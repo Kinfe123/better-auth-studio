@@ -10,9 +10,7 @@ import {
   XCircle,
   AlertTriangle,
   Info,
-  ExternalLink,
   RefreshCw,
-  Upload,
   Lock,
   Key,
   Users,
@@ -22,7 +20,6 @@ import {
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 
 interface AuthConfig {
   appName?: string

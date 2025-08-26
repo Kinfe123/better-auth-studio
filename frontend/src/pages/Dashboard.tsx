@@ -1,304 +1,277 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { 
-  Users, 
-  Shield, 
   TrendingUp, 
-  ArrowUpRight,
-  ArrowDownRight,
-  Eye,
-  Zap,
-  Settings,
-  Activity
+  TrendingDown,
+  ChevronDown
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
-
-// Chart data
-const chartData = [
-  { name: 'Jan', users: 400, sessions: 240 },
-  { name: 'Feb', users: 300, sessions: 139 },
-  { name: 'Mar', users: 200, sessions: 980 },
-  { name: 'Apr', users: 278, sessions: 390 },
-  { name: 'May', users: 189, sessions: 480 },
-  { name: 'Jun', users: 239, sessions: 380 },
-  { name: 'Jul', users: 349, sessions: 430 },
-]
-
-const pieData = [
-  { name: 'Google', value: 400, color: '#ffffff' },
-  { name: 'GitHub', value: 300, color: '#e5e7eb' },
-  { name: 'Email', value: 300, color: '#d1d5db' },
-  { name: 'Discord', value: 200, color: '#9ca3af' },
-]
-
-const COLORS = ['#ffffff', '#e5e7eb', '#d1d5db', '#9ca3af']
-
-interface DashboardStats {
-  totalUsers: number
-  activeUsers: number
-  totalSessions: number
-  successRate: number
-  userGrowth: number
-  sessionGrowth: number
-}
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalUsers: 0,
-    activeUsers: 0,
-    totalSessions: 0,
-    successRate: 0,
-    userGrowth: 0,
-    sessionGrowth: 0
-  })
-  const [loading, setLoading] = useState(true)
+  const [selectedTimeRange, setSelectedTimeRange] = useState('1Y')
+  const [selectedTab, setSelectedTab] = useState('Active Users')
+  const [selectedPeriod, _ ] = useState('Daily')
 
-  useEffect(() => {
-    fetchStats()
-  }, [])
+  const timeRanges = ['ALL', '1M', '3M', '6M', '1Y']
+  const tabs = ['Active Users', 'Total Users', 'New Users', 'Returning Users']
 
-  const fetchStats = async () => {
-    try {
-      const response = await fetch('/api/dashboard')
-      const data = await response.json()
-      setStats(data)
-    } catch (error) {
-      console.error('Failed to fetch dashboard stats:', error)
-    } finally {
-      setLoading(false)
+  const newUsers = [
+    {
+      time: '10:12 AM',
+      name: 'Bereket Engida',
+      method: 'OAuth',
+      device: 'Mobile/Safari'
+    },
+    {
+      time: '10:12 AM',
+      name: 'Jhon Doe',
+      method: 'Email',
+      device: 'Desktop/Chrome'
+    },
+    {
+      time: '10:12 AM',
+      name: 'Kinfe Tariky',
+      method: 'Passkey',
+      device: 'Mobile/Chrome'
+    },
+    {
+      time: '10:12 AM',
+      name: 'Bereket Engida',
+      method: 'OAuth',
+      device: 'Mobile/Safari'
+    },
+    {
+      time: '10:12 AM',
+      name: 'Jhon Doe',
+      method: 'Email',
+      device: 'Desktop/Chrome'
     }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-      </div>
-    )
-  }
+  ]
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center justify-between p-5 pt-7">
-        <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Dashboard</h1>
-          <p className="text-gray-300 mt-2">Welcome to your Better Auth Studio dashboard</p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-900">
-            <Eye className="w-4 h-4 mr-2" />
-            View Analytics
-          </Button>
-          <Button className="bg-white hover:bg-white text-black">
-            <Zap className="w-4 h-4 mr-2" />
-            Quick Actions
-          </Button>
-        </div>
-      </div>
-    <hr  className='w-full border-white/15 h-px'/>
-    <hr  className='w-full border-white/15 h-px'/>
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-5">
-        <StatCard
-          title="Total Users"
-          value={stats.totalUsers}
-          change={stats.userGrowth}
-          icon={Users}
-          trend="up"
-        />
-        <StatCard
-          title="Active Users"
-          value={stats.activeUsers}
-          change={12.5}
-          icon={Activity}
-          trend="up"
-        />
-        <StatCard
-          title="Total Sessions"
-          value={stats.totalSessions}
-          change={stats.sessionGrowth}
-          icon={Shield}
-          trend="up"
-        />
-        <StatCard
-          title="Success Rate"
-          value={stats.successRate}
-          change={-2.1}
-          icon={TrendingUp}
-          trend="down"
-        />
+    <div className="space-y-6 animate-fade-in">
+      {/* Welcome Message */}
+      <div className="px-5 pt-7">
+        <h1 className="text-2xl font-bold text-white">Welcome Back, Bereket</h1>
+        <p className="text-sm text-gray-400 mt-1">Mar 18 Tue, 12:57 AM</p>
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-5">
-        <Card className="hover:shadow-lg transition-shadow duration-200 border-white/15 bg-black/70">
-          <CardHeader>
-            <CardTitle className="text-white">User Growth</CardTitle>
-            <CardDescription>Monthly user registration trends</CardDescription>
+      {/* Main Stats Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-5">
+        {/* Total Users Card */}
+        <Card className="border-white/15 bg-black/70 rounded-none">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-white text-2xl font-bold">10.2k</CardTitle>
+            <CardDescription className="text-white text-sm font-medium">TOTAL USER</CardDescription>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="name" stroke="#9ca3af" />
-                <YAxis stroke="#9ca3af" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#111827', 
-                    border: '1px solid #374151',
-                    color: '#ffffff'
-                  }}
-                />
-                <Line type="monotone" dataKey="users" stroke="#ffffff" strokeWidth={2} />
-                <Line type="monotone" dataKey="sessions" stroke="#e5e7eb" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow duration-200 border-white/15 bg-black/70">
-          <CardHeader>
-            <CardTitle className="text-white">Authentication Methods</CardTitle>
-            <CardDescription>Distribution of login providers</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
+          <CardContent className="pt-0">
+            {/* Time Range Selector */}
+            <div className="flex space-x-1 mb-4">
+              {timeRanges.map((range) => (
+                <Button
+                  key={range}
+                  variant={selectedTimeRange === range ? "default" : "ghost"}
+                  size="sm"
+                  className={`text-xs px-3 py-1 h-6 ${
+                    selectedTimeRange === range 
+                      ? 'bg-gray-800 text-white' 
+                      : 'text-gray-400 hover:text-white hover:bg-transparent'
+                  }`}
+                  onClick={() => setSelectedTimeRange(range)}
                 >
-                  {pieData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#111827', 
-                    border: '1px solid #374151',
-                    color: '#ffffff'
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+                  {range}
+                </Button>
+              ))}
+            </div>
+            
+            {/* Chart Placeholder */}
+            <div className="h-32 bg-gray-900/50 rounded-none flex items-end justify-between px-2 pb-2">
+              {[23, 45, 32, 67, 89, 54].map((height, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-400 w-8 rounded-none"
+                  style={{ height: `${height}%` }}
+                ></div>
+              ))}
+            </div>
+            <div className="flex justify-between text-xs text-gray-400 mt-2">
+              <span>23 Oct</span>
+              <span>28 Oct</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Total Subscription Card */}
+        <Card className="border-white/15 bg-black/70 rounded-none">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-white text-2xl font-bold">$1243.22</CardTitle>
+            <CardDescription className="text-white text-sm font-medium">TOTAL SUBSCRIPTION</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {/* Time Range Selector */}
+            <div className="flex space-x-1 mb-4">
+              {timeRanges.map((range) => (
+                <Button
+                  key={range}
+                  variant={selectedTimeRange === range ? "default" : "ghost"}
+                  size="sm"
+                  className={`text-xs px-3 py-1 h-6 ${
+                    selectedTimeRange === range 
+                      ? 'bg-gray-800 text-white' 
+                      : 'text-gray-400 hover:text-white hover:bg-transparent'
+                  }`}
+                  onClick={() => setSelectedTimeRange(range)}
+                >
+                  {range}
+                </Button>
+              ))}
+            </div>
+            
+            {/* Chart Placeholder */}
+            <div className="h-32 bg-gray-900/50 rounded-none flex items-center justify-center">
+              <div className="w-full h-1 bg-white rounded-full"></div>
+            </div>
+            <div className="flex justify-between text-xs text-gray-400 mt-2">
+              <span>23 Oct</span>
+              <span>28 Oct</span>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Recent Activity */}
-      <Card className="border-white/15 bg-black/70">
-        <CardHeader>
-          <CardTitle className="text-white">Recent Activity</CardTitle>
-          <CardDescription>Latest user actions and system events</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4 p-4 bg-gray-800 border border-gray-700 rounded-lg">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                <Users className="w-5 h-5 text-black" />
+      {/* Bottom Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-5">
+        {/* Left Column - Stats Cards */}
+        <div className="space-y-6">
+          {/* Active Users Card */}
+          <Card className="border-white/15 bg-black/70 rounded-none">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-white text-lg">Active Users</CardTitle>
+                <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white p-0 h-auto">
+                  {selectedPeriod}
+                  <ChevronDown className="w-4 h-4 ml-1" />
+                </Button>
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-white">New user registered</p>
-                <p className="text-sm text-gray-300">john.doe@example.com signed up via Google</p>
+              <CardDescription className="text-gray-400 text-sm">
+                Users with active session in the time frame
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="text-3xl font-bold text-white mb-2">1,250</div>
+              <div className="flex items-center text-green-500 text-sm">
+                <TrendingUp className="w-4 h-4 mr-1" />
+                24% from yesterday
               </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-300">2 minutes ago</p>
-                <Badge variant="success" className="mt-1">Success</Badge>
+            </CardContent>
+          </Card>
+
+          {/* New Users Card */}
+          <Card className="border-white/15 bg-black/70 rounded-none">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-white text-lg">New Users</CardTitle>
+                <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white p-0 h-auto">
+                  {selectedPeriod}
+                  <ChevronDown className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+              <CardDescription className="text-gray-400 text-sm">
+                Newly registered Users in the time frame
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="text-3xl font-bold text-white mb-2">10</div>
+              <div className="flex items-center text-red-500 text-sm">
+                <TrendingDown className="w-4 h-4 mr-1" />
+                18% from yesterday
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Middle Column - Chart */}
+        <Card className="border-white/15 bg-black/70 rounded-none">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex space-x-1">
+                {tabs.map((tab) => (
+                  <Button
+                    key={tab}
+                    variant={selectedTab === tab ? "default" : "ghost"}
+                    size="sm"
+                    className={`text-xs px-3 py-1 h-6 ${
+                      selectedTab === tab 
+                        ? 'bg-gray-800 text-white' 
+                        : 'text-gray-400 hover:text-white hover:bg-transparent'
+                    }`}
+                    onClick={() => setSelectedTab(tab)}
+                  >
+                    {tab}
+                  </Button>
+                ))}
               </div>
             </div>
-
-            <div className="flex items-center space-x-4 p-4 bg-gray-800 border border-gray-700 rounded-lg">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                <Shield className="w-5 h-5 text-black" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-white">Session created</p>
-                <p className="text-sm text-gray-300">User session established for jane.smith@example.com</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-300">5 minutes ago</p>
-                <Badge variant="success" className="mt-1">Active</Badge>
-              </div>
+            <CardDescription className="text-gray-400 text-sm">
+              January - June 18
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {/* Chart Placeholder */}
+            <div className="h-48 bg-gray-900/50 rounded-none flex items-end justify-between px-4 pb-4">
+              {[60, 80, 45, 90, 75, 85].map((height, index) => (
+                <div
+                  key={index}
+                  className={`w-8 rounded-none ${
+                    index % 2 === 0 ? 'bg-gray-400' : 'bg-gray-600'
+                  }`}
+                  style={{ height: `${height}%` }}
+                ></div>
+              ))}
             </div>
-
-            <div className="flex items-center space-x-4 p-4 bg-gray-800 border border-gray-700 rounded-lg">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                <Settings className="w-5 h-5 text-black" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-white">Configuration updated</p>
-                <p className="text-sm text-gray-300">Email verification settings modified</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-300">10 minutes ago</p>
-                <Badge variant="info" className="mt-1">Info</Badge>
-              </div>
+            <div className="flex justify-between text-xs text-gray-400 mt-2">
+              <span>Jan</span>
+              <span>Feb</span>
+              <span>Mar</span>
+              <span>Apr</span>
+              <span>May</span>
+              <span>Jun</span>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="mt-4">
+              <div className="flex items-center text-sm text-white mb-1">
+                <TrendingUp className="w-4 h-4 mr-1 text-green-500" />
+                Trending up by 5.2% this month
+              </div>
+              <p className="text-xs text-gray-400">
+                Showing total visitors for the last 6 months
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Quick Actions */}
-      <Card className="border-white/15 bg-black/70">
-        <CardHeader>
-          <CardTitle className="text-white">Quick Actions</CardTitle>
-          <CardDescription>Common tasks and shortcuts</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-start space-y-2 border-gray-600 text-gray-300 hover:bg-gray-800">
-              <Users className="w-5 h-5 text-white" />
-              <span className="font-medium">Add User</span>
-              <span className="text-xs text-gray-400">Create a new user account</span>
-            </Button>
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-start space-y-2 border-gray-600 text-gray-300 hover:bg-gray-800">
-              <Shield className="w-5 h-5 text-white" />
-              <span className="font-medium">Security</span>
-              <span className="text-xs text-gray-400">Review security settings</span>
-            </Button>
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-start space-y-2 border-gray-600 text-gray-300 hover:bg-gray-800">
-              <Settings className="w-5 h-5 text-white" />
-              <span className="font-medium">Configure</span>
-              <span className="text-xs text-gray-400">Update authentication settings</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        {/* Right Column - New Users Table */}
+        <Card className="border-white/15 bg-black/70 rounded-none">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-white text-lg">New Users</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-3">
+              {newUsers.map((user, index) => (
+                <div key={index} className="flex items-center justify-between py-2 border-b border-white/15 last:border-b-0">
+                  <div className="flex items-center space-x-3">
+                    <div className="text-xs text-gray-400 w-16">{user.time}</div>
+                    <div>
+                      <div className="text-sm font-medium text-white">{user.name}</div>
+                      <div className="text-xs text-gray-400">{user.method}</div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-400">{user.device}</div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
-
-const StatCard = ({ title, value, change, icon: Icon, trend = 'up' }: any) => (
-  <Card className="hover:shadow-lg transition-shadow duration-200 border-white/15 bg-black/70">
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium text-gray-300">
-        {title}
-      </CardTitle>
-      <Icon className="h-4 w-4 text-gray-400" />
-    </CardHeader>
-    <CardContent>
-      <div className="text-2xl font-bold text-white">{value.toLocaleString()}</div>
-      {change && (
-        <div className="flex items-center space-x-1 text-sm">
-          {trend === 'up' ? (
-            <ArrowUpRight className="w-4 h-4 text-green-400" />
-          ) : (
-            <ArrowDownRight className="w-4 h-4 text-red-400" />
-          )}
-          <span className={trend === 'up' ? 'text-green-400' : 'text-red-400'}>
-            {Math.abs(change)}%
-          </span>
-          <span className="text-gray-400">from last month</span>
-        </div>
-      )}
-    </CardContent>
-  </Card>
-)
