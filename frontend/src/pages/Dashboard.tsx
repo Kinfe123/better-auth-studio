@@ -6,16 +6,14 @@ import {
   Users,
   Building2,
   Database,
-  Play,
   Settings,
   CheckCircle,
   AlertCircle,
-  Terminal,
   ChevronUp,
-  ChevronDown as ChevronDownIcon
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
 interface LogEntry {
   id: string
@@ -35,7 +33,9 @@ export default function Dashboard() {
   const [seedCount, setSeedCount] = useState({
     users: 10,
     organizations: 5,
-    sessions: 20
+    sessions: 20,
+    verifications: 15,
+    accounts: 8
   })
 
   const timeRanges = ['ALL', '1M', '3M', '6M', '1Y']
@@ -88,30 +88,138 @@ export default function Dashboard() {
     console.log({type})
     setSeedingStatus('seeding')
     
-    const payload = {
-      type,
-      count: seedCount[type as keyof typeof seedCount] || 10,
-      timestamp: new Date().toISOString()
-    }
+    const count = seedCount[type as keyof typeof seedCount] || 10
     
-    addLog('info', `Starting ${type} seeding...`, payload)
-    
-    try {
-      // Simulate API call with progress updates
-      addLog('info', `Sending request to /api/seed/${type}`, payload)
+    if (type === 'users') {
+      // Generate detailed user data
+      const users = Array.from({ length: count }, (_, i) => ({
+        id: `user_${Date.now()}_${i}`,
+        email: `user${i + 1}@example.com`,
+        name: `User ${i + 1}`,
+        method: i % 3 === 0 ? 'email' : i % 3 === 1 ? 'github' : 'passkey',
+        verified: i % 2 === 0,
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date(Date.now() - Math.random() * 86400000).toISOString()
+      }))
       
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      addLog('info', `Processing ${payload.count} ${type}...`)
+      const payload = {
+        type,
+        count,
+        users,
+        timestamp: new Date().toISOString()
+      }
       
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      addLog('success', `Successfully seeded ${payload.count} ${type}`)
+      addLog('info', `Starting ${type} seeding...`, payload)
       
-      setSeedingStatus('success')
-      setTimeout(() => setSeedingStatus('idle'), 3000)
-    } catch (error) {
-      addLog('error', `Failed to seed ${type}: ${error}`)
-      setSeedingStatus('error')
-      setTimeout(() => setSeedingStatus('idle'), 3000)
+      try {
+        // Simulate API call with progress updates
+        addLog('info', `Sending request to /api/seed/${type}`, payload)
+        
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        addLog('info', `Processing ${count} ${type}...`)
+        
+        // Log each user individually
+        for (let i = 0; i < users.length; i++) {
+          const user = users[i]
+          addLog('info', `Created user ${i + 1}/${count}: ${user.name} (${user.email})`, {
+            message: `user with this email registered`,
+            email: user.email
+          })
+          await new Promise(resolve => setTimeout(resolve, 200)) // Small delay between users
+        }
+        
+        addLog('success', `Successfully seeded ${count} ${type}`, {
+          totalCreated: count,
+          users: users.map(u => ({ id: u.id, email: u.email, name: u.name }))
+        })
+        
+        setSeedingStatus('success')
+        setTimeout(() => setSeedingStatus('idle'), 3000)
+      } catch (error) {
+        addLog('error', `Failed to seed ${type}: ${error}`)
+        setSeedingStatus('error')
+        setTimeout(() => setSeedingStatus('idle'), 3000)
+      }
+    } else if (type === 'organizations') {
+      // Generate detailed organization data
+      const organizations = Array.from({ length: count }, (_, i) => ({
+        id: `org_${Date.now()}_${i}`,
+        name: `Organization ${i + 1}`,
+        slug: `org-${i + 1}`,
+        members: Math.floor(Math.random() * 10) + 1,
+        createdAt: new Date().toISOString(),
+        plan: i % 3 === 0 ? 'free' : i % 3 === 1 ? 'pro' : 'enterprise'
+      }))
+      
+      const payload = {
+        type,
+        count,
+        organizations,
+        timestamp: new Date().toISOString()
+      }
+      
+      addLog('info', `Starting ${type} seeding...`, payload)
+      
+      try {
+        addLog('info', `Sending request to /api/seed/${type}`, payload)
+        
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        addLog('info', `Processing ${count} ${type}...`)
+        
+        // Log each organization individually
+        for (let i = 0; i < organizations.length; i++) {
+          const org = organizations[i]
+          addLog('info', `Created organization ${i + 1}/${count}: ${org.name} (${org.members} members)`, {
+            organization: {
+              id: org.id,
+              name: org.name,
+              slug: org.slug,
+              members: org.members,
+              plan: org.plan,
+              createdAt: org.createdAt
+            }
+          })
+          await new Promise(resolve => setTimeout(resolve, 200))
+        }
+        
+        addLog('success', `Successfully seeded ${count} ${type}`, {
+          totalCreated: count,
+          organizations: organizations.map(o => ({ id: o.id, name: o.name, members: o.members }))
+        })
+        
+        setSeedingStatus('success')
+        setTimeout(() => setSeedingStatus('idle'), 3000)
+      } catch (error) {
+        addLog('error', `Failed to seed ${type}: ${error}`)
+        setSeedingStatus('error')
+        setTimeout(() => setSeedingStatus('idle'), 3000)
+      }
+    } else {
+      // For other types, use the original simple approach
+      const payload = {
+        type,
+        count,
+        timestamp: new Date().toISOString()
+      }
+      
+      addLog('info', `Starting ${type} seeding...`, payload)
+      
+      try {
+        addLog('info', `Sending request to /api/seed/${type}`, payload)
+        
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        addLog('info', `Processing ${count} ${type}...`)
+        
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        addLog('success', `Successfully seeded ${count} ${type}`)
+        
+        setSeedingStatus('success')
+        setTimeout(() => setSeedingStatus('idle'), 3000)
+      } catch (error) {
+        addLog('error', `Failed to seed ${type}: ${error}`)
+        setSeedingStatus('error')
+        setTimeout(() => setSeedingStatus('idle'), 3000)
+      }
     }
   }
 
@@ -302,243 +410,263 @@ export default function Dashboard() {
   )
 
   const renderSeedData = () => (
-    <>
-      {/* Header */}
-      <div className="px-6 pt-8">
-        <h1 className="text-xl text-white font-normal">Seed Data</h1>
-        <p className="text-sm text-gray-400 mt-1 font-light">Generate sample data for testing and development</p>
-      </div>
-
+    <div className="space-y-6 mx-10 py-2">
       {/* Configuration Status */}
-      <div className="px-6 pt-6">
-        <Card className="border-white/10 bg-black/50 rounded-none">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-white text-base font-normal flex items-center space-x-2">
-              <Settings className="w-4 h-4" />
-              <span>Configuration Status</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center space-x-2 p-3 bg-white/5 rounded-none">
-                <CheckCircle className="w-4 h-4 text-green-400" />
-                <div>
-                  <div className="text-sm text-white font-light">Email & Password</div>
-                  <div className="text-xs text-gray-400 font-light">Enabled</div>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2 p-3 bg-white/5 rounded-none">
-                <CheckCircle className="w-4 h-4 text-green-400" />
-                <div>
-                  <div className="text-sm text-white font-light">GitHub OAuth</div>
-                  <div className="text-xs text-gray-400 font-light">Enabled</div>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2 p-3 bg-white/5 rounded-none">
-                <AlertCircle className="w-4 h-4 text-yellow-400" />
-                <div>
-                  <div className="text-sm text-white font-light">Organizations</div>
-                  <div className="text-xs text-gray-400 font-light">Not configured</div>
-                </div>
-              </div>
+      <Card className="rounded-none bg-transparent border border-dashed">
+        <CardHeader>
+          <CardTitle className="text-lg font-light">Configuration Status</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center justify-between p-3 border border-dashed rounded-none">
+              <span className="text-sm text-white font-light">Database Connected</span>
+              <Badge variant="secondary" className="text-xs bg-green-500/20 text-green-400 border-green-500/30 rounded-none">
+                Connected
+              </Badge>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Seed Options Row */}
-      <div className="px-6 pt-6">
-        <Card className="border-white/10 bg-black/50 rounded-none">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-white text-base font-normal">Seed Options</CardTitle>
-            <CardDescription className="text-gray-400 text-xs font-light">
-              Select data types and quantities to seed
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {/* Users */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Users className="w-4 h-4 text-white" />
-                  <span className="text-sm text-white font-light">Users</span>
-                </div>
-                <input
-                  type="number"
-                  value={seedCount.users}
-                  onChange={(e) => setSeedCount({...seedCount, users: parseInt(e.target.value) || 0})}
-                  className="w-full bg-white/10 border border-white/20 text-white text-sm px-3 py-2 rounded-none font-light"
-                  placeholder="Count"
-                  min="1"
-                  max="100"
-                />
-                <Button
-                  onClick={() => handleSeedData('users')}
-                  disabled={seedingStatus === 'seeding'}
-                  className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 font-light text-sm"
-                >
-                  {seedingStatus === 'seeding' ? 'Seeding...' : `Seed ${seedCount.users} Users`}
-                </Button>
-              </div>
-
-              {/* Organizations */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Building2 className="w-4 h-4 text-white" />
-                  <span className="text-sm text-white font-light">Organizations</span>
-                </div>
-                <input
-                  type="number"
-                  value={seedCount.organizations}
-                  onChange={(e) => setSeedCount({...seedCount, organizations: parseInt(e.target.value) || 0})}
-                  className="w-full bg-white/10 border border-white/20 text-white text-sm px-3 py-2 rounded-none font-light"
-                  placeholder="Count"
-                  min="1"
-                  max="50"
-                />
-                <Button
-                  onClick={() => handleSeedData('organizations')}
-                  disabled={seedingStatus === 'seeding'}
-                  className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 font-light text-sm"
-                >
-                  {seedingStatus === 'seeding' ? 'Seeding...' : `Seed ${seedCount.organizations} Organizations`}
-                </Button>
-              </div>
-
-              {/* Sessions */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Database className="w-4 h-4 text-white" />
-                  <span className="text-sm text-white font-light">Sessions</span>
-                </div>
-                <input
-                  type="number"
-                  value={seedCount.sessions}
-                  onChange={(e) => setSeedCount({...seedCount, sessions: parseInt(e.target.value) || 0})}
-                  className="w-full bg-white/10 border border-white/20 text-white text-sm px-3 py-2 rounded-none font-light"
-                  placeholder="Count"
-                  min="1"
-                  max="100"
-                />
-                <Button
-                  onClick={() => handleSeedData('sessions')}
-                  disabled={seedingStatus === 'seeding'}
-                  className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 font-light text-sm"
-                >
-                  {seedingStatus === 'seeding' ? 'Seeding...' : `Seed ${seedCount.sessions} Sessions`}
-                </Button>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Play className="w-4 h-4 text-white" />
-                  <span className="text-sm text-white font-light">Quick Actions</span>
-                </div>
-                <div className="space-y-2">
-                  <Button
-                    onClick={() => handleSeedData('verifications')}
-                    disabled={seedingStatus === 'seeding'}
-                    className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 font-light text-xs"
-                  >
-                    Seed Verifications
-                  </Button>
-                  <Button
-                    onClick={() => handleSeedData('accounts')}
-                    disabled={seedingStatus === 'seeding'}
-                    className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 font-light text-xs"
-                  >
-                    Seed Accounts
-                  </Button>
-                </div>
-              </div>
+            <div className="flex items-center justify-between p-3 border border-dashed rounded-none">
+              <span className="text-sm text-white font-light">Config</span>
+              <Badge variant="secondary" className="text-xs bg-white/10 text-white border-white/20 rounded-none">
+               Approved 
+              </Badge>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Terminal Log */}
-      <div className="px-6 pt-6 pb-8">
-        <Card className="border-white/10 bg-black/50 rounded-none">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-white text-base font-normal flex items-center space-x-2">
-                <Terminal className="w-4 h-4" />
-                <span>Seeding Log</span>
-              </CardTitle>
+      {/* Seed Options */}
+      <div className="space-y-6 grid grid-cols-2 gap-4">
+        {/* Users */}
+        <div className="space-y-3 border border-dashed rounded-none">
+          <div className="flex justify-between gap-4 items-center p-3 bg-white/5 rounded-none">
+            <div className="flex items-center space-x-2">
+              <Users className="w-4 h-4 text-white" />
+              <span className="text-sm text-white font-light">Users</span>
+            </div>
+            <input
+              type="number"
+              value={seedCount.users}
+              onChange={(e) => setSeedCount({...seedCount, users: parseInt(e.target.value) || 0})}
+              className="w-20 bg-white/10 flex justify-end border border-white/20 text-white text-sm px-2 py-1 rounded-none font-light"
+              placeholder="Count"
+              min="1"
+              max="100"
+            />
+          </div>
+          <div className="flex justify-end pr-3">
+            <Button
+              onClick={() => handleSeedData('users')}
+              disabled={seedingStatus === 'seeding'}
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-light text-sm px-4"
+            >
+              {seedingStatus === 'seeding' ? 'Seeding...' : 'Seed'}
+            </Button>
+          </div>
+          <div className="bg-black border border-white/10 rounded-none p-3 font-mono text-xs">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-green-400">$ seed users {seedCount.users}</div>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowTerminal(!showTerminal)}
                 className="text-gray-400 hover:text-white p-0 h-auto font-light"
               >
-                {showTerminal ? <ChevronUp className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />}
+                {showTerminal ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </Button>
             </div>
-          </CardHeader>
-          {showTerminal && (
-            <CardContent className="pt-0">
-              <div className="bg-black border border-white/10 rounded-none p-4 font-mono text-sm">
-                <div className="text-green-400 mb-2">$ better-auth studio seed</div>
-                {logs.length === 0 ? (
-                  <div className="text-gray-400">No seeding operations yet...</div>
-                ) : (
-                  <div className="space-y-1">
-                    {logs.map((log) => (
-                      <div key={log.id} className="flex items-start space-x-2">
-                        <span className="text-gray-500 font-light">[{log.timestamp}]</span>
-                        {getLogIcon(log.type)}
-                        <span className={`font-light ${getLogColor(log.type)}`}>{log.message}</span>
-                        {log.payload && (
-                          <div className="text-gray-400 text-xs ml-4">
-                            <div>Payload: {JSON.stringify(log.payload, null, 2)}</div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+            {showTerminal && (
+              <div>
+                {logs.filter(log => log.message.includes('users')).slice(-1).map((log) => (
+                  <div key={log.id} className="flex items-center space-x-2">
+                    <span className="text-gray-500">[{log.timestamp}]</span>
+                    {getLogIcon(log.type)}
+                    <span className={`font-light ${getLogColor(log.type)}`}>{log.message}</span>
+                    {log.payload && (
+                      <span className="text-gray-400 ml-2">- {log.payload.message}</span>
+                    )}
                   </div>
-                )}
+                ))}
               </div>
-            </CardContent>
-          )}
-        </Card>
+            )}
+          </div>
+        </div>
+
+        {/* Organizations */}
+        <div className="space-y-3">
+          <div className="grid grid-cols-3 gap-4 items-center p-3 bg-white/5 rounded-none">
+            <div className="flex items-center space-x-2">
+              <Building2 className="w-4 h-4 text-white" />
+              <span className="text-sm text-white font-light">Organizations</span>
+            </div>
+            <input
+              type="number"
+              value={seedCount.organizations}
+              onChange={(e) => setSeedCount({...seedCount, organizations: parseInt(e.target.value) || 0})}
+              className="w-20 bg-white/10 border border-white/20 text-white text-sm px-2 py-1 rounded-none font-light"
+              placeholder="Count"
+              min="1"
+              max="100"
+            />
+            <Button
+              onClick={() => handleSeedData('organizations')}
+              disabled={seedingStatus === 'seeding'}
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-light text-sm px-4 w-fit"
+            >
+              {seedingStatus === 'seeding' ? 'Seeding...' : 'Seed'}
+            </Button>
+          </div>
+          <div className="bg-black border border-white/10 rounded-none p-3 font-mono text-xs ml-3">
+            <div className="text-green-400 mb-2">$ seed organizations {seedCount.organizations}</div>
+            {logs.filter(log => log.message.includes('organizations')).slice(-1).map((log) => (
+              <div key={log.id} className="flex items-center space-x-2">
+                <span className="text-gray-500">[{log.timestamp}]</span>
+                {getLogIcon(log.type)}
+                <span className={`font-light ${getLogColor(log.type)}`}>{log.message}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Sessions */}
+        <div className="space-y-3">
+          <div className="grid grid-cols-3 gap-4 items-center p-3 bg-white/5 rounded-none">
+            <div className="flex items-center space-x-2">
+              <Database className="w-4 h-4 text-white" />
+              <span className="text-sm text-white font-light">Sessions</span>
+            </div>
+            <input
+              type="number"
+              value={seedCount.sessions}
+              onChange={(e) => setSeedCount({...seedCount, sessions: parseInt(e.target.value) || 0})}
+              className="w-20 bg-white/10 border border-white/20 text-white text-sm px-2 py-1 rounded-none font-light"
+              placeholder="Count"
+              min="1"
+              max="100"
+            />
+            <Button
+              onClick={() => handleSeedData('sessions')}
+              disabled={seedingStatus === 'seeding'}
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-light text-sm px-4 w-fit"
+            >
+              {seedingStatus === 'seeding' ? 'Seeding...' : 'Seed'}
+            </Button>
+          </div>
+          <div className="bg-black border border-white/10 rounded-none p-3 font-mono text-xs ml-3">
+            <div className="text-green-400 mb-2">$ seed sessions {seedCount.sessions}</div>
+            {logs.filter(log => log.message.includes('sessions')).slice(-1).map((log) => (
+              <div key={log.id} className="flex items-center space-x-2">
+                <span className="text-gray-500">[{log.timestamp}]</span>
+                {getLogIcon(log.type)}
+                <span className={`font-light ${getLogColor(log.type)}`}>{log.message}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Verifications */}
+        <div className="space-y-3">
+          <div className="grid grid-cols-3 gap-4 items-center p-3 bg-white/5 rounded-none">
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="w-4 h-4 text-white" />
+              <span className="text-sm text-white font-light">Verifications</span>
+            </div>
+            <input
+              type="number"
+              value={seedCount.verifications}
+              onChange={(e) => setSeedCount({...seedCount, verifications: parseInt(e.target.value) || 0})}
+              className="w-20 bg-white/10 border border-white/20 text-white text-sm px-2 py-1 rounded-none font-light"
+              placeholder="Count"
+              min="1"
+              max="100"
+            />
+            <Button
+              onClick={() => handleSeedData('verifications')}
+              disabled={seedingStatus === 'seeding'}
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-light text-sm px-4 w-fit"
+            >
+              {seedingStatus === 'seeding' ? 'Seeding...' : 'Seed'}
+            </Button>
+          </div>
+          <div className="bg-black border border-white/10 rounded-none p-3 font-mono text-xs ml-3">
+            <div className="text-green-400 mb-2">$ seed verifications {seedCount.verifications}</div>
+            {logs.filter(log => log.message.includes('verifications')).slice(-1).map((log) => (
+              <div key={log.id} className="flex items-center space-x-2">
+                <span className="text-gray-500">[{log.timestamp}]</span>
+                {getLogIcon(log.type)}
+                <span className={`font-light ${getLogColor(log.type)}`}>{log.message}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Accounts */}
+        <div className="space-y-3">
+          <div className="grid grid-cols-3 gap-4 items-center p-3 bg-white/5 rounded-none">
+            <div className="flex items-center space-x-2">
+              <Settings className="w-4 h-4 text-white" />
+              <span className="text-sm text-white font-light">Accounts</span>
+            </div>
+            <input
+              type="number"
+              value={seedCount.accounts}
+              onChange={(e) => setSeedCount({...seedCount, accounts: parseInt(e.target.value) || 0})}
+              className="w-20 bg-white/10 border border-white/20 text-white text-sm px-2 py-1 rounded-none font-light"
+              placeholder="Count"
+              min="1"
+              max="100"
+            />
+            <Button
+              onClick={() => handleSeedData('accounts')}
+              disabled={seedingStatus === 'seeding'}
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-light text-sm px-4 w-fit"
+            >
+              {seedingStatus === 'seeding' ? 'Seeding...' : 'Seed'}
+            </Button>
+          </div>
+          <div className="bg-black border border-white/10 rounded-none p-3 font-mono text-xs ml-3">
+            <div className="text-green-400 mb-2">$ seed accounts {seedCount.accounts}</div>
+            {logs.filter(log => log.message.includes('accounts')).slice(-1).map((log) => (
+              <div key={log.id} className="flex items-center space-x-2">
+                <span className="text-gray-500">[{log.timestamp}]</span>
+                {getLogIcon(log.type)}
+                <span className={`font-light ${getLogColor(log.type)}`}>{log.message}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   )
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-6">
       {/* Tab Navigation */}
-      <div className="px-6 pt-8">
-        <div className="flex space-x-1 border-b border-white/10">
-          <Button
-            variant={activeTab === 'overview' ? "default" : "ghost"}
-            size="sm"
-            className={`text-sm px-4 py-2 font-light ${
-              activeTab === 'overview' 
-                ? 'bg-white/10 text-white border-b-2 border-white' 
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
-            }`}
+      <div className="border-b border-white/10 pt-3 px-4">
+        <div className="flex space-x-8">
+          <button
             onClick={() => setActiveTab('overview')}
+            className={`pb-3 px-1 border-b-2 font-light text-sm transition-colors ${
+              activeTab === 'overview'
+                ? 'border-white text-white'
+                : 'border-transparent text-white/60 hover:text-white/80'
+            }`}
           >
             Overview
-          </Button>
-          <Button
-            variant={activeTab === 'seed' ? "default" : "ghost"}
-            size="sm"
-            className={`text-sm px-4 py-2 font-light ${
-              activeTab === 'seed' 
-                ? 'bg-white/10 text-white border-b-2 border-white' 
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
-            }`}
+          </button>
+          <button
             onClick={() => setActiveTab('seed')}
+            className={`pb-3 px-1 border-b-2 font-light text-sm transition-colors ${
+              activeTab === 'seed'
+                ? 'border-white text-white'
+                : 'border-transparent text-white/60 hover:text-white/80'
+            }`}
           >
             Seed Data
-          </Button>
+          </button>
         </div>
       </div>
 
-      {/* Content */}
+      {/* Tab Content */}
       {activeTab === 'overview' ? renderOverview() : renderSeedData()}
     </div>
   )
