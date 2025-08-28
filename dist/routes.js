@@ -185,8 +185,47 @@ function createRoutes(authConfig) {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 20;
             const search = req.query.search;
-            const users = await (0, data_1.getAuthData)(authConfig, 'users', { page, limit, search });
-            res.json(users);
+            // Try to get real data first
+            try {
+                const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+                if (adapter && typeof adapter.getUsers === 'function') {
+                    const users = await adapter.getUsers();
+                    // Transform the data to match frontend expectations
+                    const transformedUsers = (users || []).map((user) => ({
+                        id: user.id,
+                        email: user.email,
+                        name: user.name,
+                        image: user.image,
+                        emailVerified: user.emailVerified,
+                        createdAt: user.createdAt,
+                        updatedAt: user.updatedAt,
+                        provider: user.provider || 'email',
+                        lastSignIn: user.lastSignIn || user.updatedAt,
+                        status: 'active' // Default status
+                    }));
+                    res.json({ users: transformedUsers });
+                    return;
+                }
+            }
+            catch (adapterError) {
+                console.error('Error fetching users from adapter:', adapterError);
+            }
+            // Fallback to getAuthData (which is working and returning real data)
+            const result = await (0, data_1.getAuthData)(authConfig, 'users', { page, limit, search });
+            // Transform the data to match frontend expectations
+            const transformedUsers = (result.data || []).map((user) => ({
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                image: user.image,
+                emailVerified: user.emailVerified,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
+                provider: user.provider || 'email',
+                lastSignIn: user.lastSignIn || user.updatedAt,
+                status: 'active' // Default status
+            }));
+            res.json({ users: transformedUsers });
         }
         catch (error) {
             console.error('Error fetching users:', error);

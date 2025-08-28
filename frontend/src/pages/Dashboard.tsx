@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { 
   TrendingUp, 
-  TrendingDown,
   ChevronDown,
   Users,
   Building2,
@@ -14,6 +13,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import UsersPage from './Users'
 
 interface LogEntry {
   id: string
@@ -24,8 +24,6 @@ interface LogEntry {
 }
 
 export default function Dashboard() {
-  const [selectedTimeRange, setSelectedTimeRange] = useState('1Y')
-  const [selectedPeriod, _ ] = useState('Daily')
   const [activeTab, setActiveTab] = useState('overview')
   const [seedingStatus, setSeedingStatus] = useState<Record<string, 'idle' | 'seeding' | 'success' | 'error'>>({
     users: 'idle',
@@ -44,40 +42,7 @@ export default function Dashboard() {
     accounts: 8
   })
 
-  const timeRanges = ['ALL', '1M', '3M', '6M', '1Y']
 
-  const newUsers = [
-    {
-      time: '10:12 AM',
-      name: 'Bereket Engida',
-      method: 'OAuth',
-      device: 'Mobile/Safari'
-    },
-    {
-      time: '10:12 AM',
-      name: 'Jhon Doe',
-      method: 'Email',
-      device: 'Desktop/Chrome'
-    },
-    {
-      time: '10:12 AM',
-      name: 'Kinfe Tariky',
-      method: 'Passkey',
-      device: 'Mobile/Chrome'
-    },
-    {
-      time: '10:12 AM',
-      name: 'Bereket Engida',
-      method: 'OAuth',
-      device: 'Mobile/Safari'
-    },
-    {
-      time: '10:12 AM',
-      name: 'Jhon Doe',
-      method: 'Email',
-      device: 'Desktop/Chrome'
-    }
-  ]
 
   const addLog = (type: LogEntry['type'], message: string, payload?: any) => {
     const newLog: LogEntry = {
@@ -216,164 +181,261 @@ export default function Dashboard() {
     <>
       {/* Welcome Message */}
       <div className="px-6 pt-8">
-        <h1 className="text-xl text-white font-normal">Welcome Back, Bereket</h1>
-        <p className="text-sm text-gray-400 mt-1 font-light">Mar 18 Tue, 12:57 AM</p>
+        <h1 className="text-xl text-white font-normal">Better Auth Studio</h1>
+        <p className="text-sm text-gray-400 mt-1 font-light">Manage your authentication data and configuration</p>
       </div>
 
-      {/* Main Stats Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-6">
-        {/* Total Users Card */}
-        <Card className="border-white/10 bg-black/50 rounded-none">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-white text-xl font-normal">10.2k</CardTitle>
-            <CardDescription className="text-gray-300 text-xs font-light uppercase tracking-wide">Total User</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0">
-            {/* Time Range Selector */}
-            <div className="flex space-x-1 mb-6">
-              {timeRanges.map((range) => (
-                <Button
-                  key={range}
-                  variant={selectedTimeRange === range ? "default" : "ghost"}
-                  size="sm"
-                  className={`text-xs px-3 py-1.5 h-7 font-light ${
-                    selectedTimeRange === range 
-                      ? 'bg-white/10 text-white border border-white/20' 
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                  onClick={() => setSelectedTimeRange(range)}
-                >
-                  {range}
-                </Button>
-              ))}
-            </div>
-            
-            {/* Chart Placeholder */}
-            <div className="h-28 bg-white/5 rounded-none flex items-end justify-between px-3 pb-3">
-              {[23, 45, 32, 67, 89, 54].map((height, index) => (
-                <div
-                  key={index}
-                  className="bg-white/20 w-6 rounded-none transition-all duration-300 hover:bg-white/30"
-                  style={{ height: `${height}%` }}
-                ></div>
-              ))}
-            </div>
-            <div className="flex justify-between text-xs text-gray-400 mt-3 font-light">
-              <span>23 Oct</span>
-              <span>28 Oct</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Total Subscription Card */}
-        <Card className="border-white/10 bg-black/50 rounded-none">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-white text-xl font-normal">$1243.22</CardTitle>
-            <CardDescription className="text-gray-300 text-xs font-light uppercase tracking-wide">Total Subscription</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0">
-            {/* Time Range Selector */}
-            <div className="flex space-x-1 mb-6">
-              {timeRanges.map((range) => (
-                <Button
-                  key={range}
-                  variant={selectedTimeRange === range ? "default" : "ghost"}
-                  size="sm"
-                  className={`text-xs px-3 py-1.5 h-7 font-light ${
-                    selectedTimeRange === range 
-                      ? 'bg-white/10 text-white border border-white/20' 
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                  onClick={() => setSelectedTimeRange(range)}
-                >
-                  {range}
-                </Button>
-              ))}
-            </div>
-            
-            {/* Chart Placeholder */}
-            <div className="h-28 bg-white/5 rounded-none flex items-center justify-center">
-              <div className="w-full h-0.5 bg-white/30 rounded-full"></div>
-            </div>
-            <div className="flex justify-between text-xs text-gray-400 mt-3 font-light">
-              <span>23 Oct</span>
-              <span>28 Oct</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-6 pb-8">
-        {/* Left Column - Stats Cards */}
-        <div className="space-y-6">
-          {/* Active Users Card */}
-          <Card className="border-white/10 bg-black/50 rounded-none">
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-white text-base font-normal">Active Users</CardTitle>
-                <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white p-0 h-auto font-light">
-                  {selectedPeriod}
-                  <ChevronDown className="w-3 h-3 ml-1" />
-                </Button>
-              </div>
-              <CardDescription className="text-gray-400 text-xs font-light">
-                Users with active session in the time frame
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-2xl text-white mb-2 font-light">1,250</div>
-              <div className="flex items-center text-green-400 text-xs font-light">
-                <TrendingUp className="w-3 h-3 mr-1" />
-                24% from yesterday
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* New Users Card */}
-          <Card className="border-white/10 bg-black/50 rounded-none">
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-white text-base font-normal">New Users</CardTitle>
-                <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white p-0 h-auto font-light">
-                  {selectedPeriod}
-                  <ChevronDown className="w-3 h-3 ml-1" />
-                </Button>
-              </div>
-              <CardDescription className="text-gray-400 text-xs font-light">
-                Newly registered Users in the time frame
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-2xl text-white mb-2 font-light">10</div>
-              <div className="flex items-center text-red-400 text-xs font-light">
-                <TrendingDown className="w-3 h-3 mr-1" />
-                18% from yesterday
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right Column - New Users Table */}
-        <Card className="border-white/10 col-span-2 bg-black/50 rounded-none">
+      {/* Studio Actions Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-8">
+        {/* Users Management */}
+        <Card className="border border-dashed border-white/20 bg-black/30 rounded-none hover:bg-black/50 transition-colors">
           <CardHeader className="pb-4">
-            <CardTitle className="text-white text-base font-normal">New Users</CardTitle>
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-white/10 rounded-none">
+                <Users className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-white text-base font-normal">Users</CardTitle>
+                <CardDescription className="text-gray-400 text-xs font-light">Manage user accounts</CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="space-y-4">
-              {newUsers.map((user, index) => (
-                <div key={index} className="flex items-center justify-between py-3 border-b border-white/5 last:border-b-0 hover:bg-white/5 transition-colors duration-200 rounded-none px-2 -mx-2">
-                  <div className="flex items-center space-x-3">
-                    <div className="text-xs text-gray-400 w-14 font-light">{user.time}</div>
-                    <div>
-                      <div className="text-sm text-white font-light">{user.name}</div>
-                      <div className="text-xs text-gray-400 font-light">{user.method}</div>
-                    </div>
-                  </div>
-                  <div className="text-xs text-gray-400 font-light">{user.device}</div>
-                </div>
-              ))}
+            <div className="space-y-2 text-xs text-gray-300 font-light">
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>View all users</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Create new users</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Edit user details</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Delete users</span>
+              </div>
             </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-4 w-full border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              onClick={() => setActiveTab('users')}
+            >
+              Manage Users
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Sessions Management */}
+        <Card className="border border-dashed border-white/20 bg-black/30 rounded-none hover:bg-black/50 transition-colors">
+          <CardHeader className="pb-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-white/10 rounded-none">
+                <Database className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-white text-base font-normal">Sessions</CardTitle>
+                <CardDescription className="text-gray-400 text-xs font-light">Manage user sessions</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-2 text-xs text-gray-300 font-light">
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>View active sessions</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Revoke sessions</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Session analytics</span>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-4 w-full border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              onClick={() => setActiveTab('sessions')}
+            >
+              View Sessions
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Data Seeding */}
+        <Card className="border border-dashed border-white/20 bg-black/30 rounded-none hover:bg-black/50 transition-colors">
+          <CardHeader className="pb-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-white/10 rounded-none">
+                <TrendingUp className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-white text-base font-normal">Seed Data</CardTitle>
+                <CardDescription className="text-gray-400 text-xs font-light">Generate test data</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-2 text-xs text-gray-300 font-light">
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Create mock users</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Generate sessions</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Add organizations</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Create verifications</span>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-4 w-full border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              onClick={() => setActiveTab('seed')}
+            >
+              Seed Data
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Configuration */}
+        <Card className="border border-dashed border-white/20 bg-black/30 rounded-none hover:bg-black/50 transition-colors">
+          <CardHeader className="pb-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-white/10 rounded-none">
+                <Settings className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-white text-base font-normal">Configuration</CardTitle>
+                <CardDescription className="text-gray-400 text-xs font-light">View auth settings</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-2 text-xs text-gray-300 font-light">
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Database settings</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Provider configuration</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Session settings</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Security options</span>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-4 w-full border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              onClick={() => setActiveTab('settings')}
+            >
+              View Config
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Analytics */}
+        <Card className="border border-dashed border-white/20 bg-black/30 rounded-none hover:bg-black/50 transition-colors">
+          <CardHeader className="pb-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-white/10 rounded-none">
+                <TrendingUp className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-white text-base font-normal">Analytics</CardTitle>
+                <CardDescription className="text-gray-400 text-xs font-light">View usage statistics</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-2 text-xs text-gray-300 font-light">
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>User growth</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Session activity</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Provider usage</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Performance metrics</span>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-4 w-full border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+            >
+              View Analytics
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card className="border border-dashed border-white/20 bg-black/30 rounded-none hover:bg-black/50 transition-colors">
+          <CardHeader className="pb-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-white/10 rounded-none">
+                <CheckCircle className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-white text-base font-normal">Quick Actions</CardTitle>
+                <CardDescription className="text-gray-400 text-xs font-light">Common tasks</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-2 text-xs text-gray-300 font-light">
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Health check</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Database backup</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Clear cache</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-1 h-1 bg-white/40 rounded-full"></div>
+                <span>Export data</span>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-4 w-full border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+            >
+              Quick Actions
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -754,6 +816,16 @@ export default function Dashboard() {
             Overview
           </button>
           <button
+            onClick={() => setActiveTab('users')}
+            className={`pb-3 px-1 border-b-2 font-light text-sm transition-colors ${
+              activeTab === 'users'
+                ? 'border-white text-white'
+                : 'border-transparent text-white/60 hover:text-white/80'
+            }`}
+          >
+            Users
+          </button>
+          <button
             onClick={() => setActiveTab('seed')}
             className={`pb-3 px-1 border-b-2 font-light text-sm transition-colors ${
               activeTab === 'seed'
@@ -767,7 +839,9 @@ export default function Dashboard() {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'overview' ? renderOverview() : renderSeedData()}
+      {activeTab === 'overview' ? renderOverview() : 
+       activeTab === 'users' ? <UsersPage /> : 
+       renderSeedData()}
     </div>
   )
 }

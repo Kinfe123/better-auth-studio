@@ -8,6 +8,9 @@ export interface AuthAdapter {
   createVerification: (data: any) => Promise<any>;
   createOrganization: (data: any) => Promise<any>;
   create?: (table: string, data: any) => Promise<any>;
+  getUsers?: () => Promise<any[]>;
+  getSessions?: () => Promise<any[]>;
+  findMany?: (options: { model: string; where?: any; limit?: number; offset?: number }) => Promise<any[]>;
 }
 
 let authInstance: any = null;
@@ -190,6 +193,53 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
           const mockAdapter = await createMockAdapter();
           return await mockAdapter.createOrganization(data);
         }
+      },
+      getUsers: async () => {
+        try {
+          // Try to use the adapter's findMany method if available
+          if (typeof adapter.findMany === 'function') {
+            const users = await adapter.findMany({ model: 'user' });
+            return users || [];
+          }
+          // Try to use adapter.getUsers if available
+          if (typeof adapter.getUsers === 'function') {
+            const users = await adapter.getUsers();
+            return users || [];
+          }
+          // Fallback to mock data
+          console.log('No read method available on adapter, returning mock data');
+          return [];
+        } catch (error) {
+          console.error('Error getting users from adapter:', error);
+          return [];
+        }
+      },
+      getSessions: async () => {
+        try {
+          if (typeof adapter.findMany === 'function') {
+            const sessions = await adapter.findMany({ model: 'session' });
+            return sessions || [];
+          }
+          if (typeof adapter.getSessions === 'function') {
+            const sessions = await adapter.getSessions();
+            return sessions || [];
+          }
+          return [];
+        } catch (error) {
+          console.error('Error getting sessions from adapter:', error);
+          return [];
+        }
+      },
+      findMany: async (options: { model: string; where?: any; limit?: number; offset?: number }) => {
+        try {
+          if (typeof adapter.findMany === 'function') {
+            return await adapter.findMany(options);
+          }
+          return [];
+        } catch (error) {
+          console.error('Error using findMany on adapter:', error);
+          return [];
+        }
       }
     };
 
@@ -351,6 +401,68 @@ async function createMockAdapter(): Promise<AuthAdapter> {
       };
       console.log('Mock organization created:', mockOrganization);
       return mockOrganization;
+    },
+    getUsers: async () => {
+      // Return mock users that have been created
+      const mockUsers = [
+        {
+          id: 'user_1',
+          email: 'user1@example.com',
+          name: 'User 1',
+          emailVerified: true,
+          image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user1',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          provider: 'email',
+          lastSignIn: new Date().toISOString(),
+          status: 'active'
+        },
+        {
+          id: 'user_2',
+          email: 'user2@example.com',
+          name: 'User 2',
+          emailVerified: true,
+          image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user2',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          provider: 'github',
+          lastSignIn: new Date().toISOString(),
+          status: 'active'
+        }
+      ];
+      return mockUsers;
+    },
+    getSessions: async () => {
+      const mockSessions = [
+        {
+          id: 'session_1',
+          userId: 'user_1',
+          expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          sessionToken: 'session_token_1'
+        }
+      ];
+      return mockSessions;
+    },
+    findMany: async (options: { model: string; where?: any; limit?: number; offset?: number }) => {
+      if (options.model === 'user') {
+        return [
+          {
+            id: 'user_1',
+            email: 'user1@example.com',
+            name: 'User 1',
+            emailVerified: true,
+            image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user1',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            provider: 'email',
+            lastSignIn: new Date().toISOString(),
+            status: 'active'
+          }
+        ];
+      }
+      return [];
     }
   };
 }

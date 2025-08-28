@@ -205,8 +205,49 @@ export function createRoutes(authConfig: AuthConfig) {
       const limit = parseInt(req.query.limit as string) || 20;
       const search = req.query.search as string;
 
-      const users = await getAuthData(authConfig, 'users', { page, limit, search });
-      res.json(users);
+      // Try to get real data first
+      try {
+        const adapter = await getAuthAdapter();
+        if (adapter && typeof adapter.getUsers === 'function') {
+          const users = await adapter.getUsers();
+          // Transform the data to match frontend expectations
+          const transformedUsers = (users || []).map((user: any) => ({
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            emailVerified: user.emailVerified,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+            provider: user.provider || 'email',
+            lastSignIn: user.lastSignIn || user.updatedAt,
+            status: 'active' // Default status
+          }));
+          res.json({ users: transformedUsers });
+          return;
+        }
+      } catch (adapterError) {
+        console.error('Error fetching users from adapter:', adapterError);
+      }
+
+      // Fallback to getAuthData (which is working and returning real data)
+      const result = await getAuthData(authConfig, 'users', { page, limit, search });
+      
+      // Transform the data to match frontend expectations
+      const transformedUsers = (result.data || []).map((user: any) => ({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        image: user.image,
+        emailVerified: user.emailVerified,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        provider: user.provider || 'email',
+        lastSignIn: user.lastSignIn || user.updatedAt,
+        status: 'active' // Default status
+      }));
+      
+      res.json({ users: transformedUsers });
     } catch (error) {
       console.error('Error fetching users:', error);
       res.status(500).json({ error: 'Failed to fetch users' });

@@ -72,13 +72,13 @@ export default function Users() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge variant="success" className="flex items-center gap-1"><CheckCircle className="w-3 h-3" />Active</Badge>
+        return <Badge className="flex items-center gap-1 bg-white/10 text-white border border-dashed border-white/20 rounded-none"><CheckCircle className="w-3 h-3" />Active</Badge>
       case 'inactive':
-        return <Badge variant="error" className="flex items-center gap-1"><XCircle className="w-3 h-3" />Inactive</Badge>
+        return <Badge className="flex items-center gap-1 bg-white/10 text-white border border-dashed border-white/20 rounded-none"><XCircle className="w-3 h-3" />Inactive</Badge>
       case 'pending':
-        return <Badge variant="warning" className="flex items-center gap-1"><Clock className="w-3 h-3" />Pending</Badge>
+        return <Badge className="flex items-center gap-1 bg-white/10 text-white border border-dashed border-white/20 rounded-none"><Clock className="w-3 h-3" />Pending</Badge>
       default:
-        return <Badge variant="secondary">{status}</Badge>
+        return <Badge className="bg-white/10 text-white border border-dashed border-white/20 rounded-none">{status}</Badge>
     }
   }
 
@@ -104,14 +104,14 @@ export default function Users() {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in px-6 py-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">User Management</h1>
-          <p className="text-gray-400 mt-2">Manage and monitor user accounts</p>
+          <h1 className="text-2xl text-white font-normal">User Management</h1>
+          <p className="text-gray-400 mt-1 font-light">Manage and monitor user accounts</p>
         </div>
-        <Button className="bg-white hover:bg-gray-100 text-black">
+        <Button className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none">
           <UserPlus className="w-4 h-4 mr-2" />
           Add User
         </Button>
@@ -119,42 +119,42 @@ export default function Users() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="border-gray-800 bg-gray-900 hover:shadow-lg transition-shadow">
+        <Card className="border border-dashed border-white/20 bg-black/30 rounded-none">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-400">Total Users</p>
-                <p className="text-2xl font-bold text-white">{users.length}</p>
+                <p className="text-sm text-gray-400 font-light">Total Users</p>
+                <p className="text-2xl text-white font-light">{users.length}</p>
               </div>
-              <div className="p-3 bg-gray-800 rounded-lg">
+              <div className="p-3 bg-white/10 rounded-none">
                 <UsersIcon className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-gray-800 bg-gray-900 hover:shadow-lg transition-shadow">
+        <Card className="border border-dashed border-white/20 bg-black/30 rounded-none">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-400">Active Users</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-sm text-gray-400 font-light">Active Users</p>
+                <p className="text-2xl text-white font-light">
                   {users.filter(u => u.status === 'active').length}
                 </p>
               </div>
-              <div className="p-3 bg-green-500/10 rounded-lg">
-                <CheckCircle className="w-6 h-6 text-green-400" />
+              <div className="p-3 bg-white/10 rounded-none">
+                <CheckCircle className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-gray-800 bg-gray-900 hover:shadow-lg transition-shadow">
+        <Card className="border border-dashed border-white/20 bg-black/30 rounded-none">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-400">New This Month</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-sm text-gray-400 font-light">New This Month</p>
+                <p className="text-2xl text-white font-light">
                   {users.filter(u => {
                     const created = new Date(u.createdAt)
                     const now = new Date()
@@ -162,24 +162,24 @@ export default function Users() {
                   }).length}
                 </p>
               </div>
-              <div className="p-3 bg-gray-800 rounded-lg">
+              <div className="p-3 bg-white/10 rounded-none">
                 <UserPlus className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-gray-800 bg-gray-900 hover:shadow-lg transition-shadow">
+        <Card className="border border-dashed border-white/20 bg-black/30 rounded-none">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-400">Pending</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-sm text-gray-400 font-light">Pending</p>
+                <p className="text-2xl text-white font-light">
                   {users.filter(u => u.status === 'pending').length}
                 </p>
               </div>
-              <div className="p-3 bg-yellow-500/10 rounded-lg">
-                <Clock className="w-6 h-6 text-yellow-400" />
+              <div className="p-3 bg-white/10 rounded-none">
+                <Clock className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
@@ -187,7 +187,7 @@ export default function Users() {
       </div>
 
       {/* Filters and Search */}
-      <Card className="border-gray-800 bg-gray-900">
+      <Card className="border border-dashed border-white/20 bg-black/30 rounded-none">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex items-center space-x-4 flex-1">
@@ -198,7 +198,7 @@ export default function Users() {
                   placeholder="Search users..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-700 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-white focus:border-transparent transition-colors placeholder-gray-400"
+                  className="w-full pl-10 pr-4 py-2 border border-dashed border-white/20 bg-black/30 text-white rounded-none focus:ring-1 focus:ring-white focus:border-white/40 transition-colors placeholder-gray-400"
                 />
               </div>
               
@@ -207,7 +207,7 @@ export default function Users() {
                 <select
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
-                  className="px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-white focus:border-transparent transition-colors"
+                  className="px-3 py-2 border border-dashed border-white/20 bg-black/30 text-white rounded-none focus:ring-1 focus:ring-white focus:border-white/40 transition-colors"
                 >
                   <option value="all">All Users</option>
                   <option value="active">Active</option>
@@ -218,11 +218,11 @@ export default function Users() {
             </div>
 
             <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" className="border-gray-700 text-gray-300 hover:bg-gray-800">
+              <Button variant="outline" size="sm" className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none">
                 <ArrowUpDown className="w-4 h-4 mr-2" />
                 Sort
               </Button>
-              <Button variant="outline" size="sm" className="border-gray-700 text-gray-300 hover:bg-gray-800">
+              <Button variant="outline" size="sm" className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none">
                 <Eye className="w-4 h-4 mr-2" />
                 View
               </Button>
@@ -232,44 +232,44 @@ export default function Users() {
       </Card>
 
       {/* Users Table */}
-      <Card className="border-gray-800 bg-gray-900">
+      <Card className="border border-dashed border-white/20 bg-black/30 rounded-none">
         <CardHeader>
-          <CardTitle className="text-white">Users ({filteredUsers.length})</CardTitle>
-          <CardDescription>Manage user accounts and permissions</CardDescription>
+          <CardTitle className="text-white font-normal">Users ({filteredUsers.length})</CardTitle>
+          <CardDescription className="text-gray-400 font-light">Manage user accounts and permissions</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-800">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">User</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Provider</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Status</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Last Login</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Created</th>
-                  <th className="text-right py-3 px-4 text-sm font-medium text-gray-400">Actions</th>
+                <tr className="border-b border-dashed border-white/10">
+                  <th className="text-left py-3 px-4 text-sm text-gray-400 font-light">User</th>
+                  <th className="text-left py-3 px-4 text-sm text-gray-400 font-light">Provider</th>
+                  <th className="text-left py-3 px-4 text-sm text-gray-400 font-light">Status</th>
+                  <th className="text-left py-3 px-4 text-sm text-gray-400 font-light">Last Login</th>
+                  <th className="text-left py-3 px-4 text-sm text-gray-400 font-light">Created</th>
+                  <th className="text-right py-3 px-4 text-sm text-gray-400 font-light">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-800">
+              <tbody className="divide-y divide-dashed divide-white/10">
                 {paginatedUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-800/50 transition-colors">
+                  <tr key={user.id} className="hover:bg-white/5 transition-colors">
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-3">
                         <img 
                           src={user.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`} 
                           alt={user.name}
-                          className="w-10 h-10 rounded-full border-2 border-gray-700"
+                          className="w-10 h-10 rounded-none border border-dashed border-white/20"
                         />
                         <div>
-                          <p className="text-sm font-medium text-white">{user.name}</p>
-                          <p className="text-xs text-gray-400">{user.email}</p>
+                          <p className="text-sm text-white font-light">{user.name}</p>
+                          <p className="text-xs text-gray-400 font-light">{user.email}</p>
                         </div>
                       </div>
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-2">
                         {getProviderIcon(user.provider)}
-                        <span className="text-sm text-gray-300 capitalize">{user.provider}</span>
+                        <span className="text-sm text-gray-300 font-light capitalize">{user.provider}</span>
                       </div>
                     </td>
                     <td className="py-4 px-4">
@@ -278,7 +278,7 @@ export default function Users() {
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-300">
+                        <span className="text-sm text-gray-300 font-light">
                           {new Date(user.lastLogin).toLocaleDateString()}
                         </span>
                       </div>
@@ -286,20 +286,20 @@ export default function Users() {
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-300">
+                        <span className="text-sm text-gray-300 font-light">
                           {new Date(user.createdAt).toLocaleDateString()}
                         </span>
                       </div>
                     </td>
                     <td className="py-4 px-4 text-right">
                       <div className="flex items-center justify-end space-x-2">
-                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white rounded-none">
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white rounded-none">
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300">
+                        <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 rounded-none">
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -312,8 +312,8 @@ export default function Users() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-800">
-              <p className="text-sm text-gray-400">
+            <div className="flex items-center justify-between mt-6 pt-6 border-t border-dashed border-white/10">
+              <p className="text-sm text-gray-400 font-light">
                 Showing {((currentPage - 1) * usersPerPage) + 1} to {Math.min(currentPage * usersPerPage, filteredUsers.length)} of {filteredUsers.length} users
               </p>
               <div className="flex items-center space-x-2">
@@ -322,11 +322,11 @@ export default function Users() {
                   size="sm"
                   onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
-                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none disabled:opacity-50"
                 >
                   Previous
                 </Button>
-                <span className="text-sm text-gray-400">
+                <span className="text-sm text-gray-400 font-light">
                   Page {currentPage} of {totalPages}
                 </span>
                 <Button
@@ -334,7 +334,7 @@ export default function Users() {
                   size="sm"
                   onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                   disabled={currentPage === totalPages}
-                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none disabled:opacity-50"
                 >
                   Next
                 </Button>

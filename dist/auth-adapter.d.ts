@@ -5,6 +5,14 @@ export interface AuthAdapter {
     createVerification: (data: any) => Promise<any>;
     createOrganization: (data: any) => Promise<any>;
     create?: (table: string, data: any) => Promise<any>;
+    getUsers?: () => Promise<any[]>;
+    getSessions?: () => Promise<any[]>;
+    findMany?: (options: {
+        model: string;
+        where?: any;
+        limit?: number;
+        offset?: number;
+    }) => Promise<any[]>;
 }
 export declare function getAuthAdapter(): Promise<AuthAdapter | null>;
 export declare function createMockUser(adapter: AuthAdapter, index: number): Promise<any>;
