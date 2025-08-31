@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Users as UsersIcon,
   Search,
@@ -16,11 +16,25 @@ import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
 import { Select, SelectItem } from '../components/ui/select'
-import { useUsers, useSeedUsers, useSeedInvitations, User } from '../hooks/useData'
+
+interface User {
+  id: string
+  name: string
+  email: string
+  emailVerified: boolean
+  image?: string
+  createdAt: string
+  updatedAt: string
+  status?: string
+}
 
 export default function Users() {
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [filter, setFilter] = useState('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [usersPerPage] = useState(10)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -29,26 +43,45 @@ export default function Users() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [seedingLogs, setSeedingLogs] = useState<string[]>([])
 
-  // React Query hooks
-  const { data: usersData, isLoading, error } = useUsers()
-  const seedUsersMutation = useSeedUsers()
-  const seedInvitationsMutation = useSeedInvitations()
+  useEffect(() => {
+    fetchUsers()
+  }, [])
 
-  const users = usersData?.users || []
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/users')
+      const data = await response.json()
+      setUsers(data.users || [])
+    } catch (error) {
+      console.error('Failed to fetch users:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleSeedUsers = async (count: number) => {
     setSeedingLogs([])
     
     try {
-      const result = await seedUsersMutation.mutateAsync({ count })
+      const response = await fetch('/api/seed/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ count })
+      })
+      
+      const result = await response.json()
       
       if (result.success) {
         setSeedingLogs(result.results.map((r: any) =>
           `✅ Created user: ${r.user.name} (${r.user.email})`
         ))
+        // Refresh the users list to show updated count
+        await fetchUsers()
+      } else {
+        setSeedingLogs([`❌ Error: ${result.error || 'Failed to seed users'}`])
       }
     } catch (error) {
-      setSeedingLogs([`❌ Error seeding users: ${error}`])
+      setSeedingLogs([`❌ Error: ${error}`])
     }
   }
 
@@ -69,7 +102,7 @@ export default function Users() {
         `✅ Created invitation: ${r.invitation.email}`
       ))
     } catch (error) {
-      setSeedingLogs([`❌ Error seeding invitations: ${error}`])
+      setSeedingLogs([`❌ Error: ${error}`])
     }
   }
 
@@ -88,10 +121,40 @@ export default function Users() {
     setShowDeleteModal(true)
   }
 
-  const handleCreateUser = async (userData: any) => {
-    // Implementation for creating user
-    console.log('Creating user:', userData)
-    setShowCreateModal(false)
+  const handleCreateUser = async () => {
+    const name = (document.getElementById('create-name') as HTMLInputElement)?.value
+    const email = (document.getElementById('create-email') as HTMLInputElement)?.value
+    const password = (document.getElementById('create-password') as HTMLInputElement)?.value
+
+    if (!name || !email || !password) {
+      alert('Please fill in all fields')
+      return
+    }
+
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        // Refresh the users list to show the new user
+        await fetchUsers()
+        setShowCreateModal(false)
+        // Clear the form
+        ;(document.getElementById('create-name') as HTMLInputElement).value = ''
+        ;(document.getElementById('create-email') as HTMLInputElement).value = ''
+        ;(document.getElementById('create-password') as HTMLInputElement).value = ''
+      } else {
+        alert(`Error creating user: ${result.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Error creating user:', error)
+      alert('Error creating user')
+    }
   }
 
   const handleUpdateUser = async (userData: any) => {
@@ -113,18 +176,20 @@ export default function Users() {
     return matchesSearch && matchesFilter
   })
 
-  if (isLoading) {
+  // Pagination logic
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage)
+  const startIndex = (currentPage - 1) * usersPerPage
+  const endIndex = startIndex + usersPerPage
+  const currentUsers = filteredUsers.slice(startIndex, endIndex)
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+  }
+
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-white">Loading users...</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-red-400">Error loading users: {error.message}</div>
       </div>
     )
   }
@@ -134,7 +199,7 @@ export default function Users() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl text-white font-light">Users</h1>
+          <h1 className="text-2xl text-white font-light">Users ({users.length})</h1>
           <p className="text-gray-400 mt-1">Manage your application users</p>
         </div>
         <div className="flex items-center space-x-3">
@@ -191,7 +256,7 @@ export default function Users() {
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.map((user) => (
+              {currentUsers.map((user) => (
                 <tr key={user.id} className="border-b border-dashed border-white/5 hover:bg-white/5">
                   <td className="py-4 px-4">
                     <div className="flex items-center space-x-3">
@@ -255,6 +320,52 @@ export default function Users() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between mt-6">
+            <div className="text-sm text-gray-400">
+              Showing {startIndex + 1} to {Math.min(endIndex, filteredUsers.length)} of {filteredUsers.length} users
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Previous
+              </Button>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePageChange(page)}
+                  className={
+                    currentPage === page
+                      ? "bg-white text-black rounded-none"
+                      : "border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                  }
+                >
+                  {page}
+                </Button>
+              ))}
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Seed Modal */}
@@ -296,10 +407,9 @@ export default function Users() {
                       const count = parseInt((document.getElementById('user-count') as HTMLInputElement)?.value || '5')
                       handleSeedUsers(count)
                     }}
-                    disabled={seedUsersMutation.isPending}
                     className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6"
                   >
-                    {seedUsersMutation.isPending ? 'Seeding...' : 'Seed Users'}
+                    Seed Users
                   </Button>
                 </div>
               </div>
@@ -327,10 +437,9 @@ export default function Users() {
                       const count = parseInt((document.getElementById('invitation-count') as HTMLInputElement)?.value || '5')
                       handleSeedInvitations(count)
                     }}
-                    disabled={seedInvitationsMutation.isPending}
                     className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6"
                   >
-                    {seedInvitationsMutation.isPending ? 'Seeding...' : 'Seed Invitations'}
+                    Seed Invitations
                   </Button>
                 </div>
               </div>
@@ -404,6 +513,14 @@ export default function Users() {
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
+              <div>
+                <Label htmlFor="create-password" className="text-sm text-gray-400 font-light">Password</Label>
+                <Input
+                  id="create-password"
+                  type="password"
+                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                />
+              </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
               <Button
@@ -414,7 +531,7 @@ export default function Users() {
                 Cancel
               </Button>
               <Button
-                onClick={() => handleCreateUser({})}
+                onClick={handleCreateUser}
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
               >
                 Create

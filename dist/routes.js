@@ -185,13 +185,24 @@ function createRoutes(authConfig) {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 20;
             const search = req.query.search;
-            // Try to get real data first
+            // Try to get users directly from the adapter
             try {
                 const adapter = await (0, auth_adapter_1.getAuthAdapter)();
-                if (adapter && typeof adapter.getUsers === 'function') {
-                    const users = await adapter.getUsers();
+                if (adapter && typeof adapter.findMany === 'function') {
+                    const allUsers = await adapter.findMany({ model: 'user' });
+                    console.log('Found users via findMany:', allUsers?.length || 0);
+                    // Apply search filter if provided
+                    let filteredUsers = allUsers || [];
+                    if (search) {
+                        filteredUsers = filteredUsers.filter((user) => user.email?.toLowerCase().includes(search.toLowerCase()) ||
+                            user.name?.toLowerCase().includes(search.toLowerCase()));
+                    }
+                    // Apply pagination
+                    const startIndex = (page - 1) * limit;
+                    const endIndex = startIndex + limit;
+                    const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
                     // Transform the data to match frontend expectations
-                    const transformedUsers = (users || []).map((user) => ({
+                    const transformedUsers = paginatedUsers.map((user) => ({
                         id: user.id,
                         email: user.email,
                         name: user.name,
@@ -210,7 +221,7 @@ function createRoutes(authConfig) {
             catch (adapterError) {
                 console.error('Error fetching users from adapter:', adapterError);
             }
-            // Fallback to getAuthData (which is working and returning real data)
+            // Fallback to getAuthData
             const result = await (0, data_1.getAuthData)(authConfig, 'users', { page, limit, search });
             // Transform the data to match frontend expectations
             const transformedUsers = (result.data || []).map((user) => ({
@@ -268,13 +279,31 @@ function createRoutes(authConfig) {
             res.status(500).json({ error: 'Failed to delete user' });
         }
     });
+    // Create user
+    router.post('/api/users', async (req, res) => {
+        try {
+            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            if (!adapter) {
+                return res.status(500).json({ error: 'Auth adapter not available' });
+            }
+            const userData = req.body;
+            const user = await adapter.createUser(userData);
+            res.json({ success: true, user });
+        }
+        catch (error) {
+            console.error('Error creating user:', error);
+            res.status(500).json({ error: 'Failed to create user' });
+        }
+    });
     // Update user
     router.put('/api/users/:id', async (req, res) => {
         try {
             const { id } = req.params;
             const userData = req.body;
+            // For now, we'll use the existing getAuthData function
+            // In a real implementation, you'd use the adapter to update the user
             const updatedUser = await (0, data_1.getAuthData)(authConfig, 'updateUser', { id, userData });
-            res.json(updatedUser);
+            res.json({ success: true, user: updatedUser });
         }
         catch (error) {
             console.error('Error updating user:', error);

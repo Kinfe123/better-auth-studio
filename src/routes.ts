@@ -205,13 +205,29 @@ export function createRoutes(authConfig: AuthConfig) {
       const limit = parseInt(req.query.limit as string) || 20;
       const search = req.query.search as string;
 
-      // Try to get real data first
+      // Try to get users directly from the adapter
       try {
         const adapter = await getAuthAdapter();
-        if (adapter && typeof adapter.getUsers === 'function') {
-          const users = await adapter.getUsers();
+        if (adapter && typeof adapter.findMany === 'function') {
+          const allUsers = await adapter.findMany({ model: 'user' });
+          console.log('Found users via findMany:', allUsers?.length || 0);
+          
+          // Apply search filter if provided
+          let filteredUsers = allUsers || [];
+          if (search) {
+            filteredUsers = filteredUsers.filter((user: any) => 
+              user.email?.toLowerCase().includes(search.toLowerCase()) ||
+              user.name?.toLowerCase().includes(search.toLowerCase())
+            );
+          }
+          
+          // Apply pagination
+          const startIndex = (page - 1) * limit;
+          const endIndex = startIndex + limit;
+          const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+          
           // Transform the data to match frontend expectations
-          const transformedUsers = (users || []).map((user: any) => ({
+          const transformedUsers = paginatedUsers.map((user: any) => ({
             id: user.id,
             email: user.email,
             name: user.name,
@@ -223,6 +239,7 @@ export function createRoutes(authConfig: AuthConfig) {
             lastSignIn: user.lastSignIn || user.updatedAt,
             status: 'active' // Default status
           }));
+          
           res.json({ users: transformedUsers });
           return;
         }
@@ -230,7 +247,7 @@ export function createRoutes(authConfig: AuthConfig) {
         console.error('Error fetching users from adapter:', adapterError);
       }
 
-      // Fallback to getAuthData (which is working and returning real data)
+      // Fallback to getAuthData
       const result = await getAuthData(authConfig, 'users', { page, limit, search });
       
       // Transform the data to match frontend expectations

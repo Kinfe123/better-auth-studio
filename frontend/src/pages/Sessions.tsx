@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Database,
   Search,
@@ -14,9 +14,18 @@ import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
 import { Select, SelectItem } from '../components/ui/select'
-import { useSessions, useSeedSessions, useSeedAccounts, Session } from '../hooks/useData'
+
+interface Session {
+  id: string
+  userId: string
+  expiresAt: string
+  createdAt: string
+  updatedAt: string
+}
 
 export default function Sessions() {
+  const [sessions, setSessions] = useState<Session[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [filter, setFilter] = useState('all')
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -27,26 +36,45 @@ export default function Sessions() {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null)
   const [seedingLogs, setSeedingLogs] = useState<string[]>([])
 
-  // React Query hooks
-  const { data: sessionsData, isLoading, error } = useSessions()
-  const seedSessionsMutation = useSeedSessions()
-  const seedAccountsMutation = useSeedAccounts()
+  useEffect(() => {
+    fetchSessions()
+  }, [])
 
-  const sessions = sessionsData?.sessions || []
+  const fetchSessions = async () => {
+    try {
+      const response = await fetch('/api/sessions')
+      const data = await response.json()
+      setSessions(data.sessions || [])
+    } catch (error) {
+      console.error('Failed to fetch sessions:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleSeedSessions = async (count: number) => {
     setSeedingLogs([])
     
     try {
-      const result = await seedSessionsMutation.mutateAsync({ count })
+      const response = await fetch('/api/seed/sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ count })
+      })
+      
+      const result = await response.json()
       
       if (result.success) {
         setSeedingLogs(result.results.map((r: any) =>
           `✅ Created session: ${r.session.id}`
         ))
+        // Refresh the sessions list to show updated count
+        await fetchSessions()
+      } else {
+        setSeedingLogs([`❌ Error: ${result.error || 'Failed to seed sessions'}`])
       }
     } catch (error) {
-      setSeedingLogs([`❌ Error seeding sessions: ${error}`])
+      setSeedingLogs([`❌ Error: ${error}`])
     }
   }
 
@@ -54,15 +82,25 @@ export default function Sessions() {
     setSeedingLogs([])
     
     try {
-      const result = await seedAccountsMutation.mutateAsync({ count })
+      const response = await fetch('/api/seed/accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ count })
+      })
+      
+      const result = await response.json()
       
       if (result.success) {
         setSeedingLogs(result.results.map((r: any) =>
           `✅ Created account: ${r.account.provider}`
         ))
+        // Refresh the sessions list to show updated count
+        await fetchSessions()
+      } else {
+        setSeedingLogs([`❌ Error: ${result.error || 'Failed to seed accounts'}`])
       }
     } catch (error) {
-      setSeedingLogs([`❌ Error seeding accounts: ${error}`])
+      setSeedingLogs([`❌ Error: ${error}`])
     }
   }
 
@@ -108,18 +146,10 @@ export default function Sessions() {
     return matchesSearch && matchesFilter
   })
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-white">Loading sessions...</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-red-400">Error loading sessions: {error.message}</div>
       </div>
     )
   }
@@ -129,7 +159,7 @@ export default function Sessions() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl text-white font-light">Sessions</h1>
+          <h1 className="text-2xl text-white font-light">Sessions ({sessions.length})</h1>
           <p className="text-gray-400 mt-1">Manage user sessions and accounts</p>
         </div>
         <div className="flex items-center space-x-3">
@@ -289,10 +319,9 @@ export default function Sessions() {
                       const count = parseInt((document.getElementById('session-count') as HTMLInputElement)?.value || '5')
                       handleSeedSessions(count)
                     }}
-                    disabled={seedSessionsMutation.isPending}
                     className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6"
                   >
-                    {seedSessionsMutation.isPending ? 'Seeding...' : 'Seed Sessions'}
+                    Seed Sessions
                   </Button>
                 </div>
               </div>
@@ -320,10 +349,9 @@ export default function Sessions() {
                       const count = parseInt((document.getElementById('account-count') as HTMLInputElement)?.value || '5')
                       handleSeedAccounts(count)
                     }}
-                    disabled={seedAccountsMutation.isPending}
                     className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6"
                   >
-                    {seedAccountsMutation.isPending ? 'Seeding...' : 'Seed Accounts'}
+                    Seed Accounts
                   </Button>
                 </div>
               </div>

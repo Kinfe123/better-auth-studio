@@ -1,47 +1,28 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAuthData = getAuthData;
-const postgres_js_1 = require("drizzle-orm/postgres-js");
-const postgres_1 = __importDefault(require("postgres"));
-// Database connection cache
-let db = null;
-async function getDatabase(authConfig) {
-    if (!db && authConfig.database?.url) {
-        try {
-            const client = (0, postgres_1.default)(authConfig.database.url);
-            db = (0, postgres_js_1.drizzle)(client);
-        }
-        catch (error) {
-            console.error('Failed to connect to database:', error);
-            return null;
-        }
-    }
-    return db;
-}
-// Fetch real data from Better Auth database
+const auth_adapter_1 = require("./auth-adapter");
+// Fetch real data from Better Auth database using the adapter
 async function getAuthData(authConfig, type = 'stats', options) {
-    const database = await getDatabase(authConfig);
-    if (!database) {
-        // Fallback to mock data if database connection fails
-        return getMockData(type, options);
-    }
     try {
+        const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+        if (!adapter) {
+            console.log('No adapter available, falling back to mock data');
+            return getMockData(type, options);
+        }
         switch (type) {
             case 'stats':
-                return await getRealStats(database);
+                return await getRealStats(adapter);
             case 'users':
-                return await getRealUsers(database, options);
+                return await getRealUsers(adapter, options);
             case 'sessions':
-                return await getRealSessions(database, options);
+                return await getRealSessions(adapter, options);
             case 'providers':
-                return await getRealProviderStats(database);
+                return await getRealProviderStats(adapter);
             case 'deleteUser':
-                return await deleteRealUser(database, options.id);
+                return await deleteRealUser(adapter, options.id);
             case 'updateUser':
-                return await updateRealUser(database, options.id, options.userData);
+                return await updateRealUser(adapter, options.id, options.userData);
             default:
                 throw new Error(`Unknown data type: ${type}`);
         }
@@ -52,97 +33,149 @@ async function getAuthData(authConfig, type = 'stats', options) {
         return getMockData(type, options);
     }
 }
-async function getRealStats(database) {
-    // Query users table
-    const users = await database.select().from('users');
-    const sessions = await database.select().from('sessions');
-    const accounts = await database.select().from('accounts');
-    const now = new Date();
-    const activeSessions = sessions.filter((s) => new Date(s.expires) > now);
-    const activeUsers = new Set(activeSessions.map((s) => s.userId)).size;
-    // Group users by provider
-    const usersByProvider = {};
-    accounts.forEach((account) => {
-        const provider = account.provider;
-        usersByProvider[provider] = (usersByProvider[provider] || 0) + 1;
-    });
-    // Get recent signups (last 5 users)
-    const recentSignups = users
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 5)
-        .map((user) => ({
-        ...user,
-        provider: accounts.find((a) => a.userId === user.id)?.provider
-    }));
-    // Get recent logins (last 5 sessions)
-    const recentLogins = activeSessions
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 5);
-    return {
-        totalUsers: users.length,
-        activeUsers,
-        totalSessions: sessions.length,
-        activeSessions: activeSessions.length,
-        usersByProvider,
-        recentSignups,
-        recentLogins
-    };
-}
-async function getRealUsers(database, options) {
-    const { page, limit, search } = options;
-    let query = database.select().from('users');
-    if (search) {
-        query = query.where(database.sql `${database.users.email} ILIKE ${`%${search}%`} OR ${database.users.name} ILIKE ${`%${search}%`}`);
+async function getRealStats(adapter) {
+    try {
+        // Get users and sessions from adapter
+        const users = adapter.getUsers ? await adapter.getUsers() : [];
+        const sessions = adapter.getSessions ? await adapter.getSessions() : [];
+        const now = new Date();
+        const activeSessions = sessions.filter((s) => new Date(s.expiresAt || s.expires) > now);
+        const activeUsers = new Set(activeSessions.map((s) => s.userId)).size;
+        // Group users by provider (simplified for now)
+        const usersByProvider = {
+            email: users.length, // Assume all users have email/password
+            github: 0 // Will be updated if we have social providers
+        };
+        // Get recent signups (last 5 users)
+        const recentSignups = users
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 5)
+            .map((user) => ({
+            ...user,
+            provider: 'email' // Default provider
+        }));
+        // Get recent logins (last 5 sessions)
+        const recentLogins = activeSessions
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 5);
+        return {
+            totalUsers: users.length,
+            activeUsers,
+            totalSessions: sessions.length,
+            activeSessions: activeSessions.length,
+            usersByProvider,
+            recentSignups,
+            recentLogins
+        };
     }
-    const total = await query.count();
-    const users = await query
-        .limit(limit)
-        .offset((page - 1) * limit)
-        .orderBy(database.users.createdAt);
-    return {
-        data: users,
-        total: total[0]?.count || 0,
-        page,
-        limit,
-        totalPages: Math.ceil((total[0]?.count || 0) / limit)
-    };
+    catch (error) {
+        console.error('Error fetching stats from adapter:', error);
+        return getMockData('stats');
+    }
 }
-async function getRealSessions(database, options) {
-    const { page, limit } = options;
-    const total = await database.select().from('sessions').count();
-    const sessions = await database.select().from('sessions')
-        .limit(limit)
-        .offset((page - 1) * limit)
-        .orderBy(database.sessions.createdAt);
-    return {
-        data: sessions,
-        total: total[0]?.count || 0,
-        page,
-        limit,
-        totalPages: Math.ceil((total[0]?.count || 0) / limit)
-    };
-}
-async function getRealProviderStats(database) {
-    const accounts = await database.select().from('accounts');
-    const providerStats = accounts.reduce((acc, account) => {
-        const provider = account.provider;
-        if (!acc[provider]) {
-            acc[provider] = { type: provider, users: 0, active: 0 };
+async function getRealUsers(adapter, options) {
+    const { page, limit, search } = options;
+    try {
+        // Use the adapter's getUsers method if available
+        if (adapter.getUsers) {
+            const allUsers = await adapter.getUsers();
+            // Apply search filter if provided
+            let filteredUsers = allUsers;
+            if (search) {
+                filteredUsers = allUsers.filter((user) => user.email?.toLowerCase().includes(search.toLowerCase()) ||
+                    user.name?.toLowerCase().includes(search.toLowerCase()));
+            }
+            // Apply pagination
+            const startIndex = (page - 1) * limit;
+            const endIndex = startIndex + limit;
+            const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+            return {
+                data: paginatedUsers,
+                total: filteredUsers.length,
+                page,
+                limit,
+                totalPages: Math.ceil(filteredUsers.length / limit)
+            };
         }
-        acc[provider].users++;
-        return acc;
-    }, {});
-    return Object.values(providerStats);
+        // Fallback to mock data if getUsers is not available
+        return getMockData('users', options);
+    }
+    catch (error) {
+        console.error('Error fetching users from adapter:', error);
+        return getMockData('users', options);
+    }
 }
-async function deleteRealUser(database, userId) {
-    await database.delete().from('users').where(database.users.id.eq(userId));
+async function getRealSessions(adapter, options) {
+    const { page, limit } = options;
+    try {
+        // Use the adapter's getSessions method if available
+        if (adapter.getSessions) {
+            const allSessions = await adapter.getSessions();
+            // Apply pagination
+            const startIndex = (page - 1) * limit;
+            const endIndex = startIndex + limit;
+            const paginatedSessions = allSessions.slice(startIndex, endIndex);
+            return {
+                data: paginatedSessions,
+                total: allSessions.length,
+                page,
+                limit,
+                totalPages: Math.ceil(allSessions.length / limit)
+            };
+        }
+        // Fallback to mock data if getSessions is not available
+        return getMockData('sessions', options);
+    }
+    catch (error) {
+        console.error('Error fetching sessions from adapter:', error);
+        return getMockData('sessions', options);
+    }
 }
-async function updateRealUser(database, userId, userData) {
-    const updatedUser = await database.update('users')
-        .set(userData)
-        .where(database.users.id.eq(userId))
-        .returning();
-    return updatedUser[0];
+async function getRealProviderStats(adapter) {
+    try {
+        // For now, return a simplified provider stats
+        // In a real implementation, you'd query accounts from the adapter
+        return [
+            { type: 'email', users: 0, active: 0 },
+            { type: 'github', users: 0, active: 0 }
+        ];
+    }
+    catch (error) {
+        console.error('Error fetching provider stats from adapter:', error);
+        return getMockData('providers');
+    }
+}
+async function deleteRealUser(adapter, userId) {
+    try {
+        // Use adapter's delete method if available
+        if (adapter.delete) {
+            await adapter.delete({ model: 'user', where: { id: userId } });
+        }
+        else {
+            console.warn('Delete method not available on adapter');
+        }
+    }
+    catch (error) {
+        console.error('Error deleting user from adapter:', error);
+        throw error;
+    }
+}
+async function updateRealUser(adapter, userId, userData) {
+    try {
+        // Use adapter's update method if available
+        if (adapter.update) {
+            const updatedUser = await adapter.update({ model: 'user', where: { id: userId }, data: userData });
+            return updatedUser;
+        }
+        else {
+            console.warn('Update method not available on adapter');
+            throw new Error('Update method not available');
+        }
+    }
+    catch (error) {
+        console.error('Error updating user from adapter:', error);
+        throw error;
+    }
 }
 // Mock data fallback
 function getMockData(type, options) {

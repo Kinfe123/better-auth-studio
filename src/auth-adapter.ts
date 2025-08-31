@@ -99,17 +99,40 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
     authAdapter = {
       createUser: async (data: any) => {
         try {
-          // Use the adapter.create method with proper model and data structure
+          // Create the user first
           const user = await adapter.create({
             model: "user",
             data: {
               createdAt: new Date(),
               updatedAt: new Date(),
               emailVerified: false,
-              ...data,
+              name: data.name,
               email: data.email?.toLowerCase(),
+              image: data.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
             }
           });
+          
+          // If password is provided, create a credential account
+          if (data.password) {
+            try {
+              await adapter.create({
+                model: "account",
+                data: {
+                  userId: user.id,
+                  providerId: "credential",
+                  accountId: user.id,
+                  password: data.password,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                }
+              });
+              console.log('Credential account created for user:', user.id);
+            } catch (accountError) {
+              console.error('Error creating credential account:', accountError);
+              // Continue even if account creation fails
+            }
+          }
+          
           console.log('User created via real adapter:', user);
           return user;
         } catch (error) {
@@ -199,11 +222,13 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
           // Try to use the adapter's findMany method if available
           if (typeof adapter.findMany === 'function') {
             const users = await adapter.findMany({ model: 'user' });
+            console.log('Found users via findMany:', users?.length || 0);
             return users || [];
           }
           // Try to use adapter.getUsers if available
           if (typeof adapter.getUsers === 'function') {
             const users = await adapter.getUsers();
+            console.log('Found users via getUsers:', users?.length || 0);
             return users || [];
           }
           // Fallback to mock data

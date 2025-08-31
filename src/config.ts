@@ -256,9 +256,26 @@ function extractBetterAuthFields(config: any): AuthConfig {
 
   // Extract database configuration
   if (config.database) {
+    // Detect SQLite database
+    let dbType = 'postgresql'; // default
+    let dbName = config.database.name;
+    
+    // Check if it's a SQLite database instance
+    if (config.database.constructor && config.database.constructor.name === 'Database') {
+      dbType = 'sqlite';
+      dbName = config.database.name || './better-auth.db';
+    } else if (config.database.name && config.database.name.endsWith('.db')) {
+      dbType = 'sqlite';
+    } else if (config.database.type) {
+      dbType = config.database.type;
+    } else if (config.database.dialect) {
+      dbType = config.database.dialect;
+    }
+    
     authConfig.database = {
       url: config.database.url || config.database.connectionString,
-      type: config.database.type || config.database.dialect || 'postgresql',
+      name: dbName,
+      type: dbType,
       dialect: config.database.dialect,
       casing: config.database.casing
     };
