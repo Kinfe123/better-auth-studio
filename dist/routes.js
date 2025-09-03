@@ -185,23 +185,20 @@ function createRoutes(authConfig) {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 20;
             const search = req.query.search;
-            // Try to get users directly from the adapter
             try {
                 const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+                console.log({ adapter });
                 if (adapter && typeof adapter.findMany === 'function') {
-                    const allUsers = await adapter.findMany({ model: 'user' });
+                    const allUsers = await adapter.findMany({ model: 'user', limit: limit });
                     console.log('Found users via findMany:', allUsers?.length || 0);
-                    // Apply search filter if provided
                     let filteredUsers = allUsers || [];
                     if (search) {
                         filteredUsers = filteredUsers.filter((user) => user.email?.toLowerCase().includes(search.toLowerCase()) ||
                             user.name?.toLowerCase().includes(search.toLowerCase()));
                     }
-                    // Apply pagination
                     const startIndex = (page - 1) * limit;
                     const endIndex = startIndex + limit;
                     const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
-                    // Transform the data to match frontend expectations
                     const transformedUsers = paginatedUsers.map((user) => ({
                         id: user.id,
                         email: user.email,
@@ -210,9 +207,6 @@ function createRoutes(authConfig) {
                         emailVerified: user.emailVerified,
                         createdAt: user.createdAt,
                         updatedAt: user.updatedAt,
-                        provider: user.provider || 'email',
-                        lastSignIn: user.lastSignIn || user.updatedAt,
-                        status: 'active' // Default status
                     }));
                     res.json({ users: transformedUsers });
                     return;

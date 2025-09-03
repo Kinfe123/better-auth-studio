@@ -25,7 +25,6 @@ interface User {
   image?: string
   createdAt: string
   updatedAt: string
-  status?: string
 }
 
 export default function Users() {
@@ -34,7 +33,7 @@ export default function Users() {
   const [searchTerm, setSearchTerm] = useState('')
   const [filter, setFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
-  const [usersPerPage] = useState(10)
+  const [usersPerPage] = useState(50)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -49,7 +48,8 @@ export default function Users() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('/api/users')
+      // Request all users by setting a high limit to ensure we get all 1,012 users
+      const response = await fetch('/api/users?limit=10000')
       const data = await response.json()
       setUsers(data.users || [])
     } catch (error) {
@@ -172,7 +172,7 @@ export default function Users() {
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
        user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFilter = filter === 'all' || user.status === filter
+    const matchesFilter = filter === 'all'
     return matchesSearch && matchesFilter
   })
 
@@ -189,7 +189,7 @@ export default function Users() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-white">Loading users...</div>
+        <div className="text-white">Loading all users from database...</div>
       </div>
     )
   }
@@ -604,7 +604,6 @@ export default function Users() {
           </div>
         </div>
       )}
-
       {/* Delete User Modal */}
       {showDeleteModal && selectedUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

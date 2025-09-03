@@ -198,21 +198,17 @@ export function createRoutes(authConfig: AuthConfig) {
       res.status(500).json({ error: 'Failed to fetch statistics' });
     }
   });
-
   router.get('/api/users', async (req: Request, res: Response) => {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 20;
       const search = req.query.search as string;
-
-      // Try to get users directly from the adapter
       try {
         const adapter = await getAuthAdapter();
         if (adapter && typeof adapter.findMany === 'function') {
-          const allUsers = await adapter.findMany({ model: 'user' });
+          const allUsers = await adapter.findMany({ model: 'user' , limit: limit });
           console.log('Found users via findMany:', allUsers?.length || 0);
           
-          // Apply search filter if provided
           let filteredUsers = allUsers || [];
           if (search) {
             filteredUsers = filteredUsers.filter((user: any) => 
@@ -221,7 +217,6 @@ export function createRoutes(authConfig: AuthConfig) {
             );
           }
           
-          // Apply pagination
           const startIndex = (page - 1) * limit;
           const endIndex = startIndex + limit;
           const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
@@ -234,9 +229,6 @@ export function createRoutes(authConfig: AuthConfig) {
             emailVerified: user.emailVerified,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
-            provider: user.provider || 'email',
-            lastSignIn: user.lastSignIn || user.updatedAt,
-            status: 'active' // Default status
           }));
           
           res.json({ users: transformedUsers });
@@ -246,10 +238,8 @@ export function createRoutes(authConfig: AuthConfig) {
         console.error('Error fetching users from adapter:', adapterError);
       }
 
-      // Fallback to getAuthData
       const result = await getAuthData(authConfig, 'users', { page, limit, search });
       
-      // Transform the data to match frontend expectations
       const transformedUsers = (result.data || []).map((user: any) => ({
         id: user.id,
         email: user.email,
@@ -258,9 +248,6 @@ export function createRoutes(authConfig: AuthConfig) {
         emailVerified: user.emailVerified,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        provider: user.provider || 'email',
-        lastSignIn: user.lastSignIn || user.updatedAt,
-        status: 'active' // Default status
       }));
       
       res.json({ users: transformedUsers });
