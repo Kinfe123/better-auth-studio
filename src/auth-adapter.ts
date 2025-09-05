@@ -7,7 +7,9 @@ export interface AuthAdapter {
   createAccount: (data: any) => Promise<any>;
   createVerification: (data: any) => Promise<any>;
   createOrganization: (data: any) => Promise<any>;
-  create?: (table: string, data: any) => Promise<any>;
+  create?: (...args: any[]) => Promise<any>;
+  update?: (...args: any[]) => Promise<any>;
+  delete?: (...args: any[]) => Promise<any>;
   getUsers?: () => Promise<any[]>;
   getSessions?: () => Promise<any[]>;
   findMany?: (options: { model: string; where?: any; limit?: number; offset?: number }) => Promise<any[]>;

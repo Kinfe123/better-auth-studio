@@ -26,7 +26,11 @@ export const auth = betterAuth({
     resetPasswordTokenExpiresIn: 3600 // 1 hour
   },
   plugins: [
-    organization()
+    organization({
+      teams: {
+        enabled: true
+      }
+    })
   ],
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
