@@ -183,7 +183,6 @@ export default function Settings() {
     try {
       const response = await fetch('/api/health')
       const data = await response.json()
-      console.log('System info:', data)
       setSystemInfo(data.system || {
         studioVersion: 'v1.0.0',
         nodeVersion: process.version,
@@ -302,7 +301,7 @@ export default function Settings() {
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-white">
-                  {config?.baseURL || 'Not set'}
+                  {config?.baseURL || 'http://localhost:3000'}
                 </p>
               </div>
             </div>
@@ -355,7 +354,7 @@ export default function Settings() {
                 <Database className="w-5 h-5 text-white" />
                 <div>
                   <p className="text-sm font-medium text-white">
-                    {config?.database?.type || 'Unknown'}
+                    {config?.database?.type && config?.database?.type.charAt(0).toUpperCase() + config?.database?.type.slice(1) || 'Unknown'}
                   </p>
                   <p className="text-xs text-gray-400">Database Type</p>
                 </div>
