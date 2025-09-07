@@ -1,0 +1,21 @@
+# Exclude test project
+test-project/
+
+# Exclude source files (only include compiled dist)
+src/
+tsconfig.json
+
+# Exclude development files
+*.log
+*.tgz
+.DS_Store
+.vscode/
+.idea/
+
+# Exclude development dependencies
+node_modules/
+pnpm-lock.yaml
+
+# Exclude build artifacts
+*.map
+*.d.ts.map

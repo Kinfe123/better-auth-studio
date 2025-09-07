@@ -43,6 +43,8 @@ async function findAuthConfig() {
         'auth.js',
         'src/auth.ts',
         'src/auth.js',
+        'lib/auth.ts',
+        'lib/auth.js',
         'better-auth.config.ts',
         'better-auth.config.js',
         'better-auth.config.json',

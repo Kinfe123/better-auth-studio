@@ -286,13 +286,15 @@ async function findAuthConfigPath() {
         'auth.js',
         'src/auth.ts',
         'src/auth.js',
+        'lib/auth.ts',
+        'lib/auth.js',
         'better-auth.config.ts',
         'better-auth.config.js',
         'better-auth.config.json',
         'auth.config.ts',
         'auth.config.js',
         'auth.config.json',
-        'studio-config.json' // Move this to the end as fallback
+        'studio-config.json'
     ];
     let currentDir = process.cwd();
     const maxDepth = 10;

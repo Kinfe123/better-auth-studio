@@ -41,10 +41,10 @@ async function findAuthConfigPath() {
     const { join, dirname } = await Promise.resolve().then(() => __importStar(require('path')));
     const { existsSync } = await Promise.resolve().then(() => __importStar(require('fs')));
     const possiblePaths = [
-        'test-project/src/auth.ts',
-        'test-project/src/auth.js',
         'src/auth.ts',
         'src/auth.js',
+        'lib/auth.ts',
+        'lib/auth.js',
         'auth.ts',
         'auth.js'
     ];
