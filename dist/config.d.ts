@@ -22,4 +22,5 @@ export interface AuthConfig {
     [key: string]: any;
 }
 export declare function findAuthConfig(): Promise<AuthConfig | null>;
+export declare function extractBetterAuthConfig(content: string): AuthConfig | null;
 //# sourceMappingURL=config.d.ts.map

@@ -34,6 +34,7 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findAuthConfig = findAuthConfig;
+exports.extractBetterAuthConfig = extractBetterAuthConfig;
 const fs_1 = require("fs");
 const path_1 = require("path");
 async function findAuthConfig() {
@@ -131,24 +132,135 @@ async function loadTypeScriptConfig(configPath) {
         return null;
     }
 }
+function cleanConfigString(configStr) {
+    // First, let's handle the specific problematic patterns
+    let cleaned = configStr;
+    // Handle prismaAdapter calls specifically
+    cleaned = cleaned.replace(/:\s*prismaAdapter\s*\(\s*\w+\s*,\s*\{[^}]*\}\s*\)/g, ':"prisma-adapter"');
+    // Handle other function calls
+    cleaned = cleaned.replace(/:\s*(\w+)\s*\(\s*[^)]*\)/g, ':"$1-function"');
+    // Handle arrays
+    cleaned = cleaned.replace(/:\s*\[[^\]]*\]/g, ':"array"');
+    // Handle nested objects more carefully
+    cleaned = cleaned.replace(/:\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g, ':"object"');
+    // Handle process.env variables
+    cleaned = cleaned.replace(/:\s*process\.env\.(\w+)(\s*\|\|\s*"[^"]*")?/g, ':"$1"');
+    // Handle template literals
+    cleaned = cleaned.replace(/:\s*`([^`]*)`/g, ':"$1"');
+    // Handle string literals - be more careful with quotes
+    cleaned = cleaned.replace(/:\s*"([^"]*)"/g, ':"$1"');
+    cleaned = cleaned.replace(/:\s*'([^']*)'/g, ':"$1"');
+    // Handle unquoted strings (but be careful with numbers and booleans)
+    cleaned = cleaned.replace(/:\s*([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*[,}])/g, ':"$1"');
+    // Quote property names
+    cleaned = cleaned.replace(/([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '"$1":');
+    // Remove trailing commas
+    cleaned = cleaned.replace(/,\s*}/g, '}');
+    cleaned = cleaned.replace(/,\s*]/g, ']');
+    // Remove comments
+    cleaned = cleaned.replace(/\/\/.*$/gm, '');
+    cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, '');
+    // Normalize whitespace
+    cleaned = cleaned.replace(/\s+/g, ' ');
+    // Keep numbers, booleans, and null as-is
+    cleaned = cleaned.replace(/:\s*(\d+\.?\d*)/g, ':$1');
+    cleaned = cleaned.replace(/:\s*(true|false)/g, ':$1');
+    cleaned = cleaned.replace(/:\s*null/g, ':null');
+    return cleaned.trim();
+}
 function extractBetterAuthConfig(content) {
     console.log('Extracting config from content:', content.substring(0, 500) + '...');
+    // Try to extract plugins information directly from the content
+    // First, look for plugins: runtime or plugins: [runtime]
+    const pluginsMatch = content.match(/plugins\s*:\s*(?:\[)?(\w+)(?:\])?/);
+    if (pluginsMatch) {
+        const pluginsVar = pluginsMatch[1];
+        console.log('Found plugins variable:', pluginsVar);
+        // Look for the variable definition
+        const varMatch = content.match(new RegExp(`const\\s+${pluginsVar}\\s*=\\s*[^\\[]*\\[([^\\]]*)\\]`));
+        if (varMatch) {
+            const pluginsContent = varMatch[1];
+            const plugins = [];
+            // Extract plugin names from the plugins array
+            const pluginMatches = pluginsContent.match(/(\w+)\(\)/g);
+            if (pluginMatches) {
+                for (const pluginMatch of pluginMatches) {
+                    const pluginName = pluginMatch.replace(/\(\)/, '');
+                    plugins.push({
+                        id: pluginName,
+                        name: pluginName,
+                        version: 'unknown',
+                        description: `${pluginName} plugin for Better Auth`,
+                        enabled: true
+                    });
+                }
+            }
+            if (plugins.length > 0) {
+                console.log('Extracted plugins from content:', plugins);
+                return {
+                    plugins: plugins,
+                    baseURL: 'http://localhost:3000', // Default fallback
+                    database: { type: 'unknown' }
+                };
+            }
+        }
+    }
+    // Also try direct plugins array
+    const directPluginsMatch = content.match(/plugins\s*:\s*\[([^\]]*)\]/);
+    if (directPluginsMatch) {
+        const pluginsContent = directPluginsMatch[1];
+        const plugins = [];
+        // Extract plugin names from the plugins array
+        const pluginMatches = pluginsContent.match(/(\w+)\(\)/g);
+        if (pluginMatches) {
+            for (const pluginMatch of pluginMatches) {
+                const pluginName = pluginMatch.replace(/\(\)/, '');
+                plugins.push({
+                    id: pluginName,
+                    name: pluginName,
+                    version: 'unknown',
+                    description: `${pluginName} plugin for Better Auth`,
+                    enabled: true
+                });
+            }
+        }
+        if (plugins.length > 0) {
+            console.log('Extracted plugins from content:', plugins);
+            return {
+                plugins: plugins,
+                baseURL: 'http://localhost:3000', // Default fallback
+                database: { type: 'unknown' }
+            };
+        }
+    }
+    // More precise patterns that handle real-world scenarios better
     const patterns = [
-        /export\s+const\s+\w+\s*=\s*betterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
-        /export\s+const\s+\w+\s*=\s*BetterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
-        /const\s+\w+\s*=\s*betterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
-        /const\s+\w+\s*=\s*BetterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
-        /export\s+default\s+betterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
-        /export\s+default\s+BetterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
-        /module\.exports\s*=\s*betterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
-        /module\.exports\s*=\s*BetterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
-        /export\s+default\s*({[\s\S]*?});?$/m,
-        /module\.exports\s*=\s*({[\s\S]*?});?$/m,
+        // Pattern 1: export const auth = betterAuth({...})
+        /export\s+const\s+\w+\s*=\s*betterAuth\s*\(\s*({[^{}]*(?:{[^{}]*}[^{}]*)*})\s*\)/,
+        // Pattern 2: export const auth = BetterAuth({...})
+        /export\s+const\s+\w+\s*=\s*BetterAuth\s*\(\s*({[^{}]*(?:{[^{}]*}[^{}]*)*})\s*\)/,
+        // Pattern 3: const auth = betterAuth({...})
+        /const\s+\w+\s*=\s*betterAuth\s*\(\s*({[^{}]*(?:{[^{}]*}[^{}]*)*})\s*\)/,
+        // Pattern 4: const auth = BetterAuth({...})
+        /const\s+\w+\s*=\s*BetterAuth\s*\(\s*({[^{}]*(?:{[^{}]*}[^{}]*)*})\s*\)/,
+        // Pattern 5: export default betterAuth({...})
+        /export\s+default\s+betterAuth\s*\(\s*({[^{}]*(?:{[^{}]*}[^{}]*)*})\s*\)/,
+        // Pattern 6: export default BetterAuth({...})
+        /export\s+default\s+BetterAuth\s*\(\s*({[^{}]*(?:{[^{}]*}[^{}]*)*})\s*\)/,
+        // Pattern 7: module.exports = betterAuth({...})
+        /module\.exports\s*=\s*betterAuth\s*\(\s*({[^{}]*(?:{[^{}]*}[^{}]*)*})\s*\)/,
+        // Pattern 8: module.exports = BetterAuth({...})
+        /module\.exports\s*=\s*BetterAuth\s*\(\s*({[^{}]*(?:{[^{}]*}[^{}]*)*})\s*\)/,
+        // Pattern 9: betterAuth({...}) - standalone
+        /betterAuth\s*\(\s*({[^{}]*(?:{[^{}]*}[^{}]*)*})\s*\)/,
+        // Pattern 10: BetterAuth({...}) - standalone
+        /BetterAuth\s*\(\s*({[^{}]*(?:{[^{}]*}[^{}]*)*})\s*\)/,
+        // Pattern 11: More flexible pattern for complex configs
         /betterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
         /BetterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
-        /({[\s\S]*?"socialProviders"[\s\S]*?})/,
-        /({[\s\S]*?"emailAndPassword"[\s\S]*?})/,
-        /({[\s\S]*?"database"[\s\S]*?})/
+        // Pattern 12: Handle the specific case with baseURL and database
+        /betterAuth\s*\(\s*({[^{}]*baseURL[^{}]*database[^{}]*})\s*\)/,
+        /BetterAuth\s*\(\s*({[^{}]*baseURL[^{}]*database[^{}]*})\s*\)/
     ];
     for (let i = 0; i < patterns.length; i++) {
         const pattern = patterns[i];
@@ -183,22 +295,7 @@ function extractBetterAuthConfig(content) {
                         return match;
                     }
                 });
-                configStr = configStr
-                    .replace(/:\s*process\.env\.(\w+)(\s*\|\|\s*"[^"]*")?/g, ':"$1"') // Replace process.env.VAR || "default" with "VAR"
-                    .replace(/:\s*`([^`]*)`/g, ':"$1"') // Replace template literals
-                    .replace(/:\s*'([^']*)'/g, ':"$1"') // Replace single quotes
-                    .replace(/:\s*"([^"]*)"/g, ':"$1"') // Keep double quotes
-                    .replace(/:\s*(\w+)/g, ':"$1"') // Replace unquoted keys
-                    .replace(/(\w+):/g, '"$1":') // Quote property names
-                    .replace(/,\s*}/g, '}') // Remove trailing commas
-                    .replace(/,\s*]/g, ']') // Remove trailing commas in arrays
-                    .replace(/\/\/.*$/gm, '') // Remove single-line comments
-                    .replace(/\/\*[\s\S]*?\*\//g, '') // Remove multi-line comments
-                    .replace(/\s+/g, ' ') // Normalize whitespace
-                    .replace(/:\s*(\d+)/g, ':$1') // Keep numbers
-                    .replace(/:\s*(true|false)/g, ':$1') // Keep booleans
-                    .replace(/:\s*null/g, ':null') // Keep null
-                    .trim();
+                configStr = cleanConfigString(configStr);
                 console.log('Cleaned config string:', configStr.substring(0, 300) + '...');
                 let config;
                 try {

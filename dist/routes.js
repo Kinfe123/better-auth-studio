@@ -378,10 +378,36 @@ function createRoutes(authConfig) {
                 });
             }
             catch (error) {
-                console.error('Error getting plugins:', error);
+                console.error('Error importing auth config:', error);
+                console.log('Falling back to regex extraction...');
+                // Fallback to regex extraction when import fails
+                try {
+                    const { readFileSync } = await Promise.resolve().then(() => __importStar(require('fs')));
+                    const content = readFileSync(authConfigPath, 'utf-8');
+                    const { extractBetterAuthConfig } = await Promise.resolve().then(() => __importStar(require('./config')));
+                    const config = extractBetterAuthConfig(content);
+                    if (config && config.plugins) {
+                        const pluginInfo = config.plugins.map((plugin) => ({
+                            id: plugin.id || 'unknown',
+                            name: plugin.name || plugin.id || 'unknown',
+                            version: plugin.version || 'unknown',
+                            description: plugin.description || `${plugin.id || 'unknown'} plugin for Better Auth`,
+                            enabled: true
+                        }));
+                        return res.json({
+                            plugins: pluginInfo,
+                            configPath: authConfigPath,
+                            totalPlugins: pluginInfo.length,
+                            fallback: true
+                        });
+                    }
+                }
+                catch (fallbackError) {
+                    console.error('Fallback extraction also failed:', fallbackError);
+                }
                 res.json({
                     plugins: [],
-                    error: 'Failed to load auth config',
+                    error: 'Failed to load auth config - import failed and regex extraction unavailable',
                     configPath: authConfigPath
                 });
             }
