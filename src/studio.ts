@@ -26,17 +26,14 @@ export async function startStudio(options: StudioOptions) {
     credentials: true
   }));
 
-  // Body parsing middleware
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // WebSocket server for real-time updates
   const wss = new WebSocketServer({ server });
   
   wss.on('connection', (ws) => {
     console.log(chalk.gray('🔌 WebSocket client connected'));
     
-    // Send heartbeat every 30 seconds
     const heartbeat = setInterval(() => {
       ws.ping();
     }, 30000);
@@ -52,18 +49,14 @@ export async function startStudio(options: StudioOptions) {
     });
   });
 
-  // API routes
   app.use(createRoutes(authConfig));
 
-  // Serve static files from the frontend build
   app.use(express.static(join(__dirname, '../public')));
 
-  // Catch-all route to serve the React app
   app.get('*', (req, res) => {
     res.sendFile(join(__dirname, '../public/index.html'));
   });
 
-  // Start the server
   server.listen(port, host, () => {
     const url = `http://${host}:${port}`;
     console.log(chalk.green('✅ Better Auth Studio is running!'));
@@ -72,7 +65,6 @@ export async function startStudio(options: StudioOptions) {
     console.log(chalk.gray(`🔌 WebSocket: ws://${host}:${port}`));
     console.log(chalk.yellow('\nPress Ctrl+C to stop the server\n'));
 
-    // Open browser if requested
     if (openBrowser) {
       setTimeout(() => {
         open(url).catch(() => {
@@ -82,7 +74,6 @@ export async function startStudio(options: StudioOptions) {
     }
   });
 
-  // Graceful shutdown
   process.on('SIGINT', () => {
     console.log(chalk.yellow('\n🛑 Shutting down Better Auth Studio...'));
     server.close(() => {
