@@ -43,15 +43,12 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
       return await createMockAdapter();
     }
 
-    // For better-auth, we need to get the adapter from the auth instance
     let adapter;
     try {
-      // Try to get the context first
       const context = await auth.$context;
       adapter = context?.adapter;
     } catch (error) {
       console.warn('Error getting auth context:', error);
-      // Try to access adapter directly from auth object
       adapter = auth.adapter;
     }
     
@@ -66,7 +63,6 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
     console.log('Adapter keys:', Object.keys(adapter));
     console.log('Adapter methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(adapter)));
     
-    // Check if adapter has options or schema information
     if (adapter.options) {
       console.log('Adapter options:', adapter.options);
     }
@@ -74,9 +70,7 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
       console.log('Adapter schema:', adapter.createSchema);
     }
     
-    // Try to get available models by checking the adapter's internal structure
     try {
-      // Check if adapter has a schema or models property
       if (adapter.schema) {
         console.log('Adapter schema models:', Object.keys(adapter.schema));
       }
@@ -95,7 +89,6 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
     authAdapter = {
       createUser: async (data: any) => {
         try {
-          // Create the user first
           const user = await adapter.create({
             model: "user",
             data: {
@@ -124,7 +117,6 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
               console.log('Credential account created for user:', user.id);
             } catch (accountError) {
               console.error('Error creating credential account:', accountError);
-              // Continue even if account creation fails
             }
           }
           
@@ -138,7 +130,6 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
       },
       createSession: async (data: any) => {
         try {
-          // Use the adapter.create method with proper model and data structure
           const session = await adapter.create({
             model: "session",
             data: {
@@ -157,7 +148,6 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
       },
       createAccount: async (data: any) => {
         try {
-          // Use the adapter.create method with proper model and data structure
           const account = await adapter.create({
             model: "account",
             data: {
@@ -176,7 +166,6 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
       },
       createVerification: async (data: any) => {
         try {
-          // Use the adapter.create method with proper model and data structure
           const verification = await adapter.create({
             model: "verification",
             data: {
@@ -195,7 +184,6 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
       },
       createOrganization: async (data: any) => {
         try {
-          // Use the adapter.create method with proper model and data structure
           const organization = await adapter.create({
             model: "organization",
             data: {
@@ -283,7 +271,6 @@ async function findAuthConfigPath(): Promise<string | null> {
     'studio-config.json' // Move this to the end as fallback
   ];
 
-  // Start from current directory and walk up
   let currentDir = process.cwd();
   const maxDepth = 10;
   let depth = 0;
@@ -420,7 +407,6 @@ async function createMockAdapter(): Promise<AuthAdapter> {
       return mockOrganization;
     },
     getUsers: async () => {
-      // Return mock users that have been created
       const mockUsers = [
         {
           id: 'user_1',
