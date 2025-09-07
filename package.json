@@ -1,6 +1,6 @@
 {
   "name": "better-auth-studio",
-  "version": "1.0.9-beta.3",
+  "version": "1.0.9-beta.4",
   "description": "Studio for Better Auth",
   "main": "dist/index.js",
   "bin": {
