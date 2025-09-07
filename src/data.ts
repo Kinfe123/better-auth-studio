@@ -40,7 +40,6 @@ export interface PaginatedResult<T> {
   totalPages: number;
 }
 
-// Fetch real data from Better Auth database using the adapter
 export async function getAuthData(
   authConfig: AuthConfig,
   type: 'stats' | 'users' | 'sessions' | 'providers' | 'deleteUser' | 'updateUser' = 'stats',
@@ -73,14 +72,12 @@ export async function getAuthData(
     }
   } catch (error) {
     console.error(`Error fetching ${type} data:`, error);
-    // Fallback to mock data
     return getMockData(type, options);
   }
 }
 
 async function getRealStats(adapter: any): Promise<AuthStats> {
   try {
-    // Get users and sessions from adapter
     const users = adapter.getUsers ? await adapter.getUsers() : [];
     const sessions = adapter.getSessions ? await adapter.getSessions() : [];
 
@@ -88,22 +85,19 @@ async function getRealStats(adapter: any): Promise<AuthStats> {
     const activeSessions = sessions.filter((s: any) => new Date(s.expiresAt || s.expires) > now);
     const activeUsers = new Set(activeSessions.map((s: any) => s.userId)).size;
 
-    // Group users by provider (simplified for now)
     const usersByProvider: Record<string, number> = {
-      email: users.length, // Assume all users have email/password
-      github: 0 // Will be updated if we have social providers
+      email: users.length,
+      github: 0
     };
 
-    // Get recent signups (last 5 users)
     const recentSignups = users
       .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 5)
       .map((user: any) => ({
         ...user,
-        provider: 'email' // Default provider
+        provider: 'email'
       }));
 
-    // Get recent logins (last 5 sessions)
     const recentLogins = activeSessions
       .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 5);
@@ -138,7 +132,6 @@ async function getRealUsers(adapter: any, options: { page: number; limit: number
         );
       }
 
-      // Apply pagination
       const startIndex = (page - 1) * limit;
       const endIndex = startIndex + limit;
       const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
@@ -152,7 +145,6 @@ async function getRealUsers(adapter: any, options: { page: number; limit: number
       };
     }
 
-    // Fallback to mock data if getUsers is not available
     return getMockData('users', options);
   } catch (error) {
     console.error('Error fetching users from adapter:', error);
@@ -164,11 +156,9 @@ async function getRealSessions(adapter: any, options: { page: number; limit: num
   const { page, limit } = options;
 
   try {
-    // Use the adapter's getSessions method if available
     if (adapter.getSessions) {
       const allSessions = await adapter.getSessions();
 
-      // Apply pagination
       const startIndex = (page - 1) * limit;
       const endIndex = startIndex + limit;
       const paginatedSessions = allSessions.slice(startIndex, endIndex);
@@ -182,7 +172,6 @@ async function getRealSessions(adapter: any, options: { page: number; limit: num
       };
     }
 
-    // Fallback to mock data if getSessions is not available
     return getMockData('sessions', options);
   } catch (error) {
     console.error('Error fetching sessions from adapter:', error);
@@ -192,8 +181,6 @@ async function getRealSessions(adapter: any, options: { page: number; limit: num
 
 async function getRealProviderStats(adapter: any) {
   try {
-    // For now, return a simplified provider stats
-    // In a real implementation, you'd query accounts from the adapter
     return [
       { type: 'email', users: 0, active: 0 },
       { type: 'github', users: 0, active: 0 }
@@ -239,7 +226,6 @@ async function updateRealUser(adapter: any, userId: string, userData: Partial<Us
   }
 }
 
-// Mock data fallback
 function getMockData(type: string, options?: any): any {
   switch (type) {
     case 'stats':

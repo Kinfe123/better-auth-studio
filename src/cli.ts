@@ -23,7 +23,6 @@ program
       console.log(chalk.blue('🔐 Better Auth Studio'));
       console.log(chalk.gray('Starting Better Auth Studio...\n'));
 
-      // Find auth config
       const authConfig = await findAuthConfig();
       if (!authConfig) {
         console.error(chalk.red('❌ No Better Auth configuration found.'));
@@ -36,7 +35,6 @@ program
       console.log(chalk.gray(`Database: ${authConfig.database?.type || 'Not configured'}`));
       console.log(chalk.gray(`Providers: ${authConfig.providers?.map(p => p.type).join(', ') || 'None'}\n`));
 
-      // Start the studio
       await startStudio({
         port: parseInt(options.port),
         host: options.host,
