@@ -1,48 +1,10 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAuthAdapter = getAuthAdapter;
-exports.createMockUser = createMockUser;
-exports.createMockSession = createMockSession;
-exports.createMockAccount = createMockAccount;
-exports.createMockVerification = createMockVerification;
-const path_1 = require("path");
-const fs_1 = require("fs");
+import { join, dirname } from 'path';
+import { existsSync, readFileSync } from 'fs';
+import { createJiti } from 'jiti';
+import { pathToFileURL } from 'url';
 let authInstance = null;
 let authAdapter = null;
-async function getAuthAdapter() {
+export async function getAuthAdapter() {
     try {
         const authConfigPath = await findAuthConfigPath();
         if (!authConfigPath) {
@@ -52,7 +14,80 @@ async function getAuthAdapter() {
         console.log('Loading auth instance from:', authConfigPath);
         let authModule;
         try {
-            authModule = await Promise.resolve(`${authConfigPath}`).then(s => __importStar(require(s)));
+            // Use Jiti for safe TypeScript module resolution
+            if (authConfigPath.endsWith('.ts')) {
+                console.log('Using Jiti to safely import TypeScript config...');
+                // Create aliases for all relative imports dynamically
+                const aliases = {};
+                const authConfigDir = dirname(authConfigPath);
+                // Read the file content to find all relative imports
+                const content = readFileSync(authConfigPath, 'utf-8');
+                // Find all relative imports (./something or ../something)
+                const relativeImportRegex = /import\s+.*?\s+from\s+['"](\.\/[^'"]+)['"]/g;
+                const dynamicImportRegex = /import\s*\(\s*['"](\.\/[^'"]+)['"]\s*\)/g;
+                const foundImports = new Set();
+                // Extract relative imports from static imports
+                let match;
+                while ((match = relativeImportRegex.exec(content)) !== null) {
+                    foundImports.add(match[1]);
+                }
+                // Extract relative imports from dynamic imports
+                while ((match = dynamicImportRegex.exec(content)) !== null) {
+                    foundImports.add(match[1]);
+                }
+                console.log(`Found relative imports: ${Array.from(foundImports).join(', ')}`);
+                // Create aliases for each found import
+                for (const importPath of foundImports) {
+                    const importName = importPath.replace('./', '');
+                    const possiblePaths = [
+                        join(authConfigDir, importName + '.ts'),
+                        join(authConfigDir, importName + '.js'),
+                        join(authConfigDir, importName + '.mjs'),
+                        join(authConfigDir, importName + '.cjs'),
+                        join(authConfigDir, importName, 'index.ts'),
+                        join(authConfigDir, importName, 'index.js'),
+                        join(authConfigDir, importName, 'index.mjs'),
+                        join(authConfigDir, importName, 'index.cjs')
+                    ];
+                    for (const path of possiblePaths) {
+                        if (existsSync(path)) {
+                            aliases[importPath] = pathToFileURL(path).href;
+                            console.log(`Created alias: ${importPath} -> ${path}`);
+                            break;
+                        }
+                    }
+                }
+                const jiti = createJiti(import.meta.url, {
+                    debug: false,
+                    fsCache: true,
+                    moduleCache: true,
+                    interopDefault: true,
+                    alias: aliases
+                });
+                try {
+                    authModule = await jiti.import(authConfigPath);
+                }
+                catch (jitiError) {
+                    console.log(`Jiti import failed: ${jitiError.message}`);
+                    console.log('Falling back to regex extraction...');
+                    // If Jiti import fails, fall back to regex extraction
+                    const content = readFileSync(authConfigPath, 'utf-8');
+                    console.log('Using regex extraction as fallback');
+                    // Return a mock module that can be processed by regex extraction
+                    authModule = {
+                        auth: {
+                            options: {
+                                // This will be processed by regex extraction
+                                _content: content
+                            }
+                        }
+                    };
+                }
+            }
+            else {
+                // For JavaScript files, try normal import
+                authModule = await import(authConfigPath);
+            }
         }
         catch (error) {
             console.warn('Error importing auth module:', error);
@@ -62,6 +97,11 @@ async function getAuthAdapter() {
         console.log({ auth });
         if (!auth) {
             console.warn('No auth export found in config');
+            return await createMockAdapter();
+        }
+        // If we have content from regex fallback, we can't get the real auth instance
+        if (auth.options && auth.options._content) {
+            console.log('Using regex fallback - cannot get real auth instance, using mock adapter');
             return await createMockAdapter();
         }
         // Check if organization plugin is enabled and get teams configuration
@@ -316,12 +356,12 @@ async function findAuthConfigPath() {
     let depth = 0;
     while (currentDir && depth < maxDepth) {
         for (const configFile of possibleConfigFiles) {
-            const configPath = (0, path_1.join)(currentDir, configFile);
-            if ((0, fs_1.existsSync)(configPath)) {
+            const configPath = join(currentDir, configFile);
+            if (existsSync(configPath)) {
                 return configPath;
             }
         }
-        const parentDir = (0, path_1.dirname)(currentDir);
+        const parentDir = dirname(currentDir);
         if (parentDir === currentDir) {
             break;
         }
@@ -330,7 +370,7 @@ async function findAuthConfigPath() {
     }
     return null;
 }
-async function createMockUser(adapter, index) {
+export async function createMockUser(adapter, index) {
     // Generate a random string for the email
     const randomString = Math.random().toString(36).substring(2, 8);
     const userData = {
@@ -343,7 +383,7 @@ async function createMockUser(adapter, index) {
     };
     return await adapter.createUser(userData);
 }
-async function createMockSession(adapter, userId, index) {
+export async function createMockSession(adapter, userId, index) {
     const sessionData = {
         userId: userId,
         expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
@@ -353,7 +393,7 @@ async function createMockSession(adapter, userId, index) {
     };
     return await adapter.createSession(sessionData);
 }
-async function createMockAccount(adapter, userId, index) {
+export async function createMockAccount(adapter, userId, index) {
     const accountData = {
         userId: userId,
         type: 'oauth',
@@ -371,7 +411,7 @@ async function createMockAccount(adapter, userId, index) {
     };
     return await adapter.createAccount(accountData);
 }
-async function createMockVerification(adapter, userId, index) {
+export async function createMockVerification(adapter, userId, index) {
     const verificationData = {
         identifier: `user${index}@example.com`,
         token: `verification_token_${index}_${Date.now()}`,

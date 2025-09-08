@@ -1,5 +1,7 @@
 import { join, dirname } from 'path';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
+import { createJiti } from 'jiti';
+import { pathToFileURL } from 'url';
 
 export interface AuthAdapter {
   createUser: (data: any) => Promise<any>;
@@ -30,7 +32,91 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
     
     let authModule;
     try {
-      authModule = await import(authConfigPath);
+      // Use Jiti for safe TypeScript module resolution
+      if (authConfigPath.endsWith('.ts')) {
+        console.log('Using Jiti to safely import TypeScript config...');
+        
+        // Create aliases for all relative imports dynamically
+        const aliases: Record<string, string> = {};
+        const authConfigDir = dirname(authConfigPath);
+        
+        // Read the file content to find all relative imports
+        const content = readFileSync(authConfigPath, 'utf-8');
+        
+        // Find all relative imports (./something or ../something)
+        const relativeImportRegex = /import\s+.*?\s+from\s+['"](\.\/[^'"]+)['"]/g;
+        const dynamicImportRegex = /import\s*\(\s*['"](\.\/[^'"]+)['"]\s*\)/g;
+        
+        const foundImports = new Set<string>();
+        
+        // Extract relative imports from static imports
+        let match;
+        while ((match = relativeImportRegex.exec(content)) !== null) {
+          foundImports.add(match[1]);
+        }
+        
+        // Extract relative imports from dynamic imports
+        while ((match = dynamicImportRegex.exec(content)) !== null) {
+          foundImports.add(match[1]);
+        }
+        
+        console.log(`Found relative imports: ${Array.from(foundImports).join(', ')}`);
+        
+        // Create aliases for each found import
+        for (const importPath of foundImports) {
+          const importName = importPath.replace('./', '');
+          const possiblePaths = [
+            join(authConfigDir, importName + '.ts'),
+            join(authConfigDir, importName + '.js'),
+            join(authConfigDir, importName + '.mjs'),
+            join(authConfigDir, importName + '.cjs'),
+            join(authConfigDir, importName, 'index.ts'),
+            join(authConfigDir, importName, 'index.js'),
+            join(authConfigDir, importName, 'index.mjs'),
+            join(authConfigDir, importName, 'index.cjs')
+          ];
+          
+          for (const path of possiblePaths) {
+            if (existsSync(path)) {
+              aliases[importPath] = pathToFileURL(path).href;
+              console.log(`Created alias: ${importPath} -> ${path}`);
+              break;
+            }
+          }
+        }
+        
+        const jiti = createJiti(import.meta.url, {
+          debug: false,
+          fsCache: true,
+          moduleCache: true,
+          interopDefault: true,
+          alias: aliases
+        });
+        
+        try {
+          authModule = await jiti.import(authConfigPath);
+        } catch (jitiError: any) {
+          console.log(`Jiti import failed: ${jitiError.message}`);
+          console.log('Falling back to regex extraction...');
+          
+          // If Jiti import fails, fall back to regex extraction
+          const content = readFileSync(authConfigPath, 'utf-8');
+          console.log('Using regex extraction as fallback');
+          
+          // Return a mock module that can be processed by regex extraction
+          authModule = {
+            auth: {
+              options: {
+                // This will be processed by regex extraction
+                _content: content
+              }
+            }
+          };
+        }
+      } else {
+        // For JavaScript files, try normal import
+        authModule = await import(authConfigPath);
+      }
     } catch (error) {
       console.warn('Error importing auth module:', error);
       return await createMockAdapter();
@@ -40,6 +126,12 @@ export async function getAuthAdapter(): Promise<AuthAdapter | null> {
     console.log({auth})
     if (!auth) {
       console.warn('No auth export found in config');
+      return await createMockAdapter();
+    }
+
+    // If we have content from regex fallback, we can't get the real auth instance
+    if (auth.options && auth.options._content) {
+      console.log('Using regex fallback - cannot get real auth instance, using mock adapter');
       return await createMockAdapter();
     }
 

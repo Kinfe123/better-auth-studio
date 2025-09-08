@@ -1,14 +1,9 @@
 #!/usr/bin/env node
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const commander_1 = require("commander");
-const chalk_1 = __importDefault(require("chalk"));
-const studio_1 = require("./studio");
-const config_1 = require("./config");
-const program = new commander_1.Command();
+import { Command } from 'commander';
+import chalk from 'chalk';
+import { startStudio } from './studio.js';
+import { findAuthConfig } from './config.js';
+const program = new Command();
 program
     .name('better-auth-studio')
     .description('Better Auth Studio - GUI dashboard for Better Auth')
@@ -21,16 +16,16 @@ program
     .option('--no-open', 'Do not open browser automatically')
     .action(async (options) => {
     try {
-        console.log(chalk_1.default.blue('🔐 Better Auth Studio'));
-        console.log(chalk_1.default.gray('Starting Better Auth Studio...\n'));
-        const authConfig = await (0, config_1.findAuthConfig)();
+        console.log(chalk.blue('🔐 Better Auth Studio'));
+        console.log(chalk.gray('Starting Better Auth Studio...\n'));
+        const authConfig = await findAuthConfig();
         if (!authConfig) {
-            console.error(chalk_1.default.red('❌ No Better Auth configuration found.'));
-            console.log(chalk_1.default.yellow('Make sure you have a Better Auth configuration file in your project.'));
-            console.log(chalk_1.default.yellow('Supported files: auth.ts, auth.js, better-auth.config.ts, etc.'));
+            console.error(chalk.red('❌ No Better Auth configuration found.'));
+            console.log(chalk.yellow('Make sure you have a Better Auth configuration file in your project.'));
+            console.log(chalk.yellow('Supported files: auth.ts, auth.js, better-auth.config.ts, etc.'));
             process.exit(1);
         }
-        console.log(chalk_1.default.green('✅ Found Better Auth configuration'));
+        console.log(chalk.green('✅ Found Better Auth configuration'));
         // Display database information
         let databaseInfo = 'Not configured';
         if (authConfig.database) {
@@ -58,9 +53,9 @@ program
                 providersInfo = providerNames.join(', ');
             }
         }
-        console.log(chalk_1.default.gray(`Database: ${databaseInfo}`));
-        console.log(chalk_1.default.gray(`Providers: ${providersInfo}\n`));
-        await (0, studio_1.startStudio)({
+        console.log(chalk.gray(`Database: ${databaseInfo}`));
+        console.log(chalk.gray(`Providers: ${providersInfo}\n`));
+        await startStudio({
             port: parseInt(options.port),
             host: options.host,
             openBrowser: options.open,
@@ -68,7 +63,7 @@ program
         });
     }
     catch (error) {
-        console.error(chalk_1.default.red('❌ Failed to start Better Auth Studio:'), error);
+        console.error(chalk.red('❌ Failed to start Better Auth Studio:'), error);
         process.exit(1);
     }
 });

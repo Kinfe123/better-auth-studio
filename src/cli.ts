@@ -2,8 +2,8 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { startStudio } from './studio';
-import { findAuthConfig } from './config';
+import { startStudio } from './studio.js';
+import { findAuthConfig } from './config.js';
 
 const program = new Command();
 

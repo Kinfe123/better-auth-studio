@@ -2,12 +2,11 @@ import { betterAuth } from "better-auth";
 import Database from "better-sqlite3";
 import { organization } from "better-auth/plugins";
 // Better Auth configuration
-import prisma from "./prisma.js";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 
 export const auth = betterAuth({
   secret: process.env.AUTH_SECRET || "better-auth-secret-123456789",
-  database: prismaAdapter(prisma, { provider: "postgresql" }),
+  database: new Database("./better-auth.db"),
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID!,

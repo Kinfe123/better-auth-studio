@@ -1,15 +1,145 @@
 import { Router, Request, Response } from 'express';
-import { getAuthData } from './data';
-import { AuthConfig } from './config';
-import { getAuthAdapter, createMockUser, createMockSession, createMockAccount, createMockVerification } from './auth-adapter';
+import { getAuthData } from './data.js';
+import { AuthConfig } from './config.js';
+import { getAuthAdapter, createMockUser, createMockSession, createMockAccount, createMockVerification } from './auth-adapter.js';
+import { createJiti } from 'jiti';
+import { readFileSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { pathToFileURL } from 'url';
+
+// Custom module resolver that tries both .js and .ts extensions
+function resolveModuleWithExtensions(id: string, parent: string): string {
+  // If it's not a relative import, return as is
+  if (!id.startsWith('./') && !id.startsWith('../')) {
+    return id;
+  }
+
+  const parentDir = dirname(parent);
+  const basePath = join(parentDir, id);
+  
+  console.log(`Resolving ${id} from ${parent}`);
+  console.log(`Base path: ${basePath}`);
+  
+  // Try different extensions in order of preference
+  const extensions = ['.ts', '.js', '.mjs', '.cjs'];
+  
+  for (const ext of extensions) {
+    const fullPath = basePath + ext;
+    console.log(`Trying: ${fullPath}`);
+    if (existsSync(fullPath)) {
+      console.log(`✅ Found: ${fullPath}`);
+      return pathToFileURL(fullPath).href;
+    }
+  }
+  
+  // Special case: if it's a directory, try index files
+  if (existsSync(basePath)) {
+    console.log(`Found directory: ${basePath}, trying index files`);
+    for (const ext of extensions) {
+      const indexPath = join(basePath, 'index' + ext);
+      console.log(`Trying index: ${indexPath}`);
+      if (existsSync(indexPath)) {
+        console.log(`✅ Found index: ${indexPath}`);
+        return pathToFileURL(indexPath).href;
+      }
+    }
+  }
+  
+  // If no file found, return the original id
+  console.log(`❌ Could not resolve ${id} with any extension, using original`);
+  return id;
+}
 
 // Helper function to properly resolve imports from the project's context
 export async function safeImportAuthConfig(authConfigPath: string): Promise<any> {
   try {
-    // First try normal import
+    // For TypeScript files, use Jiti for safe resolution
+    if (authConfigPath.endsWith('.ts')) {
+      console.log(`Using Jiti to safely import TypeScript config from ${authConfigPath}...`);
+      // Create aliases for all relative imports dynamically
+      const aliases: Record<string, string> = {};
+      
+      // Get the directory of the auth config file
+      const authConfigDir = dirname(authConfigPath);
+      
+      // Read the file content to find all relative imports
+      const content = readFileSync(authConfigPath, 'utf-8');
+      
+      // Find all relative imports (./something or ../something)
+      const relativeImportRegex = /import\s+.*?\s+from\s+['"](\.\/[^'"]+)['"]/g;
+      const dynamicImportRegex = /import\s*\(\s*['"](\.\/[^'"]+)['"]\s*\)/g;
+      
+      const foundImports = new Set<string>();
+      
+      // Extract relative imports from static imports
+      let match;
+      while ((match = relativeImportRegex.exec(content)) !== null) {
+        foundImports.add(match[1]);
+      }
+      
+      // Extract relative imports from dynamic imports
+      while ((match = dynamicImportRegex.exec(content)) !== null) {
+        foundImports.add(match[1]);
+      }
+      
+      console.log(`Found relative imports: ${Array.from(foundImports).join(', ')}`);
+      
+      // Create aliases for each found import
+      for (const importPath of foundImports) {
+        const importName = importPath.replace('./', '');
+        const possiblePaths = [
+          join(authConfigDir, importName + '.ts'),
+          join(authConfigDir, importName + '.js'),
+          join(authConfigDir, importName + '.mjs'),
+          join(authConfigDir, importName + '.cjs'),
+          join(authConfigDir, importName, 'index.ts'),
+          join(authConfigDir, importName, 'index.js'),
+          join(authConfigDir, importName, 'index.mjs'),
+          join(authConfigDir, importName, 'index.cjs')
+        ];
+        
+        for (const path of possiblePaths) {
+          if (existsSync(path)) {
+            aliases[importPath] = pathToFileURL(path).href;
+            console.log(`Created alias: ${importPath} -> ${path}`);
+            break;
+          }
+        }
+      }
+      
+      const jiti = createJiti(import.meta.url, {
+        debug: true, // Enable debug to see what's happening
+        fsCache: true,
+        moduleCache: true,
+        interopDefault: true,
+        alias: aliases
+      });
+      try {
+        return await jiti.import(authConfigPath);
+      } catch (importError: any) {
+        console.log(`Jiti import failed: ${importError.message}`);
+        console.log('Falling back to regex extraction...');
+        
+        // If Jiti import fails, fall back to regex extraction
+        const content = readFileSync(authConfigPath, 'utf-8');
+        console.log('Using regex extraction as fallback');
+        
+        // Return a mock module that can be processed by regex extraction
+        return {
+          auth: {
+            options: {
+              // This will be processed by regex extraction
+              _content: content
+            }
+          }
+        };
+      }
+    }
+    
+    // For JavaScript files, try normal import first
     return await import(authConfigPath);
   } catch (importError) {
-    console.log('Normal import failed, trying to resolve imports from project context...');
+    console.log('Import failed, trying to resolve imports from project context...');
     
     try {
       // Get the project directory from the auth config path

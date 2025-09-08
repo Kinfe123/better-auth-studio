@@ -2,11 +2,16 @@ import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import open from 'open';
 import chalk from 'chalk';
-import { createRoutes } from './routes';
-import { AuthConfig } from './config';
+import { createRoutes } from './routes.js';
+import { AuthConfig } from './config.js';
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 interface StudioOptions {
   port: number;

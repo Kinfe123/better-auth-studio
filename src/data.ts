@@ -1,5 +1,5 @@
-import { AuthConfig } from './config';
-import { getAuthAdapter } from './auth-adapter';
+import { AuthConfig } from './config.js';
+import { getAuthAdapter } from './auth-adapter.js';
 
 export interface User {
   id: string;

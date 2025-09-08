@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Terminal as TerminalIcon, CheckCircle, XCircle, Loader, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface TerminalLine {
@@ -18,26 +18,7 @@ interface TerminalProps {
 }
 
 export function Terminal({ title = "Seeding Terminal", lines, isRunning = false, className = "", defaultCollapsed = false }: TerminalProps) {
-  const [displayedLines, setDisplayedLines] = useState<TerminalLine[]>([])
-  const [currentLineIndex, setCurrentLineIndex] = useState(0)
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed)
-
-  // Animate lines appearing one by one
-  useEffect(() => {
-    if (currentLineIndex < lines.length) {
-      const timer = setTimeout(() => {
-        setDisplayedLines(prev => [...prev, lines[currentLineIndex]])
-        setCurrentLineIndex(prev => prev + 1)
-      }, 100) // 100ms delay between lines (reduced from 200ms)
-      return () => clearTimeout(timer)
-    }
-  }, [currentLineIndex, lines])
-
-  // Reset when lines change
-  useEffect(() => {
-    setDisplayedLines([])
-    setCurrentLineIndex(0)
-  }, [lines])
 
   const getLineIcon = (line: TerminalLine) => {
     switch (line.type) {
@@ -99,9 +80,9 @@ export function Terminal({ title = "Seeding Terminal", lines, isRunning = false,
               <span className="text-green-400 text-xs">RUNNING</span>
             </div>
           )}
-          <div className="text-gray-400 text-xs">
-            {displayedLines.length} / {lines.length}
-          </div>
+                 <div className="text-gray-400 text-xs">
+                   {lines.length} / {lines.length}
+                 </div>
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="text-gray-400 hover:text-white transition-colors"
@@ -111,31 +92,30 @@ export function Terminal({ title = "Seeding Terminal", lines, isRunning = false,
         </div>
       </div>
 
-      {/* Terminal Content */}
-      {!isCollapsed && (
-        <div className="p-3 space-y-0.5 h-56 overflow-y-auto">
-          {displayedLines.length === 0 ? (
-            <div className="text-gray-500 italic text-xs">
-              <span className="text-green-400">$</span> Waiting for operations...
-            </div>
-          ) : (
-            displayedLines.map((line, index) => (
-              <div 
-                key={line.id} 
-                className={`flex items-start space-x-3 py-1 ${getLineColor(line)} animate-fadeIn text-xs`}
-                style={{ animationDelay: `${index * 25}ms` }}
-              >
-                <span className="text-gray-500 text-xs w-20 flex-shrink-0">
-                  {formatTime(line.timestamp)}
-                </span>
-                <span className="text-green-400 flex-shrink-0">$</span>
-                <div className="flex-shrink-0 mt-0.5">
-                  {getLineIcon(line)}
-                </div>
-                <span className="flex-1 min-w-0 break-words">{line.message}</span>
-              </div>
-            ))
-          )}
+             {/* Terminal Content */}
+             {!isCollapsed && (
+               <div className="p-3 space-y-0.5 h-56 overflow-y-auto">
+                 {lines.length === 0 ? (
+                   <div className="text-gray-500 italic text-xs">
+                     <span className="text-green-400">$</span> Waiting for operations...
+                   </div>
+                 ) : (
+                   lines.map((line) => (
+                     <div 
+                       key={line.id} 
+                       className={`flex items-start space-x-3 py-1 ${getLineColor(line)} text-xs`}
+                     >
+                       <span className="text-gray-500 text-xs w-20 flex-shrink-0">
+                         {formatTime(line.timestamp)}
+                       </span>
+                       <span className="text-green-400 flex-shrink-0">$</span>
+                       <div className="flex-shrink-0 mt-0.5">
+                         {getLineIcon(line)}
+                       </div>
+                       <span className="flex-1 min-w-0 break-words">{line.message}</span>
+                     </div>
+                   ))
+                 )}
           
           {/* Cursor */}
           {isRunning && (
@@ -156,11 +136,11 @@ export function Terminal({ title = "Seeding Terminal", lines, isRunning = false,
       {/* Terminal Footer */}
       {!isCollapsed && (
         <div className="px-3 py-1.5 border-t border-dashed border-white/10 bg-black/50">
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <div className="flex items-center space-x-3">
-              <span>Status: {isRunning ? 'Active' : 'Idle'}</span>
-              <span>Lines: {displayedLines.length}</span>
-            </div>
+                 <div className="flex items-center justify-between text-xs text-gray-400">
+                   <div className="flex items-center space-x-3">
+                     <span>Status: {isRunning ? 'Active' : 'Idle'}</span>
+                     <span>Lines: {lines.length}</span>
+                   </div>
             <div className="flex items-center space-x-1">
               <div className="w-1.5 h-1.5 bg-green-400 rounded-full" />
               <span>Better Auth Studio</span>

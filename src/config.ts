@@ -1,5 +1,7 @@
 import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
+import { createJiti } from 'jiti';
+import { pathToFileURL } from 'url';
 
 export interface AuthProvider {
   type: string;
@@ -27,6 +29,32 @@ export interface AuthConfig {
   secret?: string;
   rateLimit?: any;
   [key: string]: any;
+}
+
+// Custom module resolver that tries both .js and .ts extensions
+function resolveModuleWithExtensions(id: string, parent: string): string {
+  // If it's not a relative import, return as is
+  if (!id.startsWith('./') && !id.startsWith('../')) {
+    return id;
+  }
+
+  const parentDir = dirname(parent);
+  const basePath = join(parentDir, id);
+  
+  // Try different extensions in order of preference
+  const extensions = ['.ts', '.js', '.mjs', '.cjs'];
+  
+  for (const ext of extensions) {
+    const fullPath = basePath + ext;
+    if (existsSync(fullPath)) {
+      console.log(`Resolved ${id} to ${fullPath}`);
+      return pathToFileURL(fullPath).href;
+    }
+  }
+  
+  // If no file found, return the original id
+  console.log(`Could not resolve ${id} with any extension, using original`);
+  return id;
 }
 
 
@@ -99,19 +127,115 @@ async function loadTypeScriptConfig(configPath: string): Promise<AuthConfig | nu
   try {
     if (configPath.endsWith('.ts')) {
       try {
-        const authModule = await import(configPath);
+        // Create aliases for all relative imports dynamically
+        const aliases: Record<string, string> = {};
+        
+        // Get the directory of the config file
+        const configDir = dirname(configPath);
+        
+        // Read the file content to find all relative imports
+        const content = readFileSync(configPath, 'utf-8');
+        
+        // Find all relative imports (./something or ../something)
+        const relativeImportRegex = /import\s+.*?\s+from\s+['"](\.\/[^'"]+)['"]/g;
+        const dynamicImportRegex = /import\s*\(\s*['"](\.\/[^'"]+)['"]\s*\)/g;
+        
+        const foundImports = new Set<string>();
+        
+        // Extract relative imports from static imports
+        let match;
+        while ((match = relativeImportRegex.exec(content)) !== null) {
+          foundImports.add(match[1]);
+        }
+        
+        // Extract relative imports from dynamic imports
+        while ((match = dynamicImportRegex.exec(content)) !== null) {
+          foundImports.add(match[1]);
+        }
+        
+        console.log(`Found relative imports: ${Array.from(foundImports).join(', ')}`);
+        
+        // Create aliases for each found import
+        for (const importPath of foundImports) {
+          const importName = importPath.replace('./', '');
+          const possiblePaths = [
+            join(configDir, importName + '.ts'),
+            join(configDir, importName + '.js'),
+            join(configDir, importName + '.mjs'),
+            join(configDir, importName + '.cjs'),
+            join(configDir, importName, 'index.ts'),
+            join(configDir, importName, 'index.js'),
+            join(configDir, importName, 'index.mjs'),
+            join(configDir, importName, 'index.cjs')
+          ];
+          
+          for (const path of possiblePaths) {
+            if (existsSync(path)) {
+              aliases[importPath] = pathToFileURL(path).href;
+              console.log(`Created alias: ${importPath} -> ${path}`);
+              break;
+            }
+          }
+        }
+        
+        // Use Jiti for safe TypeScript module resolution
+        const jiti = createJiti(import.meta.url, {
+          debug: true, // Enable debug to see what's happening
+          fsCache: true,
+          moduleCache: true,
+          interopDefault: true,
+          alias: aliases
+        });
+        
+        console.log(`Using Jiti to safely import TypeScript config from ${configPath}...`);
+        let authModule: any;
+        
+        try {
+          authModule = await jiti.import(configPath);
+        } catch (importError: any) {
+          console.log(`Jiti import failed: ${importError.message}`);
+          console.log('Falling back to regex extraction...');
+          
+          // If Jiti import fails, fall back to regex extraction
+          const content = readFileSync(configPath, 'utf-8');
+          console.log('Using regex extraction as fallback');
+          
+          // Return a mock module that can be processed by regex extraction
+          authModule = {
+            auth: {
+              options: {
+                // This will be processed by regex extraction
+                _content: content
+              }
+            }
+          };
+        }
         
         if (authModule.auth) {
           console.log('Found auth export, extracting configuration...');
           const config = authModule.auth.options || authModule.auth;
+          
+          // If we have content from regex fallback, use regex extraction
+          if (config._content) {
+            console.log('Using regex extraction for content...');
+            return extractBetterAuthConfig(config._content);
+          }
+          
           return extractBetterAuthFields(config);
         } else if (authModule.default) {
           console.log('Found default export, extracting configuration...');
           const config = authModule.default.options || authModule.default;
+          
+          // If we have content from regex fallback, use regex extraction
+          if (config._content) {
+            console.log('Using regex extraction for content...');
+            return extractBetterAuthConfig(config._content);
+          }
+          
           return extractBetterAuthFields(config);
         }
-      } catch (importError) {
-        console.warn(`Failed to import auth config from ${configPath}:`, importError);
+      } catch (importError: any) {
+        console.warn(`Failed to import auth config from ${configPath}:`, importError.message);
         console.log('Falling back to regex extraction...');
       }
     }

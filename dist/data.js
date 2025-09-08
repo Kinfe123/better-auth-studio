@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAuthData = getAuthData;
-const auth_adapter_1 = require("./auth-adapter");
-async function getAuthData(authConfig, type = 'stats', options) {
+import { getAuthAdapter } from './auth-adapter.js';
+export async function getAuthData(authConfig, type = 'stats', options) {
     try {
-        const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+        const adapter = await getAuthAdapter();
         if (!adapter) {
             console.log('No adapter available, falling back to mock data');
             return getMockData(type, options);

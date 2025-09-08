@@ -1,43 +1,29 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
+import { readFileSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { createJiti } from 'jiti';
+import { pathToFileURL } from 'url';
+// Custom module resolver that tries both .js and .ts extensions
+function resolveModuleWithExtensions(id, parent) {
+    // If it's not a relative import, return as is
+    if (!id.startsWith('./') && !id.startsWith('../')) {
+        return id;
     }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.findAuthConfig = findAuthConfig;
-exports.extractBetterAuthConfig = extractBetterAuthConfig;
-const fs_1 = require("fs");
-const path_1 = require("path");
-async function findAuthConfig() {
+    const parentDir = dirname(parent);
+    const basePath = join(parentDir, id);
+    // Try different extensions in order of preference
+    const extensions = ['.ts', '.js', '.mjs', '.cjs'];
+    for (const ext of extensions) {
+        const fullPath = basePath + ext;
+        if (existsSync(fullPath)) {
+            console.log(`Resolved ${id} to ${fullPath}`);
+            return pathToFileURL(fullPath).href;
+        }
+    }
+    // If no file found, return the original id
+    console.log(`Could not resolve ${id} with any extension, using original`);
+    return id;
+}
+export async function findAuthConfig() {
     const possibleConfigFiles = [
         'studio-config.json',
         'auth.ts',
@@ -58,8 +44,8 @@ async function findAuthConfig() {
     let depth = 0;
     while (currentDir && depth < maxDepth) {
         for (const configFile of possibleConfigFiles) {
-            const configPath = (0, path_1.join)(currentDir, configFile);
-            if ((0, fs_1.existsSync)(configPath)) {
+            const configPath = join(currentDir, configFile);
+            if (existsSync(configPath)) {
                 try {
                     const config = await loadConfig(configPath);
                     if (config) {
@@ -71,7 +57,7 @@ async function findAuthConfig() {
                 }
             }
         }
-        const parentDir = (0, path_1.dirname)(currentDir);
+        const parentDir = dirname(currentDir);
         if (parentDir === currentDir) {
             break;
         }
@@ -84,7 +70,7 @@ async function loadConfig(configPath) {
     const ext = configPath.split('.').pop();
     try {
         if (ext === 'json') {
-            const content = (0, fs_1.readFileSync)(configPath, 'utf-8');
+            const content = readFileSync(configPath, 'utf-8');
             return JSON.parse(content);
         }
         else if (ext === 'js' || ext === 'ts') {
@@ -100,24 +86,103 @@ async function loadTypeScriptConfig(configPath) {
     try {
         if (configPath.endsWith('.ts')) {
             try {
-                const authModule = await Promise.resolve(`${configPath}`).then(s => __importStar(require(s)));
+                // Create aliases for all relative imports dynamically
+                const aliases = {};
+                // Get the directory of the config file
+                const configDir = dirname(configPath);
+                // Read the file content to find all relative imports
+                const content = readFileSync(configPath, 'utf-8');
+                // Find all relative imports (./something or ../something)
+                const relativeImportRegex = /import\s+.*?\s+from\s+['"](\.\/[^'"]+)['"]/g;
+                const dynamicImportRegex = /import\s*\(\s*['"](\.\/[^'"]+)['"]\s*\)/g;
+                const foundImports = new Set();
+                // Extract relative imports from static imports
+                let match;
+                while ((match = relativeImportRegex.exec(content)) !== null) {
+                    foundImports.add(match[1]);
+                }
+                // Extract relative imports from dynamic imports
+                while ((match = dynamicImportRegex.exec(content)) !== null) {
+                    foundImports.add(match[1]);
+                }
+                console.log(`Found relative imports: ${Array.from(foundImports).join(', ')}`);
+                // Create aliases for each found import
+                for (const importPath of foundImports) {
+                    const importName = importPath.replace('./', '');
+                    const possiblePaths = [
+                        join(configDir, importName + '.ts'),
+                        join(configDir, importName + '.js'),
+                        join(configDir, importName + '.mjs'),
+                        join(configDir, importName + '.cjs'),
+                        join(configDir, importName, 'index.ts'),
+                        join(configDir, importName, 'index.js'),
+                        join(configDir, importName, 'index.mjs'),
+                        join(configDir, importName, 'index.cjs')
+                    ];
+                    for (const path of possiblePaths) {
+                        if (existsSync(path)) {
+                            aliases[importPath] = pathToFileURL(path).href;
+                            console.log(`Created alias: ${importPath} -> ${path}`);
+                            break;
+                        }
+                    }
+                }
+                // Use Jiti for safe TypeScript module resolution
+                const jiti = createJiti(import.meta.url, {
+                    debug: true, // Enable debug to see what's happening
+                    fsCache: true,
+                    moduleCache: true,
+                    interopDefault: true,
+                    alias: aliases
+                });
+                console.log(`Using Jiti to safely import TypeScript config from ${configPath}...`);
+                let authModule;
+                try {
+                    authModule = await jiti.import(configPath);
+                }
+                catch (importError) {
+                    console.log(`Jiti import failed: ${importError.message}`);
+                    console.log('Falling back to regex extraction...');
+                    // If Jiti import fails, fall back to regex extraction
+                    const content = readFileSync(configPath, 'utf-8');
+                    console.log('Using regex extraction as fallback');
+                    // Return a mock module that can be processed by regex extraction
+                    authModule = {
+                        auth: {
+                            options: {
+                                // This will be processed by regex extraction
+                                _content: content
+                            }
+                        }
+                    };
+                }
                 if (authModule.auth) {
                     console.log('Found auth export, extracting configuration...');
                     const config = authModule.auth.options || authModule.auth;
+                    // If we have content from regex fallback, use regex extraction
+                    if (config._content) {
+                        console.log('Using regex extraction for content...');
+                        return extractBetterAuthConfig(config._content);
+                    }
                     return extractBetterAuthFields(config);
                 }
                 else if (authModule.default) {
                     console.log('Found default export, extracting configuration...');
                     const config = authModule.default.options || authModule.default;
+                    // If we have content from regex fallback, use regex extraction
+                    if (config._content) {
+                        console.log('Using regex extraction for content...');
+                        return extractBetterAuthConfig(config._content);
+                    }
                     return extractBetterAuthFields(config);
                 }
             }
             catch (importError) {
-                console.warn(`Failed to import auth config from ${configPath}:`, importError);
+                console.warn(`Failed to import auth config from ${configPath}:`, importError.message);
                 console.log('Falling back to regex extraction...');
             }
         }
-        const content = (0, fs_1.readFileSync)(configPath, 'utf-8');
+        const content = readFileSync(configPath, 'utf-8');
         const authConfig = extractBetterAuthConfig(content);
         if (authConfig) {
             return authConfig;
@@ -242,7 +307,7 @@ function cleanConfigString(configStr) {
     cleaned = cleaned.replace(/:\s*null/g, ':null');
     return cleaned.trim();
 }
-function extractBetterAuthConfig(content) {
+export function extractBetterAuthConfig(content) {
     console.log('Extracting config from content:', content.substring(0, 500) + '...');
     // Try to extract plugins information directly from the content
     // First, look for plugins: runtime or plugins: [runtime]

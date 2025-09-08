@@ -1,56 +1,130 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
+import { Router } from 'express';
+import { getAuthData } from './data.js';
+import { getAuthAdapter, createMockUser, createMockSession, createMockAccount, createMockVerification } from './auth-adapter.js';
+import { createJiti } from 'jiti';
+import { readFileSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { pathToFileURL } from 'url';
+// Custom module resolver that tries both .js and .ts extensions
+function resolveModuleWithExtensions(id, parent) {
+    // If it's not a relative import, return as is
+    if (!id.startsWith('./') && !id.startsWith('../')) {
+        return id;
     }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.safeImportAuthConfig = safeImportAuthConfig;
-exports.createRoutes = createRoutes;
-const express_1 = require("express");
-const data_1 = require("./data");
-const auth_adapter_1 = require("./auth-adapter");
+    const parentDir = dirname(parent);
+    const basePath = join(parentDir, id);
+    console.log(`Resolving ${id} from ${parent}`);
+    console.log(`Base path: ${basePath}`);
+    // Try different extensions in order of preference
+    const extensions = ['.ts', '.js', '.mjs', '.cjs'];
+    for (const ext of extensions) {
+        const fullPath = basePath + ext;
+        console.log(`Trying: ${fullPath}`);
+        if (existsSync(fullPath)) {
+            console.log(`✅ Found: ${fullPath}`);
+            return pathToFileURL(fullPath).href;
+        }
+    }
+    // Special case: if it's a directory, try index files
+    if (existsSync(basePath)) {
+        console.log(`Found directory: ${basePath}, trying index files`);
+        for (const ext of extensions) {
+            const indexPath = join(basePath, 'index' + ext);
+            console.log(`Trying index: ${indexPath}`);
+            if (existsSync(indexPath)) {
+                console.log(`✅ Found index: ${indexPath}`);
+                return pathToFileURL(indexPath).href;
+            }
+        }
+    }
+    // If no file found, return the original id
+    console.log(`❌ Could not resolve ${id} with any extension, using original`);
+    return id;
+}
 // Helper function to properly resolve imports from the project's context
-async function safeImportAuthConfig(authConfigPath) {
+export async function safeImportAuthConfig(authConfigPath) {
     try {
-        // First try normal import
-        return await Promise.resolve(`${authConfigPath}`).then(s => __importStar(require(s)));
+        // For TypeScript files, use Jiti for safe resolution
+        if (authConfigPath.endsWith('.ts')) {
+            console.log(`Using Jiti to safely import TypeScript config from ${authConfigPath}...`);
+            // Create aliases for all relative imports dynamically
+            const aliases = {};
+            // Get the directory of the auth config file
+            const authConfigDir = dirname(authConfigPath);
+            // Read the file content to find all relative imports
+            const content = readFileSync(authConfigPath, 'utf-8');
+            // Find all relative imports (./something or ../something)
+            const relativeImportRegex = /import\s+.*?\s+from\s+['"](\.\/[^'"]+)['"]/g;
+            const dynamicImportRegex = /import\s*\(\s*['"](\.\/[^'"]+)['"]\s*\)/g;
+            const foundImports = new Set();
+            // Extract relative imports from static imports
+            let match;
+            while ((match = relativeImportRegex.exec(content)) !== null) {
+                foundImports.add(match[1]);
+            }
+            // Extract relative imports from dynamic imports
+            while ((match = dynamicImportRegex.exec(content)) !== null) {
+                foundImports.add(match[1]);
+            }
+            console.log(`Found relative imports: ${Array.from(foundImports).join(', ')}`);
+            // Create aliases for each found import
+            for (const importPath of foundImports) {
+                const importName = importPath.replace('./', '');
+                const possiblePaths = [
+                    join(authConfigDir, importName + '.ts'),
+                    join(authConfigDir, importName + '.js'),
+                    join(authConfigDir, importName + '.mjs'),
+                    join(authConfigDir, importName + '.cjs'),
+                    join(authConfigDir, importName, 'index.ts'),
+                    join(authConfigDir, importName, 'index.js'),
+                    join(authConfigDir, importName, 'index.mjs'),
+                    join(authConfigDir, importName, 'index.cjs')
+                ];
+                for (const path of possiblePaths) {
+                    if (existsSync(path)) {
+                        aliases[importPath] = pathToFileURL(path).href;
+                        console.log(`Created alias: ${importPath} -> ${path}`);
+                        break;
+                    }
+                }
+            }
+            const jiti = createJiti(import.meta.url, {
+                debug: true, // Enable debug to see what's happening
+                fsCache: true,
+                moduleCache: true,
+                interopDefault: true,
+                alias: aliases
+            });
+            try {
+                return await jiti.import(authConfigPath);
+            }
+            catch (importError) {
+                console.log(`Jiti import failed: ${importError.message}`);
+                console.log('Falling back to regex extraction...');
+                // If Jiti import fails, fall back to regex extraction
+                const content = readFileSync(authConfigPath, 'utf-8');
+                console.log('Using regex extraction as fallback');
+                // Return a mock module that can be processed by regex extraction
+                return {
+                    auth: {
+                        options: {
+                            // This will be processed by regex extraction
+                            _content: content
+                        }
+                    }
+                };
+            }
+        }
+        // For JavaScript files, try normal import first
+        return await import(authConfigPath);
     }
     catch (importError) {
-        console.log('Normal import failed, trying to resolve imports from project context...');
+        console.log('Import failed, trying to resolve imports from project context...');
         try {
             // Get the project directory from the auth config path
-            const { dirname, join } = await Promise.resolve().then(() => __importStar(require('path')));
-            const { existsSync, readFileSync, writeFileSync, mkdtempSync, unlinkSync, rmdirSync } = await Promise.resolve().then(() => __importStar(require('fs')));
-            const { tmpdir } = await Promise.resolve().then(() => __importStar(require('os')));
+            const { dirname, join } = await import('path');
+            const { existsSync, readFileSync, writeFileSync, mkdtempSync, unlinkSync, rmdirSync } = await import('fs');
+            const { tmpdir } = await import('os');
             const projectDir = dirname(authConfigPath);
             const content = readFileSync(authConfigPath, 'utf-8');
             // Create a safe version of the auth config by ignoring problematic imports
@@ -112,7 +186,7 @@ const magicLink = () => ({ id: 'magic-link', name: 'Magic Link' });`);
                     process.env.NODE_PATH = nodeModulesPath;
                     process.chdir(projectDir);
                     // Try to import the resolved auth config
-                    const authModule = await Promise.resolve(`${tempFile}`).then(s => __importStar(require(s)));
+                    const authModule = await import(tempFile);
                     // Clean up temp file
                     unlinkSync(tempFile);
                     rmdirSync(tempDir);
@@ -141,8 +215,8 @@ const magicLink = () => ({ id: 'magic-link', name: 'Magic Link' });`);
     }
 }
 async function findAuthConfigPath() {
-    const { join, dirname } = await Promise.resolve().then(() => __importStar(require('path')));
-    const { existsSync } = await Promise.resolve().then(() => __importStar(require('fs')));
+    const { join, dirname } = await import('path');
+    const { existsSync } = await import('fs');
     const possiblePaths = [
         'auth.js', // Prioritize the working CommonJS file
         'auth.ts',
@@ -159,8 +233,8 @@ async function findAuthConfigPath() {
     }
     return null;
 }
-function createRoutes(authConfig) {
-    const router = (0, express_1.Router)();
+export function createRoutes(authConfig) {
+    const router = Router();
     router.get('/api/health', (req, res) => {
         const uptime = process.uptime();
         const hours = Math.floor(uptime / 3600);
@@ -308,7 +382,7 @@ function createRoutes(authConfig) {
     });
     router.get('/api/stats', async (req, res) => {
         try {
-            const stats = await (0, data_1.getAuthData)(authConfig, 'stats');
+            const stats = await getAuthData(authConfig, 'stats');
             res.json(stats);
         }
         catch (error) {
@@ -318,7 +392,7 @@ function createRoutes(authConfig) {
     });
     router.get('/api/counts', async (req, res) => {
         try {
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             let userCount = 0;
             let sessionCount = 0;
             let organizationCount = 0;
@@ -366,7 +440,7 @@ function createRoutes(authConfig) {
     // Endpoint to fetch all users for selection (e.g., for inviter selection)
     router.get('/api/users/all', async (req, res) => {
         try {
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -389,7 +463,7 @@ function createRoutes(authConfig) {
             const limit = parseInt(req.query.limit) || 20;
             const search = req.query.search;
             try {
-                const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+                const adapter = await getAuthAdapter();
                 if (adapter && typeof adapter.findMany === 'function') {
                     const allUsers = await adapter.findMany({ model: 'user', limit: limit });
                     console.log('Found users via findMany:', allUsers?.length || 0);
@@ -417,7 +491,7 @@ function createRoutes(authConfig) {
             catch (adapterError) {
                 console.error('Error fetching users from adapter:', adapterError);
             }
-            const result = await (0, data_1.getAuthData)(authConfig, 'users', { page, limit, search });
+            const result = await getAuthData(authConfig, 'users', { page, limit, search });
             const transformedUsers = (result.data || []).map((user) => ({
                 id: user.id,
                 email: user.email,
@@ -438,7 +512,7 @@ function createRoutes(authConfig) {
         try {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 20;
-            const sessions = await (0, data_1.getAuthData)(authConfig, 'sessions', { page, limit });
+            const sessions = await getAuthData(authConfig, 'sessions', { page, limit });
             res.json(sessions);
         }
         catch (error) {
@@ -448,7 +522,7 @@ function createRoutes(authConfig) {
     });
     router.get('/api/providers', async (req, res) => {
         try {
-            const providers = await (0, data_1.getAuthData)(authConfig, 'providers');
+            const providers = await getAuthData(authConfig, 'providers');
             res.json(providers);
         }
         catch (error) {
@@ -459,7 +533,7 @@ function createRoutes(authConfig) {
     router.delete('/api/users/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            await (0, data_1.getAuthData)(authConfig, 'deleteUser', { id });
+            await getAuthData(authConfig, 'deleteUser', { id });
             res.json({ success: true });
         }
         catch (error) {
@@ -506,9 +580,9 @@ function createRoutes(authConfig) {
                 console.log('Falling back to regex extraction...');
                 // Fallback to regex extraction when import fails
                 try {
-                    const { readFileSync } = await Promise.resolve().then(() => __importStar(require('fs')));
+                    const { readFileSync } = await import('fs');
                     const content = readFileSync(authConfigPath, 'utf-8');
-                    const { extractBetterAuthConfig } = await Promise.resolve().then(() => __importStar(require('./config')));
+                    const { extractBetterAuthConfig } = await import('./config');
                     const config = extractBetterAuthConfig(content);
                     if (config && config.plugins) {
                         const pluginInfo = config.plugins.map((plugin) => ({
@@ -572,9 +646,9 @@ function createRoutes(authConfig) {
                 console.log('Falling back to regex extraction...');
                 // Fallback to regex extraction when import fails
                 try {
-                    const { readFileSync } = await Promise.resolve().then(() => __importStar(require('fs')));
+                    const { readFileSync } = await import('fs');
                     const content = readFileSync(authConfigPath, 'utf-8');
-                    const { extractBetterAuthConfig } = await Promise.resolve().then(() => __importStar(require('./config')));
+                    const { extractBetterAuthConfig } = await import('./config');
                     const config = extractBetterAuthConfig(content);
                     if (config && config.database) {
                         return res.json({
@@ -632,9 +706,9 @@ function createRoutes(authConfig) {
                 console.log('Falling back to regex extraction...');
                 // Fallback to regex extraction when import fails
                 try {
-                    const { readFileSync } = await Promise.resolve().then(() => __importStar(require('fs')));
+                    const { readFileSync } = await import('fs');
                     const content = readFileSync(authConfigPath, 'utf-8');
-                    const { extractBetterAuthConfig } = await Promise.resolve().then(() => __importStar(require('./config')));
+                    const { extractBetterAuthConfig } = await import('./config');
                     const config = extractBetterAuthConfig(content);
                     if (config && config.plugins) {
                         const organizationPlugin = config.plugins.find((plugin) => plugin.id === "organization");
@@ -666,7 +740,7 @@ function createRoutes(authConfig) {
         try {
             console.log('fetching invitations', req.params);
             const { orgId } = req.params;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (adapter && typeof adapter.findMany === 'function') {
                 try {
                     const invitations = await adapter.findMany({
@@ -704,7 +778,7 @@ function createRoutes(authConfig) {
     router.get('/api/organizations/:orgId/members', async (req, res) => {
         try {
             const { orgId } = req.params;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (adapter && typeof adapter.findMany === 'function') {
                 try {
                     const members = await adapter.findMany({
@@ -762,7 +836,7 @@ function createRoutes(authConfig) {
         try {
             const { orgId } = req.params;
             const { count = 5 } = req.body;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -837,7 +911,7 @@ function createRoutes(authConfig) {
         try {
             const { orgId } = req.params;
             const { count = 3 } = req.body;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -899,7 +973,7 @@ function createRoutes(authConfig) {
     router.delete('/api/members/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -920,7 +994,7 @@ function createRoutes(authConfig) {
     router.post('/api/invitations/:id/resend', async (req, res) => {
         try {
             const { id } = req.params;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -945,7 +1019,7 @@ function createRoutes(authConfig) {
     router.delete('/api/invitations/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -974,7 +1048,7 @@ function createRoutes(authConfig) {
             if (!inviterId) {
                 return res.status(400).json({ error: 'Inviter ID is required' });
             }
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -1016,7 +1090,7 @@ function createRoutes(authConfig) {
     router.get('/api/organizations/:orgId/teams', async (req, res) => {
         try {
             const { orgId } = req.params;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (adapter && typeof adapter.findMany === 'function') {
                 try {
                     const teams = await adapter.findMany({
@@ -1061,7 +1135,7 @@ function createRoutes(authConfig) {
         try {
             const { orgId } = req.params;
             const { name } = req.body;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -1098,7 +1172,7 @@ function createRoutes(authConfig) {
     router.get('/api/teams/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (adapter && typeof adapter.findMany === 'function') {
                 try {
                     const teams = await adapter.findMany({
@@ -1151,7 +1225,7 @@ function createRoutes(authConfig) {
     router.get('/api/teams/:teamId/members', async (req, res) => {
         try {
             const { teamId } = req.params;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (adapter && typeof adapter.findMany === 'function') {
                 try {
                     const teamMembers = await adapter.findMany({
@@ -1212,7 +1286,7 @@ function createRoutes(authConfig) {
             if (!Array.isArray(userIds) || userIds.length === 0) {
                 return res.status(400).json({ error: 'userIds array is required' });
             }
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter || !adapter.create) {
                 return res.status(500).json({ error: 'Adapter not available' });
             }
@@ -1252,7 +1326,7 @@ function createRoutes(authConfig) {
     router.delete('/api/team-members/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter || !adapter.delete) {
                 return res.status(500).json({ error: 'Adapter not available' });
             }
@@ -1271,7 +1345,7 @@ function createRoutes(authConfig) {
         try {
             const { id } = req.params;
             const { name } = req.body;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -1301,7 +1375,7 @@ function createRoutes(authConfig) {
     router.delete('/api/teams/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -1354,9 +1428,9 @@ function createRoutes(authConfig) {
                 console.log('Falling back to regex extraction...');
                 // Fallback to regex extraction when import fails
                 try {
-                    const { readFileSync } = await Promise.resolve().then(() => __importStar(require('fs')));
+                    const { readFileSync } = await import('fs');
                     const content = readFileSync(authConfigPath, 'utf-8');
-                    const { extractBetterAuthConfig } = await Promise.resolve().then(() => __importStar(require('./config')));
+                    const { extractBetterAuthConfig } = await import('./config');
                     const config = extractBetterAuthConfig(content);
                     if (config && config.plugins) {
                         const hasOrganizationPlugin = config.plugins.find((plugin) => plugin.id === "organization");
@@ -1390,7 +1464,7 @@ function createRoutes(authConfig) {
             const limit = parseInt(req.query.limit) || 20;
             const search = req.query.search;
             try {
-                const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+                const adapter = await getAuthAdapter();
                 if (adapter && typeof adapter.findMany === 'function') {
                     const allOrganizations = await adapter.findMany({ model: 'organization' });
                     console.log('Found organizations via findMany:', allOrganizations?.length || 0);
@@ -1444,7 +1518,7 @@ function createRoutes(authConfig) {
     });
     router.post('/api/organizations', async (req, res) => {
         try {
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -1464,7 +1538,7 @@ function createRoutes(authConfig) {
         try {
             const { id } = req.params;
             const orgData = req.body;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -1493,7 +1567,7 @@ function createRoutes(authConfig) {
     router.get('/api/organizations/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (adapter && typeof adapter.findMany === 'function') {
                 const organizations = await adapter.findMany({ model: 'organization', limit: 10000 });
                 const organization = organizations?.find((org) => org.id === id);
@@ -1520,7 +1594,7 @@ function createRoutes(authConfig) {
     router.delete('/api/organizations/:id', async (req, res) => {
         try {
             const { id } = req.params;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -1539,7 +1613,7 @@ function createRoutes(authConfig) {
     });
     router.post('/api/users', async (req, res) => {
         try {
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -1556,7 +1630,7 @@ function createRoutes(authConfig) {
         try {
             const { id } = req.params;
             const userData = req.body;
-            const updatedUser = await (0, data_1.getAuthData)(authConfig, 'updateUser', { id, userData });
+            const updatedUser = await getAuthData(authConfig, 'updateUser', { id, userData });
             res.json({ success: true, user: updatedUser });
         }
         catch (error) {
@@ -1567,7 +1641,7 @@ function createRoutes(authConfig) {
     router.post('/api/seed/users', async (req, res) => {
         try {
             const { count = 1 } = req.body;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             console.log({ adapter });
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
@@ -1578,7 +1652,7 @@ function createRoutes(authConfig) {
                     if (typeof adapter.createUser !== 'function') {
                         throw new Error('createUser method not available on adapter');
                     }
-                    const user = await (0, auth_adapter_1.createMockUser)(adapter, i + 1);
+                    const user = await createMockUser(adapter, i + 1);
                     results.push({
                         success: true,
                         user: {
@@ -1612,13 +1686,13 @@ function createRoutes(authConfig) {
     router.post('/api/seed/sessions', async (req, res) => {
         try {
             const { count = 1 } = req.body;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
             let user;
             try {
-                user = await (0, auth_adapter_1.createMockUser)(adapter, 1);
+                user = await createMockUser(adapter, 1);
             }
             catch (error) {
                 return res.status(500).json({ error: 'Failed to create user for session' });
@@ -1629,7 +1703,7 @@ function createRoutes(authConfig) {
                     if (typeof adapter.createSession !== 'function') {
                         throw new Error('createSession method not available on adapter');
                     }
-                    const session = await (0, auth_adapter_1.createMockSession)(adapter, user.id, i + 1);
+                    const session = await createMockSession(adapter, user.id, i + 1);
                     results.push({
                         success: true,
                         session: {
@@ -1662,13 +1736,13 @@ function createRoutes(authConfig) {
     router.post('/api/seed/accounts', async (req, res) => {
         try {
             const { count = 1 } = req.body;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
             let user;
             try {
-                user = await (0, auth_adapter_1.createMockUser)(adapter, 1);
+                user = await createMockUser(adapter, 1);
             }
             catch (error) {
                 return res.status(500).json({ error: 'Failed to create user for account' });
@@ -1679,7 +1753,7 @@ function createRoutes(authConfig) {
                     if (typeof adapter.createAccount !== 'function') {
                         throw new Error('createAccount method not available on adapter');
                     }
-                    const account = await (0, auth_adapter_1.createMockAccount)(adapter, user.id, i + 1);
+                    const account = await createMockAccount(adapter, user.id, i + 1);
                     results.push({
                         success: true,
                         account: {
@@ -1713,7 +1787,7 @@ function createRoutes(authConfig) {
     router.post('/api/seed/verifications', async (req, res) => {
         try {
             const { count = 1 } = req.body;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
@@ -1723,7 +1797,7 @@ function createRoutes(authConfig) {
                     if (typeof adapter.createVerification !== 'function') {
                         throw new Error('createVerification method not available on adapter');
                     }
-                    const verification = await (0, auth_adapter_1.createMockVerification)(adapter, `user${i + 1}@example.com`, i + 1);
+                    const verification = await createMockVerification(adapter, `user${i + 1}@example.com`, i + 1);
                     results.push({
                         success: true,
                         verification: {
@@ -1756,7 +1830,7 @@ function createRoutes(authConfig) {
     router.post('/api/seed/organizations', async (req, res) => {
         try {
             const { count = 1 } = req.body;
-            const adapter = await (0, auth_adapter_1.getAuthAdapter)();
+            const adapter = await getAuthAdapter();
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }

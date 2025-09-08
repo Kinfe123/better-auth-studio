@@ -1,4 +1,4 @@
-import { AuthConfig } from './config';
+import { AuthConfig } from './config.js';
 interface StudioOptions {
     port: number;
     host: string;
