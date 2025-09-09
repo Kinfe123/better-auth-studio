@@ -7,7 +7,7 @@ import * as schema from "../auth-schema";
 
 export const auth = betterAuth({
   secret: process.env.AUTH_SECRET || "better-auth-secret-123456789",
-  database: drizzleAdapter(db, { provider: "pg"  , schema: schema}),
+  database: drizzleAdapter(db, { provider: "pg", schema: schema, casing: "snake" }),
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID!,
