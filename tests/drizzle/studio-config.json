@@ -1,0 +1,45 @@
+{
+  "secret": "AUTH_SECRET",
+  "database": {
+    "provider": "postgresql",
+    "adapter": "prisma"
+  },
+  "socialProviders": {
+    "github": {
+      "clientId": "GITHUB_CLIENT_ID",
+      "clientSecret": "GITHUB_CLIENT_SECRET",
+      "redirectUri": "http://localhost:3000/api/auth/callback/github"
+    }
+  },
+  "emailAndPassword": {
+    "enabled": true,
+    "disableSignUp": false,
+    "requireEmailVerification": true,
+    "minPasswordLength": 8,
+    "maxPasswordLength": 128,
+    "autoSignIn": true,
+    "resetPasswordTokenExpiresIn": 3600
+  },
+  "plugins": [
+    {
+      "name": "organization",
+      "config": {
+        "teams": {
+          "enabled": true
+        }
+      }
+    }
+  ],
+  "session": {
+    "expiresIn": 604800,
+    "updateAge": 86400
+  },
+  "rateLimit": {
+    "enabled": true,
+    "window": 10,
+    "max": 100
+  },
+  "telemetry": {
+    "enabled": false
+  }
+}
