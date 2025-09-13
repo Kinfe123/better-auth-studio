@@ -679,6 +679,56 @@ export function createRoutes(authConfig: AuthConfig) {
     }
   });
 
+  router.get('/api/users/:userId/sessions', async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+      const adapter = await getAuthAdapter();
+      if (!adapter || !adapter.findMany) {
+        return res.status(500).json({ error: 'Auth adapter not available' });
+      }
+
+      const sessions = await adapter.findMany({ 
+        model: 'session', 
+        limit: 10000
+      });
+
+      const userSessions = sessions.filter((session: any) => session.userId === userId);
+
+      const formattedSessions = userSessions.map((session: any) => ({
+        id: session.id,
+        token: session.token,
+        expiresAt: session.expiresAt,
+        ipAddress: session.ipAddress || 'Unknown',
+        userAgent: session.userAgent || 'Unknown',
+        activeOrganizationId: session.activeOrganizationId,
+        activeTeamId: session.activeTeamId,
+        createdAt: session.createdAt,
+        updatedAt: session.updatedAt
+      }));
+
+      res.json({ sessions: formattedSessions });
+    } catch (error) {
+      console.error('Error fetching user sessions:', error);
+      res.status(500).json({ error: 'Failed to fetch user sessions' });
+    }
+  });
+
+  router.delete('/api/sessions/:sessionId', async (req: Request, res: Response) => {
+    try {
+      const { sessionId } = req.params;
+      const adapter = await getAuthAdapter();
+      if (!adapter || !adapter.delete) {
+        return res.status(500).json({ error: 'Auth adapter not available' });
+      }
+
+      await adapter.delete({ model: 'session', id: sessionId });
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting session:', error);
+      res.status(500).json({ error: 'Failed to delete session' });
+    }
+  });
+
   router.get('/api/teams/:teamId', async (req: Request, res: Response) => {
     try {
       const { teamId } = req.params;

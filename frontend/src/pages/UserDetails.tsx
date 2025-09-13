@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, User, Building2, Users, Mail, Calendar, Edit, Ban, UserMinus } from 'lucide-react'
+import { ArrowLeft, User, Building2, Users, Mail, Calendar, Edit, Ban, UserMinus, Clock, Monitor, Globe } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
 import { toast } from 'sonner'
@@ -47,17 +47,29 @@ interface TeamMembership {
   joinedAt: string
 }
 
+interface Session {
+  id: string
+  token: string
+  expiresAt: string
+  ipAddress: string
+  userAgent: string
+  activeOrganizationId?: string
+  activeTeamId?: string
+  createdAt: string
+  updatedAt: string
+}
+
 export default function UserDetails() {
   const { userId } = useParams<{ userId: string }>()
   const navigate = useNavigate()
   const [user, setUser] = useState<User | null>(null)
   const [organizations, setOrganizations] = useState<OrganizationMembership[]>([])
   const [teams, setTeams] = useState<TeamMembership[]>([])
+  const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'details' | 'organizations' | 'teams'>('details')
+  const [activeTab, setActiveTab] = useState<'details' | 'organizations' | 'teams' | 'sessions'>('details')
   const [showEditModal, setShowEditModal] = useState(false)
   const [showBanModal, setShowBanModal] = useState(false)
-  const [editFormData, setEditFormData] = useState({ name: '', email: '' })
 
   useEffect(() => {
     if (userId) {
@@ -72,7 +84,6 @@ export default function UserDetails() {
       if (response.ok) {
         const data = await response.json()
         setUser(data.user)
-        setEditFormData({ name: data.user.name, email: data.user.email })
       } else {
         toast.error('Failed to fetch user details')
         navigate('/users')
@@ -88,9 +99,10 @@ export default function UserDetails() {
 
   const fetchUserMemberships = async () => {
     try {
-      const [orgResponse, teamResponse] = await Promise.all([
+      const [orgResponse, teamResponse, sessionResponse] = await Promise.all([
         fetch(`/api/users/${userId}/organizations`),
-        fetch(`/api/users/${userId}/teams`)
+        fetch(`/api/users/${userId}/teams`),
+        fetch(`/api/users/${userId}/sessions`)
       ])
 
       if (orgResponse.ok) {
@@ -102,6 +114,11 @@ export default function UserDetails() {
         const teamData = await teamResponse.json()
         setTeams(teamData.memberships || [])
       }
+
+      if (sessionResponse.ok) {
+        const sessionData = await sessionResponse.json()
+        setSessions(sessionData.sessions || [])
+      }
     } catch (error) {
       console.error('Failed to fetch user memberships:', error)
     }
@@ -110,18 +127,26 @@ export default function UserDetails() {
   const handleEditUser = async () => {
     if (!user) return
 
+    const name = (document.getElementById('edit-name') as HTMLInputElement)?.value
+    const email = (document.getElementById('edit-email') as HTMLInputElement)?.value
+
+    if (!name || !email) {
+      toast.error('Please fill in all fields')
+      return
+    }
+
     const toastId = toast.loading('Updating user...')
     try {
       const response = await fetch(`/api/users/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editFormData)
+        body: JSON.stringify({ name, email })
       })
 
       const result = await response.json()
 
       if (result.success) {
-        setUser({ ...user, ...editFormData })
+        setUser({ ...user, name, email })
         setShowEditModal(false)
         toast.success('User updated successfully!', { id: toastId })
       } else {
@@ -195,6 +220,27 @@ export default function UserDetails() {
     } catch (error) {
       console.error('Error removing user from team:', error)
       toast.error('Error removing user from team', { id: toastId })
+    }
+  }
+
+  const handleDeleteSession = async (sessionId: string) => {
+    const toastId = toast.loading('Deleting session...')
+    try {
+      const response = await fetch(`/api/sessions/${sessionId}`, {
+        method: 'DELETE'
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setSessions(prev => prev.filter(s => s.id !== sessionId))
+        toast.success('Session deleted successfully!', { id: toastId })
+      } else {
+        toast.error(`Error deleting session: ${result.error || 'Unknown error'}`, { id: toastId })
+      }
+    } catch (error) {
+      console.error('Error deleting session:', error)
+      toast.error('Error deleting session', { id: toastId })
     }
   }
 
@@ -274,7 +320,8 @@ export default function UserDetails() {
               {[
                 { id: 'details', name: 'Details', icon: User },
                 { id: 'organizations', name: 'Organizations', icon: Building2, count: organizations.length },
-                { id: 'teams', name: 'Teams', icon: Users, count: teams.length }
+                { id: 'teams', name: 'Teams', icon: Users, count: teams.length },
+                { id: 'sessions', name: 'Sessions', icon: Clock, count: sessions.length }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -451,31 +498,109 @@ export default function UserDetails() {
                 )}
               </div>
             )}
+
+            {activeTab === 'sessions' && (
+              <div className="space-y-4">
+                {sessions.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-white mb-2">No Sessions</h3>
+                    <p className="text-gray-400">This user has no active sessions.</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4">
+                    {sessions.map((session) => (
+                      <div
+                        key={session.id}
+                        className="border border-dashed border-white/10 rounded-none p-4 hover:bg-white/5 transition-colors"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-12 h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center">
+                              <Monitor className="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                              <h3 className="text-white font-medium">Session {session.id.substring(0, 8)}...</h3>
+                              <p className="text-gray-400 text-sm">Token: {session.token.substring(0, 20)}...</p>
+                              <div className="flex items-center space-x-4 mt-1">
+                                <div className="flex items-center space-x-1 text-gray-400 text-xs">
+                                  <Globe className="w-3 h-3" />
+                                  <span>{session.ipAddress}</span>
+                                </div>
+                                <div className="flex items-center space-x-1 text-gray-400 text-xs">
+                                  <Clock className="w-3 h-3" />
+                                  <span>Expires {new Date(session.expiresAt).toLocaleDateString()}</span>
+                                </div>
+                              </div>
+                              <div className="text-gray-400 text-xs mt-1">
+                                Created: {new Date(session.createdAt).toLocaleString()}
+                              </div>
+                            </div>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteSession(session.id)}
+                            className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                          >
+                            <Ban className="w-4 h-4 mr-1" />
+                            Revoke
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {showEditModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-white mb-4">Edit User</h2>
+          <div className="bg-black/90 border border-dashed border-white/20 rounded-none p-6 w-full max-w-md">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light">Edit User</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowEditModal(false)}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                ×
+              </Button>
+            </div>
             <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-16 h-16 bg-black/80 border border-dashed border-white/20 flex items-center justify-center">
+                  {user?.image ? (
+                    <img src={user.image} alt={user.name} className="w-16 h-16 object-cover" />
+                  ) : (
+                    <User className="w-8 h-8 text-white" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-white font-medium">{user?.name}</h4>
+                  <p className="text-gray-400 text-sm">{user?.email}</p>
+                </div>
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">Name</label>
                 <input
+                  id="edit-name"
                   type="text"
-                  value={editFormData.name}
-                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                  className="w-full px-3 py-2 bg-black/80 border border-dashed border-white/20 rounded-none text-white placeholder-gray-400 focus:outline-none focus:border-white/50"
+                  defaultValue={user?.name || ''}
+                  className="w-full px-3 py-2 bg-gray-800 border border-dashed border-white/20 rounded-none text-white placeholder-gray-400 focus:outline-none focus:border-white/50"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
                 <input
+                  id="edit-email"
                   type="email"
-                  value={editFormData.email}
-                  onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                  className="w-full px-3 py-2 bg-black/80 border border-dashed border-white/20 rounded-none text-white placeholder-gray-400 focus:outline-none focus:border-white/50"
+                  defaultValue={user?.email || ''}
+                  className="w-full px-3 py-2 bg-gray-800 border border-dashed border-white/20 rounded-none text-white placeholder-gray-400 focus:outline-none focus:border-white/50"
                 />
               </div>
             </div>
@@ -489,9 +614,9 @@ export default function UserDetails() {
               </Button>
               <Button
                 onClick={handleEditUser}
-                className="bg-white text-black hover:bg-gray-200 rounded-none"
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
               >
-                Save Changes
+                Update
               </Button>
             </div>
           </div>
