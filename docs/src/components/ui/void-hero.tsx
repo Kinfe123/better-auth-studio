@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Geometry, Base, Subtraction} from '@react-three/csg'
-import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { Bloom, N8AO, SMAA, EffectComposer } from '@react-three/postprocessing'
 import { useRef } from "react";
 import { Mesh } from "three";
