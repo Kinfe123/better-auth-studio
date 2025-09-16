@@ -10,7 +10,7 @@ import { createRoutes } from './routes.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 export async function startStudio(options) {
-    const { port, host, openBrowser, authConfig } = options;
+    const { port, host, openBrowser, authConfig, configPath, watchMode } = options;
     const app = express();
     const server = createServer(app);
     app.use(cors({
@@ -19,22 +19,33 @@ export async function startStudio(options) {
     }));
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    const wss = new WebSocketServer({ server });
-    wss.on('connection', (ws) => {
-        console.log(chalk.gray('🔌 WebSocket client connected'));
-        const heartbeat = setInterval(() => {
-            ws.ping();
-        }, 30000);
-        ws.on('close', () => {
-            console.log(chalk.gray('🔌 WebSocket client disconnected'));
-            clearInterval(heartbeat);
+    let wss = null;
+    // Only start WebSocket server in watch mode
+    if (watchMode) {
+        wss = new WebSocketServer({ server });
+        wss.on('connection', (ws) => {
+            console.log(chalk.gray('🔌 WebSocket client connected (watch mode)'));
+            const heartbeat = setInterval(() => {
+                if (ws.readyState === ws.OPEN) {
+                    ws.ping();
+                }
+            }, 30000);
+            ws.on('close', () => {
+                console.log(chalk.gray('🔌 WebSocket client disconnected'));
+                clearInterval(heartbeat);
+            });
+            ws.on('error', (error) => {
+                console.error('WebSocket error:', error);
+                clearInterval(heartbeat);
+            });
+            // Send initial connection message
+            ws.send(JSON.stringify({
+                type: 'connected',
+                message: 'Connected to Better Auth Studio (watch mode)'
+            }));
         });
-        ws.on('error', (error) => {
-            console.error('WebSocket error:', error);
-            clearInterval(heartbeat);
-        });
-    });
-    app.use(createRoutes(authConfig));
+    }
+    app.use(createRoutes(authConfig, configPath));
     app.use(express.static(join(__dirname, '../public')));
     app.get('*', (req, res) => {
         res.sendFile(join(__dirname, '../public/index.html'));
@@ -61,6 +72,6 @@ export async function startStudio(options) {
             process.exit(0);
         });
     });
-    return server;
+    return { server, wss };
 }
 //# sourceMappingURL=studio.js.map

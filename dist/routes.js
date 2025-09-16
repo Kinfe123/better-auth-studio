@@ -178,7 +178,7 @@ async function findAuthConfigPath() {
     }
     return null;
 }
-export function createRoutes(authConfig) {
+export function createRoutes(authConfig, configPath) {
     const router = Router();
     router.get('/api/health', (req, res) => {
         const uptime = process.uptime();
@@ -819,7 +819,7 @@ export function createRoutes(authConfig) {
     });
     router.get('/api/plugins', async (req, res) => {
         try {
-            const authConfigPath = await findAuthConfigPath();
+            const authConfigPath = configPath ? join(process.cwd(), configPath) : await findAuthConfigPath();
             if (!authConfigPath) {
                 return res.json({
                     plugins: [],
@@ -841,7 +841,6 @@ export function createRoutes(authConfig) {
                 const pluginInfo = plugins.map((plugin) => ({
                     id: plugin.id,
                     name: plugin.name || plugin.id,
-                    version: plugin.version || 'unknown',
                     description: plugin.description || `${plugin.id} plugin for Better Auth`,
                     enabled: true
                 }));

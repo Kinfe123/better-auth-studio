@@ -17,10 +17,12 @@ interface StudioOptions {
   host: string;
   openBrowser: boolean;
   authConfig: AuthConfig;
+  configPath?: string;
+  watchMode?: boolean;
 }
 
 export async function startStudio(options: StudioOptions) {
-  const { port, host, openBrowser, authConfig } = options;
+  const { port, host, openBrowser, authConfig, configPath, watchMode } = options;
   const app = express();
   const server = createServer(app);
 
@@ -32,27 +34,40 @@ export async function startStudio(options: StudioOptions) {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  const wss = new WebSocketServer({ server });
+  let wss: WebSocketServer | null = null;
   
-  wss.on('connection', (ws) => {
-    console.log(chalk.gray('🔌 WebSocket client connected'));
+  // Only start WebSocket server in watch mode
+  if (watchMode) {
+    wss = new WebSocketServer({ server });
     
-    const heartbeat = setInterval(() => {
-      ws.ping();
-    }, 30000);
+    wss.on('connection', (ws) => {
+      console.log(chalk.gray('🔌 WebSocket client connected (watch mode)'));
+      
+      const heartbeat = setInterval(() => {
+        if (ws.readyState === ws.OPEN) {
+          ws.ping();
+        }
+      }, 30000);
 
-    ws.on('close', () => {
-      console.log(chalk.gray('🔌 WebSocket client disconnected'));
-      clearInterval(heartbeat);
+      ws.on('close', () => {
+        console.log(chalk.gray('🔌 WebSocket client disconnected'));
+        clearInterval(heartbeat);
+      });
+
+      ws.on('error', (error) => {
+        console.error('WebSocket error:', error);
+        clearInterval(heartbeat);
+      });
+
+      // Send initial connection message
+      ws.send(JSON.stringify({
+        type: 'connected',
+        message: 'Connected to Better Auth Studio (watch mode)'
+      }));
     });
+  }
 
-    ws.on('error', (error) => {
-      console.error('WebSocket error:', error);
-      clearInterval(heartbeat);
-    });
-  });
-
-  app.use(createRoutes(authConfig));
+  app.use(createRoutes(authConfig, configPath));
 
   app.use(express.static(join(__dirname, '../public')));
 
@@ -85,5 +100,5 @@ export async function startStudio(options: StudioOptions) {
     });
   });
 
-  return server;
+  return { server, wss };
 }

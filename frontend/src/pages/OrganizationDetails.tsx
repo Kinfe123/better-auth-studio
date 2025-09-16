@@ -1085,7 +1085,7 @@ export default function OrganizationDetails() {
                                                         </div>
                                                         <div>
                                                             <div className="text-white font-light">{invitation.email}</div>
-                                                            <div className="text-sm text-gray-400">Expires on {new Date(invitation.expiresAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</div>
+                                                            <div className="text-sm text-gray-400">Expires on {new Date(invitation.expiresAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric'  , day: 'numeric' })}</div>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -1109,6 +1109,10 @@ export default function OrganizationDetails() {
                                                 </td>
                                                 <td className="py-4 px-4 text-sm text-gray-400">
                                                     {new Date(invitation.expiresAt).toLocaleDateString()}
+                                                   <br />
+                                                   <span className="text-xs text-gray-400">
+                                                     {new Date(invitation.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </span> 
                                                 </td>
                                                 <td className="py-4 px-4 text-right">
                                                     <div className="flex items-center justify-end space-x-2">

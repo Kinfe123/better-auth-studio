@@ -5,6 +5,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { startStudio } from './studio.js';
 import { findAuthConfig } from './config.js';
+import chokidar from 'chokidar';
 async function findAuthConfigPath() {
     const possibleConfigFiles = [
         'auth.ts',
@@ -40,6 +41,102 @@ async function findAuthConfigPath() {
     }
     return null;
 }
+let currentStudio = null;
+let watcher = null;
+let webSocketServer = null;
+async function startStudioWithWatch(options) {
+    const { port, host, openBrowser, authConfig, configPath, watchMode } = options;
+    const studioResult = await startStudio({
+        port,
+        host,
+        openBrowser,
+        authConfig,
+        configPath,
+        watchMode
+    });
+    currentStudio = studioResult.server;
+    webSocketServer = studioResult.wss;
+    if (configPath) {
+        const resolvedPath = join(process.cwd(), configPath);
+        console.log(chalk.blue(`👀 Watching for changes in: ${resolvedPath}`));
+        watcher = chokidar.watch(resolvedPath, {
+            persistent: true,
+            ignoreInitial: true
+        });
+        watcher.on('change', async (path) => {
+            console.log(chalk.yellow(`\n🔄 Config file changed: ${path}`));
+            console.log(chalk.gray('Reloading Better Auth Studio...\n'));
+            try {
+                // Stop current studio
+                if (currentStudio && typeof currentStudio.close === 'function') {
+                    await currentStudio.close();
+                }
+                // Reload config
+                const newAuthConfig = await findAuthConfig(configPath);
+                if (!newAuthConfig) {
+                    console.error(chalk.red('❌ Failed to reload config. Keeping previous configuration.'));
+                    return;
+                }
+                console.log(chalk.green('✅ Config reloaded successfully'));
+                const newStudioResult = await startStudio({
+                    port,
+                    host,
+                    openBrowser: false,
+                    authConfig: newAuthConfig,
+                    configPath,
+                    watchMode
+                });
+                currentStudio = newStudioResult.server;
+                webSocketServer = newStudioResult.wss;
+                if (webSocketServer && webSocketServer.clients) {
+                    console.log(chalk.blue(`📡 Broadcasting config change to ${webSocketServer.clients.size} connected clients`));
+                    webSocketServer.clients.forEach((client) => {
+                        if (client.readyState === 1) { // WebSocket.OPEN
+                            try {
+                                client.send(JSON.stringify({
+                                    type: 'config_changed',
+                                    message: 'Configuration has been reloaded'
+                                }));
+                                console.log(chalk.green('✅ Config change message sent to client'));
+                            }
+                            catch (error) {
+                                console.error(chalk.red('❌ Failed to send message to client:'), error);
+                            }
+                        }
+                    });
+                }
+                else {
+                    console.log(chalk.yellow('⚠️  No WebSocket server or clients available'));
+                }
+                console.log(chalk.green('✅ Better Auth Studio reloaded!'));
+            }
+            catch (error) {
+                console.error(chalk.red('❌ Failed to reload studio:'), error);
+                console.log(chalk.yellow('Keeping previous configuration running...'));
+            }
+        });
+        watcher.on('error', (error) => {
+            console.error(chalk.red('❌ File watcher error:'), error);
+        });
+    }
+    else {
+        console.log(chalk.yellow('⚠️  Watch mode requires --config flag to specify which file to watch'));
+    }
+    // Handle graceful shutdown
+    process.on('SIGINT', async () => {
+        console.log(chalk.gray('\n🛑 Shutting down...'));
+        if (watcher) {
+            await watcher.close();
+        }
+        if (webSocketServer) {
+            webSocketServer.close();
+        }
+        if (currentStudio && typeof currentStudio.close === 'function') {
+            await currentStudio.close();
+        }
+        process.exit(0);
+    });
+}
 const program = new Command();
 program
     .name('better-auth-studio')
@@ -50,16 +147,28 @@ program
     .description('Start Better Auth Studio')
     .option('-p, --port <port>', 'Port to run the studio on', '3002')
     .option('-h, --host <host>', 'Host to run the studio on', 'localhost')
+    .option('-c, --config <path>', 'Path to the auth configuration file')
+    .option('-w, --watch', 'Watch for changes in auth config file and reload server')
     .option('--no-open', 'Do not open browser automatically')
     .action(async (options) => {
     try {
         console.log(chalk.blue('🔐 Better Auth Studio'));
         console.log(chalk.gray('Starting Better Auth Studio...\n'));
-        const authConfig = await findAuthConfig();
+        const authConfig = await findAuthConfig(options.config);
         if (!authConfig) {
             console.error(chalk.red('❌ No Better Auth configuration found.'));
-            console.log(chalk.yellow('Make sure you have a Better Auth configuration file in your project.'));
-            console.log(chalk.yellow('Supported files: auth.ts, auth.js, better-auth.config.ts, etc.'));
+            if (options.config) {
+                console.log(chalk.yellow(`Could not find or load config file: ${options.config}`));
+                console.log(chalk.gray(`Current working directory: ${process.cwd()}`));
+                console.log(chalk.gray(`Tried paths:`));
+                console.log(chalk.gray(`  - ${join(process.cwd(), options.config)}`));
+                console.log(chalk.gray(`  - ${join(process.cwd(), '..', options.config)}`));
+                console.log(chalk.gray(`  - ${join(process.cwd(), '../..', options.config)}`));
+            }
+            else {
+                console.log(chalk.yellow('Make sure you have a Better Auth configuration file in your project.'));
+                console.log(chalk.yellow('Supported files: auth.ts, auth.js, better-auth.config.ts, etc.'));
+            }
             process.exit(1);
         }
         console.log(chalk.green('✅ Found Better Auth configuration'));
@@ -115,12 +224,26 @@ program
         }
         console.log(chalk.gray(`Database: ${databaseInfo}`));
         console.log(chalk.gray(`Providers: ${providersInfo}\n`));
-        await startStudio({
-            port: parseInt(options.port),
-            host: options.host,
-            openBrowser: options.open,
-            authConfig
-        });
+        if (options.watch) {
+            await startStudioWithWatch({
+                port: parseInt(options.port),
+                host: options.host,
+                openBrowser: options.open,
+                authConfig,
+                configPath: options.config,
+                watchMode: true
+            });
+        }
+        else {
+            await startStudio({
+                port: parseInt(options.port),
+                host: options.host,
+                openBrowser: options.open,
+                authConfig,
+                configPath: options.config,
+                watchMode: false
+            });
+        }
     }
     catch (error) {
         console.error(chalk.red('❌ Failed to start Better Auth Studio:'), error);

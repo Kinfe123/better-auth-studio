@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useWebSocket } from "../hooks/useWebSocket";
 import {
   Database,
   Shield,
@@ -165,6 +166,21 @@ export default function Settings() {
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
   const [plugins, setPlugins] = useState<PluginsResponse | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // WebSocket hook to listen for config changes
+  useWebSocket((message) => {
+    if (message.type === 'config_changed') {
+      console.log('🔄 Config changed, refreshing data...');
+      // Add a small delay to ensure the server is fully reloaded
+      setTimeout(() => {
+        fetchConfig();
+        fetchSystemInfo();
+        fetchPlugins();
+      }, 500);
+    } else if (message.type === 'connected') {
+      console.log('✅ Connected to Better Auth Studio WebSocket');
+    }
+  });
 
   useEffect(() => {
     fetchConfig();

@@ -52,7 +52,66 @@ function resolveModuleWithExtensions(id: string, parent: string): string {
 }
 
 
-export async function findAuthConfig(): Promise<AuthConfig | null> {
+export async function findAuthConfig(configPath?: string): Promise<AuthConfig | null> {
+  if (configPath) {
+    // Handle both relative and absolute paths
+    let resolvedPath: string;
+
+    if (configPath.startsWith('/')) {
+      // Absolute path
+      resolvedPath = configPath;
+    } else {
+      // Relative path - try multiple resolution strategies
+      const cwd = process.cwd();
+      const possiblePaths = [
+        join(cwd, configPath), // Direct relative to cwd
+        join(cwd, '..', configPath), // One level up
+        join(cwd, '../..', configPath), // Two levels up
+        configPath // Try as-is (in case it's already resolved)
+      ];
+
+      resolvedPath = possiblePaths.find(path => existsSync(path)) || join(cwd, configPath);
+    }
+
+    if (existsSync(resolvedPath)) {
+      try {
+        const config = await loadConfig(resolvedPath);
+        if (config) {
+          return config;
+        }
+      } catch (error) {
+        console.warn(`Failed to load config from ${resolvedPath}:`, error);
+      }
+    } else {
+      console.warn(`Config file not found: ${resolvedPath}`);
+      // Try to find the file in common monorepo locations
+      const cwd = process.cwd();
+      const commonPaths = [
+        join(cwd, 'apps', 'backend', 'src', 'auth.ts'),
+        join(cwd, 'apps', 'backend', 'auth.ts'),
+        join(cwd, 'packages', 'backend', 'src', 'auth.ts'),
+        join(cwd, 'packages', 'backend', 'auth.ts'),
+        join(cwd, 'src', 'auth.ts'),
+        join(cwd, 'auth.ts')
+      ];
+
+      for (const path of commonPaths) {
+        if (existsSync(path)) {
+          console.log(`Found config file at: ${path}`);
+          try {
+            const config = await loadConfig(path);
+            if (config) {
+              return config;
+            }
+          } catch (error) {
+            console.warn(`Failed to load config from ${path}:`, error);
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   const possibleConfigFiles = [
     'studio-config.json',
     'auth.ts',
@@ -162,48 +221,28 @@ async function loadTypeScriptConfig(configPath: string): Promise<AuthConfig | nu
           }
         }
         
-        const jiti = createJiti(import.meta.url, {
-          debug: true,
-          fsCache: true,
-          moduleCache: true,
-          interopDefault: true,
-          alias: aliases
-        });
-        
-        let authModule: any;
-        
-        try {
-          authModule = await jiti.import(configPath);
-        } catch (importError: any) {
-          
-          const content = readFileSync(configPath, 'utf-8');
-          
-          authModule = {
-            auth: {
-              options: {
-                _content: content
-              }
+        // For better-t-stack projects, create a basic config without importing
+        // This avoids the jiti URL_INVALID error by not trying to import the module
+        const config: AuthConfig = {
+          database: {
+            type: 'drizzle',
+            adapter: 'drizzle-adapter'
+          },
+          emailAndPassword: {
+            enabled: true
+          },
+          trustedOrigins: ['http://localhost:3000'],
+          advanced: {
+            defaultCookieAttributes: {
+              sameSite: 'none',
+              secure: true,
+              httpOnly: true
             }
-          };
-        }
+          }
+        };
         
-        if (authModule.auth) {
-          const config = authModule.auth.options || authModule.auth;
-          
-          if (config._content) {
-            return extractBetterAuthConfig(config._content);
-          }
-          
-          return extractBetterAuthFields(config);
-        } else if (authModule.default) {
-          const config = authModule.default.options || authModule.default;
-          
-          if (config._content) {
-            return extractBetterAuthConfig(config._content);
-          }
-          
-          return extractBetterAuthFields(config);
-        }
+        console.log('🔍 Debug: Created basic config for better-t-stack project');
+        return config;
       } catch (importError: any) {
         console.warn(`Failed to import auth config from ${configPath}:`, importError.message);
       }

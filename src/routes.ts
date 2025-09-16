@@ -217,7 +217,7 @@ async function findAuthConfigPath(): Promise<string | null> {
   return null;
 }
 
-export function createRoutes(authConfig: AuthConfig) {
+export function createRoutes(authConfig: AuthConfig, configPath?: string) {
   const router = Router();
 
   router.get('/api/health', (req: Request, res: Response) => {
@@ -920,7 +920,7 @@ export function createRoutes(authConfig: AuthConfig) {
 
   router.get('/api/plugins', async (req: Request, res: Response) => {
     try {
-      const authConfigPath = await findAuthConfigPath();
+      const authConfigPath = configPath ? join(process.cwd(), configPath) : await findAuthConfigPath();
       if (!authConfigPath) {
         return res.json({
           plugins: [],
@@ -932,7 +932,7 @@ export function createRoutes(authConfig: AuthConfig) {
       try {
         const authModule = await safeImportAuthConfig(authConfigPath);
         const auth = authModule.auth || authModule.default;
-
+        
         if (!auth) {
           return res.json({
             plugins: [],
@@ -940,12 +940,10 @@ export function createRoutes(authConfig: AuthConfig) {
             configPath: authConfigPath
           });
         }
-
         const plugins = auth.options?.plugins || [];
         const pluginInfo = plugins.map((plugin: any) => ({
           id: plugin.id,
           name: plugin.name || plugin.id,
-          version: plugin.version || 'unknown',
           description: plugin.description || `${plugin.id} plugin for Better Auth`,
           enabled: true
         }));

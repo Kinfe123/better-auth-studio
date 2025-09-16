@@ -23,6 +23,6 @@ export interface AuthConfig {
     rateLimit?: any;
     [key: string]: any;
 }
-export declare function findAuthConfig(): Promise<AuthConfig | null>;
+export declare function findAuthConfig(configPath?: string): Promise<AuthConfig | null>;
 export declare function extractBetterAuthConfig(content: string): AuthConfig | null;
 //# sourceMappingURL=config.d.ts.map
