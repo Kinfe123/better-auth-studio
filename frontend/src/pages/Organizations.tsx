@@ -11,7 +11,8 @@ import {
   Eye,
   X,
   Database,
-  Loader
+  Loader,
+  Download
 } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
@@ -437,6 +438,39 @@ export default function Organizations() {
     }
   }
 
+  const exportOrganizationsToCSV = () => {
+    if (organizations.length === 0) {
+      toast.error('No organizations to export')
+      return
+    }
+
+    const csvHeaders = ['ID', 'Name', 'Slug', 'Created At', 'Updated At']
+    const csvData = organizations.map(organization => [
+      organization.id,
+      organization.name || '',
+      organization.slug || '',
+      new Date(organization.createdAt).toLocaleString(),
+      new Date(organization.updatedAt).toLocaleString()
+    ])
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvData.map(row => row.map(field => `"${field}"`).join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `organizations-export-${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
+    toast.success(`Exported ${organizations.length} organizations to CSV`)
+  }
+
   const filteredOrganizations = organizations.filter(organization => {
     const matchesSearch = organization.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          organization.slug.toLowerCase().includes(searchTerm.toLowerCase())
@@ -559,6 +593,13 @@ export default function Organizations() {
           <p className="text-gray-400 mt-1">Manage your organizations and teams</p>
         </div>
         <div className="flex items-center space-x-3">
+          <Button
+            className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
+            onClick={exportOrganizationsToCSV}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export CSV
+          </Button>
           <Button
             className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
             onClick={() => setShowSeedModal(true)}

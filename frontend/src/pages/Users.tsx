@@ -13,7 +13,8 @@ import {
   X,
   Database,
   Check,
-  Loader
+  Loader,
+  Download
 } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
@@ -267,6 +268,40 @@ export default function Users() {
     }
   }
 
+  const exportUsersToCSV = () => {
+    if (users.length === 0) {
+      toast.error('No users to export')
+      return
+    }
+
+    const csvHeaders = ['ID', 'Name', 'Email', 'Email Verified', 'Created At', 'Updated At']
+    const csvData = users.map(user => [
+      user.id,
+      user.name || '',
+      user.email || '',
+      user.emailVerified ? true : false,
+      new Date(user.createdAt).toLocaleString(),
+      new Date(user.updatedAt).toLocaleString()
+    ])
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvData.map(row => row.map(field => `"${field}"`).join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `users-export-${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
+    toast.success(`Exported ${users.length} users to CSV`)
+  }
+
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
        user.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -303,6 +338,13 @@ export default function Users() {
           <p className="text-gray-400 mt-1">Manage your application users</p>
         </div>
         <div className="flex items-center space-x-3">
+          <Button
+            className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
+            onClick={exportUsersToCSV}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export CSV
+          </Button>
           <Button
             className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
             onClick={() => setShowSeedModal(true)}
