@@ -218,7 +218,7 @@ async function findAuthConfigPath(): Promise<string | null> {
   return null;
 }
 
-// @ts-ignore will be fixed in the next version
+// @ts-expect-error will be fixed in the next version
 export function createRoutes(authConfig: AuthConfig, configPath?: string, geoDbPath?: string) {
   const router = Router();
 
