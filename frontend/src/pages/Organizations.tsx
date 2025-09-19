@@ -111,12 +111,16 @@ export default function Organizations() {
     try {
       const response = await fetch('/api/plugins');
       const pluginLists: any = await response.json();
-      const orgEnabled = (pluginLists?.plugins as any).find((plugin: any) => plugin.id === 'organization');
+      const orgEnabled = (pluginLists?.plugins as any).find(
+        (plugin: any) => plugin.id === 'organization'
+      );
       setPluginStatus({
         enabled: !!orgEnabled,
         availablePlugins: (pluginLists?.plugins as any).map((plugin: any) => plugin.id),
         configPath: (pluginLists as any).configPath,
-        organizationPlugin: (pluginLists?.plugins as any).find((plugin: any) => plugin.id === 'organization'),
+        organizationPlugin: (pluginLists?.plugins as any).find(
+          (plugin: any) => plugin.id === 'organization'
+        ),
       });
       if (orgEnabled) {
         await fetchOrganizations();

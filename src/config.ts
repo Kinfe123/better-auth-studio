@@ -288,12 +288,12 @@ async function loadTypeScriptConfig(configPath: string): Promise<AuthConfig | nu
                 console.log('Found auth.$context, attempting to await...');
                 const context = await auth.$context;
                 const options = context.options;
-                console.log({context})
+                console.log({ context });
                 if (!options) {
                   console.warn('No options found in auth context');
                   return null;
                 }
-                
+
                 const config: AuthConfig = {
                   database: {
                     type: options.database ? 'drizzle' : 'unknown',
@@ -304,11 +304,13 @@ async function loadTypeScriptConfig(configPath: string): Promise<AuthConfig | nu
                     enabled: options.emailAndPassword?.enabled || false,
                     ...options.emailAndPassword,
                   },
-                  socialProviders: options.socialProviders ? Object.keys(options.socialProviders).map(provider => ({
-                    id: provider,
-                    name: provider,
-                    enabled: true
-                  })) : [],
+                  socialProviders: options.socialProviders
+                    ? Object.keys(options.socialProviders).map((provider) => ({
+                        id: provider,
+                        name: provider,
+                        enabled: true,
+                      }))
+                    : [],
                   trustedOrigins: options.trustedOrigins || ['http://localhost:3000'],
                   advanced: {
                     defaultCookieAttributes: options.advanced?.defaultCookieAttributes || {

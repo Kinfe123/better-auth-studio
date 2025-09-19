@@ -2,7 +2,7 @@ import { type Request, type Response, Router } from 'express';
 import { existsSync, readFileSync } from 'fs';
 import { createJiti } from 'jiti';
 import { dirname, join } from 'path';
-import { pathToFileURL, fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import {
   createMockAccount,
   createMockSession,

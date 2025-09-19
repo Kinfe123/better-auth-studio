@@ -979,9 +979,7 @@ export default function Settings() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-white">
-                  {studioVersion || 'v1.0.0'}
-                </p>
+                <p className="text-sm font-medium text-white">{studioVersion || 'v1.0.0'}</p>
                 <p className="text-xs text-gray-400">Latest</p>
               </div>
             </div>
