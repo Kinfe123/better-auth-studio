@@ -36,6 +36,16 @@ async function testCI() {
     allPassed = false;
   }
 
+  // Test 1.5: Install frontend dependencies
+  console.log('📦 Installing frontend dependencies...');
+  try {
+    execSync('cd frontend && npm install', { stdio: 'inherit' });
+    console.log('✅ Frontend dependencies installed successfully\n');
+  } catch (error) {
+    console.error('❌ Frontend dependencies installation failed:', error.message);
+    allPassed = false;
+  }
+
   // Test 2: Type checking
   if (!runCommand('pnpm run type-check', 'Type checking')) {
     allPassed = false;

@@ -61,6 +61,18 @@ jobs:
           echo "⚠️ pnpm-lock.yaml not found, installing without frozen lockfile"
           pnpm install
         fi
+        
+        # Install frontend dependencies
+        echo "📦 Installing frontend dependencies..."
+        cd frontend
+        if [ -f "package-lock.json" ]; then
+          echo "✅ package-lock.json found, installing with npm ci"
+          npm ci
+        else
+          echo "⚠️ package-lock.json not found, installing with npm install"
+          npm install
+        fi
+        cd ..
       
     - name: Lint packages
       run: pnpm run lint || echo "Linting completed with warnings"
@@ -131,6 +143,18 @@ jobs:
           echo "⚠️ pnpm-lock.yaml not found, installing without frozen lockfile"
           pnpm install
         fi
+        
+        # Install frontend dependencies
+        echo "📦 Installing frontend dependencies..."
+        cd frontend
+        if [ -f "package-lock.json" ]; then
+          echo "✅ package-lock.json found, installing with npm ci"
+          npm ci
+        else
+          echo "⚠️ package-lock.json not found, installing with npm install"
+          npm install
+        fi
+        cd ..
       
     - name: Run security audit
       run: pnpm audit --audit-level moderate
