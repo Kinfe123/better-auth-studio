@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { getAuthData } from './data.js';
-import { getAuthAdapter, createMockUser, createMockSession, createMockAccount, createMockVerification } from './auth-adapter.js';
-import { resolveIPLocation, initializeGeoService, setGeoDbPath } from './geo-service.js';
+import { existsSync, readFileSync } from 'fs';
 import { createJiti } from 'jiti';
-import { readFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
+import { dirname, join } from 'path';
 import { pathToFileURL } from 'url';
+import { createMockAccount, createMockSession, createMockUser, createMockVerification, getAuthAdapter, } from './auth-adapter.js';
+import { getAuthData } from './data.js';
+import { initializeGeoService, resolveIPLocation, setGeoDbPath } from './geo-service.js';
 function resolveModuleWithExtensions(id, parent) {
     if (!id.startsWith('./') && !id.startsWith('../')) {
         return id;
@@ -55,7 +55,7 @@ export async function safeImportAuthConfig(authConfigPath) {
                     join(authConfigDir, importName, 'index.ts'),
                     join(authConfigDir, importName, 'index.js'),
                     join(authConfigDir, importName, 'index.mjs'),
-                    join(authConfigDir, importName, 'index.cjs')
+                    join(authConfigDir, importName, 'index.cjs'),
                 ];
                 for (const path of possiblePaths) {
                     if (existsSync(path)) {
@@ -69,7 +69,7 @@ export async function safeImportAuthConfig(authConfigPath) {
                 fsCache: true,
                 moduleCache: true,
                 interopDefault: true,
-                alias: aliases
+                alias: aliases,
             });
             try {
                 return await jiti.import(authConfigPath);
@@ -79,9 +79,9 @@ export async function safeImportAuthConfig(authConfigPath) {
                 return {
                     auth: {
                         options: {
-                            _content: content
-                        }
-                    }
+                            _content: content,
+                        },
+                    },
                 };
             }
         }
@@ -169,7 +169,7 @@ async function findAuthConfigPath() {
         'src/auth.js',
         'src/auth.ts',
         'lib/auth.js',
-        'lib/auth.ts'
+        'lib/auth.ts',
     ];
     for (const path of possiblePaths) {
         const fullPath = join(process.cwd(), path);
@@ -179,15 +179,13 @@ async function findAuthConfigPath() {
     }
     return null;
 }
+// @ts-nocheck
 export function createRoutes(authConfig, configPath, geoDbPath) {
     const router = Router();
-    // Set geo database path if provided
     if (geoDbPath) {
         setGeoDbPath(geoDbPath);
     }
-    // Initialize Geo service
     initializeGeoService().catch(console.error);
-    // Store the config path for use in adapter functions
     const getAuthAdapterWithConfig = () => getAuthAdapter(configPath);
     router.get('/api/health', (req, res) => {
         const uptime = process.uptime();
@@ -206,11 +204,11 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 memory: {
                     used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
                     total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
-                    external: Math.round(process.memoryUsage().external / 1024 / 1024)
+                    external: Math.round(process.memoryUsage().external / 1024 / 1024),
                 },
                 pid: process.pid,
-                cwd: process.cwd()
-            }
+                cwd: process.cwd(),
+            },
         });
     });
     // IP Geolocation endpoint
@@ -220,26 +218,26 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             if (!ipAddress) {
                 return res.status(400).json({
                     success: false,
-                    error: 'IP address is required'
+                    error: 'IP address is required',
                 });
             }
             const location = resolveIPLocation(ipAddress);
             if (!location) {
                 return res.status(404).json({
                     success: false,
-                    error: 'Location not found for IP address'
+                    error: 'Location not found for IP address',
                 });
             }
             res.json({
                 success: true,
-                location
+                location,
             });
         }
         catch (error) {
             console.error('Error resolving IP location:', error);
             res.status(500).json({
                 success: false,
-                error: 'Failed to resolve IP location'
+                error: 'Failed to resolve IP location',
             });
         }
     });
@@ -275,13 +273,13 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 dialect: authConfig.database?.dialect || authConfig.database?.provider || 'unknown',
                 casing: authConfig.database?.casing || 'camel',
                 debugLogs: authConfig.database?.debugLogs || false,
-                url: authConfig.database?.url
+                url: authConfig.database?.url,
             },
             emailVerification: {
                 sendOnSignUp: authConfig.emailVerification?.sendOnSignUp || false,
                 sendOnSignIn: authConfig.emailVerification?.sendOnSignIn || false,
                 autoSignInAfterVerification: authConfig.emailVerification?.autoSignInAfterVerification || false,
-                expiresIn: authConfig.emailVerification?.expiresIn || 3600
+                expiresIn: authConfig.emailVerification?.expiresIn || 3600,
             },
             emailAndPassword: {
                 enabled: authConfig.emailAndPassword?.enabled ?? false,
@@ -291,26 +289,26 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 minPasswordLength: authConfig.emailAndPassword?.minPasswordLength ?? 8,
                 resetPasswordTokenExpiresIn: authConfig.emailAndPassword?.resetPasswordTokenExpiresIn ?? 3600,
                 autoSignIn: authConfig.emailAndPassword?.autoSignIn ?? true, // defaults to true
-                revokeSessionsOnPasswordReset: authConfig.emailAndPassword?.revokeSessionsOnPasswordReset ?? false
+                revokeSessionsOnPasswordReset: authConfig.emailAndPassword?.revokeSessionsOnPasswordReset ?? false,
             },
-            socialProviders: authConfig.socialProviders ?
-                Object.entries(authConfig.socialProviders).map(([provider, config]) => ({
+            socialProviders: authConfig.socialProviders
+                ? Object.entries(authConfig.socialProviders).map(([provider, config]) => ({
                     type: provider,
                     clientId: config.clientId,
                     clientSecret: config.clientSecret,
                     redirectUri: config.redirectUri,
-                    ...config
-                })) :
-                (authConfig.providers || []),
+                    ...config,
+                }))
+                : authConfig.providers || [],
             user: {
                 modelName: authConfig.user?.modelName || 'user',
                 changeEmail: {
-                    enabled: authConfig.user?.changeEmail?.enabled || false
+                    enabled: authConfig.user?.changeEmail?.enabled || false,
                 },
                 deleteUser: {
                     enabled: authConfig.user?.deleteUser?.enabled || false,
-                    deleteTokenExpiresIn: authConfig.user?.deleteUser?.deleteTokenExpiresIn || 86400
-                }
+                    deleteTokenExpiresIn: authConfig.user?.deleteUser?.deleteTokenExpiresIn || 86400,
+                },
             },
             session: {
                 modelName: authConfig.session?.modelName || 'session',
@@ -321,9 +319,9 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 preserveSessionInDatabase: authConfig.session?.preserveSessionInDatabase || false,
                 cookieCache: {
                     enabled: authConfig.session?.cookieCache?.enabled || false,
-                    maxAge: authConfig.session?.cookieCache?.maxAge || 300
+                    maxAge: authConfig.session?.cookieCache?.maxAge || 300,
                 },
-                freshAge: authConfig.session?.freshAge || 86400
+                freshAge: authConfig.session?.freshAge || 86400,
             },
             account: {
                 modelName: authConfig.account?.modelName || 'account',
@@ -333,13 +331,13 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     trustedProviders: authConfig.account?.accountLinking?.trustedProviders || [],
                     allowDifferentEmails: authConfig.account?.accountLinking?.allowDifferentEmails || false,
                     allowUnlinkingAll: authConfig.account?.accountLinking?.allowUnlinkingAll || false,
-                    updateUserInfoOnLink: authConfig.account?.accountLinking?.updateUserInfoOnLink || false
+                    updateUserInfoOnLink: authConfig.account?.accountLinking?.updateUserInfoOnLink || false,
                 },
-                encryptOAuthTokens: authConfig.account?.encryptOAuthTokens || false
+                encryptOAuthTokens: authConfig.account?.encryptOAuthTokens || false,
             },
             verification: {
                 modelName: authConfig.verification?.modelName || 'verification',
-                disableCleanup: authConfig.verification?.disableCleanup || false
+                disableCleanup: authConfig.verification?.disableCleanup || false,
             },
             trustedOrigins: Array.isArray(authConfig.trustedOrigins) ? authConfig.trustedOrigins : [],
             rateLimit: {
@@ -347,39 +345,39 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 window: authConfig.rateLimit?.window || 10,
                 max: authConfig.rateLimit?.max || 100,
                 storage: authConfig.rateLimit?.storage || 'memory',
-                modelName: authConfig.rateLimit?.modelName || 'rateLimit'
+                modelName: authConfig.rateLimit?.modelName || 'rateLimit',
             },
             advanced: {
                 ipAddress: {
                     ipAddressHeaders: authConfig.advanced?.ipAddress?.ipAddressHeaders || [],
-                    disableIpTracking: authConfig.advanced?.ipAddress?.disableIpTracking || false
+                    disableIpTracking: authConfig.advanced?.ipAddress?.disableIpTracking || false,
                 },
                 useSecureCookies: authConfig.advanced?.useSecureCookies || false,
                 disableCSRFCheck: authConfig.advanced?.disableCSRFCheck || false,
                 crossSubDomainCookies: {
                     enabled: authConfig.advanced?.crossSubDomainCookies?.enabled || false,
                     additionalCookies: authConfig.advanced?.crossSubDomainCookies?.additionalCookies || [],
-                    domain: authConfig.advanced?.crossSubDomainCookies?.domain
+                    domain: authConfig.advanced?.crossSubDomainCookies?.domain,
                 },
                 cookies: authConfig.advanced?.cookies || {},
                 defaultCookieAttributes: authConfig.advanced?.defaultCookieAttributes || {},
                 cookiePrefix: authConfig.advanced?.cookiePrefix,
                 database: {
                     defaultFindManyLimit: authConfig.advanced?.database?.defaultFindManyLimit || 100,
-                    useNumberId: authConfig.advanced?.database?.useNumberId || false
-                }
+                    useNumberId: authConfig.advanced?.database?.useNumberId || false,
+                },
             },
             disabledPaths: authConfig.disabledPaths || [],
             telemetry: {
                 enabled: authConfig.telemetry?.enabled ?? false,
-                debug: authConfig.telemetry?.debug || false
+                debug: authConfig.telemetry?.debug || false,
             },
             studio: {
                 version: '1.0.0',
                 nodeVersion: process.version,
                 platform: process.platform,
-                uptime: process.uptime()
-            }
+                uptime: process.uptime(),
+            },
         };
         res.json(config);
     });
@@ -432,7 +430,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             res.json({
                 users: userCount,
                 sessions: sessionCount,
-                organizations: organizationCount
+                organizations: organizationCount,
             });
         }
         catch (error) {
@@ -469,7 +467,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             const users = await adapter.findMany({
                 model: 'user',
                 where: [{ field: 'id', value: userId }],
-                limit: 1
+                limit: 1,
             });
             const user = users && users.length > 0 ? users[0] : null;
             if (!user) {
@@ -493,7 +491,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             const user = await adapter.update({
                 model: 'user',
                 where: [{ field: 'id', value: userId }],
-                update: { name, email }
+                update: { name, email },
             });
             res.json({ success: true, user });
         }
@@ -526,27 +524,29 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             }
             const [memberships, organizations] = await Promise.all([
                 adapter.findMany({ model: 'member', limit: 10000 }),
-                adapter.findMany({ model: 'organization', limit: 10000 })
+                adapter.findMany({ model: 'organization', limit: 10000 }),
             ]);
             const userMemberships = memberships.filter((membership) => membership.userId === userId);
             const formattedMemberships = userMemberships.map((membership) => {
                 const organization = organizations.find((org) => org.id === membership.organizationId);
                 return {
                     id: membership.id,
-                    organization: organization ? {
-                        id: organization.id,
-                        name: organization.name || 'Unknown Organization',
-                        slug: organization.slug || 'unknown',
-                        image: organization.image,
-                        createdAt: organization.createdAt
-                    } : {
-                        id: membership.organizationId,
-                        name: 'Unknown Organization',
-                        slug: 'unknown',
-                        createdAt: membership.createdAt
-                    },
+                    organization: organization
+                        ? {
+                            id: organization.id,
+                            name: organization.name || 'Unknown Organization',
+                            slug: organization.slug || 'unknown',
+                            image: organization.image,
+                            createdAt: organization.createdAt,
+                        }
+                        : {
+                            id: membership.organizationId,
+                            name: 'Unknown Organization',
+                            slug: 'unknown',
+                            createdAt: membership.createdAt,
+                        },
                     role: membership.role || 'member',
-                    joinedAt: membership.createdAt
+                    joinedAt: membership.createdAt,
                 };
             });
             res.json({ memberships: formattedMemberships });
@@ -566,27 +566,33 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             const [memberships, teams, organizations] = await Promise.all([
                 adapter.findMany({ model: 'teamMember', limit: 10000 }),
                 adapter.findMany({ model: 'team', limit: 10000 }),
-                adapter.findMany({ model: 'organization', limit: 10000 })
+                adapter.findMany({ model: 'organization', limit: 10000 }),
             ]);
             const userMemberships = memberships.filter((membership) => membership.userId === userId);
             const formattedMemberships = userMemberships.map((membership) => {
                 const team = teams.find((t) => t.id === membership.teamId);
-                const organization = team ? organizations.find((org) => org.id === team.organizationId) : null;
+                const organization = team
+                    ? organizations.find((org) => org.id === team.organizationId)
+                    : null;
                 return {
                     id: membership.id,
-                    team: team ? {
-                        id: team.id,
-                        name: team.name || 'Unknown Team',
-                        organizationId: team.organizationId,
-                        organizationName: organization ? organization.name || 'Unknown Organization' : 'Unknown Organization'
-                    } : {
-                        id: membership.teamId,
-                        name: 'Unknown Team',
-                        organizationId: 'unknown',
-                        organizationName: 'Unknown Organization'
-                    },
+                    team: team
+                        ? {
+                            id: team.id,
+                            name: team.name || 'Unknown Team',
+                            organizationId: team.organizationId,
+                            organizationName: organization
+                                ? organization.name || 'Unknown Organization'
+                                : 'Unknown Organization',
+                        }
+                        : {
+                            id: membership.teamId,
+                            name: 'Unknown Team',
+                            organizationId: 'unknown',
+                            organizationName: 'Unknown Organization',
+                        },
                     role: membership.role || 'member',
-                    joinedAt: membership.createdAt
+                    joinedAt: membership.createdAt,
                 };
             });
             res.json({ memberships: formattedMemberships });
@@ -636,7 +642,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             const user = await adapter.update({
                 model: 'user',
                 id: userId,
-                data: { banned: true }
+                data: { banned: true },
             });
             res.json({ success: true, user });
         }
@@ -654,7 +660,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             }
             const sessions = await adapter.findMany({
                 model: 'session',
-                limit: 10000
+                limit: 10000,
             });
             const userSessions = sessions.filter((session) => session.userId === userId);
             const formattedSessions = userSessions.map((session) => ({
@@ -666,7 +672,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 activeOrganizationId: session.activeOrganizationId,
                 activeTeamId: session.activeTeamId,
                 createdAt: session.createdAt,
-                updatedAt: session.updatedAt
+                updatedAt: session.updatedAt,
             }));
             res.json({ sessions: formattedSessions });
         }
@@ -700,7 +706,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             const teams = await adapter.findMany({
                 model: 'team',
                 where: [{ field: 'id', value: teamId }],
-                limit: 1
+                limit: 1,
             });
             const team = teams && teams.length > 0 ? teams[0] : null;
             if (!team) {
@@ -712,7 +718,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 const orgs = await adapter.findMany({
                     model: 'organization',
                     where: [{ field: 'id', value: team.organizationId }],
-                    limit: 1
+                    limit: 1,
                 });
                 organization = orgs && orgs.length > 0 ? orgs[0] : null;
             }
@@ -727,10 +733,12 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 createdAt: team.createdAt,
                 updatedAt: team.updatedAt,
                 memberCount: team.memberCount || 0,
-                organization: organization ? {
-                    id: organization.id,
-                    name: organization.name
-                } : null
+                organization: organization
+                    ? {
+                        id: organization.id,
+                        name: organization.name,
+                    }
+                    : null,
             };
             res.json({ success: true, team: transformedTeam });
         }
@@ -749,7 +757,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             const organizations = await adapter.findMany({
                 model: 'organization',
                 where: [{ field: 'id', value: orgId }],
-                limit: 1
+                limit: 1,
             });
             const organization = organizations && organizations.length > 0 ? organizations[0] : null;
             if (!organization) {
@@ -855,12 +863,14 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
     });
     router.get('/api/plugins', async (req, res) => {
         try {
-            const authConfigPath = configPath ? join(process.cwd(), configPath) : await findAuthConfigPath();
+            const authConfigPath = configPath
+                ? join(process.cwd(), configPath)
+                : await findAuthConfigPath();
             if (!authConfigPath) {
                 return res.json({
                     plugins: [],
                     error: 'No auth config found',
-                    configPath: null
+                    configPath: null,
                 });
             }
             try {
@@ -875,9 +885,9 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                         auth: {
                             options: {
                                 _content: content,
-                                plugins: []
-                            }
-                        }
+                                plugins: [],
+                            },
+                        },
                     };
                 }
                 const auth = authModule.auth || authModule.default;
@@ -885,7 +895,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     return res.json({
                         plugins: [],
                         error: 'No auth export found',
-                        configPath: authConfigPath
+                        configPath: authConfigPath,
                     });
                 }
                 const plugins = auth.options?.plugins || [];
@@ -893,12 +903,12 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     id: plugin.id,
                     name: plugin.name || plugin.id,
                     description: plugin.description || `${plugin.id} plugin for Better Auth`,
-                    enabled: true
+                    enabled: true,
                 }));
                 res.json({
                     plugins: pluginInfo,
                     configPath: authConfigPath,
-                    totalPlugins: pluginInfo.length
+                    totalPlugins: pluginInfo.length,
                 });
             }
             catch (error) {
@@ -914,13 +924,13 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                             name: plugin.name || plugin.id || 'unknown',
                             version: plugin.version || 'unknown',
                             description: plugin.description || `${plugin.id || 'unknown'} plugin for Better Auth`,
-                            enabled: true
+                            enabled: true,
                         }));
                         return res.json({
                             plugins: pluginInfo,
                             configPath: authConfigPath,
                             totalPlugins: pluginInfo.length,
-                            fallback: true
+                            fallback: true,
                         });
                     }
                 }
@@ -930,7 +940,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 res.json({
                     plugins: [],
                     error: 'Failed to load auth config - import failed and regex extraction unavailable',
-                    configPath: authConfigPath
+                    configPath: authConfigPath,
                 });
             }
         }
@@ -941,12 +951,12 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
     });
     router.get('/api/database/info', async (req, res) => {
         try {
-            const authConfigPath = configPath || await findAuthConfigPath();
+            const authConfigPath = configPath || (await findAuthConfigPath());
             if (!authConfigPath) {
                 return res.json({
                     database: null,
                     error: 'No auth config found',
-                    configPath: null
+                    configPath: null,
                 });
             }
             try {
@@ -956,13 +966,13 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     return res.json({
                         database: null,
                         error: 'No auth export found',
-                        configPath: authConfigPath
+                        configPath: authConfigPath,
                     });
                 }
                 const database = auth.options?.database;
                 res.json({
                     database: database,
-                    configPath: authConfigPath
+                    configPath: authConfigPath,
                 });
             }
             catch (error) {
@@ -976,7 +986,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                         return res.json({
                             database: config.database,
                             configPath: authConfigPath,
-                            fallback: true
+                            fallback: true,
                         });
                     }
                 }
@@ -986,7 +996,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 res.json({
                     database: null,
                     error: 'Failed to load auth config - import failed and regex extraction unavailable',
-                    configPath: authConfigPath
+                    configPath: authConfigPath,
                 });
             }
         }
@@ -997,12 +1007,12 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
     });
     router.get('/api/plugins/teams/status', async (req, res) => {
         try {
-            const authConfigPath = configPath || await findAuthConfigPath();
+            const authConfigPath = configPath || (await findAuthConfigPath());
             if (!authConfigPath) {
                 return res.json({
                     enabled: false,
                     error: 'No auth config found',
-                    configPath: null
+                    configPath: null,
                 });
             }
             try {
@@ -1017,9 +1027,9 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                         auth: {
                             options: {
                                 _content: content,
-                                plugins: []
-                            }
-                        }
+                                plugins: [],
+                            },
+                        },
                     };
                 }
                 const auth = authModule.auth || authModule.default;
@@ -1027,15 +1037,15 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     return res.json({
                         enabled: false,
                         error: 'No auth export found',
-                        configPath: authConfigPath
+                        configPath: authConfigPath,
                     });
                 }
-                const organizationPlugin = auth.options?.plugins?.find((plugin) => plugin.id === "organization");
+                const organizationPlugin = auth.options?.plugins?.find((plugin) => plugin.id === 'organization');
                 const teamsEnabled = organizationPlugin?.teams?.enabled === true;
                 res.json({
                     enabled: teamsEnabled,
                     configPath: authConfigPath,
-                    organizationPlugin: organizationPlugin || null
+                    organizationPlugin: organizationPlugin || null,
                 });
             }
             catch (error) {
@@ -1046,13 +1056,13 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     const { extractBetterAuthConfig } = await import('./config');
                     const config = extractBetterAuthConfig(content);
                     if (config && config.plugins) {
-                        const organizationPlugin = config.plugins.find((plugin) => plugin.id === "organization");
+                        const organizationPlugin = config.plugins.find((plugin) => plugin.id === 'organization');
                         const teamsEnabled = organizationPlugin?.teams?.enabled === true;
                         return res.json({
                             enabled: teamsEnabled,
                             configPath: authConfigPath,
                             organizationPlugin: organizationPlugin || null,
-                            fallback: true
+                            fallback: true,
                         });
                     }
                 }
@@ -1062,7 +1072,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 res.json({
                     enabled: false,
                     error: 'Failed to load auth config - import failed and regex extraction unavailable',
-                    configPath: authConfigPath
+                    configPath: authConfigPath,
                 });
             }
         }
@@ -1081,7 +1091,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                         model: 'invitation',
                         where: [
                             { field: 'organizationId', value: orgId },
-                            { field: 'status', value: 'pending' }
+                            { field: 'status', value: 'pending' },
                         ],
                     });
                     const transformedInvitations = (invitations || []).map((invitation) => ({
@@ -1093,7 +1103,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                         teamId: invitation.teamId,
                         inviterId: invitation.inviterId,
                         expiresAt: invitation.expiresAt,
-                        createdAt: invitation.createdAt
+                        createdAt: invitation.createdAt,
                     }));
                     res.json({ success: true, invitations: transformedInvitations });
                     return;
@@ -1118,7 +1128,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     const members = await adapter.findMany({
                         model: 'member',
                         where: [{ field: 'organizationId', value: orgId }],
-                        limit: 10000
+                        limit: 10000,
                     });
                     const membersWithUsers = await Promise.all((members || []).map(async (member) => {
                         try {
@@ -1126,7 +1136,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                                 const users = await adapter.findMany({
                                     model: 'user',
                                     where: [{ field: 'id', value: member.userId }],
-                                    limit: 1
+                                    limit: 1,
                                 });
                                 const user = users?.[0];
                                 return {
@@ -1135,13 +1145,15 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                                     organizationId: member.organizationId,
                                     role: member.role || 'member',
                                     joinedAt: member.joinedAt || member.createdAt,
-                                    user: user ? {
-                                        id: user.id,
-                                        name: user.name,
-                                        email: user.email,
-                                        image: user.image,
-                                        emailVerified: user.emailVerified
-                                    } : null
+                                    user: user
+                                        ? {
+                                            id: user.id,
+                                            name: user.name,
+                                            email: user.email,
+                                            image: user.image,
+                                            emailVerified: user.emailVerified,
+                                        }
+                                        : null,
                                 };
                             }
                             return null;
@@ -1151,7 +1163,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                             return null;
                         }
                     }));
-                    const validMembers = membersWithUsers.filter(member => member && member.user);
+                    const validMembers = membersWithUsers.filter((member) => member && member.user);
                     res.json({ success: true, members: validMembers });
                     return;
                 }
@@ -1196,21 +1208,21 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                         email,
                         emailVerified: false,
                         createdAt: new Date(),
-                        updatedAt: new Date()
+                        updatedAt: new Date(),
                     };
                     const user = await adapter.create({
                         model: 'user',
-                        data: userData
+                        data: userData,
                     });
                     const memberData = {
                         organizationId: orgId,
                         userId: user.id,
                         role: 'member',
-                        createdAt: new Date()
+                        createdAt: new Date(),
                     };
                     await adapter.create({
                         model: 'member',
-                        data: memberData
+                        data: memberData,
                     });
                     results.push({
                         success: true,
@@ -1218,22 +1230,22 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                             userId: user.id,
                             user: {
                                 name,
-                                email
-                            }
-                        }
+                                email,
+                            },
+                        },
                     });
                 }
                 catch (error) {
                     results.push({
                         success: false,
-                        error: error instanceof Error ? error.message : 'Unknown error'
+                        error: error instanceof Error ? error.message : 'Unknown error',
                     });
                 }
             }
             res.json({
                 success: true,
-                message: `Added ${results.filter(r => r.success).length} members`,
-                results
+                message: `Added ${results.filter((r) => r.success).length} members`,
+                results,
             });
         }
         catch (error) {
@@ -1261,7 +1273,16 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 return result;
             };
             const teamNames = [
-                'Engineering', 'Design', 'Marketing', 'Sales', 'Support', 'Product', 'Operations', 'Finance', 'HR', 'Legal'
+                'Engineering',
+                'Design',
+                'Marketing',
+                'Sales',
+                'Support',
+                'Product',
+                'Operations',
+                'Finance',
+                'HR',
+                'Legal',
             ];
             const results = [];
             for (let i = 0; i < count; i++) {
@@ -1272,31 +1293,31 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                         name: teamName,
                         organizationId: orgId,
                         createdAt: new Date(),
-                        updatedAt: new Date()
+                        updatedAt: new Date(),
                     };
                     const team = await adapter.create({
                         model: 'team',
-                        data: teamData
+                        data: teamData,
                     });
                     results.push({
                         success: true,
                         team: {
                             id: team.id,
-                            name: teamName
-                        }
+                            name: teamName,
+                        },
                     });
                 }
                 catch (error) {
                     results.push({
                         success: false,
-                        error: error instanceof Error ? error.message : 'Unknown error'
+                        error: error instanceof Error ? error.message : 'Unknown error',
                     });
                 }
             }
             res.json({
                 success: true,
-                message: `Created ${results.filter(r => r.success).length} teams`,
-                results
+                message: `Created ${results.filter((r) => r.success).length} teams`,
+                results,
             });
         }
         catch (error) {
@@ -1316,7 +1337,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             }
             await adapter.delete({
                 model: 'member',
-                where: [{ field: 'id', value: id }]
+                where: [{ field: 'id', value: id }],
             });
             res.json({ success: true });
         }
@@ -1340,8 +1361,8 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 where: [{ field: 'id', value: id }],
                 update: {
                     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-                    updatedAt: new Date().toISOString()
-                }
+                    updatedAt: new Date().toISOString(),
+                },
             });
             res.json({ success: true });
         }
@@ -1365,8 +1386,8 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 where: [{ field: 'id', value: id }],
                 update: {
                     status: 'cancelled',
-                    updatedAt: new Date().toISOString()
-                }
+                    updatedAt: new Date().toISOString(),
+                },
             });
             res.json({ success: true });
         }
@@ -1393,11 +1414,11 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 status: 'pending',
                 expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
                 createdAt: new Date(),
-                inviterId: inviterId
+                inviterId: inviterId,
             };
             const invitation = {
                 id: `inv_${Date.now()}`,
-                ...invitationData
+                ...invitationData,
             };
             if (!adapter.create) {
                 return res.status(500).json({ error: 'Adapter create method not available' });
@@ -1412,7 +1433,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     inviterId: invitationData.inviterId,
                     expiresAt: invitationData.expiresAt,
                     createdAt: invitationData.createdAt,
-                }
+                },
             });
             res.json({ success: true, invitation });
         }
@@ -1430,7 +1451,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     const teams = await adapter.findMany({
                         model: 'team',
                         where: [{ field: 'organizationId', value: orgId }],
-                        limit: 10000
+                        limit: 10000,
                     });
                     const transformedTeams = await Promise.all((teams || []).map(async (team) => {
                         if (!adapter.findMany) {
@@ -1439,7 +1460,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                         const teamMembers = await adapter.findMany({
                             model: 'teamMember',
                             where: [{ field: 'teamId', value: team.id }],
-                            limit: 10000
+                            limit: 10000,
                         });
                         return {
                             id: team.id,
@@ -1448,7 +1469,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                             metadata: team.metadata,
                             createdAt: team.createdAt,
                             updatedAt: team.updatedAt,
-                            memberCount: teamMembers ? teamMembers.length : 0
+                            memberCount: teamMembers ? teamMembers.length : 0,
                         };
                     }));
                     res.json({ success: true, teams: transformedTeams });
@@ -1478,11 +1499,11 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 organizationId: orgId,
                 createdAt: new Date(),
                 updatedAt: new Date(),
-                memberCount: 0
+                memberCount: 0,
             };
             const team = {
                 id: `team_${Date.now()}`,
-                ...teamData
+                ...teamData,
             };
             if (!adapter.create) {
                 return res.status(500).json({ error: 'Adapter create method not available' });
@@ -1494,7 +1515,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     organizationId: teamData.organizationId,
                     createdAt: teamData.createdAt,
                     updatedAt: teamData.updatedAt,
-                }
+                },
             });
             res.json({ success: true, team });
         }
@@ -1512,7 +1533,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     const teamMembers = await adapter.findMany({
                         model: 'teamMember',
                         where: [{ field: 'teamId', value: teamId }],
-                        limit: 10000
+                        limit: 10000,
                     });
                     const membersWithUsers = await Promise.all((teamMembers || []).map(async (member) => {
                         try {
@@ -1520,7 +1541,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                                 const users = await adapter.findMany({
                                     model: 'user',
                                     where: [{ field: 'id', value: member.userId }],
-                                    limit: 1
+                                    limit: 1,
                                 });
                                 const user = users?.[0];
                                 return {
@@ -1529,13 +1550,15 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                                     teamId: member.teamId,
                                     role: member.role || 'member',
                                     joinedAt: member.joinedAt || member.createdAt,
-                                    user: user ? {
-                                        id: user.id,
-                                        name: user.name,
-                                        email: user.email,
-                                        image: user.image,
-                                        emailVerified: user.emailVerified
-                                    } : null
+                                    user: user
+                                        ? {
+                                            id: user.id,
+                                            name: user.name,
+                                            email: user.email,
+                                            image: user.image,
+                                            emailVerified: user.emailVerified,
+                                        }
+                                        : null,
                                 };
                             }
                             return null;
@@ -1545,7 +1568,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                             return null;
                         }
                     }));
-                    const validMembers = membersWithUsers.filter(member => member && member.user);
+                    const validMembers = membersWithUsers.filter((member) => member && member.user);
                     res.json({ success: true, members: validMembers });
                     return;
                 }
@@ -1580,8 +1603,8 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                             teamId,
                             userId,
                             role: 'member',
-                            createdAt: new Date()
-                        }
+                            createdAt: new Date(),
+                        },
                     });
                     results.push({ success: true, userId });
                 }
@@ -1589,14 +1612,14 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     results.push({
                         success: false,
                         userId,
-                        error: error instanceof Error ? error.message : 'Unknown error'
+                        error: error instanceof Error ? error.message : 'Unknown error',
                     });
                 }
             }
             res.json({
                 success: true,
-                message: `Added ${results.filter(r => r.success).length} members`,
-                results
+                message: `Added ${results.filter((r) => r.success).length} members`,
+                results,
             });
         }
         catch (error) {
@@ -1613,7 +1636,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             }
             await adapter.delete({
                 model: 'teamMember',
-                where: [{ field: 'id', value: id }]
+                where: [{ field: 'id', value: id }],
             });
             res.json({ success: true });
         }
@@ -1642,7 +1665,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 where: [{ field: 'id', value: id }],
                 update: {
                     name: updatedTeam.name,
-                }
+                },
             });
             res.json({ success: true, team: updatedTeam });
         }
@@ -1674,30 +1697,28 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
     });
     router.get('/api/plugins/organization/status', async (req, res) => {
         try {
-            const authConfigPath = configPath || await findAuthConfigPath();
+            const authConfigPath = configPath || (await findAuthConfigPath());
             if (!authConfigPath) {
                 return res.json({
                     enabled: false,
                     error: 'No auth config found',
-                    configPath: null
+                    configPath: null,
                 });
             }
             try {
-                // Use the same logic as the /api/plugins endpoint
                 let authModule;
                 try {
                     authModule = await safeImportAuthConfig(authConfigPath);
                 }
                 catch (importError) {
-                    // Fallback: read file content directly
                     const content = readFileSync(authConfigPath, 'utf-8');
                     authModule = {
                         auth: {
                             options: {
                                 _content: content,
-                                plugins: []
-                            }
-                        }
+                                plugins: [],
+                            },
+                        },
                     };
                 }
                 const auth = authModule.auth || authModule.default;
@@ -1705,16 +1726,16 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     return res.json({
                         enabled: false,
                         error: 'No auth export found',
-                        configPath: authConfigPath
+                        configPath: authConfigPath,
                     });
                 }
                 const plugins = auth.options?.plugins || [];
-                const hasOrganizationPlugin = plugins.find((plugin) => plugin.id === "organization");
+                const hasOrganizationPlugin = plugins.find((plugin) => plugin.id === 'organization');
                 res.json({
                     enabled: !!hasOrganizationPlugin,
                     configPath: authConfigPath,
                     availablePlugins: plugins.map((p) => p.id) || [],
-                    organizationPlugin: hasOrganizationPlugin || null
+                    organizationPlugin: hasOrganizationPlugin || null,
                 });
             }
             catch (error) {
@@ -1725,13 +1746,13 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     const { extractBetterAuthConfig } = await import('./config');
                     const config = extractBetterAuthConfig(content);
                     if (config && config.plugins) {
-                        const hasOrganizationPlugin = config.plugins.find((plugin) => plugin.id === "organization");
+                        const hasOrganizationPlugin = config.plugins.find((plugin) => plugin.id === 'organization');
                         return res.json({
                             enabled: !!hasOrganizationPlugin,
                             configPath: authConfigPath,
                             availablePlugins: config.plugins.map((p) => p.id) || [],
                             organizationPlugin: hasOrganizationPlugin || null,
-                            fallback: true
+                            fallback: true,
                         });
                     }
                 }
@@ -1741,7 +1762,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 res.json({
                     enabled: false,
                     error: 'Failed to load auth config - import failed and regex extraction unavailable',
-                    configPath: authConfigPath
+                    configPath: authConfigPath,
                 });
             }
         }
@@ -1789,7 +1810,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     slug: 'acme-corp',
                     metadata: { status: 'active' },
                     createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
+                    updatedAt: new Date().toISOString(),
                 },
                 {
                     id: 'org_2',
@@ -1797,8 +1818,8 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     slug: 'tech-solutions',
                     metadata: { status: 'active' },
                     createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                }
+                    updatedAt: new Date().toISOString(),
+                },
             ];
             res.json({ organizations: mockOrganizations });
         }
@@ -1815,7 +1836,10 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             }
             const orgData = req.body;
             if (!orgData.slug && orgData.name) {
-                orgData.slug = orgData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                orgData.slug = orgData.name
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/g, '');
             }
             const organization = await adapter.createOrganization(orgData);
             res.json({ success: true, organization });
@@ -1834,19 +1858,20 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
             if (orgData.name && !orgData.slug) {
-                orgData.slug = orgData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                orgData.slug = orgData.name
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/g, '');
             }
             const updatedOrganization = {
                 id,
                 ...orgData,
-                updatedAt: new Date().toISOString()
+                updatedAt: new Date().toISOString(),
             };
             const updatedOrg = await adapter.update({
                 model: 'organization',
-                where: [
-                    { field: 'id', value: id }
-                ],
-                update: updatedOrganization
+                where: [{ field: 'id', value: id }],
+                update: updatedOrganization,
             });
             res.json({ success: true, organization: updatedOrg });
         }
@@ -1864,9 +1889,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             }
             const deletedOrg = await adapter.delete({
                 model: 'organization',
-                where: [
-                    { field: 'id', value: id }
-                ]
+                where: [{ field: 'id', value: id }],
             });
             res.json({ success: true, organization: deletedOrg });
         }
@@ -1924,21 +1947,21 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                             name: user.name,
                             emailVerified: user.emailVerified,
                             image: user.image,
-                            createdAt: user.createdAt
-                        }
+                            createdAt: user.createdAt,
+                        },
                     });
                 }
                 catch (error) {
                     results.push({
                         success: false,
-                        error: error instanceof Error ? error.message : 'Unknown error'
+                        error: error instanceof Error ? error.message : 'Unknown error',
                     });
                 }
             }
             res.json({
                 success: true,
-                message: `Seeded ${results.filter(r => r.success).length} users`,
-                results
+                message: `Seeded ${results.filter((r) => r.success).length} users`,
+                results,
             });
         }
         catch (error) {
@@ -1974,21 +1997,21 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                             userId: session.userId,
                             expires: session.expires,
                             sessionToken: session.sessionToken,
-                            createdAt: session.createdAt
-                        }
+                            createdAt: session.createdAt,
+                        },
                     });
                 }
                 catch (error) {
                     results.push({
                         success: false,
-                        error: error instanceof Error ? error.message : 'Unknown error'
+                        error: error instanceof Error ? error.message : 'Unknown error',
                     });
                 }
             }
             res.json({
                 success: true,
-                message: `Seeded ${results.filter(r => r.success).length} sessions`,
-                results
+                message: `Seeded ${results.filter((r) => r.success).length} sessions`,
+                results,
             });
         }
         catch (error) {
@@ -2004,8 +2027,11 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
-            // @ts-ignore
-            const user = await adapter.findOne({ model: 'user', where: [{ field: 'id', value: userId }] });
+            // @ts-expect-error
+            const user = await adapter.findOne({
+                model: 'user',
+                where: [{ field: 'id', value: userId }],
+            });
             if (!user) {
                 return res.status(404).json({ error: 'User not found' });
             }
@@ -2026,21 +2052,21 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                             ipAddress: session.ipAddress,
                             userAgent: session.userAgent,
                             createdAt: session.createdAt,
-                            updatedAt: session.updatedAt
-                        }
+                            updatedAt: session.updatedAt,
+                        },
                     });
                 }
                 catch (error) {
                     results.push({
                         success: false,
-                        error: error instanceof Error ? error.message : 'Unknown error'
+                        error: error instanceof Error ? error.message : 'Unknown error',
                     });
                 }
             }
             res.json({
                 success: true,
-                message: `Seeded ${results.filter(r => r.success).length} sessions for user`,
-                results
+                message: `Seeded ${results.filter((r) => r.success).length} sessions for user`,
+                results,
             });
         }
         catch (error) {
@@ -2077,21 +2103,21 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                             type: account.type,
                             provider: account.provider,
                             providerAccountId: account.providerAccountId,
-                            createdAt: account.createdAt
-                        }
+                            createdAt: account.createdAt,
+                        },
                     });
                 }
                 catch (error) {
                     results.push({
                         success: false,
-                        error: error instanceof Error ? error.message : 'Unknown error'
+                        error: error instanceof Error ? error.message : 'Unknown error',
                     });
                 }
             }
             res.json({
                 success: true,
-                message: `Seeded ${results.filter(r => r.success).length} accounts`,
-                results
+                message: `Seeded ${results.filter((r) => r.success).length} accounts`,
+                results,
             });
         }
         catch (error) {
@@ -2120,21 +2146,21 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                             identifier: verification.identifier,
                             token: verification.token,
                             expires: verification.expires,
-                            createdAt: verification.createdAt
-                        }
+                            createdAt: verification.createdAt,
+                        },
                     });
                 }
                 catch (error) {
                     results.push({
                         success: false,
-                        error: error instanceof Error ? error.message : 'Unknown error'
+                        error: error instanceof Error ? error.message : 'Unknown error',
                     });
                 }
             }
             res.json({
                 success: true,
-                message: `Seeded ${results.filter(r => r.success).length} verifications`,
-                results
+                message: `Seeded ${results.filter((r) => r.success).length} verifications`,
+                results,
             });
         }
         catch (error) {
@@ -2167,7 +2193,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                         slug: generateSlug(organizationName),
                         image: `https://api.dicebear.com/7.x/identicon/svg?seed=${randomSuffix}`,
                         createdAt: new Date(),
-                        updatedAt: new Date()
+                        updatedAt: new Date(),
                     };
                     const organization = await adapter.createOrganization(organizationData);
                     results.push({
@@ -2177,21 +2203,21 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                             name: organization.name,
                             slug: organization.slug,
                             image: organization.image,
-                            createdAt: organization.createdAt
-                        }
+                            createdAt: organization.createdAt,
+                        },
                     });
                 }
                 catch (error) {
                     results.push({
                         success: false,
-                        error: error instanceof Error ? error.message : 'Unknown error'
+                        error: error instanceof Error ? error.message : 'Unknown error',
                     });
                 }
             }
             res.json({
                 success: true,
-                message: `Seeded ${results.filter(r => r.success).length} organizations`,
-                results
+                message: `Seeded ${results.filter((r) => r.success).length} organizations`,
+                results,
             });
         }
         catch (error) {

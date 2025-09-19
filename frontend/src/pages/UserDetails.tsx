@@ -1,352 +1,375 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, User, Building2, Users, Mail, Calendar, Edit, Ban, UserMinus, Clock, Monitor, Globe, Plus, X, Database, Loader } from 'lucide-react'
-import { Button } from '../components/ui/button'
-import { Badge } from '../components/ui/badge'
-import { Input } from '../components/ui/input'
-import { Label } from '../components/ui/label'
-import { Terminal } from '../components/Terminal'
-import { toast } from 'sonner'
+import {
+  ArrowLeft,
+  Ban,
+  Building2,
+  Calendar,
+  Clock,
+  Database,
+  Edit,
+  Globe,
+  Loader,
+  Mail,
+  Monitor,
+  Plus,
+  User,
+  UserMinus,
+  Users,
+  X,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
+import { Terminal } from '../components/Terminal';
+import { Badge } from '../components/ui/badge';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
 
 interface User {
-  id: string
-  name: string
-  email: string
-  emailVerified: boolean
-  image?: string
-  createdAt: string
-  updatedAt: string
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface Organization {
-  id: string
-  name: string
-  slug: string
-  image?: string
-  createdAt: string
-  role: string
+  id: string;
+  name: string;
+  slug: string;
+  image?: string;
+  createdAt: string;
+  role: string;
 }
 
 interface Team {
-  id: string
-  name: string
-  organizationId: string
-  organizationName: string
-  role: string
-  createdAt: string
+  id: string;
+  name: string;
+  organizationId: string;
+  organizationName: string;
+  role: string;
+  createdAt: string;
 }
 
 interface OrganizationMembership {
-  id: string
-  organization: Organization
-  role: string
-  joinedAt: string
+  id: string;
+  organization: Organization;
+  role: string;
+  joinedAt: string;
 }
 
 interface TeamMembership {
-  id: string
-  team: Team
-  role: string
-  joinedAt: string
+  id: string;
+  team: Team;
+  role: string;
+  joinedAt: string;
 }
 
 interface Session {
-  id: string
-  token: string
-  expiresAt: string
-  ipAddress: string
-  userAgent: string
-  activeOrganizationId?: string
-  activeTeamId?: string
-  createdAt: string
-  updatedAt: string
+  id: string;
+  token: string;
+  expiresAt: string;
+  ipAddress: string;
+  userAgent: string;
+  activeOrganizationId?: string;
+  activeTeamId?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface LocationData {
-  country: string
-  countryCode: string
-  city: string
-  region: string
+  country: string;
+  countryCode: string;
+  city: string;
+  region: string;
 }
 
 export default function UserDetails() {
-  const { userId } = useParams<{ userId: string }>()
-  const navigate = useNavigate()
-  const [user, setUser] = useState<User | null>(null)
-  const [organizations, setOrganizations] = useState<OrganizationMembership[]>([])
-  const [teams, setTeams] = useState<TeamMembership[]>([])
-  const [sessions, setSessions] = useState<Session[]>([])
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'details' | 'organizations' | 'teams' | 'sessions'>('details')
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [showBanModal, setShowBanModal] = useState(false)
-  const [showSessionSeedModal, setShowSessionSeedModal] = useState(false)
-  const [seedingLogs, setSeedingLogs] = useState<Array<{
-    id: string
-    type: 'info' | 'success' | 'error' | 'progress'
-    message: string
-    timestamp: Date
-    status?: 'pending' | 'running' | 'completed' | 'failed'
-  }>>([])
-  const [isSeeding, setIsSeeding] = useState(false)
-  const [sessionLocations, setSessionLocations] = useState<Record<string, LocationData>>({})
+  const { userId } = useParams<{ userId: string }>();
+  const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [organizations, setOrganizations] = useState<OrganizationMembership[]>([]);
+  const [teams, setTeams] = useState<TeamMembership[]>([]);
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'details' | 'organizations' | 'teams' | 'sessions'>(
+    'details'
+  );
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showBanModal, setShowBanModal] = useState(false);
+  const [showSessionSeedModal, setShowSessionSeedModal] = useState(false);
+  const [seedingLogs, setSeedingLogs] = useState<
+    Array<{
+      id: string;
+      type: 'info' | 'success' | 'error' | 'progress';
+      message: string;
+      timestamp: Date;
+      status?: 'pending' | 'running' | 'completed' | 'failed';
+    }>
+  >([]);
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [sessionLocations, setSessionLocations] = useState<Record<string, LocationData>>({});
 
   useEffect(() => {
     if (userId) {
-      fetchUserDetails()
-      fetchUserMemberships()
+      fetchUserDetails();
+      fetchUserMemberships();
     }
-  }, [userId])
+  }, [userId]);
 
   const resolveIPLocation = async (ipAddress: string): Promise<LocationData | null> => {
     try {
       const response = await fetch('/api/geo/resolve', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ipAddress })
-      })
-      
+        body: JSON.stringify({ ipAddress }),
+      });
+
       if (response.ok) {
-        const data = await response.json()
+        const data = await response.json();
         if (data.success && data.location) {
-          return data.location
+          return data.location;
         }
       }
-      return null
+      return null;
     } catch (error) {
-      console.error('Failed to resolve IP location:', error)
-      return null
+      console.error('Failed to resolve IP location:', error);
+      return null;
     }
-  }
+  };
 
   const resolveSessionLocations = async (sessions: Session[]) => {
     const locationPromises = sessions.map(async (session) => {
       if (!sessionLocations[session.id]) {
-        const location = await resolveIPLocation(session.ipAddress)
+        const location = await resolveIPLocation(session.ipAddress);
         if (location) {
-          return { sessionId: session.id, location }
+          return { sessionId: session.id, location };
         }
       }
-      return null
-    })
+      return null;
+    });
 
-    const results = await Promise.all(locationPromises)
-    const newLocations: Record<string, LocationData> = {}
-    
-    results.forEach(result => {
+    const results = await Promise.all(locationPromises);
+    const newLocations: Record<string, LocationData> = {};
+
+    results.forEach((result) => {
       if (result) {
-        newLocations[result.sessionId] = result.location
+        newLocations[result.sessionId] = result.location;
       }
-    })
+    });
 
     if (Object.keys(newLocations).length > 0) {
-      setSessionLocations(prev => ({ ...prev, ...newLocations }))
+      setSessionLocations((prev) => ({ ...prev, ...newLocations }));
     }
-  }
+  };
 
   const getCountryFlag = (countryCode: string): string => {
-    if (!countryCode) return '🌍'
-    
+    if (!countryCode) return '🌍';
+
     // Convert country code to flag emoji
     const codePoints = countryCode
       .toUpperCase()
       .split('')
-      .map(char => 127397 + char.charCodeAt(0))
-    return String.fromCodePoint(...codePoints)
-  }
+      .map((char) => 127397 + char.charCodeAt(0));
+    return String.fromCodePoint(...codePoints);
+  };
 
   const fetchUserDetails = async () => {
     try {
-      const response = await fetch(`/api/users/${userId}`)
+      const response = await fetch(`/api/users/${userId}`);
       if (response.ok) {
-        const data = await response.json()
-        setUser(data.user)
+        const data = await response.json();
+        setUser(data.user);
       } else {
-        toast.error('Failed to fetch user details')
-        navigate('/users')
+        toast.error('Failed to fetch user details');
+        navigate('/users');
       }
     } catch (error) {
-      console.error('Failed to fetch user details:', error)
-      toast.error('Failed to fetch user details')
-      navigate('/users')
+      console.error('Failed to fetch user details:', error);
+      toast.error('Failed to fetch user details');
+      navigate('/users');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const fetchUserMemberships = async () => {
     try {
       const [orgResponse, teamResponse, sessionResponse] = await Promise.all([
         fetch(`/api/users/${userId}/organizations`),
         fetch(`/api/users/${userId}/teams`),
-        fetch(`/api/users/${userId}/sessions`)
-      ])
+        fetch(`/api/users/${userId}/sessions`),
+      ]);
 
       if (orgResponse.ok) {
-        const orgData = await orgResponse.json()
-        setOrganizations(orgData.memberships || [])
+        const orgData = await orgResponse.json();
+        setOrganizations(orgData.memberships || []);
       }
 
       if (teamResponse.ok) {
-        const teamData = await teamResponse.json()
-        setTeams(teamData.memberships || [])
+        const teamData = await teamResponse.json();
+        setTeams(teamData.memberships || []);
       }
 
       if (sessionResponse.ok) {
-        const sessionData = await sessionResponse.json()
-        const sessions = sessionData.sessions || []
-        setSessions(sessions)
+        const sessionData = await sessionResponse.json();
+        const sessions = sessionData.sessions || [];
+        setSessions(sessions);
         // Resolve locations for sessions
-        resolveSessionLocations(sessions)
+        resolveSessionLocations(sessions);
       }
     } catch (error) {
-      console.error('Failed to fetch user memberships:', error)
+      console.error('Failed to fetch user memberships:', error);
     }
-  }
+  };
 
   const handleEditUser = async () => {
-    if (!user) return
+    if (!user) return;
 
-    const name = (document.getElementById('edit-name') as HTMLInputElement)?.value
-    const email = (document.getElementById('edit-email') as HTMLInputElement)?.value
+    const name = (document.getElementById('edit-name') as HTMLInputElement)?.value;
+    const email = (document.getElementById('edit-email') as HTMLInputElement)?.value;
 
     if (!name || !email) {
-      toast.error('Please fill in all fields')
-      return
+      toast.error('Please fill in all fields');
+      return;
     }
 
-    const toastId = toast.loading('Updating user...')
+    const toastId = toast.loading('Updating user...');
     try {
       const response = await fetch(`/api/users/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email })
-      })
+        body: JSON.stringify({ name, email }),
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        setUser({ ...user, name, email })
-        setShowEditModal(false)
-        toast.success('User updated successfully!', { id: toastId })
+        setUser({ ...user, name, email });
+        setShowEditModal(false);
+        toast.success('User updated successfully!', { id: toastId });
       } else {
-        toast.error(`Error updating user: ${result.error || 'Unknown error'}`, { id: toastId })
+        toast.error(`Error updating user: ${result.error || 'Unknown error'}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error updating user:', error)
-      toast.error('Error updating user', { id: toastId })
+      console.error('Error updating user:', error);
+      toast.error('Error updating user', { id: toastId });
     }
-  }
+  };
 
   const handleBanUser = async () => {
-    if (!user) return
+    if (!user) return;
 
-    const toastId = toast.loading('Banning user...')
+    const toastId = toast.loading('Banning user...');
     try {
       const response = await fetch(`/api/users/${userId}/ban`, {
-        method: 'POST'
-      })
+        method: 'POST',
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        toast.success('User banned successfully!', { id: toastId })
-        navigate('/users')
+        toast.success('User banned successfully!', { id: toastId });
+        navigate('/users');
       } else {
-        toast.error(`Error banning user: ${result.error || 'Unknown error'}`, { id: toastId })
+        toast.error(`Error banning user: ${result.error || 'Unknown error'}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error banning user:', error)
-      toast.error('Error banning user', { id: toastId })
+      console.error('Error banning user:', error);
+      toast.error('Error banning user', { id: toastId });
     }
-  }
+  };
 
   const handleRemoveFromOrganization = async (membershipId: string) => {
-    const toastId = toast.loading('Removing user from organization...')
+    const toastId = toast.loading('Removing user from organization...');
     try {
       const response = await fetch(`/api/organizations/members/${membershipId}`, {
-        method: 'DELETE'
-      })
+        method: 'DELETE',
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        setOrganizations(prev => prev.filter(m => m.id !== membershipId))
-        toast.success('User removed from organization!', { id: toastId })
+        setOrganizations((prev) => prev.filter((m) => m.id !== membershipId));
+        toast.success('User removed from organization!', { id: toastId });
       } else {
-        toast.error(`Error removing user: ${result.error || 'Unknown error'}`, { id: toastId })
+        toast.error(`Error removing user: ${result.error || 'Unknown error'}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error removing user from organization:', error)
-      toast.error('Error removing user from organization', { id: toastId })
+      console.error('Error removing user from organization:', error);
+      toast.error('Error removing user from organization', { id: toastId });
     }
-  }
+  };
 
   const handleRemoveFromTeam = async (membershipId: string) => {
-    const toastId = toast.loading('Removing user from team...')
+    const toastId = toast.loading('Removing user from team...');
     try {
       const response = await fetch(`/api/teams/members/${membershipId}`, {
-        method: 'DELETE'
-      })
+        method: 'DELETE',
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        setTeams(prev => prev.filter(m => m.id !== membershipId))
-        toast.success('User removed from team!', { id: toastId })
+        setTeams((prev) => prev.filter((m) => m.id !== membershipId));
+        toast.success('User removed from team!', { id: toastId });
       } else {
-        toast.error(`Error removing user: ${result.error || 'Unknown error'}`, { id: toastId })
+        toast.error(`Error removing user: ${result.error || 'Unknown error'}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error removing user from team:', error)
-      toast.error('Error removing user from team', { id: toastId })
+      console.error('Error removing user from team:', error);
+      toast.error('Error removing user from team', { id: toastId });
     }
-  }
+  };
 
   const handleDeleteSession = async (sessionId: string) => {
-    const toastId = toast.loading('Deleting session...')
+    const toastId = toast.loading('Deleting session...');
     try {
       const response = await fetch(`/api/sessions/${sessionId}`, {
-        method: 'DELETE'
-      })
+        method: 'DELETE',
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        setSessions(prev => prev.filter(s => s.id !== sessionId))
-        toast.success('Session deleted successfully!', { id: toastId })
+        setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+        toast.success('Session deleted successfully!', { id: toastId });
       } else {
-        toast.error(`Error deleting session: ${result.error || 'Unknown error'}`, { id: toastId })
+        toast.error(`Error deleting session: ${result.error || 'Unknown error'}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error deleting session:', error)
-      toast.error('Error deleting session', { id: toastId })
+      console.error('Error deleting session:', error);
+      toast.error('Error deleting session', { id: toastId });
     }
-  }
+  };
 
   const handleSeedSessions = async (count: number = 3) => {
-    if (!userId) return
-    
-    setSeedingLogs([])
-    setIsSeeding(true)
-    
-    setSeedingLogs([{
-      id: 'start',
-      type: 'info',
-      message: `Starting session seeding process for ${count} sessions...`,
-      timestamp: new Date()
-    }])
-    
+    if (!userId) return;
+
+    setSeedingLogs([]);
+    setIsSeeding(true);
+
+    setSeedingLogs([
+      {
+        id: 'start',
+        type: 'info',
+        message: `Starting session seeding process for ${count} sessions...`,
+        timestamp: new Date(),
+      },
+    ]);
+
     try {
       const response = await fetch(`/api/users/${userId}/seed-sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ count })
-      })
+        body: JSON.stringify({ count }),
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
         const progressLogs = result.results.map((r: any, index: number) => {
@@ -356,56 +379,65 @@ export default function UserDetails() {
               type: 'progress' as const,
               message: `Creating session ${index + 1}: ${r.session.token.substring(0, 20)}... from ${r.session.ipAddress}`,
               timestamp: new Date(),
-              status: 'completed' as const
-            }
+              status: 'completed' as const,
+            };
           } else {
             return {
               id: `session-${index}`,
               type: 'error' as const,
               message: `Failed to create session ${index + 1}: ${r.error}`,
-              timestamp: new Date()
-            }
+              timestamp: new Date(),
+            };
           }
-        })
-        
-        setSeedingLogs(prev => [...prev, ...progressLogs])
-        
-        const successCount = result.results.filter((r: any) => r.success).length
-        setSeedingLogs(prev => [...prev, {
-          id: 'complete',
-          type: 'success',
-          message: `✅ Session seeding completed! Created ${successCount}/${count} sessions successfully`,
-          timestamp: new Date()
-        }])
-        
+        });
+
+        setSeedingLogs((prev) => [...prev, ...progressLogs]);
+
+        const successCount = result.results.filter((r: any) => r.success).length;
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'complete',
+            type: 'success',
+            message: `✅ Session seeding completed! Created ${successCount}/${count} sessions successfully`,
+            timestamp: new Date(),
+          },
+        ]);
+
         // Refresh sessions data
-        fetchUserMemberships()
+        fetchUserMemberships();
       } else {
-        setSeedingLogs(prev => [...prev, {
-          id: 'error',
-          type: 'error',
-          message: `❌ Session seeding failed: ${result.error || 'Unknown error'}`,
-          timestamp: new Date()
-        }])
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'error',
+            type: 'error',
+            message: `❌ Session seeding failed: ${result.error || 'Unknown error'}`,
+            timestamp: new Date(),
+          },
+        ]);
       }
     } catch (error) {
-      setSeedingLogs(prev => [...prev, {
-        id: 'error',
-        type: 'error',
-        message: `❌ Network error: ${error}`,
-        timestamp: new Date()
-      }])
+      setSeedingLogs((prev) => [
+        ...prev,
+        {
+          id: 'error',
+          type: 'error',
+          message: `❌ Network error: ${error}`,
+          timestamp: new Date(),
+        },
+      ]);
     } finally {
-      setIsSeeding(false)
+      setIsSeeding(false);
     }
-  }
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-white text-lg">Loading user details...</div>
       </div>
-    )
+    );
   }
 
   if (!user) {
@@ -413,7 +445,7 @@ export default function UserDetails() {
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-white text-lg">User not found</div>
       </div>
-    )
+    );
   }
 
   return (
@@ -442,7 +474,10 @@ export default function UserDetails() {
                 <h1 className="text-3xl font-bold text-white">{user.name}</h1>
                 <p className="text-gray-400">{user.email}</p>
                 <div className="flex items-center space-x-2 mt-2">
-                  <Badge variant={user.emailVerified ? "default" : "destructive"} className="rounded-none">
+                  <Badge
+                    variant={user.emailVerified ? 'default' : 'destructive'}
+                    className="rounded-none"
+                  >
                     {user.emailVerified ? 'Verified' : 'Unverified'}
                   </Badge>
                 </div>
@@ -475,9 +510,14 @@ export default function UserDetails() {
             <nav className="flex space-x-8 px-6">
               {[
                 { id: 'details', name: 'Details', icon: User },
-                { id: 'organizations', name: 'Organizations', icon: Building2, count: organizations.length },
+                {
+                  id: 'organizations',
+                  name: 'Organizations',
+                  icon: Building2,
+                  count: organizations.length,
+                },
                 { id: 'teams', name: 'Teams', icon: Users, count: teams.length },
-                { id: 'sessions', name: 'Sessions', icon: Clock, count: sessions.length }
+                { id: 'sessions', name: 'Sessions', icon: Clock, count: sessions.length },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -517,29 +557,40 @@ export default function UserDetails() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">Email Status</label>
-                      <Badge variant={user.emailVerified ? "default" : "destructive"} className="rounded-none">
+                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                        Email Status
+                      </label>
+                      <Badge
+                        variant={user.emailVerified ? 'default' : 'destructive'}
+                        className="rounded-none"
+                      >
                         {user.emailVerified ? 'Verified' : 'Unverified'}
                       </Badge>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">Created</label>
+                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                        Created
+                      </label>
                       <div className="text-white flex items-center space-x-2">
                         <Calendar className="w-4 h-4" />
                         <span>{new Date(user.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">Last Updated</label>
+                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                        Last Updated
+                      </label>
                       <div className="text-white flex items-center space-x-2">
                         <Calendar className="w-4 h-4" />
                         <span>{new Date(user.updatedAt).toLocaleDateString()}</span>
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">User ID</label>
+                      <label className="block text-sm font-medium text-gray-400 mb-2">
+                        User ID
+                      </label>
                       <div className="text-white font-mono text-sm">{user.id}</div>
                     </div>
                   </div>
@@ -576,8 +627,12 @@ export default function UserDetails() {
                               )}
                             </div>
                             <div>
-                              <h3 className="text-white font-medium">{membership.organization.name}</h3>
-                              <p className="text-gray-400 text-sm">@{membership.organization.slug}</p>
+                              <h3 className="text-white font-medium">
+                                {membership.organization.name}
+                              </h3>
+                              <p className="text-gray-400 text-sm">
+                                @{membership.organization.slug}
+                              </p>
                               <div className="flex items-center space-x-2 mt-1">
                                 <Badge variant="outline" className="rounded-none text-xs">
                                   {membership.role}
@@ -627,7 +682,9 @@ export default function UserDetails() {
                             </div>
                             <div>
                               <h3 className="text-white font-medium">{membership.team.name}</h3>
-                              <p className="text-gray-400 text-sm">in {membership.team.organizationName}</p>
+                              <p className="text-gray-400 text-sm">
+                                in {membership.team.organizationName}
+                              </p>
                               <div className="flex items-center space-x-2 mt-1">
                                 <Badge variant="outline" className="rounded-none text-xs">
                                   {membership.role}
@@ -665,9 +722,9 @@ export default function UserDetails() {
                   <Button
                     variant="outline"
                     onClick={() => {
-                      setSeedingLogs([])
-                      setIsSeeding(false)
-                      setShowSessionSeedModal(true)
+                      setSeedingLogs([]);
+                      setIsSeeding(false);
+                      setShowSessionSeedModal(true);
                     }}
                     className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
                   >
@@ -696,7 +753,9 @@ export default function UserDetails() {
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center space-x-3 mb-2">
-                                <h3 className="text-white font-medium">Session {session.id.substring(0, 8)}...</h3>
+                                <h3 className="text-white font-medium">
+                                  Session {session.id.substring(0, 8)}...
+                                </h3>
                               </div>
                               <div className="flex items-center space-x-4 mb-1">
                                 <div className="flex items-center space-x-2">
@@ -706,7 +765,8 @@ export default function UserDetails() {
                                 <div className="flex items-center space-x-1">
                                   <span className="text-gray-400 text-xs">📍</span>
                                   <span className="text-gray-300 text-sm">
-                                    {sessionLocations[session.id]?.city || '...'}, {sessionLocations[session.id]?.country || '...'}
+                                    {sessionLocations[session.id]?.city || '...'},{' '}
+                                    {sessionLocations[session.id]?.country || '...'}
                                   </span>
                                   {sessionLocations[session.id]?.countryCode && (
                                     <span className="text-sm ml-1">
@@ -726,7 +786,7 @@ export default function UserDetails() {
                                       day: 'numeric',
                                       hour: 'numeric',
                                       minute: '2-digit',
-                                      hour12: true
+                                      hour12: true,
                                     })}
                                   </span>
                                 </div>
@@ -804,7 +864,8 @@ export default function UserDetails() {
               <Button
                 variant="outline"
                 onClick={() => setShowEditModal(false)}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none" >
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
                 Cancel
               </Button>
               <Button
@@ -823,7 +884,8 @@ export default function UserDetails() {
           <div className="bg-black border border-dashed border-red-400/50 rounded-none p-6 w-full max-w-md">
             <h2 className="text-xl font-bold text-white mb-4">Ban User</h2>
             <p className="text-gray-400 mb-6">
-              Are you sure you want to ban <strong>{user.name}</strong>? This will prevent them from accessing the system.
+              Are you sure you want to ban <strong>{user.name}</strong>? This will prevent them from
+              accessing the system.
             </p>
             <div className="flex justify-end space-x-2">
               <Button
@@ -867,7 +929,9 @@ export default function UserDetails() {
                 </div>
                 <div className="space-y-3">
                   <div>
-                    <Label htmlFor="session-count" className="text-sm text-gray-400 font-light">Number of sessions</Label>
+                    <Label htmlFor="session-count" className="text-sm text-gray-400 font-light">
+                      Number of sessions
+                    </Label>
                     <Input
                       id="session-count"
                       type="number"
@@ -882,10 +946,10 @@ export default function UserDetails() {
                   </p>
                 </div>
               </div>
-              
+
               {seedingLogs.length > 0 && (
                 <div className="mt-6">
-                  <Terminal 
+                  <Terminal
                     title="Session Seeding Terminal"
                     lines={seedingLogs}
                     isRunning={isSeeding}
@@ -903,30 +967,32 @@ export default function UserDetails() {
               >
                 Cancel
               </Button>
-                  <Button
-                    onClick={() => {
-                      const count = parseInt((document.getElementById('session-count') as HTMLInputElement)?.value || '3')
-                      handleSeedSessions(count)
-                    }}
-                    disabled={isSeeding}
-                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
-                  >
-                    {isSeeding ? (
-                      <>
-                        <Loader className="w-4 h-4 mr-2 animate-spin" />
-                        Seeding...
-                      </>
-                    ) : (
-                      <>
-                        <Database className="w-4 h-4 mr-2" />
-                        Seed Sessions
-                      </>
-                    )}
-                  </Button>
+              <Button
+                onClick={() => {
+                  const count = parseInt(
+                    (document.getElementById('session-count') as HTMLInputElement)?.value || '3'
+                  );
+                  handleSeedSessions(count);
+                }}
+                disabled={isSeeding}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
+              >
+                {isSeeding ? (
+                  <>
+                    <Loader className="w-4 h-4 mr-2 animate-spin" />
+                    Seeding...
+                  </>
+                ) : (
+                  <>
+                    <Database className="w-4 h-4 mr-2" />
+                    Seed Sessions
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }

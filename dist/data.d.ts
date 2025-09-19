@@ -1,4 +1,4 @@
-import { AuthConfig } from './config.js';
+import type { AuthConfig } from './config.js';
 export interface User {
     id: string;
     email?: string;

@@ -1,5 +1,5 @@
-import { AuthConfig } from './config.js';
 import { getAuthAdapter } from './auth-adapter.js';
+import type { AuthConfig } from './config.js';
 
 export interface User {
   id: string;
@@ -87,7 +87,7 @@ async function getRealStats(adapter: any): Promise<AuthStats> {
 
     const usersByProvider: Record<string, number> = {
       email: users.length,
-      github: 0
+      github: 0,
     };
 
     const recentSignups = users
@@ -95,7 +95,7 @@ async function getRealStats(adapter: any): Promise<AuthStats> {
       .slice(0, 5)
       .map((user: any) => ({
         ...user,
-        provider: 'email'
+        provider: 'email',
       }));
 
     const recentLogins = activeSessions
@@ -109,7 +109,7 @@ async function getRealStats(adapter: any): Promise<AuthStats> {
       activeSessions: activeSessions.length,
       usersByProvider,
       recentSignups,
-      recentLogins
+      recentLogins,
     };
   } catch (error) {
     console.error('Error fetching stats from adapter:', error);
@@ -117,7 +117,10 @@ async function getRealStats(adapter: any): Promise<AuthStats> {
   }
 }
 
-async function getRealUsers(adapter: any, options: { page: number; limit: number; search?: string }): Promise<PaginatedResult<User>> {
+async function getRealUsers(
+  adapter: any,
+  options: { page: number; limit: number; search?: string }
+): Promise<PaginatedResult<User>> {
   const { page, limit, search } = options;
 
   try {
@@ -126,9 +129,10 @@ async function getRealUsers(adapter: any, options: { page: number; limit: number
 
       let filteredUsers = allUsers;
       if (search) {
-        filteredUsers = allUsers.filter((user: any) =>
-          user.email?.toLowerCase().includes(search.toLowerCase()) ||
-          user.name?.toLowerCase().includes(search.toLowerCase())
+        filteredUsers = allUsers.filter(
+          (user: any) =>
+            user.email?.toLowerCase().includes(search.toLowerCase()) ||
+            user.name?.toLowerCase().includes(search.toLowerCase())
         );
       }
 
@@ -141,7 +145,7 @@ async function getRealUsers(adapter: any, options: { page: number; limit: number
         total: filteredUsers.length,
         page,
         limit,
-        totalPages: Math.ceil(filteredUsers.length / limit)
+        totalPages: Math.ceil(filteredUsers.length / limit),
       };
     }
 
@@ -152,7 +156,10 @@ async function getRealUsers(adapter: any, options: { page: number; limit: number
   }
 }
 
-async function getRealSessions(adapter: any, options: { page: number; limit: number }): Promise<PaginatedResult<Session>> {
+async function getRealSessions(
+  adapter: any,
+  options: { page: number; limit: number }
+): Promise<PaginatedResult<Session>> {
   const { page, limit } = options;
 
   try {
@@ -168,7 +175,7 @@ async function getRealSessions(adapter: any, options: { page: number; limit: num
         total: allSessions.length,
         page,
         limit,
-        totalPages: Math.ceil(allSessions.length / limit)
+        totalPages: Math.ceil(allSessions.length / limit),
       };
     }
 
@@ -183,7 +190,7 @@ async function getRealProviderStats(adapter: any) {
   try {
     return [
       { type: 'email', users: 0, active: 0 },
-      { type: 'github', users: 0, active: 0 }
+      { type: 'github', users: 0, active: 0 },
     ];
   } catch (error) {
     console.error('Error fetching provider stats from adapter:', error);
@@ -204,21 +211,24 @@ async function deleteRealUser(adapter: any, userId: string): Promise<void> {
   }
 }
 
-async function updateRealUser(adapter: any, userId: string, userData: Partial<User>): Promise<User> {
-  console.log({userId, userData})
+async function updateRealUser(
+  adapter: any,
+  userId: string,
+  userData: Partial<User>
+): Promise<User> {
+  console.log({ userId, userData });
   try {
-      const updatedUser = await adapter.update({
-        model: 'user',
-        where: [
-          {
-            field: 'id',
-            value: userId
-          }
-        ],
-        update: {...userData}
-      });
-      return updatedUser;
-   
+    const updatedUser = await adapter.update({
+      model: 'user',
+      where: [
+        {
+          field: 'id',
+          value: userId,
+        },
+      ],
+      update: { ...userData },
+    });
+    return updatedUser;
   } catch (error) {
     console.error('Error updating user from adapter:', error);
     throw error;
@@ -251,24 +261,29 @@ function getMockStats(): AuthStats {
     totalSessions: 3456,
     activeSessions: 1234,
     usersByProvider: {
-      'google': 456,
-      'github': 234,
-      'email': 557
+      google: 456,
+      github: 234,
+      email: 557,
     },
     recentSignups: generateMockUsers(5),
-    recentLogins: generateMockSessions(5)
+    recentLogins: generateMockSessions(5),
   };
 }
 
-function getMockUsers(options: { page: number; limit: number; search?: string }): PaginatedResult<User> {
+function getMockUsers(options: {
+  page: number;
+  limit: number;
+  search?: string;
+}): PaginatedResult<User> {
   const { page, limit, search } = options;
   const allUsers = generateMockUsers(100);
 
   let filteredUsers = allUsers;
   if (search) {
-    filteredUsers = allUsers.filter(user =>
-      user.email?.toLowerCase().includes(search.toLowerCase()) ||
-      user.name?.toLowerCase().includes(search.toLowerCase())
+    filteredUsers = allUsers.filter(
+      (user) =>
+        user.email?.toLowerCase().includes(search.toLowerCase()) ||
+        user.name?.toLowerCase().includes(search.toLowerCase())
     );
   }
 
@@ -281,7 +296,7 @@ function getMockUsers(options: { page: number; limit: number; search?: string })
     total: filteredUsers.length,
     page,
     limit,
-    totalPages: Math.ceil(filteredUsers.length / limit)
+    totalPages: Math.ceil(filteredUsers.length / limit),
   };
 }
 
@@ -298,7 +313,7 @@ function getMockSessions(options: { page: number; limit: number }): PaginatedRes
     total: allSessions.length,
     page,
     limit,
-    totalPages: Math.ceil(allSessions.length / limit)
+    totalPages: Math.ceil(allSessions.length / limit),
   };
 }
 
@@ -306,7 +321,7 @@ function getMockProviderStats() {
   return [
     { type: 'google', users: 456, active: 234 },
     { type: 'github', users: 234, active: 123 },
-    { type: 'email', users: 557, active: 345 }
+    { type: 'email', users: 557, active: 345 },
   ];
 }
 
@@ -325,7 +340,7 @@ function generateMockUsers(count: number): User[] {
       createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
       updatedAt: new Date(),
       provider,
-      lastSignIn: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000)
+      lastSignIn: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
     });
   }
 
@@ -342,7 +357,7 @@ function generateMockSessions(count: number): Session[] {
       expires: new Date(Date.now() + Math.random() * 24 * 60 * 60 * 1000),
       createdAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
       userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-      ip: `192.168.1.${Math.floor(Math.random() * 255)}`
+      ip: `192.168.1.${Math.floor(Math.random() * 255)}`,
     });
   }
 

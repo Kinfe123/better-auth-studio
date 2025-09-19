@@ -1,99 +1,109 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
 import {
-  Users as UsersIcon,
-  Search,
-  Filter,
+  Check,
+  Database,
+  Download,
   Edit,
+  Eye,
+  Filter,
+  Loader,
+  Mail,
+  Search,
   Trash2,
   UserPlus,
-  Mail,
-  Eye,
+  Users as UsersIcon,
   X,
-  Database,
-  Check,
-  Loader,
-  Download
-} from 'lucide-react'
-import { Button } from '../components/ui/button'
-import { Input } from '../components/ui/input'
-import { Label } from '../components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select'
-import { Terminal } from '../components/Terminal'
-import { useCounts } from '../contexts/CountsContext'
-import { Pagination } from '../components/ui/pagination'
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { Terminal } from '../components/Terminal';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Pagination } from '../components/ui/pagination';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
+import { useCounts } from '../contexts/CountsContext';
 
 interface User {
-  id: string
-  name: string
-  email: string
-  emailVerified: boolean
-  image?: string
-  createdAt: string
-  updatedAt: string
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function Users() {
-  const navigate = useNavigate()
-  const { refetchCounts } = useCounts()
-  const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filter, setFilter] = useState('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [usersPerPage] = useState(20)
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [showViewModal, setShowViewModal] = useState(false)
-  const [showSeedModal, setShowSeedModal] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
-  const [seedingLogs, setSeedingLogs] = useState<Array<{
-    id: string
-    type: 'info' | 'success' | 'error' | 'progress'
-    message: string
-    timestamp: Date
-    status?: 'pending' | 'running' | 'completed' | 'failed'
-  }>>([])
-  const [isSeeding, setIsSeeding] = useState(false)
+  const navigate = useNavigate();
+  const { refetchCounts } = useCounts();
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage] = useState(20);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showSeedModal, setShowSeedModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [seedingLogs, setSeedingLogs] = useState<
+    Array<{
+      id: string;
+      type: 'info' | 'success' | 'error' | 'progress';
+      message: string;
+      timestamp: Date;
+      status?: 'pending' | 'running' | 'completed' | 'failed';
+    }>
+  >([]);
+  const [isSeeding, setIsSeeding] = useState(false);
 
   useEffect(() => {
-    fetchUsers()
-  }, [])
+    fetchUsers();
+  }, []);
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('/api/users?limit=10000')
-      const data = await response.json()
-      setUsers(data.users || [])
+      const response = await fetch('/api/users?limit=10000');
+      const data = await response.json();
+      setUsers(data.users || []);
     } catch (error) {
-      console.error('Failed to fetch users:', error)
+      console.error('Failed to fetch users:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSeedUsers = async (count: number) => {
-    setSeedingLogs([])
-    setIsSeeding(true)
-    
-    setSeedingLogs([{
-      id: 'start',
-      type: 'info',
-      message: `Starting user seeding process for ${count} users...`,
-      timestamp: new Date()
-    }])
-    
+    setSeedingLogs([]);
+    setIsSeeding(true);
+
+    setSeedingLogs([
+      {
+        id: 'start',
+        type: 'info',
+        message: `Starting user seeding process for ${count} users...`,
+        timestamp: new Date(),
+      },
+    ]);
+
     try {
       const response = await fetch('/api/seed/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ count })
-      })
-      
-      const result = await response.json()
-      
+        body: JSON.stringify({ count }),
+      });
+
+      const result = await response.json();
+
       if (result.success) {
         const progressLogs = result.results.map((r: any, index: number) => {
           if (r.success) {
@@ -102,221 +112,231 @@ export default function Users() {
               type: 'progress' as const,
               message: `Creating user: ${r.user.name} (${r.user.email})`,
               timestamp: new Date(),
-              status: 'completed' as const
-            }
+              status: 'completed' as const,
+            };
           } else {
             return {
               id: `user-${index}`,
               type: 'error' as const,
               message: `Failed to create user ${index + 1}: ${r.error}`,
-              timestamp: new Date()
-            }
+              timestamp: new Date(),
+            };
           }
-        })
-        
-        setSeedingLogs(prev => [...prev, ...progressLogs])
-        
-        const successCount = result.results.filter((r: any) => r.success).length
-        setSeedingLogs(prev => [...prev, {
-          id: 'complete',
-          type: 'success',
-          message: `✅ Seeding completed! Created ${successCount}/${count} users successfully`,
-          timestamp: new Date()
-        }])
-        
-        await fetchUsers()
-        await refetchCounts()
+        });
+
+        setSeedingLogs((prev) => [...prev, ...progressLogs]);
+
+        const successCount = result.results.filter((r: any) => r.success).length;
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'complete',
+            type: 'success',
+            message: `✅ Seeding completed! Created ${successCount}/${count} users successfully`,
+            timestamp: new Date(),
+          },
+        ]);
+
+        await fetchUsers();
+        await refetchCounts();
       } else {
-        setSeedingLogs(prev => [...prev, {
-          id: 'error',
-          type: 'error',
-          message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
-          timestamp: new Date()
-        }])
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'error',
+            type: 'error',
+            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            timestamp: new Date(),
+          },
+        ]);
       }
     } catch (error) {
-      setSeedingLogs(prev => [...prev, {
-        id: 'error',
-        type: 'error',
-        message: `❌ Network error: ${error}`,
-        timestamp: new Date()
-      }])
+      setSeedingLogs((prev) => [
+        ...prev,
+        {
+          id: 'error',
+          type: 'error',
+          message: `❌ Network error: ${error}`,
+          timestamp: new Date(),
+        },
+      ]);
     } finally {
-      setIsSeeding(false)
+      setIsSeeding(false);
     }
-  }
+  };
 
   const openViewModal = (user: User) => {
-    setSelectedUser(user)
-    setShowViewModal(true)
-  }
+    setSelectedUser(user);
+    setShowViewModal(true);
+  };
 
   const openEditModal = (user: User) => {
-    setSelectedUser(user)
-    setShowEditModal(true)
-  }
+    setSelectedUser(user);
+    setShowEditModal(true);
+  };
 
   const openDeleteModal = (user: User) => {
-    setSelectedUser(user)
-    setShowDeleteModal(true)
-  }
+    setSelectedUser(user);
+    setShowDeleteModal(true);
+  };
 
   const handleCreateUser = async () => {
-    const name = (document.getElementById('create-name') as HTMLInputElement)?.value
-    const email = (document.getElementById('create-email') as HTMLInputElement)?.value
-    const password = (document.getElementById('create-password') as HTMLInputElement)?.value
+    const name = (document.getElementById('create-name') as HTMLInputElement)?.value;
+    const email = (document.getElementById('create-email') as HTMLInputElement)?.value;
+    const password = (document.getElementById('create-password') as HTMLInputElement)?.value;
 
     if (!name || !email || !password) {
-      toast.error('Please fill in all fields')
-      return
+      toast.error('Please fill in all fields');
+      return;
     }
 
-    const toastId = toast.loading('Creating user...')
-    
+    const toastId = toast.loading('Creating user...');
+
     try {
       const response = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
-      })
+        body: JSON.stringify({ name, email, password }),
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        await fetchUsers()
-        setShowCreateModal(false)
-        ;(document.getElementById('create-name') as HTMLInputElement).value = ''
-        ;(document.getElementById('create-email') as HTMLInputElement).value = ''
-        ;(document.getElementById('create-password') as HTMLInputElement).value = ''
-        toast.success('User created successfully!', { id: toastId })
+        await fetchUsers();
+        setShowCreateModal(false);
+        (document.getElementById('create-name') as HTMLInputElement).value = '';
+        (document.getElementById('create-email') as HTMLInputElement).value = '';
+        (document.getElementById('create-password') as HTMLInputElement).value = '';
+        toast.success('User created successfully!', { id: toastId });
       } else {
-        toast.error(`Error creating user: ${result.error || 'Unknown error'}`, { id: toastId })
+        toast.error(`Error creating user: ${result.error || 'Unknown error'}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error creating user:', error)
-      toast.error('Error creating user', { id: toastId })
+      console.error('Error creating user:', error);
+      toast.error('Error creating user', { id: toastId });
     }
-  }
+  };
 
   const handleUpdateUser = async () => {
     if (!selectedUser) {
-      toast.error('No user selected')
-      return
+      toast.error('No user selected');
+      return;
     }
 
-    const name = (document.getElementById('edit-name') as HTMLInputElement)?.value
-    const email = (document.getElementById('edit-email') as HTMLInputElement)?.value
+    const name = (document.getElementById('edit-name') as HTMLInputElement)?.value;
+    const email = (document.getElementById('edit-email') as HTMLInputElement)?.value;
 
     if (!name || !email) {
-      toast.error('Please fill in all fields')
-      return
+      toast.error('Please fill in all fields');
+      return;
     }
 
-    const toastId = toast.loading('Updating user...')
-    
+    const toastId = toast.loading('Updating user...');
+
     try {
       const response = await fetch(`/api/users/${selectedUser.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email })
-      })
+        body: JSON.stringify({ name, email }),
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        await fetchUsers()
-        setShowEditModal(false)
-        setSelectedUser(null)
-        toast.success('User updated successfully!', { id: toastId })
+        await fetchUsers();
+        setShowEditModal(false);
+        setSelectedUser(null);
+        toast.success('User updated successfully!', { id: toastId });
       } else {
-        toast.error(`Error updating user: ${result.error || 'Unknown error'}`, { id: toastId })
+        toast.error(`Error updating user: ${result.error || 'Unknown error'}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error updating user:', error)
-      toast.error('Error updating user', { id: toastId })
+      console.error('Error updating user:', error);
+      toast.error('Error updating user', { id: toastId });
     }
-  }
+  };
 
   const handleDeleteUser = async () => {
     if (!selectedUser) {
-      toast.error('No user selected')
-      return
+      toast.error('No user selected');
+      return;
     }
 
-    const toastId = toast.loading('Deleting user...')
-    
+    const toastId = toast.loading('Deleting user...');
+
     try {
       const response = await fetch(`/api/users/${selectedUser.id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
-      })
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        await fetchUsers()
-        await refetchCounts()
-        setShowDeleteModal(false)
-        setSelectedUser(null)
-        toast.success('User deleted successfully!', { id: toastId })
+        await fetchUsers();
+        await refetchCounts();
+        setShowDeleteModal(false);
+        setSelectedUser(null);
+        toast.success('User deleted successfully!', { id: toastId });
       } else {
-        toast.error(`Error deleting user: ${result.error || 'Unknown error'}`, { id: toastId })
+        toast.error(`Error deleting user: ${result.error || 'Unknown error'}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error deleting user:', error)
-      toast.error('Error deleting user', { id: toastId })
+      console.error('Error deleting user:', error);
+      toast.error('Error deleting user', { id: toastId });
     }
-  }
+  };
 
   const exportUsersToCSV = () => {
     if (users.length === 0) {
-      toast.error('No users to export')
-      return
+      toast.error('No users to export');
+      return;
     }
 
-    const csvHeaders = ['ID', 'Name', 'Email', 'Email Verified', 'Created At', 'Updated At']
-    const csvData = users.map(user => [
+    const csvHeaders = ['ID', 'Name', 'Email', 'Email Verified', 'Created At', 'Updated At'];
+    const csvData = users.map((user) => [
       user.id,
       user.name || '',
       user.email || '',
       user.emailVerified ? true : false,
       new Date(user.createdAt).toLocaleString(),
-      new Date(user.updatedAt).toLocaleString()
-    ])
+      new Date(user.updatedAt).toLocaleString(),
+    ]);
 
     const csvContent = [
       csvHeaders.join(','),
-      ...csvData.map(row => row.map(field => `"${field}"`).join(','))
-    ].join('\n')
+      ...csvData.map((row) => row.map((field) => `"${field}"`).join(',')),
+    ].join('\n');
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const link = document.createElement('a')
-    const url = URL.createObjectURL(blob)
-    link.setAttribute('href', url)
-    link.setAttribute('download', `users-export-${new Date().toISOString().split('T')[0]}.csv`)
-    link.style.visibility = 'hidden'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    
-    toast.success(`Exported ${users.length} users to CSV`)
-  }
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `users-export-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFilter = filter === 'all'
-    return matchesSearch && matchesFilter
-  })
+    toast.success(`Exported ${users.length} users to CSV`);
+  };
 
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage)
-  const startIndex = (currentPage - 1) * usersPerPage
-  const endIndex = startIndex + usersPerPage
-  const currentUsers = filteredUsers.slice(startIndex, endIndex)
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filter === 'all';
+    return matchesSearch && matchesFilter;
+  });
+
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const startIndex = (currentPage - 1) * usersPerPage;
+  const endIndex = startIndex + usersPerPage;
+  const currentUsers = filteredUsers.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-  }
+    setCurrentPage(page);
+  };
 
   if (loading) {
     return (
@@ -326,7 +346,7 @@ export default function Users() {
           <div className="text-white text-sm">Loading users...</div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -412,10 +432,9 @@ export default function Users() {
                       <div>
                         <h3 className="text-white font-medium text-lg">No users found</h3>
                         <p className="text-gray-400 text-sm mt-1">
-                          {searchTerm || filter !== 'all' 
+                          {searchTerm || filter !== 'all'
                             ? 'Try adjusting your search or filter criteria'
-                            : 'Get started by creating your first user or seeding some data'
-                          }
+                            : 'Get started by creating your first user or seeding some data'}
                         </p>
                       </div>
                       {!searchTerm && filter === 'all' && (
@@ -441,15 +460,18 @@ export default function Users() {
                 </tr>
               ) : (
                 currentUsers.map((user) => (
-                                        <tr 
-                                            key={user.id} 
-                                            className="border-b border-dashed border-white/5 hover:bg-white/5 cursor-pointer"
-                                            onClick={() => navigate(`/users/${user.id}`)}
-                                        >
+                  <tr
+                    key={user.id}
+                    className="border-b border-dashed border-white/5 hover:bg-white/5 cursor-pointer"
+                    onClick={() => navigate(`/users/${user.id}`)}
+                  >
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-3">
                         <img
-                          src={user.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`}
+                          src={
+                            user.image ||
+                            `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`
+                          }
                           alt={user.name}
                           className="w-10 h-10 rounded-none border border-dashed border-white/20"
                         />
@@ -464,7 +486,7 @@ export default function Users() {
                       <div className="flex items-center space-x-2">
                         {user.emailVerified ? (
                           <Check className="w-4 h-4 text-green-400" />
-                         ) : (
+                        ) : (
                           <Mail className="w-4 h-4 text-yellow-400" />
                         )}
                         <span className="text-sm text-gray-400">
@@ -473,10 +495,16 @@ export default function Users() {
                       </div>
                     </td>
                     <td className="py-4 px-4 text-sm text-gray-400">
-                     <div className='flex flex-col'>
-                      {new Date(user.createdAt).toLocaleDateString()}
-                      <p className='text-xs'>{new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                      </div> 
+                      <div className="flex flex-col">
+                        {new Date(user.createdAt).toLocaleDateString()}
+                        <p className="text-xs">
+                          {new Date(user.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </p>
+                      </div>
                     </td>
                     <td className="py-4 px-4 text-right">
                       <div className="flex items-center justify-end space-x-2">
@@ -485,8 +513,8 @@ export default function Users() {
                           size="sm"
                           className="text-gray-400 hover:text-white rounded-none"
                           onClick={(e) => {
-                            e.stopPropagation()
-                            openViewModal(user)
+                            e.stopPropagation();
+                            openViewModal(user);
                           }}
                         >
                           <Eye className="w-4 h-4" />
@@ -496,8 +524,8 @@ export default function Users() {
                           size="sm"
                           className="text-gray-400 hover:text-white rounded-none"
                           onClick={(e) => {
-                            e.stopPropagation()
-                            openEditModal(user)
+                            e.stopPropagation();
+                            openEditModal(user);
                           }}
                         >
                           <Edit className="w-4 h-4" />
@@ -507,8 +535,8 @@ export default function Users() {
                           size="sm"
                           className="text-red-400 hover:text-red-300 rounded-none"
                           onClick={(e) => {
-                            e.stopPropagation()
-                            openDeleteModal(user)
+                            e.stopPropagation();
+                            openDeleteModal(user);
                           }}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -557,7 +585,9 @@ export default function Users() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
-                    <Label htmlFor="user-count" className="text-sm text-gray-400 font-light">Number of users</Label>
+                    <Label htmlFor="user-count" className="text-sm text-gray-400 font-light">
+                      Number of users
+                    </Label>
                     <Input
                       id="user-count"
                       type="number"
@@ -569,8 +599,10 @@ export default function Users() {
                   </div>
                   <Button
                     onClick={() => {
-                      const count = parseInt((document.getElementById('user-count') as HTMLInputElement)?.value || '5')
-                      handleSeedUsers(count)
+                      const count = parseInt(
+                        (document.getElementById('user-count') as HTMLInputElement)?.value || '5'
+                      );
+                      handleSeedUsers(count);
                     }}
                     disabled={isSeeding}
                     className="bg-transparent hover:bg-white/90 bg-white text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
@@ -589,10 +621,10 @@ export default function Users() {
                   </Button>
                 </div>
               </div>
-              
+
               {seedingLogs.length > 0 && (
                 <div className="mt-6">
-                  <Terminal 
+                  <Terminal
                     title="User Seeding Terminal"
                     lines={seedingLogs}
                     isRunning={isSeeding}
@@ -632,14 +664,18 @@ export default function Users() {
             </div>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="create-name" className="text-sm text-gray-400 font-light">Name</Label>
+                <Label htmlFor="create-name" className="text-sm text-gray-400 font-light">
+                  Name
+                </Label>
                 <Input
                   id="create-name"
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
               <div>
-                <Label htmlFor="create-email" className="text-sm text-gray-400 font-light">Email</Label>
+                <Label htmlFor="create-email" className="text-sm text-gray-400 font-light">
+                  Email
+                </Label>
                 <Input
                   id="create-email"
                   type="email"
@@ -647,7 +683,9 @@ export default function Users() {
                 />
               </div>
               <div>
-                <Label htmlFor="create-password" className="text-sm text-gray-400 font-light">Password</Label>
+                <Label htmlFor="create-password" className="text-sm text-gray-400 font-light">
+                  Password
+                </Label>
                 <Input
                   id="create-password"
                   type="password"
@@ -692,7 +730,10 @@ export default function Users() {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <img
-                  src={selectedUser.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedUser.id}`}
+                  src={
+                    selectedUser.image ||
+                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedUser.id}`
+                  }
                   alt={selectedUser.name}
                   className="w-16 h-16 rounded-none border border-dashed border-white/20"
                 />
@@ -702,7 +743,9 @@ export default function Users() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="edit-name" className="text-sm text-gray-400 font-light">Name</Label>
+                <Label htmlFor="edit-name" className="text-sm text-gray-400 font-light">
+                  Name
+                </Label>
                 <Input
                   id="edit-name"
                   defaultValue={selectedUser.name}
@@ -710,7 +753,9 @@ export default function Users() {
                 />
               </div>
               <div>
-                <Label htmlFor="edit-email" className="text-sm text-gray-400 font-light">Email</Label>
+                <Label htmlFor="edit-email" className="text-sm text-gray-400 font-light">
+                  Email
+                </Label>
                 <Input
                   id="edit-email"
                   type="email"
@@ -755,7 +800,10 @@ export default function Users() {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <img
-                  src={selectedUser.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedUser.id}`}
+                  src={
+                    selectedUser.image ||
+                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedUser.id}`
+                  }
                   alt={selectedUser.name}
                   className="w-16 h-16 rounded-none border border-dashed border-white/20"
                 />
@@ -764,7 +812,9 @@ export default function Users() {
                   <div className="text-sm text-gray-400">{selectedUser.email}</div>
                 </div>
               </div>
-              <p className="text-gray-400">Are you sure you want to delete this user? This action cannot be undone.</p>
+              <p className="text-gray-400">
+                Are you sure you want to delete this user? This action cannot be undone.
+              </p>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
               <Button
@@ -803,7 +853,10 @@ export default function Users() {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <img
-                  src={selectedUser.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedUser.id}`}
+                  src={
+                    selectedUser.image ||
+                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedUser.id}`
+                  }
                   alt={selectedUser.name}
                   className="w-16 h-16 rounded-none border border-dashed border-white/20"
                 />
@@ -819,15 +872,21 @@ export default function Users() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Email Verified:</span>
-                  <span className="text-white text-sm">{selectedUser.emailVerified ? 'Yes' : 'No'}</span>
+                  <span className="text-white text-sm">
+                    {selectedUser.emailVerified ? 'Yes' : 'No'}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Created:</span>
-                  <span className="text-white text-sm">{new Date(selectedUser.createdAt).toLocaleString()}</span>
+                  <span className="text-white text-sm">
+                    {new Date(selectedUser.createdAt).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Updated:</span>
-                  <span className="text-white text-sm">{new Date(selectedUser.updatedAt).toLocaleString()}</span>
+                  <span className="text-white text-sm">
+                    {new Date(selectedUser.updatedAt).toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
@@ -843,5 +902,5 @@ export default function Users() {
         </div>
       )}
     </div>
-  )
+  );
 }

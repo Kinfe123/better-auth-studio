@@ -1,0 +1,92 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": ["src/**/*", "frontend/src/**/*", "apps/docs/src/**/*", "scripts/**/*"],
+    "experimentalScannerIgnores": [
+      "node_modules/**",
+      "dist/**",
+      "public/**",
+      "frontend/dist/**",
+      "frontend/node_modules/**",
+      "apps/docs/.next/**",
+      "apps/docs/node_modules/**",
+      "tests/**/node_modules/**",
+      "tests/**/dist/**",
+      "tests/**/generated/**",
+      "*.d.ts",
+      "*.d.ts.map",
+      "*.js.map",
+      "**/*.css"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noConsole": "warn",
+        "noExplicitAny": "warn",
+        "noImplicitAnyLet": "warn",
+        "noAssignInExpressions": "warn",
+        "noRedeclare": "warn",
+        "noArrayIndexKey": "warn",
+        "noCommentText": "warn",
+        "noUnknownAtRules": "warn"
+      },
+      "style": {
+        "noNonNullAssertion": "warn",
+        "useTemplate": "warn",
+        "useNodejsImportProtocol": "warn"
+      },
+      "correctness": {
+        "noUnusedVariables": "warn",
+        "useUniqueElementIds": "warn",
+        "useExhaustiveDependencies": "warn",
+        "noUnusedFunctionParameters": "warn"
+      },
+      "a11y": {
+        "noLabelWithoutControl": "warn",
+        "useButtonType": "warn",
+        "useKeyWithClickEvents": "warn",
+        "noStaticElementInteractions": "warn"
+      },
+      "security": {
+        "noBlankTarget": "warn",
+        "noGlobalEval": "warn"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "es5"
+    }
+  },
+  "json": {
+    "formatter": {
+      "indentStyle": "space",
+      "indentWidth": 2
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
+}

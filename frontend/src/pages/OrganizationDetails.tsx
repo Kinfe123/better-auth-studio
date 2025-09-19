@@ -1,1577 +1,1679 @@
-import { useState, useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
 import {
-    Building2,
-    ArrowLeft,
-    Edit,
-    Users,
-    Calendar,
-    UserPlus,
-    Trash2,
-    Mail,
-    X,
-    Send,
-    Clock,
-    CheckCircle,
-    Loader,
-    Database
-} from 'lucide-react'
-import { Button } from '../components/ui/button'
-import { Badge } from '../components/ui/badge'
-import { Input } from '../components/ui/input'
-import { Label } from '../components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select'
-import { Terminal } from '../components/Terminal'
+  ArrowLeft,
+  Building2,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Database,
+  Edit,
+  Loader,
+  Mail,
+  Send,
+  Trash2,
+  UserPlus,
+  Users,
+  X,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
+import { Terminal } from '../components/Terminal';
+import { Badge } from '../components/ui/badge';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
 
 interface Organization {
-    id: string
-    name: string
-    slug: string
-    metadata?: any
-    createdAt: string
-    updatedAt: string
+  id: string;
+  name: string;
+  slug: string;
+  metadata?: any;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface Team {
-    id: string
-    name: string
-    organizationId: string
-    metadata?: any
-    createdAt: string
-    updatedAt: string
-    memberCount?: number
+  id: string;
+  name: string;
+  organizationId: string;
+  metadata?: any;
+  createdAt: string;
+  updatedAt: string;
+  memberCount?: number;
 }
 
 interface Invitation {
-    id: string
-    email: string
-    role: string
-    status: 'pending' | 'accepted' | 'expired'
-    organizationId: string
-    teamId?: string
-    inviterId: string
-    expiresAt: string
-    createdAt: string
+  id: string;
+  email: string;
+  role: string;
+  status: 'pending' | 'accepted' | 'expired';
+  organizationId: string;
+  teamId?: string;
+  inviterId: string;
+  expiresAt: string;
+  createdAt: string;
 }
 
 interface Member {
-    id: string
-    userId: string
-    organizationId: string
-    role: string
-    joinedAt: string
-    user: {
-        id: string
-        name: string
-        email: string
-        image?: string
-        emailVerified: boolean
-    }
+  id: string;
+  userId: string;
+  organizationId: string;
+  role: string;
+  joinedAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    image?: string;
+    emailVerified: boolean;
+  };
 }
 
-
 export default function OrganizationDetails() {
-    const { orgId } = useParams<{ orgId: string }>()
-    const navigate = useNavigate()
-    const [organization, setOrganization] = useState<Organization | null>(null)
-    const [teams, setTeams] = useState<Team[]>([])
-    const [invitations, setInvitations] = useState<Invitation[]>([])
-    const [members, setMembers] = useState<Member[]>([])
-    const [loading, setLoading] = useState(true)
-    const [activeTab, setActiveTab] = useState<'details' | 'members' | 'invitations' | 'teams'>('details')
-    const [teamsEnabled, setTeamsEnabled] = useState(false)
-    
-    const [showInviteModal, setShowInviteModal] = useState(false)
-    const [showSeedMembersModal, setShowSeedMembersModal] = useState(false)
-    const [showSeedTeamsModal, setShowSeedTeamsModal] = useState(false)
-    const [showCreateTeamModal, setShowCreateTeamModal] = useState(false)
-    const [showEditTeamModal, setShowEditTeamModal] = useState(false)
-    const [showDeleteTeamModal, setShowDeleteTeamModal] = useState(false)
-    const [selectedTeam, setSelectedTeam] = useState<Team | null>(null)
-    
-    const [inviteEmail, setInviteEmail] = useState('')
-    const [selectedInviterId, setSelectedInviterId] = useState('')
-    const [availableUsers, setAvailableUsers] = useState<User[]>([])
-    const [teamFormData, setTeamFormData] = useState({ name: '' })
-    const [inviting, setInviting] = useState(false)
-    const [seedingLogs, setSeedingLogs] = useState<Array<{
-        id: string
-        type: 'info' | 'success' | 'error' | 'progress'
-        message: string
-        timestamp: Date
-        status?: 'pending' | 'running' | 'completed' | 'failed'
-    }>>([])
-    const [isSeeding, setIsSeeding] = useState(false)
-    const [teamSeedingLogs, setTeamSeedingLogs] = useState<Array<{
-        id: string
-        type: 'info' | 'success' | 'error' | 'progress'
-        message: string
-        timestamp: Date
-        status?: 'pending' | 'running' | 'completed' | 'failed'
-    }>>([])
-    const [isTeamSeeding, setIsTeamSeeding] = useState(false)
+  const { orgId } = useParams<{ orgId: string }>();
+  const navigate = useNavigate();
+  const [organization, setOrganization] = useState<Organization | null>(null);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'details' | 'members' | 'invitations' | 'teams'>(
+    'details'
+  );
+  const [teamsEnabled, setTeamsEnabled] = useState(false);
 
-    interface User {
-        id: string
-        name: string
-        email: string
-        image?: string
-        emailVerified: boolean
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showSeedMembersModal, setShowSeedMembersModal] = useState(false);
+  const [showSeedTeamsModal, setShowSeedTeamsModal] = useState(false);
+  const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
+  const [showEditTeamModal, setShowEditTeamModal] = useState(false);
+  const [showDeleteTeamModal, setShowDeleteTeamModal] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [selectedInviterId, setSelectedInviterId] = useState('');
+  const [availableUsers, setAvailableUsers] = useState<User[]>([]);
+  const [teamFormData, setTeamFormData] = useState({ name: '' });
+  const [inviting, setInviting] = useState(false);
+  const [seedingLogs, setSeedingLogs] = useState<
+    Array<{
+      id: string;
+      type: 'info' | 'success' | 'error' | 'progress';
+      message: string;
+      timestamp: Date;
+      status?: 'pending' | 'running' | 'completed' | 'failed';
+    }>
+  >([]);
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [teamSeedingLogs, setTeamSeedingLogs] = useState<
+    Array<{
+      id: string;
+      type: 'info' | 'success' | 'error' | 'progress';
+      message: string;
+      timestamp: Date;
+      status?: 'pending' | 'running' | 'completed' | 'failed';
+    }>
+  >([]);
+  const [isTeamSeeding, setIsTeamSeeding] = useState(false);
+
+  interface User {
+    id: string;
+    name: string;
+    email: string;
+    image?: string;
+    emailVerified: boolean;
+  }
+
+  useEffect(() => {
+    if (orgId) {
+      fetchOrganization();
+      checkTeamsEnabled();
+      fetchInvitations();
+      fetchMembers();
+      fetchTeams();
+    }
+  }, [orgId]);
+
+  useEffect(() => {
+    if (teamsEnabled && orgId) {
+      fetchTeams();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'members' && orgId) {
+      fetchMembers();
+    }
+  }, [activeTab, orgId]);
+
+  useEffect(() => {
+    if (activeTab === 'invitations' && orgId) {
+      fetchInvitations();
+    }
+  }, [activeTab, orgId]);
+
+  const handleTeamNameChange = (name: string) => {
+    setTeamFormData({ name });
+  };
+
+  const fetchOrganization = async () => {
+    try {
+      const response = await fetch(`/api/organizations/${orgId}`);
+      const data = await response.json();
+
+      // Handle both response formats: { success: true, organization: ... } and { organization: ... }
+      if (data.success && data.organization) {
+        setOrganization(data.organization);
+      } else if (data.organization) {
+        setOrganization(data.organization);
+      } else {
+        toast.error('Organization not found');
+      }
+    } catch (error) {
+      console.error('Failed to fetch organization:', error);
+      toast.error('Failed to load organization');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkTeamsEnabled = async () => {
+    try {
+      const response = await fetch('/api/plugins/teams/status');
+      const data = await response.json();
+      setTeamsEnabled(data.enabled);
+    } catch (error) {
+      console.error('Failed to check teams status:', error);
+      setTeamsEnabled(false);
+    }
+  };
+
+  const fetchTeams = async () => {
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/teams`);
+      const data = await response.json();
+
+      if (data.success) {
+        setTeams(data.teams || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch teams:', error);
+      toast.error('Failed to load teams');
+    }
+  };
+
+  const fetchInvitations = async () => {
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/invitations`);
+      const data = await response.json();
+
+      if (data.success) {
+        setInvitations(data.invitations || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch invitations:', error);
+      toast.error('Failed to load invitations');
+    }
+  };
+
+  const fetchMembers = async () => {
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/members`);
+      const data = await response.json();
+
+      if (data.success) {
+        setMembers(data.members || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch members:', error);
+      toast.error('Failed to load members');
+    }
+  };
+
+  const handleSeedMembers = async (count: number) => {
+    setSeedingLogs([]);
+    setIsSeeding(true);
+
+    setSeedingLogs([
+      {
+        id: 'start',
+        type: 'info',
+        message: `Starting member seeding process for ${count} members...`,
+        timestamp: new Date(),
+      },
+    ]);
+
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/seed-members`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ count }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const progressLogs = result.results.map((r: any, index: number) => {
+          if (r.success) {
+            return {
+              id: `member-${index}`,
+              type: 'progress' as const,
+              message: `Adding member: ${r.member.user.name} (${r.member.user.email})`,
+              timestamp: new Date(),
+              status: 'completed' as const,
+            };
+          } else {
+            return {
+              id: `member-${index}`,
+              type: 'error' as const,
+              message: `Failed to add member ${index + 1}: ${r.error}`,
+              timestamp: new Date(),
+            };
+          }
+        });
+
+        setSeedingLogs((prev) => [...prev, ...progressLogs]);
+
+        const successCount = result.results.filter((r: any) => r.success).length;
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'complete',
+            type: 'success',
+            message: `✅ Seeding completed! Added ${successCount}/${count} members successfully`,
+            timestamp: new Date(),
+          },
+        ]);
+
+        await fetchMembers();
+        toast.success(`Successfully added ${successCount} members!`);
+      } else {
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'error',
+            type: 'error',
+            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            timestamp: new Date(),
+          },
+        ]);
+        toast.error(result.error || 'Failed to seed members');
+      }
+    } catch (error) {
+      setSeedingLogs((prev) => [
+        ...prev,
+        {
+          id: 'error',
+          type: 'error',
+          message: `❌ Network error: ${error}`,
+          timestamp: new Date(),
+        },
+      ]);
+      toast.error('Failed to seed members');
+    } finally {
+      setIsSeeding(false);
+    }
+  };
+
+  const handleSeedTeams = async (count: number) => {
+    setTeamSeedingLogs([]);
+    setIsTeamSeeding(true);
+
+    setTeamSeedingLogs([
+      {
+        id: 'start',
+        type: 'info',
+        message: `Starting team seeding process for ${count} teams...`,
+        timestamp: new Date(),
+      },
+    ]);
+
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/seed-teams`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ count }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const progressLogs = result.results.map((r: any, index: number) => {
+          if (r.success) {
+            return {
+              id: `team-${index}`,
+              type: 'progress' as const,
+              message: `Creating team: ${r.team.name}`,
+              timestamp: new Date(),
+              status: 'completed' as const,
+            };
+          } else {
+            return {
+              id: `team-${index}`,
+              type: 'error' as const,
+              message: `Failed to create team ${index + 1}: ${r.error}`,
+              timestamp: new Date(),
+            };
+          }
+        });
+
+        setTeamSeedingLogs((prev) => [...prev, ...progressLogs]);
+
+        const successCount = result.results.filter((r: any) => r.success).length;
+        setTeamSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'complete',
+            type: 'success',
+            message: `✅ Seeding completed! Created ${successCount}/${count} teams successfully`,
+            timestamp: new Date(),
+          },
+        ]);
+
+        await fetchTeams();
+        toast.success(`Successfully created ${successCount} teams!`);
+      } else {
+        setTeamSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'error',
+            type: 'error',
+            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            timestamp: new Date(),
+          },
+        ]);
+        toast.error(result.error || 'Failed to seed teams');
+      }
+    } catch (error) {
+      setTeamSeedingLogs((prev) => [
+        ...prev,
+        {
+          id: 'error',
+          type: 'error',
+          message: `❌ Network error: ${error}`,
+          timestamp: new Date(),
+        },
+      ]);
+      toast.error('Failed to seed teams');
+    } finally {
+      setIsTeamSeeding(false);
+    }
+  };
+
+  const fetchAvailableUsers = async () => {
+    try {
+      const response = await fetch('/api/users/all');
+      const data = await response.json();
+
+      if (data.success) {
+        setAvailableUsers(data.users || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+    }
+  };
+
+  const openInviteModal = () => {
+    fetchAvailableUsers();
+    setShowInviteModal(true);
+  };
+
+  const handleInviteUser = async () => {
+    if (!inviteEmail) {
+      toast.error('Please enter an email address');
+      return;
     }
 
-    useEffect(() => {
-        if (orgId) {
-            fetchOrganization()
-            checkTeamsEnabled()
-            fetchInvitations()
-            fetchMembers()
-            fetchTeams()
-        }
-    }, [orgId])
-
-    useEffect(() => {
-        if (teamsEnabled && orgId) {
-            fetchTeams()
-        }
-    }, [])
-
-    useEffect(() => {
-        if (activeTab === 'members' && orgId) {
-            fetchMembers()
-        }
-    }, [activeTab, orgId])
-
-    useEffect(() => {
-        if (activeTab === 'invitations' && orgId) {
-            fetchInvitations()
-        }
-    }, [activeTab, orgId])
-
-    const handleTeamNameChange = (name: string) => {
-        setTeamFormData({ name })
+    if (!selectedInviterId) {
+      toast.error('Please select an inviter');
+      return;
     }
 
-    const fetchOrganization = async () => {
-        try {
-            const response = await fetch(`/api/organizations/${orgId}`)
-            const data = await response.json()
+    setInviting(true);
+    const toastId = toast.loading('Sending invitation...');
 
-            // Handle both response formats: { success: true, organization: ... } and { organization: ... }
-            if (data.success && data.organization) {
-                setOrganization(data.organization)
-            } else if (data.organization) {
-                setOrganization(data.organization)
-            } else {
-                toast.error('Organization not found')
-            }
-        } catch (error) {
-            console.error('Failed to fetch organization:', error)
-            toast.error('Failed to load organization')
-        } finally {
-            setLoading(false)
-        }
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/invitations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: inviteEmail,
+          role: 'member',
+          inviterId: selectedInviterId,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchInvitations();
+        setShowInviteModal(false);
+        setInviteEmail('');
+        setSelectedInviterId('');
+        toast.success('Invitation sent successfully!', { id: toastId });
+      } else {
+        toast.error(`Error sending invitation: ${result.error || 'Unknown error'}`, {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+      console.error('Error sending invitation:', error);
+      toast.error('Error sending invitation', { id: toastId });
+    } finally {
+      setInviting(false);
+    }
+  };
+
+  const handleCancelInvitation = async (invitationId: string) => {
+    const toastId = toast.loading('Cancelling invitation...');
+
+    try {
+      const response = await fetch(`/api/invitations/${invitationId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchInvitations();
+        toast.success('Invitation cancelled successfully!', { id: toastId });
+      } else {
+        toast.error(`Error cancelling invitation: ${result.error || 'Unknown error'}`, {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+      console.error('Error cancelling invitation:', error);
+      toast.error('Error cancelling invitation', { id: toastId });
+    }
+  };
+
+  const handleResendInvitation = async (invitationId: string, email: string) => {
+    const toastId = toast.loading('Resending invitation...');
+
+    try {
+      const response = await fetch(`/api/invitations/${invitationId}/resend`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchInvitations();
+        toast.success(`Invitation resent to ${email}!`, { id: toastId });
+      } else {
+        toast.error(`Error resending invitation: ${result.error || 'Unknown error'}`, {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+      console.error('Error resending invitation:', error);
+      toast.error('Error resending invitation', { id: toastId });
+    }
+  };
+
+  const handleRemoveMember = async (memberId: string, userName: string) => {
+    const toastId = toast.loading(`Removing ${userName}...`);
+
+    try {
+      const response = await fetch(`/api/members/${memberId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchMembers();
+        toast.success(`${userName} removed from organization!`, { id: toastId });
+      } else {
+        toast.error(`Error removing member: ${result.error || 'Unknown error'}`, { id: toastId });
+      }
+    } catch (error) {
+      console.error('Error removing member:', error);
+      toast.error('Error removing member', { id: toastId });
+    }
+  };
+
+  const handleCreateTeam = async () => {
+    if (!teamFormData.name) {
+      toast.error('Please enter a team name');
+      return;
     }
 
-    const checkTeamsEnabled = async () => {
-        try {
-            const response = await fetch('/api/plugins/teams/status')
-            const data = await response.json()
-            setTeamsEnabled(data.enabled)
-        } catch (error) {
-            console.error('Failed to check teams status:', error)
-            setTeamsEnabled(false)
-        }
+    const toastId = toast.loading('Creating team...');
+
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/teams`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: teamFormData.name,
+          organizationId: orgId,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchTeams();
+        setShowCreateTeamModal(false);
+        setTeamFormData({ name: '' });
+        toast.success('Team created successfully!', { id: toastId });
+      } else {
+        toast.error(`Error creating team: ${result.error || 'Unknown error'}`, { id: toastId });
+      }
+    } catch (error) {
+      console.error('Error creating team:', error);
+      toast.error('Error creating team', { id: toastId });
+    }
+  };
+
+  const handleUpdateTeam = async () => {
+    if (!selectedTeam || !teamFormData.name) {
+      toast.error('Please enter a team name');
+      return;
     }
 
-    const fetchTeams = async () => {
-        try {
-            const response = await fetch(`/api/organizations/${orgId}/teams`)
-            const data = await response.json()
+    const toastId = toast.loading('Updating team...');
 
-            if (data.success) {
-                setTeams(data.teams || [])
-            }
-        } catch (error) {
-            console.error('Failed to fetch teams:', error)
-            toast.error('Failed to load teams')
-        }
+    try {
+      const response = await fetch(`/api/teams/${selectedTeam.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: teamFormData.name,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchTeams();
+        setShowEditTeamModal(false);
+        setSelectedTeam(null);
+        setTeamFormData({ name: '' });
+        toast.success('Team updated successfully!', { id: toastId });
+      } else {
+        toast.error(`Error updating team: ${result.error || 'Unknown error'}`, { id: toastId });
+      }
+    } catch (error) {
+      console.error('Error updating team:', error);
+      toast.error('Error updating team', { id: toastId });
+    }
+  };
+
+  const handleDeleteTeam = async () => {
+    if (!selectedTeam) {
+      toast.error('No team selected');
+      return;
     }
 
-    const fetchInvitations = async () => {
-        try {
-            const response = await fetch(`/api/organizations/${orgId}/invitations`)
-            const data = await response.json()
+    const toastId = toast.loading('Deleting team...');
 
-            if (data.success) {
-                setInvitations(data.invitations || [])
-            }
-        } catch (error) {
-            console.error('Failed to fetch invitations:', error)
-            toast.error('Failed to load invitations')
-        }
+    try {
+      const response = await fetch(`/api/teams/${selectedTeam.id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchTeams();
+        setShowDeleteTeamModal(false);
+        setSelectedTeam(null);
+        toast.success('Team deleted successfully!', { id: toastId });
+      } else {
+        toast.error(`Error deleting team: ${result.error || 'Unknown error'}`, { id: toastId });
+      }
+    } catch (error) {
+      console.error('Error deleting team:', error);
+      toast.error('Error deleting team', { id: toastId });
     }
+  };
 
-    const fetchMembers = async () => {
-        try {
-            const response = await fetch(`/api/organizations/${orgId}/members`)
-            const data = await response.json()
+  const openEditTeamModal = (team: Team) => {
+    setSelectedTeam(team);
+    setTeamFormData({ name: team.name });
+    setShowEditTeamModal(true);
+  };
 
-            if (data.success) {
-                setMembers(data.members || [])
-            }
-        } catch (error) {
-            console.error('Failed to fetch members:', error)
-            toast.error('Failed to load members')
-        }
-    }
+  const openDeleteTeamModal = (team: Team) => {
+    setSelectedTeam(team);
+    setShowDeleteTeamModal(true);
+  };
 
-    const handleSeedMembers = async (count: number) => {
-        setSeedingLogs([])
-        setIsSeeding(true)
-        
-        setSeedingLogs([{
-            id: 'start',
-            type: 'info',
-            message: `Starting member seeding process for ${count} members...`,
-            timestamp: new Date()
-        }])
-        
-        try {
-            const response = await fetch(`/api/organizations/${orgId}/seed-members`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ count })
-            })
-            
-            const result = await response.json()
-            
-            if (result.success) {
-                const progressLogs = result.results.map((r: any, index: number) => {
-                    if (r.success) {
-                        return {
-                            id: `member-${index}`,
-                            type: 'progress' as const,
-                            message: `Adding member: ${r.member.user.name} (${r.member.user.email})`,
-                            timestamp: new Date(),
-                            status: 'completed' as const
-                        }
-                    } else {
-                        return {
-                            id: `member-${index}`,
-                            type: 'error' as const,
-                            message: `Failed to add member ${index + 1}: ${r.error}`,
-                            timestamp: new Date()
-                        }
-                    }
-                })
-                
-                setSeedingLogs(prev => [...prev, ...progressLogs])
-                
-                const successCount = result.results.filter((r: any) => r.success).length
-                setSeedingLogs(prev => [...prev, {
-                    id: 'complete',
-                    type: 'success',
-                    message: `✅ Seeding completed! Added ${successCount}/${count} members successfully`,
-                    timestamp: new Date()
-                }])
-                
-                await fetchMembers()
-                toast.success(`Successfully added ${successCount} members!`)
-            } else {
-                setSeedingLogs(prev => [...prev, {
-                    id: 'error',
-                    type: 'error',
-                    message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
-                    timestamp: new Date()
-                }])
-                toast.error(result.error || 'Failed to seed members')
-            }
-        } catch (error) {
-            setSeedingLogs(prev => [...prev, {
-                id: 'error',
-                type: 'error',
-                message: `❌ Network error: ${error}`,
-                timestamp: new Date()
-            }])
-            toast.error('Failed to seed members')
-        } finally {
-            setIsSeeding(false)
-        }
-    }
-
-    const handleSeedTeams = async (count: number) => {
-        setTeamSeedingLogs([])
-        setIsTeamSeeding(true)
-        
-        setTeamSeedingLogs([{
-            id: 'start',
-            type: 'info',
-            message: `Starting team seeding process for ${count} teams...`,
-            timestamp: new Date()
-        }])
-        
-        try {
-            const response = await fetch(`/api/organizations/${orgId}/seed-teams`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ count })
-            })
-            
-            const result = await response.json()
-            
-            if (result.success) {
-                const progressLogs = result.results.map((r: any, index: number) => {
-                    if (r.success) {
-                        return {
-                            id: `team-${index}`,
-                            type: 'progress' as const,
-                            message: `Creating team: ${r.team.name}`,
-                            timestamp: new Date(),
-                            status: 'completed' as const
-                        }
-                    } else {
-                        return {
-                            id: `team-${index}`,
-                            type: 'error' as const,
-                            message: `Failed to create team ${index + 1}: ${r.error}`,
-                            timestamp: new Date()
-                        }
-                    }
-                })
-                
-                setTeamSeedingLogs(prev => [...prev, ...progressLogs])
-                
-                const successCount = result.results.filter((r: any) => r.success).length
-                setTeamSeedingLogs(prev => [...prev, {
-                    id: 'complete',
-                    type: 'success',
-                    message: `✅ Seeding completed! Created ${successCount}/${count} teams successfully`,
-                    timestamp: new Date()
-                }])
-                
-                await fetchTeams()
-                toast.success(`Successfully created ${successCount} teams!`)
-            } else {
-                setTeamSeedingLogs(prev => [...prev, {
-                    id: 'error',
-                    type: 'error',
-                    message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
-                    timestamp: new Date()
-                }])
-                toast.error(result.error || 'Failed to seed teams')
-            }
-        } catch (error) {
-            setTeamSeedingLogs(prev => [...prev, {
-                id: 'error',
-                type: 'error',
-                message: `❌ Network error: ${error}`,
-                timestamp: new Date()
-            }])
-            toast.error('Failed to seed teams')
-        } finally {
-            setIsTeamSeeding(false)
-        }
-    }
-
-    const fetchAvailableUsers = async () => {
-        try {
-            const response = await fetch('/api/users/all')
-            const data = await response.json()
-            
-            if (data.success) {
-                setAvailableUsers(data.users || [])
-            }
-        } catch (error) {
-            console.error('Failed to fetch users:', error)
-        }
-    }
-
-    const openInviteModal = () => {
-        fetchAvailableUsers()
-        setShowInviteModal(true)
-    }
-
-    const handleInviteUser = async () => {
-        if (!inviteEmail) {
-            toast.error('Please enter an email address')
-            return
-        }
-
-        if (!selectedInviterId) {
-            toast.error('Please select an inviter')
-            return
-        }
-
-        setInviting(true)
-        const toastId = toast.loading('Sending invitation...')
-        
-        try {
-            const response = await fetch(`/api/organizations/${orgId}/invitations`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    email: inviteEmail,
-                    role: 'member',
-                    inviterId: selectedInviterId
-                })
-            })
-
-            const result = await response.json()
-
-            if (result.success) {
-                await fetchInvitations()
-                setShowInviteModal(false)
-                setInviteEmail('')
-                setSelectedInviterId('')
-                toast.success('Invitation sent successfully!', { id: toastId })
-            } else {
-                toast.error(`Error sending invitation: ${result.error || 'Unknown error'}`, { id: toastId })
-            }
-        } catch (error) {
-            console.error('Error sending invitation:', error)
-            toast.error('Error sending invitation', { id: toastId })
-        } finally {
-            setInviting(false)
-        }
-    }
-
-    const handleCancelInvitation = async (invitationId: string) => {
-        const toastId = toast.loading('Cancelling invitation...')
-        
-        try {
-            const response = await fetch(`/api/invitations/${invitationId}`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
-            })
-
-            const result = await response.json()
-
-            if (result.success) {
-                await fetchInvitations()
-                toast.success('Invitation cancelled successfully!', { id: toastId })
-            } else {
-                toast.error(`Error cancelling invitation: ${result.error || 'Unknown error'}`, { id: toastId })
-            }
-        } catch (error) {
-            console.error('Error cancelling invitation:', error)
-            toast.error('Error cancelling invitation', { id: toastId })
-        }
-    }
-
-    const handleResendInvitation = async (invitationId: string, email: string) => {
-        const toastId = toast.loading('Resending invitation...')
-        
-        try {
-            const response = await fetch(`/api/invitations/${invitationId}/resend`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            })
-
-            const result = await response.json()
-
-            if (result.success) {
-                await fetchInvitations()
-                toast.success(`Invitation resent to ${email}!`, { id: toastId })
-            } else {
-                toast.error(`Error resending invitation: ${result.error || 'Unknown error'}`, { id: toastId })
-            }
-        } catch (error) {
-            console.error('Error resending invitation:', error)
-            toast.error('Error resending invitation', { id: toastId })
-        }
-    }
-
-    const handleRemoveMember = async (memberId: string, userName: string) => {
-        const toastId = toast.loading(`Removing ${userName}...`)
-        
-        try {
-            const response = await fetch(`/api/members/${memberId}`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
-            })
-
-            const result = await response.json()
-
-            if (result.success) {
-                await fetchMembers()
-                toast.success(`${userName} removed from organization!`, { id: toastId })
-            } else {
-                toast.error(`Error removing member: ${result.error || 'Unknown error'}`, { id: toastId })
-            }
-        } catch (error) {
-            console.error('Error removing member:', error)
-            toast.error('Error removing member', { id: toastId })
-        }
-    }
-
-    const handleCreateTeam = async () => {
-        if (!teamFormData.name) {
-            toast.error('Please enter a team name')
-            return
-        }
-
-        const toastId = toast.loading('Creating team...')
-        
-        try {
-            const response = await fetch(`/api/organizations/${orgId}/teams`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    name: teamFormData.name,
-                    organizationId: orgId
-                })
-            })
-
-            const result = await response.json()
-
-            if (result.success) {
-                await fetchTeams()
-                setShowCreateTeamModal(false)
-                setTeamFormData({ name: '' })
-                toast.success('Team created successfully!', { id: toastId })
-            } else {
-                toast.error(`Error creating team: ${result.error || 'Unknown error'}`, { id: toastId })
-            }
-        } catch (error) {
-            console.error('Error creating team:', error)
-            toast.error('Error creating team', { id: toastId })
-        }
-    }
-
-    const handleUpdateTeam = async () => {
-        if (!selectedTeam || !teamFormData.name) {
-            toast.error('Please enter a team name')
-            return
-        }
-
-        const toastId = toast.loading('Updating team...')
-        
-        try {
-            const response = await fetch(`/api/teams/${selectedTeam.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    name: teamFormData.name
-                })
-            })
-
-            const result = await response.json()
-
-            if (result.success) {
-                await fetchTeams()
-                setShowEditTeamModal(false)
-                setSelectedTeam(null)
-                setTeamFormData({ name: '' })
-                toast.success('Team updated successfully!', { id: toastId })
-            } else {
-                toast.error(`Error updating team: ${result.error || 'Unknown error'}`, { id: toastId })
-            }
-        } catch (error) {
-            console.error('Error updating team:', error)
-            toast.error('Error updating team', { id: toastId })
-        }
-    }
-
-    const handleDeleteTeam = async () => {
-        if (!selectedTeam) {
-            toast.error('No team selected')
-            return
-        }
-
-        const toastId = toast.loading('Deleting team...')
-        
-        try {
-            const response = await fetch(`/api/teams/${selectedTeam.id}`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
-            })
-
-            const result = await response.json()
-
-            if (result.success) {
-                await fetchTeams()
-                setShowDeleteTeamModal(false)
-                setSelectedTeam(null)
-                toast.success('Team deleted successfully!', { id: toastId })
-            } else {
-                toast.error(`Error deleting team: ${result.error || 'Unknown error'}`, { id: toastId })
-            }
-        } catch (error) {
-            console.error('Error deleting team:', error)
-            toast.error('Error deleting team', { id: toastId })
-        }
-    }
-
-    const openEditTeamModal = (team: Team) => {
-        setSelectedTeam(team)
-        setTeamFormData({ name: team.name })
-        setShowEditTeamModal(true)
-    }
-
-    const openDeleteTeamModal = (team: Team) => {
-        setSelectedTeam(team)
-        setShowDeleteTeamModal(true)
-    }
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-32">
-                <div className="flex flex-col items-center space-y-3">
-                    <Loader className="w-6 h-6 text-white animate-spin" />
-                    <div className="text-white text-sm">Loading organization details...</div>
-                </div>
-            </div>
-        )
-    }
-
-    if (!organization) {
-        return (
-            <div className="space-y-6 p-6">
-                <div className="flex items-center space-x-4">
-                    <Link to="/organizations">
-                        <Button variant="ghost" className="text-gray-400 hover:text-white rounded-none">
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            Back to Organizations
-                        </Button>
-                    </Link>
-                </div>
-                <br />
-                <div className="text-center py-12">
-                    <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h2 className="text-xl text-white font-light mb-2">Organization Not Found</h2>
-                    <p className="text-gray-400">The organization you're looking for doesn't exist.</p>
-                </div>
-            </div>
-        )
-    }
-
+  if (loading) {
     return (
-        <div className="space-y-6 p-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                    <Link to="/organizations">
-                        <Button variant="ghost" className="text-gray-400 hover:text-white rounded-none">
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            Back to Organizations
-                        </Button>
-                    </Link>
+      <div className="flex items-center justify-center h-32">
+        <div className="flex flex-col items-center space-y-3">
+          <Loader className="w-6 h-6 text-white animate-spin" />
+          <div className="text-white text-sm">Loading organization details...</div>
+        </div>
+      </div>
+    );
+  }
 
-                </div>
+  if (!organization) {
+    return (
+      <div className="space-y-6 p-6">
+        <div className="flex items-center space-x-4">
+          <Link to="/organizations">
+            <Button variant="ghost" className="text-gray-400 hover:text-white rounded-none">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Organizations
+            </Button>
+          </Link>
+        </div>
+        <br />
+        <div className="text-center py-12">
+          <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl text-white font-light mb-2">Organization Not Found</h2>
+          <p className="text-gray-400">The organization you're looking for doesn't exist.</p>
+        </div>
+      </div>
+    );
+  }
 
-                <div className="flex items-center space-x-3">
-                    <Button 
-                        onClick={() => setShowSeedMembersModal(true)}
-                        className="border border-dashed border-white/20 text-white bg-transparent hover:bg-white/10 rounded-none"
-                    >
-                        <Users className="w-4 h-4 mr-2" />
-                        Seed Members
-                    </Button>
-                    <Button 
-                        onClick={openInviteModal}
-                        className="border border-dashed border-white/20 text-white bg-transparent hover:bg-white/10 rounded-none"
-                    >
-                        <Mail className="w-4 h-4 mr-2" />
-                        Invite User
-                    </Button>
-                    <Button className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none">
-                        <Edit className="w-4 h-4 mr-2" />
-                        Edit Organization
-                    </Button>
+  return (
+    <div className="space-y-6 p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Link to="/organizations">
+            <Button variant="ghost" className="text-gray-400 hover:text-white rounded-none">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Organizations
+            </Button>
+          </Link>
+        </div>
+
+        <div className="flex items-center space-x-3">
+          <Button
+            onClick={() => setShowSeedMembersModal(true)}
+            className="border border-dashed border-white/20 text-white bg-transparent hover:bg-white/10 rounded-none"
+          >
+            <Users className="w-4 h-4 mr-2" />
+            Seed Members
+          </Button>
+          <Button
+            onClick={openInviteModal}
+            className="border border-dashed border-white/20 text-white bg-transparent hover:bg-white/10 rounded-none"
+          >
+            <Mail className="w-4 h-4 mr-2" />
+            Invite User
+          </Button>
+          <Button className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none">
+            <Edit className="w-4 h-4 mr-2" />
+            Edit Organization
+          </Button>
+        </div>
+      </div>
+      <div className="flex items-center space-x-3">
+        <div className="w-12 h-12 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
+          <Building2 className="w-6 h-6 text-white" />
+        </div>
+        <div>
+          <h1 className="text-2xl text-white font-light">{organization.name}</h1>
+          <p className="text-gray-400">{organization.slug}</p>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="border-b border-white/10">
+        <nav className="flex space-x-8">
+          <button
+            onClick={() => setActiveTab('details')}
+            className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${
+              activeTab === 'details'
+                ? 'border-white text-white'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-gray-300'
+            }`}
+          >
+            <Building2 className="w-4 h-4" />
+            <span>Details</span>
+            <Badge
+              variant="secondary"
+              className="text-xs bg-white/10 border border-white/20 rounded-sm"
+            >
+              {members.length + invitations.length + teams.length}
+            </Badge>
+          </button>
+          <button
+            onClick={() => setActiveTab('members')}
+            className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${
+              activeTab === 'members'
+                ? 'border-white text-white'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-gray-300'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>Members</span>
+            {members.length > 0 && (
+              <Badge
+                variant="secondary"
+                className="text-xs bg-white/10 border border-white/20 rounded-sm"
+              >
+                {members.length}
+              </Badge>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('invitations')}
+            className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${
+              activeTab === 'invitations'
+                ? 'border-white text-white'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-gray-300'
+            }`}
+          >
+            <Mail className="w-4 h-4" />
+            <span>Invitations</span>
+            {invitations.length > 0 && (
+              <Badge
+                variant="secondary"
+                className="text-xs bg-white/10 border border-white/20 rounded-sm"
+              >
+                {invitations.length}
+              </Badge>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('teams')}
+            className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${
+              activeTab === 'teams'
+                ? 'border-white text-white'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-gray-300'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>Teams</span>
+            {teams.length > 0 && (
+              <Badge
+                variant="secondary"
+                className="text-xs bg-white/10 border border-white/20 rounded-sm"
+              >
+                {teams.length}
+              </Badge>
+            )}
+          </button>
+        </nav>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'details' && (
+        <div className="space-y-6">
+          {/* Organization Information */}
+          <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+            <h3 className="text-lg text-white font-light mb-4">Organization Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="text-sm text-gray-400 font-light">Name</label>
+                <p className="text-white mt-1">{organization.name}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-400 font-light">Slug</label>
+                <p className="text-white mt-1">{organization.slug}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-400 font-light">Created</label>
+                <p className="text-white mt-1">
+                  {new Date(organization.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-400 font-light">Last Updated</label>
+                <p className="text-white mt-1">
+                  {new Date(organization.updatedAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Organization Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+              <div className="flex items-center space-x-3">
+                <Users className="w-8 h-8 text-white" />
+                <div>
+                  <p className="text-2xl text-white font-light">{members.length}</p>
+                  <p className="text-sm text-gray-400">Members</p>
                 </div>
+              </div>
+            </div>
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+              <div className="flex items-center space-x-3">
+                <Users className="w-8 h-8 text-white" />
+                <div>
+                  <p className="text-2xl text-white font-light">{teams.length}</p>
+                  <p className="text-sm text-gray-400">Teams</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+              <div className="flex items-center space-x-3">
+                <Mail className="w-8 h-8 text-white" />
+                <div>
+                  <p className="text-2xl text-white font-light">{invitations.length}</p>
+                  <p className="text-sm text-gray-400">Invitations</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+              <div className="flex items-center space-x-3">
+                <Calendar className="w-8 h-8 text-white" />
+                <div>
+                  <p className="text-2xl text-white font-light">
+                    {Math.ceil(
+                      (new Date().getTime() - new Date(organization.createdAt).getTime()) /
+                        (1000 * 60 * 60 * 24)
+                    )}
+                  </p>
+                  <p className="text-sm text-gray-400">Days Active</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'teams' && (
+        <div className="space-y-6">
+          {/* Teams Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg text-white font-light">Teams ({teams.length})</h3>
+              <p className="text-gray-400 mt-1">Manage teams within this organization</p>
             </div>
             <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-                    <Building2 className="w-6 h-6 text-white" />
+              <Button
+                onClick={() => setShowSeedTeamsModal(true)}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
+              >
+                <Database className="w-4 h-4 mr-2" />
+                Seed Teams
+              </Button>
+              <Button
+                onClick={() => setShowCreateTeamModal(true)}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                Create Team
+              </Button>
+            </div>
+          </div>
+
+          {/* Teams List */}
+          {teams.length > 0 ? (
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-dashed border-white/10">
+                      <th className="text-left py-4 px-4 text-white font-light">Team</th>
+                      <th className="text-left py-4 px-4 text-white font-light">Members</th>
+                      <th className="text-left py-4 px-4 text-white font-light">Created</th>
+                      <th className="text-right py-4 px-4 text-white font-light">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {teams.map((team) => (
+                      <tr
+                        key={team.id}
+                        className="border-b border-dashed border-white/5 hover:bg-white/5 cursor-pointer"
+                        onClick={() => navigate(`/organizations/${orgId}/teams/${team.id}`)}
+                      >
+                        <td className="py-4 px-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
+                              <Users className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                              <div className="text-white font-light">{team.name}</div>
+                              <div className="text-sm text-gray-400">Team ID: {team.id}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-white">{team.memberCount || 0}</td>
+                        <td className="py-4 px-4 text-sm text-gray-400">
+                          {new Date(team.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="py-4 px-4 text-right">
+                          <div className="flex items-center justify-end space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openEditTeamModal(team);
+                              }}
+                            >
+                              <Edit className="w-4 h-4 mr-1" />
+                              Edit
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openDeleteTeamModal(team);
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4 mr-1" />
+                              Delete
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
+              <div className="text-center">
+                <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl text-white font-light mb-2">No Teams Yet</h3>
+                <p className="text-gray-400 mb-6">
+                  Create your first team to start organizing members within this organization.
+                </p>
+                <Button
+                  onClick={() => setShowCreateTeamModal(true)}
+                  className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Create First Team
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'members' && (
+        <div className="space-y-6">
+          {/* Members Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg text-white font-light">Members ({members.length})</h3>
+              <p className="text-gray-400 mt-1">Manage organization members and their roles</p>
+            </div>
+          </div>
+
+          {/* Members List */}
+          {members.length > 0 ? (
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-dashed border-white/10">
+                      <th className="text-left py-4 px-4 text-white font-light">User</th>
+                      <th className="text-left py-4 px-4 text-white font-light">Email</th>
+                      <th className="text-left py-4 px-4 text-white font-light">Role</th>
+                      <th className="text-left py-4 px-4 text-white font-light">Joined</th>
+                      <th className="text-right py-4 px-4 text-white font-light">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {members.map((member) => (
+                      <tr
+                        key={member.id}
+                        className="border-b border-dashed border-white/5 hover:bg-white/5"
+                      >
+                        <td className="py-4 px-4">
+                          <div className="flex items-center space-x-3">
+                            <img
+                              src={
+                                member.user.image ||
+                                `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.user.id}`
+                              }
+                              alt={member.user.name}
+                              className="w-10 h-10 rounded-none border border-dashed border-white/20"
+                            />
+                            <div>
+                              <div className="text-white font-light">{member.user.name}</div>
+                              <div className="text-sm text-gray-400">ID: {member.user.id}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-white">{member.user.email}</td>
+                        <td className="py-4 px-4">
+                          <Badge
+                            variant="secondary"
+                            className="text-xs bg-blue-900/10 border border-dashed rounded-none border-blue-500/30 text-blue-400/70 capitalize"
+                          >
+                            {member.role}
+                          </Badge>
+                        </td>
+                        <td className="py-4 px-4 text-sm text-gray-400">
+                          {new Date(member.joinedAt).toLocaleDateString()}
+                        </td>
+                        <td className="py-4 px-4 text-right">
+                          <div className="flex items-center justify-end space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                              onClick={() => handleRemoveMember(member.id, member.user.name)}
+                            >
+                              <Trash2 className="w-4 h-4 mr-1" />
+                              Remove
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
+              <div className="text-center">
+                <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl text-white font-light mb-2">No Members Yet</h3>
+                <p className="text-gray-400 mb-6">
+                  Invite users or seed members from existing users to get started.
+                </p>
+                <div className="flex items-center justify-center space-x-3">
+                  <Button
+                    onClick={() => setShowSeedMembersModal(true)}
+                    className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Seed Members
+                  </Button>
+                  <Button
+                    onClick={openInviteModal}
+                    className="bg-white text-white hover:bg-white/90 bg-transparent border border-white/20 rounded-none"
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Invite User
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'invitations' && (
+        <div className="space-y-6">
+          {/* Invitations Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg text-white font-light">Invitations ({invitations.length})</h3>
+              <p className="text-gray-400 mt-1">Manage pending invitations to this organization</p>
+            </div>
+          </div>
+
+          {/* Invitations List */}
+          {invitations.length > 0 ? (
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-dashed border-white/10">
+                      <th className="text-left py-4 px-4 text-white font-light">Email</th>
+                      <th className="text-left py-4 px-4 text-white font-light">Role</th>
+                      <th className="text-left py-4 px-4 text-white font-light">Status</th>
+                      <th className="text-left py-4 px-4 text-white font-light">Expires</th>
+                      <th className="text-right py-4 px-4 text-white font-light">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {invitations.map((invitation) => (
+                      <tr
+                        key={invitation.id}
+                        className="border-b border-dashed border-white/5 hover:bg-white/5"
+                      >
+                        <td className="py-4 px-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
+                              <Mail className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                              <div className="text-white font-light">{invitation.email}</div>
+                              <div className="text-sm text-gray-400">
+                                Expires on{' '}
+                                {new Date(invitation.expiresAt).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  year: 'numeric',
+                                  day: 'numeric',
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-white capitalize">{invitation.role}</td>
+                        <td className="py-4 px-4">
+                          <Badge
+                            variant="secondary"
+                            className={`text-xs font-normal rounded-none border-dashed flex items-center gap-1 w-fit ${
+                              invitation.status === 'pending'
+                                ? 'bg-yellow-900/10 border border-yellow-500/30 text-yellow-400/70'
+                                : invitation.status === 'accepted'
+                                  ? 'bg-green-900/10 border border-green-500/30 text-green-400/70'
+                                  : 'bg-red-900/10 border border-red-500/30 text-red-400/70'
+                            }`}
+                          >
+                            {invitation.status === 'pending' && <Clock className="w-3 h-3" />}
+                            {invitation.status === 'accepted' && (
+                              <CheckCircle className="w-3 h-3" />
+                            )}
+                            {invitation.status === 'expired' && <X className="w-3 h-3" />}
+                            {invitation.status}
+                          </Badge>
+                        </td>
+                        <td className="py-4 px-4 text-sm text-gray-400">
+                          {new Date(invitation.expiresAt).toLocaleDateString()}
+                          <br />
+                          <span className="text-xs text-gray-400">
+                            {new Date(invitation.expiresAt).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 text-right">
+                          <div className="flex items-center justify-end space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                              onClick={() =>
+                                handleResendInvitation(invitation.id, invitation.email)
+                              }
+                            >
+                              <Send className="w-4 h-4 mr-1" />
+                              Resend
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                              onClick={() => handleCancelInvitation(invitation.id)}
+                            >
+                              <Trash2 className="w-4 h-4 mr-1" />
+                              Cancel
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
+              <div className="text-center">
+                <Mail className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl text-white font-light mb-2">No Invitations</h3>
+                <p className="text-gray-400 mb-6">
+                  Start inviting users to join this organization.
+                </p>
+                <Button
+                  onClick={openInviteModal}
+                  className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Send First Invitation
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Invite User Modal */}
+      {showInviteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light">Invite User</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowInviteModal(false);
+                  setInviteEmail('');
+                  setSelectedInviterId('');
+                }}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="invite-email" className="text-sm text-gray-400 font-light">
+                  Email Address
+                </Label>
+                <Input
+                  id="invite-email"
+                  type="email"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  placeholder="user@example.com"
+                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                />
+              </div>
+              <div>
+                <Label htmlFor="inviter-select" className="text-sm text-gray-400 font-light">
+                  Inviter
+                </Label>
+                <Select value={selectedInviterId} onValueChange={setSelectedInviterId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select an inviter..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableUsers.map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        <div className="flex items-center space-x-2">
+                          <img
+                            src={
+                              user.image ||
+                              `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`
+                            }
+                            alt={user.name}
+                            className="w-6 h-6 rounded-none border border-dashed border-white/20"
+                          />
+                          <span>
+                            {user.name} ({user.email})
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowInviteModal(false);
+                  setInviteEmail('');
+                  setSelectedInviterId('');
+                }}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleInviteUser}
+                disabled={inviting}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
+              >
+                {inviting ? (
+                  <Loader className="w-3 h-3 mr-2 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4 mr-2" />
+                )}
+                {inviting ? 'Sending...' : 'Send Invitation'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Team Modal */}
+      {showCreateTeamModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light">Create Team</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowCreateTeamModal(false);
+                  setTeamFormData({ name: '' });
+                }}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="team-name" className="text-sm text-gray-400 font-light">
+                  Team Name
+                </Label>
+                <Input
+                  id="team-name"
+                  value={teamFormData.name}
+                  onChange={(e) => handleTeamNameChange(e.target.value)}
+                  placeholder="e.g. Development Team"
+                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCreateTeamModal(false);
+                  setTeamFormData({ name: '' });
+                }}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCreateTeam}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+              >
+                Create Team
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Team Modal */}
+      {showEditTeamModal && selectedTeam && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light">Edit Team</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowEditTeamModal(false);
+                  setTeamFormData({ name: '' });
+                }}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-16 h-16 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
+                  <Users className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                    <h1 className="text-2xl text-white font-light">{organization.name}</h1>
-                    <p className="text-gray-400">{organization.slug}</p>
+                  <div className="text-white font-light">{selectedTeam.name}</div>
+                  <div className="text-sm text-gray-400">Team ID: {selectedTeam.id}</div>
                 </div>
+              </div>
+              <div>
+                <Label htmlFor="edit-team-name" className="text-sm text-gray-400 font-light">
+                  Team Name
+                </Label>
+                <Input
+                  id="edit-team-name"
+                  value={teamFormData.name}
+                  onChange={(e) => handleTeamNameChange(e.target.value)}
+                  placeholder="e.g. Development Team"
+                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                />
+              </div>
             </div>
-
-            {/* Tabs */}
-            <div className="border-b border-white/10">
-                <nav className="flex space-x-8">
-                    <button
-                        onClick={() => setActiveTab('details')}
-                        className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${activeTab === 'details'
-                            ? 'border-white text-white'
-                            : 'border-transparent text-gray-400 hover:text-white hover:border-gray-300'
-                            }`}
-                    >
-                        <Building2 className="w-4 h-4" />
-                        <span>Details</span>
-                        <Badge variant="secondary" className="text-xs bg-white/10 border border-white/20 rounded-sm">
-                            {members.length + invitations.length + teams.length}
-                        </Badge>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('members')}
-                        className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${activeTab === 'members'
-                            ? 'border-white text-white'
-                            : 'border-transparent text-gray-400 hover:text-white hover:border-gray-300'
-                            }`}
-                    >
-                        <Users className="w-4 h-4" />
-                        <span>Members</span>
-                        {members.length > 0 && (
-                            <Badge variant="secondary" className="text-xs bg-white/10 border border-white/20 rounded-sm">
-                                {members.length}
-                            </Badge>
-                        )}
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('invitations')}
-                        className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${activeTab === 'invitations'
-                            ? 'border-white text-white'
-                            : 'border-transparent text-gray-400 hover:text-white hover:border-gray-300'
-                            }`}
-                    >
-                        <Mail className="w-4 h-4" />
-                        <span>Invitations</span>
-                        {invitations.length > 0 && (
-                            <Badge variant="secondary" className="text-xs bg-white/10 border border-white/20 rounded-sm">
-                                {invitations.length}
-                            </Badge>
-                        )}
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('teams')}
-                        className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${activeTab === 'teams'
-                            ? 'border-white text-white'
-                            : 'border-transparent text-gray-400 hover:text-white hover:border-gray-300'
-                            }`}
-                    >
-                        <Users className="w-4 h-4" />
-                        <span>Teams</span>
-                        {teams.length > 0 && (
-                            <Badge variant="secondary" className="text-xs bg-white/10 border border-white/20 rounded-sm">
-                                {teams.length}
-                            </Badge>
-                        )}
-                    </button>
-                </nav>
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowEditTeamModal(false);
+                  setTeamFormData({ name: '' });
+                }}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdateTeam}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+              >
+                Update Team
+              </Button>
             </div>
-
-            {/* Tab Content */}
-            {activeTab === 'details' && (
-                <div className="space-y-6">
-                    {/* Organization Information */}
-                    <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-                        <h3 className="text-lg text-white font-light mb-4">Organization Information</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="text-sm text-gray-400 font-light">Name</label>
-                                <p className="text-white mt-1">{organization.name}</p>
-                            </div>
-                            <div>
-                                <label className="text-sm text-gray-400 font-light">Slug</label>
-                                <p className="text-white mt-1">{organization.slug}</p>
-                            </div>
-                            <div>
-                                <label className="text-sm text-gray-400 font-light">Created</label>
-                                <p className="text-white mt-1">
-                                    {new Date(organization.createdAt).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
-                                    })}
-                                </p>
-                            </div>
-                            <div>
-                                <label className="text-sm text-gray-400 font-light">Last Updated</label>
-                                <p className="text-white mt-1">
-                                    {new Date(organization.updatedAt).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
-                                    })}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Organization Stats */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-                            <div className="flex items-center space-x-3">
-                                <Users className="w-8 h-8 text-white" />
-                                <div>
-                                    <p className="text-2xl text-white font-light">{members.length}</p>
-                                    <p className="text-sm text-gray-400">Members</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-                            <div className="flex items-center space-x-3">
-                                <Users className="w-8 h-8 text-white" />
-                                <div>
-                                    <p className="text-2xl text-white font-light">{teams.length}</p>
-                                    <p className="text-sm text-gray-400">Teams</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-                            <div className="flex items-center space-x-3">
-                                <Mail className="w-8 h-8 text-white" />
-                                <div>
-                                    <p className="text-2xl text-white font-light">{invitations.length}</p>
-                                    <p className="text-sm text-gray-400">Invitations</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-                            <div className="flex items-center space-x-3">
-                                <Calendar className="w-8 h-8 text-white" />
-                                <div>
-                                    <p className="text-2xl text-white font-light">
-                                        {Math.ceil((new Date().getTime() - new Date(organization.createdAt).getTime()) / (1000 * 60 * 60 * 24))}
-                                    </p>
-                                    <p className="text-sm text-gray-400">Days Active</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {activeTab === 'teams' && (
-                <div className="space-y-6">
-                    {/* Teams Header */}
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h3 className="text-lg text-white font-light">Teams ({teams.length})</h3>
-                            <p className="text-gray-400 mt-1">Manage teams within this organization</p>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                        <Button
-                            onClick={() => setShowSeedTeamsModal(true)}
-                            className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
-                        >
-                            <Database className="w-4 h-4 mr-2" />
-                            Seed Teams
-                        </Button>
-                        <Button 
-                            onClick={() => setShowCreateTeamModal(true)}
-                            className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
-                        >
-                            <UserPlus className="w-4 h-4 mr-2" />
-                            Create Team
-                        </Button>
-                        </div>
-                    </div>
-
-                    {/* Teams List */}
-                    {teams.length > 0 ? (
-                        <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
-                            <div className="overflow-x-auto">
-                                <table className="w-full">
-                                    <thead>
-                                        <tr className="border-b border-dashed border-white/10">
-                                            <th className="text-left py-4 px-4 text-white font-light">Team</th>
-                                            <th className="text-left py-4 px-4 text-white font-light">Members</th>
-                                            <th className="text-left py-4 px-4 text-white font-light">Created</th>
-                                            <th className="text-right py-4 px-4 text-white font-light">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {teams.map((team) => (
-                                            <tr 
-                                                key={team.id} 
-                                                className="border-b border-dashed border-white/5 hover:bg-white/5 cursor-pointer"
-                                                onClick={() => navigate(`/organizations/${orgId}/teams/${team.id}`)}
-                                            >
-                                                <td className="py-4 px-4">
-                                                    <div className="flex items-center space-x-3">
-                                                        <div className="w-10 h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-                                                            <Users className="w-5 h-5 text-white" />
-                                                        </div>
-                                                        <div>
-                                                            <div className="text-white font-light">{team.name}</div>
-                                                            <div className="text-sm text-gray-400">Team ID: {team.id}</div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="py-4 px-4 text-white">{team.memberCount || 0}</td>
-                                                <td className="py-4 px-4 text-sm text-gray-400">
-                                                    {new Date(team.createdAt).toLocaleDateString()}
-                                                </td>
-                                                <td className="py-4 px-4 text-right">
-                                                    <div className="flex items-center justify-end space-x-2">
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation()
-                                                                openEditTeamModal(team)
-                                                            }}
-                                                        >
-                                                            <Edit className="w-4 h-4 mr-1" />
-                                                            Edit
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation()
-                                                                openDeleteTeamModal(team)
-                                                            }}
-                                                        >
-                                                            <Trash2 className="w-4 h-4 mr-1" />
-                                                            Delete
-                                                        </Button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
-                            <div className="text-center">
-                                <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                                <h3 className="text-xl text-white font-light mb-2">No Teams Yet</h3>
-                                <p className="text-gray-400 mb-6">
-                                    Create your first team to start organizing members within this organization.
-                                </p>
-                                <Button 
-                                    onClick={() => setShowCreateTeamModal(true)}
-                                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
-                                >
-                                    <UserPlus className="w-4 h-4 mr-2" />
-                                    Create First Team
-                                </Button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {activeTab === 'members' && (
-                <div className="space-y-6">
-                    {/* Members Header */}
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h3 className="text-lg text-white font-light">Members ({members.length})</h3>
-                            <p className="text-gray-400 mt-1">Manage organization members and their roles</p>
-                        </div>
-                    </div>
-
-                    {/* Members List */}
-                    {members.length > 0 ? (
-                        <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
-                            <div className="overflow-x-auto">
-                                <table className="w-full">
-                                    <thead>
-                                        <tr className="border-b border-dashed border-white/10">
-                                            <th className="text-left py-4 px-4 text-white font-light">User</th>
-                                            <th className="text-left py-4 px-4 text-white font-light">Email</th>
-                                            <th className="text-left py-4 px-4 text-white font-light">Role</th>
-                                            <th className="text-left py-4 px-4 text-white font-light">Joined</th>
-                                            <th className="text-right py-4 px-4 text-white font-light">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {members.map((member) => (
-                                            <tr key={member.id} className="border-b border-dashed border-white/5 hover:bg-white/5">
-                                                <td className="py-4 px-4">
-                                                    <div className="flex items-center space-x-3">
-                                                        <img
-                                                            src={member.user.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.user.id}`}
-                                                            alt={member.user.name}
-                                                            className="w-10 h-10 rounded-none border border-dashed border-white/20"
-                                                        />
-                                                        <div>
-                                                            <div className="text-white font-light">{member.user.name}</div>
-                                                            <div className="text-sm text-gray-400">ID: {member.user.id}</div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="py-4 px-4 text-white">{member.user.email}</td>
-                                                <td className="py-4 px-4">
-                                                    <Badge variant="secondary" className="text-xs bg-blue-900/10 border border-dashed rounded-none border-blue-500/30 text-blue-400/70 capitalize">
-                                                        {member.role}
-                                                    </Badge>
-                                                </td>
-                                                <td className="py-4 px-4 text-sm text-gray-400">
-                                                    {new Date(member.joinedAt).toLocaleDateString()}
-                                                </td>
-                                                <td className="py-4 px-4 text-right">
-                                                    <div className="flex items-center justify-end space-x-2">
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
-                                                            onClick={() => handleRemoveMember(member.id, member.user.name)}
-                                                        >
-                                                            <Trash2 className="w-4 h-4 mr-1" />
-                                                            Remove
-                                                        </Button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
-                            <div className="text-center">
-                                <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                                <h3 className="text-xl text-white font-light mb-2">No Members Yet</h3>
-                                <p className="text-gray-400 mb-6">
-                                    Invite users or seed members from existing users to get started.
-                                </p>
-                                <div className="flex items-center justify-center space-x-3">
-                                    <Button 
-                                        onClick={() => setShowSeedMembersModal(true)}
-                                        className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
-                                    >
-                                        <Users className="w-4 h-4 mr-2" />
-                                        Seed Members
-                                    </Button>
-                                    <Button 
-                                        onClick={openInviteModal}
-                                        className="bg-white text-white hover:bg-white/90 bg-transparent border border-white/20 rounded-none"
-                                    >
-                                        <Mail className="w-4 h-4 mr-2" />
-                                        Invite User
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {activeTab === 'invitations' && (
-                <div className="space-y-6">
-                    {/* Invitations Header */}
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h3 className="text-lg text-white font-light">Invitations ({invitations.length})</h3>
-                            <p className="text-gray-400 mt-1">Manage pending invitations to this organization</p>
-                        </div>
-                    </div>
-
-                    {/* Invitations List */}
-                    {invitations.length > 0 ? (
-                        <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
-                            <div className="overflow-x-auto">
-                                <table className="w-full">
-                                    <thead>
-                                        <tr className="border-b border-dashed border-white/10">
-                                            <th className="text-left py-4 px-4 text-white font-light">Email</th>
-                                            <th className="text-left py-4 px-4 text-white font-light">Role</th>
-                                            <th className="text-left py-4 px-4 text-white font-light">Status</th>
-                                            <th className="text-left py-4 px-4 text-white font-light">Expires</th>
-                                            <th className="text-right py-4 px-4 text-white font-light">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {invitations.map((invitation) => (
-                                            <tr key={invitation.id} className="border-b border-dashed border-white/5 hover:bg-white/5">
-                                                <td className="py-4 px-4">
-                                                    <div className="flex items-center space-x-3">
-                                                        <div className="w-10 h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-                                                            <Mail className="w-5 h-5 text-white" />
-                                                        </div>
-                                                        <div>
-                                                            <div className="text-white font-light">{invitation.email}</div>
-                                                            <div className="text-sm text-gray-400">Expires on {new Date(invitation.expiresAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric'  , day: 'numeric' })}</div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="py-4 px-4 text-white capitalize">{invitation.role}</td>
-                                                <td className="py-4 px-4">
-                                                    <Badge 
-                                                        variant="secondary" 
-                                                        className={`text-xs font-normal rounded-none border-dashed flex items-center gap-1 w-fit ${
-                                                            invitation.status === 'pending' 
-                                                                ? 'bg-yellow-900/10 border border-yellow-500/30 text-yellow-400/70'
-                                                                : invitation.status === 'accepted'
-                                                                ? 'bg-green-900/10 border border-green-500/30 text-green-400/70'
-                                                                : 'bg-red-900/10 border border-red-500/30 text-red-400/70'
-                                                        }`}
-                                                    >
-                                                        {invitation.status === 'pending' && <Clock className="w-3 h-3" />}
-                                                        {invitation.status === 'accepted' && <CheckCircle className="w-3 h-3" />}
-                                                        {invitation.status === 'expired' && <X className="w-3 h-3" />}
-                                                        {invitation.status}
-                                                    </Badge>
-                                                </td>
-                                                <td className="py-4 px-4 text-sm text-gray-400">
-                                                    {new Date(invitation.expiresAt).toLocaleDateString()}
-                                                   <br />
-                                                   <span className="text-xs text-gray-400">
-                                                     {new Date(invitation.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                    </span> 
-                                                </td>
-                                                <td className="py-4 px-4 text-right">
-                                                    <div className="flex items-center justify-end space-x-2">
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
-                                                            onClick={() => handleResendInvitation(invitation.id, invitation.email)}
-                                                        >
-                                                            <Send className="w-4 h-4 mr-1" />
-                                                            Resend
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
-                                                            onClick={() => handleCancelInvitation(invitation.id)}
-                                                        >
-                                                            <Trash2 className="w-4 h-4 mr-1" />
-                                                            Cancel
-                                                        </Button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
-                            <div className="text-center">
-                                <Mail className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                                <h3 className="text-xl text-white font-light mb-2">No Invitations</h3>
-                                <p className="text-gray-400 mb-6">
-                                    Start inviting users to join this organization.
-                                </p>
-                                <Button 
-                                    onClick={openInviteModal}
-                                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
-                                >
-                                    <Mail className="w-4 h-4 mr-2" />
-                                    Send First Invitation
-                                </Button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* Invite User Modal */}
-            {showInviteModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg text-white font-light">Invite User</h3>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                    setShowInviteModal(false)
-                                    setInviteEmail('')
-                                    setSelectedInviterId('')
-                                }}
-                                className="text-gray-400 hover:text-white rounded-none"
-                            >
-                                <X className="w-4 h-4" />
-                            </Button>
-                        </div>
-                        <div className="space-y-4">
-                            <div>
-                                <Label htmlFor="invite-email" className="text-sm text-gray-400 font-light">Email Address</Label>
-                                <Input
-                                    id="invite-email"
-                                    type="email"
-                                    value={inviteEmail}
-                                    onChange={(e) => setInviteEmail(e.target.value)}
-                                    placeholder="user@example.com"
-                                    className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
-                                />
-                            </div>
-                            <div>
-                                <Label htmlFor="inviter-select" className="text-sm text-gray-400 font-light">Inviter</Label>
-                                <Select
-                                    value={selectedInviterId}
-                                    onValueChange={setSelectedInviterId}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select an inviter..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {availableUsers.map((user) => (
-                                            <SelectItem key={user.id} value={user.id}>
-                                                <div className="flex items-center space-x-2">
-                                                    <img
-                                                        src={user.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`}
-                                                        alt={user.name}
-                                                        className="w-6 h-6 rounded-none border border-dashed border-white/20"
-                                                    />
-                                                    <span>{user.name} ({user.email})</span>
-                                                </div>
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-                        <div className="flex justify-end space-x-3 mt-6">
-                            <Button
-                                variant="outline"
-                                onClick={() => {
-                                    setShowInviteModal(false)
-                                    setInviteEmail('')
-                                    setSelectedInviterId('')
-                                }}
-                                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={handleInviteUser}
-                                disabled={inviting}
-                                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
-                            >
-                                {inviting ? (
-                                    <Loader className="w-3 h-3 mr-2 animate-spin" />
-                                ) : (
-                                    <Send className="w-4 h-4 mr-2" />
-                                )}
-                                {inviting ? 'Sending...' : 'Send Invitation'}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Create Team Modal */}
-            {showCreateTeamModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg text-white font-light">Create Team</h3>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                    setShowCreateTeamModal(false)
-                                    setTeamFormData({ name: '' })
-                                }}
-                                className="text-gray-400 hover:text-white rounded-none"
-                            >
-                                <X className="w-4 h-4" />
-                            </Button>
-                        </div>
-                        <div className="space-y-4">
-                            <div>
-                                <Label htmlFor="team-name" className="text-sm text-gray-400 font-light">Team Name</Label>
-                                <Input
-                                    id="team-name"
-                                    value={teamFormData.name}
-                                    onChange={(e) => handleTeamNameChange(e.target.value)}
-                                    placeholder="e.g. Development Team"
-                                    className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex justify-end space-x-3 mt-6">
-                            <Button
-                                variant="outline"
-                                onClick={() => {
-                                    setShowCreateTeamModal(false)
-                                    setTeamFormData({ name: '' })
-                                }}
-                                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={handleCreateTeam}
-                                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
-                            >
-                                Create Team
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Edit Team Modal */}
-            {showEditTeamModal && selectedTeam && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg text-white font-light">Edit Team</h3>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                    setShowEditTeamModal(false)
-                                    setTeamFormData({ name: '' })
-                                }}
-                                className="text-gray-400 hover:text-white rounded-none"
-                            >
-                                <X className="w-4 h-4" />
-                            </Button>
-                        </div>
-                        <div className="space-y-4">
-                            <div className="flex items-center space-x-3">
-                                <div className="w-16 h-16 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-                                    <Users className="w-8 h-8 text-white" />
-                                </div>
-                                <div>
-                                    <div className="text-white font-light">{selectedTeam.name}</div>
-                                    <div className="text-sm text-gray-400">Team ID: {selectedTeam.id}</div>
-                                </div>
-                            </div>
-                            <div>
-                                <Label htmlFor="edit-team-name" className="text-sm text-gray-400 font-light">Team Name</Label>
-                                <Input
-                                    id="edit-team-name"
-                                    value={teamFormData.name}
-                                    onChange={(e) => handleTeamNameChange(e.target.value)}
-                                    placeholder="e.g. Development Team"
-                                    className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex justify-end space-x-3 mt-6">
-                            <Button
-                                variant="outline"
-                                onClick={() => {
-                                    setShowEditTeamModal(false)
-                                    setTeamFormData({ name: '' })
-                                }}
-                                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={handleUpdateTeam}
-                                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
-                            >
-                                Update Team
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Delete Team Modal */}
-            {showDeleteTeamModal && selectedTeam && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg text-white font-light">Delete Team</h3>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setShowDeleteTeamModal(false)}
-                                className="text-gray-400 hover:text-white rounded-none"
-                            >
-                                <X className="w-4 h-4" />
-                            </Button>
-                        </div>
-                        <div className="space-y-4">
-                            <div className="flex items-center space-x-3">
-                                <div className="w-16 h-16 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-                                    <Users className="w-8 h-8 text-white" />
-                                </div>
-                                <div>
-                                    <div className="text-white font-light">{selectedTeam.name}</div>
-                                    <div className="text-sm text-gray-400">Team ID: {selectedTeam.id}</div>
-                                </div>
-                            </div>
-                            <p className="text-gray-400">Are you sure you want to delete this team? This action cannot be undone.</p>
-                        </div>
-                        <div className="flex justify-end space-x-3 mt-6">
-                            <Button
-                                variant="outline"
-                                onClick={() => setShowDeleteTeamModal(false)}
-                                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={handleDeleteTeam}
-                                className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none"
-                            >
-                                Delete Team
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Seed Members Modal */}
-            {showSeedMembersModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-lg text-white font-light">Seed Members</h3>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setShowSeedMembersModal(false)}
-                                className="text-gray-400 hover:text-white rounded-none"
-                            >
-                                <X className="w-4 h-4" />
-                            </Button>
-                        </div>
-                        <div className="space-y-6">
-                            <div className="space-y-4">
-                                <div className="flex items-center space-x-2">
-                                    <Users className="w-5 h-5 text-white" />
-                                    <h4 className="text-white font-light">Add Members from Existing Users</h4>
-                                </div>
-                                <div className="flex items-center space-x-3">
-                                    <div className="flex-1">
-                                        <Label htmlFor="member-count" className="text-sm text-gray-400 font-light">Number of members to add</Label>
-                                        <Input
-                                            id="member-count"
-                                            type="number"
-                                            min="1"
-                                            max="50"
-                                            defaultValue="5"
-                                            className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
-                                        />
-                                    </div>
-                                    <Button
-                                        onClick={() => {
-                                            const count = parseInt((document.getElementById('member-count') as HTMLInputElement)?.value || '5')
-                                            handleSeedMembers(count)
-                                        }}
-                                        disabled={isSeeding}
-                                        className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
-                                    >
-                                        {isSeeding ? (
-                                            <>
-                                                <Loader className="w-3 h-3 mr-2 animate-spin" />
-                                                Seeding...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Users className="w-3 h-3 mr-2" />
-                                                Seed Members
-                                            </>
-                                        )}
-                                    </Button>
-                                </div>
-                            </div>
-
-
-                            {/* Seeding Logs */}
-                            {seedingLogs.length > 0 && (
-                                <div className="mt-6">
-                                    <Terminal 
-                                        title="Member Seeding Terminal"
-                                        lines={seedingLogs}
-                                        isRunning={isSeeding}
-                                        className="w-full"
-                                        defaultCollapsed={true}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex justify-end mt-6 pt-6 border-t border-dashed border-white/10">
-                            <Button
-                                variant="outline"
-                                onClick={() => setShowSeedMembersModal(false)}
-                                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
-                            >
-                                Close
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Seed Teams Modal */}
-            {showSeedTeamsModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-lg text-white font-light">Seed Teams</h3>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setShowSeedTeamsModal(false)}
-                                className="text-gray-400 hover:text-white rounded-none"
-                            >
-                                <X className="w-4 h-4" />
-                            </Button>
-                        </div>
-                        <div className="space-y-6">
-                            <div className="space-y-4">
-                                <div className="flex items-center space-x-2">
-                                    <Building2 className="w-5 h-5 text-white" />
-                                    <h4 className="text-white font-light">Create Teams</h4>
-                                </div>
-                                <div className="flex items-center space-x-3">
-                                    <div className="flex-1">
-                                        <Label htmlFor="team-count" className="text-sm text-gray-400 font-light">Number of teams to create</Label>
-                                        <Input
-                                            id="team-count"
-                                            type="number"
-                                            min="1"
-                                            max="20"
-                                            defaultValue="3"
-                                            className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
-                                        />
-                                    </div>
-                                    <Button
-                                        onClick={() => {
-                                            const count = parseInt((document.getElementById('team-count') as HTMLInputElement)?.value || '3')
-                                            handleSeedTeams(count)
-                                        }}
-                                        disabled={isTeamSeeding}
-                                        className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
-                                    >
-                                        {isTeamSeeding ? (
-                                            <>
-                                                <Loader className="w-3 h-3 mr-2 animate-spin" />
-                                                Seeding...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Building2 className="w-3 h-3 mr-2" />
-                                                Seed Teams
-                                            </>
-                                        )}
-                                    </Button>
-                                </div>
-                            </div>
-
-                            {/* Team Seeding Logs */}
-                            {teamSeedingLogs.length > 0 && (
-                                <div className="mt-6">
-                                    <Terminal 
-                                        title="Team Seeding Terminal"
-                                        lines={teamSeedingLogs}
-                                        isRunning={isTeamSeeding}
-                                        className="w-full"
-                                        defaultCollapsed={true}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex justify-end mt-6 pt-6 border-t border-dashed border-white/10">
-                            <Button
-                                variant="outline"
-                                onClick={() => setShowSeedTeamsModal(false)}
-                                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
-                            >
-                                Close
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
+          </div>
         </div>
-    )
+      )}
+
+      {/* Delete Team Modal */}
+      {showDeleteTeamModal && selectedTeam && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light">Delete Team</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowDeleteTeamModal(false)}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-16 h-16 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
+                  <Users className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <div className="text-white font-light">{selectedTeam.name}</div>
+                  <div className="text-sm text-gray-400">Team ID: {selectedTeam.id}</div>
+                </div>
+              </div>
+              <p className="text-gray-400">
+                Are you sure you want to delete this team? This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => setShowDeleteTeamModal(false)}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDeleteTeam}
+                className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none"
+              >
+                Delete Team
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Seed Members Modal */}
+      {showSeedMembersModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg text-white font-light">Seed Members</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSeedMembersModal(false)}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Users className="w-5 h-5 text-white" />
+                  <h4 className="text-white font-light">Add Members from Existing Users</h4>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="flex-1">
+                    <Label htmlFor="member-count" className="text-sm text-gray-400 font-light">
+                      Number of members to add
+                    </Label>
+                    <Input
+                      id="member-count"
+                      type="number"
+                      min="1"
+                      max="50"
+                      defaultValue="5"
+                      className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                    />
+                  </div>
+                  <Button
+                    onClick={() => {
+                      const count = parseInt(
+                        (document.getElementById('member-count') as HTMLInputElement)?.value || '5'
+                      );
+                      handleSeedMembers(count);
+                    }}
+                    disabled={isSeeding}
+                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
+                  >
+                    {isSeeding ? (
+                      <>
+                        <Loader className="w-3 h-3 mr-2 animate-spin" />
+                        Seeding...
+                      </>
+                    ) : (
+                      <>
+                        <Users className="w-3 h-3 mr-2" />
+                        Seed Members
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Seeding Logs */}
+              {seedingLogs.length > 0 && (
+                <div className="mt-6">
+                  <Terminal
+                    title="Member Seeding Terminal"
+                    lines={seedingLogs}
+                    isRunning={isSeeding}
+                    className="w-full"
+                    defaultCollapsed={true}
+                  />
+                </div>
+              )}
+            </div>
+            <div className="flex justify-end mt-6 pt-6 border-t border-dashed border-white/10">
+              <Button
+                variant="outline"
+                onClick={() => setShowSeedMembersModal(false)}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Seed Teams Modal */}
+      {showSeedTeamsModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg text-white font-light">Seed Teams</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSeedTeamsModal(false)}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Building2 className="w-5 h-5 text-white" />
+                  <h4 className="text-white font-light">Create Teams</h4>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="flex-1">
+                    <Label htmlFor="team-count" className="text-sm text-gray-400 font-light">
+                      Number of teams to create
+                    </Label>
+                    <Input
+                      id="team-count"
+                      type="number"
+                      min="1"
+                      max="20"
+                      defaultValue="3"
+                      className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                    />
+                  </div>
+                  <Button
+                    onClick={() => {
+                      const count = parseInt(
+                        (document.getElementById('team-count') as HTMLInputElement)?.value || '3'
+                      );
+                      handleSeedTeams(count);
+                    }}
+                    disabled={isTeamSeeding}
+                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
+                  >
+                    {isTeamSeeding ? (
+                      <>
+                        <Loader className="w-3 h-3 mr-2 animate-spin" />
+                        Seeding...
+                      </>
+                    ) : (
+                      <>
+                        <Building2 className="w-3 h-3 mr-2" />
+                        Seed Teams
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Team Seeding Logs */}
+              {teamSeedingLogs.length > 0 && (
+                <div className="mt-6">
+                  <Terminal
+                    title="Team Seeding Terminal"
+                    lines={teamSeedingLogs}
+                    isRunning={isTeamSeeding}
+                    className="w-full"
+                    defaultCollapsed={true}
+                  />
+                </div>
+              )}
+            </div>
+            <div className="flex justify-end mt-6 pt-6 border-t border-dashed border-white/10">
+              <Button
+                variant="outline"
+                onClick={() => setShowSeedTeamsModal(false)}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

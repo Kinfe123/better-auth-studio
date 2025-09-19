@@ -1,20 +1,13 @@
-import { useState } from 'react'
-import { 
-  Users, 
-  Building2, 
-  Settings, 
-  BarChart3, 
-  Zap,
-  ArrowRight
-} from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import UsersPage from './Users'
-import OrganizationsPage from './Organizations'
+import { ArrowRight, BarChart3, Building2, Settings, Users, Zap } from 'lucide-react';
+import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import OrganizationsPage from './Organizations';
+import UsersPage from './Users';
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState('overview')
+  const [activeTab, setActiveTab] = useState('overview');
 
   const renderOverview = () => (
     <div className="space-y-8 animate-fade-in px-6 py-8">
@@ -35,8 +28,10 @@ export default function Dashboard() {
               </Badge>
             </div>
             <h3 className="text-lg text-white font-light mb-2">User Management</h3>
-            <p className="text-gray-400 font-light mb-4">Manage user accounts, profiles, and permissions</p>
-            <Button 
+            <p className="text-gray-400 font-light mb-4">
+              Manage user accounts, profiles, and permissions
+            </p>
+            <Button
               onClick={() => setActiveTab('users')}
               className="w-full bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
             >
@@ -58,8 +53,10 @@ export default function Dashboard() {
               </Badge>
             </div>
             <h3 className="text-lg text-white font-light mb-2">Organizations</h3>
-            <p className="text-gray-400 font-light mb-4">Manage organizations, teams, and memberships</p>
-            <Button 
+            <p className="text-gray-400 font-light mb-4">
+              Manage organizations, teams, and memberships
+            </p>
+            <Button
               onClick={() => setActiveTab('organizations')}
               className="w-full bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
             >
@@ -105,7 +102,7 @@ export default function Dashboard() {
             </div>
             <h3 className="text-lg text-white font-light mb-2">Configuration</h3>
             <p className="text-gray-400 font-light mb-4">View and manage auth configuration</p>
-            <Button 
+            <Button
               variant="outline"
               className="w-full border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
             >
@@ -127,8 +124,10 @@ export default function Dashboard() {
               </Badge>
             </div>
             <h3 className="text-lg text-white font-light mb-2">Analytics</h3>
-            <p className="text-gray-400 font-light mb-4">View authentication analytics and insights</p>
-            <Button 
+            <p className="text-gray-400 font-light mb-4">
+              View authentication analytics and insights
+            </p>
+            <Button
               variant="outline"
               disabled
               className="w-full border border-dashed border-white/20 text-gray-400 rounded-none"
@@ -152,7 +151,7 @@ export default function Dashboard() {
             </div>
             <h3 className="text-lg text-white font-light mb-2">Quick Actions</h3>
             <p className="text-gray-400 font-light mb-4">Common tasks and shortcuts</p>
-            <Button 
+            <Button
               variant="outline"
               className="w-full border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
             >
@@ -163,7 +162,7 @@ export default function Dashboard() {
         </Card>
       </div>
     </div>
-  )
+  );
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -216,11 +215,16 @@ export default function Dashboard() {
       </div> */}
 
       {/* Tab Content */}
-      {activeTab === 'overview' ? renderOverview() : 
-       activeTab === 'users' ? <UsersPage /> : 
-       activeTab === 'organizations' ? <OrganizationsPage /> :
-      //  activeTab === 'sessions' ? <SessionsPage /> : 
-       renderOverview()}
+      {activeTab === 'overview' ? (
+        renderOverview()
+      ) : activeTab === 'users' ? (
+        <UsersPage />
+      ) : activeTab === 'organizations' ? (
+        <OrganizationsPage />
+      ) : (
+        //  activeTab === 'sessions' ? <SessionsPage /> :
+        renderOverview()
+      )}
     </div>
-  )
+  );
 }

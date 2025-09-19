@@ -1,6 +1,6 @@
-import { readFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
+import { existsSync, readFileSync } from 'fs';
 import { createJiti } from 'jiti';
+import { dirname, join } from 'path';
 import { pathToFileURL } from 'url';
 
 export interface AuthProvider {
@@ -38,19 +38,18 @@ function resolveModuleWithExtensions(id: string, parent: string): string {
 
   const parentDir = dirname(parent);
   const basePath = join(parentDir, id);
-  
+
   const extensions = ['.ts', '.js', '.mjs', '.cjs'];
-  
+
   for (const ext of extensions) {
     const fullPath = basePath + ext;
     if (existsSync(fullPath)) {
       return pathToFileURL(fullPath).href;
     }
   }
-  
+
   return id;
 }
-
 
 export async function findAuthConfig(configPath?: string): Promise<AuthConfig | null> {
   if (configPath) {
@@ -67,10 +66,10 @@ export async function findAuthConfig(configPath?: string): Promise<AuthConfig | 
         join(cwd, configPath), // Direct relative to cwd
         join(cwd, '..', configPath), // One level up
         join(cwd, '../..', configPath), // Two levels up
-        configPath // Try as-is (in case it's already resolved)
+        configPath, // Try as-is (in case it's already resolved)
       ];
 
-      resolvedPath = possiblePaths.find(path => existsSync(path)) || join(cwd, configPath);
+      resolvedPath = possiblePaths.find((path) => existsSync(path)) || join(cwd, configPath);
     }
 
     if (existsSync(resolvedPath)) {
@@ -92,7 +91,7 @@ export async function findAuthConfig(configPath?: string): Promise<AuthConfig | 
         join(cwd, 'packages', 'backend', 'src', 'auth.ts'),
         join(cwd, 'packages', 'backend', 'auth.ts'),
         join(cwd, 'src', 'auth.ts'),
-        join(cwd, 'auth.ts')
+        join(cwd, 'auth.ts'),
       ];
 
       for (const path of commonPaths) {
@@ -125,7 +124,7 @@ export async function findAuthConfig(configPath?: string): Promise<AuthConfig | 
     'better-auth.config.json',
     'auth.config.ts',
     'auth.config.js',
-    'auth.config.json'
+    'auth.config.json',
   ];
 
   let currentDir = process.cwd();
@@ -135,7 +134,7 @@ export async function findAuthConfig(configPath?: string): Promise<AuthConfig | 
   while (currentDir && depth < maxDepth) {
     for (const configFile of possibleConfigFiles) {
       const configPath = join(currentDir, configFile);
-      
+
       if (existsSync(configPath)) {
         try {
           const config = await loadConfig(configPath);
@@ -161,7 +160,7 @@ export async function findAuthConfig(configPath?: string): Promise<AuthConfig | 
 
 async function loadConfig(configPath: string): Promise<AuthConfig | null> {
   const ext = configPath.split('.').pop();
-  
+
   try {
     if (ext === 'json') {
       const content = readFileSync(configPath, 'utf-8');
@@ -181,25 +180,25 @@ async function loadTypeScriptConfig(configPath: string): Promise<AuthConfig | nu
     if (configPath.endsWith('.ts')) {
       try {
         const aliases: Record<string, string> = {};
-        
+
         const configDir = dirname(configPath);
-        
+
         const content = readFileSync(configPath, 'utf-8');
-        
+
         const relativeImportRegex = /import\s+.*?\s+from\s+['"](\.\/[^'"]+)['"]/g;
         const dynamicImportRegex = /import\s*\(\s*['"](\.\/[^'"]+)['"]\s*\)/g;
-        
+
         const foundImports = new Set<string>();
-        
+
         let match;
         while ((match = relativeImportRegex.exec(content)) !== null) {
           foundImports.add(match[1]);
         }
-        
+
         while ((match = dynamicImportRegex.exec(content)) !== null) {
           foundImports.add(match[1]);
         }
-        
+
         for (const importPath of foundImports) {
           const importName = importPath.replace('./', '');
           const possiblePaths = [
@@ -210,9 +209,9 @@ async function loadTypeScriptConfig(configPath: string): Promise<AuthConfig | nu
             join(configDir, importName, 'index.ts'),
             join(configDir, importName, 'index.js'),
             join(configDir, importName, 'index.mjs'),
-            join(configDir, importName, 'index.cjs')
+            join(configDir, importName, 'index.cjs'),
           ];
-          
+
           for (const path of possiblePaths) {
             if (existsSync(path)) {
               aliases[importPath] = pathToFileURL(path).href;
@@ -220,22 +219,22 @@ async function loadTypeScriptConfig(configPath: string): Promise<AuthConfig | nu
             }
           }
         }
-        
+
         try {
           let importPath = configPath;
           if (!configPath.startsWith('/')) {
             importPath = join(process.cwd(), configPath);
           }
-          console.log({importPath})
+          console.log({ importPath });
           const jitiInstance = createJiti(importPath, {
             debug: true,
             fsCache: true,
             moduleCache: true,
-            interopDefault: true
+            interopDefault: true,
           });
-          console.log({jitiInstance})
+          console.log({ jitiInstance });
           const authModule: any = await jitiInstance.import(importPath);
-          console.log({authModule}) 
+          console.log({ authModule });
           const auth = authModule.auth || authModule.default || authModule;
           if (auth && typeof auth === 'object') {
             try {
@@ -245,49 +244,47 @@ async function loadTypeScriptConfig(configPath: string): Promise<AuthConfig | nu
                 const config: AuthConfig = {
                   database: {
                     type: 'drizzle',
-                    adapter: 'drizzle-adapter'
+                    adapter: 'drizzle-adapter',
                   },
                   emailAndPassword: {
-                    enabled: true
+                    enabled: true,
                   },
                   trustedOrigins: ['http://localhost:3000'],
                   advanced: {
                     defaultCookieAttributes: {
                       sameSite: 'none',
                       secure: true,
-                      httpOnly: true
-                    }
-                  }
+                      httpOnly: true,
+                    },
+                  },
                 };
                 return config;
               }
-            } catch (contextError: any) {
-            }
+            } catch (contextError: any) {}
           }
         } catch (importError: any) {
           console.warn(`Failed to import auth config from ${configPath}:`, importError.message);
         }
-        
+
         const config: AuthConfig = {
           database: {
             type: 'drizzle',
-            adapter: 'drizzle-adapter'
+            adapter: 'drizzle-adapter',
           },
           emailAndPassword: {
-            enabled: true
+            enabled: true,
           },
           trustedOrigins: ['http://localhost:3000'],
           advanced: {
             defaultCookieAttributes: {
               sameSite: 'none',
               secure: true,
-              httpOnly: true
-            }
-          }
+              httpOnly: true,
+            },
+          },
         };
         return config;
-      }
-      catch (importError: any) {
+      } catch (importError: any) {
         console.warn(`Failed to import auth config from ${configPath}:`, importError.message);
       }
     }
@@ -311,11 +308,12 @@ async function loadTypeScriptConfig(configPath: string): Promise<AuthConfig | nu
 
 function detectDatabaseAdapter(content: string): AuthDatabase {
   const database: AuthDatabase = {};
-  
-  
+
   if (content.includes('drizzleAdapter')) {
     database.adapter = 'drizzle';
-    const providerMatch = content.match(/drizzleAdapter\s*\(\s*\w+\s*,\s*\{[^}]*provider\s*:\s*["']([^"']+)["'][^}]*\}/);
+    const providerMatch = content.match(
+      /drizzleAdapter\s*\(\s*\w+\s*,\s*\{[^}]*provider\s*:\s*["']([^"']+)["'][^}]*\}/
+    );
     if (providerMatch) {
       const provider = providerMatch[1];
       database.provider = provider;
@@ -326,7 +324,9 @@ function detectDatabaseAdapter(content: string): AuthDatabase {
     }
   } else if (content.includes('prismaAdapter')) {
     database.adapter = 'prisma';
-    const providerMatch = content.match(/prismaAdapter\s*\(\s*\w+\s*,\s*\{[^}]*provider\s*:\s*["']([^"']+)["'][^}]*\}/);
+    const providerMatch = content.match(
+      /prismaAdapter\s*\(\s*\w+\s*,\s*\{[^}]*provider\s*:\s*["']([^"']+)["'][^}]*\}/
+    );
     if (providerMatch) {
       database.provider = providerMatch[1];
       database.type = providerMatch[1];
@@ -338,27 +338,33 @@ function detectDatabaseAdapter(content: string): AuthDatabase {
     database.adapter = 'sqlite';
     database.type = 'sqlite';
     database.provider = 'sqlite';
-    
+
     const dbPathMatch = content.match(/new\s+Database\s*\(\s*["']([^"']+)["']\s*\)/);
     if (dbPathMatch) {
       database.name = dbPathMatch[1];
     }
   }
-  
+
   const urlMatch = content.match(/DATABASE_URL|DB_URL|DB_CONNECTION_STRING/);
   if (urlMatch) {
     database.url = `process.env.${urlMatch[0]}`;
   }
-  
+
   return database;
 }
 
 function cleanConfigString(configStr: string): string {
   let cleaned = configStr;
-  
-  cleaned = cleaned.replace(/:\s*prismaAdapter\s*\(\s*\w+\s*,\s*\{[^}]*\}\s*\)/g, ':"prisma-adapter"');
+
+  cleaned = cleaned.replace(
+    /:\s*prismaAdapter\s*\(\s*\w+\s*,\s*\{[^}]*\}\s*\)/g,
+    ':"prisma-adapter"'
+  );
   cleaned = cleaned.replace(/:\s*prismaAdapter\s*\(\s*\w+\s*\)/g, ':"prisma-adapter"');
-  cleaned = cleaned.replace(/:\s*drizzleAdapter\s*\(\s*\w+\s*,\s*\{[^}]*\}\s*\)/g, ':"drizzle-adapter"');
+  cleaned = cleaned.replace(
+    /:\s*drizzleAdapter\s*\(\s*\w+\s*,\s*\{[^}]*\}\s*\)/g,
+    ':"drizzle-adapter"'
+  );
   cleaned = cleaned.replace(/:\s*drizzleAdapter\s*\(\s*\w+\s*\)/g, ':"drizzle-adapter"');
   cleaned = cleaned.replace(/:\s*betterSqlite3\s*\(\s*[^)]*\)/g, ':"better-sqlite3"');
   cleaned = cleaned.replace(/:\s*postgres\s*\(\s*[^)]*\)/g, ':"postgres"');
@@ -377,29 +383,29 @@ function cleanConfigString(configStr: string): string {
   cleaned = cleaned.replace(/([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '"$1":');
   cleaned = cleaned.replace(/,\s*}/g, '}');
   cleaned = cleaned.replace(/,\s*]/g, ']');
-  
+
   cleaned = cleaned.replace(/\/\/.*$/gm, '');
   cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, '');
   cleaned = cleaned.replace(/\s+/g, ' ');
   cleaned = cleaned.replace(/:\s*(\d+\.?\d*)/g, ':$1');
   cleaned = cleaned.replace(/:\s*(true|false)/g, ':$1');
   cleaned = cleaned.replace(/:\s*null/g, ':null');
-  
+
   return cleaned.trim();
 }
 
 export function extractBetterAuthConfig(content: string): AuthConfig | null {
-  
-  
   const pluginsMatch = content.match(/plugins\s*:\s*(?:\[)?(\w+)(?:\])?/);
   if (pluginsMatch) {
     const pluginsVar = pluginsMatch[1];
-    
-    const varMatch = content.match(new RegExp(`const\\s+${pluginsVar}\\s*=\\s*[^\\[]*\\[([^\\]]*)\\]`));
+
+    const varMatch = content.match(
+      new RegExp(`const\\s+${pluginsVar}\\s*=\\s*[^\\[]*\\[([^\\]]*)\\]`)
+    );
     if (varMatch) {
       const pluginsContent = varMatch[1];
       const plugins = [];
-      
+
       const pluginMatches = pluginsContent.match(/(\w+)\(\)/g);
       if (pluginMatches) {
         for (const pluginMatch of pluginMatches) {
@@ -409,36 +415,38 @@ export function extractBetterAuthConfig(content: string): AuthConfig | null {
             name: pluginName,
             version: 'unknown',
             description: `${pluginName} plugin for Better Auth`,
-            enabled: true
+            enabled: true,
           };
-          
+
           if (pluginName === 'organization') {
-            const orgConfigMatch = content.match(/organization\s*\(\s*\{[^}]*teams[^}]*enabled[^}]*\}/);
+            const orgConfigMatch = content.match(
+              /organization\s*\(\s*\{[^}]*teams[^}]*enabled[^}]*\}/
+            );
             if (orgConfigMatch) {
               plugin.teams = { enabled: true };
             }
           }
-          
+
           plugins.push(plugin);
         }
       }
-      
+
       if (plugins.length > 0) {
         const database = detectDatabaseAdapter(content);
         return {
           plugins: plugins,
           baseURL: 'http://localhost:3000',
-          database: database
+          database: database,
         };
       }
     }
   }
-  
+
   const directPluginsMatch = content.match(/plugins\s*:\s*\[([^\]]*)\]/);
   if (directPluginsMatch) {
     const pluginsContent = directPluginsMatch[1];
     const plugins = [];
-    
+
     const pluginMatches = pluginsContent.match(/(\w+)\(\)/g);
     if (pluginMatches) {
       for (const pluginMatch of pluginMatches) {
@@ -448,30 +456,32 @@ export function extractBetterAuthConfig(content: string): AuthConfig | null {
           name: pluginName,
           version: 'unknown',
           description: `${pluginName} plugin for Better Auth`,
-          enabled: true
+          enabled: true,
         };
-        
+
         if (pluginName === 'organization') {
-          const orgConfigMatch = content.match(/organization\s*\(\s*\{[^}]*teams[^}]*enabled[^}]*\}/);
+          const orgConfigMatch = content.match(
+            /organization\s*\(\s*\{[^}]*teams[^}]*enabled[^}]*\}/
+          );
           if (orgConfigMatch) {
             plugin.teams = { enabled: true };
           }
         }
-        
+
         plugins.push(plugin);
       }
     }
-    
+
     if (plugins.length > 0) {
       const database = detectDatabaseAdapter(content);
       return {
         plugins: plugins,
         baseURL: 'http://localhost:3000',
-        database: database
+        database: database,
       };
     }
   }
-  
+
   const patterns = [
     /export\s+const\s+\w+\s*=\s*betterAuth\s*\(\s*({[^{}]*(?:{[^{}]*}[^{}]*)*})\s*\)/,
     /export\s+const\s+\w+\s*=\s*BetterAuth\s*\(\s*({[^{}]*(?:{[^{}]*}[^{}]*)*})\s*\)/,
@@ -486,7 +496,7 @@ export function extractBetterAuthConfig(content: string): AuthConfig | null {
     /betterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
     /BetterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
     /betterAuth\s*\(\s*({[^{}]*baseURL[^{}]*database[^{}]*})\s*\)/,
-    /BetterAuth\s*\(\s*({[^{}]*baseURL[^{}]*database[^{}]*})\s*\)/
+    /BetterAuth\s*\(\s*({[^{}]*baseURL[^{}]*database[^{}]*})\s*\)/,
   ];
 
   for (let i = 0; i < patterns.length; i++) {
@@ -495,7 +505,7 @@ export function extractBetterAuthConfig(content: string): AuthConfig | null {
     if (match) {
       try {
         let configStr = match[1];
-        
+
         configStr = configStr
           .replace(/(\d+\s*\*\s*\d+\s*\*\s*\d+\s*\*\s*\d+)/g, (match) => {
             try {
@@ -518,19 +528,20 @@ export function extractBetterAuthConfig(content: string): AuthConfig | null {
               return match;
             }
           });
-        
+
         configStr = cleanConfigString(configStr);
-        
 
         let config;
         try {
           config = JSON.parse(configStr);
         } catch (error) {
-          console.warn(`Failed to parse config: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          console.warn(
+            `Failed to parse config: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
           console.warn('Config string that failed:', configStr.substring(0, 200) + '...');
           return null;
         }
-        
+
         const authConfig = extractBetterAuthFields(config);
         if (authConfig) {
           const detectedDatabase = detectDatabaseAdapter(content);
@@ -540,8 +551,9 @@ export function extractBetterAuthConfig(content: string): AuthConfig | null {
         }
         return authConfig;
       } catch (error) {
-        console.warn(`Failed to parse config pattern: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        continue;
+        console.warn(
+          `Failed to parse config pattern: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
       }
     }
   }
@@ -552,12 +564,11 @@ export function extractBetterAuthConfig(content: string): AuthConfig | null {
 function extractBetterAuthFields(config: any): AuthConfig {
   const authConfig: AuthConfig = {};
 
-
   if (config.database) {
     let dbType = 'postgresql';
     let dbName = config.database.name;
     let adapter = 'unknown';
-    
+
     if (typeof config.database === 'function') {
       if (config.database.options?.adapterId) {
         adapter = config.database.options.adapterId;
@@ -587,18 +598,29 @@ function extractBetterAuthFields(config: any): AuthConfig {
         adapter = 'prisma';
         dbType = 'postgresql';
       }
-    } else if (config.database.constructor?.name === 'Database' || 
-               (typeof config.database === 'object' && config.database.constructor && config.database.constructor.name === 'Database')) {
+    } else if (
+      config.database.constructor?.name === 'Database' ||
+      (typeof config.database === 'object' &&
+        config.database.constructor &&
+        config.database.constructor.name === 'Database')
+    ) {
       dbType = 'sqlite';
       dbName = config.database.name || './better-auth.db';
       adapter = 'sqlite';
-    } else if (config.database.name?.endsWith('.db') || 
-               (typeof config.database === 'string' && config.database.endsWith('.db'))) {
+    } else if (
+      config.database.name?.endsWith('.db') ||
+      (typeof config.database === 'string' && config.database.endsWith('.db'))
+    ) {
       dbType = 'sqlite';
       adapter = 'sqlite';
     } else if (config.database.provider) {
       const provider = config.database.provider;
-      if (provider === 'pg' || provider === 'postgresql' || provider === 'mysql' || provider === 'sqlite') {
+      if (
+        provider === 'pg' ||
+        provider === 'postgresql' ||
+        provider === 'mysql' ||
+        provider === 'sqlite'
+      ) {
         adapter = 'drizzle';
         dbType = provider === 'pg' ? 'postgresql' : provider;
       } else {
@@ -609,7 +631,12 @@ function extractBetterAuthFields(config: any): AuthConfig {
       adapter = config.database.adapter;
       if (config.database.provider) {
         const provider = config.database.provider;
-        if (provider === 'pg' || provider === 'postgresql' || provider === 'mysql' || provider === 'sqlite') {
+        if (
+          provider === 'pg' ||
+          provider === 'postgresql' ||
+          provider === 'mysql' ||
+          provider === 'sqlite'
+        ) {
           adapter = 'drizzle';
           dbType = provider === 'pg' ? 'postgresql' : provider;
         } else {
@@ -622,12 +649,18 @@ function extractBetterAuthFields(config: any): AuthConfig {
       dbType = config.database.type;
       adapter = config.database.type;
     }
-    
-    if (config.database.provider && (config.database.provider === 'postgresql' || config.database.provider === 'pg' || config.database.provider === 'mysql' || config.database.provider === 'sqlite')) {
+
+    if (
+      config.database.provider &&
+      (config.database.provider === 'postgresql' ||
+        config.database.provider === 'pg' ||
+        config.database.provider === 'mysql' ||
+        config.database.provider === 'sqlite')
+    ) {
       adapter = 'drizzle';
       dbType = config.database.provider === 'pg' ? 'postgresql' : config.database.provider;
     }
-    
+
     authConfig.database = {
       url: config.database.url || config.database.connectionString,
       name: dbName,
@@ -635,20 +668,22 @@ function extractBetterAuthFields(config: any): AuthConfig {
       adapter: adapter,
       dialect: config.database.dialect,
       provider: config.database.provider,
-      casing: config.database.casing
+      casing: config.database.casing,
     };
   }
 
   if (config.socialProviders) {
     if (typeof config.socialProviders === 'object' && !Array.isArray(config.socialProviders)) {
       authConfig.socialProviders = config.socialProviders;
-      authConfig.providers = Object.entries(config.socialProviders).map(([provider, config]: [string, any]) => ({
-        type: provider,
-        clientId: config.clientId,
-        clientSecret: config.clientSecret,
-        redirectUri: config.redirectUri,
-        ...config
-      }));
+      authConfig.providers = Object.entries(config.socialProviders).map(
+        ([provider, config]: [string, any]) => ({
+          type: provider,
+          clientId: config.clientId,
+          clientSecret: config.clientSecret,
+          redirectUri: config.redirectUri,
+          ...config,
+        })
+      );
     } else if (Array.isArray(config.socialProviders)) {
       authConfig.socialProviders = config.socialProviders;
       authConfig.providers = config.socialProviders;
@@ -660,7 +695,7 @@ function extractBetterAuthFields(config: any): AuthConfig {
       type: provider.type || provider.id,
       clientId: provider.clientId || provider.client_id,
       clientSecret: provider.clientSecret || provider.client_secret,
-      ...provider
+      ...provider,
     }));
   }
 
@@ -683,7 +718,7 @@ function extractBetterAuthFields(config: any): AuthConfig {
   if (config.telemetry) {
     authConfig.telemetry = config.telemetry;
   }
-  if(config.plugins) {
+  if (config.plugins) {
     authConfig.plugins = config.plugins.map((plugin: any) => plugin.id);
   }
   return authConfig;
@@ -692,18 +727,18 @@ function extractBetterAuthFields(config: any): AuthConfig {
 async function evaluateJSConfig(configPath: string): Promise<AuthConfig | null> {
   try {
     const config = require(configPath);
-    
+
     if (config.auth) {
       const authConfig = config.auth.options || config.auth;
       return extractBetterAuthFields(authConfig);
     }
-    
+
     if (config.default) {
       return extractBetterAuthFields(config.default);
     } else if (typeof config === 'object') {
       return extractBetterAuthFields(config);
     }
-    
+
     return null;
   } catch (error) {
     console.warn(`Error evaluating JS config from ${configPath}:`, error);

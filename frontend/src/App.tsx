@@ -1,15 +1,15 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { Toaster } from 'sonner'
-import Layout from './components/Layout'
-import Dashboard from './pages/Dashboard'
-import Users from './pages/Users'
-import Organizations from './pages/Organizations'
-import OrganizationDetails from './pages/OrganizationDetails'
-import TeamDetails from './pages/TeamDetails'
-import UserDetails from './pages/UserDetails'
-import Sessions from './pages/Sessions'
-import Settings from './pages/Settings'
-import { CountsProvider } from './contexts/CountsContext'
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Toaster } from 'sonner';
+import Layout from './components/Layout';
+import { CountsProvider } from './contexts/CountsContext';
+import Dashboard from './pages/Dashboard';
+import OrganizationDetails from './pages/OrganizationDetails';
+import Organizations from './pages/Organizations';
+import Sessions from './pages/Sessions';
+import Settings from './pages/Settings';
+import TeamDetails from './pages/TeamDetails';
+import UserDetails from './pages/UserDetails';
+import Users from './pages/Users';
 
 function App() {
   return (
@@ -27,15 +27,10 @@ function App() {
             <Route path="/settings" element={<Settings />} />
           </Routes>
         </Layout>
-        <Toaster 
-          theme="dark" 
-          position="top-right"
-          richColors
-          closeButton
-        />
+        <Toaster theme="dark" position="top-right" richColors closeButton />
       </Router>
     </CountsProvider>
-  )
+  );
 }
 
-export default App
+export default App;

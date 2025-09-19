@@ -1,11 +1,11 @@
-import { join, dirname } from 'path';
 import { existsSync } from 'fs';
 import { createJiti } from 'jiti';
-let authInstance = null;
+import { dirname, join } from 'path';
+const authInstance = null;
 let authAdapter = null;
 export async function getAuthAdapter(configPath) {
     try {
-        let authConfigPath = configPath ? configPath : await findAuthConfigPath();
+        const authConfigPath = configPath ? configPath : await findAuthConfigPath();
         if (!authConfigPath) {
             return null;
         }
@@ -19,7 +19,7 @@ export async function getAuthAdapter(configPath) {
                 debug: true,
                 fsCache: true,
                 moduleCache: true,
-                interopDefault: true
+                interopDefault: true,
             });
             authModule = await jitiInstance.import(importPath);
         }
@@ -49,7 +49,7 @@ export async function getAuthAdapter(configPath) {
             createUser: async (data) => {
                 try {
                     const user = await adapter.create({
-                        model: "user",
+                        model: 'user',
                         data: {
                             createdAt: new Date(),
                             updatedAt: new Date(),
@@ -57,20 +57,20 @@ export async function getAuthAdapter(configPath) {
                             name: data.name,
                             email: data.email?.toLowerCase(),
                             image: data.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
-                        }
+                        },
                     });
                     if (data.password) {
                         try {
                             await adapter.create({
-                                model: "account",
+                                model: 'account',
                                 data: {
                                     userId: user.id,
-                                    providerId: "credential",
+                                    providerId: 'credential',
                                     accountId: user.id,
                                     password: data.password,
                                     createdAt: new Date(),
                                     updatedAt: new Date(),
-                                }
+                                },
                             });
                         }
                         catch (accountError) {
@@ -87,12 +87,12 @@ export async function getAuthAdapter(configPath) {
             createSession: async (data) => {
                 try {
                     return await adapter.create({
-                        model: "session",
+                        model: 'session',
                         data: {
                             createdAt: new Date(),
                             updatedAt: new Date(),
                             ...data,
-                        }
+                        },
                     });
                 }
                 catch (error) {
@@ -103,12 +103,12 @@ export async function getAuthAdapter(configPath) {
             createAccount: async (data) => {
                 try {
                     return await adapter.create({
-                        model: "account",
+                        model: 'account',
                         data: {
                             createdAt: new Date(),
                             updatedAt: new Date(),
                             ...data,
-                        }
+                        },
                     });
                 }
                 catch (error) {
@@ -119,12 +119,12 @@ export async function getAuthAdapter(configPath) {
             createVerification: async (data) => {
                 try {
                     return await adapter.create({
-                        model: "verification",
+                        model: 'verification',
                         data: {
                             createdAt: new Date(),
                             updatedAt: new Date(),
                             ...data,
-                        }
+                        },
                     });
                 }
                 catch (error) {
@@ -135,12 +135,12 @@ export async function getAuthAdapter(configPath) {
             createOrganization: async (data) => {
                 try {
                     return await adapter.create({
-                        model: "organization",
+                        model: 'organization',
                         data: {
                             createdAt: new Date(),
                             updatedAt: new Date(),
                             ...data,
-                        }
+                        },
                     });
                 }
                 catch (error) {
@@ -193,7 +193,7 @@ export async function getAuthAdapter(configPath) {
                     console.error('Error using findMany:', error);
                     return [];
                 }
-            }
+            },
         };
         return { ...adapter, ...authAdapter };
     }
@@ -216,7 +216,7 @@ async function findAuthConfigPath() {
         'auth.config.ts',
         'auth.config.js',
         'auth.config.json',
-        'studio-config.json'
+        'studio-config.json',
     ];
     let currentDir = process.cwd();
     const maxDepth = 10;
@@ -245,52 +245,132 @@ export async function createMockUser(adapter, index) {
         emailVerified: true,
         image: `https://api.dicebear.com/7.x/avataaars/svg?seed=user${index}`,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
     };
     return await adapter.createUser(userData);
 }
 // Random IP address generators for different countries
 const countryIPRanges = [
     // United States
-    { country: 'United States', city: 'New York', region: 'NY', ranges: [
-            { min: 8, max: 8 }, { min: 24, max: 24 }, { min: 32, max: 32 }, { min: 64, max: 64 }
-        ] },
+    {
+        country: 'United States',
+        city: 'New York',
+        region: 'NY',
+        ranges: [
+            { min: 8, max: 8 },
+            { min: 24, max: 24 },
+            { min: 32, max: 32 },
+            { min: 64, max: 64 },
+        ],
+    },
     // United Kingdom
-    { country: 'United Kingdom', city: 'London', region: 'England', ranges: [
-            { min: 51, max: 51 }, { min: 77, max: 77 }, { min: 81, max: 81 }, { min: 86, max: 86 }
-        ] },
+    {
+        country: 'United Kingdom',
+        city: 'London',
+        region: 'England',
+        ranges: [
+            { min: 51, max: 51 },
+            { min: 77, max: 77 },
+            { min: 81, max: 81 },
+            { min: 86, max: 86 },
+        ],
+    },
     // Germany
-    { country: 'Germany', city: 'Berlin', region: 'Berlin', ranges: [
-            { min: 46, max: 46 }, { min: 78, max: 78 }, { min: 85, max: 85 }, { min: 134, max: 134 }
-        ] },
+    {
+        country: 'Germany',
+        city: 'Berlin',
+        region: 'Berlin',
+        ranges: [
+            { min: 46, max: 46 },
+            { min: 78, max: 78 },
+            { min: 85, max: 85 },
+            { min: 134, max: 134 },
+        ],
+    },
     // Japan
-    { country: 'Japan', city: 'Tokyo', region: 'Tokyo', ranges: [
-            { min: 126, max: 126 }, { min: 157, max: 157 }, { min: 202, max: 202 }, { min: 210, max: 210 }
-        ] },
+    {
+        country: 'Japan',
+        city: 'Tokyo',
+        region: 'Tokyo',
+        ranges: [
+            { min: 126, max: 126 },
+            { min: 157, max: 157 },
+            { min: 202, max: 202 },
+            { min: 210, max: 210 },
+        ],
+    },
     // Australia
-    { country: 'Australia', city: 'Sydney', region: 'NSW', ranges: [
-            { min: 101, max: 101 }, { min: 118, max: 118 }, { min: 125, max: 125 }, { min: 139, max: 139 }
-        ] },
+    {
+        country: 'Australia',
+        city: 'Sydney',
+        region: 'NSW',
+        ranges: [
+            { min: 101, max: 101 },
+            { min: 118, max: 118 },
+            { min: 125, max: 125 },
+            { min: 139, max: 139 },
+        ],
+    },
     // Canada
-    { country: 'Canada', city: 'Toronto', region: 'ON', ranges: [
-            { min: 24, max: 24 }, { min: 70, max: 70 }, { min: 142, max: 142 }, { min: 174, max: 174 }
-        ] },
+    {
+        country: 'Canada',
+        city: 'Toronto',
+        region: 'ON',
+        ranges: [
+            { min: 24, max: 24 },
+            { min: 70, max: 70 },
+            { min: 142, max: 142 },
+            { min: 174, max: 174 },
+        ],
+    },
     // France
-    { country: 'France', city: 'Paris', region: 'Île-de-France', ranges: [
-            { min: 37, max: 37 }, { min: 51, max: 51 }, { min: 78, max: 78 }, { min: 90, max: 90 }
-        ] },
+    {
+        country: 'France',
+        city: 'Paris',
+        region: 'Île-de-France',
+        ranges: [
+            { min: 37, max: 37 },
+            { min: 51, max: 51 },
+            { min: 78, max: 78 },
+            { min: 90, max: 90 },
+        ],
+    },
     // Brazil
-    { country: 'Brazil', city: 'São Paulo', region: 'SP', ranges: [
-            { min: 177, max: 177 }, { min: 179, max: 179 }, { min: 186, max: 186 }, { min: 200, max: 200 }
-        ] },
+    {
+        country: 'Brazil',
+        city: 'São Paulo',
+        region: 'SP',
+        ranges: [
+            { min: 177, max: 177 },
+            { min: 179, max: 179 },
+            { min: 186, max: 186 },
+            { min: 200, max: 200 },
+        ],
+    },
     // India
-    { country: 'India', city: 'Mumbai', region: 'Maharashtra', ranges: [
-            { min: 103, max: 103 }, { min: 117, max: 117 }, { min: 125, max: 125 }, { min: 180, max: 180 }
-        ] },
+    {
+        country: 'India',
+        city: 'Mumbai',
+        region: 'Maharashtra',
+        ranges: [
+            { min: 103, max: 103 },
+            { min: 117, max: 117 },
+            { min: 125, max: 125 },
+            { min: 180, max: 180 },
+        ],
+    },
     // South Korea
-    { country: 'South Korea', city: 'Seoul', region: 'Seoul', ranges: [
-            { min: 112, max: 112 }, { min: 114, max: 114 }, { min: 175, max: 175 }, { min: 203, max: 203 }
-        ] }
+    {
+        country: 'South Korea',
+        city: 'Seoul',
+        region: 'Seoul',
+        ranges: [
+            { min: 112, max: 112 },
+            { min: 114, max: 114 },
+            { min: 175, max: 175 },
+            { min: 203, max: 203 },
+        ],
+    },
 ];
 function generateRandomIP() {
     // Generate a random IP address from common ranges
@@ -309,7 +389,7 @@ function generateRandomIP() {
         { min: '177.0.0.0', max: '177.255.255.255' }, // Brazil
         { min: '201.0.0.0', max: '201.255.255.255' }, // Brazil
         { min: '103.0.0.0', max: '103.255.255.255' }, // India
-        { min: '117.0.0.0', max: '117.255.255.255' } // India
+        { min: '117.0.0.0', max: '117.255.255.255' }, // India
     ];
     const range = commonRanges[Math.floor(Math.random() * commonRanges.length)];
     const secondOctet = Math.floor(Math.random() * 256);
@@ -327,7 +407,7 @@ export async function createMockSession(adapter, userId, index) {
         ipAddress: ipAddress,
         userAgent: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36`,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
     };
     return await adapter.createSession(sessionData);
 }
@@ -345,7 +425,7 @@ export async function createMockAccount(adapter, userId, index) {
         id_token: `id_token_${index}`,
         session_state: `session_state_${index}`,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
     };
     return await adapter.createAccount(accountData);
 }
@@ -355,7 +435,7 @@ export async function createMockVerification(adapter, userId, index) {
         token: `verification_token_${index}_${Date.now()}`,
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
     };
     return await adapter.createVerification(verificationData);
 }

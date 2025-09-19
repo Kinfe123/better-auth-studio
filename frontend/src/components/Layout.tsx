@@ -1,51 +1,55 @@
-import { ReactNode, useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import {
-  LayoutDashboard,
-  Users,
-  Building2,
-  Settings,
-  Search
-} from 'lucide-react'
-import { Button } from './ui/button'
-import { Badge } from './ui/badge'
-import CommandPalette from './CommandPalette'
-import { useCounts } from '../contexts/CountsContext'
+import { Building2, LayoutDashboard, Search, Settings, Users } from 'lucide-react';
+import { type ReactNode, useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useCounts } from '../contexts/CountsContext';
+import CommandPalette from './CommandPalette';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 
 interface LayoutProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const location = useLocation()
-  const { counts, loading } = useCounts()
-  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
+  const location = useLocation();
+  const { counts, loading } = useCounts();
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        setIsCommandPaletteOpen(true)
+        e.preventDefault();
+        setIsCommandPaletteOpen(true);
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const formatCount = (count: number): string => {
     if (count >= 1000) {
-      return (count / 1000).toFixed(1).replace(/\.0$/, '') + 'k'
+      return (count / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
     }
-    return count.toString()
-  }
+    return count.toString();
+  };
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-    { name: 'Users', href: '/users', icon: Users, badge: loading ? '...' : formatCount(counts.users) },
-    { name: 'Organizations', href: '/organizations', icon: Building2, badge: loading ? '...' : formatCount(counts.organizations) },
+    {
+      name: 'Users',
+      href: '/users',
+      icon: Users,
+      badge: loading ? '...' : formatCount(counts.users),
+    },
+    {
+      name: 'Organizations',
+      href: '/organizations',
+      icon: Building2,
+      badge: loading ? '...' : formatCount(counts.organizations),
+    },
     { name: 'Settings', href: '/settings', icon: Settings },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-black">
@@ -78,13 +82,19 @@ export default function Layout({ children }: LayoutProps) {
                 ⌘K
               </kbd>
             </div>
-            <a href="https://better-auth.com/docs" target="_blank">
-              <Button variant="ghost" className="text-gray-300 bg-transparent hover:bg-transparent hover:bg-gray-900 border-dashed">
+            <a href="https://better-auth.com/docs" target="_blank" rel="noopener">
+              <Button
+                variant="ghost"
+                className="text-gray-300 bg-transparent hover:bg-transparent hover:bg-gray-900 border-dashed"
+              >
                 Docs
               </Button>
             </a>
-            <a href="https://better-auth.com/support" target="_blank">
-              <Button variant="ghost" className="text-gray-300 bg-transparent hover:bg-transparent hover:bg-gray-900 border-dashed">
+            <a href="https://better-auth.com/support" target="_blank" rel="noopener">
+              <Button
+                variant="ghost"
+                className="text-gray-300 bg-transparent hover:bg-transparent hover:bg-gray-900 border-dashed"
+              >
                 Support
               </Button>
             </a>
@@ -97,40 +107,42 @@ export default function Layout({ children }: LayoutProps) {
         <div className="px-6">
           <nav className="flex space-x-8">
             {navigation.map((item) => {
-              const isActive = location.pathname === item.href
+              const isActive = location.pathname === item.href;
               return (
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${isActive
-                    ? 'border-white text-white'
-                    : 'border-transparent text-gray-400 hover:text-white hover:border-gray-300'
-                    }`}
+                  className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${
+                    isActive
+                      ? 'border-white text-white'
+                      : 'border-transparent text-gray-400 hover:text-white hover:border-gray-300'
+                  }`}
                 >
                   <item.icon className="w-4 h-4" />
                   <span>{item.name}</span>
                   {item.badge && (
-                    <Badge variant="secondary" className="text-xs bg-white/10 border border-white/20 rounded-sm">
+                    <Badge
+                      variant="secondary"
+                      className="text-xs bg-white/10 border border-white/20 rounded-sm"
+                    >
                       {item.badge}
                     </Badge>
                   )}
                 </Link>
-              )
+              );
             })}
           </nav>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-0">
-        {children}
-      </div>
+      <div className="flex-1 p-0">{children}</div>
 
       {/* Command Palette */}
-      <CommandPalette 
-        isOpen={isCommandPaletteOpen} 
-        onClose={() => setIsCommandPaletteOpen(false)} 
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
       />
     </div>
-  )
+  );
 }

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import { Command } from 'commander';
 import chalk from 'chalk';
-import { readFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
-import { startStudio } from './studio.js';
-import { findAuthConfig } from './config.js';
 import chokidar from 'chokidar';
+import { Command } from 'commander';
+import { existsSync, readFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { findAuthConfig } from './config.js';
+import { startStudio } from './studio.js';
 
 async function findAuthConfigPath(): Promise<string | null> {
   const possibleConfigFiles = [
@@ -22,7 +22,7 @@ async function findAuthConfigPath(): Promise<string | null> {
     'auth.config.ts',
     'auth.config.js',
     'auth.config.json',
-    'studio-config.json'
+    'studio-config.json',
   ];
 
   let currentDir = process.cwd();
@@ -32,7 +32,7 @@ async function findAuthConfigPath(): Promise<string | null> {
   while (currentDir && depth < maxDepth) {
     for (const configFile of possibleConfigFiles) {
       const configPath = join(currentDir, configFile);
-      
+
       if (existsSync(configPath)) {
         return configPath;
       }
@@ -65,7 +65,7 @@ let webSocketServer: any = null;
 
 async function startStudioWithWatch(options: StudioWatchOptions) {
   const { port, host, openBrowser, authConfig, configPath, watchMode, geoDbPath } = options;
-  
+
   const studioResult = await startStudio({
     port,
     host,
@@ -73,7 +73,7 @@ async function startStudioWithWatch(options: StudioWatchOptions) {
     authConfig,
     configPath,
     watchMode,
-    geoDbPath
+    geoDbPath,
   });
   currentStudio = studioResult.server;
   webSocketServer = studioResult.wss;
@@ -81,31 +81,31 @@ async function startStudioWithWatch(options: StudioWatchOptions) {
   if (configPath) {
     const resolvedPath = join(process.cwd(), configPath);
     console.log(chalk.blue(`👀 Watching for changes in: ${resolvedPath}`));
-    
+
     watcher = chokidar.watch(resolvedPath, {
       persistent: true,
-      ignoreInitial: true
+      ignoreInitial: true,
     });
 
     watcher.on('change', async (path: string) => {
       console.log(chalk.yellow(`\n🔄 Config file changed: ${path}`));
       console.log(chalk.gray('Reloading Better Auth Studio...\n'));
-      
+
       try {
         // Stop current studio
         if (currentStudio && typeof currentStudio.close === 'function') {
           await currentStudio.close();
         }
-        
+
         // Reload config
         const newAuthConfig = await findAuthConfig(configPath);
         if (!newAuthConfig) {
           console.error(chalk.red('❌ Failed to reload config. Keeping previous configuration.'));
           return;
         }
-        
+
         console.log(chalk.green('✅ Config reloaded successfully'));
-        
+
         const newStudioResult = await startStudio({
           port,
           host,
@@ -113,20 +113,27 @@ async function startStudioWithWatch(options: StudioWatchOptions) {
           authConfig: newAuthConfig,
           configPath,
           watchMode,
-          geoDbPath
+          geoDbPath,
         });
         currentStudio = newStudioResult.server;
         webSocketServer = newStudioResult.wss;
-        
+
         if (webSocketServer && webSocketServer.clients) {
-          console.log(chalk.blue(`📡 Broadcasting config change to ${webSocketServer.clients.size} connected clients`));
+          console.log(
+            chalk.blue(
+              `📡 Broadcasting config change to ${webSocketServer.clients.size} connected clients`
+            )
+          );
           webSocketServer.clients.forEach((client: any) => {
-            if (client.readyState === 1) { // WebSocket.OPEN
+            if (client.readyState === 1) {
+              // WebSocket.OPEN
               try {
-                client.send(JSON.stringify({
-                  type: 'config_changed',
-                  message: 'Configuration has been reloaded'
-                }));
+                client.send(
+                  JSON.stringify({
+                    type: 'config_changed',
+                    message: 'Configuration has been reloaded',
+                  })
+                );
                 console.log(chalk.green('✅ Config change message sent to client'));
               } catch (error) {
                 console.error(chalk.red('❌ Failed to send message to client:'), error);
@@ -136,9 +143,8 @@ async function startStudioWithWatch(options: StudioWatchOptions) {
         } else {
           console.log(chalk.yellow('⚠️  No WebSocket server or clients available'));
         }
-        
+
         console.log(chalk.green('✅ Better Auth Studio reloaded!'));
-        
       } catch (error) {
         console.error(chalk.red('❌ Failed to reload studio:'), error);
         console.log(chalk.yellow('Keeping previous configuration running...'));
@@ -149,7 +155,9 @@ async function startStudioWithWatch(options: StudioWatchOptions) {
       console.error(chalk.red('❌ File watcher error:'), error);
     });
   } else {
-    console.log(chalk.yellow('⚠️  Watch mode requires --config flag to specify which file to watch'));
+    console.log(
+      chalk.yellow('⚠️  Watch mode requires --config flag to specify which file to watch')
+    );
   }
 
   // Handle graceful shutdown
@@ -200,14 +208,18 @@ program
           console.log(chalk.gray(`  - ${join(process.cwd(), '..', options.config)}`));
           console.log(chalk.gray(`  - ${join(process.cwd(), '../..', options.config)}`));
         } else {
-          console.log(chalk.yellow('Make sure you have a Better Auth configuration file in your project.'));
-          console.log(chalk.yellow('Supported files: auth.ts, auth.js, better-auth.config.ts, etc.'));
+          console.log(
+            chalk.yellow('Make sure you have a Better Auth configuration file in your project.')
+          );
+          console.log(
+            chalk.yellow('Supported files: auth.ts, auth.js, better-auth.config.ts, etc.')
+          );
         }
         process.exit(1);
       }
 
       console.log(chalk.green('✅ Found Better Auth configuration'));
-      
+
       let databaseInfo = 'Not configured';
       if (authConfig.database) {
         const configPath = await findAuthConfigPath();
@@ -218,7 +230,7 @@ program
           } else if (content.includes('prismaAdapter')) {
             databaseInfo = 'Prisma';
           } else if (authConfig.database.adapter && authConfig.database.provider) {
-            let adapter = authConfig.database.adapter;
+            const adapter = authConfig.database.adapter;
             const adapterName = adapter.charAt(0).toUpperCase() + adapter.slice(1);
             databaseInfo = adapterName;
           } else if (authConfig.database.type) {
@@ -228,7 +240,7 @@ program
           }
         } else {
           if (authConfig.database.adapter && authConfig.database.provider) {
-            let adapter = authConfig.database.adapter;
+            const adapter = authConfig.database.adapter;
             const adapterName = adapter.charAt(0).toUpperCase() + adapter.slice(1);
             databaseInfo = adapterName;
           } else if (authConfig.database.type) {
@@ -238,7 +250,7 @@ program
           }
         }
       }
-      
+
       let providersInfo = 'None';
       if (authConfig.socialProviders && typeof authConfig.socialProviders === 'object') {
         const providerNames = Object.keys(authConfig.socialProviders);
@@ -246,12 +258,12 @@ program
           providersInfo = providerNames.join(', ');
         }
       } else if (authConfig.providers && Array.isArray(authConfig.providers)) {
-        const providerNames = authConfig.providers.map(p => p.type || p.name).filter(Boolean);
+        const providerNames = authConfig.providers.map((p) => p.type || p.name).filter(Boolean);
         if (providerNames.length > 0) {
           providersInfo = providerNames.join(', ');
         }
       }
-      
+
       console.log(chalk.gray(`Database: ${databaseInfo}`));
       console.log(chalk.gray(`Providers: ${providersInfo}\n`));
 
@@ -263,7 +275,7 @@ program
           authConfig,
           configPath: options.config,
           watchMode: true,
-          geoDbPath: options.geoDb
+          geoDbPath: options.geoDb,
         });
       } else {
         await startStudio({
@@ -273,10 +285,9 @@ program
           authConfig,
           configPath: options.config,
           watchMode: false,
-          geoDbPath: options.geoDb
+          geoDbPath: options.geoDb,
         });
       }
-
     } catch (error) {
       console.error(chalk.red('❌ Failed to start Better Auth Studio:'), error);
       process.exit(1);

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-import { Command } from 'commander';
 import chalk from 'chalk';
-import { readFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
-import { startStudio } from './studio.js';
-import { findAuthConfig } from './config.js';
 import chokidar from 'chokidar';
+import { Command } from 'commander';
+import { existsSync, readFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { findAuthConfig } from './config.js';
+import { startStudio } from './studio.js';
 async function findAuthConfigPath() {
     const possibleConfigFiles = [
         'auth.ts',
@@ -20,7 +20,7 @@ async function findAuthConfigPath() {
         'auth.config.ts',
         'auth.config.js',
         'auth.config.json',
-        'studio-config.json'
+        'studio-config.json',
     ];
     let currentDir = process.cwd();
     const maxDepth = 10;
@@ -53,7 +53,7 @@ async function startStudioWithWatch(options) {
         authConfig,
         configPath,
         watchMode,
-        geoDbPath
+        geoDbPath,
     });
     currentStudio = studioResult.server;
     webSocketServer = studioResult.wss;
@@ -62,7 +62,7 @@ async function startStudioWithWatch(options) {
         console.log(chalk.blue(`👀 Watching for changes in: ${resolvedPath}`));
         watcher = chokidar.watch(resolvedPath, {
             persistent: true,
-            ignoreInitial: true
+            ignoreInitial: true,
         });
         watcher.on('change', async (path) => {
             console.log(chalk.yellow(`\n🔄 Config file changed: ${path}`));
@@ -86,18 +86,19 @@ async function startStudioWithWatch(options) {
                     authConfig: newAuthConfig,
                     configPath,
                     watchMode,
-                    geoDbPath
+                    geoDbPath,
                 });
                 currentStudio = newStudioResult.server;
                 webSocketServer = newStudioResult.wss;
                 if (webSocketServer && webSocketServer.clients) {
                     console.log(chalk.blue(`📡 Broadcasting config change to ${webSocketServer.clients.size} connected clients`));
                     webSocketServer.clients.forEach((client) => {
-                        if (client.readyState === 1) { // WebSocket.OPEN
+                        if (client.readyState === 1) {
+                            // WebSocket.OPEN
                             try {
                                 client.send(JSON.stringify({
                                     type: 'config_changed',
-                                    message: 'Configuration has been reloaded'
+                                    message: 'Configuration has been reloaded',
                                 }));
                                 console.log(chalk.green('✅ Config change message sent to client'));
                             }
@@ -187,7 +188,7 @@ program
                     databaseInfo = 'Prisma';
                 }
                 else if (authConfig.database.adapter && authConfig.database.provider) {
-                    let adapter = authConfig.database.adapter;
+                    const adapter = authConfig.database.adapter;
                     const adapterName = adapter.charAt(0).toUpperCase() + adapter.slice(1);
                     databaseInfo = adapterName;
                 }
@@ -200,7 +201,7 @@ program
             }
             else {
                 if (authConfig.database.adapter && authConfig.database.provider) {
-                    let adapter = authConfig.database.adapter;
+                    const adapter = authConfig.database.adapter;
                     const adapterName = adapter.charAt(0).toUpperCase() + adapter.slice(1);
                     databaseInfo = adapterName;
                 }
@@ -220,7 +221,7 @@ program
             }
         }
         else if (authConfig.providers && Array.isArray(authConfig.providers)) {
-            const providerNames = authConfig.providers.map(p => p.type || p.name).filter(Boolean);
+            const providerNames = authConfig.providers.map((p) => p.type || p.name).filter(Boolean);
             if (providerNames.length > 0) {
                 providersInfo = providerNames.join(', ');
             }
@@ -235,7 +236,7 @@ program
                 authConfig,
                 configPath: options.config,
                 watchMode: true,
-                geoDbPath: options.geoDb
+                geoDbPath: options.geoDb,
             });
         }
         else {
@@ -246,7 +247,7 @@ program
                 authConfig,
                 configPath: options.config,
                 watchMode: false,
-                geoDbPath: options.geoDb
+                geoDbPath: options.geoDb,
             });
         }
     }

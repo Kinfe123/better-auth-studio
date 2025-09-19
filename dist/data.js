@@ -37,14 +37,14 @@ async function getRealStats(adapter) {
         const activeUsers = new Set(activeSessions.map((s) => s.userId)).size;
         const usersByProvider = {
             email: users.length,
-            github: 0
+            github: 0,
         };
         const recentSignups = users
             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             .slice(0, 5)
             .map((user) => ({
             ...user,
-            provider: 'email'
+            provider: 'email',
         }));
         const recentLogins = activeSessions
             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -56,7 +56,7 @@ async function getRealStats(adapter) {
             activeSessions: activeSessions.length,
             usersByProvider,
             recentSignups,
-            recentLogins
+            recentLogins,
         };
     }
     catch (error) {
@@ -82,7 +82,7 @@ async function getRealUsers(adapter, options) {
                 total: filteredUsers.length,
                 page,
                 limit,
-                totalPages: Math.ceil(filteredUsers.length / limit)
+                totalPages: Math.ceil(filteredUsers.length / limit),
             };
         }
         return getMockData('users', options);
@@ -105,7 +105,7 @@ async function getRealSessions(adapter, options) {
                 total: allSessions.length,
                 page,
                 limit,
-                totalPages: Math.ceil(allSessions.length / limit)
+                totalPages: Math.ceil(allSessions.length / limit),
             };
         }
         return getMockData('sessions', options);
@@ -119,7 +119,7 @@ async function getRealProviderStats(adapter) {
     try {
         return [
             { type: 'email', users: 0, active: 0 },
-            { type: 'github', users: 0, active: 0 }
+            { type: 'github', users: 0, active: 0 },
         ];
     }
     catch (error) {
@@ -149,10 +149,10 @@ async function updateRealUser(adapter, userId, userData) {
             where: [
                 {
                     field: 'id',
-                    value: userId
-                }
+                    value: userId,
+                },
             ],
-            update: { ...userData }
+            update: { ...userData },
         });
         return updatedUser;
     }
@@ -186,12 +186,12 @@ function getMockStats() {
         totalSessions: 3456,
         activeSessions: 1234,
         usersByProvider: {
-            'google': 456,
-            'github': 234,
-            'email': 557
+            google: 456,
+            github: 234,
+            email: 557,
         },
         recentSignups: generateMockUsers(5),
-        recentLogins: generateMockSessions(5)
+        recentLogins: generateMockSessions(5),
     };
 }
 function getMockUsers(options) {
@@ -199,7 +199,7 @@ function getMockUsers(options) {
     const allUsers = generateMockUsers(100);
     let filteredUsers = allUsers;
     if (search) {
-        filteredUsers = allUsers.filter(user => user.email?.toLowerCase().includes(search.toLowerCase()) ||
+        filteredUsers = allUsers.filter((user) => user.email?.toLowerCase().includes(search.toLowerCase()) ||
             user.name?.toLowerCase().includes(search.toLowerCase()));
     }
     const start = (page - 1) * limit;
@@ -210,7 +210,7 @@ function getMockUsers(options) {
         total: filteredUsers.length,
         page,
         limit,
-        totalPages: Math.ceil(filteredUsers.length / limit)
+        totalPages: Math.ceil(filteredUsers.length / limit),
     };
 }
 function getMockSessions(options) {
@@ -224,14 +224,14 @@ function getMockSessions(options) {
         total: allSessions.length,
         page,
         limit,
-        totalPages: Math.ceil(allSessions.length / limit)
+        totalPages: Math.ceil(allSessions.length / limit),
     };
 }
 function getMockProviderStats() {
     return [
         { type: 'google', users: 456, active: 234 },
         { type: 'github', users: 234, active: 123 },
-        { type: 'email', users: 557, active: 345 }
+        { type: 'email', users: 557, active: 345 },
     ];
 }
 function generateMockUsers(count) {
@@ -248,7 +248,7 @@ function generateMockUsers(count) {
             createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
             updatedAt: new Date(),
             provider,
-            lastSignIn: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000)
+            lastSignIn: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
         });
     }
     return users;
@@ -262,7 +262,7 @@ function generateMockSessions(count) {
             expires: new Date(Date.now() + Math.random() * 24 * 60 * 60 * 1000),
             createdAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
             userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-            ip: `192.168.1.${Math.floor(Math.random() * 255)}`
+            ip: `192.168.1.${Math.floor(Math.random() * 255)}`,
         });
     }
     return sessions;

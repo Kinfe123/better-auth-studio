@@ -1,6 +1,6 @@
-import maxmind, { CityResponse, Reader } from 'maxmind';
-import { readFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
+import { existsSync, readFileSync } from 'fs';
+import maxmind, { type CityResponse, type Reader } from 'maxmind';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -43,7 +43,9 @@ function loadDefaultDatabase(): void {
     if (existsSync(defaultDbPath)) {
       const dbContent = readFileSync(defaultDbPath, 'utf-8');
       defaultDatabase = JSON.parse(dbContent);
-      console.log(`✅ Default geolocation database loaded (${defaultDatabase?.countries} countries, ${defaultDatabase?.totalRanges} IP ranges)`);
+      console.log(
+        `✅ Default geolocation database loaded (${defaultDatabase?.countries} countries, ${defaultDatabase?.totalRanges} IP ranges)`
+      );
     } else {
       console.log('⚠️  Default geolocation database not found, using basic fallback');
     }
@@ -71,7 +73,7 @@ export function resolveIPLocation(ipAddress: string): LocationData | null {
           country: result.country?.names?.en || 'Unknown',
           countryCode: result.country?.iso_code || '',
           city: result.city?.names?.en || 'Unknown',
-          region: result.subdivisions?.[0]?.names?.en || 'Unknown'
+          region: result.subdivisions?.[0]?.names?.en || 'Unknown',
         };
       }
     } catch (error) {
@@ -111,7 +113,7 @@ function findLocationInDefaultDatabase(ipAddress: string): LocationData | null {
           country: countryData.country,
           countryCode: countryData.countryCode,
           city: countryData.city,
-          region: countryData.region
+          region: countryData.region,
         };
       }
     }
@@ -122,20 +124,110 @@ function findLocationInDefaultDatabase(ipAddress: string): LocationData | null {
 
 function resolveIPFromRanges(ipAddress: string): LocationData | null {
   const countryIPRanges = [
-    { country: 'United States', countryCode: 'US', city: 'New York', region: 'New York', ranges: [{ min: '8.0.0.0', max: '8.255.255.255' }, { min: '24.0.0.0', max: '24.255.255.255' }] },
-    { country: 'United Kingdom', countryCode: 'GB', city: 'London', region: 'England', ranges: [{ min: '2.0.0.0', max: '2.255.255.255' }, { min: '5.0.0.0', max: '5.255.255.255' }] },
-    { country: 'Germany', countryCode: 'DE', city: 'Berlin', region: 'Berlin', ranges: [{ min: '46.0.0.0', max: '46.255.255.255' }, { min: '62.0.0.0', max: '62.255.255.255' }] },
-    { country: 'France', countryCode: 'FR', city: 'Paris', region: 'Île-de-France', ranges: [{ min: '37.0.0.0', max: '37.255.255.255' }, { min: '62.0.0.0', max: '62.255.255.255' }] },
-    { country: 'Japan', countryCode: 'JP', city: 'Tokyo', region: 'Tokyo', ranges: [{ min: '126.0.0.0', max: '126.255.255.255' }, { min: '210.0.0.0', max: '210.255.255.255' }] },
-    { country: 'Canada', countryCode: 'CA', city: 'Toronto', region: 'Ontario', ranges: [{ min: '24.0.0.0', max: '24.255.255.255' }, { min: '70.0.0.0', max: '70.255.255.255' }] },
-    { country: 'Australia', countryCode: 'AU', city: 'Sydney', region: 'New South Wales', ranges: [{ min: '1.0.0.0', max: '1.255.255.255' }, { min: '27.0.0.0', max: '27.255.255.255' }] },
-    { country: 'Brazil', countryCode: 'BR', city: 'São Paulo', region: 'São Paulo', ranges: [{ min: '177.0.0.0', max: '177.255.255.255' }, { min: '201.0.0.0', max: '201.255.255.255' }] },
-    { country: 'India', countryCode: 'IN', city: 'Mumbai', region: 'Maharashtra', ranges: [{ min: '103.0.0.0', max: '103.255.255.255' }, { min: '117.0.0.0', max: '117.255.255.255' }] },
-    { country: 'China', countryCode: 'CN', city: 'Beijing', region: 'Beijing', ranges: [{ min: '1.0.0.0', max: '1.255.255.255' }, { min: '14.0.0.0', max: '14.255.255.255' }] }
+    {
+      country: 'United States',
+      countryCode: 'US',
+      city: 'New York',
+      region: 'New York',
+      ranges: [
+        { min: '8.0.0.0', max: '8.255.255.255' },
+        { min: '24.0.0.0', max: '24.255.255.255' },
+      ],
+    },
+    {
+      country: 'United Kingdom',
+      countryCode: 'GB',
+      city: 'London',
+      region: 'England',
+      ranges: [
+        { min: '2.0.0.0', max: '2.255.255.255' },
+        { min: '5.0.0.0', max: '5.255.255.255' },
+      ],
+    },
+    {
+      country: 'Germany',
+      countryCode: 'DE',
+      city: 'Berlin',
+      region: 'Berlin',
+      ranges: [
+        { min: '46.0.0.0', max: '46.255.255.255' },
+        { min: '62.0.0.0', max: '62.255.255.255' },
+      ],
+    },
+    {
+      country: 'France',
+      countryCode: 'FR',
+      city: 'Paris',
+      region: 'Île-de-France',
+      ranges: [
+        { min: '37.0.0.0', max: '37.255.255.255' },
+        { min: '62.0.0.0', max: '62.255.255.255' },
+      ],
+    },
+    {
+      country: 'Japan',
+      countryCode: 'JP',
+      city: 'Tokyo',
+      region: 'Tokyo',
+      ranges: [
+        { min: '126.0.0.0', max: '126.255.255.255' },
+        { min: '210.0.0.0', max: '210.255.255.255' },
+      ],
+    },
+    {
+      country: 'Canada',
+      countryCode: 'CA',
+      city: 'Toronto',
+      region: 'Ontario',
+      ranges: [
+        { min: '24.0.0.0', max: '24.255.255.255' },
+        { min: '70.0.0.0', max: '70.255.255.255' },
+      ],
+    },
+    {
+      country: 'Australia',
+      countryCode: 'AU',
+      city: 'Sydney',
+      region: 'New South Wales',
+      ranges: [
+        { min: '1.0.0.0', max: '1.255.255.255' },
+        { min: '27.0.0.0', max: '27.255.255.255' },
+      ],
+    },
+    {
+      country: 'Brazil',
+      countryCode: 'BR',
+      city: 'São Paulo',
+      region: 'São Paulo',
+      ranges: [
+        { min: '177.0.0.0', max: '177.255.255.255' },
+        { min: '201.0.0.0', max: '201.255.255.255' },
+      ],
+    },
+    {
+      country: 'India',
+      countryCode: 'IN',
+      city: 'Mumbai',
+      region: 'Maharashtra',
+      ranges: [
+        { min: '103.0.0.0', max: '103.255.255.255' },
+        { min: '117.0.0.0', max: '117.255.255.255' },
+      ],
+    },
+    {
+      country: 'China',
+      countryCode: 'CN',
+      city: 'Beijing',
+      region: 'Beijing',
+      ranges: [
+        { min: '1.0.0.0', max: '1.255.255.255' },
+        { min: '14.0.0.0', max: '14.255.255.255' },
+      ],
+    },
   ];
 
   const ipParts = ipAddress.split('.').map(Number);
-  if (ipParts.length !== 4 || ipParts.some(part => isNaN(part) || part < 0 || part > 255)) {
+  if (ipParts.length !== 4 || ipParts.some((part) => isNaN(part) || part < 0 || part > 255)) {
     return null;
   }
 
@@ -146,7 +238,7 @@ function resolveIPFromRanges(ipAddress: string): LocationData | null {
           country: countryData.country,
           countryCode: countryData.countryCode,
           city: countryData.city,
-          region: countryData.region
+          region: countryData.region,
         };
       }
     }
@@ -156,7 +248,7 @@ function resolveIPFromRanges(ipAddress: string): LocationData | null {
     country: 'Unknown',
     countryCode: '',
     city: 'Unknown',
-    region: 'Unknown'
+    region: 'Unknown',
   };
 }
 

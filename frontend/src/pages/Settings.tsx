@@ -1,33 +1,27 @@
-import { useState, useEffect } from "react";
-import { useWebSocket } from "../hooks/useWebSocket";
 import {
-  Database,
-  Shield,
-  Mail,
-  Globe,
-  Clock,
-  Zap,
-  CheckCircle,
-  XCircle,
   AlertTriangle,
-  Info,
-  RefreshCw,
-  Lock,
-  Key,
-  Users,
-  Settings as SettingsIcon,
   Bell,
+  CheckCircle,
+  Clock,
+  Database,
   Eye,
+  Globe,
+  Info,
+  Key,
+  Lock,
+  Mail,
   Puzzle,
-} from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+  RefreshCw,
+  Settings as SettingsIcon,
+  Shield,
+  Users,
+  XCircle,
+  Zap,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useWebSocket } from '../hooks/useWebSocket';
 
 interface AuthConfig {
   appName?: string;
@@ -190,12 +184,12 @@ export default function Settings() {
 
   const fetchConfig = async () => {
     try {
-      const response = await fetch("/api/config");
+      const response = await fetch('/api/config');
       const data = await response.json();
-      console.log("Config data:", data);
+      console.log('Config data:', data);
       setConfig(data);
     } catch (error) {
-      console.error("Failed to fetch config:", error);
+      console.error('Failed to fetch config:', error);
     } finally {
       setLoading(false);
     }
@@ -203,47 +197,47 @@ export default function Settings() {
 
   const fetchSystemInfo = async () => {
     try {
-      const response = await fetch("/api/health");
+      const response = await fetch('/api/health');
       const data = await response.json();
       setSystemInfo(
         data.system || {
-          studioVersion: "v1.0.0",
+          studioVersion: 'v1.0.0',
           nodeVersion: process.version,
           platform: navigator.platform,
-          uptime: "2h 15m",
-        },
+          uptime: '2h 15m',
+        }
       );
     } catch (error) {
-      console.error("Failed to fetch system info:", error);
+      console.error('Failed to fetch system info:', error);
       setSystemInfo({
-        studioVersion: "v1.0.0",
-        nodeVersion: "v18.0.0",
-        platform: "macOS",
-        uptime: "2h 15m",
+        studioVersion: 'v1.0.0',
+        nodeVersion: 'v18.0.0',
+        platform: 'macOS',
+        uptime: '2h 15m',
       });
     }
   };
 
   const fetchPlugins = async () => {
     try {
-      const response = await fetch("/api/plugins");
+      const response = await fetch('/api/plugins');
       const data = await response.json();
       setPlugins(data);
     } catch (error) {
-      console.error("Failed to fetch plugins:", error);
+      console.error('Failed to fetch plugins:', error);
       setPlugins({
         plugins: [],
         configPath: null,
         totalPlugins: 0,
-        error: "Failed to fetch plugins",
+        error: 'Failed to fetch plugins',
       });
     }
   };
 
   const getConnectionStatus = (type: string) => {
     switch (type?.toLowerCase()) {
-      case "postgresql":
-      case "postgres":
+      case 'postgresql':
+      case 'postgres':
         return (
           <Badge
             variant="secondary"
@@ -253,7 +247,7 @@ export default function Settings() {
             Connected
           </Badge>
         );
-      case "mysql":
+      case 'mysql':
         return (
           <Badge
             variant="secondary"
@@ -263,7 +257,7 @@ export default function Settings() {
             Connected
           </Badge>
         );
-      case "sqlite":
+      case 'sqlite':
         return (
           <Badge
             variant="secondary"
@@ -288,13 +282,13 @@ export default function Settings() {
 
   const getProviderIcon = (provider: string) => {
     switch (provider.toLowerCase()) {
-      case "google":
+      case 'google':
         return <Globe className="w-5 h-5 text-white" />;
-      case "github":
+      case 'github':
         return <Shield className="w-5 h-5 text-white" />;
-      case "discord":
+      case 'discord':
         return <Globe className="w-5 h-5 text-white" />;
-      case "twitter":
+      case 'twitter':
         return <Globe className="w-5 h-5 text-white" />;
       default:
         return <Globe className="w-5 h-5 text-white" />;
@@ -313,12 +307,8 @@ export default function Settings() {
     <div className="space-y-8 animate-fade-in">
       <div className="flex items-center justify-between p-5 pt-7">
         <div>
-          <h1 className="text-3xl font-normal text-white tracking-tight">
-            Settings
-          </h1>
-          <p className="text-gray-300 mt-2">
-            Configure your Better Auth application
-          </p>
+          <h1 className="text-3xl font-normal text-white tracking-tight">Settings</h1>
+          <p className="text-gray-300 mt-2">Configure your Better Auth application</p>
         </div>
       </div>
       <hr className="w-full border-white/15 h-px" />
@@ -340,15 +330,11 @@ export default function Settings() {
                 <Globe className="w-5 h-5 text-white" />
                 <div>
                   <p className="text-sm font-medium text-white">App Name</p>
-                  <p className="text-xs text-gray-400">
-                    Application display name
-                  </p>
+                  <p className="text-xs text-gray-400">Application display name</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-white">
-                  {config?.appName || "Better Auth"}
-                </p>
+                <p className="text-sm font-medium text-white">{config?.appName || 'Better Auth'}</p>
               </div>
             </div>
 
@@ -362,7 +348,7 @@ export default function Settings() {
               </div>
               <div className="text-right">
                 <p className="text-sm font-mono font-medium text-white">
-                  {config?.baseURL || "http://localhost:3000"}
+                  {config?.baseURL || 'http://localhost:3000'}
                 </p>
               </div>
             </div>
@@ -377,7 +363,7 @@ export default function Settings() {
               </div>
               <div className="text-right">
                 <p className="text-sm font-mono font-medium text-white">
-                  {config?.basePath || "/api/auth"}
+                  {config?.basePath || '/api/auth'}
                 </p>
               </div>
             </div>
@@ -392,7 +378,7 @@ export default function Settings() {
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-white">
-                  {config?.secret === "Configured" ? "Configured" : "Not set"}
+                  {config?.secret === 'Configured' ? 'Configured' : 'Not set'}
                 </p>
               </div>
             </div>
@@ -406,9 +392,7 @@ export default function Settings() {
               <Database className="w-5 h-5 text-white" />
               <span>Database</span>
             </CardTitle>
-            <CardDescription>
-              Database connection and configuration
-            </CardDescription>
+            <CardDescription>Database connection and configuration</CardDescription>
           </CardHeader>
           <hr className="w-full border-white/15 h-px -mt-3 mb-1" />
           <CardContent className="space-y-0 px-0 pb-0 border-b-none">
@@ -420,13 +404,12 @@ export default function Settings() {
                     {(config?.database?.type &&
                       config?.database?.type.charAt(0).toUpperCase() +
                         config?.database?.type.slice(1)) ||
-                      "Unknown"}
+                      'Unknown'}
                   </p>
                   <p className="text-xs text-gray-400">Database Type</p>
                 </div>
               </div>
-              {config?.database?.type &&
-                getConnectionStatus(config.database.type)}
+              {config?.database?.type && getConnectionStatus(config.database.type)}
             </div>
 
             {config?.database?.dialect && (
@@ -439,9 +422,7 @@ export default function Settings() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium text-white">
-                    {config.database.dialect}
-                  </p>
+                  <p className="text-sm font-medium text-white">{config.database.dialect}</p>
                 </div>
               </div>
             )}
@@ -467,9 +448,7 @@ export default function Settings() {
                 <RefreshCw className="w-5 h-5 text-white" />
                 <div>
                   <p className="text-sm font-medium text-white">Debug Logs</p>
-                  <p className="text-xs text-gray-400">
-                    Database debug logging
-                  </p>
+                  <p className="text-xs text-gray-400">Database debug logging</p>
                 </div>
               </div>
               <Badge
@@ -499,9 +478,7 @@ export default function Settings() {
               <Shield className="w-5 h-5 text-white" />
               <span>Providers</span>
             </CardTitle>
-            <CardDescription>
-              Configured authentication providers
-            </CardDescription>
+            <CardDescription>Configured authentication providers</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             {config?.socialProviders && config.socialProviders.length > 0 ? (
@@ -513,11 +490,9 @@ export default function Settings() {
                   <div className="flex items-center space-x-3">
                     {getProviderIcon(provider.type)}
                     <div>
-                      <p className="text-sm font-medium text-white capitalize">
-                        {provider.type}
-                      </p>
+                      <p className="text-sm font-medium text-white capitalize">{provider.type}</p>
                       <p className="text-xs text-gray-400">
-                        {provider.clientId ? "Configured" : "Not configured"}
+                        {provider.clientId ? 'Configured' : 'Not configured'}
                       </p>
                     </div>
                   </div>
@@ -562,12 +537,8 @@ export default function Settings() {
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-white" />
                 <div>
-                  <p className="text-sm font-medium text-white">
-                    Email Authentication
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    Allow users to sign up with email
-                  </p>
+                  <p className="text-sm font-medium text-white">Email Authentication</p>
+                  <p className="text-xs text-gray-400">Allow users to sign up with email</p>
                 </div>
               </div>
               <Badge
@@ -595,9 +566,7 @@ export default function Settings() {
                     <Users className="w-5 h-5 text-white" />
                     <div>
                       <p className="text-sm font-medium text-white">Sign Up</p>
-                      <p className="text-xs text-gray-400">
-                        Allow new user registration
-                      </p>
+                      <p className="text-xs text-gray-400">Allow new user registration</p>
                     </div>
                   </div>
                   <Badge
@@ -622,12 +591,8 @@ export default function Settings() {
                   <div className="flex items-center space-x-3">
                     <Shield className="w-5 h-5 text-white" />
                     <div>
-                      <p className="text-sm font-medium text-white">
-                        Email Verification
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        Require email verification
-                      </p>
+                      <p className="text-sm font-medium text-white">Email Verification</p>
+                      <p className="text-xs text-gray-400">Require email verification</p>
                     </div>
                   </div>
                   <Badge
@@ -652,17 +617,13 @@ export default function Settings() {
                   <div className="flex items-center space-x-3">
                     <Lock className="w-5 h-5 text-white" />
                     <div>
-                      <p className="text-sm font-medium text-white">
-                        Password Length
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        Min/Max password length
-                      </p>
+                      <p className="text-sm font-medium text-white">Password Length</p>
+                      <p className="text-xs text-gray-400">Min/Max password length</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium text-white">
-                      {config?.emailAndPassword?.minPasswordLength || 8} -{" "}
+                      {config?.emailAndPassword?.minPasswordLength || 8} -{' '}
                       {config?.emailAndPassword?.maxPasswordLength || 128}
                     </p>
                   </div>
@@ -672,12 +633,8 @@ export default function Settings() {
                   <div className="flex items-center space-x-3">
                     <Zap className="w-5 h-5 text-white" />
                     <div>
-                      <p className="text-sm font-medium text-white">
-                        Auto Sign In
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        Auto sign in after registration
-                      </p>
+                      <p className="text-sm font-medium text-white">Auto Sign In</p>
+                      <p className="text-xs text-gray-400">Auto sign in after registration</p>
                     </div>
                   </div>
                   <Badge
@@ -716,19 +673,15 @@ export default function Settings() {
               <div className="flex items-center space-x-3">
                 <Clock className="w-5 h-5 text-white" />
                 <div>
-                  <p className="text-sm font-medium text-white">
-                    Session Duration
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    How long sessions last
-                  </p>
+                  <p className="text-sm font-medium text-white">Session Duration</p>
+                  <p className="text-xs text-gray-400">How long sessions last</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-white">
                   {config?.session?.expiresIn
                     ? `${Math.floor(config.session.expiresIn / (60 * 60 * 24))} days`
-                    : "7 days"}
+                    : '7 days'}
                 </p>
                 <p className="text-xs text-gray-400">Default</p>
               </div>
@@ -739,16 +692,14 @@ export default function Settings() {
                 <RefreshCw className="w-5 h-5 text-white" />
                 <div>
                   <p className="text-sm font-medium text-white">Update Age</p>
-                  <p className="text-xs text-gray-400">
-                    Session refresh interval
-                  </p>
+                  <p className="text-xs text-gray-400">Session refresh interval</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-white">
                   {config?.session?.updateAge
                     ? `${Math.floor(config.session.updateAge / (60 * 60))} hours`
-                    : "24 hours"}
+                    : '24 hours'}
                 </p>
               </div>
             </div>
@@ -757,9 +708,7 @@ export default function Settings() {
               <div className="flex items-center space-x-3">
                 <Zap className="w-5 h-5 text-white" />
                 <div>
-                  <p className="text-sm font-medium text-white">
-                    Session Refresh
-                  </p>
+                  <p className="text-sm font-medium text-white">Session Refresh</p>
                   <p className="text-xs text-gray-400">Auto refresh sessions</p>
                 </div>
               </div>
@@ -785,12 +734,8 @@ export default function Settings() {
               <div className="flex items-center space-x-3">
                 <Database className="w-5 h-5 text-white" />
                 <div>
-                  <p className="text-sm font-medium text-white">
-                    Store in Database
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    Store sessions in database
-                  </p>
+                  <p className="text-sm font-medium text-white">Store in Database</p>
+                  <p className="text-xs text-gray-400">Store sessions in database</p>
                 </div>
               </div>
               <Badge
@@ -827,9 +772,7 @@ export default function Settings() {
               <div className="flex items-center space-x-3">
                 <Shield className="w-5 h-5 text-white" />
                 <div>
-                  <p className="text-sm font-medium text-white">
-                    Rate Limiting
-                  </p>
+                  <p className="text-sm font-medium text-white">Rate Limiting</p>
                   <p className="text-xs text-gray-400">Enable rate limiting</p>
                 </div>
               </div>
@@ -855,19 +798,13 @@ export default function Settings() {
               <div className="flex items-center space-x-3">
                 <Clock className="w-5 h-5 text-red-400" />
                 <div>
-                  <p className="text-sm font-medium text-white">
-                    Rate Limit Window
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    Time window for rate limiting
-                  </p>
+                  <p className="text-sm font-medium text-white">Rate Limit Window</p>
+                  <p className="text-xs text-gray-400">Time window for rate limiting</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-white">
-                  {config?.rateLimit?.window
-                    ? `${config.rateLimit.window} seconds`
-                    : "10 seconds"}
+                  {config?.rateLimit?.window ? `${config.rateLimit.window} seconds` : '10 seconds'}
                 </p>
                 <p className="text-xs text-gray-400">Window</p>
               </div>
@@ -878,15 +815,11 @@ export default function Settings() {
                 <Shield className="w-5 h-5 text-white" />
                 <div>
                   <p className="text-sm font-medium text-white">Max Requests</p>
-                  <p className="text-xs text-gray-400">
-                    Maximum requests per window
-                  </p>
+                  <p className="text-xs text-gray-400">Maximum requests per window</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-white">
-                  {config?.rateLimit?.max || 100}
-                </p>
+                <p className="text-sm font-medium text-white">{config?.rateLimit?.max || 100}</p>
                 <p className="text-xs text-gray-400">Requests</p>
               </div>
             </div>
@@ -896,14 +829,12 @@ export default function Settings() {
                 <Database className="w-5 h-5 text-white" />
                 <div>
                   <p className="text-sm font-medium text-white">Storage</p>
-                  <p className="text-xs text-gray-400">
-                    Rate limit storage type
-                  </p>
+                  <p className="text-xs text-gray-400">Rate limit storage type</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-white capitalize">
-                  {config?.rateLimit?.storage || "memory"}
+                  {config?.rateLimit?.storage || 'memory'}
                 </p>
               </div>
             </div>
@@ -924,9 +855,7 @@ export default function Settings() {
               <div className="flex items-center space-x-3">
                 <Lock className="w-5 h-5 text-white" />
                 <div>
-                  <p className="text-sm font-medium text-white">
-                    Secure Cookies
-                  </p>
+                  <p className="text-sm font-medium text-white">Secure Cookies</p>
                   <p className="text-xs text-gray-400">Use secure cookies</p>
                 </div>
               </div>
@@ -1035,24 +964,20 @@ export default function Settings() {
               <Info className="w-5 h-5 text-white" />
               <span>System Info</span>
             </CardTitle>
-            <CardDescription>
-              Better Auth Studio system information
-            </CardDescription>
+            <CardDescription>Better Auth Studio system information</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <div className="flex items-center justify-between p-4 px-5 border-b border-white/15">
               <div className="flex items-center space-x-3">
                 <Zap className="w-5 h-5 text-white" />
                 <div>
-                  <p className="text-sm font-medium text-white">
-                    Studio Version
-                  </p>
+                  <p className="text-sm font-medium text-white">Studio Version</p>
                   <p className="text-xs text-gray-400">Better Auth Studio</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-white">
-                  {systemInfo?.studioVersion || "v1.0.0"}
+                  {systemInfo?.studioVersion || 'v1.0.0'}
                 </p>
                 <p className="text-xs text-gray-400">Latest</p>
               </div>
@@ -1062,15 +987,13 @@ export default function Settings() {
               <div className="flex items-center space-x-3">
                 <Info className="w-5 h-5 text-white" />
                 <div>
-                  <p className="text-sm font-medium text-white">
-                    Node.js Version
-                  </p>
+                  <p className="text-sm font-medium text-white">Node.js Version</p>
                   <p className="text-xs text-gray-400">Runtime environment</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-white">
-                  {systemInfo?.nodeVersion || "v18.0.0"}
+                  {systemInfo?.nodeVersion || 'v18.0.0'}
                 </p>
                 <p className="text-xs text-gray-400">Current</p>
               </div>
@@ -1085,9 +1008,7 @@ export default function Settings() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-white">
-                  {systemInfo?.platform || "macOS"}
-                </p>
+                <p className="text-sm font-medium text-white">{systemInfo?.platform || 'macOS'}</p>
                 <p className="text-xs text-gray-400">System</p>
               </div>
             </div>
@@ -1101,9 +1022,7 @@ export default function Settings() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-white">
-                  {systemInfo?.uptime || "2h 15m"}
-                </p>
+                <p className="text-sm font-medium text-white">{systemInfo?.uptime || '2h 15m'}</p>
                 <p className="text-xs text-gray-400">Running</p>
               </div>
             </div>
@@ -1117,9 +1036,7 @@ export default function Settings() {
               <Puzzle className="w-5 h-5 text-white" />
               <span>Plugins</span>
             </CardTitle>
-            <CardDescription>
-              Better Auth plugins enabled in your configuration
-            </CardDescription>
+            <CardDescription>Better Auth plugins enabled in your configuration</CardDescription>
           </CardHeader>
           <hr className="w-full border-white/15 h-px -mt-3 mb-1" />
           <CardContent className="space-y-0 px-0 pb-0 border-b-none">
@@ -1129,18 +1046,12 @@ export default function Settings() {
                   <div className="flex items-center space-x-3">
                     <Info className="w-5 h-5 text-white" />
                     <div>
-                      <p className="text-sm font-medium text-white">
-                        Total Plugins
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        Currently enabled plugins
-                      </p>
+                      <p className="text-sm font-medium text-white">Total Plugins</p>
+                      <p className="text-xs text-gray-400">Currently enabled plugins</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-white">
-                      {plugins.totalPlugins}
-                    </p>
+                    <p className="text-sm font-medium text-white">{plugins.totalPlugins}</p>
                     <p className="text-xs text-gray-400">Active</p>
                   </div>
                 </div>
@@ -1148,17 +1059,13 @@ export default function Settings() {
                 {plugins.plugins.map((plugin, index) => (
                   <div
                     key={plugin.id}
-                    className={`flex items-center justify-between p-4 px-5 ${index < plugins.plugins.length - 1 ? "border-b border-white/15" : ""}`}
+                    className={`flex items-center justify-between p-4 px-5 ${index < plugins.plugins.length - 1 ? 'border-b border-white/15' : ''}`}
                   >
                     <div className="flex items-center space-x-3">
                       <Puzzle className="w-5 h-5 text-white" />
                       <div>
-                        <p className="text-sm font-medium text-white">
-                          {plugin.name}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          {plugin.description}
-                        </p>
+                        <p className="text-sm font-medium text-white">{plugin.name}</p>
+                        <p className="text-xs text-gray-400">{plugin.description}</p>
                       </div>
                     </div>
                     <div className="text-right flex items-center space-x-2">
@@ -1176,10 +1083,8 @@ export default function Settings() {
                 {plugins.configPath && (
                   <div className="p-4 px-5 bg-black/30 border-t border-white/10">
                     <p className="text-xs text-gray-400">
-                      Config file:{" "}
-                      <span className="text-white font-mono">
-                        {plugins.configPath}
-                      </span>
+                      Config file:{' '}
+                      <span className="text-white font-mono">{plugins.configPath}</span>
                     </p>
                   </div>
                 )}
@@ -1189,12 +1094,10 @@ export default function Settings() {
                 <div className="flex items-center space-x-3">
                   <AlertTriangle className="w-5 h-5 text-yellow-400" />
                   <div>
-                    <p className="text-sm font-medium text-white">
-                      No Plugins Enabled
-                    </p>
+                    <p className="text-sm font-medium text-white">No Plugins Enabled</p>
                     <p className="text-xs text-gray-400">
                       {plugins?.error ||
-                        "No plugins are currently configured in your Better Auth setup"}
+                        'No plugins are currently configured in your Better Auth setup'}
                     </p>
                   </div>
                 </div>

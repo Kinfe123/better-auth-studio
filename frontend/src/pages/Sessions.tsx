@@ -1,86 +1,85 @@
-import { useState, useEffect } from 'react'
+import { Database, Edit, Eye, Filter, Loader, Plus, Search, Trash2, User, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Terminal } from '../components/Terminal';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
 import {
-  Database,
-  Search,
-  Filter,
-  Edit,
-  Trash2,
-  Plus,
-  Eye,
-  X,
-  User,
-  Loader
-} from 'lucide-react'
-import { Button } from '../components/ui/button'
-import { Input } from '../components/ui/input'
-import { Label } from '../components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select'
-import { Terminal } from '../components/Terminal'
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
 
 interface Session {
-  id: string
-  userId: string
-  expiresAt: string
-  createdAt: string
-  updatedAt: string
+  id: string;
+  userId: string;
+  expiresAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function Sessions() {
-  const [sessions, setSessions] = useState<Session[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filter, setFilter] = useState('all')
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [showViewModal, setShowViewModal] = useState(false)
-  const [showSeedModal, setShowSeedModal] = useState(false)
-  const [selectedSession, setSelectedSession] = useState<Session | null>(null)
-  const [seedingLogs, setSeedingLogs] = useState<Array<{
-    id: string
-    type: 'info' | 'success' | 'error' | 'progress'
-    message: string
-    timestamp: Date
-    status?: 'pending' | 'running' | 'completed' | 'failed'
-  }>>([])
-  const [isSeeding, setIsSeeding] = useState(false)
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('all');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showSeedModal, setShowSeedModal] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [seedingLogs, setSeedingLogs] = useState<
+    Array<{
+      id: string;
+      type: 'info' | 'success' | 'error' | 'progress';
+      message: string;
+      timestamp: Date;
+      status?: 'pending' | 'running' | 'completed' | 'failed';
+    }>
+  >([]);
+  const [isSeeding, setIsSeeding] = useState(false);
 
   useEffect(() => {
-    fetchSessions()
-  }, [])
+    fetchSessions();
+  }, []);
 
   const fetchSessions = async () => {
     try {
-      const response = await fetch('/api/sessions')
-      const data = await response.json()
-      setSessions(data.sessions || [])
+      const response = await fetch('/api/sessions');
+      const data = await response.json();
+      setSessions(data.sessions || []);
     } catch (error) {
-      console.error('Failed to fetch sessions:', error)
+      console.error('Failed to fetch sessions:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSeedSessions = async (count: number) => {
-    setSeedingLogs([])
-    setIsSeeding(true)
-    
-    setSeedingLogs([{
-      id: 'start',
-      type: 'info',
-      message: `Starting session seeding process for ${count} sessions...`,
-      timestamp: new Date()
-    }])
-    
+    setSeedingLogs([]);
+    setIsSeeding(true);
+
+    setSeedingLogs([
+      {
+        id: 'start',
+        type: 'info',
+        message: `Starting session seeding process for ${count} sessions...`,
+        timestamp: new Date(),
+      },
+    ]);
+
     try {
       const response = await fetch('/api/seed/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ count })
-      })
-      
-      const result = await response.json()
-      
+        body: JSON.stringify({ count }),
+      });
+
+      const result = await response.json();
+
       if (result.success) {
         const progressLogs = result.results.map((r: any, index: number) => {
           if (r.success) {
@@ -89,69 +88,80 @@ export default function Sessions() {
               type: 'progress' as const,
               message: `Creating session: ${r.session.id}`,
               timestamp: new Date(),
-              status: 'completed' as const
-            }
+              status: 'completed' as const,
+            };
           } else {
             return {
               id: `session-${index}`,
               type: 'error' as const,
               message: `Failed to create session ${index + 1}: ${r.error}`,
-              timestamp: new Date()
-            }
+              timestamp: new Date(),
+            };
           }
-        })
-        
-        setSeedingLogs(prev => [...prev, ...progressLogs])
-        
-        const successCount = result.results.filter((r: any) => r.success).length
-        setSeedingLogs(prev => [...prev, {
-          id: 'complete',
-          type: 'success',
-          message: `✅ Seeding completed! Created ${successCount}/${count} sessions successfully`,
-          timestamp: new Date()
-        }])
-        
-        await fetchSessions()
+        });
+
+        setSeedingLogs((prev) => [...prev, ...progressLogs]);
+
+        const successCount = result.results.filter((r: any) => r.success).length;
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'complete',
+            type: 'success',
+            message: `✅ Seeding completed! Created ${successCount}/${count} sessions successfully`,
+            timestamp: new Date(),
+          },
+        ]);
+
+        await fetchSessions();
       } else {
-        setSeedingLogs(prev => [...prev, {
-          id: 'error',
-          type: 'error',
-          message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
-          timestamp: new Date()
-        }])
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'error',
+            type: 'error',
+            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            timestamp: new Date(),
+          },
+        ]);
       }
     } catch (error) {
-      setSeedingLogs(prev => [...prev, {
-        id: 'error',
-        type: 'error',
-        message: `❌ Network error: ${error}`,
-        timestamp: new Date()
-      }])
+      setSeedingLogs((prev) => [
+        ...prev,
+        {
+          id: 'error',
+          type: 'error',
+          message: `❌ Network error: ${error}`,
+          timestamp: new Date(),
+        },
+      ]);
     } finally {
-      setIsSeeding(false)
+      setIsSeeding(false);
     }
-  }
+  };
 
   const handleSeedAccounts = async (count: number) => {
-    setSeedingLogs([])
-    setIsSeeding(true)
-    
-    setSeedingLogs([{
-      id: 'start',
-      type: 'info',
-      message: `Starting account seeding process for ${count} accounts...`,
-      timestamp: new Date()
-    }])
-    
+    setSeedingLogs([]);
+    setIsSeeding(true);
+
+    setSeedingLogs([
+      {
+        id: 'start',
+        type: 'info',
+        message: `Starting account seeding process for ${count} accounts...`,
+        timestamp: new Date(),
+      },
+    ]);
+
     try {
       const response = await fetch('/api/seed/accounts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ count })
-      })
-      
-      const result = await response.json()
-      
+        body: JSON.stringify({ count }),
+      });
+
+      const result = await response.json();
+
       if (result.success) {
         const progressLogs = result.results.map((r: any, index: number) => {
           if (r.success) {
@@ -160,87 +170,98 @@ export default function Sessions() {
               type: 'progress' as const,
               message: `Creating account: ${r.account.provider}`,
               timestamp: new Date(),
-              status: 'completed' as const
-            }
+              status: 'completed' as const,
+            };
           } else {
             return {
               id: `account-${index}`,
               type: 'error' as const,
               message: `Failed to create account ${index + 1}: ${r.error}`,
-              timestamp: new Date()
-            }
+              timestamp: new Date(),
+            };
           }
-        })
-        
-        setSeedingLogs(prev => [...prev, ...progressLogs])
-        
-        const successCount = result.results.filter((r: any) => r.success).length
-        setSeedingLogs(prev => [...prev, {
-          id: 'complete',
-          type: 'success',
-          message: `✅ Seeding completed! Created ${successCount}/${count} accounts successfully`,
-          timestamp: new Date()
-        }])
-        
-        await fetchSessions()
+        });
+
+        setSeedingLogs((prev) => [...prev, ...progressLogs]);
+
+        const successCount = result.results.filter((r: any) => r.success).length;
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'complete',
+            type: 'success',
+            message: `✅ Seeding completed! Created ${successCount}/${count} accounts successfully`,
+            timestamp: new Date(),
+          },
+        ]);
+
+        await fetchSessions();
       } else {
-        setSeedingLogs(prev => [...prev, {
-          id: 'error',
-          type: 'error',
-          message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
-          timestamp: new Date()
-        }])
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'error',
+            type: 'error',
+            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            timestamp: new Date(),
+          },
+        ]);
       }
     } catch (error) {
-      setSeedingLogs(prev => [...prev, {
-        id: 'error',
-        type: 'error',
-        message: `❌ Network error: ${error}`,
-        timestamp: new Date()
-      }])
+      setSeedingLogs((prev) => [
+        ...prev,
+        {
+          id: 'error',
+          type: 'error',
+          message: `❌ Network error: ${error}`,
+          timestamp: new Date(),
+        },
+      ]);
     } finally {
-      setIsSeeding(false)
+      setIsSeeding(false);
     }
-  }
+  };
 
   const openViewModal = (session: Session) => {
-    setSelectedSession(session)
-    setShowViewModal(true)
-  }
+    setSelectedSession(session);
+    setShowViewModal(true);
+  };
 
   const openEditModal = (session: Session) => {
-    setSelectedSession(session)
-    setShowEditModal(true)
-  }
+    setSelectedSession(session);
+    setShowEditModal(true);
+  };
 
   const openDeleteModal = (session: Session) => {
-    setSelectedSession(session)
-    setShowDeleteModal(true)
-  }
+    setSelectedSession(session);
+    setShowDeleteModal(true);
+  };
 
   const handleCreateSession = async (sessionData: any) => {
-    console.log('Creating session:', sessionData)
-    setShowCreateModal(false)
-  }
+    console.log('Creating session:', sessionData);
+    setShowCreateModal(false);
+  };
 
   const handleUpdateSession = async (sessionData: any) => {
-    console.log('Updating session:', sessionData)
-    setShowEditModal(false)
-  }
+    console.log('Updating session:', sessionData);
+    setShowEditModal(false);
+  };
 
   const handleDeleteSession = async () => {
-    console.log('Deleting session:', selectedSession?.id)
-    setShowDeleteModal(false)
-  }
+    console.log('Deleting session:', selectedSession?.id);
+    setShowDeleteModal(false);
+  };
 
-  const filteredSessions = sessions.filter(session => {
-    const matchesSearch = session.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         session.userId.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFilter = filter === 'all' || 
+  const filteredSessions = sessions.filter((session) => {
+    const matchesSearch =
+      session.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      session.userId.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter =
+      filter === 'all' ||
       (filter === 'active' && new Date(session.expiresAt) > new Date()) ||
-      (filter === 'expired' && new Date(session.expiresAt) <= new Date())
-    return matchesSearch && matchesFilter
-  })
+      (filter === 'expired' && new Date(session.expiresAt) <= new Date());
+    return matchesSearch && matchesFilter;
+  });
 
   if (loading) {
     return (
@@ -250,7 +271,7 @@ export default function Sessions() {
           <div className="text-white text-sm">Loading sessions...</div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -321,14 +342,19 @@ export default function Sessions() {
             </thead>
             <tbody>
               {filteredSessions.map((session) => (
-                <tr key={session.id} className="border-b border-dashed border-white/5 hover:bg-white/5">
+                <tr
+                  key={session.id}
+                  className="border-b border-dashed border-white/5 hover:bg-white/5"
+                >
                   <td className="py-4 px-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded-none border border-dashed border-white/20 bg-white/10 flex items-center justify-center">
                         <Database className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <div className="text-white font-light">Session {session.id.slice(0, 8)}...</div>
+                        <div className="text-white font-light">
+                          Session {session.id.slice(0, 8)}...
+                        </div>
                         <div className="text-sm text-gray-400">ID: {session.id}</div>
                       </div>
                     </div>
@@ -408,7 +434,9 @@ export default function Sessions() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
-                    <Label htmlFor="session-count" className="text-sm text-gray-400 font-light">Number of sessions</Label>
+                    <Label htmlFor="session-count" className="text-sm text-gray-400 font-light">
+                      Number of sessions
+                    </Label>
                     <Input
                       id="session-count"
                       type="number"
@@ -420,8 +448,10 @@ export default function Sessions() {
                   </div>
                   <Button
                     onClick={() => {
-                      const count = parseInt((document.getElementById('session-count') as HTMLInputElement)?.value || '5')
-                      handleSeedSessions(count)
+                      const count = parseInt(
+                        (document.getElementById('session-count') as HTMLInputElement)?.value || '5'
+                      );
+                      handleSeedSessions(count);
                     }}
                     disabled={isSeeding}
                     className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
@@ -440,7 +470,7 @@ export default function Sessions() {
                   </Button>
                 </div>
               </div>
-              
+
               {/* Account Seeding */}
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
@@ -449,7 +479,9 @@ export default function Sessions() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
-                    <Label htmlFor="account-count" className="text-sm text-gray-400 font-light">Number of accounts</Label>
+                    <Label htmlFor="account-count" className="text-sm text-gray-400 font-light">
+                      Number of accounts
+                    </Label>
                     <Input
                       id="account-count"
                       type="number"
@@ -461,8 +493,10 @@ export default function Sessions() {
                   </div>
                   <Button
                     onClick={() => {
-                      const count = parseInt((document.getElementById('account-count') as HTMLInputElement)?.value || '5')
-                      handleSeedAccounts(count)
+                      const count = parseInt(
+                        (document.getElementById('account-count') as HTMLInputElement)?.value || '5'
+                      );
+                      handleSeedAccounts(count);
                     }}
                     disabled={isSeeding}
                     className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
@@ -485,7 +519,7 @@ export default function Sessions() {
               {/* Seeding Logs */}
               {seedingLogs.length > 0 && (
                 <div className="mt-6">
-                  <Terminal 
+                  <Terminal
                     title="Session Seeding Terminal"
                     lines={seedingLogs}
                     isRunning={isSeeding}
@@ -525,14 +559,18 @@ export default function Sessions() {
             </div>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="create-user-id" className="text-sm text-gray-400 font-light">User ID</Label>
+                <Label htmlFor="create-user-id" className="text-sm text-gray-400 font-light">
+                  User ID
+                </Label>
                 <Input
                   id="create-user-id"
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
               <div>
-                <Label htmlFor="create-expires" className="text-sm text-gray-400 font-light">Expires At</Label>
+                <Label htmlFor="create-expires" className="text-sm text-gray-400 font-light">
+                  Expires At
+                </Label>
                 <Input
                   id="create-expires"
                   type="datetime-local"
@@ -580,12 +618,16 @@ export default function Sessions() {
                   <Database className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <div className="text-white font-light">Session {selectedSession.id.slice(0, 8)}...</div>
+                  <div className="text-white font-light">
+                    Session {selectedSession.id.slice(0, 8)}...
+                  </div>
                   <div className="text-sm text-gray-400">{selectedSession.userId}</div>
                 </div>
               </div>
               <div>
-                <Label htmlFor="edit-user-id" className="text-sm text-gray-400 font-light">User ID</Label>
+                <Label htmlFor="edit-user-id" className="text-sm text-gray-400 font-light">
+                  User ID
+                </Label>
                 <Input
                   id="edit-user-id"
                   defaultValue={selectedSession.userId}
@@ -593,7 +635,9 @@ export default function Sessions() {
                 />
               </div>
               <div>
-                <Label htmlFor="edit-expires" className="text-sm text-gray-400 font-light">Expires At</Label>
+                <Label htmlFor="edit-expires" className="text-sm text-gray-400 font-light">
+                  Expires At
+                </Label>
                 <Input
                   id="edit-expires"
                   type="datetime-local"
@@ -642,11 +686,15 @@ export default function Sessions() {
                   <Database className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <div className="text-white font-light">Session {selectedSession.id.slice(0, 8)}...</div>
+                  <div className="text-white font-light">
+                    Session {selectedSession.id.slice(0, 8)}...
+                  </div>
                   <div className="text-sm text-gray-400">{selectedSession.userId}</div>
                 </div>
               </div>
-              <p className="text-gray-400">Are you sure you want to delete this session? This action cannot be undone.</p>
+              <p className="text-gray-400">
+                Are you sure you want to delete this session? This action cannot be undone.
+              </p>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
               <Button
@@ -688,7 +736,9 @@ export default function Sessions() {
                   <Database className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <div className="text-white font-light">Session {selectedSession.id.slice(0, 8)}...</div>
+                  <div className="text-white font-light">
+                    Session {selectedSession.id.slice(0, 8)}...
+                  </div>
                   <div className="text-sm text-gray-400">{selectedSession.userId}</div>
                 </div>
               </div>
@@ -709,15 +759,21 @@ export default function Sessions() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Expires:</span>
-                  <span className="text-white text-sm">{new Date(selectedSession.expiresAt).toLocaleString()}</span>
+                  <span className="text-white text-sm">
+                    {new Date(selectedSession.expiresAt).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Created:</span>
-                  <span className="text-white text-sm">{new Date(selectedSession.createdAt).toLocaleString()}</span>
+                  <span className="text-white text-sm">
+                    {new Date(selectedSession.createdAt).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Updated:</span>
-                  <span className="text-white text-sm">{new Date(selectedSession.updatedAt).toLocaleString()}</span>
+                  <span className="text-white text-sm">
+                    {new Date(selectedSession.updatedAt).toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
@@ -733,5 +789,5 @@ export default function Sessions() {
         </div>
       )}
     </div>
-  )
+  );
 }

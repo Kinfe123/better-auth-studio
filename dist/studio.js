@@ -1,11 +1,11 @@
-import express from 'express';
-import cors from 'cors';
-import { createServer } from 'http';
-import { WebSocketServer } from 'ws';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import open from 'open';
 import chalk from 'chalk';
+import cors from 'cors';
+import express from 'express';
+import { createServer } from 'http';
+import open from 'open';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import { WebSocketServer } from 'ws';
 import { createRoutes } from './routes.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -14,8 +14,8 @@ export async function startStudio(options) {
     const app = express();
     const server = createServer(app);
     app.use(cors({
-        origin: ['http://localhost:3000', 'http://localhost:3001', "http://localhost:3002"],
-        credentials: true
+        origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
+        credentials: true,
     }));
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -41,7 +41,7 @@ export async function startStudio(options) {
             // Send initial connection message
             ws.send(JSON.stringify({
                 type: 'connected',
-                message: 'Connected to Better Auth Studio (watch mode)'
+                message: 'Connected to Better Auth Studio (watch mode)',
             }));
         });
     }

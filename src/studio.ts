@@ -1,13 +1,13 @@
-import express from 'express';
-import cors from 'cors';
-import { createServer } from 'http';
-import { WebSocketServer } from 'ws';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import open from 'open';
 import chalk from 'chalk';
+import cors from 'cors';
+import express from 'express';
+import { createServer } from 'http';
+import open from 'open';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import { WebSocketServer } from 'ws';
+import type { AuthConfig } from './config.js';
 import { createRoutes } from './routes.js';
-import { AuthConfig } from './config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,23 +27,25 @@ export async function startStudio(options: StudioOptions) {
   const app = express();
   const server = createServer(app);
 
-  app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001' , "http://localhost:3002"],
-    credentials: true
-  }));
+  app.use(
+    cors({
+      origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
+      credentials: true,
+    })
+  );
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
   let wss: WebSocketServer | null = null;
-  
+
   // Only start WebSocket server in watch mode
   if (watchMode) {
     wss = new WebSocketServer({ server });
-    
+
     wss.on('connection', (ws) => {
       console.log(chalk.gray('🔌 WebSocket client connected (watch mode)'));
-      
+
       const heartbeat = setInterval(() => {
         if (ws.readyState === ws.OPEN) {
           ws.ping();
@@ -61,10 +63,12 @@ export async function startStudio(options: StudioOptions) {
       });
 
       // Send initial connection message
-      ws.send(JSON.stringify({
-        type: 'connected',
-        message: 'Connected to Better Auth Studio (watch mode)'
-      }));
+      ws.send(
+        JSON.stringify({
+          type: 'connected',
+          message: 'Connected to Better Auth Studio (watch mode)',
+        })
+      );
     });
   }
 

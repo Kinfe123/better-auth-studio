@@ -1,36 +1,36 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Command } from 'cmdk'
+import { Command } from 'cmdk';
 import {
-  Search,
-  Users,
-  Building2,
-  Settings,
+  ArrowRight,
   BarChart3,
-  UserPlus,
+  Building2,
   Mail,
   Plus,
-  ArrowRight
-} from 'lucide-react'
+  Search,
+  Settings,
+  UserPlus,
+  Users,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface CommandItem {
-  id: string
-  title: string
-  description: string
-  icon: React.ComponentType<any>
-  action: () => void
-  category: string
-  keywords?: string[]
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<any>;
+  action: () => void;
+  category: string;
+  keywords?: string[];
 }
 
 interface CommandPaletteProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
-  const navigate = useNavigate()
-  const [search, setSearch] = useState('')
+  const navigate = useNavigate();
+  const [search, setSearch] = useState('');
 
   const commands: CommandItem[] = [
     {
@@ -40,7 +40,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
       icon: Users,
       action: () => navigate('/users'),
       category: 'Navigation',
-      keywords: ['user', 'account', 'profile']
+      keywords: ['user', 'account', 'profile'],
     },
     {
       id: 'organizations',
@@ -49,7 +49,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
       icon: Building2,
       action: () => navigate('/organizations'),
       category: 'Navigation',
-      keywords: ['org', 'company', 'team']
+      keywords: ['org', 'company', 'team'],
     },
     {
       id: 'sessions',
@@ -58,7 +58,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
       icon: BarChart3,
       action: () => navigate('/sessions'),
       category: 'Navigation',
-      keywords: ['session', 'login', 'active']
+      keywords: ['session', 'login', 'active'],
     },
     {
       id: 'settings',
@@ -67,7 +67,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
       icon: Settings,
       action: () => navigate('/settings'),
       category: 'Navigation',
-      keywords: ['config', 'setup', 'preferences']
+      keywords: ['config', 'setup', 'preferences'],
     },
     {
       id: 'dashboard',
@@ -76,7 +76,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
       icon: BarChart3,
       action: () => navigate('/'),
       category: 'Navigation',
-      keywords: ['overview', 'stats', 'home']
+      keywords: ['overview', 'stats', 'home'],
     },
     {
       id: 'create-user',
@@ -85,7 +85,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
       icon: UserPlus,
       action: () => navigate('/users'),
       category: 'Actions',
-      keywords: ['add', 'new', 'register']
+      keywords: ['add', 'new', 'register'],
     },
     {
       id: 'create-organization',
@@ -94,7 +94,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
       icon: Plus,
       action: () => navigate('/organizations'),
       category: 'Actions',
-      keywords: ['add', 'new', 'org']
+      keywords: ['add', 'new', 'org'],
     },
     {
       id: 'invite-user',
@@ -103,52 +103,55 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
       icon: Mail,
       action: () => navigate('/organizations'),
       category: 'Actions',
-      keywords: ['invite', 'email', 'send']
-    }
-  ]
+      keywords: ['invite', 'email', 'send'],
+    },
+  ];
 
   const filteredCommands = commands.filter((command) => {
-    const searchLower = search.toLowerCase()
+    const searchLower = search.toLowerCase();
     return (
       command.title.toLowerCase().includes(searchLower) ||
       command.description.toLowerCase().includes(searchLower) ||
-      command.keywords?.some(keyword => keyword.toLowerCase().includes(searchLower))
-    )
-  })
+      command.keywords?.some((keyword) => keyword.toLowerCase().includes(searchLower))
+    );
+  });
 
-  const groupedCommands = filteredCommands.reduce((acc, command) => {
-    if (!acc[command.category]) {
-      acc[command.category] = []
-    }
-    acc[command.category].push(command)
-    return acc
-  }, {} as Record<string, CommandItem[]>)
+  const groupedCommands = filteredCommands.reduce(
+    (acc, command) => {
+      if (!acc[command.category]) {
+        acc[command.category] = [];
+      }
+      acc[command.category].push(command);
+      return acc;
+    },
+    {} as Record<string, CommandItem[]>
+  );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
+        e.preventDefault();
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [])
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose()
+        onClose();
       }
-    }
+    };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-      return () => document.removeEventListener('keydown', handleEscape)
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
     }
-  }, [isOpen, onClose])
+  }, [isOpen, onClose]);
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-start justify-center pt-[20vh] z-50">
@@ -167,7 +170,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
               ESC
             </kbd>
           </div>
-          
+
           <Command.List className="max-h-96 overflow-y-auto p-2">
             {Object.keys(groupedCommands).length === 0 ? (
               <div className="text-center py-8 text-gray-400">
@@ -178,16 +181,19 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
             ) : (
               Object.entries(groupedCommands).map(([category, categoryCommands]) => (
                 <div key={category} className="mb-4">
-                  <Command.Group heading={category} className="text-xs text-gray-400 font-medium mb-2 px-2">
+                  <Command.Group
+                    heading={category}
+                    className="text-xs text-gray-400 font-medium mb-2 px-2"
+                  >
                     {categoryCommands.map((command) => {
-                      const Icon = command.icon
+                      const Icon = command.icon;
                       return (
                         <Command.Item
                           key={command.id}
                           value={command.id}
                           onSelect={() => {
-                            command.action()
-                            onClose()
+                            command.action();
+                            onClose();
                           }}
                           className="flex items-center space-x-3 px-3 py-2 rounded-none hover:bg-white/5 cursor-pointer transition-colors"
                         >
@@ -198,22 +204,34 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
                           </div>
                           <ArrowRight className="w-4 h-4 text-gray-400" />
                         </Command.Item>
-                      )
+                      );
                     })}
                   </Command.Group>
                 </div>
               ))
             )}
           </Command.List>
-          
+
           <div className="border-t border-dashed border-white/10 px-3 py-2 text-xs text-gray-400">
             <div className="flex items-center justify-between">
-              <span>Press <kbd className="px-1 py-0.5 border border-dashed border-white/20 rounded-sm">↑↓</kbd> to navigate</span>
-              <span>Press <kbd className="px-1 py-0.5 border border-dashed border-white/20 rounded-sm">Enter</kbd> to select</span>
+              <span>
+                Press{' '}
+                <kbd className="px-1 py-0.5 border border-dashed border-white/20 rounded-sm">
+                  ↑↓
+                </kbd>{' '}
+                to navigate
+              </span>
+              <span>
+                Press{' '}
+                <kbd className="px-1 py-0.5 border border-dashed border-white/20 rounded-sm">
+                  Enter
+                </kbd>{' '}
+                to select
+              </span>
             </div>
           </div>
         </Command>
       </div>
     </div>
-  )
+  );
 }

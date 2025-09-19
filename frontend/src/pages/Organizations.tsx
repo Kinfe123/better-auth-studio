@@ -1,76 +1,84 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
 import {
   Building2,
-  Search,
-  Filter,
-  Edit,
-  Trash2,
-  Plus,
-  Eye,
-  X,
   Database,
+  Download,
+  Edit,
+  Eye,
+  Filter,
   Loader,
-  Download
-} from 'lucide-react'
-import { Button } from '../components/ui/button'
-import { Input } from '../components/ui/input'
-import { Label } from '../components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select'
-import { Terminal } from '../components/Terminal'
-import { useCounts } from '../contexts/CountsContext'
-import { Pagination } from '../components/ui/pagination'
+  Plus,
+  Search,
+  Trash2,
+  X,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { Terminal } from '../components/Terminal';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Pagination } from '../components/ui/pagination';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
+import { useCounts } from '../contexts/CountsContext';
 
 interface Organization {
-  id: string
-  name: string
-  slug: string
-  metadata?: any
-  createdAt: string
-  updatedAt: string
+  id: string;
+  name: string;
+  slug: string;
+  metadata?: any;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface PluginStatus {
-  enabled: boolean
-  error?: string
-  configPath?: string | null
-  availablePlugins?: string[]
-  organizationPlugin?: any
+  enabled: boolean;
+  error?: string;
+  configPath?: string | null;
+  availablePlugins?: string[];
+  organizationPlugin?: any;
 }
 
 export default function Organizations() {
-  const navigate = useNavigate()
-  const { refetchCounts } = useCounts()
-  const [organizations, setOrganizations] = useState<Organization[]>([])
-  const [loading, setLoading] = useState(true)
-  const [pluginStatus, setPluginStatus] = useState<PluginStatus | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filter, setFilter] = useState('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [organizationsPerPage] = useState(20)
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [showCreateTeamModal, setShowCreateTeamModal] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [showViewModal, setShowViewModal] = useState(false)
-  const [showSeedModal, setShowSeedModal] = useState(false)
-  const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null)
-  const [seedingLogs, setSeedingLogs] = useState<Array<{
-    id: string
-    type: 'info' | 'success' | 'error' | 'progress'
-    message: string
-    timestamp: Date
-    status?: 'pending' | 'running' | 'completed' | 'failed'
-  }>>([])
-  const [isSeeding, setIsSeeding] = useState(false)
-  const [createFormData, setCreateFormData] = useState({ name: '', slug: '' })
-  const [createTeamFormData, setCreateTeamFormData] = useState({ name: '', organizationId: '' })
-  const [editFormData, setEditFormData] = useState({ name: '', slug: '' })
+  const navigate = useNavigate();
+  const { refetchCounts } = useCounts();
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [pluginStatus, setPluginStatus] = useState<PluginStatus | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [organizationsPerPage] = useState(20);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showSeedModal, setShowSeedModal] = useState(false);
+  const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
+  const [seedingLogs, setSeedingLogs] = useState<
+    Array<{
+      id: string;
+      type: 'info' | 'success' | 'error' | 'progress';
+      message: string;
+      timestamp: Date;
+      status?: 'pending' | 'running' | 'completed' | 'failed';
+    }>
+  >([]);
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [createFormData, setCreateFormData] = useState({ name: '', slug: '' });
+  const [createTeamFormData, setCreateTeamFormData] = useState({ name: '', organizationId: '' });
+  const [editFormData, setEditFormData] = useState({ name: '', slug: '' });
 
   useEffect(() => {
-    checkPluginStatus()
-  }, [])
+    checkPluginStatus();
+  }, []);
 
   const generateSlug = (name: string): string => {
     return name
@@ -78,83 +86,85 @@ export default function Organizations() {
       .replace(/\s+/g, '-') // Replace spaces with hyphens
       .replace(/[^a-z0-9-]/g, '') // Remove special characters except hyphens
       .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-      .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
-  }
+      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+  };
 
   const handleCreateNameChange = (name: string) => {
-    const slug = generateSlug(name)
-    setCreateFormData({ name, slug })
-  }
+    const slug = generateSlug(name);
+    setCreateFormData({ name, slug });
+  };
 
   const handleCreateSlugChange = (slug: string) => {
-    setCreateFormData(prev => ({ ...prev, slug: generateSlug(slug) }))
-  }
+    setCreateFormData((prev) => ({ ...prev, slug: generateSlug(slug) }));
+  };
 
   const handleEditNameChange = (name: string) => {
-    const slug = generateSlug(name)
-    setEditFormData({ name, slug })
-  }
+    const slug = generateSlug(name);
+    setEditFormData({ name, slug });
+  };
 
   const handleEditSlugChange = (slug: string) => {
-    setEditFormData(prev => ({ ...prev, slug: generateSlug(slug) }))
-  }
+    setEditFormData((prev) => ({ ...prev, slug: generateSlug(slug) }));
+  };
 
   const checkPluginStatus = async () => {
     try {
-      const response = await fetch('/api/plugins')
-      const pluginLists: any[] = await response.json()
-      const orgEnabled = pluginLists.find((plugin) => plugin.name === 'organization')
+      const response = await fetch('/api/plugins');
+      const pluginLists: any[] = await response.json();
+      const orgEnabled = pluginLists.find((plugin) => plugin.name === 'organization');
       setPluginStatus({
-        enabled:!!orgEnabled,
+        enabled: !!orgEnabled,
         availablePlugins: pluginLists.map((plugin) => plugin.name),
         configPath: (pluginLists as any).configPath,
-        organizationPlugin:  pluginLists.find((plugin) => plugin.name === 'organization')
-      })
+        organizationPlugin: pluginLists.find((plugin) => plugin.name === 'organization'),
+      });
       if (orgEnabled) {
-        await fetchOrganizations()
+        await fetchOrganizations();
       } else {
-        setLoading(false)
+        setLoading(false);
       }
     } catch (error) {
-      console.error('Failed to check plugin status:', error)
-      setPluginStatus({ enabled: false, error: 'Failed to check plugin status' })
-      setLoading(false)
+      console.error('Failed to check plugin status:', error);
+      setPluginStatus({ enabled: false, error: 'Failed to check plugin status' });
+      setLoading(false);
     }
-  }
+  };
 
   const fetchOrganizations = async () => {
     try {
-      const response = await fetch('/api/organizations?limit=10000')
-      const data = await response.json()
-      setOrganizations(data.organizations || [])
+      const response = await fetch('/api/organizations?limit=10000');
+      const data = await response.json();
+      setOrganizations(data.organizations || []);
     } catch (error) {
-      console.error('Failed to fetch organizations:', error)
-      toast.error('Failed to fetch organizations')
+      console.error('Failed to fetch organizations:', error);
+      toast.error('Failed to fetch organizations');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSeedOrganizations = async (count: number) => {
-    setSeedingLogs([])
-    setIsSeeding(true)
-    
-    setSeedingLogs([{
-      id: 'start',
-      type: 'info',
-      message: `Starting organization seeding process for ${count} organizations...`,
-      timestamp: new Date()
-    }])
-    
+    setSeedingLogs([]);
+    setIsSeeding(true);
+
+    setSeedingLogs([
+      {
+        id: 'start',
+        type: 'info',
+        message: `Starting organization seeding process for ${count} organizations...`,
+        timestamp: new Date(),
+      },
+    ]);
+
     try {
       const response = await fetch('/api/seed/organizations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ count })
-      })
-      
-      const result = await response.json()
-      
+        body: JSON.stringify({ count }),
+      });
+
+      const result = await response.json();
+
       if (result.success) {
         const progressLogs = result.results.map((r: any, index: number) => {
           if (r.success) {
@@ -163,70 +173,81 @@ export default function Organizations() {
               type: 'progress' as const,
               message: `Creating organization: ${r.organization.name} (${r.organization.slug})`,
               timestamp: new Date(),
-              status: 'completed' as const
-            }
+              status: 'completed' as const,
+            };
           } else {
             return {
               id: `org-${index}`,
               type: 'error' as const,
               message: `Failed to create organization ${index + 1}: ${r.error}`,
-              timestamp: new Date()
-            }
+              timestamp: new Date(),
+            };
           }
-        })
-        
-        setSeedingLogs(prev => [...prev, ...progressLogs])
-        
-        const successCount = result.results.filter((r: any) => r.success).length
-        setSeedingLogs(prev => [...prev, {
-          id: 'complete',
-          type: 'success',
-          message: `✅ Seeding completed! Created ${successCount}/${count} organizations successfully`,
-          timestamp: new Date()
-        }])
-        
-        await fetchOrganizations()
-        await refetchCounts()
+        });
+
+        setSeedingLogs((prev) => [...prev, ...progressLogs]);
+
+        const successCount = result.results.filter((r: any) => r.success).length;
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'complete',
+            type: 'success',
+            message: `✅ Seeding completed! Created ${successCount}/${count} organizations successfully`,
+            timestamp: new Date(),
+          },
+        ]);
+
+        await fetchOrganizations();
+        await refetchCounts();
       } else {
-        setSeedingLogs(prev => [...prev, {
-          id: 'error',
-          type: 'error',
-          message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
-          timestamp: new Date()
-        }])
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'error',
+            type: 'error',
+            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            timestamp: new Date(),
+          },
+        ]);
       }
     } catch (error) {
-      setSeedingLogs(prev => [...prev, {
-        id: 'error',
-        type: 'error',
-        message: `❌ Network error: ${error}`,
-        timestamp: new Date()
-      }])
+      setSeedingLogs((prev) => [
+        ...prev,
+        {
+          id: 'error',
+          type: 'error',
+          message: `❌ Network error: ${error}`,
+          timestamp: new Date(),
+        },
+      ]);
     } finally {
-      setIsSeeding(false)
+      setIsSeeding(false);
     }
-  }
+  };
 
   const handleSeedTeams = async (count: number) => {
-    setSeedingLogs([])
-    setIsSeeding(true)
-    
-    setSeedingLogs([{
-      id: 'start',
-      type: 'info',
-      message: `Starting team seeding process for ${count} teams...`,
-      timestamp: new Date()
-    }])
-    
+    setSeedingLogs([]);
+    setIsSeeding(true);
+
+    setSeedingLogs([
+      {
+        id: 'start',
+        type: 'info',
+        message: `Starting team seeding process for ${count} teams...`,
+        timestamp: new Date(),
+      },
+    ]);
+
     try {
       const response = await fetch('/api/seed/teams', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ count })
-      })
-      
-      const result = await response.json()
-      
+        body: JSON.stringify({ count }),
+      });
+
+      const result = await response.json();
+
       if (result.success) {
         const progressLogs = result.results.map((r: any, index: number) => {
           if (r.success) {
@@ -235,257 +256,276 @@ export default function Organizations() {
               type: 'progress' as const,
               message: `Creating team: ${r.team.name}`,
               timestamp: new Date(),
-              status: 'completed' as const
-            }
+              status: 'completed' as const,
+            };
           } else {
             return {
               id: `team-${index}`,
               type: 'error' as const,
               message: `Failed to create team ${index + 1}: ${r.error}`,
-              timestamp: new Date()
-            }
+              timestamp: new Date(),
+            };
           }
-        })
-        
-        setSeedingLogs(prev => [...prev, ...progressLogs])
-        
-        const successCount = result.results.filter((r: any) => r.success).length
-        setSeedingLogs(prev => [...prev, {
-          id: 'complete',
-          type: 'success',
-          message: `✅ Seeding completed! Created ${successCount}/${count} teams successfully`,
-          timestamp: new Date()
-        }])
-        
-        await fetchOrganizations()
-        await refetchCounts()
+        });
+
+        setSeedingLogs((prev) => [...prev, ...progressLogs]);
+
+        const successCount = result.results.filter((r: any) => r.success).length;
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'complete',
+            type: 'success',
+            message: `✅ Seeding completed! Created ${successCount}/${count} teams successfully`,
+            timestamp: new Date(),
+          },
+        ]);
+
+        await fetchOrganizations();
+        await refetchCounts();
       } else {
-        setSeedingLogs(prev => [...prev, {
-          id: 'error',
-          type: 'error',
-          message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
-          timestamp: new Date()
-        }])
+        setSeedingLogs((prev) => [
+          ...prev,
+          {
+            id: 'error',
+            type: 'error',
+            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            timestamp: new Date(),
+          },
+        ]);
       }
     } catch (error) {
-      setSeedingLogs(prev => [...prev, {
-        id: 'error',
-        type: 'error',
-        message: `❌ Network error: ${error}`,
-        timestamp: new Date()
-      }])
+      setSeedingLogs((prev) => [
+        ...prev,
+        {
+          id: 'error',
+          type: 'error',
+          message: `❌ Network error: ${error}`,
+          timestamp: new Date(),
+        },
+      ]);
     } finally {
-      setIsSeeding(false)
+      setIsSeeding(false);
     }
-  }
+  };
 
   const openViewModal = (organization: Organization) => {
-    setSelectedOrganization(organization)
-    setShowViewModal(true)
-  }
+    setSelectedOrganization(organization);
+    setShowViewModal(true);
+  };
 
   const openEditModal = (organization: Organization) => {
-    setSelectedOrganization(organization)
-    setEditFormData({ name: organization.name, slug: organization.slug })
-    setShowEditModal(true)
-  }
+    setSelectedOrganization(organization);
+    setEditFormData({ name: organization.name, slug: organization.slug });
+    setShowEditModal(true);
+  };
 
   const openDeleteModal = (organization: Organization) => {
-    setSelectedOrganization(organization)
-    setShowDeleteModal(true)
-  }
+    setSelectedOrganization(organization);
+    setShowDeleteModal(true);
+  };
 
   const handleCreateOrganization = async () => {
     if (!createFormData.name) {
-      toast.error('Please fill in the organization name')
-      return
+      toast.error('Please fill in the organization name');
+      return;
     }
 
-    const toastId = toast.loading('Creating organization...')
-    
+    const toastId = toast.loading('Creating organization...');
+
     try {
       const response = await fetch('/api/organizations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          name: createFormData.name, 
-          slug: createFormData.slug 
-        })
-      })
+        body: JSON.stringify({
+          name: createFormData.name,
+          slug: createFormData.slug,
+        }),
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        await fetchOrganizations()
-        setShowCreateModal(false)
-        setCreateFormData({ name: '', slug: '' })
-        toast.success('Organization created successfully!', { id: toastId })
+        await fetchOrganizations();
+        setShowCreateModal(false);
+        setCreateFormData({ name: '', slug: '' });
+        toast.success('Organization created successfully!', { id: toastId });
       } else {
-        toast.error(`Error creating organization: ${result.error || 'Unknown error'}`, { id: toastId })
+        toast.error(`Error creating organization: ${result.error || 'Unknown error'}`, {
+          id: toastId,
+        });
       }
     } catch (error) {
-      console.error('Error creating organization:', error)
-      toast.error('Error creating organization', { id: toastId })
+      console.error('Error creating organization:', error);
+      toast.error('Error creating organization', { id: toastId });
     }
-  }
+  };
 
   const handleCreateTeam = async () => {
     if (!createTeamFormData.name) {
-      toast.error('Please fill in the team name')
-      return
+      toast.error('Please fill in the team name');
+      return;
     }
 
     if (!createTeamFormData.organizationId) {
-      toast.error('Please select an organization')
-      return
+      toast.error('Please select an organization');
+      return;
     }
 
-    const toastId = toast.loading('Creating team...')
-    
+    const toastId = toast.loading('Creating team...');
+
     try {
       const response = await fetch('/api/teams', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          name: createTeamFormData.name, 
-          organizationId: createTeamFormData.organizationId 
-        })
-      })
+        body: JSON.stringify({
+          name: createTeamFormData.name,
+          organizationId: createTeamFormData.organizationId,
+        }),
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        setShowCreateTeamModal(false)
-        setCreateTeamFormData({ name: '', organizationId: '' })
-        toast.success('Team created successfully!', { id: toastId })
+        setShowCreateTeamModal(false);
+        setCreateTeamFormData({ name: '', organizationId: '' });
+        toast.success('Team created successfully!', { id: toastId });
       } else {
-        toast.error(`Error creating team: ${result.error || 'Unknown error'}`, { id: toastId })
+        toast.error(`Error creating team: ${result.error || 'Unknown error'}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error creating team:', error)
-      toast.error('Error creating team', { id: toastId })
+      console.error('Error creating team:', error);
+      toast.error('Error creating team', { id: toastId });
     }
-  }
+  };
 
   const handleUpdateOrganization = async () => {
     if (!selectedOrganization) {
-      toast.error('No organization selected')
-      return
+      toast.error('No organization selected');
+      return;
     }
 
     if (!editFormData.name) {
-      toast.error('Please fill in the organization name')
-      return
+      toast.error('Please fill in the organization name');
+      return;
     }
 
-    const toastId = toast.loading('Updating organization...')
-    
+    const toastId = toast.loading('Updating organization...');
+
     try {
       const response = await fetch(`/api/organizations/${selectedOrganization.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          name: editFormData.name, 
-          slug: editFormData.slug 
-        })
-      })
+        body: JSON.stringify({
+          name: editFormData.name,
+          slug: editFormData.slug,
+        }),
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        await fetchOrganizations()
-        setShowEditModal(false)
-        setSelectedOrganization(null)
-        setEditFormData({ name: '', slug: '' })
-        toast.success('Organization updated successfully!', { id: toastId })
+        await fetchOrganizations();
+        setShowEditModal(false);
+        setSelectedOrganization(null);
+        setEditFormData({ name: '', slug: '' });
+        toast.success('Organization updated successfully!', { id: toastId });
       } else {
-        toast.error(`Error updating organization: ${result.error || 'Unknown error'}`, { id: toastId })
+        toast.error(`Error updating organization: ${result.error || 'Unknown error'}`, {
+          id: toastId,
+        });
       }
     } catch (error) {
-      console.error('Error updating organization:', error)
-      toast.error('Error updating organization', { id: toastId })
+      console.error('Error updating organization:', error);
+      toast.error('Error updating organization', { id: toastId });
     }
-  }
+  };
 
   const handleDeleteOrganization = async () => {
     if (!selectedOrganization) {
-      toast.error('No organization selected')
-      return
+      toast.error('No organization selected');
+      return;
     }
 
-    const toastId = toast.loading('Deleting organization...')
-    
+    const toastId = toast.loading('Deleting organization...');
+
     try {
       const response = await fetch(`/api/organizations/${selectedOrganization.id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
-      })
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        await fetchOrganizations()
-        await refetchCounts()
-        setShowDeleteModal(false)
-        setSelectedOrganization(null)
-        toast.success('Organization deleted successfully!', { id: toastId })
+        await fetchOrganizations();
+        await refetchCounts();
+        setShowDeleteModal(false);
+        setSelectedOrganization(null);
+        toast.success('Organization deleted successfully!', { id: toastId });
       } else {
-        toast.error(`Error deleting organization: ${result.error || 'Unknown error'}`, { id: toastId })
+        toast.error(`Error deleting organization: ${result.error || 'Unknown error'}`, {
+          id: toastId,
+        });
       }
     } catch (error) {
-      console.error('Error deleting organization:', error)
-      toast.error('Error deleting organization', { id: toastId })
+      console.error('Error deleting organization:', error);
+      toast.error('Error deleting organization', { id: toastId });
     }
-  }
+  };
 
   const exportOrganizationsToCSV = () => {
     if (organizations.length === 0) {
-      toast.error('No organizations to export')
-      return
+      toast.error('No organizations to export');
+      return;
     }
 
-    const csvHeaders = ['ID', 'Name', 'Slug', 'Created At', 'Updated At']
-    const csvData = organizations.map(organization => [
+    const csvHeaders = ['ID', 'Name', 'Slug', 'Created At', 'Updated At'];
+    const csvData = organizations.map((organization) => [
       organization.id,
       organization.name || '',
       organization.slug || '',
       new Date(organization.createdAt).toLocaleString(),
-      new Date(organization.updatedAt).toLocaleString()
-    ])
+      new Date(organization.updatedAt).toLocaleString(),
+    ]);
 
     const csvContent = [
       csvHeaders.join(','),
-      ...csvData.map(row => row.map(field => `"${field}"`).join(','))
-    ].join('\n')
+      ...csvData.map((row) => row.map((field) => `"${field}"`).join(',')),
+    ].join('\n');
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const link = document.createElement('a')
-    const url = URL.createObjectURL(blob)
-    link.setAttribute('href', url)
-    link.setAttribute('download', `organizations-export-${new Date().toISOString().split('T')[0]}.csv`)
-    link.style.visibility = 'hidden'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    
-    toast.success(`Exported ${organizations.length} organizations to CSV`)
-  }
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute(
+      'download',
+      `organizations-export-${new Date().toISOString().split('T')[0]}.csv`
+    );
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-  const filteredOrganizations = organizations.filter(organization => {
-    const matchesSearch = organization.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         organization.slug.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFilter = filter === 'all' || organization.metadata?.status === filter
-    return matchesSearch && matchesFilter
-  })
+    toast.success(`Exported ${organizations.length} organizations to CSV`);
+  };
 
-  const totalPages = Math.ceil(filteredOrganizations.length / organizationsPerPage)
-  const startIndex = (currentPage - 1) * organizationsPerPage
-  const endIndex = startIndex + organizationsPerPage
-  const currentOrganizations = filteredOrganizations.slice(startIndex, endIndex)
+  const filteredOrganizations = organizations.filter((organization) => {
+    const matchesSearch =
+      organization.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      organization.slug.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filter === 'all' || organization.metadata?.status === filter;
+    return matchesSearch && matchesFilter;
+  });
+
+  const totalPages = Math.ceil(filteredOrganizations.length / organizationsPerPage);
+  const startIndex = (currentPage - 1) * organizationsPerPage;
+  const endIndex = startIndex + organizationsPerPage;
+  const currentOrganizations = filteredOrganizations.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-  }
+    setCurrentPage(page);
+  };
 
   if (loading) {
     return (
@@ -495,7 +535,7 @@ export default function Organizations() {
           <div className="text-white text-sm">Loading organizations...</div>
         </div>
       </div>
-    )
+    );
   }
 
   if (pluginStatus && !pluginStatus.enabled) {
@@ -518,36 +558,53 @@ export default function Organizations() {
             <div className="flex-1">
               <h3 className="text-xl text-white font-light mb-2">Organization Plugin Required</h3>
               <p className="text-gray-300 mb-6">
-                To use Organizations in Better Auth Studio, you need to enable the organization plugin in your Better Auth configuration.
+                To use Organizations in Better Auth Studio, you need to enable the organization
+                plugin in your Better Auth configuration.
               </p>
-              
+
               <div className="bg-black/50 border border-dashed border-white/20 rounded-none p-4 mb-6">
                 <h4 className="text-white font-light mb-3">Follow these steps:</h4>
                 <ol className="text-gray-300 space-y-2 text-sm list-decimal list-inside">
-                  <li>Import the plugin in your auth configuration file{pluginStatus.configPath && (
-                    <span className="text-gray-400"> ({pluginStatus.configPath})</span>
-                  )}:</li>
+                  <li>
+                    Import the plugin in your auth configuration file
+                    {pluginStatus.configPath && (
+                      <span className="text-gray-400"> ({pluginStatus.configPath})</span>
+                    )}
+                    :
+                  </li>
                 </ol>
-                
+
                 <div className="mt-4 bg-black/70 border border-dashed border-white/10 rounded-none p-3 overflow-x-auto">
                   <pre className="text-sm text-gray-300">
-<span className="text-blue-400">import</span> {`{ betterAuth }`} <span className="text-blue-400">from</span> <span className="text-green-400">"better-auth"</span> <br />
-<span className="text-blue-400">import</span> {`{ organization }`} <span className="text-blue-400">from</span> <span className="text-green-400">"better-auth/plugins/organization"</span> <br />
-
-<span className="text-blue-400">export const</span> <span className="text-yellow-300">auth</span> = <span className="text-yellow-300">betterAuth</span>({`{`} <br />
-  <span className="text-gray-500 pl-10">// ... your existing configuration</span> <br />
-  <span className="text-red-300 pl-10">plugins</span>: [ <br />
-    <span className="text-yellow-300 pl-12">organization({})</span><br />
-        <span className="pl-10">]</span> <br />
-{`}`}) <br />
+                    <span className="text-blue-400">import</span> {`{ betterAuth }`}{' '}
+                    <span className="text-blue-400">from</span>{' '}
+                    <span className="text-green-400">"better-auth"</span> <br />
+                    <span className="text-blue-400">import</span> {`{ organization }`}{' '}
+                    <span className="text-blue-400">from</span>{' '}
+                    <span className="text-green-400">"better-auth/plugins/organization"</span>{' '}
+                    <br />
+                    <span className="text-blue-400">export const</span>{' '}
+                    <span className="text-yellow-300">auth</span> ={' '}
+                    <span className="text-yellow-300">betterAuth</span>({`{`} <br />
+                    <span className="text-gray-500 pl-10">// ... your existing configuration</span>{' '}
+                    <br />
+                    <span className="text-red-300 pl-10">plugins</span>: [ <br />
+                    <span className="text-yellow-300 pl-12">organization({})</span>
+                    <br />
+                    <span className="pl-10">]</span> <br />
+                    {`}`}) <br />
                   </pre>
                 </div>
-                
+
                 <div className="mt-4">
-                  <p className="text-gray-400 text-sm">2. Do migrations to create the organizations table</p>
+                  <p className="text-gray-400 text-sm">
+                    2. Do migrations to create the organizations table
+                  </p>
                 </div>
                 <div className="mt-2">
-                  <p className="text-gray-400 text-sm">3. Restart your application to apply the changes</p>
+                  <p className="text-gray-400 text-sm">
+                    3. Restart your application to apply the changes
+                  </p>
                 </div>
               </div>
 
@@ -565,12 +622,12 @@ export default function Organizations() {
               >
                 Check Again
               </Button>
-              
+
               <div className="mt-4 text-xs text-gray-500">
                 Need help? Check the{' '}
-                <a 
-                  href="https://better-auth.com/docs/plugins/organization" 
-                  target="_blank" 
+                <a
+                  href="https://better-auth.com/docs/plugins/organization"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-white hover:underline"
                 >
@@ -581,7 +638,7 @@ export default function Organizations() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -674,10 +731,9 @@ export default function Organizations() {
                       <div>
                         <h3 className="text-white font-medium text-lg">No organizations found</h3>
                         <p className="text-gray-400 text-sm mt-1">
-                          {searchTerm || filter !== 'all' 
+                          {searchTerm || filter !== 'all'
                             ? 'Try adjusting your search or filter criteria'
-                            : 'Get started by creating your first organization'
-                          }
+                            : 'Get started by creating your first organization'}
                         </p>
                       </div>
                       {!searchTerm && filter === 'all' && (
@@ -703,8 +759,8 @@ export default function Organizations() {
                 </tr>
               ) : (
                 currentOrganizations.map((organization) => (
-                  <tr 
-                    key={organization.id} 
+                  <tr
+                    key={organization.id}
                     className="border-b border-dashed border-white/5 hover:bg-white/5 cursor-pointer"
                     onClick={() => navigate(`/organizations/${organization.id}`)}
                   >
@@ -721,9 +777,15 @@ export default function Organizations() {
                     </td>
                     <td className="py-4 px-4 text-white">{organization.slug}</td>
                     <td className="py-4 px-4 text-sm text-gray-400">
-                     <div className="flex flex-col">
-                      {new Date(organization.createdAt).toLocaleDateString()}
-                      <p className="text-xs">{new Date(organization.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                      <div className="flex flex-col">
+                        {new Date(organization.createdAt).toLocaleDateString()}
+                        <p className="text-xs">
+                          {new Date(organization.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </p>
                       </div>
                     </td>
                     <td className="py-4 px-4 text-right">
@@ -733,8 +795,8 @@ export default function Organizations() {
                           size="sm"
                           className="text-gray-400 hover:text-white rounded-none"
                           onClick={(e) => {
-                            e.stopPropagation()
-                            openViewModal(organization)
+                            e.stopPropagation();
+                            openViewModal(organization);
                           }}
                         >
                           <Eye className="w-4 h-4" />
@@ -744,8 +806,8 @@ export default function Organizations() {
                           size="sm"
                           className="text-gray-400 hover:text-white rounded-none"
                           onClick={(e) => {
-                            e.stopPropagation()
-                            openEditModal(organization)
+                            e.stopPropagation();
+                            openEditModal(organization);
                           }}
                         >
                           <Edit className="w-4 h-4" />
@@ -755,8 +817,8 @@ export default function Organizations() {
                           size="sm"
                           className="text-red-400 hover:text-red-300 rounded-none"
                           onClick={(e) => {
-                            e.stopPropagation()
-                            openDeleteModal(organization)
+                            e.stopPropagation();
+                            openDeleteModal(organization);
                           }}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -805,7 +867,12 @@ export default function Organizations() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
-                    <Label htmlFor="organization-count" className="text-sm text-gray-400 font-light">Number of organizations</Label>
+                    <Label
+                      htmlFor="organization-count"
+                      className="text-sm text-gray-400 font-light"
+                    >
+                      Number of organizations
+                    </Label>
                     <Input
                       id="organization-count"
                       type="number"
@@ -817,8 +884,11 @@ export default function Organizations() {
                   </div>
                   <Button
                     onClick={() => {
-                      const count = parseInt((document.getElementById('organization-count') as HTMLInputElement)?.value || '5')
-                      handleSeedOrganizations(count)
+                      const count = parseInt(
+                        (document.getElementById('organization-count') as HTMLInputElement)
+                          ?.value || '5'
+                      );
+                      handleSeedOrganizations(count);
                     }}
                     disabled={isSeeding}
                     className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
@@ -837,7 +907,7 @@ export default function Organizations() {
                   </Button>
                 </div>
               </div>
-              
+
               {/* Team Seeding */}
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
@@ -846,7 +916,9 @@ export default function Organizations() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
-                    <Label htmlFor="team-count" className="text-sm text-gray-400 font-light">Number of teams</Label>
+                    <Label htmlFor="team-count" className="text-sm text-gray-400 font-light">
+                      Number of teams
+                    </Label>
                     <Input
                       id="team-count"
                       type="number"
@@ -858,8 +930,10 @@ export default function Organizations() {
                   </div>
                   <Button
                     onClick={() => {
-                      const count = parseInt((document.getElementById('team-count') as HTMLInputElement)?.value || '5')
-                      handleSeedTeams(count)
+                      const count = parseInt(
+                        (document.getElementById('team-count') as HTMLInputElement)?.value || '5'
+                      );
+                      handleSeedTeams(count);
                     }}
                     disabled={isSeeding}
                     className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
@@ -882,7 +956,7 @@ export default function Organizations() {
               {/* Seeding Logs */}
               {seedingLogs.length > 0 && (
                 <div className="mt-6">
-                  <Terminal 
+                  <Terminal
                     title="Organization Seeding Terminal"
                     lines={seedingLogs}
                     isRunning={isSeeding}
@@ -922,20 +996,28 @@ export default function Organizations() {
             </div>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="team-name" className="text-sm text-gray-400 font-light">Team Name</Label>
+                <Label htmlFor="team-name" className="text-sm text-gray-400 font-light">
+                  Team Name
+                </Label>
                 <Input
                   id="team-name"
                   value={createTeamFormData.name}
-                  onChange={(e) => setCreateTeamFormData(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) =>
+                    setCreateTeamFormData((prev) => ({ ...prev, name: e.target.value }))
+                  }
                   placeholder="Enter team name"
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
               <div>
-                <Label htmlFor="team-organization" className="text-sm text-gray-400 font-light">Organization</Label>
+                <Label htmlFor="team-organization" className="text-sm text-gray-400 font-light">
+                  Organization
+                </Label>
                 <Select
                   value={createTeamFormData.organizationId}
-                  onValueChange={(value) => setCreateTeamFormData(prev => ({ ...prev, organizationId: value }))}
+                  onValueChange={(value) =>
+                    setCreateTeamFormData((prev) => ({ ...prev, organizationId: value }))
+                  }
                 >
                   <SelectTrigger className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none">
                     <SelectValue placeholder="Select organization" />
@@ -954,8 +1036,8 @@ export default function Organizations() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  setShowCreateTeamModal(false)
-                  setCreateTeamFormData({ name: '', organizationId: '' })
+                  setShowCreateTeamModal(false);
+                  setCreateTeamFormData({ name: '', organizationId: '' });
                 }}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
@@ -989,7 +1071,9 @@ export default function Organizations() {
             </div>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="create-name" className="text-sm text-gray-400 font-light">Name</Label>
+                <Label htmlFor="create-name" className="text-sm text-gray-400 font-light">
+                  Name
+                </Label>
                 <Input
                   id="create-name"
                   value={createFormData.name}
@@ -999,7 +1083,9 @@ export default function Organizations() {
                 />
               </div>
               <div>
-                <Label htmlFor="create-slug" className="text-sm text-gray-400 font-light">Slug</Label>
+                <Label htmlFor="create-slug" className="text-sm text-gray-400 font-light">
+                  Slug
+                </Label>
                 <Input
                   id="create-slug"
                   value={createFormData.slug}
@@ -1016,8 +1102,8 @@ export default function Organizations() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  setShowCreateModal(false)
-                  setCreateFormData({ name: '', slug: '' })
+                  setShowCreateModal(false);
+                  setCreateFormData({ name: '', slug: '' });
                 }}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
@@ -1060,7 +1146,9 @@ export default function Organizations() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="edit-name" className="text-sm text-gray-400 font-light">Name</Label>
+                <Label htmlFor="edit-name" className="text-sm text-gray-400 font-light">
+                  Name
+                </Label>
                 <Input
                   id="edit-name"
                   value={editFormData.name}
@@ -1070,7 +1158,9 @@ export default function Organizations() {
                 />
               </div>
               <div>
-                <Label htmlFor="edit-slug" className="text-sm text-gray-400 font-light">Slug</Label>
+                <Label htmlFor="edit-slug" className="text-sm text-gray-400 font-light">
+                  Slug
+                </Label>
                 <Input
                   id="edit-slug"
                   value={editFormData.slug}
@@ -1087,8 +1177,8 @@ export default function Organizations() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  setShowEditModal(false)
-                  setEditFormData({ name: '', slug: '' })
+                  setShowEditModal(false);
+                  setEditFormData({ name: '', slug: '' });
                 }}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
@@ -1130,7 +1220,9 @@ export default function Organizations() {
                   <div className="text-sm text-gray-400">{selectedOrganization.slug}</div>
                 </div>
               </div>
-              <p className="text-gray-400">Are you sure you want to delete this organization? This action cannot be undone.</p>
+              <p className="text-gray-400">
+                Are you sure you want to delete this organization? This action cannot be undone.
+              </p>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
               <Button
@@ -1183,11 +1275,15 @@ export default function Organizations() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Created:</span>
-                  <span className="text-white text-sm">{new Date(selectedOrganization.createdAt).toLocaleString()}</span>
+                  <span className="text-white text-sm">
+                    {new Date(selectedOrganization.createdAt).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Updated:</span>
-                  <span className="text-white text-sm">{new Date(selectedOrganization.updatedAt).toLocaleString()}</span>
+                  <span className="text-white text-sm">
+                    {new Date(selectedOrganization.updatedAt).toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
@@ -1203,5 +1299,5 @@ export default function Organizations() {
         </div>
       )}
     </div>
-  )
+  );
 }

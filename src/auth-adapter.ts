@@ -1,6 +1,6 @@
-import { join, dirname } from 'path';
 import { existsSync, readFileSync } from 'fs';
 import { createJiti } from 'jiti';
+import { dirname, join } from 'path';
 import { pathToFileURL } from 'url';
 import { resolveIPLocation } from './geo-service.js';
 
@@ -15,15 +15,20 @@ export interface AuthAdapter {
   delete?: (...args: any[]) => Promise<any>;
   getUsers?: () => Promise<any[]>;
   getSessions?: () => Promise<any[]>;
-  findMany?: (options: { model: string; where?: any; limit?: number; offset?: number }) => Promise<any[]>;
+  findMany?: (options: {
+    model: string;
+    where?: any;
+    limit?: number;
+    offset?: number;
+  }) => Promise<any[]>;
 }
 
-let authInstance: any = null;
+const authInstance: any = null;
 let authAdapter: AuthAdapter | null = null;
 
 export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter | null> {
   try {
-    let authConfigPath = configPath ? configPath : await findAuthConfigPath();
+    const authConfigPath = configPath ? configPath : await findAuthConfigPath();
     if (!authConfigPath) {
       return null;
     }
@@ -33,21 +38,21 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
       if (!authConfigPath.startsWith('/')) {
         importPath = join(process.cwd(), authConfigPath);
       }
-      
+
       const jitiInstance = createJiti(importPath, {
         debug: true,
         fsCache: true,
         moduleCache: true,
-        interopDefault: true
+        interopDefault: true,
       });
       authModule = await jitiInstance.import(importPath);
     } catch (error: any) {
       console.warn('🔍 Debug: Failed to import auth module in adapter:', error.message);
       return null;
     }
-    
+
     const auth = authModule.auth || authModule.default;
-    
+
     if (!auth) {
       return null;
     }
@@ -63,17 +68,16 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
     } catch (error: any) {
       adapter = auth.adapter;
     }
-    
+
     if (!adapter) {
       return null;
     }
-    
 
     authAdapter = {
       createUser: async (data: any) => {
         try {
           const user = await adapter.create({
-            model: "user",
+            model: 'user',
             data: {
               createdAt: new Date(),
               updatedAt: new Date(),
@@ -81,27 +85,27 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
               name: data.name,
               email: data.email?.toLowerCase(),
               image: data.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
-            }
+            },
           });
-          
+
           if (data.password) {
             try {
               await adapter.create({
-                model: "account",
+                model: 'account',
                 data: {
                   userId: user.id,
-                  providerId: "credential",
+                  providerId: 'credential',
                   accountId: user.id,
                   password: data.password,
                   createdAt: new Date(),
                   updatedAt: new Date(),
-                }
+                },
               });
             } catch (accountError) {
               console.error('Error creating credential account:', accountError);
             }
           }
-          
+
           return user;
         } catch (error) {
           console.error('Error creating user:', error);
@@ -111,12 +115,12 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
       createSession: async (data: any) => {
         try {
           return await adapter.create({
-            model: "session",
+            model: 'session',
             data: {
               createdAt: new Date(),
               updatedAt: new Date(),
               ...data,
-            }
+            },
           });
         } catch (error) {
           console.error('Error creating session:', error);
@@ -126,12 +130,12 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
       createAccount: async (data: any) => {
         try {
           return await adapter.create({
-            model: "account",
+            model: 'account',
             data: {
               createdAt: new Date(),
               updatedAt: new Date(),
               ...data,
-            }
+            },
           });
         } catch (error) {
           console.error('Error creating account:', error);
@@ -141,12 +145,12 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
       createVerification: async (data: any) => {
         try {
           return await adapter.create({
-            model: "verification",
+            model: 'verification',
             data: {
               createdAt: new Date(),
               updatedAt: new Date(),
               ...data,
-            }
+            },
           });
         } catch (error) {
           console.error('Error creating verification:', error);
@@ -156,12 +160,12 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
       createOrganization: async (data: any) => {
         try {
           return await adapter.create({
-            model: "organization",
+            model: 'organization',
             data: {
               createdAt: new Date(),
               updatedAt: new Date(),
               ...data,
-            }
+            },
           });
         } catch (error) {
           console.error('Error creating organization:', error);
@@ -200,7 +204,12 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
           return [];
         }
       },
-      findMany: async (options: { model: string; where?: any; limit?: number; offset?: number }) => {
+      findMany: async (options: {
+        model: string;
+        where?: any;
+        limit?: number;
+        offset?: number;
+      }) => {
         try {
           if (typeof adapter.findMany === 'function') {
             return await adapter.findMany(options);
@@ -210,9 +219,9 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
           console.error('Error using findMany:', error);
           return [];
         }
-      }
+      },
     };
-    
+
     return { ...adapter, ...authAdapter };
   } catch (error) {
     console.error('Error loading auth adapter:', error);
@@ -234,7 +243,7 @@ async function findAuthConfigPath(): Promise<string | null> {
     'auth.config.ts',
     'auth.config.js',
     'auth.config.json',
-    'studio-config.json'
+    'studio-config.json',
   ];
 
   let currentDir = process.cwd();
@@ -244,7 +253,7 @@ async function findAuthConfigPath(): Promise<string | null> {
   while (currentDir && depth < maxDepth) {
     for (const configFile of possibleConfigFiles) {
       const configPath = join(currentDir, configFile);
-      
+
       if (existsSync(configPath)) {
         return configPath;
       }
@@ -263,14 +272,14 @@ async function findAuthConfigPath(): Promise<string | null> {
 
 export async function createMockUser(adapter: AuthAdapter, index: number) {
   const randomString = Math.random().toString(36).substring(2, 8);
-  
+
   const userData = {
     email: `user${randomString}@example.com`,
     name: `User ${index}`,
     emailVerified: true,
     image: `https://api.dicebear.com/7.x/avataaars/svg?seed=user${index}`,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   return await adapter.createUser(userData);
@@ -279,80 +288,159 @@ export async function createMockUser(adapter: AuthAdapter, index: number) {
 // Random IP address generators for different countries
 const countryIPRanges = [
   // United States
-  { country: 'United States', city: 'New York', region: 'NY', ranges: [
-    { min: 8, max: 8 }, { min: 24, max: 24 }, { min: 32, max: 32 }, { min: 64, max: 64 }
-  ]},
+  {
+    country: 'United States',
+    city: 'New York',
+    region: 'NY',
+    ranges: [
+      { min: 8, max: 8 },
+      { min: 24, max: 24 },
+      { min: 32, max: 32 },
+      { min: 64, max: 64 },
+    ],
+  },
   // United Kingdom
-  { country: 'United Kingdom', city: 'London', region: 'England', ranges: [
-    { min: 51, max: 51 }, { min: 77, max: 77 }, { min: 81, max: 81 }, { min: 86, max: 86 }
-  ]},
+  {
+    country: 'United Kingdom',
+    city: 'London',
+    region: 'England',
+    ranges: [
+      { min: 51, max: 51 },
+      { min: 77, max: 77 },
+      { min: 81, max: 81 },
+      { min: 86, max: 86 },
+    ],
+  },
   // Germany
-  { country: 'Germany', city: 'Berlin', region: 'Berlin', ranges: [
-    { min: 46, max: 46 }, { min: 78, max: 78 }, { min: 85, max: 85 }, { min: 134, max: 134 }
-  ]},
+  {
+    country: 'Germany',
+    city: 'Berlin',
+    region: 'Berlin',
+    ranges: [
+      { min: 46, max: 46 },
+      { min: 78, max: 78 },
+      { min: 85, max: 85 },
+      { min: 134, max: 134 },
+    ],
+  },
   // Japan
-  { country: 'Japan', city: 'Tokyo', region: 'Tokyo', ranges: [
-    { min: 126, max: 126 }, { min: 157, max: 157 }, { min: 202, max: 202 }, { min: 210, max: 210 }
-  ]},
+  {
+    country: 'Japan',
+    city: 'Tokyo',
+    region: 'Tokyo',
+    ranges: [
+      { min: 126, max: 126 },
+      { min: 157, max: 157 },
+      { min: 202, max: 202 },
+      { min: 210, max: 210 },
+    ],
+  },
   // Australia
-  { country: 'Australia', city: 'Sydney', region: 'NSW', ranges: [
-    { min: 101, max: 101 }, { min: 118, max: 118 }, { min: 125, max: 125 }, { min: 139, max: 139 }
-  ]},
+  {
+    country: 'Australia',
+    city: 'Sydney',
+    region: 'NSW',
+    ranges: [
+      { min: 101, max: 101 },
+      { min: 118, max: 118 },
+      { min: 125, max: 125 },
+      { min: 139, max: 139 },
+    ],
+  },
   // Canada
-  { country: 'Canada', city: 'Toronto', region: 'ON', ranges: [
-    { min: 24, max: 24 }, { min: 70, max: 70 }, { min: 142, max: 142 }, { min: 174, max: 174 }
-  ]},
+  {
+    country: 'Canada',
+    city: 'Toronto',
+    region: 'ON',
+    ranges: [
+      { min: 24, max: 24 },
+      { min: 70, max: 70 },
+      { min: 142, max: 142 },
+      { min: 174, max: 174 },
+    ],
+  },
   // France
-  { country: 'France', city: 'Paris', region: 'Île-de-France', ranges: [
-    { min: 37, max: 37 }, { min: 51, max: 51 }, { min: 78, max: 78 }, { min: 90, max: 90 }
-  ]},
+  {
+    country: 'France',
+    city: 'Paris',
+    region: 'Île-de-France',
+    ranges: [
+      { min: 37, max: 37 },
+      { min: 51, max: 51 },
+      { min: 78, max: 78 },
+      { min: 90, max: 90 },
+    ],
+  },
   // Brazil
-  { country: 'Brazil', city: 'São Paulo', region: 'SP', ranges: [
-    { min: 177, max: 177 }, { min: 179, max: 179 }, { min: 186, max: 186 }, { min: 200, max: 200 }
-  ]},
+  {
+    country: 'Brazil',
+    city: 'São Paulo',
+    region: 'SP',
+    ranges: [
+      { min: 177, max: 177 },
+      { min: 179, max: 179 },
+      { min: 186, max: 186 },
+      { min: 200, max: 200 },
+    ],
+  },
   // India
-  { country: 'India', city: 'Mumbai', region: 'Maharashtra', ranges: [
-    { min: 103, max: 103 }, { min: 117, max: 117 }, { min: 125, max: 125 }, { min: 180, max: 180 }
-  ]},
+  {
+    country: 'India',
+    city: 'Mumbai',
+    region: 'Maharashtra',
+    ranges: [
+      { min: 103, max: 103 },
+      { min: 117, max: 117 },
+      { min: 125, max: 125 },
+      { min: 180, max: 180 },
+    ],
+  },
   // South Korea
-  { country: 'South Korea', city: 'Seoul', region: 'Seoul', ranges: [
-    { min: 112, max: 112 }, { min: 114, max: 114 }, { min: 175, max: 175 }, { min: 203, max: 203 }
-  ]}
+  {
+    country: 'South Korea',
+    city: 'Seoul',
+    region: 'Seoul',
+    ranges: [
+      { min: 112, max: 112 },
+      { min: 114, max: 114 },
+      { min: 175, max: 175 },
+      { min: 203, max: 203 },
+    ],
+  },
 ];
 
 function generateRandomIP(): string {
   // Generate a random IP address from common ranges
   const commonRanges = [
-    { min: '8.0.0.0', max: '8.255.255.255' },    // US
-    { min: '24.0.0.0', max: '24.255.255.255' },  // US
-    { min: '2.0.0.0', max: '2.255.255.255' },    // UK
-    { min: '5.0.0.0', max: '5.255.255.255' },    // UK
-    { min: '46.0.0.0', max: '46.255.255.255' },  // Germany
-    { min: '62.0.0.0', max: '62.255.255.255' },  // Germany
-    { min: '37.0.0.0', max: '37.255.255.255' },  // France
+    { min: '8.0.0.0', max: '8.255.255.255' }, // US
+    { min: '24.0.0.0', max: '24.255.255.255' }, // US
+    { min: '2.0.0.0', max: '2.255.255.255' }, // UK
+    { min: '5.0.0.0', max: '5.255.255.255' }, // UK
+    { min: '46.0.0.0', max: '46.255.255.255' }, // Germany
+    { min: '62.0.0.0', max: '62.255.255.255' }, // Germany
+    { min: '37.0.0.0', max: '37.255.255.255' }, // France
     { min: '126.0.0.0', max: '126.255.255.255' }, // Japan
     { min: '210.0.0.0', max: '210.255.255.255' }, // Japan
-    { min: '1.0.0.0', max: '1.255.255.255' },    // Australia
-    { min: '27.0.0.0', max: '27.255.255.255' },  // Australia
+    { min: '1.0.0.0', max: '1.255.255.255' }, // Australia
+    { min: '27.0.0.0', max: '27.255.255.255' }, // Australia
     { min: '177.0.0.0', max: '177.255.255.255' }, // Brazil
     { min: '201.0.0.0', max: '201.255.255.255' }, // Brazil
     { min: '103.0.0.0', max: '103.255.255.255' }, // India
-    { min: '117.0.0.0', max: '117.255.255.255' }  // India
+    { min: '117.0.0.0', max: '117.255.255.255' }, // India
   ];
-  
+
   const range = commonRanges[Math.floor(Math.random() * commonRanges.length)];
   const secondOctet = Math.floor(Math.random() * 256);
   const thirdOctet = Math.floor(Math.random() * 256);
   const fourthOctet = Math.floor(Math.random() * 255) + 1;
-  
+
   return `${range.min.split('.')[0]}.${secondOctet}.${thirdOctet}.${fourthOctet}`;
 }
-
 
 export async function createMockSession(adapter: AuthAdapter, userId: string, index: number) {
   // Generate a random IP address
   const ipAddress = generateRandomIP();
-  
+
   const sessionData = {
     userId: userId,
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
@@ -360,7 +448,7 @@ export async function createMockSession(adapter: AuthAdapter, userId: string, in
     ipAddress: ipAddress,
     userAgent: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36`,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   return await adapter.createSession(sessionData);
@@ -380,7 +468,7 @@ export async function createMockAccount(adapter: AuthAdapter, userId: string, in
     id_token: `id_token_${index}`,
     session_state: `session_state_${index}`,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   return await adapter.createAccount(accountData);
@@ -392,7 +480,7 @@ export async function createMockVerification(adapter: AuthAdapter, userId: strin
     token: `verification_token_${index}_${Date.now()}`,
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   return await adapter.createVerification(verificationData);

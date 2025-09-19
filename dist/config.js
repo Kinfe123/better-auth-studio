@@ -1,6 +1,6 @@
-import { readFileSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
+import { existsSync, readFileSync } from 'fs';
 import { createJiti } from 'jiti';
+import { dirname, join } from 'path';
 import { pathToFileURL } from 'url';
 function resolveModuleWithExtensions(id, parent) {
     if (!id.startsWith('./') && !id.startsWith('../')) {
@@ -32,9 +32,9 @@ export async function findAuthConfig(configPath) {
                 join(cwd, configPath), // Direct relative to cwd
                 join(cwd, '..', configPath), // One level up
                 join(cwd, '../..', configPath), // Two levels up
-                configPath // Try as-is (in case it's already resolved)
+                configPath, // Try as-is (in case it's already resolved)
             ];
-            resolvedPath = possiblePaths.find(path => existsSync(path)) || join(cwd, configPath);
+            resolvedPath = possiblePaths.find((path) => existsSync(path)) || join(cwd, configPath);
         }
         if (existsSync(resolvedPath)) {
             try {
@@ -57,7 +57,7 @@ export async function findAuthConfig(configPath) {
                 join(cwd, 'packages', 'backend', 'src', 'auth.ts'),
                 join(cwd, 'packages', 'backend', 'auth.ts'),
                 join(cwd, 'src', 'auth.ts'),
-                join(cwd, 'auth.ts')
+                join(cwd, 'auth.ts'),
             ];
             for (const path of commonPaths) {
                 if (existsSync(path)) {
@@ -89,7 +89,7 @@ export async function findAuthConfig(configPath) {
         'better-auth.config.json',
         'auth.config.ts',
         'auth.config.js',
-        'auth.config.json'
+        'auth.config.json',
     ];
     let currentDir = process.cwd();
     const maxDepth = 10;
@@ -161,7 +161,7 @@ async function loadTypeScriptConfig(configPath) {
                         join(configDir, importName, 'index.ts'),
                         join(configDir, importName, 'index.js'),
                         join(configDir, importName, 'index.mjs'),
-                        join(configDir, importName, 'index.cjs')
+                        join(configDir, importName, 'index.cjs'),
                     ];
                     for (const path of possiblePaths) {
                         if (existsSync(path)) {
@@ -180,7 +180,7 @@ async function loadTypeScriptConfig(configPath) {
                         debug: true,
                         fsCache: true,
                         moduleCache: true,
-                        interopDefault: true
+                        interopDefault: true,
                     });
                     console.log({ jitiInstance });
                     const authModule = await jitiInstance.import(importPath);
@@ -194,25 +194,24 @@ async function loadTypeScriptConfig(configPath) {
                                 const config = {
                                     database: {
                                         type: 'drizzle',
-                                        adapter: 'drizzle-adapter'
+                                        adapter: 'drizzle-adapter',
                                     },
                                     emailAndPassword: {
-                                        enabled: true
+                                        enabled: true,
                                     },
                                     trustedOrigins: ['http://localhost:3000'],
                                     advanced: {
                                         defaultCookieAttributes: {
                                             sameSite: 'none',
                                             secure: true,
-                                            httpOnly: true
-                                        }
-                                    }
+                                            httpOnly: true,
+                                        },
+                                    },
                                 };
                                 return config;
                             }
                         }
-                        catch (contextError) {
-                        }
+                        catch (contextError) { }
                     }
                 }
                 catch (importError) {
@@ -221,19 +220,19 @@ async function loadTypeScriptConfig(configPath) {
                 const config = {
                     database: {
                         type: 'drizzle',
-                        adapter: 'drizzle-adapter'
+                        adapter: 'drizzle-adapter',
                     },
                     emailAndPassword: {
-                        enabled: true
+                        enabled: true,
                     },
                     trustedOrigins: ['http://localhost:3000'],
                     advanced: {
                         defaultCookieAttributes: {
                             sameSite: 'none',
                             secure: true,
-                            httpOnly: true
-                        }
-                    }
+                            httpOnly: true,
+                        },
+                    },
                 };
                 return config;
             }
@@ -346,7 +345,7 @@ export function extractBetterAuthConfig(content) {
                         name: pluginName,
                         version: 'unknown',
                         description: `${pluginName} plugin for Better Auth`,
-                        enabled: true
+                        enabled: true,
                     };
                     if (pluginName === 'organization') {
                         const orgConfigMatch = content.match(/organization\s*\(\s*\{[^}]*teams[^}]*enabled[^}]*\}/);
@@ -362,7 +361,7 @@ export function extractBetterAuthConfig(content) {
                 return {
                     plugins: plugins,
                     baseURL: 'http://localhost:3000',
-                    database: database
+                    database: database,
                 };
             }
         }
@@ -380,7 +379,7 @@ export function extractBetterAuthConfig(content) {
                     name: pluginName,
                     version: 'unknown',
                     description: `${pluginName} plugin for Better Auth`,
-                    enabled: true
+                    enabled: true,
                 };
                 if (pluginName === 'organization') {
                     const orgConfigMatch = content.match(/organization\s*\(\s*\{[^}]*teams[^}]*enabled[^}]*\}/);
@@ -396,7 +395,7 @@ export function extractBetterAuthConfig(content) {
             return {
                 plugins: plugins,
                 baseURL: 'http://localhost:3000',
-                database: database
+                database: database,
             };
         }
     }
@@ -414,7 +413,7 @@ export function extractBetterAuthConfig(content) {
         /betterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
         /BetterAuth\s*\(\s*({[\s\S]*?})\s*\)/,
         /betterAuth\s*\(\s*({[^{}]*baseURL[^{}]*database[^{}]*})\s*\)/,
-        /BetterAuth\s*\(\s*({[^{}]*baseURL[^{}]*database[^{}]*})\s*\)/
+        /BetterAuth\s*\(\s*({[^{}]*baseURL[^{}]*database[^{}]*})\s*\)/,
     ];
     for (let i = 0; i < patterns.length; i++) {
         const pattern = patterns[i];
@@ -468,7 +467,6 @@ export function extractBetterAuthConfig(content) {
             }
             catch (error) {
                 console.warn(`Failed to parse config pattern: ${error instanceof Error ? error.message : 'Unknown error'}`);
-                continue;
             }
         }
     }
@@ -516,7 +514,9 @@ function extractBetterAuthFields(config) {
             }
         }
         else if (config.database.constructor?.name === 'Database' ||
-            (typeof config.database === 'object' && config.database.constructor && config.database.constructor.name === 'Database')) {
+            (typeof config.database === 'object' &&
+                config.database.constructor &&
+                config.database.constructor.name === 'Database')) {
             dbType = 'sqlite';
             dbName = config.database.name || './better-auth.db';
             adapter = 'sqlite';
@@ -528,7 +528,10 @@ function extractBetterAuthFields(config) {
         }
         else if (config.database.provider) {
             const provider = config.database.provider;
-            if (provider === 'pg' || provider === 'postgresql' || provider === 'mysql' || provider === 'sqlite') {
+            if (provider === 'pg' ||
+                provider === 'postgresql' ||
+                provider === 'mysql' ||
+                provider === 'sqlite') {
                 adapter = 'drizzle';
                 dbType = provider === 'pg' ? 'postgresql' : provider;
             }
@@ -541,7 +544,10 @@ function extractBetterAuthFields(config) {
             adapter = config.database.adapter;
             if (config.database.provider) {
                 const provider = config.database.provider;
-                if (provider === 'pg' || provider === 'postgresql' || provider === 'mysql' || provider === 'sqlite') {
+                if (provider === 'pg' ||
+                    provider === 'postgresql' ||
+                    provider === 'mysql' ||
+                    provider === 'sqlite') {
                     adapter = 'drizzle';
                     dbType = provider === 'pg' ? 'postgresql' : provider;
                 }
@@ -557,7 +563,11 @@ function extractBetterAuthFields(config) {
             dbType = config.database.type;
             adapter = config.database.type;
         }
-        if (config.database.provider && (config.database.provider === 'postgresql' || config.database.provider === 'pg' || config.database.provider === 'mysql' || config.database.provider === 'sqlite')) {
+        if (config.database.provider &&
+            (config.database.provider === 'postgresql' ||
+                config.database.provider === 'pg' ||
+                config.database.provider === 'mysql' ||
+                config.database.provider === 'sqlite')) {
             adapter = 'drizzle';
             dbType = config.database.provider === 'pg' ? 'postgresql' : config.database.provider;
         }
@@ -568,7 +578,7 @@ function extractBetterAuthFields(config) {
             adapter: adapter,
             dialect: config.database.dialect,
             provider: config.database.provider,
-            casing: config.database.casing
+            casing: config.database.casing,
         };
     }
     if (config.socialProviders) {
@@ -579,7 +589,7 @@ function extractBetterAuthFields(config) {
                 clientId: config.clientId,
                 clientSecret: config.clientSecret,
                 redirectUri: config.redirectUri,
-                ...config
+                ...config,
             }));
         }
         else if (Array.isArray(config.socialProviders)) {
@@ -592,7 +602,7 @@ function extractBetterAuthFields(config) {
             type: provider.type || provider.id,
             clientId: provider.clientId || provider.client_id,
             clientSecret: provider.clientSecret || provider.client_secret,
-            ...provider
+            ...provider,
         }));
     }
     if (config.emailAndPassword) {
