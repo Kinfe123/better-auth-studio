@@ -207,11 +207,13 @@ async function loadTypeScriptConfig(configPath) {
                                         enabled: options.emailAndPassword?.enabled || false,
                                         ...options.emailAndPassword,
                                     },
-                                    socialProviders: options.socialProviders ? Object.keys(options.socialProviders).map(provider => ({
-                                        id: provider,
-                                        name: provider,
-                                        enabled: true
-                                    })) : [],
+                                    socialProviders: options.socialProviders
+                                        ? Object.keys(options.socialProviders).map((provider) => ({
+                                            id: provider,
+                                            name: provider,
+                                            enabled: true,
+                                        }))
+                                        : [],
                                     trustedOrigins: options.trustedOrigins || ['http://localhost:3000'],
                                     advanced: {
                                         defaultCookieAttributes: options.advanced?.defaultCookieAttributes || {

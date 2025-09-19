@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { existsSync, readFileSync } from 'fs';
 import { createJiti } from 'jiti';
 import { dirname, join } from 'path';
-import { pathToFileURL, fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { createMockAccount, createMockSession, createMockUser, createMockVerification, getAuthAdapter, } from './auth-adapter.js';
 import { getAuthData } from './data.js';
 import { initializeGeoService, resolveIPLocation, setGeoDbPath } from './geo-service.js';
