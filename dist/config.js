@@ -1,21 +1,20 @@
-import { loadConfig } from "c12";
-import { logger } from "better-auth";
-import path from "path";
 // @ts-expect-error
-import babelPresetTypeScript from "@babel/preset-typescript";
+import babelPresetReact from '@babel/preset-react';
 // @ts-expect-error
-import babelPresetReact from "@babel/preset-react";
-import fs, { existsSync } from "fs";
-import { BetterAuthError } from "better-auth";
-import { addSvelteKitEnvModules } from "./add-svelte-kit-env-modules.js";
-import { getTsconfigInfo } from "./get-tsconfig-info.js";
+import babelPresetTypeScript from '@babel/preset-typescript';
+import { BetterAuthError, logger } from 'better-auth';
+import { loadConfig } from 'c12';
+import fs, { existsSync } from 'fs';
+import path from 'path';
+import { addSvelteKitEnvModules } from './add-svelte-kit-env-modules.js';
+import { getTsconfigInfo } from './get-tsconfig-info.js';
 let possiblePaths = [
-    "auth.ts",
-    "auth.tsx",
-    "auth.js",
-    "auth.jsx",
-    "auth.server.js",
-    "auth.server.ts",
+    'auth.ts',
+    'auth.tsx',
+    'auth.js',
+    'auth.jsx',
+    'auth.server.js',
+    'auth.server.ts',
 ];
 possiblePaths = [
     ...possiblePaths,
@@ -32,7 +31,7 @@ possiblePaths = [
 function resolveReferencePath(configDir, refPath) {
     const resolvedPath = path.resolve(configDir, refPath);
     // If it ends with .json, treat as direct file reference
-    if (refPath.endsWith(".json")) {
+    if (refPath.endsWith('.json')) {
         return resolvedPath;
     }
     // If the exact path exists and is a file, use it
@@ -48,7 +47,7 @@ function resolveReferencePath(configDir, refPath) {
         }
     }
     // Otherwise, assume directory reference
-    return path.resolve(configDir, refPath, "tsconfig.json");
+    return path.resolve(configDir, refPath, 'tsconfig.json');
 }
 function getPathAliasesRecursive(tsconfigPath, visited = new Set()) {
     if (visited.has(tsconfigPath)) {
@@ -61,18 +60,16 @@ function getPathAliasesRecursive(tsconfigPath, visited = new Set()) {
     }
     try {
         const tsConfig = getTsconfigInfo(undefined, tsconfigPath);
-        const { paths = {}, baseUrl = "." } = tsConfig.compilerOptions || {};
+        const { paths = {}, baseUrl = '.' } = tsConfig.compilerOptions || {};
         const result = {};
         const configDir = path.dirname(tsconfigPath);
         const obj = Object.entries(paths);
         for (const [alias, aliasPaths] of obj) {
             for (const aliasedPath of aliasPaths) {
                 const resolvedBaseUrl = path.resolve(configDir, baseUrl);
-                const finalAlias = alias.slice(-1) === "*" ? alias.slice(0, -1) : alias;
-                const finalAliasedPath = aliasedPath.slice(-1) === "*"
-                    ? aliasedPath.slice(0, -1)
-                    : aliasedPath;
-                result[finalAlias || ""] = path.join(resolvedBaseUrl, finalAliasedPath);
+                const finalAlias = alias.slice(-1) === '*' ? alias.slice(0, -1) : alias;
+                const finalAliasedPath = aliasedPath.slice(-1) === '*' ? aliasedPath.slice(0, -1) : aliasedPath;
+                result[finalAlias || ''] = path.join(resolvedBaseUrl, finalAliasedPath);
             }
         }
         if (tsConfig.references) {
@@ -94,7 +91,7 @@ function getPathAliasesRecursive(tsconfigPath, visited = new Set()) {
     }
 }
 function getPathAliases(cwd) {
-    const tsConfigPath = path.join(cwd, "tsconfig.json");
+    const tsConfigPath = path.join(cwd, 'tsconfig.json');
     if (!fs.existsSync(tsConfigPath)) {
         return null;
     }
@@ -105,7 +102,7 @@ function getPathAliases(cwd) {
     }
     catch (error) {
         console.error(error);
-        throw new BetterAuthError("Error parsing tsconfig.json");
+        throw new BetterAuthError('Error parsing tsconfig.json');
     }
 }
 /**
@@ -124,20 +121,20 @@ const jitiOptions = (cwd) => {
                             allExtensions: true,
                         },
                     ],
-                    [babelPresetReact, { runtime: "automatic" }],
+                    [babelPresetReact, { runtime: 'automatic' }],
                 ],
             },
         },
-        extensions: [".ts", ".tsx", ".js", ".jsx"],
+        extensions: ['.ts', '.tsx', '.js', '.jsx'],
         alias,
     };
 };
 const isDefaultExport = (object) => {
-    return (typeof object === "object" &&
+    return (typeof object === 'object' &&
         object !== null &&
         !Array.isArray(object) &&
         Object.keys(object).length > 0 &&
-        "options" in object);
+        'options' in object);
 };
 export async function getConfig({ cwd, configPath, shouldThrowOnError = false, }) {
     try {
@@ -151,14 +148,14 @@ export async function getConfig({ cwd, configPath, shouldThrowOnError = false, }
                 dotenv: true,
                 jitiOptions: jitiOptions(cwd),
             });
-            if (!("auth" in config) && !isDefaultExport(config)) {
+            if (!('auth' in config) && !isDefaultExport(config)) {
                 if (shouldThrowOnError) {
                     throw new Error(`Couldn't read your auth config in ${resolvedPath}. Make sure to default export your auth instance or to export as a variable named auth.`);
                 }
                 logger.error(`[#better-auth]: Couldn't read your auth config in ${resolvedPath}. Make sure to default export your auth instance or to export as a variable named auth.`);
                 process.exit(1);
             }
-            configFile = "auth" in config ? config.auth?.options : config.options;
+            configFile = 'auth' in config ? config.auth?.options : config.options;
         }
         if (!configFile) {
             for (const possiblePath of possiblePaths) {
@@ -169,26 +166,25 @@ export async function getConfig({ cwd, configPath, shouldThrowOnError = false, }
                     });
                     const hasConfig = Object.keys(config).length > 0;
                     if (hasConfig) {
-                        configFile =
-                            config.auth?.options || config.default?.options || null;
+                        configFile = config.auth?.options || config.default?.options || null;
                         if (!configFile) {
                             if (shouldThrowOnError) {
                                 throw new Error("Couldn't read your auth config. Make sure to default export your auth instance or to export as a variable named auth.");
                             }
                             logger.error("[#better-auth]: Couldn't read your auth config.");
-                            console.log("");
-                            logger.info("[#better-auth]: Make sure to default export your auth instance or to export as a variable named auth.");
+                            console.log('');
+                            logger.info('[#better-auth]: Make sure to default export your auth instance or to export as a variable named auth.');
                             process.exit(1);
                         }
                         break;
                     }
                 }
                 catch (e) {
-                    if (typeof e === "object" &&
+                    if (typeof e === 'object' &&
                         e &&
-                        "message" in e &&
-                        typeof e.message === "string" &&
-                        e.message.includes("This module cannot be imported from a Client Component module")) {
+                        'message' in e &&
+                        typeof e.message === 'string' &&
+                        e.message.includes('This module cannot be imported from a Client Component module')) {
                         if (shouldThrowOnError) {
                             throw new Error(`Please remove import 'server-only' from your auth config file temporarily. The CLI cannot resolve the configuration with it included. You can re-add it after running the CLI.`);
                         }
@@ -206,11 +202,11 @@ export async function getConfig({ cwd, configPath, shouldThrowOnError = false, }
         return configFile;
     }
     catch (e) {
-        if (typeof e === "object" &&
+        if (typeof e === 'object' &&
             e &&
-            "message" in e &&
-            typeof e.message === "string" &&
-            e.message.includes("This module cannot be imported from a Client Component module")) {
+            'message' in e &&
+            typeof e.message === 'string' &&
+            e.message.includes('This module cannot be imported from a Client Component module')) {
             if (shouldThrowOnError) {
                 throw new Error(`Please remove import 'server-only' from your auth config file temporarily. The CLI cannot resolve the configuration with it included. You can re-add it after running the CLI.`);
             }
@@ -239,7 +235,6 @@ export async function findAuthConfig(configPath) {
             shouldThrowOnError: false,
         });
         if (betterAuthConfig) {
-            // Convert BetterAuthOptions to AuthConfig format
             const authConfig = {
                 database: {
                     type: betterAuthConfig.database ? 'drizzle' : 'unknown',
@@ -268,6 +263,7 @@ export async function findAuthConfig(configPath) {
                     },
                     ...betterAuthConfig.advanced,
                 },
+                plugins: betterAuthConfig?.options?.plugins || [],
             };
             return authConfig;
         }

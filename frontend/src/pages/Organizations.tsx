@@ -545,7 +545,6 @@ export default function Organizations() {
   if (pluginStatus && !pluginStatus.enabled) {
     return (
       <div className="space-y-6 p-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl text-white font-light">Organizations</h1>
@@ -553,7 +552,6 @@ export default function Organizations() {
           </div>
         </div>
 
-        {/* Plugin Setup Card */}
         <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-8">
           <div className="flex items-start space-x-4">
             <div className="flex-shrink-0">

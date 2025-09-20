@@ -1,4 +1,3 @@
-import type { BetterAuthOptions } from "better-auth";
 export interface AuthProvider {
     type: string;
     clientId?: string;
@@ -43,6 +42,7 @@ export interface AuthConfig {
         enabled: boolean;
     }>;
     trustedOrigins?: string[];
+    plugins?: any[];
     advanced?: {
         defaultCookieAttributes?: {
             sameSite?: string;
@@ -75,7 +75,7 @@ export declare function getConfig({ cwd, configPath, shouldThrowOnError, }: {
     cwd: string;
     configPath?: string;
     shouldThrowOnError?: boolean;
-}): Promise<BetterAuthOptions | null>;
+}): Promise<any>;
 export { possiblePaths };
 export declare function extractBetterAuthConfig(content: string): AuthConfig | null;
 export declare function findAuthConfig(configPath?: string): Promise<AuthConfig | null>;

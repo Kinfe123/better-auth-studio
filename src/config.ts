@@ -67,6 +67,7 @@ export interface AuthConfig {
     enabled: boolean;
   }>;
   trustedOrigins?: string[];
+  plugins?: any[]
   advanced?: {
     defaultCookieAttributes?: {
       sameSite?: string;
@@ -252,7 +253,7 @@ export async function getConfig({
   shouldThrowOnError?: boolean;
 }) {
   try {
-    let configFile: BetterAuthOptions | null = null;
+    let configFile: any | null = null;
     if (configPath) {
       let resolvedPath: string = path.join(cwd, configPath);
       if (existsSync(configPath)) resolvedPath = configPath; // If the configPath is a file, use it as is, as it means the path wasn't relative.
@@ -386,9 +387,7 @@ export async function findAuthConfig(configPath?: string): Promise<AuthConfig | 
       configPath,
       shouldThrowOnError: false,
     });
-
     if (betterAuthConfig) {
-      // Convert BetterAuthOptions to AuthConfig format
       const authConfig: AuthConfig = {
         database: {
           type: betterAuthConfig.database ? 'drizzle' : 'unknown',
@@ -417,6 +416,7 @@ export async function findAuthConfig(configPath?: string): Promise<AuthConfig | 
           },
           ...betterAuthConfig.advanced,
         },
+        plugins: betterAuthConfig?.options?.plugins || [],
       };
 
       return authConfig;

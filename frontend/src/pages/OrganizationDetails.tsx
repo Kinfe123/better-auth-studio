@@ -88,6 +88,7 @@ export default function OrganizationDetails() {
     'details'
   );
   const [teamsEnabled, setTeamsEnabled] = useState(false);
+  const [_, setOrganizationEnabled] = useState(false);
 
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showSeedMembersModal, setShowSeedMembersModal] = useState(false);
@@ -134,6 +135,7 @@ export default function OrganizationDetails() {
   useEffect(() => {
     if (orgId) {
       fetchOrganization();
+      checkOrganizationEnabled();
       checkTeamsEnabled();
       fetchInvitations();
       fetchMembers();
@@ -188,10 +190,21 @@ export default function OrganizationDetails() {
     try {
       const response = await fetch('/api/plugins/teams/status');
       const data = await response.json();
-      setTeamsEnabled(data.enabled);
+      setTeamsEnabled(data.organizationPlugin.options.teams.enabled);
     } catch (error) {
       console.error('Failed to check teams status:', error);
       setTeamsEnabled(false);
+    }
+  };
+
+  const checkOrganizationEnabled = async () => {
+    try {
+      const response = await fetch('/api/plugins/organization/status');
+      const data = await response.json();
+      setOrganizationEnabled(data.enabled);
+    } catch (error) {
+      console.error('Failed to check organization status:', error);
+      setOrganizationEnabled(false);
     }
   };
 
@@ -920,8 +933,87 @@ export default function OrganizationDetails() {
             </div>
           </div>
 
-          {/* Teams List */}
-          {teams.length > 0 ? (
+          {/* Teams Content */}
+          {!teamsEnabled ? (
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-8">
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <Users className="w-12 h-12 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl text-white font-light mb-2">Teams Feature Required</h3>
+                  <p className="text-gray-300 mb-6">
+                    To use Teams in Better Auth Studio, you need to enable the teams feature
+                    in your organization plugin configuration.
+                  </p>
+
+                  <div className="bg-black/50 border border-dashed border-white/20 rounded-none p-4 mb-6">
+                    <h4 className="text-white font-light mb-3">Follow these steps:</h4>
+                    <ol className="text-gray-300 space-y-2 text-sm list-decimal list-inside">
+                      <li>
+                        Update your auth configuration file to enable teams:
+                      </li>
+                    </ol>
+
+                    <div className="mt-4 bg-black/70 border border-dashed border-white/10 rounded-none p-3 overflow-x-auto">
+                      <pre className="text-sm text-gray-300">
+                        <span className="text-blue-400">import</span> {`{ betterAuth }`}{' '}
+                        <span className="text-blue-400">from</span>{' '}
+                        <span className="text-green-400">"better-auth"</span> <br />
+                        <span className="text-blue-400">import</span> {`{ organization }`}{' '}
+                        <span className="text-blue-400">from</span>{' '}
+                        <span className="text-green-400">"better-auth/plugins/organization"</span>{' '}
+                        <br />
+                        <span className="text-blue-400">export const</span>{' '}
+                        <span className="text-yellow-300">auth</span> ={' '}
+                        <span className="text-yellow-300">betterAuth</span>({`{`} <br />
+                        <span className="text-gray-500 pl-10">// ... your existing configuration</span>{' '}
+                        <br />
+                        <span className="text-red-300 pl-10">plugins</span>: [ <br />
+                        <span className="text-yellow-300 pl-12">organization</span>({`{`} <br />
+                        <span className="text-red-300 pl-16">teams</span>: {`{`} <br />
+                        <span className="text-yellow-300 pl-20">enabled</span>: <span className="text-blue-400">true</span> <br />
+                        <span className="pl-16">{`}`}</span> <br />
+                        <span className="pl-12">{`})`}</span> <br />
+                        <span className="pl-10">]</span> <br />
+                        {`}`}) <br />
+                      </pre>
+                    </div>
+
+                    <div className="mt-4">
+                      <p className="text-gray-400 text-sm">
+                        2. Run migrations to create the teams table
+                      </p>
+                    </div>
+                    <div className="mt-2">
+                      <p className="text-gray-400 text-sm">
+                        3. Restart your application to apply the changes
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={() => window.location.reload()}
+                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                  >
+                    Check Again
+                  </Button>
+
+                  <div className="mt-4 text-xs text-gray-500">
+                    Need help? Check the{' '}
+                    <a
+                      href="https://better-auth.com/docs/plugins/organization"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white hover:underline"
+                    >
+                      Better Auth Organization Plugin Documentation
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : teams.length > 0 ? (
             <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
               <div className="overflow-x-auto">
                 <table className="w-full">

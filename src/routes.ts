@@ -333,7 +333,6 @@ export function createRoutes(
       }
       databaseType = type;
     }
-
     const config = {
       appName: authConfig.appName || 'Better Auth',
       baseURL: authConfig.baseURL || process.env.BETTER_AUTH_URL,
@@ -459,7 +458,6 @@ export function createRoutes(
         enabled: authConfig.telemetry?.enabled ?? false,
         debug: authConfig.telemetry?.debug || false,
       },
-
       studio: {
         version: getStudioVersion(),
         nodeVersion: process.version,

@@ -1,4 +1,4 @@
-import { CheckCircle, Copy, Loader, Plus, Search, Users } from 'lucide-react';
+import { Building2, Loader, Plus, Search, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -86,10 +86,10 @@ export default function Teams() {
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success('Copied to clipboard');
-  };
+  // const copyToClipboard = (text: string) => {
+  //   navigator.clipboard.writeText(text);
+  //   toast.success('Copied to clipboard');
+  // };
 
   const filteredTeams = teams.filter((team) => {
     const matchesSearch =
@@ -120,107 +120,102 @@ export default function Teams() {
 
   if (!pluginStatus?.enabled) {
     return (
-      <div className="p-6 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-light tracking-tight text-white">Teams</h1>
-            <p className="text-gray-400 mt-1">Manage your organization teams</p>
-          </div>
+      <div className="space-y-6 p-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl text-white font-light">Teams</h1>
+          <p className="text-gray-400 mt-1">Manage your application organizations</p>
         </div>
+      </div>
 
-        {/* Plugin Setup Card */}
-        <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-8">
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0">
-              <Users className="w-12 h-12 text-white" />
+      <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-8">
+        <div className="flex items-start space-x-4">
+          <div className="flex-shrink-0">
+            <Building2 className="w-12 h-12 text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-xl text-white font-light mb-2">Organization Plugin Required</h3>
+            <p className="text-gray-300 mb-6">
+              To use Organizations in Better Auth Studio, you need to enable the organization
+              plugin in your Better Auth configuration.
+            </p>
+
+            <div className="bg-black/50 border border-dashed border-white/20 rounded-none p-4 mb-6">
+              <h4 className="text-white font-light mb-3">Follow these steps:</h4>
+              <ol className="text-gray-300 space-y-2 text-sm list-decimal list-inside">
+                <li>
+                  Import the plugin in your auth configuration file
+                  {pluginStatus?.configPath && (
+                    <span className="text-gray-400"> ({pluginStatus.configPath})</span>
+                  )}
+                  :
+                </li>
+              </ol>
+
+              <div className="mt-4 bg-black/70 border border-dashed border-white/10 rounded-none p-3 overflow-x-auto">
+                <pre className="text-sm text-gray-300">
+                  <span className="text-blue-400">import</span> {`{ betterAuth }`}{' '}
+                  <span className="text-blue-400">from</span>{' '}
+                  <span className="text-green-400">"better-auth"</span> <br />
+                  <span className="text-blue-400">import</span> {`{ organization }`}{' '}
+                  <span className="text-blue-400">from</span>{' '}
+                  <span className="text-green-400">"better-auth/plugins/organization"</span>{' '}
+                  <br />
+                  <span className="text-blue-400">export const</span>{' '}
+                  <span className="text-yellow-300">auth</span> ={' '}
+                  <span className="text-yellow-300">betterAuth</span>({`{`} <br />
+                  <span className="text-gray-500 pl-10">// ... your existing configuration</span>{' '}
+                  <br />
+                  <span className="text-red-300 pl-10">plugins</span>: [ <br />
+                  <span className="text-yellow-300 pl-12">organization({})</span>
+                  <br />
+                  <span className="pl-10">]</span> <br />
+                  {`}`}) <br />
+                </pre>
+              </div>
+
+              <div className="mt-4">
+                <p className="text-gray-400 text-sm">
+                  2. Do migrations to create the organizations table
+                </p>
+              </div>
+              <div className="mt-2">
+                <p className="text-gray-400 text-sm">
+                  3. Restart your application to apply the changes
+                </p>
+              </div>
             </div>
-            <div className="flex-1">
-              <h3 className="text-xl text-white font-light mb-2">Teams Plugin Required</h3>
-              <p className="text-gray-300 mb-6">
-                To use Teams in Better Auth Studio, you need to enable the teams plugin in your
-                Better Auth configuration.
-              </p>
 
-              <div className="bg-black/50 border border-dashed border-white/20 rounded-none p-4 mb-6">
-                <h4 className="text-white font-light mb-3">Follow these steps:</h4>
-                <ol className="text-gray-300 space-y-2 text-sm list-decimal list-inside">
-                  <li>
-                    Import the plugin in your auth configuration file
-                    {pluginStatus?.configPath && (
-                      <span className="text-gray-400"> ({pluginStatus.configPath})</span>
-                    )}
-                    :
-                  </li>
-                </ol>
-
-                <div className="mt-4 bg-black/70 border border-dashed border-white/10 rounded-none p-3 overflow-x-auto">
-                  <pre className="text-sm text-gray-300">
-                    <code>
-                      {`import { betterAuth } from "better-auth";
-import { teams } from "better-auth/plugins";
-
-export const auth = betterAuth({
-  // ... your existing config
-  plugins: [
-    teams({
-      enabled: true,
-      // Optional: customize team settings
-      // maxTeamsPerUser: 10,
-      // allowPublicTeams: false,
-    })
-  ]
-});`}
-                    </code>
-                  </pre>
-                </div>
-
-                <div className="mt-4 flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      copyToClipboard(`import { betterAuth } from "better-auth";
-import { teams } from "better-auth/plugins";
-
-export const auth = betterAuth({
-  // ... your existing config
-  plugins: [
-    teams({
-      enabled: true,
-      // Optional: customize team settings
-      // maxTeamsPerUser: 10,
-                  // allowPublicTeams: false,
-    })
-  ]
-});`)
-                    }
-                    className="border-dashed border-white/20 text-white hover:bg-white/10"
-                  >
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy Code
-                  </Button>
-                </div>
+            {pluginStatus?.availablePlugins && pluginStatus.availablePlugins.length > 0 && (
+              <div className="mb-4">
+                <p className="text-gray-400 text-sm">
+                  Currently enabled plugins: {pluginStatus.availablePlugins.join(', ')}
+                </p>
               </div>
+            )}
 
-              <div className="bg-blue-900/20 border border-dashed border-blue-500/30 rounded-none p-4">
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <h4 className="text-blue-400 font-light mb-1">Teams Plugin Features</h4>
-                    <ul className="text-blue-300 text-sm space-y-1">
-                      <li>• Create and manage teams within organizations</li>
-                      <li>• Assign team members with different roles</li>
-                      <li>• Control team permissions and access</li>
-                      <li>• Team-based collaboration and project management</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+            <Button
+              onClick={() => window.location.reload()}
+              className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+            >
+              Check Again
+            </Button>
+
+            <div className="mt-4 text-xs text-gray-500">
+              Need help? Check the{' '}
+              <a
+                href="https://better-auth.com/docs/plugins/organization"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:underline"
+              >
+                Better Auth Organization Plugin Documentation
+              </a>
             </div>
           </div>
         </div>
       </div>
+    </div>
     );
   }
 
