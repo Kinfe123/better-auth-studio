@@ -195,7 +195,7 @@ function getPackageVersion(): string {
 
 program
   .name('better-auth-studio')
-  .description('Better Auth Studio - GUI dashboard for Better Auth')
+  .description('Better Auth Studio - Admin dashboard for Better Auth')
   .version(getPackageVersion());
 
 program
