@@ -1030,6 +1030,338 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             res.status(500).json({ error: 'Failed to fetch database info' });
         }
     });
+    // Database Schema Visualization endpoint
+    // Schema definitions for different Better Auth plugins
+    const BASE_SCHEMA = {
+        user: {
+            name: 'user',
+            displayName: 'User',
+            fields: [
+                { name: 'id', type: 'string', required: true, primaryKey: true, description: 'Unique user identifier' },
+                { name: 'name', type: 'string', required: true, description: 'User display name' },
+                { name: 'email', type: 'string', required: true, unique: true, description: 'User email address' },
+                { name: 'emailVerified', type: 'boolean', required: true, defaultValue: false, description: 'Email verification status' },
+                { name: 'image', type: 'string', required: false, description: 'User profile image URL' },
+                { name: 'createdAt', type: 'date', required: true, description: 'Account creation timestamp' },
+                { name: 'updatedAt', type: 'date', required: true, description: 'Last update timestamp' },
+            ],
+            relationships: [
+                { type: 'one-to-many', target: 'session', field: 'userId' },
+                { type: 'one-to-many', target: 'account', field: 'userId' },
+            ]
+        },
+        session: {
+            name: 'session',
+            displayName: 'Session',
+            fields: [
+                { name: 'id', type: 'string', required: true, primaryKey: true, description: 'Unique session identifier' },
+                { name: 'expiresAt', type: 'date', required: true, description: 'Session expiration timestamp' },
+                { name: 'token', type: 'string', required: true, unique: true, description: 'Session token' },
+                { name: 'createdAt', type: 'date', required: true, description: 'Session creation timestamp' },
+                { name: 'updatedAt', type: 'date', required: true, description: 'Last update timestamp' },
+                { name: 'ipAddress', type: 'string', required: false, description: 'Client IP address' },
+                { name: 'userAgent', type: 'string', required: false, description: 'Client user agent' },
+                { name: 'userId', type: 'string', required: true, description: 'Associated user ID' },
+            ],
+            relationships: [
+                { type: 'many-to-one', target: 'user', field: 'userId' },
+            ]
+        },
+        account: {
+            name: 'account',
+            displayName: 'Account',
+            fields: [
+                { name: 'id', type: 'string', required: true, primaryKey: true, description: 'Unique account identifier' },
+                { name: 'accountId', type: 'string', required: true, description: 'Provider account ID' },
+                { name: 'providerId', type: 'string', required: true, description: 'Authentication provider' },
+                { name: 'userId', type: 'string', required: true, description: 'Associated user ID' },
+                { name: 'accessToken', type: 'string', required: false, description: 'OAuth access token' },
+                { name: 'refreshToken', type: 'string', required: false, description: 'OAuth refresh token' },
+                { name: 'idToken', type: 'string', required: false, description: 'OAuth ID token' },
+                { name: 'accessTokenExpiresAt', type: 'date', required: false, description: 'Access token expiration' },
+                { name: 'refreshTokenExpiresAt', type: 'date', required: false, description: 'Refresh token expiration' },
+                { name: 'scope', type: 'string', required: false, description: 'OAuth scope' },
+                { name: 'password', type: 'string', required: false, description: 'Hashed password (if applicable)' },
+                { name: 'createdAt', type: 'date', required: true, description: 'Account creation timestamp' },
+                { name: 'updatedAt', type: 'date', required: true, description: 'Last update timestamp' },
+            ],
+            relationships: [
+                { type: 'many-to-one', target: 'user', field: 'userId' },
+            ]
+        },
+        verification: {
+            name: 'verification',
+            displayName: 'Verification',
+            fields: [
+                { name: 'id', type: 'string', required: true, primaryKey: true, description: 'Unique verification identifier' },
+                { name: 'identifier', type: 'string', required: true, description: 'Email or phone being verified' },
+                { name: 'value', type: 'string', required: true, description: 'Verification code or token' },
+                { name: 'expiresAt', type: 'date', required: true, description: 'Verification expiration timestamp' },
+                { name: 'createdAt', type: 'date', required: true, description: 'Verification creation timestamp' },
+                { name: 'updatedAt', type: 'date', required: true, description: 'Last update timestamp' },
+            ],
+            relationships: []
+        }
+    };
+    // Plugin schemas that extend the base schema
+    const PLUGIN_SCHEMAS = {
+        organization: {
+            tables: {
+                organization: {
+                    name: 'organization',
+                    displayName: 'Organization',
+                    fields: [
+                        { name: 'id', type: 'string', required: true, primaryKey: true, description: 'Unique organization identifier' },
+                        { name: 'name', type: 'string', required: true, description: 'Organization name' },
+                        { name: 'slug', type: 'string', required: false, unique: true, description: 'Organization URL slug' },
+                        { name: 'logo', type: 'string', required: false, description: 'Organization logo URL' },
+                        { name: 'createdAt', type: 'date', required: true, description: 'Organization creation timestamp' },
+                        { name: 'metadata', type: 'json', required: false, description: 'Additional organization metadata' },
+                    ],
+                    relationships: [
+                        { type: 'one-to-many', target: 'member', field: 'organizationId' },
+                        { type: 'one-to-many', target: 'invitation', field: 'organizationId' },
+                    ]
+                },
+                member: {
+                    name: 'member',
+                    displayName: 'Member',
+                    fields: [
+                        { name: 'id', type: 'string', required: true, primaryKey: true, description: 'Unique member identifier' },
+                        { name: 'organizationId', type: 'string', required: true, description: 'Organization ID' },
+                        { name: 'userId', type: 'string', required: true, description: 'User ID' },
+                        { name: 'role', type: 'string', required: true, defaultValue: 'member', description: 'Member role in organization' },
+                        { name: 'createdAt', type: 'date', required: true, description: 'Membership creation timestamp' },
+                    ],
+                    relationships: [
+                        { type: 'many-to-one', target: 'organization', field: 'organizationId' },
+                        { type: 'many-to-one', target: 'user', field: 'userId' },
+                    ]
+                },
+                invitation: {
+                    name: 'invitation',
+                    displayName: 'Invitation',
+                    fields: [
+                        { name: 'id', type: 'string', required: true, primaryKey: true, description: 'Unique invitation identifier' },
+                        { name: 'organizationId', type: 'string', required: true, description: 'Organization ID' },
+                        { name: 'email', type: 'string', required: true, description: 'Invited email address' },
+                        { name: 'role', type: 'string', required: false, description: 'Invited role' },
+                        { name: 'status', type: 'string', required: true, defaultValue: 'pending', description: 'Invitation status' },
+                        { name: 'expiresAt', type: 'date', required: true, description: 'Invitation expiration timestamp' },
+                        { name: 'inviterId', type: 'string', required: true, description: 'User who sent the invitation' },
+                    ],
+                    relationships: [
+                        { type: 'many-to-one', target: 'organization', field: 'organizationId' },
+                        { type: 'many-to-one', target: 'user', field: 'inviterId' },
+                    ]
+                }
+            },
+            userExtensions: {
+                fields: [],
+                relationships: [
+                    { type: 'one-to-many', target: 'member', field: 'userId' },
+                    { type: 'one-to-many', target: 'invitation', field: 'inviterId' },
+                ]
+            },
+            sessionExtensions: {
+                fields: [
+                    { name: 'activeOrganizationId', type: 'string', required: false, description: 'Active organization ID' },
+                ],
+                relationships: []
+            }
+        },
+        teams: {
+            tables: {
+                team: {
+                    name: 'team',
+                    displayName: 'Team',
+                    fields: [
+                        { name: 'id', type: 'string', required: true, primaryKey: true, description: 'Unique team identifier' },
+                        { name: 'name', type: 'string', required: true, description: 'Team name' },
+                        { name: 'organizationId', type: 'string', required: true, description: 'Organization ID' },
+                        { name: 'createdAt', type: 'date', required: true, description: 'Team creation timestamp' },
+                        { name: 'updatedAt', type: 'date', required: false, description: 'Last update timestamp' },
+                    ],
+                    relationships: [
+                        { type: 'many-to-one', target: 'organization', field: 'organizationId' },
+                        { type: 'one-to-many', target: 'teamMember', field: 'teamId' },
+                    ]
+                },
+                teamMember: {
+                    name: 'teamMember',
+                    displayName: 'Team Member',
+                    fields: [
+                        { name: 'id', type: 'string', required: true, primaryKey: true, description: 'Unique team member identifier' },
+                        { name: 'teamId', type: 'string', required: true, description: 'Team ID' },
+                        { name: 'userId', type: 'string', required: true, description: 'User ID' },
+                        { name: 'createdAt', type: 'date', required: false, description: 'Team membership creation timestamp' },
+                    ],
+                    relationships: [
+                        { type: 'many-to-one', target: 'team', field: 'teamId' },
+                        { type: 'many-to-one', target: 'user', field: 'userId' },
+                    ]
+                }
+            },
+            organizationExtensions: {
+                relationships: [
+                    { type: 'one-to-many', target: 'team', field: 'organizationId' },
+                ]
+            },
+            sessionExtensions: {
+                fields: [
+                    { name: 'activeTeamId', type: 'string', required: false, description: 'Active team ID' },
+                ],
+                relationships: []
+            }
+        },
+        twoFactor: {
+            tables: {
+                twoFactor: {
+                    name: 'twoFactor',
+                    displayName: 'Two Factor',
+                    fields: [
+                        { name: 'id', type: 'string', required: true, primaryKey: true, description: 'Unique two-factor authentication identifier' },
+                        { name: 'userId', type: 'string', required: true, description: 'Associated user ID' },
+                        { name: 'secret', type: 'string', required: true, description: 'Two-factor authentication secret' },
+                        { name: 'backupCodes', type: 'string', required: true, description: 'Backup codes for two-factor authentication' },
+                    ],
+                    relationships: [
+                        { type: 'many-to-one', target: 'user', field: 'userId' },
+                    ]
+                }
+            },
+            userExtensions: {
+                fields: [
+                    { name: 'twoFactorEnabled', type: 'boolean', required: false, description: 'Two-factor authentication enabled status' },
+                ],
+                relationships: [
+                    { type: 'one-to-one', target: 'twoFactor', field: 'userId' },
+                ]
+            }
+        },
+        apiKey: {
+            tables: {
+                apiKey: {
+                    name: 'apiKey',
+                    displayName: 'API Key',
+                    fields: [
+                        { name: 'id', type: 'string', required: true, primaryKey: true, description: 'Unique API key identifier' },
+                        { name: 'userId', type: 'string', required: true, description: 'Associated user ID' },
+                        { name: 'name', type: 'string', required: true, description: 'API key name' },
+                        { name: 'key', type: 'string', required: true, unique: true, description: 'API key value' },
+                        { name: 'expiresAt', type: 'date', required: false, description: 'API key expiration timestamp' },
+                        { name: 'lastUsedAt', type: 'date', required: false, description: 'Last usage timestamp' },
+                        { name: 'createdAt', type: 'date', required: true, description: 'API key creation timestamp' },
+                    ],
+                    relationships: [
+                        { type: 'many-to-one', target: 'user', field: 'userId' },
+                    ]
+                }
+            },
+            userExtensions: {
+                relationships: [
+                    { type: 'one-to-many', target: 'apiKey', field: 'userId' },
+                ]
+            }
+        },
+        passkey: {
+            tables: {
+                passkey: {
+                    name: 'passkey',
+                    displayName: 'Passkey',
+                    fields: [
+                        { name: 'id', type: 'string', required: true, primaryKey: true, description: 'Unique passkey identifier' },
+                        { name: 'userId', type: 'string', required: true, description: 'Associated user ID' },
+                        { name: 'name', type: 'string', required: true, description: 'Passkey name' },
+                        { name: 'credentialId', type: 'string', required: true, unique: true, description: 'WebAuthn credential ID' },
+                        { name: 'publicKey', type: 'string', required: true, description: 'Public key' },
+                        { name: 'counter', type: 'number', required: true, description: 'Usage counter' },
+                        { name: 'createdAt', type: 'date', required: true, description: 'Passkey creation timestamp' },
+                        { name: 'lastUsedAt', type: 'date', required: false, description: 'Last usage timestamp' },
+                    ],
+                    relationships: [
+                        { type: 'many-to-one', target: 'user', field: 'userId' },
+                    ]
+                }
+            },
+            userExtensions: {
+                relationships: [
+                    { type: 'one-to-many', target: 'passkey', field: 'userId' },
+                ]
+            }
+        }
+    };
+    // Function to generate schema based on selected plugins
+    function generateSchema(selectedPlugins) {
+        const schema = { tables: [] };
+        // Start with base tables
+        const baseTables = Object.values(BASE_SCHEMA);
+        schema.tables.push(...baseTables);
+        // Apply plugin extensions
+        selectedPlugins.forEach(pluginName => {
+            const plugin = PLUGIN_SCHEMAS[pluginName];
+            if (!plugin)
+                return;
+            // Add plugin-specific tables
+            if (plugin.tables) {
+                Object.values(plugin.tables).forEach((table) => {
+                    schema.tables.push(table);
+                });
+            }
+            // Extend existing tables
+            if ('userExtensions' in plugin && plugin.userExtensions) {
+                const userTable = schema.tables.find((t) => t.name === 'user');
+                if (userTable && 'fields' in plugin.userExtensions) {
+                    userTable.fields.push(...(plugin.userExtensions.fields || []));
+                    userTable.relationships.push(...(plugin.userExtensions.relationships || []));
+                }
+            }
+            if ('sessionExtensions' in plugin && plugin.sessionExtensions) {
+                const sessionTable = schema.tables.find((t) => t.name === 'session');
+                if (sessionTable && 'fields' in plugin.sessionExtensions) {
+                    sessionTable.fields.push(...(plugin.sessionExtensions.fields || []));
+                    sessionTable.relationships.push(...(plugin.sessionExtensions.relationships || []));
+                }
+            }
+            if ('organizationExtensions' in plugin && plugin.organizationExtensions) {
+                const orgTable = schema.tables.find((t) => t.name === 'organization');
+                if (orgTable) {
+                    orgTable.relationships.push(...(plugin.organizationExtensions.relationships || []));
+                }
+            }
+        });
+        return schema;
+    }
+    router.get('/api/database/schema', async (req, res) => {
+        try {
+            const adapter = await getAuthAdapterWithConfig();
+            const { plugins } = req.query;
+            let selectedPlugins = [];
+            if (plugins && typeof plugins === 'string') {
+                selectedPlugins = plugins.split(',').filter(Boolean);
+            }
+            if (!adapter) {
+                return res.json({
+                    schema: null,
+                    error: 'Auth adapter not available',
+                });
+            }
+            const schema = generateSchema(selectedPlugins);
+            res.json({
+                success: true,
+                schema: schema,
+                availablePlugins: Object.keys(PLUGIN_SCHEMAS),
+                selectedPlugins: selectedPlugins,
+            });
+        }
+        catch (error) {
+            console.error('Error fetching database schema:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Failed to fetch database schema'
+            });
+        }
+    });
     router.get('/api/plugins/teams/status', async (req, res) => {
         try {
             const authConfigPath = configPath || (await findAuthConfigPath());
