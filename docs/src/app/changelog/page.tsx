@@ -14,15 +14,19 @@ export default function Changelog() {
           <h2 className="text-2xl font-light tracking-tight mb-6 text-white">LATEST RELEASE</h2>
           <PixelCard variant="highlight">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-light tracking-tight text-white">v1.0.21</h3>
-              <span className="text-sm font-light tracking-tight text-white/50">2025-01-28</span>
+              <h3 className="text-lg font-light tracking-tight text-white">v1.0.23</h3>
+              <span className="text-sm font-light tracking-tight text-white/50">2025-01-30</span>
             </div>
             <p className="text-sm font-light tracking-tight text-white/70 mb-4">
-              Major beta release with advanced session management, IP geolocation, modern tooling, and comprehensive CI/CD pipeline.
+              Major release introducing the Database Schema Visualizer - an interactive ReactFlow-powered tool for visualizing Better Auth database schemas with plugin-based configuration and real-time relationship mapping.
             </p>
             <div className="space-y-3">
               <h4 className="font-light tracking-tight text-white">✨ New Features</h4>
               <ul className="list-none space-y-2 text-sm font-light tracking-tight text-white/70 ml-4">
+                <li className="flex items-start">
+                  <span className="text-white/50 mr-3">•</span>
+                  <strong className="pr-2">Database Schema Visualizer</strong> with interactive ReactFlow diagrams, plugin-based configuration, and real-time relationship mapping
+                </li>
                 <li className="flex items-start">
                   <span className="text-white/50 mr-3">•</span>
                   <strong className="pr-2">Advanced Session Management</strong> with user-specific session seeding
@@ -58,14 +62,6 @@ export default function Changelog() {
                 <li className="flex items-start">
                   <span className="text-white/50 mr-3">•</span>
                   <strong className="pr-2">Session Seeding Functionality</strong> with user-specific session seeding 
-                </li>
-                <li className="flex items-start">
-                  <span className="text-white/50 mr-3">•</span>
-                  <strong className="pr-2">Database Schema Visualizer</strong> with interactive ReactFlow diagrams and plugin-based table visualization
-                </li>
-                <li className="flex items-start">
-                  <span className="text-white/50 mr-3">•</span>
-                  <strong className="pr-2">Biome Integration</strong> with comprehensive linting and formatting
                 </li>
                 <li className="flex items-start">
                   <span className="text-white/50 mr-3">•</span>
@@ -114,7 +110,7 @@ export default function Changelog() {
           <PixelCard className="mb-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-light tracking-tight text-white">Database Schema Visualizer</h3>
-              <span className="text-sm font-light tracking-tight text-white/50">2025-01-28</span>
+              <span className="text-sm font-light tracking-tight text-white/50">2025-01-30</span>
             </div>
             <div className="space-y-4">
               <div>
@@ -488,11 +484,31 @@ export default function Changelog() {
           <div className="space-y-4">
             <PixelCard>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-light tracking-tight text-white">v1.0.20-beta.5</h3>
+                <h3 className="text-lg font-light tracking-tight text-white">v1.0.22</h3>
+                <span className="text-sm font-light tracking-tight text-white/50">2025-01-29</span>
+              </div>
+              <p className="text-sm font-light tracking-tight text-white/70">
+                Release with enhanced session management and improved user interface components.
+              </p>
+            </PixelCard>
+            
+            <PixelCard>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-light tracking-tight text-white">v1.0.21</h3>
                 <span className="text-sm font-light tracking-tight text-white/50">2025-01-28</span>
               </div>
               <p className="text-sm font-light tracking-tight text-white/70">
                 Major beta release with advanced session management, IP geolocation, Biome integration, and comprehensive CI/CD pipeline.
+              </p>
+            </PixelCard>
+            
+            <PixelCard>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-light tracking-tight text-white">v1.0.20-beta.5</h3>
+                <span className="text-sm font-light tracking-tight text-white/50">2025-01-27</span>
+              </div>
+              <p className="text-sm font-light tracking-tight text-white/70">
+                Beta release with CSV export functionality and enhanced user management interface.
               </p>
             </PixelCard>
             
