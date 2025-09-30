@@ -1819,8 +1819,6 @@ export function createRoutes(
           configPath: authConfigPath,
           shouldThrowOnError: false,
         });
-
-        console.log({betterAuthConfig}) 
         if (betterAuthConfig) {
           const plugins = betterAuthConfig.plugins || [];
           const organizationPlugin = plugins.find(
