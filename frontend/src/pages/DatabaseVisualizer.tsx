@@ -114,7 +114,7 @@ export default function DatabaseVisualizer() {
         }));
         
         setAvailablePlugins(enabledPlugins);
-        setSelectedPlugins(enabledPlugins.map(p => p.name));
+        setSelectedPlugins(enabledPlugins.map((p: any) => p.name));
       }
     } catch (err) {
       console.error('Error fetching enabled plugins:', err);
