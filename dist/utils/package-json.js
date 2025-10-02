@@ -28,7 +28,7 @@ export async function getPackageVersion(packageName, cwd) {
     const searchDir = cwd || process.cwd();
     try {
         const projectRoot = findProjectRoot(searchDir);
-        const packageJsonPath = join(projectRoot, 'package.json');
+        const packageJsonPath = join(searchDir, 'package.json');
         if (existsSync(packageJsonPath)) {
             const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
             if (packageJson.dependencies?.[packageName]) {

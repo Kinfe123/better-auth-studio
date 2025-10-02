@@ -32,11 +32,9 @@ export async function getPackageVersion(packageName: string, cwd?: string): Prom
   
   try {
     const projectRoot = findProjectRoot(searchDir);
-    const packageJsonPath = join(projectRoot, 'package.json');
-    
+    const packageJsonPath = join(searchDir, 'package.json');
     if (existsSync(packageJsonPath)) {
       const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-      
       if (packageJson.dependencies?.[packageName]) {
         return packageJson.dependencies[packageName].replace(/[\^~]/, '');
       }

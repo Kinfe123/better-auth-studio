@@ -10,7 +10,6 @@ import {
   Key,
   Lock,
   Mail,
-  Package,
   Puzzle,
   RefreshCw,
   Settings as SettingsIcon,
@@ -159,32 +158,14 @@ interface PluginsResponse {
 }
 
 interface DatabaseInfo {
-  detected?: {
-    name: string;
-    version: string;
-    dialect: string;
-    adapter: string;
-    displayName: string;
-  } | null;
-  configured?: {
-    type: string;
-    dialect: string;
-    adapter: string;
-    url: string | null;
-    casing: string;
-    debugLogs: boolean;
-  } | null;
-  merged: {
-    name: string;
-    displayName: string;
-    version: string;
-    dialect: string;
-    adapter: string;
-    casing: string;
-    debugLogs: boolean;
-    hasUrl: boolean;
-    autoDetected: boolean;
-  };
+  success: boolean;
+  name: string;
+  version: string;
+  dialect: string;
+  adapter: string;
+  displayName: string;
+  autoDetected: boolean;
+  message?: string;
 }
 
 export default function Settings() {
@@ -276,17 +257,19 @@ export default function Settings() {
     try {
       const response = await fetch('/api/db');
       const data = await response.json();
-      if (data.success) {
-        setDatabaseInfo({
-          detected: data.detected,
-          configured: data.configured,
-          merged: data.merged,
-        });
-      } else {
-        console.error('Failed to fetch database info:', data.error);
-      }
+      setDatabaseInfo(data);
     } catch (error) {
       console.error('Failed to fetch database info:', error);
+      setDatabaseInfo({
+        success: false,
+        name: 'unknown',
+        version: 'unknown',
+        dialect: 'unknown',
+        adapter: 'unknown',
+        displayName: 'Unknown',
+        autoDetected: false,
+        message: 'Failed to fetch database info',
+      });
     }
   };
 
@@ -447,14 +430,7 @@ export default function Settings() {
             <CardTitle className="text-white flex items-center space-x-2">
               <Database className="w-5 h-5 text-white" />
               <span>Database</span>
-              {databaseInfo?.merged.autoDetected && (
-                <Badge
-                  variant="secondary"
-                  className="text-xs bg-green-900/50 border border-green-500/30 text-green-400 rounded-sm ml-2"
-                >
-                  Auto-detected
-                </Badge>
-              )}
+              
             </CardTitle>
             <CardDescription>Database connection and configuration</CardDescription>
           </CardHeader>
@@ -466,7 +442,7 @@ export default function Settings() {
                 <Database className="w-5 h-5 text-white" />
                 <div>
                   <p className="text-sm font-medium text-white">
-                    {databaseInfo?.merged.displayName || 
+                    {databaseInfo?.displayName || 
                      (config?.database?.type &&
                        config?.database?.type.charAt(0).toUpperCase() +
                          config?.database?.type.slice(1)) ||
@@ -475,29 +451,13 @@ export default function Settings() {
                   <p className="text-xs text-gray-400">Database Type</p>
                 </div>
               </div>
-              {(databaseInfo?.merged.name || config?.database?.type) && 
-               getConnectionStatus(databaseInfo?.merged.name || config?.database?.type || '')}
+              {(databaseInfo?.name || config?.database?.type) && 
+               getConnectionStatus(databaseInfo?.name || config?.database?.type || '')}
             </div>
 
-            {/* Version (if auto-detected) */}
-            {databaseInfo?.merged.version && databaseInfo.merged.version !== 'unknown' && (
-              <div className="flex items-center justify-between p-4 px-5 border-b border-white/15">
-                <div className="flex items-center space-x-3">
-                  <Package className="w-5 h-5 text-white" />
-                  <div>
-                    <p className="text-sm font-medium text-white">Version</p>
-                    <p className="text-xs text-gray-400">Package version</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-mono font-medium text-white">v{databaseInfo.merged.version}</p>
-                  <p className="text-xs text-gray-400">Installed</p>
-                </div>
-              </div>
-            )}
 
-            {/* Dialect */}
-            {(databaseInfo?.merged.dialect || config?.database?.dialect) && (
+            {(databaseInfo?.dialect || config?.database?.dialect) && 
+             databaseInfo?.dialect !== 'unknown' && (
               <div className="flex items-center justify-between p-4 px-5 border-b border-white/15">
                 <div className="flex items-center space-x-3">
                   <Database className="w-5 h-5 text-white" />
@@ -508,33 +468,14 @@ export default function Settings() {
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium text-white">
-                    {databaseInfo?.merged.dialect || config?.database?.dialect}
+                    {databaseInfo?.dialect || config?.database?.dialect}
                   </p>
                 </div>
               </div>
             )}
 
-            {/* Adapter */}
-            {(databaseInfo?.merged.adapter || config?.database?.adapter) && 
-             databaseInfo?.merged.adapter !== 'unknown' && (
-              <div className="flex items-center justify-between p-4 px-5 border-b border-white/15">
-                <div className="flex items-center space-x-3">
-                  <Package className="w-5 h-5 text-white" />
-                  <div>
-                    <p className="text-sm font-medium text-white">Adapter</p>
-                    <p className="text-xs text-gray-400">Database adapter</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-mono font-medium text-white">
-                    {databaseInfo?.merged.adapter || config?.database?.adapter}
-                  </p>
-                </div>
-              </div>
-            )}
 
-            {/* Connection URL Status */}
-            {(databaseInfo?.merged.hasUrl || config?.database?.url) && (
+            {config?.database?.url && (
               <div className="flex items-center justify-between p-4 px-5 border-b border-white/15">
                 <div className="flex items-center space-x-3">
                   <Key className="w-5 h-5 text-white" />
@@ -553,8 +494,8 @@ export default function Settings() {
               </div>
             )}
 
-            {/* Casing */}
-            {(databaseInfo?.merged.casing || config?.database?.casing) && (
+            {/* Casing (from config only) */}
+            {config?.database?.casing && (
               <div className="flex items-center justify-between p-4 px-5 border-b border-white/15">
                 <div className="flex items-center space-x-3">
                   <SettingsIcon className="w-5 h-5 text-white" />
@@ -565,38 +506,61 @@ export default function Settings() {
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium text-white capitalize">
-                    {databaseInfo?.merged.casing || config?.database?.casing}
+                    {config.database.casing}
                   </p>
                 </div>
               </div>
             )}
 
-            {/* Debug Logs */}
-            <div className="flex items-center justify-between p-4 px-5 border-b border-white/15">
-              <div className="flex items-center space-x-3">
-                <RefreshCw className="w-5 h-5 text-white" />
-                <div>
-                  <p className="text-sm font-medium text-white">Debug Logs</p>
-                  <p className="text-xs text-gray-400">Database debug logging</p>
+            {/* Debug Logs (from config only) */}
+            {config?.database && (
+              <div className="flex items-center justify-between p-4 px-5 border-b border-white/15">
+                <div className="flex items-center space-x-3">
+                  <RefreshCw className="w-5 h-5 text-white" />
+                  <div>
+                    <p className="text-sm font-medium text-white">Debug Logs</p>
+                    <p className="text-xs text-gray-400">Database debug logging</p>
+                  </div>
                 </div>
+                <Badge
+                  variant="secondary"
+                  className="text-xs group-hover:bg-white group-hover:border-black group-hover:text-black bg-black/70 border border-white/15 rounded-none border-dashed flex items-center gap-1"
+                >
+                  {config.database.debugLogs ? (
+                    <>
+                      <AlertTriangle className="w-3 h-3" />
+                      Enabled
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-3 h-3" />
+                      Disabled
+                    </>
+                  )}
+                </Badge>
               </div>
-              <Badge
-                variant="secondary"
-                className="text-xs group-hover:bg-white group-hover:border-black group-hover:text-black bg-black/70 border border-white/15 rounded-none border-dashed flex items-center gap-1"
-              >
-                {(databaseInfo?.merged.debugLogs || config?.database?.debugLogs) ? (
-                  <>
-                    <AlertTriangle className="w-3 h-3" />
-                    Enabled
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="w-3 h-3" />
-                    Disabled
-                  </>
-                )}
-              </Badge>
-            </div>
+            )}
+
+            {/* No Database Detected */}
+            {!databaseInfo?.success && !config?.database && (
+              <div className="flex items-center justify-between p-4 px-5">
+                <div className="flex items-center space-x-3">
+                  <AlertTriangle className="w-5 h-5 text-yellow-400" />
+                  <div>
+                    <p className="text-sm font-medium text-white">No Database Detected</p>
+                    <p className="text-xs text-gray-400">
+                      {databaseInfo?.message || 'No supported database packages found'}
+                    </p>
+                  </div>
+                </div>
+                <Badge
+                  variant="secondary"
+                  className="text-xs bg-yellow-900/50 border border-yellow-500/30 text-yellow-400 rounded-sm"
+                >
+                  Unknown
+                </Badge>
+              </div>
+            )}
           </CardContent>
         </Card>
 

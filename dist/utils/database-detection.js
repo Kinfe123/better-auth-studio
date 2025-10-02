@@ -1,14 +1,14 @@
 import { getPackageVersion } from "./package-json.js";
 const DATABASES = {
+    "drizzle-orm": "drizzle",
+    "@prisma/client": "prisma",
+    mongoose: "mongodb",
+    mongodb: "mongodb",
     pg: "postgresql",
     mysql: "mysql",
     mariadb: "mariadb",
     sqlite3: "sqlite",
     "better-sqlite3": "sqlite",
-    "@prisma/client": "prisma",
-    mongoose: "mongodb",
-    mongodb: "mongodb",
-    "drizzle-orm": "drizzle",
 };
 const DATABASE_DIALECTS = {
     postgresql: ["pg", "postgres"],
@@ -39,6 +39,7 @@ export async function detectDatabase(cwd) {
  */
 export async function detectDatabaseWithDialect(cwd) {
     const detection = await detectDatabase(cwd);
+    console.log('detection', detection);
     if (!detection)
         return undefined;
     let dialect = detection.name;
@@ -110,9 +111,14 @@ async function detectDrizzleDialect(cwd) {
         { pkg: "better-sqlite3", dialect: "sqlite" },
     ];
     for (const { pkg, dialect } of drizzleDrivers) {
-        const version = await getPackageVersion(pkg, cwd);
-        if (version)
-            return dialect;
+        try {
+            const version = await getPackageVersion(pkg, cwd);
+            if (version)
+                return dialect;
+        }
+        catch (error) {
+            console.error('Error detecting drizzle dialect:', error);
+        }
     }
     return undefined;
 }

@@ -306,7 +306,6 @@ export function createRoutes(
     let databaseAdapter = 'unknown';
     let databaseVersion = 'unknown';
 
-    // Try to detect database using the new utility
     try {
       const detectedDb = await detectDatabaseWithDialect();
       if (detectedDb) {
@@ -319,7 +318,6 @@ export function createRoutes(
       console.warn('Failed to auto-detect database:', error);
     }
 
-    // Fallback to existing detection logic if auto-detection fails
     if (databaseType === 'unknown') {
       const configPath = await findAuthConfigPath();
       if (configPath) {
@@ -341,6 +339,7 @@ export function createRoutes(
         databaseType = type;
       }
     }
+    console.log({social:authConfig.socialProviders})
     const config = {
       appName: authConfig.appName || 'Better Auth',
       baseURL: authConfig.baseURL || process.env.BETTER_AUTH_URL,
@@ -379,13 +378,13 @@ export function createRoutes(
       },
 
       socialProviders: authConfig.socialProviders
-        ? Object.entries(authConfig.socialProviders).map(([provider, config]: [string, any]) => ({
-            type: provider,
-            clientId: config.clientId,
-            clientSecret: config.clientSecret,
-            redirectUri: config.redirectUri,
-            ...config,
-          }))
+       ? authConfig.socialProviders.map((provider: any) => ({
+        type: provider.id,
+        clientId: provider.clientId,
+        clientSecret: provider.clientSecret,
+        redirectUri: provider.redirectUri,
+        ...provider,
+       }))
         : authConfig.providers || [],
 
       user: {
@@ -1237,58 +1236,28 @@ export function createRoutes(
     try {
       const detectedDb = await detectDatabaseWithDialect();
       
-      const authConfigPath = configPath || (await findAuthConfigPath());
-      let configDatabase = null;
-      
-      if (authConfigPath) {
-        try {
-          const authModule = await safeImportAuthConfig(authConfigPath);
-          const auth = authModule.auth || authModule.default;
-          if (auth?.options?.database) {
-            configDatabase = auth.options.database;
-          }
-        } catch (error) {
-          console.warn('Failed to load auth config for database info:', error);
-        }
-      }
-
-      const databaseInfo = {
-        detected: detectedDb ? {
+      if (detectedDb) {
+        res.json({
+          success: true,
           name: detectedDb.name,
           version: detectedDb.version,
           dialect: detectedDb.dialect,
           adapter: detectedDb.adapter,
           displayName: detectedDb.name.charAt(0).toUpperCase() + detectedDb.name.slice(1),
-        } : null,
-        configured: configDatabase ? {
-          type: authConfig.database?.type || 'unknown',
-          dialect: authConfig.database?.dialect || authConfig.database?.provider || 'unknown',
-          adapter: authConfig.database?.adapter || 'unknown',
-          url: authConfig.database?.url ? '••••••••' : null,
-          casing: authConfig.database?.casing || 'camel',
-          debugLogs: authConfig.database?.debugLogs || false,
-        } : null,
-        merged: {
-          name: detectedDb?.name || authConfig.database?.type || 'unknown',
-          displayName: detectedDb ? 
-            detectedDb.name.charAt(0).toUpperCase() + detectedDb.name.slice(1) : 
-            (authConfig.database?.type ? 
-              authConfig.database.type.charAt(0).toUpperCase() + authConfig.database.type.slice(1) : 
-              'Unknown'),
-          version: detectedDb?.version || 'unknown',
-          dialect: detectedDb?.dialect || authConfig.database?.dialect || authConfig.database?.provider || 'unknown',
-          adapter: detectedDb?.adapter || authConfig.database?.adapter || 'unknown',
-          casing: authConfig.database?.casing || 'camel',
-          debugLogs: authConfig.database?.debugLogs || false,
-          hasUrl: !!authConfig.database?.url,
-          autoDetected: !!detectedDb,
-        }
-      };
-
-      res.json({
-        success: true,
-        ...databaseInfo
-      });
+          autoDetected: true,
+        });
+      } else {
+        res.json({
+          success: false,
+          name: 'unknown',
+          version: 'unknown',
+          dialect: 'unknown',
+          adapter: 'unknown',
+          displayName: 'Unknown',
+          autoDetected: false,
+          message: 'No supported database packages detected',
+        });
+      }
     } catch (error) {
       console.error('Error getting database information:', error);
       res.status(500).json({ 

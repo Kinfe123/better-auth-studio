@@ -2,15 +2,16 @@ import { getPackageVersion } from "./package-json.js";
 import type { DetectionInfo, DatabaseDetectionResult } from "../types";
 
 const DATABASES: Record<string, string> = {
-	pg: "postgresql",
+	"drizzle-orm": "drizzle",
+	"@prisma/client": "prisma",
+    mongoose: "mongodb",
+	mongodb: "mongodb",
+    pg: "postgresql",
 	mysql: "mysql",
 	mariadb: "mariadb",
 	sqlite3: "sqlite",
 	"better-sqlite3": "sqlite",
-	"@prisma/client": "prisma",
-	mongoose: "mongodb",
-	mongodb: "mongodb",
-	"drizzle-orm": "drizzle",
+	
 };
 
 const DATABASE_DIALECTS: Record<string, string[]> = {
@@ -43,6 +44,7 @@ export async function detectDatabase(cwd?: string): Promise<DetectionInfo | unde
  */
 export async function detectDatabaseWithDialect(cwd?: string): Promise<DatabaseDetectionResult | undefined> {
 	const detection = await detectDatabase(cwd);
+    console.log('detection', detection);
 	if (!detection) return undefined;
 
 	let dialect = detection.name;
@@ -120,8 +122,11 @@ async function detectDrizzleDialect(cwd?: string): Promise<string | undefined> {
 	];
 
 	for (const { pkg, dialect } of drizzleDrivers) {
-		const version = await getPackageVersion(pkg, cwd);
+        try {
+        const version = await getPackageVersion(pkg, cwd);
 		if (version) return dialect;
+        } catch (error) {
+        }
 	}
 
 	return undefined;
