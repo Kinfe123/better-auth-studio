@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import Database from "better-sqlite3";
-import { organization } from "better-auth/plugins";
+import { admin, organization } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
 
@@ -33,6 +33,7 @@ export const auth = betterAuth({
         enabled: true,
       },
     }),
+    admin()
   ],
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days

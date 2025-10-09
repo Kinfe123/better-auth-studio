@@ -330,9 +330,23 @@ export default function Users() {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filter === 'all';
+    
+    let matchesFilter = true;
+    if (filter === 'verified') {
+      matchesFilter = user.emailVerified === true;
+    } else if (filter === 'unverified') {
+      matchesFilter = user.emailVerified === false;
+    } else if (filter === 'banned') {
+      matchesFilter = user.banned === true;
+    } else if (filter === 'active') {
+      matchesFilter = user.banned !== true;
+    }
+    
     return matchesSearch && matchesFilter;
   });
+
+  const bannedCount = users.filter(u => u.banned).length;
+  const activeCount = users.filter(u => !u.banned).length;
 
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
   const startIndex = (currentPage - 1) * usersPerPage;
@@ -360,6 +374,17 @@ export default function Users() {
         <div>
           <h1 className="text-2xl text-white font-light">Users ({users.length})</h1>
           <p className="text-gray-400 mt-1">Manage your application users</p>
+          <div className="flex items-center space-x-4 mt-2">
+            <span className="text-sm text-green-400">
+              ✓ {activeCount} Active
+            </span>
+            {bannedCount > 0 && (
+              <span className="text-sm text-red-400 flex items-center space-x-1">
+                <Ban className="w-3 h-3" />
+                <span>{bannedCount} Banned</span>
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex items-center space-x-3">
           <Button
@@ -405,9 +430,11 @@ export default function Users() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="all">All Users ({users.length})</SelectItem>
+              <SelectItem value="active">Active ({activeCount})</SelectItem>
+              <SelectItem value="banned">Banned ({bannedCount})</SelectItem>
+              <SelectItem value="verified">Email Verified</SelectItem>
+              <SelectItem value="unverified">Email Unverified</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -420,9 +447,7 @@ export default function Users() {
             <thead>
               <tr className="border-b border-dashed border-white/10">
                 <th className="text-left py-4 px-4 text-white font-light">User</th>
-                <th className="text-left py-4 px-4 text-white font-light">Email</th>
-                <th className="text-left py-4 px-4 text-white font-light">Email Verified</th>
-                <th className="text-left py-4 px-4 text-white font-light">Status</th>
+                <th className="text-left py-4 px-4 text-white font-light">Email Status</th>
                 <th className="text-left py-4 px-4 text-white font-light">Created</th>
                 <th className="text-right py-4 px-4 text-white font-light">Actions</th>
               </tr>
@@ -430,7 +455,7 @@ export default function Users() {
             <tbody>
               {currentUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 px-4 text-center">
+                  <td colSpan={4} className="py-12 px-4 text-center">
                     <div className="flex flex-col items-center space-y-4">
                       <div className="w-16 h-16 rounded-none border border-dashed border-white/20 bg-white/10 flex items-center justify-center">
                         <UsersIcon className="w-8 h-8 text-white/50" />
@@ -468,26 +493,47 @@ export default function Users() {
                 currentUsers.map((user) => (
                   <tr
                     key={user.id}
-                    className="border-b border-dashed border-white/5 hover:bg-white/5 cursor-pointer"
+                    className={`border-b border-dashed hover:bg-white/5 cursor-pointer ${
+                      user.banned 
+                        ? 'border-red-500/30 bg-red-500/5' 
+                        : 'border-white/5'
+                    }`}
                     onClick={() => navigate(`/users/${user.id}`)}
                   >
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-3">
-                        <img
-                          src={
-                            user.image ||
-                            `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`
-                          }
-                          alt={user.name}
-                          className="w-10 h-10 rounded-none border border-dashed border-white/20"
-                        />
-                        <div>
-                          <div className="text-white font-light">{user.name}</div>
-                          <div className="text-sm text-gray-400">ID: {user.id}</div>
+                        <div className="relative">
+                          <img
+                            src={
+                              user.image ||
+                              `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`
+                            }
+                            alt={user.name}
+                            className={`w-10 h-10 rounded-none border border-dashed ${
+                              user.banned ? 'border-red-400/50 opacity-60' : 'border-white/20'
+                            }`}
+                          />
+                          {user.banned && (
+                            <div className="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5">
+                              <Ban className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <div className="text-white font-light">{user.name}</div>
+                            {user.banned && (
+                              <span className="px-2 py-0.5 text-[10px] font-semibold bg-red-500/20 border border-red-500/50 text-red-400 rounded-sm uppercase tracking-wide">
+                                Banned
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-sm text-gray-400 mt-0.5">
+                            {user.email}
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-white">{user.email}</td>
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-2">
                         {user.emailVerified ? (
@@ -499,23 +545,6 @@ export default function Users() {
                           {user.emailVerified ? 'Verified' : 'Not Verified'}
                         </span>
                       </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center space-x-2">
-                        {user.banned ? (
-                          <Ban className="w-4 h-4 text-red-400" />
-                        ) : (
-                          <Check className="w-4 h-4 text-green-400" />
-                        )}
-                        <span className="text-sm text-gray-400">
-                          {user.banned ? 'Banned' : 'Active'}
-                        </span>
-                      </div>
-                      {user.banned && user.banReason && (
-                        <div className="text-xs text-red-400 mt-1">
-                          {user.banReason}
-                        </div>
-                      )}
                     </td>
                     <td className="py-4 px-4 text-sm text-gray-400">
                       <div className="flex flex-col">

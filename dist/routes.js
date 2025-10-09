@@ -868,6 +868,10 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                         emailVerified: user.emailVerified,
                         createdAt: user.createdAt,
                         updatedAt: user.updatedAt,
+                        role: user.role,
+                        banned: user.banned,
+                        banReason: user.banReason,
+                        banExpires: user.banExpires,
                     }));
                     res.json({ users: transformedUsers });
                     return;
@@ -885,6 +889,11 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 emailVerified: user.emailVerified,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
+                role: user.role,
+                banned: user.banned,
+                banReason: user.banReason,
+                banExpires: user.banExpires,
+                ...user,
             }));
             res.json({ users: transformedUsers });
         }
@@ -1139,7 +1148,6 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             });
         }
     });
-    // Admin Plugin Proxy Endpoints
     router.post('/api/admin/ban-user', async (req, res) => {
         try {
             const authConfigPath = configPath || (await findAuthConfigPath());
@@ -1169,19 +1177,19 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     error: 'Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration.'
                 });
             }
-            console.log({ auth });
-            if (!auth.api || !auth.api.banUser) {
-                return res.status(400).json({
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter || !adapter.update) {
+                return res.status(500).json({
                     success: false,
-                    error: 'Admin API methods not available. Make sure the admin plugin is properly configured.',
-                    adminPluginEnabled: true
+                    error: 'Auth adapter not available'
                 });
             }
-            const result = await auth.api.banUser({
-                body: req.body,
-                headers: req.headers
+            const bannedUser = await adapter.update({
+                model: 'user',
+                where: [{ field: 'id', value: req.body.userId }],
+                update: { banned: true, banReason: req.body.banReason, banExpires: req.body.banExpires }
             });
-            res.json(result);
+            res.json({ success: true, user: bannedUser });
         }
         catch (error) {
             console.error('Error banning user:', error);
@@ -1221,18 +1229,19 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                     error: 'Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration.'
                 });
             }
-            if (!auth.api || !auth.api.unbanUser) {
-                return res.status(400).json({
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter || !adapter.update) {
+                return res.status(500).json({
                     success: false,
-                    error: 'Admin API methods not available. Make sure the admin plugin is properly configured.',
-                    adminPluginEnabled: true
+                    error: 'Auth adapter not available'
                 });
             }
-            const result = await auth.api.unbanUser({
-                body: req.body,
-                headers: req.headers
+            const unbannedUser = await adapter.update({
+                model: 'user',
+                where: [{ field: 'id', value: req.body.userId }],
+                update: { banned: false, banReason: null, banExpires: null }
             });
-            res.json(result);
+            res.json({ success: true, user: unbannedUser });
         }
         catch (error) {
             console.error('Error unbanning user:', error);

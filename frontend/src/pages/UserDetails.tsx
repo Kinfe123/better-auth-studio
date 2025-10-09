@@ -535,6 +535,37 @@ export default function UserDetails() {
   return (
     <div className="min-h-screen bg-black w-full">
       <div className="w-full px-6 py-8">
+        {/* Banned User Warning Banner */}
+        {user.banned && (
+          <div className="mb-6 border-l-4 border-red-500 bg-red-500/10 p-4">
+            <div className="flex items-start space-x-3">
+              <Ban className="w-5 h-5 text-red-400 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="text-red-400 font-semibold text-sm uppercase tracking-wide">
+                  User Account Banned
+                </h3>
+                <p className="text-red-300 text-sm mt-1">
+                  This user has been banned from accessing the system.
+                </p>
+                {user.banReason && (
+                  <div className="mt-2 text-sm">
+                    <span className="text-gray-400">Reason: </span>
+                    <span className="text-red-300">{user.banReason}</span>
+                  </div>
+                )}
+                {user.banExpires && (
+                  <div className="mt-1 text-sm">
+                    <span className="text-gray-400">Ban expires: </span>
+                    <span className="text-yellow-400">
+                      {new Date(user.banExpires).toLocaleString()}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="mb-8">
           <Button
             variant="outline"

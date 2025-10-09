@@ -377,13 +377,13 @@ export function createRoutes(
       },
 
       socialProviders: authConfig.socialProviders
-       ? authConfig.socialProviders.map((provider: any) => ({
-        type: provider.id,
-        clientId: provider.clientId,
-        clientSecret: provider.clientSecret,
-        redirectUri: provider.redirectUri,
-        ...provider,
-       }))
+        ? authConfig.socialProviders.map((provider: any) => ({
+          type: provider.id,
+          clientId: provider.clientId,
+          clientSecret: provider.clientSecret,
+          redirectUri: provider.redirectUri,
+          ...provider,
+        }))
         : authConfig.providers || [],
 
       user: {
@@ -682,18 +682,18 @@ export function createRoutes(
           id: membership.id,
           organization: organization
             ? {
-                id: organization.id,
-                name: organization.name || 'Unknown Organization',
-                slug: organization.slug || 'unknown',
-                image: organization.image,
-                createdAt: organization.createdAt,
-              }
+              id: organization.id,
+              name: organization.name || 'Unknown Organization',
+              slug: organization.slug || 'unknown',
+              image: organization.image,
+              createdAt: organization.createdAt,
+            }
             : {
-                id: membership.organizationId,
-                name: 'Unknown Organization',
-                slug: 'unknown',
-                createdAt: membership.createdAt,
-              },
+              id: membership.organizationId,
+              name: 'Unknown Organization',
+              slug: 'unknown',
+              createdAt: membership.createdAt,
+            },
           role: membership.role || 'member',
           joinedAt: membership.createdAt,
         };
@@ -732,19 +732,19 @@ export function createRoutes(
           id: membership.id,
           team: team
             ? {
-                id: team.id,
-                name: team.name || 'Unknown Team',
-                organizationId: team.organizationId,
-                organizationName: organization
-                  ? organization.name || 'Unknown Organization'
-                  : 'Unknown Organization',
-              }
+              id: team.id,
+              name: team.name || 'Unknown Team',
+              organizationId: team.organizationId,
+              organizationName: organization
+                ? organization.name || 'Unknown Organization'
+                : 'Unknown Organization',
+            }
             : {
-                id: membership.teamId,
-                name: 'Unknown Team',
-                organizationId: 'unknown',
-                organizationName: 'Unknown Organization',
-              },
+              id: membership.teamId,
+              name: 'Unknown Team',
+              organizationId: 'unknown',
+              organizationName: 'Unknown Organization',
+            },
           role: membership.role || 'member',
           joinedAt: membership.createdAt,
         };
@@ -903,9 +903,9 @@ export function createRoutes(
         memberCount: team.memberCount || 0,
         organization: organization
           ? {
-              id: organization.id,
-              name: organization.name,
-            }
+            id: organization.id,
+            name: organization.name,
+          }
           : null,
       };
 
@@ -983,6 +983,10 @@ export function createRoutes(
             emailVerified: user.emailVerified,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
+            role: user.role,
+            banned: user.banned,
+            banReason: user.banReason,
+            banExpires: user.banExpires,
           }));
 
           res.json({ users: transformedUsers });
@@ -1002,6 +1006,11 @@ export function createRoutes(
         emailVerified: user.emailVerified,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
+        role: user.role,
+        banned: user.banned,
+        banReason: user.banReason,
+        banExpires: user.banExpires,
+        ...user,
       }));
 
       res.json({ users: transformedUsers });
@@ -1202,7 +1211,7 @@ export function createRoutes(
   router.get('/api/database/detect', async (req: Request, res: Response) => {
     try {
       const detectedDb = await detectDatabaseWithDialect();
-      
+
       if (detectedDb) {
         res.json({
           success: true,
@@ -1223,7 +1232,7 @@ export function createRoutes(
       }
     } catch (error) {
       console.error('Error detecting database:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         success: false,
         error: 'Failed to detect database',
         message: error instanceof Error ? error.message : 'Unknown error'
@@ -1234,7 +1243,7 @@ export function createRoutes(
   router.get('/api/db', async (req: Request, res: Response) => {
     try {
       const detectedDb = await detectDatabaseWithDialect();
-      
+
       if (detectedDb) {
         res.json({
           success: true,
@@ -1259,7 +1268,7 @@ export function createRoutes(
       }
     } catch (error) {
       console.error('Error getting database information:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         success: false,
         error: 'Failed to get database information',
         message: error instanceof Error ? error.message : 'Unknown error'
@@ -1267,7 +1276,6 @@ export function createRoutes(
     }
   });
 
-  // Admin Plugin Proxy Endpoints
   router.post('/api/admin/ban-user', async (req: Request, res: Response) => {
     try {
       const authConfigPath = configPath || (await findAuthConfigPath());
@@ -1294,29 +1302,27 @@ export function createRoutes(
 
       const plugins = auth.plugins || [];
       const adminPlugin = plugins.find((plugin: any) => plugin.id === 'admin');
-      
+
       if (!adminPlugin) {
         return res.status(400).json({
           success: false,
           error: 'Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration.'
         });
       }
-      console.log({auth})
-
-      if (!auth.api || !auth.api.banUser) {
-        return res.status(400).json({
+      const adapter = await getAuthAdapterWithConfig();
+      if (!adapter || !adapter.update) {
+        return res.status(500).json({
           success: false,
-          error: 'Admin API methods not available. Make sure the admin plugin is properly configured.',
-          adminPluginEnabled: true
+          error: 'Auth adapter not available'
         });
       }
-
-      const result = await auth.api.banUser({
-        body: req.body,
-        headers: req.headers
+      const bannedUser = await adapter.update({
+        model: 'user',
+        where: [{ field: 'id', value: req.body.userId }],
+        update: { banned: true, banReason: req.body.banReason, banExpires: req.body.banExpires }
       });
-
-      res.json(result);
+      
+      res.json({ success: true, user: bannedUser });
     } catch (error) {
       console.error('Error banning user:', error);
       res.status(500).json({
@@ -1325,6 +1331,8 @@ export function createRoutes(
         message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
+
+
   });
 
   router.post('/api/admin/unban-user', async (req: Request, res: Response) => {
@@ -1353,28 +1361,27 @@ export function createRoutes(
 
       const plugins = auth.plugins || [];
       const adminPlugin = plugins.find((plugin: any) => plugin.id === 'admin');
-      
+
       if (!adminPlugin) {
         return res.status(400).json({
           success: false,
           error: 'Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration.'
         });
       }
-
-      if (!auth.api || !auth.api.unbanUser) {
-        return res.status(400).json({
+      const adapter = await getAuthAdapterWithConfig();
+      if (!adapter || !adapter.update) {
+        return res.status(500).json({
           success: false,
-          error: 'Admin API methods not available. Make sure the admin plugin is properly configured.',
-          adminPluginEnabled: true
+          error: 'Auth adapter not available'
         });
       }
-
-      const result = await auth.api.unbanUser({
-        body: req.body,
-        headers: req.headers
+      const unbannedUser = await adapter.update({
+        model: 'user',
+        where: [{ field: 'id', value: req.body.userId }],
+        update: { banned: false, banReason: null, banExpires: null }
       });
+      res.json({ success: true, user: unbannedUser });
 
-      res.json(result);
     } catch (error) {
       console.error('Error unbanning user:', error);
       res.status(500).json({
@@ -1413,13 +1420,13 @@ export function createRoutes(
 
       const plugins = betterAuthConfig.plugins || [];
       const adminPlugin = plugins.find((plugin: any) => plugin.id === 'admin');
-      
+
       res.json({
         enabled: !!adminPlugin,
         configPath: authConfigPath,
         adminPlugin: adminPlugin || null,
-        message: adminPlugin 
-          ? 'Admin plugin is enabled. Use Better Auth admin endpoints directly for ban/unban functionality.' 
+        message: adminPlugin
+          ? 'Admin plugin is enabled. Use Better Auth admin endpoints directly for ban/unban functionality.'
           : 'Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration.'
       });
     } catch (error) {
@@ -2224,12 +2231,12 @@ export function createRoutes(
                     joinedAt: member.joinedAt || member.createdAt,
                     user: user
                       ? {
-                          id: user.id,
-                          name: user.name,
-                          email: user.email,
-                          image: user.image,
-                          emailVerified: user.emailVerified,
-                        }
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
+                        emailVerified: user.emailVerified,
+                      }
                       : null,
                   };
                 }
@@ -2682,12 +2689,12 @@ export function createRoutes(
                     joinedAt: member.joinedAt || member.createdAt,
                     user: user
                       ? {
-                          id: user.id,
-                          name: user.name,
-                          email: user.email,
-                          image: user.image,
-                          emailVerified: user.emailVerified,
-                        }
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
+                        emailVerified: user.emailVerified,
+                      }
                       : null,
                   };
                 }
