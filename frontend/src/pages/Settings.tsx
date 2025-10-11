@@ -18,7 +18,7 @@ import {
   XCircle,
   Zap,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useWebSocket } from '../hooks/useWebSocket';
@@ -190,7 +190,7 @@ export default function Settings() {
     }
   });
 
-  const fetchConfig = async () => {
+  const fetchConfig = useCallback(async () => {
     try {
       const response = await fetch('/api/config');
       const data = await response.json();
@@ -202,9 +202,9 @@ export default function Settings() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchSystemInfo = async () => {
+  const fetchSystemInfo = useCallback(async () => {
     try {
       const response = await fetch('/api/health');
       const data = await response.json();
@@ -224,9 +224,9 @@ export default function Settings() {
         uptime: '2h 15m',
       });
     }
-  };
+  }, [studioVersion]);
 
-  const fetchPlugins = async () => {
+  const fetchPlugins = useCallback(async () => {
     try {
       const response = await fetch('/api/plugins');
       const data = await response.json();
@@ -239,9 +239,9 @@ export default function Settings() {
         error: 'Failed to fetch plugins',
       });
     }
-  };
+  }, []);
 
-  const fetchDatabaseInfo = async () => {
+  const fetchDatabaseInfo = useCallback(async () => {
     try {
       const response = await fetch('/api/db');
       const data = await response.json();
@@ -258,7 +258,7 @@ export default function Settings() {
         message: 'Failed to fetch database info',
       });
     }
-  };
+  }, []);
 
   const getConnectionStatus = (type: string) => {
     switch (type?.toLowerCase()) {

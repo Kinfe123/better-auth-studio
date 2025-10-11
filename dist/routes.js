@@ -821,15 +821,28 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             try {
                 const adapter = await getAuthAdapterWithConfig();
                 if (adapter && typeof adapter.findMany === 'function') {
-                    const allUsers = await adapter.findMany({ model: 'user', limit: limit });
+                    // If limit is very high (like 10000), fetch all users without pagination
+                    const shouldPaginate = limit < 1000;
+                    const fetchLimit = shouldPaginate ? limit : undefined;
+                    const allUsers = await adapter.findMany({
+                        model: 'user',
+                        limit: fetchLimit
+                    });
                     let filteredUsers = allUsers || [];
                     if (search) {
                         filteredUsers = filteredUsers.filter((user) => user.email?.toLowerCase().includes(search.toLowerCase()) ||
                             user.name?.toLowerCase().includes(search.toLowerCase()));
                     }
-                    const startIndex = (page - 1) * limit;
-                    const endIndex = startIndex + limit;
-                    const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+                    let paginatedUsers;
+                    if (shouldPaginate) {
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = startIndex + limit;
+                        paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+                    }
+                    else {
+                        // Return all users if limit is high
+                        paginatedUsers = filteredUsers;
+                    }
                     const transformedUsers = paginatedUsers.map((user) => ({
                         id: user.id,
                         email: user.email,
@@ -2590,47 +2603,16 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             try {
                 const adapter = await getAuthAdapterWithConfig();
                 if (adapter && typeof adapter.findMany === 'function') {
-                    const allOrganizations = await adapter.findMany({ model: 'organization' });
-                    let filteredOrganizations = allOrganizations || [];
-                    if (search) {
-                        filteredOrganizations = filteredOrganizations.filter((org) => org.name?.toLowerCase().includes(search.toLowerCase()) ||
-                            org.slug?.toLowerCase().includes(search.toLowerCase()));
-                    }
-                    const startIndex = (page - 1) * limit;
-                    const endIndex = startIndex + limit;
-                    const paginatedOrganizations = filteredOrganizations.slice(startIndex, endIndex);
-                    const transformedOrganizations = paginatedOrganizations.map((org) => ({
-                        id: org.id,
-                        name: org.name,
-                        slug: org.slug,
-                        metadata: org.metadata,
-                        createdAt: org.createdAt,
-                        updatedAt: org.updatedAt,
-                    }));
-                    res.json({ organizations: transformedOrganizations });
-                    return;
+                    const allOrganizations = await adapter.findMany({
+                        model: 'organization',
+                        limit: limit
+                    });
+                    res.json({ organizations: allOrganizations });
                 }
             }
-            catch (_adapterError) { }
-            const mockOrganizations = [
-                {
-                    id: 'org_1',
-                    name: 'Acme Corp',
-                    slug: 'acme-corp',
-                    metadata: { status: 'active' },
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                },
-                {
-                    id: 'org_2',
-                    name: 'Tech Solutions',
-                    slug: 'tech-solutions',
-                    metadata: { status: 'active' },
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                },
-            ];
-            res.json({ organizations: mockOrganizations });
+            catch (_error) {
+                res.status(500).json({ error: 'Failed to fetch organizations' });
+            }
         }
         catch (_error) {
             res.status(500).json({ error: 'Failed to fetch organizations' });

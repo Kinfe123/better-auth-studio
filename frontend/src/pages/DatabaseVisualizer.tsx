@@ -100,10 +100,34 @@ export default function DatabaseVisualizer() {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
-  const getPluginColor = (pluginId: string): string => {
+  const getPluginColor = useCallback((pluginId: string): string => {
     const plugin = AVAILABLE_PLUGINS.find((p) => p.name === pluginId);
     return plugin?.color || 'bg-gray-500';
-  };
+  }, []);
+
+  const getPluginForField = useCallback((
+    tableName: string,
+    _fieldName: string,
+    plugins: string[]
+  ): string => {
+    if (
+      tableName === 'user' ||
+      tableName === 'session' ||
+      tableName === 'account' ||
+      tableName === 'verification'
+    ) {
+      return 'core';
+    }
+
+    for (const plugin of plugins) {
+      if (tableName === plugin || tableName.includes(plugin)) {
+        return plugin;
+      }
+    }
+
+    return 'core';
+  }, []);
+
   const fetchEnabledPlugins = useCallback(async () => {
     try {
       const response = await fetch('/api/plugins');
@@ -187,28 +211,7 @@ export default function DatabaseVisualizer() {
         } as TableNodeData,
       });
     });
-    const getPluginForField = (
-      tableName: string,
-      _fieldName: string,
-      plugins: string[]
-    ): string => {
-      if (
-        tableName === 'user' ||
-        tableName === 'session' ||
-        tableName === 'account' ||
-        tableName === 'verification'
-      ) {
-        return 'core';
-      }
-
-      for (const plugin of plugins) {
-        if (tableName === plugin || tableName.includes(plugin)) {
-          return plugin;
-        }
-      }
-
-      return 'core';
-    };
+    
     schema.tables.forEach((table) => {
       table.relationships.forEach((rel) => {
         if (rel.type === 'many-to-one') {
@@ -261,7 +264,7 @@ export default function DatabaseVisualizer() {
 
     setNodes(newNodes);
     setEdges(newEdges);
-  }, [schema, selectedPlugins, setNodes, setEdges]);
+  }, [schema, selectedPlugins, setNodes, setEdges, getPluginForField]);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -306,32 +309,20 @@ export default function DatabaseVisualizer() {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <Database className="w-8 h-8 text-white" />
+            <Database className="w-6 h-6 text-white" />
             <h1 className="text-2xl font-normal text-white">Schema Visualizer</h1>
           </div>
-
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowPluginLabels(!showPluginLabels)}
-              className="flex items-center space-x-2 rounded-none border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black"
-            >
-              {showPluginLabels ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              <span>Plugin Labels</span>
-            </Button>
-          </div>
         </div>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-black dark:text-white">
           Visualize your Better Auth database schema with interactive tables and relationships.
         </p>
       </div>
 
       <div className="flex-1 grid grid-cols-4 gap-6">
         <div className="col-span-1">
-          <Card className="rounded-none bg-white dark:bg-black border-gray-200 dark:border-gray-700 h-fit shadow-sm">
+          <Card className="rounded-none bg-black border-gray-200 dark:border-gray-700 h-fit shadow-sm">
             <CardHeader>
-              <CardTitle className="text-gray-900 dark:text-white flex items-center space-x-2">
+              <CardTitle className="text-white flex items-center space-x-2">
                 <Settings className="w-5 h-5" />
                 <span>Plugins</span>
               </CardTitle>
@@ -350,15 +341,15 @@ export default function DatabaseVisualizer() {
                     <div className="flex-1">
                       <label
                         htmlFor={plugin.name}
-                        className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer"
+                        className="text-sm font-medium text-white cursor-pointer"
                       >
-                        {plugin.displayName}
+                        {plugin.displayName.slice(0, 1).toUpperCase() + plugin.displayName.slice(1).replace('-', ' ')}
                       </label>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-xs text-white">
                         {plugin.description}
                       </p>
                     </div>
-                    <div className={`w-3 h-3 rounded-full ${plugin.color}`} />
+                    {/* <div className={`w-3 h-3 rounded-full ${plugin.color}`} /> */}
                   </div>
                 ))
               ) : (
@@ -370,7 +361,7 @@ export default function DatabaseVisualizer() {
           </Card>
 
           {schema && (
-            <Card className="rounded-none bg-white dark:bg-black border-gray-200 dark:border-gray-700 mt-4 shadow-sm">
+            <Card className="rounded-none bg-black border-gray-200 dark:border-gray-700 mt-4 shadow-sm">
               <CardHeader>
                 <CardTitle className="text-gray-900 dark:text-white text-sm">Schema Info</CardTitle>
               </CardHeader>
