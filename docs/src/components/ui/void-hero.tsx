@@ -134,7 +134,7 @@ function Scene() {
 function Navbar({ links }: { links: Array<{ name: string; href: string }> }) {
 
   return (
-    <nav className="absolute top-4 left-4 right-4 md:top-10 md:left-10 md:right-10 z-30">
+    <nav className="absolute font-mono top-4 left-4 right-4 md:top-10 md:left-10 md:right-10 z-30">
       <ul className="hidden md:flex gap-8 lg:gap-12">
         {links.map((link) => (
           <li key={link.name}>
