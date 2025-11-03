@@ -46,24 +46,17 @@ export async function getAuthAdapter(configPath) {
         }
         authAdapter = {
             createUser: async (data) => {
-                let user = null;
-                try {
-                    user = await adapter.create({
-                        model: 'user',
-                        data: {
-                            createdAt: new Date(),
-                            updatedAt: new Date(),
-                            emailVerified: false,
-                            name: data.name,
-                            email: data.email?.toLowerCase(),
-                            image: data.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
-                        },
-                    });
-                }
-                catch (_error) {
-                    console.error('Error creating user', _error);
-                    return null;
-                }
+                const user = await adapter.create({
+                    model: 'user',
+                    data: {
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                        emailVerified: false,
+                        name: data.name,
+                        email: data.email?.toLowerCase(),
+                        image: data.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
+                    },
+                });
                 if (data.password) {
                     try {
                         await adapter.create({
