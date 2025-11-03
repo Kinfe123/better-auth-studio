@@ -539,13 +539,11 @@ export default function UserDetails() {
         <Button
             variant="outline"
             onClick={() => navigate('/users')}
-            className="mb-4 border-none text-white"
+            className="mb-4 flex justify-start items-start text-left border-none text-white"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Users
           </Button>
-
-
         {user.banned && (
           <div className="mb-6 border-l-4 border-red-500 bg-red-500/10 p-4">
             <div className="flex items-start space-x-3">
