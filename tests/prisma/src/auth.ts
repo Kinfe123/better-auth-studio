@@ -1,12 +1,11 @@
 import { betterAuth } from "better-auth";
-import Database from "better-sqlite3";
 import { admin, organization } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
 
 export const auth = betterAuth({
   secret: process.env.AUTH_SECRET || "better-auth-secret-123456789",
-  database: new Database("./better-auth.db"),
+  // database: new Database("./better-auth.db"),
   socialProviders: process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET ? {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID,
