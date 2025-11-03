@@ -439,12 +439,12 @@ export default function DatabaseVisualizer() {
             <div className="flex items-center justify-center mb-4">
               <div className="relative">
                 <Database className="w-16 h-16 text-white opacity-50" />
-                <Sparkles className="w-8 h-8 text-white absolute -top-2 -right-2 animate-pulse" />
+                <Sparkles className="w-8 h-8 text-white opacity-80 absolute -top-2 -right-2 animate-pulse" />
               </div>
             </div>
             <h2 className="text-3xl font-mono uppercase font-light text-white mb-3">Coming Soon</h2>
             <p className="text-lg text-gray-300 font-light mb-6 leading-relaxed">
-              We're working hard to bring you an interactive database schema visualizer. This
+              We will be having this feature soon. This
               feature will allow you to explore your Better Auth database structure with beautiful,
               interactive graphs showing all tables, relationships, and data flow.
             </p>
