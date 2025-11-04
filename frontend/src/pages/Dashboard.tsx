@@ -752,88 +752,78 @@ export default function Dashboard() {
               {/* Bottom-right corner */}
               <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/30" />
               <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/30" />
-              <div className="flex items-center justify-between mb-2 relative">
-                <button
-                  onClick={() => setShowActiveUsersDropdown(!showActiveUsersDropdown)}
-                  className="text-xs h-full font-mono -mt-2 pb-1 uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
-                >
-                  <ChevronDown className="w-3 h-3" />
-                  <span>{activeUsersPeriod}</span>
-                </button>
-                {showActiveUsersDropdown && (
-                  <div className="absolute top-6 left-0 z-10 bg-black border border-white/10 rounded-none shadow-lg min-w-[200px]">
-                    {periodOptions.map((period) => (
-                      <button
-                        key={period}
-                        onClick={() => {
-                          setActiveUsersPeriod(period);
-                          if (period !== 'Custom') {
-                            setShowActiveUsersDropdown(false);
-                          }
-                        }}
-                        className="block w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors"
-                      >
-                        {period}
-                      </button>
-                    ))}
-                    {activeUsersPeriod === 'Custom' && (
-                      <div className="border-t border-white/10 p-4 space-y-3">
-                        <div className="space-y-2">
-                          <label className="text-xs text-gray-400">From</label>
-                          <Popover>
-                            <PopoverTrigger asChild>
-            <Button
-                                variant="outline"
-                                className="w-full justify-start text-left font-normal bg-black border-white/10 text-white hover:bg-white/5 text-xs h-8"
-            >
-                                <CalendarIcon className="mr-2 h-3 w-3" />
-                                {activeUsersDateFrom ? format(activeUsersDateFrom, 'PPP') : <span className="text-gray-400">Pick a date</span>}
-            </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                              <Calendar
-                                mode="single"
-                                selected={activeUsersDateFrom}
-                                onSelect={setActiveUsersDateFrom}
-                                initialFocus
-                                className="rounded-none"
-                              />
-                            </PopoverContent>
-                          </Popover>
-              </div>
-                        <div className="space-y-2">
-                          <label className="text-xs text-gray-400">To</label>
-                          <Popover>
-                            <PopoverTrigger asChild>
-            <Button 
-              variant="outline"
-                                className="w-full justify-start text-left font-normal bg-black border-white/10 text-white hover:bg-white/5 text-xs h-8"
-            >
-                                <CalendarIcon className="mr-2 h-3 w-3" />
-                                {activeUsersDateTo ? format(activeUsersDateTo, 'PPP') : <span className="text-gray-400">Pick a date</span>}
-            </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                              <Calendar
-                                mode="single"
-                                selected={activeUsersDateTo}
-                                onSelect={setActiveUsersDateTo}
-                                initialFocus
-                                disabled={(date) => activeUsersDateFrom ? date < activeUsersDateFrom : false}
-                                className="rounded-none"
-                              />
-                            </PopoverContent>
-                          </Popover>
-              </div>
+              <div className="flex items-center gap-2 mb-2 relative -mt-2 pb-1">
+                <div className="relative">
+                  <button
+                    onClick={() => setShowActiveUsersDropdown(!showActiveUsersDropdown)}
+                    className="text-xs h-full font-mono uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
+                  >
+                    <ChevronDown className="w-3 h-3" />
+                    <span>{activeUsersPeriod}</span>
+                  </button>
+                  {showActiveUsersDropdown && (
+                    <div className="absolute top-6 left-0 z-10 bg-black border border-white/10 rounded-none shadow-lg">
+                      {periodOptions.map((period) => (
                         <button
-                          onClick={() => setShowActiveUsersDropdown(false)}
-                          className="w-full px-4 py-2 text-xs text-white bg-white/10 hover:bg-white/20 transition-colors rounded-none"
+                          key={period}
+                          onClick={() => {
+                            setActiveUsersPeriod(period);
+                            setShowActiveUsersDropdown(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors whitespace-nowrap"
                         >
-                          Apply
+                          {period}
                         </button>
+                      ))}
+              </div>
+                  )}
             </div>
-                    )}
-                  </div>
+                
+                {activeUsersPeriod === 'Custom' && (
+                  <>
+                    <Popover>
+                      <PopoverTrigger asChild>
+            <Button 
+                          variant="outline"
+                          className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+            >
+                          <CalendarIcon className="mr-1 h-3 w-3" />
+                          {activeUsersDateFrom ? format(activeUsersDateFrom, 'MMM dd') : 'From'}
+            </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                        <Calendar
+                          mode="single"
+                          selected={activeUsersDateFrom}
+                          onSelect={setActiveUsersDateFrom}
+                          initialFocus
+                          className="rounded-none"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                        >
+                          <CalendarIcon className="mr-1 h-3 w-3" />
+                          {activeUsersDateTo ? format(activeUsersDateTo, 'MMM dd') : 'To'}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                        <Calendar
+                          mode="single"
+                          selected={activeUsersDateTo}
+                          onSelect={setActiveUsersDateTo}
+                          initialFocus
+                          disabled={(date) => activeUsersDateFrom ? date < activeUsersDateFrom : false}
+                          className="rounded-none"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </>
                 )}
               </div>
               <hr className='mb-2 -mx-10 border-white/10' />
@@ -842,12 +832,12 @@ export default function Dashboard() {
               <div className='flex pt-4 justify-between items-end'>
                 <p className="text-3xl text-white font-light mb-2">{activeUsersDaily.toLocaleString()}</p>
                 <div className="mt-2 mb-1 flex items-center gap-2">
-                  <div className="flex items-center -mr-5 gap-1 px-2 py-1 border border-dashed border-white/5 rounded-none">
+                  <div className="flex items-center -mr-5 gap-1 px-2 py-1 border-white/5 rounded-none">
                     <svg className="w-3 h-3 text-green-500" viewBox="0 0 12 12" fill="currentColor">
                       <path d="M6 0 L12 12 L0 12 Z" />
                     </svg>
                     <span className="text-xs text-green-500 font-medium">24%</span>
-                  </div>
+            </div>
                 </div>
 
               </div>
@@ -866,88 +856,78 @@ export default function Dashboard() {
               {/* Bottom-right corner */}
               <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/30" />
               <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/30" />
-              <div className="flex items-center justify-between mb-2 relative">
-                <button
-                  onClick={() => setShowNewUsersDropdown(!showNewUsersDropdown)}
-                  className="text-xs h-full font-mono -mt-2 pb-1 uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
-                >
-                  <ChevronDown className="w-3 h-3" />
-                  <span>{newUsersPeriod}</span>
-                </button>
-                {showNewUsersDropdown && (
-                  <div className="absolute top-6 left-0 z-10 bg-black border border-white/10 rounded-none shadow-lg min-w-[200px]">
-                    {periodOptions.map((period) => (
-                      <button
-                        key={period}
-                        onClick={() => {
-                          setNewUsersPeriod(period);
-                          if (period !== 'Custom') {
-                            setShowNewUsersDropdown(false);
-                          }
-                        }}
-                        className="block w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors"
-                      >
-                        {period}
-                      </button>
-                    ))}
-                    {newUsersPeriod === 'Custom' && (
-                      <div className="border-t border-white/10 p-4 space-y-3">
-                        <div className="space-y-2">
-                          <label className="text-xs text-gray-400">From</label>
-                          <Popover>
-                            <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-                                className="w-full justify-start text-left font-normal bg-black border-white/10 text-white hover:bg-white/5 text-xs h-8"
-            >
-                                <CalendarIcon className="mr-2 h-3 w-3" />
-                                {newUsersDateFrom ? format(newUsersDateFrom, 'PPP') : <span className="text-gray-400">Pick a date</span>}
-            </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                              <Calendar
-                                mode="single"
-                                selected={newUsersDateFrom}
-                                onSelect={setNewUsersDateFrom}
-                                initialFocus
-                                className="rounded-none"
-                              />
-                            </PopoverContent>
-                          </Popover>
-              </div>
-                        <div className="space-y-2">
-                          <label className="text-xs text-gray-400">To</label>
-                          <Popover>
-                            <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-                                className="w-full justify-start text-left font-normal bg-black border-white/10 text-white hover:bg-white/5 text-xs h-8"
-            >
-                                <CalendarIcon className="mr-2 h-3 w-3" />
-                                {newUsersDateTo ? format(newUsersDateTo, 'PPP') : <span className="text-gray-400">Pick a date</span>}
-            </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                              <Calendar
-                                mode="single"
-                                selected={newUsersDateTo}
-                                onSelect={setNewUsersDateTo}
-                                initialFocus
-                                disabled={(date) => newUsersDateFrom ? date < newUsersDateFrom : false}
-                                className="rounded-none"
-                              />
-                            </PopoverContent>
-                          </Popover>
-            </div>
+              <div className="flex items-center gap-2 mb-2 relative -mt-2 pb-1">
+                <div className="relative">
+                  <button
+                    onClick={() => setShowNewUsersDropdown(!showNewUsersDropdown)}
+                    className="text-xs h-full font-mono uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
+                  >
+                    <ChevronDown className="w-3 h-3" />
+                    <span>{newUsersPeriod}</span>
+                  </button>
+                  {showNewUsersDropdown && (
+                    <div className="absolute top-6 left-0 z-10 bg-black border border-white/10 rounded-none shadow-lg">
+                      {periodOptions.map((period) => (
                         <button
-                          onClick={() => setShowNewUsersDropdown(false)}
-                          className="w-full px-4 py-2 text-xs text-white bg-white/10 hover:bg-white/20 transition-colors rounded-none"
+                          key={period}
+                          onClick={() => {
+                            setNewUsersPeriod(period);
+                            setShowNewUsersDropdown(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors whitespace-nowrap"
                         >
-                          Apply
+                          {period}
                         </button>
-                      </div>
-                    )}
-                  </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {newUsersPeriod === 'Custom' && (
+                  <>
+                    <Popover>
+                      <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+                          className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+            >
+                          <CalendarIcon className="mr-1 h-3 w-3" />
+                          {newUsersDateFrom ? format(newUsersDateFrom, 'MMM dd') : 'From'}
+            </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                        <Calendar
+                          mode="single"
+                          selected={newUsersDateFrom}
+                          onSelect={setNewUsersDateFrom}
+                          initialFocus
+                          className="rounded-none"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                        >
+                          <CalendarIcon className="mr-1 h-3 w-3" />
+                          {newUsersDateTo ? format(newUsersDateTo, 'MMM dd') : 'To'}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                        <Calendar
+                          mode="single"
+                          selected={newUsersDateTo}
+                          onSelect={setNewUsersDateTo}
+                          initialFocus
+                          disabled={(date) => newUsersDateFrom ? date < newUsersDateFrom : false}
+                          className="rounded-none"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </>
                 )}
               </div>
               <hr className='mb-2 -mx-10 border-white/10' />
@@ -958,7 +938,7 @@ export default function Dashboard() {
               <div className='flex pt-4 justify-between items-end'>
                 <p className="text-3xl text-white font-light mb-2">{newUsersDaily}</p>
                 <div className="mt-2 mb-1 flex items-center gap-2">
-                  <div className="flex items-center -mr-5 gap-1 px-2 py-1 border border-dashed border-white/5 rounded-none">
+                  <div className="flex items-center -mr-5 gap-1 px-2 py-1 rounded-none">
                     <svg className="w-3 h-3 text-red-500" viewBox="0 0 12 12" fill="currentColor" style={{ transform: 'rotate(180deg)' }}>
                       <path d="M6 0 L12 12 L0 12 Z" />
                     </svg>
@@ -985,102 +965,92 @@ export default function Dashboard() {
               {/* Bottom-right corner */}
               <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/30" />
               <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/30" />
-              <div className="flex items-center justify-between mb-2 relative">
-                <button
-                  onClick={() => setShowOrganizationsDropdown(!showOrganizationsDropdown)}
-                  className="text-xs h-full font-mono -mt-2 pb-1 uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
-                >
-                  <ChevronDown className="w-3 h-3" />
-                  <span>{organizationsPeriod}</span>
-                </button>
-                {showOrganizationsDropdown && (
-                  <div className="absolute top-6 left-0 z-10 bg-black border border-white/10 rounded-none shadow-lg min-w-[200px]">
-                    {periodOptions.map((period) => (
-                      <button
-                        key={period}
-                        onClick={() => {
-                          setOrganizationsPeriod(period);
-                          if (period !== 'Custom') {
-                            setShowOrganizationsDropdown(false);
-                          }
-                        }}
-                        className="block w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors"
-                      >
-                        {period}
-                      </button>
-                    ))}
-                    {organizationsPeriod === 'Custom' && (
-                      <div className="border-t border-white/10 p-4 space-y-3">
-                        <div className="space-y-2">
-                          <label className="text-xs text-gray-400">From</label>
-                          <Popover>
-                            <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-                                className="w-full justify-start text-left font-normal bg-black border-white/10 text-white hover:bg-white/5 text-xs h-8"
-            >
-                                <CalendarIcon className="mr-2 h-3 w-3" />
-                                {organizationsDateFrom ? format(organizationsDateFrom, 'PPP') : <span className="text-gray-400">Pick a date</span>}
-            </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                              <Calendar
-                                mode="single"
-                                selected={organizationsDateFrom}
-                                onSelect={setOrganizationsDateFrom}
-                                initialFocus
-                                className="rounded-none"
-                              />
-                            </PopoverContent>
-                          </Popover>
-              </div>
-                        <div className="space-y-2">
-                          <label className="text-xs text-gray-400">To</label>
-                          <Popover>
-                            <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-                                className="w-full justify-start text-left font-normal bg-black border-white/10 text-white hover:bg-white/5 text-xs h-8"
-            >
-                                <CalendarIcon className="mr-2 h-3 w-3" />
-                                {organizationsDateTo ? format(organizationsDateTo, 'PPP') : <span className="text-gray-400">Pick a date</span>}
-            </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                              <Calendar
-                                mode="single"
-                                selected={organizationsDateTo}
-                                onSelect={setOrganizationsDateTo}
-                                initialFocus
-                                disabled={(date) => organizationsDateFrom ? date < organizationsDateFrom : false}
-                                className="rounded-none"
-                              />
-                            </PopoverContent>
-                          </Popover>
-                        </div>
+              <div className="flex items-center gap-2 mb-2 relative -mt-2 pb-1">
+                <div className="relative">
+                  <button
+                    onClick={() => setShowOrganizationsDropdown(!showOrganizationsDropdown)}
+                    className="text-xs h-full font-mono uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
+                  >
+                    <ChevronDown className="w-3 h-3" />
+                    <span>{organizationsPeriod}</span>
+                  </button>
+                  {showOrganizationsDropdown && (
+                    <div className="absolute top-6 left-0 z-10 bg-black border border-white/10 rounded-none shadow-lg">
+                      {periodOptions.map((period) => (
                         <button
-                          onClick={() => setShowOrganizationsDropdown(false)}
-                          className="w-full px-4 py-2 text-xs text-white bg-white/10 hover:bg-white/20 transition-colors rounded-none"
+                          key={period}
+                          onClick={() => {
+                            setOrganizationsPeriod(period);
+                            setShowOrganizationsDropdown(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors whitespace-nowrap"
                         >
-                          Apply
+                          {period}
                         </button>
-                      </div>
-                    )}
-                  </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {organizationsPeriod === 'Custom' && (
+                  <>
+                    <Popover>
+                      <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+                          className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+            >
+                          <CalendarIcon className="mr-1 h-3 w-3" />
+                          {organizationsDateFrom ? format(organizationsDateFrom, 'MMM dd') : 'From'}
+            </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                        <Calendar
+                          mode="single"
+                          selected={organizationsDateFrom}
+                          onSelect={setOrganizationsDateFrom}
+                          initialFocus
+                          className="rounded-none"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                        >
+                          <CalendarIcon className="mr-1 h-3 w-3" />
+                          {organizationsDateTo ? format(organizationsDateTo, 'MMM dd') : 'To'}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                        <Calendar
+                          mode="single"
+                          selected={organizationsDateTo}
+                          onSelect={setOrganizationsDateTo}
+                          initialFocus
+                          disabled={(date) => organizationsDateFrom ? date < organizationsDateFrom : false}
+                          className="rounded-none"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </>
                 )}
-            </div>
+              </div>
               <hr className='mb-2 -mx-10 border-white/10' />
               <h4 className="text-md text-white/80 uppercase font-mono font-light mb-1">Organizations</h4>
               <p className="text-xs text-gray-400 mb-3">Total organizations in the time frame</p>
               <div className='flex pt-4 justify-between items-end'>
                 <p className="text-3xl text-white font-light mb-2">{loading ? '...' : counts.organizations.toLocaleString()}</p>
                 <div className="mt-2 mb-1 flex items-center gap-2">
-                  <div className="flex items-center -mr-5 gap-1 px-2 py-1 border border-dashed border-white/5 rounded-none">
+                  <div className="flex items-center -mr-5 gap-1 px-2 py-1 rounded-none">
                     <svg className="w-3 h-3 text-green-500" viewBox="0 0 12 12" fill="currentColor">
                       <path d="M6 0 L12 12 L0 12 Z" />
                     </svg>
                     <span className="text-xs text-green-500 font-medium">15%</span>
-                  </div>
+            </div>
                 </div>
               </div>
             </div>
@@ -1099,38 +1069,87 @@ export default function Dashboard() {
               {/* Bottom-right corner */}
               <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/30" />
               <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/30" />
-              <div className="flex items-center justify-between mb-2 relative">
-                <button
-                  onClick={() => setShowTeamsDropdown(!showTeamsDropdown)}
-                  className="text-xs h-full font-mono -mt-2 pb-1 uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
-                >
-                  <ChevronDown className="w-3 h-3" />
-                  <span>{teamsPeriod}</span>
-                </button>
-                {showTeamsDropdown && (
-                  <div className="absolute top-6 left-0 z-10 bg-black border border-white/10 rounded-none shadow-lg">
-                    {periodOptions.map((period) => (
-                      <button
-                        key={period}
-                        onClick={() => {
-                          setTeamsPeriod(period);
-                          setShowTeamsDropdown(false);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors"
-                      >
-                        {period}
-                      </button>
-                    ))}
-              </div>
+              <div className="flex items-center gap-2 mb-2 relative -mt-2 pb-1">
+                <div className="relative">
+                  <button
+                    onClick={() => setShowTeamsDropdown(!showTeamsDropdown)}
+                    className="text-xs h-full font-mono uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
+                  >
+                    <ChevronDown className="w-3 h-3" />
+                    <span>{teamsPeriod}</span>
+                  </button>
+                  {showTeamsDropdown && (
+                    <div className="absolute top-6 left-0 z-10 bg-black border border-white/10 rounded-none shadow-lg">
+                      {periodOptions.map((period) => (
+                        <button
+                          key={period}
+                          onClick={() => {
+                            setTeamsPeriod(period);
+                            setShowTeamsDropdown(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+                        >
+                          {period}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {teamsPeriod === 'Custom' && (
+                  <>
+                    <Popover>
+                      <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+                          className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+            >
+                          <CalendarIcon className="mr-1 h-3 w-3" />
+                          {teamsDateFrom ? format(teamsDateFrom, 'MMM dd') : 'From'}
+            </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                        <Calendar
+                          mode="single"
+                          selected={teamsDateFrom}
+                          onSelect={setTeamsDateFrom}
+                          initialFocus
+                          className="rounded-none"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                        >
+                          <CalendarIcon className="mr-1 h-3 w-3" />
+                          {teamsDateTo ? format(teamsDateTo, 'MMM dd') : 'To'}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                        <Calendar
+                          mode="single"
+                          selected={teamsDateTo}
+                          onSelect={setTeamsDateTo}
+                          initialFocus
+                          disabled={(date) => teamsDateFrom ? date < teamsDateFrom : false}
+                          className="rounded-none"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </>
                 )}
-            </div>
+              </div>
               <hr className='mb-2 -mx-10 border-white/10' />
               <h4 className="text-md text-white/80 uppercase font-mono font-light mb-1">Teams</h4>
               <p className="text-xs text-gray-400 mb-3">Total teams in the time frame</p>
               <div className='flex pt-4 justify-between items-end'>
                 <p className="text-3xl text-white font-light mb-2">{loading ? '...' : (counts.teams ?? 0).toLocaleString()}</p>
                 <div className="mt-2 mb-1 flex items-center gap-2">
-                  <div className="flex items-center -mr-5 gap-1 px-2 py-1 border border-dashed border-white/5 rounded-none">
+                  <div className="flex items-center -mr-5 gap-1 px-2 py-1 rounded-none">
                     <svg className="w-3 h-3 text-green-500" viewBox="0 0 12 12" fill="currentColor">
                       <path d="M6 0 L12 12 L0 12 Z" />
                     </svg>
