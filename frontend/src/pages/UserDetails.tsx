@@ -1,11 +1,11 @@
 import {
-  ArrowLeft,
   Ban,
   Building2,
   Calendar,
   Clock,
   Database,
   Edit,
+  Globe,
   HashIcon,
   Loader,
   Mail,
@@ -543,7 +543,7 @@ export default function UserDetails() {
         <Button
           variant="outline"
           onClick={() => navigate('/users')}
-          className="mb-4 flex justify-start items-start text-left border-none text-white"
+          className="mb-4 ml-0 flex justify-start items-start text-left border-none text-white"
         >
           <span className='font-light'>
             <span className='uppercase text-white/80 font-mono text-sm'>users / </span>
@@ -777,7 +777,7 @@ export default function UserDetails() {
                         <Database className="w-4 h-4 text-gray-400" />
                         <div>
                           <div className="text-xs uppercase font-mono text-gray-500">Two-Factor Authentication</div>
-                          
+
                         </div>
                       </div>
                       <div className={`px-2 rounded-none py-1 text-xs font-mono ${user.twoFactorEnabled ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
@@ -936,63 +936,62 @@ export default function UserDetails() {
                         key={session.id}
                         className="border border-dashed border-white/10 rounded-none p-4 hover:bg-white/5 transition-colors"
                       >
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center space-x-4 flex-1">
-                            <div className="w-12 -mt-2 h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none">
+                            <div className="w-12 h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none">
                               <Monitor className="w-6 h-6 text-white" />
                             </div>
                             <div className="flex-1">
-                              <div className="flex items-center space-x-3 mb-2">
-                                <h3 className="text-white font-light inline-flex items-start">
-                                  Session {session.id.substring(0, 8)}...
-                                  <sup className="text-xs text-gray-500 ml-2 mt-0.5">
-                                    <span className='mr-1'>[</span>
-                                    <span className='text-white/80 font-mono text-xs'>{session.ipAddress}</span>
-                                    <span className='ml-1'>]</span>
-                                  </sup>
-                                </h3>
-                              </div>
-                              <div className="flex items-center space-x-4 mb-1">
-                                <div className="flex items-center space-x-1">
-                                  <span className="text-gray-400 text-xs">📍</span>
-                                  <span className="text-gray-300 text-sm">
-                                    {sessionLocations[session.id]?.city || '...'},{' '}
-                                    {sessionLocations[session.id]?.country || '...'}
+                              <h3 className="text-white font-light inline-flex items-start">
+                                Session {session.id.substring(0, 8)}...
+                                <sup className="text-xs text-gray-500 ml-2 mt-0.5">
+                                  <span className='mr-1'>[</span>
+                                  <span className='text-white/80 font-mono text-xs'>{session.ipAddress}</span>
+                                  <span className='ml-1'>]</span>
+                                </sup>
+                              </h3>
+                              <div className="flex items-center space-x-2 mt-2">
+                                <Globe className="w-3.5 h-3.5 text-gray-400" />
+                                <span className="text-gray-400 font-mono text-xs">
+                                  {sessionLocations[session.id]?.city || '...'},{' '}
+                                  {sessionLocations[session.id]?.country || '...'}
+                                </span>
+                                {sessionLocations[session.id]?.countryCode && (
+                                  <span className="text-xs ml-1">
+                                    {getCountryFlag(sessionLocations[session.id]?.countryCode)}
                                   </span>
-                                  {sessionLocations[session.id]?.countryCode && (
-                                    <span className="text-sm ml-1">
-                                      {getCountryFlag(sessionLocations[session.id]?.countryCode)}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                  <Clock className="w-4 h-4 text-white" />
-                                  <span className="text-gray-400 text-sm">Expires:</span>
-                                  <span className="text-white text-sm">
-                                    {new Date(session.expiresAt).toLocaleDateString('en-US', {
-                                      year: 'numeric',
-                                      month: 'short',
-                                      day: 'numeric',
-                                      hour: 'numeric',
-                                      minute: '2-digit',
-                                      hour12: true,
-                                    })}
-                                  </span>
-                                </div>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDeleteSession(session.id)}
-                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
-                                >
-                                  <Ban className="w-4 h-4 mr-1" />
-                                  Revoke
-                                </Button>
+                                )}
                               </div>
                             </div>
                           </div>
+                          <div className="flex flex-col items-end space-y-2">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-gray-500 font-mono text-xs uppercase">Expires: </span>
+                              <span className="text-white font-mono text-xs">
+                                {new Date(session.expiresAt).toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                                , {new Date(session.expiresAt).toLocaleTimeString('en-US', {
+                                  hour: 'numeric',
+                                  minute: '2-digit',
+                                  hour12: true,
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteSession(session.id)}
+                            className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none"
+                          >
+                            <Ban className="w-4 h-4 mr-1" />
+                            Revoke
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -1072,7 +1071,7 @@ export default function UserDetails() {
 
       {showBanModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black border border-red-400/50 rounded-none p-6 w-full max-w-md">
+          <div className="bg-black border border-red-400/20 rounded-none p-6 w-full max-w-md">
             <h2 className="text-xl font-bold text-white mb-4">Ban User</h2>
             <p className="text-gray-400 mb-4">
               Ban <strong>{user.name}</strong> from accessing the system.
