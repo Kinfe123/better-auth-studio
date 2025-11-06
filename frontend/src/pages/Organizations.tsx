@@ -51,7 +51,7 @@ interface PluginStatus {
 
 export default function Organizations() {
   const navigate = useNavigate();
-  const { refetchCounts } = useCounts();
+  const { counts, refetchCounts } = useCounts();
   
   interface FilterConfig {
     type: string;
@@ -578,7 +578,7 @@ export default function Organizations() {
             Organizations
             <sup className="text-xs text-gray-500 ml-1 mt-0">
               <span className='mr-1'>[</span>
-              <span className='text-white font-mono text-sm'>{organizations.length}</span>
+              <span className='text-white font-mono text-sm'>{counts.organizations}</span>
               <span className='ml-1'>]</span>
             </sup>
           </h1>

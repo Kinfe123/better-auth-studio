@@ -82,6 +82,17 @@ export default function Dashboard() {
   const [teamsDateFrom, setTeamsDateFrom] = useState<Date | undefined>(undefined);
   const [teamsDateTo, setTeamsDateTo] = useState<Date | undefined>(undefined);
   
+  // Analytics data and percentages
+  const [totalUsersData, setTotalUsersData] = useState<number[]>([]);
+  const [totalUsersLabels, setTotalUsersLabels] = useState<string[]>([]);
+  const [totalUsersPercentage, setTotalUsersPercentage] = useState(0);
+  const [newUsersData, setNewUsersData] = useState<number[]>([]);
+  const [newUsersLabels, setNewUsersLabels] = useState<string[]>([]);
+  const [newUsersPercentage, setNewUsersPercentage] = useState(0);
+  const [activeUsersPercentage, setActiveUsersPercentage] = useState(0);
+  const [organizationsPercentage, setOrganizationsPercentage] = useState(0);
+  const [teamsPercentage, setTeamsPercentage] = useState(0);
+  
   const { counts, loading } = useCounts();
   const navigate = useNavigate();
 
@@ -178,6 +189,20 @@ export default function Dashboard() {
 
   const securityPatches = getSecurityPatches();
 
+  const fetchAnalytics = async (type: string, period: string, from?: Date, to?: Date) => {
+    try {
+      const params = new URLSearchParams({ type, period });
+      if (from) params.append('from', from.toISOString());
+      if (to) params.append('to', to.toISOString());
+      
+      const response = await fetch(`/api/analytics?${params.toString()}`);
+      return await response.json();
+    } catch (error) {
+      console.error('Failed to fetch analytics:', error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     // Fetch additional stats
     const fetchStats = async () => {
@@ -185,18 +210,71 @@ export default function Dashboard() {
         const response = await fetch('/api/stats');
         const data = await response.json();
         if (data) {
-          setActiveUsersDaily(data.activeUsersDaily || 1250);
-          setNewUsersDaily(data.newUsersDaily || 10);
-          setTotalSubscription(data.totalSubscription || 1243.22);
+          setActiveUsersDaily(data.activeUsers || 0);
+          setNewUsersDaily(data.totalUsers || 0);
+          setTotalSubscription(data.totalUsers || 0);
         }
       } catch (_error) {
-        // Set defaults if API doesn't exist
-        setActiveUsersDaily(1250);
-        setNewUsersDaily(10);
-        setTotalSubscription(1243.22);
+        // Set to 0 if API fails
+        setActiveUsersDaily(0);
+        setNewUsersDaily(0);
+        setTotalSubscription(0);
       }
     };
     fetchStats();
+  }, []);
+
+  // Fetch total users chart analytics
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchAnalytics('users', selectedUserPeriod, activeUsersDateFrom, activeUsersDateTo);
+      if (data) {
+        setTotalUsersData(data.data || []);
+        setTotalUsersLabels(data.labels || []);
+        setTotalUsersPercentage(data.percentageChange || 0);
+      }
+    };
+    fetchData();
+  }, [selectedUserPeriod, activeUsersDateFrom, activeUsersDateTo]);
+
+  // Fetch new users chart analytics
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchAnalytics('newUsers', selectedSubscriptionPeriod, newUsersDateFrom, newUsersDateTo);
+      if (data) {
+        setNewUsersData(data.data || []);
+        setNewUsersLabels(data.labels || []);
+        setNewUsersPercentage(data.percentageChange || 0);
+      }
+    };
+    fetchData();
+  }, [selectedSubscriptionPeriod, newUsersDateFrom, newUsersDateTo]);
+
+  // Fetch active users card analytics
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchAnalytics('activeUsers', '1D');
+      if (data) setActiveUsersPercentage(data.percentageChange || 0);
+    };
+    fetchData();
+  }, []);
+
+  // Fetch organizations analytics
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchAnalytics('organizations', '1D');
+      if (data) setOrganizationsPercentage(data.percentageChange || 0);
+    };
+    fetchData();
+  }, []);
+
+  // Fetch teams analytics
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchAnalytics('teams', '1D');
+      if (data) setTeamsPercentage(data.percentageChange || 0);
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -284,81 +362,198 @@ export default function Dashboard() {
   };
 
   // Generate x-axis labels based on selected period
-  const getChartLabels = (period: string) => {
+  const getChartLabels = (period: string, dataSource: 'users' | 'newUsers' = 'users') => {
+    const labels = dataSource === 'users' ? totalUsersLabels : newUsersLabels;
+    const lengths: Record<string, number> = {
+      '1D': 24, '1W': 7, '1M': 30, '3M': 3, '6M': 6, '1Y': 12, 'ALL': 7
+    };
+    const expectedLength = lengths[period] || 7;
+    
+    // If we have labels from API, use them (but simplify for x-axis)
+    if (labels && labels.length > 0 && labels.length === expectedLength) {
+      if (period === '1D') {
+        // For 1D, show every 4 hours
+        return labels.filter((_, i) => i % 4 === 0).map(label => {
+          // Convert hour format to am/pm
+          const hour = parseInt(label.replace('h', ''));
+          if (hour === 0) return '12am';
+          if (hour < 12) return `${hour}am`;
+          if (hour === 12) return '12pm';
+          return `${hour - 12}pm`;
+        });
+      }
+      if (period === '1W') {
+        // For 1W, use day names directly (Mon, Tue, Wed, etc.)
+        return labels.map(label => {
+          return label.length > 3 ? label.substring(0, 3) : label;
+        });
+      }
+      if (period === '1M') {
+        // For 1M, show day numbers only for x-axis (labels are like "Nov 5")
+        return labels.map(label => {
+          const parts = label.split(' ');
+          if (parts.length >= 2) {
+            return parts[1]; // Just the day number
+          }
+          return label;
+        });
+      }
+      if (period === '1Y' || period === '3M' || period === '6M') {
+        // For months, use short month names (Jan, Feb, Mar, etc.)
+        return labels.map(label => {
+          // Labels should already be month names like "Nov", "Dec", etc.
+          return label.length > 3 ? label.substring(0, 3) : label;
+        });
+      }
+      // For other periods, use labels directly but shorten them
+      return labels.map(label => {
+        if (label.length > 3) return label.substring(0, 3);
+        return label;
+      });
+    }
+    
+    // Fallback: generate labels dynamically based on current date
+    const now = new Date();
     switch (period) {
       case '1D':
-        // 24 hours - show every 4 hours
         return ['12am', '4am', '8am', '12pm', '4pm', '8pm'];
       case '1W':
-        return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        return Array.from({ length: 7 }, (_, i) => {
+          const date = new Date(now.getTime() - (6 - i) * 24 * 60 * 60 * 1000);
+          return date.toLocaleDateString('en-US', { weekday: 'short' });
+        });
       case '1M':
-        return ['W1', 'W2', 'W3', 'W4'];
+        return Array.from({ length: 30 }, (_, i) => {
+          const date = new Date(now.getTime() - (29 - i) * 24 * 60 * 60 * 1000);
+          return date.getDate().toString();
+        });
       case '3M':
-        return ['M1', 'M2', 'M3'];
+        return Array.from({ length: 3 }, (_, i) => {
+          const monthDate = new Date(now.getFullYear(), now.getMonth() - (2 - i), 1);
+          return monthDate.toLocaleDateString('en-US', { month: 'short' });
+        });
       case '6M':
-        return ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return Array.from({ length: 6 }, (_, i) => {
+          const monthDate = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+          return monthDate.toLocaleDateString('en-US', { month: 'short' });
+        });
       case '1Y':
-        return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        // Last 12 months starting from current month
+        return Array.from({ length: 12 }, (_, i) => {
+          const monthDate = new Date(now.getFullYear(), now.getMonth() - (11 - i), 1);
+          return monthDate.toLocaleDateString('en-US', { month: 'short' });
+        });
       case 'ALL':
-        return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+        return Array.from({ length: 7 }, (_, i) => {
+          const monthDate = new Date(now.getFullYear(), now.getMonth() - (6 - i), 1);
+          return monthDate.toLocaleDateString('en-US', { month: 'short' });
+        });
       default:
         return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     }
   };
 
   // Generate detailed labels for tooltips
-  const getDetailedLabels = (period: string) => {
+  const getDetailedLabels = (period: string, dataSource: 'users' | 'newUsers' = 'users') => {
+    const labels = dataSource === 'users' ? totalUsersLabels : newUsersLabels;
+    const lengths: Record<string, number> = {
+      '1D': 24, '1W': 7, '1M': 30, '3M': 3, '6M': 6, '1Y': 12, 'ALL': 7
+    };
+    const expectedLength = lengths[period] || 7;
+    
+    // If we have labels from API, use them
+    if (labels && labels.length > 0 && labels.length === expectedLength) {
+      if (period === '1D') {
+        // Convert hour format to am/pm for tooltips
+        return labels.map(label => {
+          const hour = parseInt(label.replace('h', ''));
+          if (hour === 0) return '12am';
+          if (hour < 12) return `${hour}am`;
+          if (hour === 12) return '12pm';
+          return `${hour - 12}pm`;
+        });
+      }
+      if (period === '1Y' || period === '3M' || period === '6M') {
+        // For months, convert short names to full names
+        return labels.map(label => {
+          const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+          const shortNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          const index = shortNames.findIndex(s => s === label);
+          if (index !== -1) return monthNames[index];
+          return label;
+        });
+      }
+      return labels;
+    }
+    
+    // Fallback: generate labels dynamically based on current date
+    const now = new Date();
     switch (period) {
       case '1D':
         return Array.from({ length: 24 }, (_, i) => {
-          const hour = i % 12 || 12;
-          const ampm = i < 12 ? 'am' : 'pm';
-          return `${hour}${ampm}`;
+          const hour = new Date();
+          hour.setHours(i, 0, 0, 0);
+          return hour.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
         });
       case '1W':
-        return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        return Array.from({ length: 7 }, (_, i) => {
+          const date = new Date(now.getTime() - (6 - i) * 24 * 60 * 60 * 1000);
+          return date.toLocaleDateString('en-US', { weekday: 'long' });
+        });
       case '1M':
-        return ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+        return Array.from({ length: 30 }, (_, i) => {
+          const date = new Date(now.getTime() - (29 - i) * 24 * 60 * 60 * 1000);
+          const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+          const dayNum = date.getDate();
+          return `${monthName} ${dayNum}`;
+        });
       case '3M':
-        return ['Month 1', 'Month 2', 'Month 3'];
+        return Array.from({ length: 3 }, (_, i) => {
+          const monthDate = new Date(now.getFullYear(), now.getMonth() - (2 - i), 1);
+          return monthDate.toLocaleDateString('en-US', { month: 'long' });
+        });
       case '6M':
-        return ['July', 'August', 'September', 'October', 'November', 'December'];
+        return Array.from({ length: 6 }, (_, i) => {
+          const monthDate = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+          return monthDate.toLocaleDateString('en-US', { month: 'long' });
+        });
       case '1Y':
-        return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        // Last 12 months starting from current month
+        return Array.from({ length: 12 }, (_, i) => {
+          const monthDate = new Date(now.getFullYear(), now.getMonth() - (11 - i), 1);
+          return monthDate.toLocaleDateString('en-US', { month: 'long' });
+        });
       case 'ALL':
-        return ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+        return Array.from({ length: 7 }, (_, i) => {
+          const monthDate = new Date(now.getFullYear(), now.getMonth() - (6 - i), 1);
+          return monthDate.toLocaleDateString('en-US', { month: 'long' });
+        });
       default:
         return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     }
   };
 
   // Generate chart data points based on selected period
-  const getChartData = (period: string) => {
-    switch (period) {
-      case '1D':
-        // 24 hours - show every hour
-        return [45, 42, 40, 38, 35, 33, 35, 40, 50, 60, 70, 75, 80, 85, 82, 78, 75, 70, 65, 60, 55, 52, 48, 46];
-      case '1W':
-        // 7 days
-        return [60, 65, 70, 68, 75, 72, 55];
-      case '1M':
-        // 4 weeks
-        return [65, 70, 85, 90];
-      case '3M':
-        // 3 months
-        return [60, 75, 85];
-      case '6M':
-        // 6 months
-        return [50, 55, 65, 70, 80, 90];
-      case '1Y':
-        // 12 months
-        return [50, 55, 60, 65, 70, 75, 80, 85, 90, 85, 80, 95];
-      case 'ALL':
-        // Default view
-        return [60, 45, 80, 55, 70, 90, 75];
-      default:
-        return [60, 65, 70, 68, 75, 72, 55];
+  const getChartData = (period: string, dataSource: 'users' | 'newUsers' = 'users') => {
+    const data = dataSource === 'users' ? totalUsersData : newUsersData;
+    const lengths: Record<string, number> = {
+      '1D': 24, '1W': 7, '1M': 30, '3M': 3, '6M': 6, '1Y': 12, 'ALL': 7
+    };
+    const expectedLength = lengths[period] || 7;
+    
+    // If no data yet, return placeholder
+    if (!data || data.length === 0) {
+      return Array(expectedLength).fill(0);
     }
+    
+    const paddedData = [...data];
+    while (paddedData.length < expectedLength) {
+      paddedData.push(0);
+    }
+    const trimmedData = paddedData.slice(0, expectedLength);
+    
+    const maxValue = Math.max(...trimmedData, 1);
+    return trimmedData.map(val => (val / maxValue) * 100);
   };
 
   const renderOverview = () => (
@@ -428,10 +623,8 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Divider */}
           <div className="h-8 w-[1px] bg-white/10" />
 
-          {/* Total Sessions Stat */}
           <div className="flex items-center gap-3 min-w-fit">
             <div className="w-10 h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
               <Zap className="w-5 h-5 text-white" />
@@ -513,7 +706,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm text-white uppercase font-light">TOTAL USER</h3>
               <div className="flex items-center space-x-1 overflow-x-auto">
-                {['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL'].map((period) => (
+                {['1D', '1W', '1M', '3M', '6M', '1Y',].map((period) => (
                   <button
                     key={period}
                     onClick={() => setSelectedUserPeriod(period)}
@@ -527,12 +720,22 @@ export default function Dashboard() {
                 ))}
               </div>
             </div>
-            <p className="text-4xl text-white font-light mb-6">
-              {loading ? '...' : formatNumber(counts.users)}
-            </p>
+            <div className='flex justify-between items-end mb-6'>
+              <p className="text-4xl text-white font-light">
+                {loading ? '...' : formatNumber(counts.users)}
+              </p>
+              <div className="flex items-center gap-1 px-2 py-1">
+                <svg className={`w-3 h-3 ${totalUsersPercentage >= 0 ? 'text-green-500' : 'text-red-500 rotate-180'}`} viewBox="0 0 12 12" fill="currentColor">
+                  <path d="M6 0 L12 12 L0 12 Z" />
+                </svg>
+                <span className={`text-xs font-medium ${totalUsersPercentage >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {Math.abs(totalUsersPercentage).toFixed(1)}%
+                </span>
+              </div>
+            </div>
             <div className="space-y-2 relative">
               <div className="h-32 flex items-end justify-between space-x-1 relative">
-                {getChartData(selectedUserPeriod).map((height, i) => {
+                {getChartData(selectedUserPeriod, 'users').map((height, i) => {
                   // Vary opacity based on position and height for visual interest
                   const baseOpacity = 15 + (i % 3) * 5; // 15, 20, 25
                   const hoverOpacity = baseOpacity + 10;
@@ -570,18 +773,18 @@ export default function Dashboard() {
                     }}
                   >
                     <div className="bg-black border border-white/20 rounded-sm px-3 py-2 shadow-lg">
-                      <div className="text-xs text-gray-400 mb-1">{getDetailedLabels(selectedUserPeriod)[hoveredBarIndex]}</div>
+                      <div className="text-xs text-gray-400 mb-1">{getDetailedLabels(selectedUserPeriod, 'users')[hoveredBarIndex]}</div>
                       <div className="text-sm text-white font-medium">
-                        {Math.round((getChartData(selectedUserPeriod)[hoveredBarIndex] / 100) * counts.users).toLocaleString()} users
+                        {totalUsersData[hoveredBarIndex] !== undefined ? totalUsersData[hoveredBarIndex].toLocaleString() : '0'} users
                       </div>
                     </div>
                   </div>
                 )}
               </div>
               {/* X-axis labels */}
-              <div className="flex justify-between text-xs text-gray-500 font-mono">
-                {getChartLabels(selectedUserPeriod).map((label, i) => (
-                  <span key={i} className="flex-1 text-center">
+              <div className={`flex justify-between ${selectedUserPeriod === '1M' ? 'text-[10px]' : 'text-xs'} text-gray-500 font-mono`}>
+                {getChartLabels(selectedUserPeriod, 'users').map((label, i) => (
+                  <span key={i} className="flex-1 text-center truncate">
                     {label}
                   </span>
                 ))}
@@ -620,9 +823,19 @@ export default function Dashboard() {
                 ))}
               </div>
             </div>
-            <p className="text-4xl text-white font-light mb-6">
-              ${totalSubscription.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
+            <div className='flex justify-between items-end mb-6'>
+              <p className="text-4xl text-white font-light">
+                ${totalSubscription.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </p>
+              <div className="flex items-center gap-1 px-2 py-1">
+                <svg className={`w-3 h-3 ${newUsersPercentage >= 0 ? 'text-green-500' : 'text-red-500 rotate-180'}`} viewBox="0 0 12 12" fill="currentColor">
+                  <path d="M6 0 L12 12 L0 12 Z" />
+                </svg>
+                <span className={`text-xs font-medium ${newUsersPercentage >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {Math.abs(newUsersPercentage).toFixed(1)}%
+                </span>
+              </div>
+            </div>
             {/* Area Chart with X-axis labels and Tooltip */}
             <div className="space-y-2 relative">
               <div className="h-32 relative">
@@ -635,7 +848,7 @@ export default function Dashboard() {
                   </defs>
                   {/* Area fill */}
                   <polygon
-                    points={`0,100 ${getChartData(selectedSubscriptionPeriod)
+                    points={`0,100 ${getChartData(selectedSubscriptionPeriod, 'newUsers')
                       .map((val, i, arr) => {
                         const x = (i / (arr.length - 1)) * 100;
                         const y = 100 - val;
@@ -646,7 +859,7 @@ export default function Dashboard() {
                   />
                   {/* Top line */}
                   <polyline
-                    points={getChartData(selectedSubscriptionPeriod)
+                    points={getChartData(selectedSubscriptionPeriod, 'newUsers')
                       .map((val, i, arr) => {
                         const x = (i / (arr.length - 1)) * 100;
                         const y = 100 - val;
@@ -658,7 +871,7 @@ export default function Dashboard() {
                     strokeWidth="0.5"
                   />
 
-                  {getChartData(selectedSubscriptionPeriod).map((val, i, arr) => {
+                  {getChartData(selectedSubscriptionPeriod, 'newUsers').map((val, i, arr) => {
                     const x = (i / (arr.length - 1)) * 100;
                     const y = 100 - val;
                     const isHovered = hoveredAreaIndex === i;
@@ -716,18 +929,18 @@ export default function Dashboard() {
                     }}
                   >
                     <div className="bg-black border border-white/20 rounded-sm px-3 py-2 shadow-lg">
-                      <div className="text-xs text-gray-400 mb-1">{getDetailedLabels(selectedSubscriptionPeriod)[hoveredAreaIndex]}</div>
+                      <div className="text-xs text-gray-400 mb-1">{getDetailedLabels(selectedSubscriptionPeriod, 'newUsers')[hoveredAreaIndex]}</div>
                       <div className="text-sm text-white font-medium">
-                        ${Math.round((getChartData(selectedSubscriptionPeriod)[hoveredAreaIndex] / 100) * totalSubscription).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-            </div>
+                        {newUsersData[hoveredAreaIndex] !== undefined ? newUsersData[hoveredAreaIndex].toLocaleString() : '0'} users
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
               {/* X-axis labels */}
-              <div className="flex justify-between text-xs text-gray-500 font-mono">
-                {getChartLabels(selectedSubscriptionPeriod).map((label, i) => (
-                  <span key={i} className="flex-1 text-center">
+              <div className={`flex justify-between ${selectedSubscriptionPeriod === '1M' ? 'text-[10px]' : 'text-xs'} text-gray-500 font-mono`}>
+                {getChartLabels(selectedSubscriptionPeriod, 'newUsers').map((label, i) => (
+                  <span key={i} className="flex-1 text-center truncate">
                     {label}
                   </span>
                 ))}
@@ -835,11 +1048,13 @@ export default function Dashboard() {
                 <p className="text-3xl text-white font-light mb-2">{activeUsersDaily.toLocaleString()}</p>
                 <div className="mt-2 mb-1 flex items-center gap-2">
                   <div className="flex items-center -mr-5 gap-1 px-2 py-1 border-white/5 rounded-none">
-                    <svg className="w-3 h-3 text-green-500" viewBox="0 0 12 12" fill="currentColor">
+                    <svg className={`w-3 h-3 ${activeUsersPercentage >= 0 ? 'text-green-500' : 'text-red-500 rotate-180'}`} viewBox="0 0 12 12" fill="currentColor">
                       <path d="M6 0 L12 12 L0 12 Z" />
                     </svg>
-                    <span className="text-xs text-green-500 font-medium">24%</span>
-            </div>
+                    <span className={`text-xs font-medium ${activeUsersPercentage >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                      {Math.abs(activeUsersPercentage).toFixed(1)}%
+                    </span>
+                  </div>
                 </div>
 
               </div>
@@ -941,10 +1156,12 @@ export default function Dashboard() {
                 <p className="text-3xl text-white font-light mb-2">{newUsersDaily}</p>
                 <div className="mt-2 mb-1 flex items-center gap-2">
                   <div className="flex items-center -mr-5 gap-1 px-2 py-1 rounded-none">
-                    <svg className="w-3 h-3 text-red-500" viewBox="0 0 12 12" fill="currentColor" style={{ transform: 'rotate(180deg)' }}>
+                    <svg className={`w-3 h-3 ${newUsersPercentage >= 0 ? 'text-green-500' : 'text-red-500 rotate-180'}`} viewBox="0 0 12 12" fill="currentColor" style={newUsersPercentage < 0 ? { transform: 'rotate(180deg)' } : {}}>
                       <path d="M6 0 L12 12 L0 12 Z" />
                     </svg>
-                    <span className="text-xs text-red-500 font-medium">18%</span>
+                    <span className={`text-xs font-medium ${newUsersPercentage >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                      {Math.abs(newUsersPercentage).toFixed(1)}%
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1048,11 +1265,13 @@ export default function Dashboard() {
                 <p className="text-3xl text-white font-light mb-2">{loading ? '...' : counts.organizations.toLocaleString()}</p>
                 <div className="mt-2 mb-1 flex items-center gap-2">
                   <div className="flex items-center -mr-5 gap-1 px-2 py-1 rounded-none">
-                    <svg className="w-3 h-3 text-green-500" viewBox="0 0 12 12" fill="currentColor">
+                    <svg className={`w-3 h-3 ${organizationsPercentage >= 0 ? 'text-green-500' : 'text-red-500 rotate-180'}`} viewBox="0 0 12 12" fill="currentColor">
                       <path d="M6 0 L12 12 L0 12 Z" />
                     </svg>
-                    <span className="text-xs text-green-500 font-medium">15%</span>
-            </div>
+                    <span className={`text-xs font-medium ${organizationsPercentage >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                      {Math.abs(organizationsPercentage).toFixed(1)}%
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1152,10 +1371,12 @@ export default function Dashboard() {
                 <p className="text-3xl text-white font-light mb-2">{loading ? '...' : (counts.teams ?? 0).toLocaleString()}</p>
                 <div className="mt-2 mb-1 flex items-center gap-2">
                   <div className="flex items-center -mr-5 gap-1 px-2 py-1 rounded-none">
-                    <svg className="w-3 h-3 text-green-500" viewBox="0 0 12 12" fill="currentColor">
+                    <svg className={`w-3 h-3 ${teamsPercentage >= 0 ? 'text-green-500' : 'text-red-500 rotate-180'}`} viewBox="0 0 12 12" fill="currentColor">
                       <path d="M6 0 L12 12 L0 12 Z" />
                     </svg>
-                    <span className="text-xs text-green-500 font-medium">22%</span>
+                    <span className={`text-xs font-medium ${teamsPercentage >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                      {Math.abs(teamsPercentage).toFixed(1)}%
+                    </span>
                   </div>
                 </div>
               </div>

@@ -543,6 +543,21 @@ export function createRoutes(
     }
   });
 
+  router.get('/api/analytics', async (req: Request, res: Response) => {
+    try {
+      const { period = 'ALL', type = 'users', from, to } = req.query;
+      const analytics = await getAuthData(authConfig, 'analytics', {
+        period: period as string,
+        type: type as string,
+        from: from as string | undefined,
+        to: to as string | undefined,
+      }, configPath);
+      res.json(analytics);
+    } catch (_error) {
+      res.status(500).json({ error: 'Failed to fetch analytics' });
+    }
+  });
+
   router.get('/api/counts', async (_req: Request, res: Response) => {
     try {
       const adapter = await getAuthAdapterWithConfig();
@@ -582,14 +597,14 @@ export function createRoutes(
       if (adapter) {
         try {
           if (typeof adapter.findMany === 'function') {
-            const users = await adapter.findMany({ model: 'user', limit: 10000 });
+            const users = await adapter.findMany({ model: 'user', limit: 100000 });
             userCount = users?.length || 0;
           }
         } catch (_error) {}
 
         try {
           if (typeof adapter.findMany === 'function') {
-            const sessions = await adapter.findMany({ model: 'session', limit: 10000 });
+            const sessions = await adapter.findMany({ model: 'session', limit: 100000 });
             sessionCount = sessions?.length || 0;
           }
         } catch (_error) {}
@@ -889,7 +904,7 @@ export function createRoutes(
         return res.status(500).json({ error: 'Auth adapter not available' });
       }
 
-      await adapter.delete({ model: 'session', id: sessionId });
+      await adapter.delete({ model: 'session', where: [{ field: 'id', value: sessionId }] });
       res.json({ success: true });
     } catch (_error) {
       res.status(500).json({ error: 'Failed to delete session' });

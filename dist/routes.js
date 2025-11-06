@@ -467,6 +467,21 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             res.status(500).json({ error: 'Failed to fetch statistics' });
         }
     });
+    router.get('/api/analytics', async (req, res) => {
+        try {
+            const { period = 'ALL', type = 'users', from, to } = req.query;
+            const analytics = await getAuthData(authConfig, 'analytics', {
+                period: period,
+                type: type,
+                from: from,
+                to: to,
+            }, configPath);
+            res.json(analytics);
+        }
+        catch (_error) {
+            res.status(500).json({ error: 'Failed to fetch analytics' });
+        }
+    });
     router.get('/api/counts', async (_req, res) => {
         try {
             const adapter = await getAuthAdapterWithConfig();
@@ -502,14 +517,14 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             if (adapter) {
                 try {
                     if (typeof adapter.findMany === 'function') {
-                        const users = await adapter.findMany({ model: 'user', limit: 10000 });
+                        const users = await adapter.findMany({ model: 'user', limit: 100000 });
                         userCount = users?.length || 0;
                     }
                 }
                 catch (_error) { }
                 try {
                     if (typeof adapter.findMany === 'function') {
-                        const sessions = await adapter.findMany({ model: 'session', limit: 10000 });
+                        const sessions = await adapter.findMany({ model: 'session', limit: 100000 });
                         sessionCount = sessions?.length || 0;
                     }
                 }
@@ -788,7 +803,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             if (!adapter || !adapter.delete) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
-            await adapter.delete({ model: 'session', id: sessionId });
+            await adapter.delete({ model: 'session', where: [{ field: 'id', value: sessionId }] });
             res.json({ success: true });
         }
         catch (_error) {

@@ -754,13 +754,14 @@ export default function OrganizationDetails() {
             }`}
           >
             <Building2 className="w-4 h-4" />
-            <span>Details</span>
-            <Badge
-              variant="secondary"
-              className="text-xs bg-white/10 border border-white/20 rounded-sm"
-            >
-              {members.length + invitations.length + teams.length}
-            </Badge>
+            <span className="inline-flex items-start">
+              Details
+              <sup className="text-xs text-gray-500 ml-1">
+                <span className='mr-0.5'>[</span>
+                <span className='text-white/80 font-mono text-xs'>{members.length + invitations.length + teams.length}</span>
+                <span className='ml-0.5'>]</span>
+              </sup>
+            </span>
           </button>
           <button
             onClick={() => setActiveTab('members')}
@@ -771,15 +772,16 @@ export default function OrganizationDetails() {
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>Members</span>
-            {members.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="text-xs bg-white/10 border border-white/20 rounded-sm"
-              >
-                {members.length}
-              </Badge>
-            )}
+            <span className="inline-flex items-start">
+              Members
+              {members.length > 0 && (
+                <sup className="text-xs text-gray-500 ml-1">
+                  <span className='mr-0.5'>[</span>
+                  <span className='text-white/80 font-mono text-xs'>{members.length}</span>
+                  <span className='ml-0.5'>]</span>
+                </sup>
+              )}
+            </span>
           </button>
           <button
             onClick={() => setActiveTab('invitations')}
@@ -790,15 +792,16 @@ export default function OrganizationDetails() {
             }`}
           >
             <Mail className="w-4 h-4" />
-            <span>Invitations</span>
-            {invitations.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="text-xs bg-white/10 border border-white/20 rounded-sm"
-              >
-                {invitations.length}
-              </Badge>
-            )}
+            <span className="inline-flex items-start">
+              Invitations
+              {invitations.length > 0 && (
+                <sup className="text-xs text-gray-500 ml-1">
+                  <span className='mr-0.5'>[</span>
+                  <span className='text-white/80 font-mono text-xs'>{invitations.length}</span>
+                  <span className='ml-0.5'>]</span>
+                </sup>
+              )}
+            </span>
           </button>
           <button
             onClick={() => setActiveTab('teams')}
@@ -809,15 +812,16 @@ export default function OrganizationDetails() {
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>Teams</span>
-            {teams.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="text-xs bg-white/10 border border-white/20 rounded-sm"
-              >
-                {teams.length}
-              </Badge>
-            )}
+            <span className="inline-flex items-start">
+              Teams
+              {teams.length > 0 && (
+                <sup className="text-xs text-gray-500 ml-1">
+                  <span className='mr-0.5'>[</span>
+                  <span className='text-white/80 font-mono text-xs'>{teams.length}</span>
+                  <span className='ml-0.5'>]</span>
+                </sup>
+              )}
+            </span>
           </button>
         </nav>
       </div>

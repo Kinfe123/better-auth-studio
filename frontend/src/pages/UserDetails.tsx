@@ -951,7 +951,7 @@ export default function UserDetails() {
                               </h3>
                               <div className="flex items-center space-x-2 mt-2">
                                 <Globe className="w-3.5 h-3.5 text-gray-400" />
-                                <span className="text-gray-400 font-mono text-xs">
+                                <span className="text-gray-400 uppercase font-mono text-xs">
                                   {sessionLocations[session.id]?.city || '...'},{' '}
                                   {sessionLocations[session.id]?.country || '...'}
                                 </span>

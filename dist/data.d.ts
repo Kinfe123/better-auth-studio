@@ -34,5 +34,5 @@ export interface PaginatedResult<T> {
     limit: number;
     totalPages: number;
 }
-export declare function getAuthData(_authConfig: AuthConfig, type?: 'stats' | 'users' | 'sessions' | 'providers' | 'deleteUser' | 'updateUser', options?: any, configPath?: string): Promise<any>;
+export declare function getAuthData(_authConfig: AuthConfig, type?: 'stats' | 'users' | 'sessions' | 'providers' | 'deleteUser' | 'updateUser' | 'analytics', options?: any, configPath?: string): Promise<any>;
 //# sourceMappingURL=data.d.ts.map

@@ -48,7 +48,7 @@ interface User {
 
 export default function Users() {
   const navigate = useNavigate();
-  const { refetchCounts } = useCounts();
+  const { counts, refetchCounts } = useCounts();
   interface FilterConfig {
     type: string;
     value?: any;
@@ -515,7 +515,7 @@ export default function Users() {
             Users
             <sup className="text-xs text-gray-500 ml-1 mt-0">
               <span className='mr-1'>[</span>
-              <span className='text-white font-mono text-sm'>{users.length}</span>
+              <span className='text-white font-mono text-sm'>{counts.users}</span>
               <span className='ml-1'>]</span>
             </sup>
           </h1>
