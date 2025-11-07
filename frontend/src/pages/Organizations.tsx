@@ -611,42 +611,38 @@ export default function Organizations() {
       </div>
 
       {/* Filters */}
-      <div className="space-y-4">
-      <div className="flex items-center space-x-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            placeholder="Search organizations..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
-          />
-        </div>
+      <div className="space-y-3">
+        <div className="flex items-center space-x-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Search organizations..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+            />
+          </div>
 
           <div className="flex items-center space-x-2">
-            <Select value="add-filter" onValueChange={addFilter}>
+            <Select value="" onValueChange={addFilter}>
               <SelectTrigger className="w-[180px]">
-        <div className="flex items-center space-x-2">
-          <Filter className="w-4 h-4 text-gray-400" />
+                <div className="flex mr-3 items-center space-x-2">
+                  <Plus className="w-4 h-4" />
                   <span>Add Filter</span>
                 </div>
-            </SelectTrigger>
-            <SelectContent>
+              </SelectTrigger>
+              <SelectContent>
                 {!activeFilters.some((f) => f.type === 'createdAt') && (
                   <SelectItem value="createdAt">Created Date</SelectItem>
                 )}
-            </SelectContent>
-          </Select>
-        </div>
+              </SelectContent>
+            </Select>
+          </div>
+
           {activeFilters.length > 0 && (
             <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearFilters}
-                className="text-xs text-gray-400 hover:text-white"
-              >
-                Clear All
+              <Button onClick={clearFilters}>
+                Clear all
               </Button>
             </div>
           )}
@@ -654,68 +650,76 @@ export default function Organizations() {
 
         {/* Active Filters */}
         {activeFilters.length > 0 && (
-          <div className="flex flex-wrap items-center gap-3">
-            {activeFilters.map((filter, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 bg-black/30 border border-white/10 rounded-none px-3 py-2"
-              >
-                {filter.type === 'createdAt' && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-white">Created:</span>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="h-8 px-3 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
-                        >
-                          <CalendarIcon className="mr-1 h-3 w-3" />
-                          {filter.dateRange?.from ? format(filter.dateRange.from, 'MMM dd yyyy') : 'From'}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                        <Calendar
-                          mode="single"
-                          selected={filter.dateRange?.from}
-                          onSelect={(date) => updateFilterDateRange('createdAt', { from: date, to: filter.dateRange?.to })}
-                          initialFocus
-                          className="rounded-none"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="h-8 px-3 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
-                        >
-                          <CalendarIcon className="mr-1 h-3 w-3" />
-                          {filter.dateRange?.to ? format(filter.dateRange.to, 'MMM dd yyyy') : 'To'}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                        <Calendar
-                          mode="single"
-                          selected={filter.dateRange?.to}
-                          onSelect={(date) => updateFilterDateRange('createdAt', { from: filter.dateRange?.from, to: date })}
-                          initialFocus
-                          disabled={(date) => filter.dateRange?.from ? date < filter.dateRange.from : false}
-                          className="rounded-none"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                )}
-
-                <button
-                  onClick={() => removeFilter(filter.type)}
-                  className="text-gray-400 hover:text-white ml-2"
+          <div className="space-y-3">
+            <div className="flex flex-wrap gap-3">
+              {activeFilters.map((filter) => (
+                <div
+                  key={filter.type}
+                  className="inline-flex items-center gap-2 px-3 py-2 bg-white/10 border border-white/20 rounded-sm"
                 >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
+                  <Filter className="w-3 h-3 text-white" />
+
+                  {filter.type === 'createdAt' && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-white">Created:</span>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="h-8 px-3 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                          >
+                            <CalendarIcon className="mr-1 h-3 w-3" />
+                            {filter.dateRange?.from ? format(filter.dateRange.from, 'MMM dd yyyy') : 'From'}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                          <Calendar
+                            mode="single"
+                            selected={filter.dateRange?.from}
+                            onSelect={(date) =>
+                              updateFilterDateRange('createdAt', { from: date, to: filter.dateRange?.to })
+                            }
+                            initialFocus
+                            className="rounded-none"
+                          />
+                        </PopoverContent>
+                      </Popover>
+
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="h-8 px-3 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                          >
+                            <CalendarIcon className="mr-1 h-3 w-3" />
+                            {filter.dateRange?.to ? format(filter.dateRange.to, 'MMM dd yyyy') : 'To'}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                          <Calendar
+                            mode="single"
+                            selected={filter.dateRange?.to}
+                            onSelect={(date) =>
+                              updateFilterDateRange('createdAt', { from: filter.dateRange?.from, to: date })
+                            }
+                            initialFocus
+                            disabled={(date) => (filter.dateRange?.from ? date < filter.dateRange.from : false)}
+                            className="rounded-none"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => removeFilter(filter.type)}
+                    className="ml-1 hover:bg-white/20 rounded-full p-0.5"
+                  >
+                    <X className="w-3 h-3 text-white" />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -858,9 +862,14 @@ export default function Organizations() {
       {/* Seed Modal */}
       {showSeedModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
+          <div className="overflow-x-hidden bg-black/90 border border-white/10 p-6 w-full pt-4 max-w-2xl rounded-none">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg text-white font-light">Seed Data</h3>
+              <h3 className="text-sm text-white flex items-center justify-center font-light uppercase">
+                <span className="text-white/50 mr-2">[</span>
+                <Building2 className="inline mr-2 w-3.5 h-3.5 text-white" />
+                <span className="font-mono text-white/70 uppercase">Seed Organizations</span>
+                <span className="text-white/50 ml-2">]</span>
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -870,13 +879,10 @@ export default function Organizations() {
                 <X className="w-4 h-4" />
               </Button>
             </div>
+            <hr className="border-white/10 -mx-10 border-dashed -mt-4 mb-4" />
             <div className="space-y-6">
               {/* Organization Seeding */}
               <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Building2 className="w-5 h-5 text-white" />
-                  <h4 className="text-white font-light">Seed Organizations</h4>
-                </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
                     <Label
@@ -898,7 +904,8 @@ export default function Organizations() {
                     onClick={() => {
                       const count = parseInt(
                         (document.getElementById('organization-count') as HTMLInputElement)
-                          ?.value || '5'
+                          ?.value || '5',
+                        10
                       );
                       handleSeedOrganizations(count);
                     }}
@@ -932,7 +939,8 @@ export default function Organizations() {
                 </div>
               )}
             </div>
-            <div className="flex justify-end mt-6 pt-6 border-t border-dashed border-white/10">
+            <hr className="border-white/10 -mx-10 border-dashed mt-10" />
+            <div className="flex justify-end mt-6 pt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowSeedModal(false)}

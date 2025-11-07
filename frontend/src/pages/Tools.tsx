@@ -1111,8 +1111,16 @@ export default function Tools() {
                                         <button
                                             key={tool.id}
                                             onClick={() => tool.action()}
-                                            disabled={isRunning || runningTool !== null}
-                                            className="flex items-center space-x-4 p-4 bg-black/30 border border-dashed border-white/20 rounded-none hover:bg-black/50 transition-colors text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+                                            disabled={
+                                                (tool.id !== 'test-oauth' && tool.id !== 'test-db') ||
+                                                isRunning ||
+                                                runningTool !== null
+                                            }
+                                            className={`relative flex items-center space-x-4 p-4 bg-black/30 border border-dashed border-white/20 rounded-none transition-colors text-left group ${
+                                                tool.id !== 'test-oauth' && tool.id !== 'test-db'
+                                                    ? 'opacity-60 cursor-not-allowed'
+                                                    : 'hover:bg-black/50 disabled:opacity-50 disabled:cursor-not-allowed'
+                                            }`}
                                         >
                                             <div className="p-2 bg-white/10 rounded-none group-hover:bg-white/20 transition-colors">
                                                 {isRunning ? (
@@ -1127,6 +1135,11 @@ export default function Tools() {
                                                     <ChevronRight className='w-4 h-4 mr-2' />
                                                     {tool.description}</p>
                                             </div>
+                                            {tool.id !== 'test-oauth' && tool.id !== 'test-db' && (
+                                                <span className="absolute top-2 right-3 text-[10px] font-mono uppercase tracking-[0.2em] text-white/60">
+                                                    Coming Soon
+                                                </span>
+                                            )}
                                             <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
                                         </button>
                                     );
