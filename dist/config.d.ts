@@ -39,6 +39,9 @@ export interface AuthConfig {
     socialProviders?: Array<{
         id: string;
         name: string;
+        clientId?: string;
+        clientSecret?: string;
+        redirectURI?: string;
         enabled: boolean;
     }>;
     trustedOrigins?: string[];

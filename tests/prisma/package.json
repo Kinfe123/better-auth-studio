@@ -13,9 +13,10 @@
   "dependencies": {
     "@prisma/client": "^6.15.0",
     "@types/better-sqlite3": "^7.6.13",
-    "better-auth": "1.3.5",
+    "better-auth": "1.3.34",
     "better-auth-studio": "file:../../",
-    "better-sqlite3": "^12.2.0",
+    "better-sqlite3": "12.4.1",
+    "dotenv": "^17.2.3",
     "express": "^4.18.2",
     "prisma": "^6.15.0"
   },

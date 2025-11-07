@@ -1,17 +1,17 @@
 import { Handle, type NodeProps } from '@xyflow/react';
-import { 
-  Database, 
-  Key, 
-  Fingerprint, 
-  Hash, 
-  Eye, 
-  EyeOff,
+import {
   ChevronDown,
-  ChevronRight 
+  ChevronRight,
+  Database,
+  Eye,
+  EyeOff,
+  Fingerprint,
+  Hash,
+  Key,
 } from 'lucide-react';
+import { useState } from 'react';
 import { cn } from '../lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip-docs';
-import { useState } from 'react';
 
 const SCHEMA_NODE_WIDTH = 320;
 const SCHEMA_NODE_ROW_HEIGHT = 32;
@@ -72,8 +72,9 @@ const DatabaseSchemaNode = ({
   const data = data_ as DatabaseSchemaNodeData;
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  
-  const hiddenNodeConnector = '!h-2 !w-2 !min-w-0 !min-h-0 !cursor-grab !border-0 opacity-0 hover:opacity-100 transition-opacity';
+
+  const hiddenNodeConnector =
+    '!h-2 !w-2 !min-w-0 !min-h-0 !cursor-grab !border-0 opacity-0 hover:opacity-100 transition-opacity';
   const pluginTextColor = getPluginTextColor(data.plugin || 'core');
 
   if (data.isForeign) {
@@ -121,7 +122,7 @@ const DatabaseSchemaNode = ({
             <span className="text-white font-semibold text-sm">
               {data.displayName || data.name}
             </span>
-        </div>
+          </div>
           <div className="flex items-center gap-1">
             <button
               onClick={(e) => {
@@ -162,10 +163,7 @@ const DatabaseSchemaNode = ({
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Key
-                            size={10}
-                            className="text-yellow-400 flex-shrink-0"
-                          />
+                          <Key size={10} className="text-yellow-400 flex-shrink-0" />
                         </TooltipTrigger>
                         <TooltipContent className="bg-black border-gray-600 text-white text-xs">
                           Primary Key
@@ -173,15 +171,12 @@ const DatabaseSchemaNode = ({
                       </Tooltip>
                     </TooltipProvider>
                   )}
-                  
+
                   {column.isUnique && !column.isPrimary && (
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Fingerprint
-                            size={10}
-                            className="text-green-400 flex-shrink-0"
-                          />
+                          <Fingerprint size={10} className="text-green-400 flex-shrink-0" />
                         </TooltipTrigger>
                         <TooltipContent className="bg-black border-gray-600 text-white text-xs">
                           Unique
@@ -189,15 +184,12 @@ const DatabaseSchemaNode = ({
                       </Tooltip>
                     </TooltipProvider>
                   )}
-                  
+
                   {column.isIdentity && (
                     <TooltipProvider delayDuration={100}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Hash
-                            size={10}
-                            className="text-blue-400 flex-shrink-0"
-                          />
+                          <Hash size={10} className="text-blue-400 flex-shrink-0" />
                         </TooltipTrigger>
                         <TooltipContent className="bg-black border-gray-600 text-white text-xs">
                           Identity
@@ -210,30 +202,19 @@ const DatabaseSchemaNode = ({
                 {/* Column Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    {!column.isNullable && (
-                      <span className="text-red-400 text-xs">*</span>
-                    )}
-                    <span className="text-white font-medium truncate">
-                      {column.name}
-                    </span>
-                    <span className="text-gray-400 font-mono text-xs">
-                      {column.format}
-                    </span>
+                    {!column.isNullable && <span className="text-red-400 text-xs">*</span>}
+                    <span className="text-white font-medium truncate">{column.name}</span>
+                    <span className="text-gray-400 font-mono text-xs">{column.format}</span>
                   </div>
-                  
+
                   {showDetails && column.description && (
-                    <div className="text-gray-500 text-xs mt-1 truncate">
-                      {column.description}
-                    </div>
+                    <div className="text-gray-500 text-xs mt-1 truncate">{column.description}</div>
                   )}
                 </div>
 
                 {/* Plugin Badge */}
                 <div className="ml-2">
-                  <span className={cn(
-                    'px-2 py-1 rounded text-xs font-medium',
-                    pluginTextColor
-                  )}>
+                  <span className={cn('px-2 py-1 rounded text-xs font-medium', pluginTextColor)}>
                     {column.plugin}
                   </span>
                 </div>

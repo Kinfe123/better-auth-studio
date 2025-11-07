@@ -247,6 +247,9 @@ export async function findAuthConfig(configPath) {
                     ? Object.keys(betterAuthConfig.socialProviders).map((provider) => ({
                         id: provider,
                         name: provider,
+                        clientId: betterAuthConfig.socialProviders[provider].clientId,
+                        clientSecret: betterAuthConfig.socialProviders[provider].clientSecret,
+                        redirectURI: betterAuthConfig.socialProviders[provider].redirectURI,
                         enabled: true,
                     }))
                     : [],

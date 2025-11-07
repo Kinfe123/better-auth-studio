@@ -78,7 +78,7 @@ export async function startStudio(options: StudioOptions) {
 
   server.listen(port, host, () => {
     const url = `http://${host}:${port}`;
-    
+
     console.log(chalk.green('✅ Better Auth Studio is running!'));
     console.log(chalk.blue(`🌐 Open your browser and navigate to: ${url}`));
     console.log(chalk.gray(`📊 Dashboard available at: ${url}`));

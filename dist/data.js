@@ -19,6 +19,8 @@ export async function getAuthData(_authConfig, type = 'stats', options, configPa
                 return await deleteRealUser(adapter, options.id);
             case 'updateUser':
                 return await updateRealUser(adapter, options.id, options.userData);
+            case 'analytics':
+                return await getRealAnalytics(adapter, options);
             default:
                 throw new Error(`Unknown data type: ${type}`);
         }
@@ -29,14 +31,38 @@ export async function getAuthData(_authConfig, type = 'stats', options, configPa
 }
 async function getRealStats(adapter) {
     try {
-        const users = adapter.getUsers ? await adapter.getUsers() : [];
-        const sessions = adapter.getSessions ? await adapter.getSessions() : [];
+        // Use findMany with high limit to get all records
+        let users = [];
+        let sessions = [];
+        if (adapter.findMany) {
+            users = await adapter.findMany({ model: 'user', limit: 100000 }).catch(() => []);
+            sessions = await adapter.findMany({ model: 'session', limit: 100000 }).catch(() => []);
+        }
+        else {
+            users = adapter.getUsers ? await adapter.getUsers() : [];
+            sessions = adapter.getSessions ? await adapter.getSessions() : [];
+        }
         const now = new Date();
         const activeSessions = sessions.filter((s) => new Date(s.expiresAt || s.expires) > now);
         const activeUsers = new Set(activeSessions.map((s) => s.userId)).size;
         const usersByProvider = {
             email: users.length,
             github: 0,
+            google: 0,
+            apple: 0,
+            microsoft: 0,
+            twitter: 0,
+            facebook: 0,
+            instagram: 0,
+            linkedin: 0,
+            tiktok: 0,
+            twitch: 0,
+            discord: 0,
+            reddit: 0,
+            pinterest: 0,
+            snapchat: 0,
+            whatsapp: 0,
+            telegram: 0,
         };
         const recentSignups = users
             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -247,5 +273,252 @@ function generateMockSessions(count) {
         });
     }
     return sessions;
+}
+async function getRealAnalytics(adapter, options) {
+    try {
+        const { period, type, from, to } = options;
+        // Get all users and sessions from the database
+        let users = [];
+        let sessions = [];
+        // Try to fetch with higher limits
+        if (adapter.findMany) {
+            users = await adapter.findMany({ model: 'user', limit: 100000 }).catch(() => []);
+            sessions = await adapter.findMany({ model: 'session', limit: 100000 }).catch(() => []);
+        }
+        else {
+            users = adapter.getUsers ? await adapter.getUsers() : [];
+            sessions = adapter.getSessions ? await adapter.getSessions() : [];
+        }
+        const organizations = adapter.findMany ? await adapter.findMany({ model: 'organization', limit: 100000 }).catch(() => []) : [];
+        const teams = adapter.findMany ? await adapter.findMany({ model: 'team', limit: 100000 }).catch(() => []) : [];
+        // Determine the time range
+        const now = new Date();
+        let startDate;
+        let endDate = to ? new Date(to) : now;
+        if (from) {
+            startDate = new Date(from);
+        }
+        else {
+            switch (period) {
+                case '1D':
+                    startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                    break;
+                case '1W':
+                    startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    break;
+                case '1M':
+                    startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                    break;
+                case '3M':
+                    startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+                    break;
+                case '6M':
+                    startDate = new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000);
+                    break;
+                case '1Y':
+                    startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+                    break;
+                case 'Custom':
+                    // For Custom, use from date if provided, otherwise default to 30 days
+                    startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                    break;
+                case 'ALL':
+                default:
+                    // Get the earliest creation date from users
+                    const earliestUser = users.reduce((earliest, user) => {
+                        const userDate = new Date(user.createdAt);
+                        return !earliest || userDate < new Date(earliest.createdAt) ? user : earliest;
+                    }, null);
+                    startDate = earliestUser ? new Date(earliestUser.createdAt) : new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+                    break;
+            }
+        }
+        // Generate time buckets based on period
+        const buckets = [];
+        if (period === '1D') {
+            // 24 hours - last 24 hours from now
+            for (let i = 0; i < 24; i++) {
+                const bucketDate = new Date(endDate.getTime() - (23 - i) * 60 * 60 * 1000);
+                const bucketStart = new Date(bucketDate);
+                bucketStart.setMinutes(0, 0, 0);
+                const bucketEnd = new Date(bucketStart);
+                bucketEnd.setMinutes(59, 59, 999);
+                const hour = bucketDate.getHours();
+                buckets.push({ start: bucketStart, end: bucketEnd, label: `${hour}h` });
+            }
+        }
+        else if (period === '1W') {
+            // 7 days - last 7 days from today
+            for (let i = 0; i < 7; i++) {
+                const bucketDate = new Date(endDate.getTime() - (6 - i) * 24 * 60 * 60 * 1000);
+                const bucketStart = new Date(bucketDate);
+                bucketStart.setHours(0, 0, 0, 0);
+                const bucketEnd = new Date(bucketStart);
+                bucketEnd.setHours(23, 59, 59, 999);
+                const dayName = bucketDate.toLocaleDateString('en-US', { weekday: 'short' });
+                buckets.push({ start: bucketStart, end: bucketEnd, label: dayName });
+            }
+        }
+        else if (period === '1M') {
+            // 30 days - last 30 days from today
+            for (let i = 0; i < 30; i++) {
+                const bucketDate = new Date(endDate.getTime() - (29 - i) * 24 * 60 * 60 * 1000);
+                const bucketStart = new Date(bucketDate);
+                bucketStart.setHours(0, 0, 0, 0);
+                const bucketEnd = new Date(bucketStart);
+                bucketEnd.setHours(23, 59, 59, 999);
+                // Format as "Nov 5" or just the day number
+                const monthName = bucketDate.toLocaleDateString('en-US', { month: 'short' });
+                const dayNum = bucketDate.getDate();
+                const dayLabel = `${monthName} ${dayNum}`;
+                buckets.push({ start: bucketStart, end: bucketEnd, label: dayLabel });
+            }
+        }
+        else if (period === '3M') {
+            // 3 months - last 3 months starting from current month
+            const currentMonth = endDate.getMonth();
+            const currentYear = endDate.getFullYear();
+            for (let i = 0; i < 3; i++) {
+                const monthDate = new Date(currentYear, currentMonth - (2 - i), 1);
+                const bucketStart = new Date(monthDate);
+                bucketStart.setHours(0, 0, 0, 0);
+                const bucketEnd = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0);
+                bucketEnd.setHours(23, 59, 59, 999);
+                const monthName = monthDate.toLocaleDateString('en-US', { month: 'short' });
+                buckets.push({ start: bucketStart, end: bucketEnd, label: monthName });
+            }
+        }
+        else if (period === '6M') {
+            // 6 months - last 6 months starting from current month
+            const currentMonth = endDate.getMonth();
+            const currentYear = endDate.getFullYear();
+            for (let i = 0; i < 6; i++) {
+                const monthDate = new Date(currentYear, currentMonth - (5 - i), 1);
+                const bucketStart = new Date(monthDate);
+                bucketStart.setHours(0, 0, 0, 0);
+                const bucketEnd = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0);
+                bucketEnd.setHours(23, 59, 59, 999);
+                const monthName = monthDate.toLocaleDateString('en-US', { month: 'short' });
+                buckets.push({ start: bucketStart, end: bucketEnd, label: monthName });
+            }
+        }
+        else if (period === '1Y') {
+            // 12 months - last 12 months starting from current month
+            const currentMonth = endDate.getMonth();
+            const currentYear = endDate.getFullYear();
+            for (let i = 0; i < 12; i++) {
+                const monthDate = new Date(currentYear, currentMonth - (11 - i), 1);
+                const bucketStart = new Date(monthDate);
+                bucketStart.setHours(0, 0, 0, 0);
+                const bucketEnd = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0);
+                bucketEnd.setHours(23, 59, 59, 999);
+                const monthName = monthDate.toLocaleDateString('en-US', { month: 'short' });
+                buckets.push({ start: bucketStart, end: bucketEnd, label: monthName });
+            }
+        }
+        else if (period === 'Custom' || period === 'ALL') {
+            // Custom or ALL - divide into equal buckets
+            const totalDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+            const bucketCount = Math.min(Math.max(totalDays, 1), 30); // Max 30 buckets, min 1
+            const bucketSize = totalDays / bucketCount;
+            for (let i = 0; i < bucketCount; i++) {
+                const bucketStart = new Date(startDate.getTime() + i * bucketSize * 24 * 60 * 60 * 1000);
+                const bucketEnd = i === bucketCount - 1
+                    ? endDate
+                    : new Date(bucketStart.getTime() + bucketSize * 24 * 60 * 60 * 1000);
+                // Generate better labels based on date range
+                let label;
+                if (totalDays <= 7) {
+                    // For short ranges, show day names
+                    label = bucketStart.toLocaleDateString('en-US', { weekday: 'short' });
+                }
+                else if (totalDays <= 30) {
+                    // For medium ranges, show month and day
+                    label = bucketStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }
+                else {
+                    // For long ranges, show month only
+                    label = bucketStart.toLocaleDateString('en-US', { month: 'short' });
+                }
+                buckets.push({ start: bucketStart, end: bucketEnd, label });
+            }
+        }
+        // Count items in each bucket based on type
+        let data = [];
+        if (type === 'users') {
+            // For users, count users created within each bucket (non-cumulative)
+            data = buckets.map(bucket => {
+                return users.filter((user) => {
+                    const createdAt = new Date(user.createdAt);
+                    return createdAt >= bucket.start && createdAt < bucket.end;
+                }).length;
+            });
+        }
+        else if (type === 'newUsers') {
+            // For new users, count users created within each bucket
+            data = buckets.map(bucket => {
+                return users.filter((user) => {
+                    const createdAt = new Date(user.createdAt);
+                    return createdAt >= bucket.start && createdAt < bucket.end;
+                }).length;
+            });
+        }
+        else if (type === 'activeUsers') {
+            // Active users = users with active sessions in that period
+            data = buckets.map(bucket => {
+                const activeSessions = sessions.filter((session) => {
+                    const sessionCreated = new Date(session.createdAt);
+                    const sessionExpires = new Date(session.expiresAt || session.expires);
+                    return sessionCreated >= bucket.start && sessionCreated < bucket.end && sessionExpires > bucket.start;
+                });
+                return new Set(activeSessions.map((s) => s.userId)).size;
+            });
+        }
+        else if (type === 'organizations') {
+            // For organizations, count orgs created within each bucket (non-cumulative)
+            data = buckets.map(bucket => {
+                return organizations.filter((org) => {
+                    const createdAt = new Date(org.createdAt);
+                    return createdAt >= bucket.start && createdAt < bucket.end;
+                }).length;
+            });
+        }
+        else if (type === 'teams') {
+            // For teams, count teams created within each bucket (non-cumulative)
+            data = buckets.map(bucket => {
+                return teams.filter((team) => {
+                    const createdAt = new Date(team.createdAt);
+                    return createdAt >= bucket.start && createdAt < bucket.end;
+                }).length;
+            });
+        }
+        // Calculate percentage change
+        const total = data.reduce((sum, val) => sum + val, 0);
+        const average = total / data.length;
+        const lastValue = data[data.length - 1] || 0;
+        const previousValue = data[data.length - 2] || average;
+        const percentageChange = previousValue > 0 ? ((lastValue - previousValue) / previousValue) * 100 : 0;
+        return {
+            data,
+            labels: buckets.map(b => b.label),
+            total,
+            average: Math.round(average),
+            percentageChange: Math.round(percentageChange * 10) / 10,
+            period,
+            type,
+        };
+    }
+    catch (error) {
+        // Return empty data on error
+        return {
+            data: [],
+            labels: [],
+            total: 0,
+            average: 0,
+            percentageChange: 0,
+            period: options.period,
+            type: options.type,
+        };
+    }
 }
 //# sourceMappingURL=data.js.map

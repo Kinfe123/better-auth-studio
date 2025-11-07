@@ -1,5 +1,4 @@
 import { betterAuth } from "better-auth";
-import Database from "better-sqlite3";
 import { organization, twoFactor, admin, apiKey } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../lib/db";
@@ -7,14 +6,14 @@ import * as schema from "../auth-schema";
 
 export const auth = betterAuth({
   secret: process.env.AUTH_SECRET || "better-auth-secret-123456789",
-  database: drizzleAdapter(db, { provider: "pg", schema: schema  }),
-  socialProviders: process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET ? {
+  database: drizzleAdapter(db, { provider: "pg", schema: schema }),
+  socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID,
+      clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      redirectUri: "http://localhost:3000/api/auth/callback/github"
+      redirectURI: "http://localhost:3000/api/auth/callback/github"
     }
-  } : undefined,
+  },
   emailAndPassword: {
     enabled: true,
     disableSignUp: false,
@@ -35,7 +34,6 @@ export const auth = betterAuth({
     }),
     admin(),
     twoFactor({}),
-    admin(),
     apiKey()
   ],
   session: {

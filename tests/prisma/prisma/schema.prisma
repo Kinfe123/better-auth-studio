@@ -49,6 +49,8 @@ model Session {
   activeOrganizationId String?
   activeTeamId         String?
 
+  impersonatedBy String?
+
   @@unique([token])
   @@map("session")
 }

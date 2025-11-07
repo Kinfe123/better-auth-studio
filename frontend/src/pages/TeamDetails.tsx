@@ -1,17 +1,16 @@
 import {
-  ArrowLeft,
   Building2,
   Calendar,
-  Edit,
   Loader,
   Search,
   Trash2,
   UserPlus,
   Users,
   X,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+} from '../components/PixelIcons';
+import { Edit } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -57,6 +56,7 @@ interface User {
 
 export default function TeamDetails() {
   const { orgId, teamId } = useParams<{ orgId: string; teamId: string }>();
+  const navigate = useNavigate();
   const [team, setTeam] = useState<Team | null>(null);
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +70,8 @@ export default function TeamDetails() {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [teamFormData, setTeamFormData] = useState({ name: '' });
 
-  const fetchTeam = async () => {
+  const fetchTeam = useCallback(async () => {
+    if (!teamId) return;
     try {
       const response = await fetch(`/api/teams/${teamId}`);
       const data = await response.json();
@@ -90,9 +91,10 @@ export default function TeamDetails() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [teamId]);
 
-  const fetchTeamMembers = async () => {
+  const fetchTeamMembers = useCallback(async () => {
+    if (!teamId) return;
     try {
       const response = await fetch(`/api/teams/${teamId}/members`);
       const data = await response.json();
@@ -103,7 +105,7 @@ export default function TeamDetails() {
     } catch (_error) {
       toast.error('Failed to load team members');
     }
-  };
+  }, [teamId]);
 
   const fetchAvailableUsers = async () => {
     try {
@@ -239,12 +241,14 @@ export default function TeamDetails() {
     return (
       <div className="space-y-6 p-6">
         <div className="flex items-center space-x-4">
-          <Link to={`/organizations/${orgId}`}>
-            <Button variant="ghost" className="text-gray-400 hover:text-white rounded-none">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Organization
-            </Button>
-          </Link>
+          <span className="mb-4 ml-0 flex justify-start items-start text-left border-none text-white">
+            <span className='font-light'>
+              <span
+                onClick={() => navigate(`/organizations/${orgId}`)}
+                className='uppercase cursor-pointer text-white/80 font-mono text-sm'>teams / </span>
+              <span className='text-white font-mono text-sm'>{teamId}</span>
+            </span>
+          </span>
         </div>
         <div className="text-center py-12">
           <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -260,12 +264,14 @@ export default function TeamDetails() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Link to={`/organizations/${team.organizationId}`}>
-            <Button variant="ghost" className="text-gray-400 hover:text-white rounded-none">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Organization
-            </Button>
-          </Link>
+          <span className="mb-4 ml-0 flex justify-start items-start text-left border-none text-white">
+            <span className='font-light'>
+              <span
+                onClick={() => navigate(`/organizations/${team.organizationId}`)}
+                className='uppercase cursor-pointer text-white/80 font-mono text-sm'>teams / </span>
+              <span className='text-white font-mono text-sm'>{teamId}</span>
+            </span>
+          </span>
         </div>
 
         <div className="flex items-center space-x-3">
@@ -291,12 +297,19 @@ export default function TeamDetails() {
           <Users className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h1 className="text-2xl text-white font-light">{team.name}</h1>
-          <div className="flex items-center space-x-2">
+          <h1 className="text-2xl text-white font-light inline-flex items-center">
+            {team.name}
+            <sup className="text-xs text-gray-500 ml-2">
+              <span className='mr-1'>[</span>
+              <span className='text-white/80 font-mono text-xs'>{teamId}</span>
+              <span className='ml-1'>]</span>
+            </sup>
+          </h1>
+          <div className="flex items-center space-x-2 mt-1">
             {team.organization && (
               <Link
                 to={`/organizations/${team.organizationId}`}
-                className="text-gray-400 hover:text-white text-sm"
+                className="text-gray-400 hover:text-white text-sm font-sans"
               >
                 <Building2 className="w-4 h-4 inline mr-1" />
                 {team.organization.name}
@@ -329,15 +342,14 @@ export default function TeamDetails() {
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>Members</span>
-            {members.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="text-xs bg-white/10 border border-white/20 rounded-sm"
-              >
-                {members.length}
-              </Badge>
-            )}
+            <span className="inline-flex items-start">
+              Members
+              <sup className="text-xs text-gray-500 ml-1">
+                <span className='mr-0.5'>[</span>
+                <span className='text-white/80 font-mono text-xs'>{members.length}</span>
+                <span className='ml-0.5'>]</span>
+              </sup>
+            </span>
           </button>
         </nav>
       </div>
@@ -350,16 +362,16 @@ export default function TeamDetails() {
             <h3 className="text-lg text-white font-light mb-4">Team Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="text-sm text-gray-400 font-light">Name</label>
-                <p className="text-white mt-1">{team.name}</p>
+                <label className="text-sm text-gray-400 font-mono uppercase">Name</label>
+                <p className="text-white font-sans mt-1">{team.name}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-400 font-light">Organization</label>
-                <p className="text-white mt-1">{team.organization?.name || 'Unknown'}</p>
+                <label className="text-sm text-gray-400 font-mono uppercase">Organization</label>
+                <p className="text-white font-sans mt-1">{team.organization?.name || 'Unknown'}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-400 font-light">Created</label>
-                <p className="text-white mt-1">
+                <label className="text-sm text-gray-400 font-mono uppercase">Created</label>
+                <p className="text-white font-sans mt-1">
                   {new Date(team.createdAt).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -368,8 +380,8 @@ export default function TeamDetails() {
                 </p>
               </div>
               <div>
-                <label className="text-sm text-gray-400 font-light">Last Updated</label>
-                <p className="text-white mt-1">
+                <label className="text-sm text-gray-400 font-mono uppercase">Last Updated</label>
+                <p className="text-white font-sans mt-1">
                   {new Date(team.updatedAt).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -386,8 +398,8 @@ export default function TeamDetails() {
               <div className="flex items-center space-x-3">
                 <Users className="w-8 h-8 text-white" />
                 <div>
-                  <p className="text-2xl text-white font-light">{members.length}</p>
-                  <p className="text-sm text-gray-400">Members</p>
+                  <p className="text-2xl text-white font-sans font-light">{members.length}</p>
+                  <p className="text-sm text-gray-400 font-mono uppercase">Members</p>
                 </div>
               </div>
             </div>
@@ -395,12 +407,12 @@ export default function TeamDetails() {
               <div className="flex items-center space-x-3">
                 <Calendar className="w-8 h-8 text-white" />
                 <div>
-                  <p className="text-2xl text-white font-light">
+                  <p className="text-2xl text-white font-sans font-light">
                     {Math.ceil(
                       (Date.now() - new Date(team.createdAt).getTime()) / (1000 * 60 * 60 * 24)
                     )}
                   </p>
-                  <p className="text-sm text-gray-400">Days Active</p>
+                  <p className="text-sm text-gray-400 font-mono uppercase">Days Active</p>
                 </div>
               </div>
             </div>
@@ -408,8 +420,8 @@ export default function TeamDetails() {
               <div className="flex items-center space-x-3">
                 <Building2 className="w-8 h-8 text-white" />
                 <div>
-                  <p className="text-2xl text-white font-light">1</p>
-                  <p className="text-sm text-gray-400">Organization</p>
+                  <p className="text-2xl text-white font-sans font-light">1</p>
+                  <p className="text-sm text-gray-400 font-mono uppercase">Organization</p>
                 </div>
               </div>
             </div>
@@ -422,8 +434,14 @@ export default function TeamDetails() {
           {/* Members Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg text-white font-light">Team Members ({members.length})</h3>
-              <p className="text-gray-400 mt-1">Manage members of this team</p>
+              <h3 className="text-lg relative text-white font-light inline-flex items-start">Team Members
+                <sup className="text-xs text-gray-500 ml-1 mt-0">
+                  <span className='mr-1'>[</span>
+                  <span className='text-white/80 font-mono text-xs'>{members.length}</span>
+                  <span className='ml-1'>]</span>
+                </sup>
+              </h3>
+              <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">Manage members of this team</p>
             </div>
           </div>
 

@@ -224,8 +224,15 @@ export default function Teams() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-light tracking-tight text-white">Teams</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-2xl relative text-white font-light inline-flex items-start">
+            Teams
+            <sup className="text-xs text-gray-500 ml-1 mt-0">
+              <span className='mr-1'>[</span>
+              <span className='text-white font-mono text-sm'>{filteredTeams.length}</span>
+              <span className='ml-1'>]</span>
+            </sup>
+          </h1>
+          <p className="text-gray-400 mt-1 uppercase font-mono text-sm font-light">
             {filteredTeams.length} team{filteredTeams.length !== 1 ? 's' : ''} found
           </p>
         </div>

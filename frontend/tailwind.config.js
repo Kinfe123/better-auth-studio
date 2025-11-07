@@ -61,6 +61,7 @@ export default {
   				'sans-serif'
   			],
   			mono: [
+				'Geist Mono',
   				'JetBrains Mono',
   				'monospace'
   			]

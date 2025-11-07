@@ -6,7 +6,7 @@ import {
   Terminal as TerminalIcon,
   XCircle,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface TerminalLine {
   id: string;
@@ -32,6 +32,19 @@ export function Terminal({
   defaultCollapsed = false,
 }: TerminalProps) {
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container || isCollapsed) {
+      return;
+    }
+
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: 'smooth',
+    });
+  }, [lines, isRunning, isCollapsed]);
 
   const getLineIcon = (line: TerminalLine) => {
     switch (line.type) {
@@ -117,7 +130,7 @@ export function Terminal({
 
       {/* Terminal Content */}
       {!isCollapsed && (
-        <div className="p-3 space-y-0.5 h-56 overflow-y-auto">
+        <div ref={scrollRef} className="p-3 space-y-0.5 h-56 overflow-y-auto">
           {lines.length === 0 ? (
             <div className="text-gray-500 italic text-xs">
               <span className="text-green-400">$</span> Waiting for operations...

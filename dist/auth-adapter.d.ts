@@ -1,6 +1,7 @@
 export interface AuthAdapter {
     createUser: (data: any) => Promise<any>;
     createSession: (data: any) => Promise<any>;
+    deletUser?: (id: string) => Promise<any>;
     createAccount: (data: any) => Promise<any>;
     createVerification: (data: any) => Promise<any>;
     createOrganization: (data: any) => Promise<any>;

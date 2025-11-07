@@ -3,6 +3,7 @@ import {
   ArrowRight,
   BarChart3,
   Building2,
+  Lock,
   Mail,
   Plus,
   Search,
@@ -21,6 +22,9 @@ interface CommandItem {
   action: () => void;
   category: string;
   keywords?: string[];
+  requiresPlugin?: string;
+  disabled?: boolean;
+  disabledMessage?: string;
 }
 
 interface CommandPaletteProps {
@@ -31,6 +35,27 @@ interface CommandPaletteProps {
 export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
+  const [plugins, setPlugins] = useState<any>(null);
+
+  // Fetch plugins on mount
+  useEffect(() => {
+    const fetchPlugins = async () => {
+      try {
+        const response = await fetch('/api/plugins');
+        const data = await response.json();
+        setPlugins(data);
+      } catch (error) {
+        console.error('Failed to fetch plugins:', error);
+      }
+    };
+    fetchPlugins();
+  }, []);
+
+  // Check if a plugin is enabled
+  const isPluginEnabled = (pluginName: string) => {
+    if (!plugins?.plugins) return false;
+    return plugins.plugins.some((p: any) => p.id === pluginName);
+  };
 
   const commands: CommandItem[] = [
     {
@@ -50,6 +75,9 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
       action: () => navigate('/organizations'),
       category: 'Navigation',
       keywords: ['org', 'company', 'team'],
+      requiresPlugin: 'organization',
+      disabled: !isPluginEnabled('organization'),
+      disabledMessage: 'Enable organization plugin in settings',
     },
     {
       id: 'sessions',
@@ -95,6 +123,9 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
       action: () => navigate('/organizations'),
       category: 'Actions',
       keywords: ['add', 'new', 'org'],
+      requiresPlugin: 'organization',
+      disabled: !isPluginEnabled('organization'),
+      disabledMessage: 'Enable organization plugin in settings',
     },
     {
       id: 'invite-user',
@@ -104,6 +135,9 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
       action: () => navigate('/organizations'),
       category: 'Actions',
       keywords: ['invite', 'email', 'send'],
+      requiresPlugin: 'organization',
+      disabled: !isPluginEnabled('organization'),
+      disabledMessage: 'Enable organization plugin in settings',
     },
   ];
 
@@ -146,16 +180,28 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
     };
 
     if (isOpen) {
+      // Prevent background scroll when command palette is open
+      document.body.style.overflow = 'hidden';
       document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
+      
+      return () => {
+        document.body.style.overflow = 'unset';
+        document.removeEventListener('keydown', handleEscape);
+      };
     }
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-start justify-center pt-[20vh] z-50">
-      <div className="bg-black/90 border border-dashed border-white/20 rounded-none w-full max-w-2xl mx-4">
+    <div 
+      className="fixed inset-0 bg-black/50 flex items-start justify-center pt-[20vh] z-50 overflow-hidden"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-black/90 overflow-hidden border border-white/10 rounded-none w-full max-w-2xl mx-4"
+        onClick={(e) => e.stopPropagation()}
+      >
         <Command className="p-2">
           <div className="flex items-center border-b border-dashed border-white/10 px-3 pb-3">
             <Search className="w-4 h-4 text-gray-400 mr-3" />
@@ -163,7 +209,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
               value={search}
               onValueChange={setSearch}
               placeholder="Search for actions, pages, or commands..."
-              className="flex-1 bg-transparent text-white placeholder-gray-400 outline-none"
+              className="flex-1 placeholder:text-xs bg-transparent text-white placeholder-gray-400 outline-none"
               autoFocus
             />
             <kbd className="hidden sm:inline-flex items-center px-2 py-1 text-xs text-gray-400 border border-dashed border-white/20 rounded-sm">
@@ -187,22 +233,36 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
                   >
                     {categoryCommands.map((command) => {
                       const Icon = command.icon;
+                      const isDisabled = command.disabled;
+                      
                       return (
                         <Command.Item
                           key={command.id}
                           value={command.id}
+                          disabled={isDisabled}
                           onSelect={() => {
+                            if (!isDisabled) {
                             command.action();
                             onClose();
+                            }
                           }}
-                          className="flex items-center space-x-3 px-3 py-2 rounded-none hover:bg-white/5 cursor-pointer transition-colors"
+                          className={`flex items-center space-x-3 px-0 py-2 rounded-none transition-colors relative ${
+                            isDisabled 
+                              ? 'opacity-40 cursor-not-allowed blur-[0.5px]' 
+                              : 'hover:bg-white/5 cursor-pointer'
+                          }`}
                         >
                           <Icon className="w-4 h-4 text-white" />
                           <div className="flex-1">
-                            <div className="text-white font-light">{command.title}</div>
-                            <div className="text-sm text-gray-400">{command.description}</div>
+                            <div className="text-white text-[13px] font-light flex items-center gap-2">
+                              {command.title}
+                              {isDisabled && <Lock className="w-3 h-3 text-yellow-500" />}
+                            </div>
+                            <div className="text-[10px] font-light uppercase font-mono text-gray-400">
+                              {isDisabled ? command.disabledMessage : command.description}
+                            </div>
                           </div>
-                          <ArrowRight className="w-4 h-4 text-gray-400" />
+                          {!isDisabled && <ArrowRight className="w-4 h-4 text-gray-400" />}
                         </Command.Item>
                       );
                     })}

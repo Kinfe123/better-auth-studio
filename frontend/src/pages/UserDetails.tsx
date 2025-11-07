@@ -1,25 +1,24 @@
 import {
-  ArrowLeft,
   Ban,
   Building2,
   Calendar,
-  Clock,
   Database,
-  Edit,
   Globe,
+  HashIcon,
   Loader,
   Mail,
   Monitor,
+  Phone,
   User,
   UserMinus,
   Users,
   X,
-} from 'lucide-react';
+} from '../components/PixelIcons';
+import { Clock1, Edit } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Terminal } from '../components/Terminal';
-import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -29,12 +28,15 @@ interface User {
   name: string;
   email: string;
   emailVerified: boolean;
+  twoFactorEnabled?: boolean;
   image?: string;
   createdAt: string;
   updatedAt: string;
   banned?: boolean;
   banReason?: string;
   banExpires?: string;
+  phoneNumber?: string
+  username?: string
   role?: string;
 }
 
@@ -52,6 +54,7 @@ interface Team {
   name: string;
   organizationId: string;
   organizationName: string;
+  organizationSlug?: string;
   role: string;
   createdAt: string;
 }
@@ -230,7 +233,7 @@ export default function UserDetails() {
         // Resolve locations for sessions
         resolveSessionLocations(sessions);
       }
-    } catch (_error) {}
+    } catch (_error) { }
   }, [userId]);
 
   const handleEditUser = async () => {
@@ -534,49 +537,19 @@ export default function UserDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-black w-full">
-      <div className="w-full px-6 py-8">
-        {/* Banned User Warning Banner */}
-        {user.banned && (
-          <div className="mb-6 border-l-4 border-red-500 bg-red-500/10 p-4">
-            <div className="flex items-start space-x-3">
-              <Ban className="w-5 h-5 text-red-400 mt-0.5" />
-              <div className="flex-1">
-                <h3 className="text-red-400 font-semibold text-sm uppercase tracking-wide">
-                  User Account Banned
-                </h3>
-                <p className="text-red-300 text-sm mt-1">
-                  This user has been banned from accessing the system.
-                </p>
-                {user.banReason && (
-                  <div className="mt-2 text-sm">
-                    <span className="text-gray-400">Reason: </span>
-                    <span className="text-red-300">{user.banReason}</span>
-                  </div>
-                )}
-                {user.banExpires && (
-                  <div className="mt-1 text-sm">
-                    <span className="text-gray-400">Ban expires: </span>
-                    <span className="text-yellow-400">
-                      {new Date(user.banExpires).toLocaleString()}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="mb-8">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/users')}
-            className="mb-4 border-none text-white"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Users
-          </Button>
-
+    <div className="space-y-6 p-6 bg-black w-full">
+      <div className="w-full flex flex-col">
+        <span
+          className="mb-4 ml-0 flex justify-start items-start text-left border-none text-white"
+        >
+          <span className='font-light'>
+            <span
+              onClick={() => navigate('/users')}
+              className='uppercase cursor-pointer text-white/80 font-mono text-sm'>users / </span>
+            <span className='text-white font-mono text-sm'>{user.id}</span>
+          </span>
+        </span>
+        <div className="mb-8 mt-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-gray-800 border border-dashed border-white/20 flex items-center justify-center">
@@ -587,15 +560,34 @@ export default function UserDetails() {
                 )}
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white">{user.name}</h1>
-                <p className="text-gray-400">{user.email}</p>
-                <div className="flex items-center space-x-2 mt-2">
-                  <Badge
-                    variant={user.emailVerified ? 'default' : 'destructive'}
-                    className="rounded-none"
+                <h1 className="text-3xl font-light text-white inline-flex items-center">
+                  {user.name}
+                  <sup
+                    className="text-xs text-gray-500 ml-2 cursor-pointer hover:text-white transition-colors"
+                    onClick={() => {
+                      navigator.clipboard.writeText(user.id);
+                      toast.success('User ID copied to clipboard');
+                    }}
+                    title="Click to copy User ID"
                   >
-                    {user.emailVerified ? 'Verified' : 'Unverified'}
-                  </Badge>
+                    <span className='mr-1'>[</span>
+                    <span className='text-white/80 font-mono text-xs'>{user.id.slice(0, 8)}...</span>
+                    <span className='ml-1'>]</span>
+                  </sup>
+                  {user.banned && (
+                    <sup className="ml-2 px-2 pt-2 pb-2 -mt-1 py-0.5 text-[10px] font-mono uppercase border border-dashed border-red-500/30 bg-red-500/10 text-red-400/80 rounded-none">
+                      Banned
+                    </sup>
+                  )}
+                </h1>
+                <p className="text-gray-400 font-mono text-sm">{user.email}</p>
+                <div className="flex items-center space-x-2 mt-2">
+                  {user.role && (
+                    <div className="flex items-center space-x-1 px-2 py-1 rounded-sm text-xs font-mono bg-purple-500/20 text-purple-400">
+                      <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
+                      <span>{user.role}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -604,7 +596,7 @@ export default function UserDetails() {
               <Button
                 variant="outline"
                 onClick={() => setShowEditModal(true)}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                className="border border-white/20 text-white hover:bg-white/10 rounded-none"
               >
                 <Edit className="w-4 h-4 mr-2" />
                 Edit User
@@ -613,7 +605,7 @@ export default function UserDetails() {
                 <Button
                   variant="outline"
                   onClick={() => setShowUnbanModal(true)}
-                  className="border border-dashed border-green-400/50 text-green-400 hover:bg-green-400/10 rounded-none"
+                  className="border border-green-400/20 text-green-400 hover:bg-green-400/10 rounded-none"
                   disabled={!adminPluginEnabled}
                 >
                   <Ban className="w-4 h-4 mr-2" />
@@ -623,7 +615,7 @@ export default function UserDetails() {
                 <Button
                   variant="outline"
                   onClick={() => setShowBanModal(true)}
-                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                  className="border border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none"
                   disabled={!adminPluginEnabled}
                 >
                   <Ban className="w-4 h-4 mr-2" />
@@ -646,24 +638,27 @@ export default function UserDetails() {
                   count: organizations.length,
                 },
                 { id: 'teams', name: 'Teams', icon: Users, count: teams.length },
-                { id: 'sessions', name: 'Sessions', icon: Clock, count: sessions.length },
+                { id: 'sessions', name: 'Sessions', icon: Clock1, count: sessions.length },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                    activeTab === tab.id
-                      ? 'border-white text-white'
-                      : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-                  }`}
+                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === tab.id
+                    ? 'border-white text-white'
+                    : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                    }`}
                 >
-                  <tab.icon className="w-4 h-4" />
-                  <span>{tab.name}</span>
-                  {tab.count !== undefined && (
-                    <Badge variant="outline" className="rounded-none text-xs">
-                      {tab.count}
-                    </Badge>
-                  )}
+                  <tab.icon className="w-4 h-4 text-white/90" />
+                  <span className="inline-flex items-start">
+                    <span className="">{tab.name}</span>
+                    {tab.count !== undefined && (
+                      <sup className="text-xs text-gray-500 ml-1">
+                        <span className='mr-0.5'>[</span>
+                        <span className='text-white/80 font-mono text-xs'>{tab.count}</span>
+                        <span className='ml-0.5'>]</span>
+                      </sup>
+                    )}
+                  </span>
                 </button>
               ))}
             </nav>
@@ -671,81 +666,97 @@ export default function UserDetails() {
 
           <div className="p-6">
             {activeTab === 'details' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="overflow-x-hidden bg-white/[3%] border border-white/10 p-6 rounded-none">
+                  <h3 className="text-sm uppercase font-mono text-gray-400 mb-4 tracking-wider">
+                    BASIC INFORMATION
+                  </h3>
+                  <hr className="border-white/10 -mx-10 border-dashed my-4" />
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">Name</label>
-                      <div className="text-white">{user.name}</div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
-                      <div className="text-white flex items-center space-x-2">
-                        <Mail className="w-4 h-4" />
-                        <span>{user.email}</span>
+                    <div className="flex items-start space-x-3">
+                      <User className="w-4 h-4 text-gray-400 mt-1" />
+                      <div className="flex-1">
+                        <div className="text-xs uppercase font-mono text-gray-500 mb-1">Username</div>
+                        <div className="text-white font-sans text-sm">{user.name.toLowerCase().replace(/\s+/g, '')}</div>
                       </div>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
-                        Email Status
-                      </label>
-                      <Badge
-                        variant={user.emailVerified ? 'default' : 'destructive'}
-                        className="rounded-none"
-                      >
-                        {user.emailVerified ? 'Verified' : 'Unverified'}
-                      </Badge>
+                    <div className="flex items-start space-x-3">
+                      <Mail className="w-4 h-4 text-gray-400 mt-1" />
+                      <div className="flex-1">
+                        <div className="text-xs uppercase font-mono text-gray-500 mb-1">Email</div>
+                        <div className="text-white font-mono text-sm">{user.email}</div>
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
-                        Account Status
-                      </label>
-                      <Badge
-                        variant={user.banned ? 'destructive' : 'default'}
-                        className="rounded-none"
-                      >
-                        {user.banned ? 'Banned' : 'Active'}
-                      </Badge>
-                      {user.banned && user.banReason && (
-                        <div className="mt-2 text-sm text-red-400">Reason: {user.banReason}</div>
-                      )}
-                      {user.banned && user.banExpires && (
-                        <div className="mt-1 text-sm text-yellow-400">
-                          Expires: {new Date(user.banExpires).toLocaleDateString()}
+                    {user.username && (
+                      <div className="flex items-start space-x-3">
+                        <HashIcon className="w-4 h-4 text-gray-400 mt-1" />
+                        <div className="flex-1">
+                          <div className="text-xs uppercase font-mono text-gray-500 mb-1">Username</div>
+                          <div className="text-white font-mono text-sm">{user.username}</div>
                         </div>
-                      )}
+                      </div>
+                    )}
+                    {user.phoneNumber && (
+                      <div className="flex items-start space-x-3">
+                        <Phone className="w-4 h-4 text-gray-400 mt-1" />
+                        <div className="flex-1">
+                          <div className="text-xs uppercase font-mono text-gray-500 mb-1">Phone</div>
+                          <div className="text-white font-mono text-sm">+251 91 234 5678</div>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex items-start space-x-3">
+                      <Calendar className="w-4 h-4 text-gray-400 mt-1" />
+                      <div className="flex-1">
+                        <div className="text-xs uppercase font-mono text-gray-500 mb-1">Member Since</div>
+                        <div className="text-white font-mono text-sm">
+                          {new Date(user.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </div>
+                      </div>
                     </div>
                   </div>
+                </div>
+
+                <div className="overflow-x-hidden bg-white/[3%] border border-white/10 p-6 rounded-none">
+                  <h3 className="text-sm uppercase font-mono text-gray-400 mb-4 tracking-wider">
+                    SECURITY
+                  </h3>
+                  <hr className="border-white/10 -mx-10 border-dashed my-4" />
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
-                        Created
-                      </label>
-                      <div className="text-white flex items-center space-x-2">
-                        <Calendar className="w-4 h-4" />
-                        <span>{new Date(user.createdAt).toLocaleDateString()}</span>
+                    <div className="flex items-center justify-between p-3 bg-black/30 border border-white/5 rounded-none">
+                      <div className="flex items-center space-x-3">
+                        <Mail className="w-4 h-4 text-gray-400" />
+                        <div>
+                          <div className="text-xs uppercase font-mono text-gray-500">Email Verification</div>
+                        </div>
+                      </div>
+                      <div className={`px-2 rounded-none py-1 text-xs font-mono ${user.emailVerified ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                        {user.emailVerified ? 'Verified' : 'Unverified'}
                       </div>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
-                        Last Updated
-                      </label>
-                      <div className="text-white flex items-center space-x-2">
-                        <Calendar className="w-4 h-4" />
-                        <span>{new Date(user.updatedAt).toLocaleDateString()}</span>
+
+                    <div className="flex items-center justify-between p-3 bg-black/30 border border-white/5 rounded-none">
+                      <div className="flex items-center space-x-3">
+                        <Database className="w-4 h-4 text-gray-400" />
+                        <div>
+                          <div className="text-xs uppercase font-mono text-gray-500">Two-Factor Authentication</div>
+
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-2">
-                        User ID
-                      </label>
-                      <div className="text-white font-mono text-sm">{user.id}</div>
+                      <div className={`px-2 rounded-none py-1 text-xs font-mono ${user.twoFactorEnabled ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                        {user.twoFactorEnabled ? 'Enabled' : 'Disabled'}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             )}
-
             {activeTab === 'organizations' && (
               <div className="space-y-4">
                 {organizations.length === 0 ? (
@@ -761,9 +772,9 @@ export default function UserDetails() {
                         key={membership.id}
                         className="border border-dashed border-white/10 rounded-none p-4 hover:bg-white/5 transition-colors"
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-gray-800 border border-dashed border-white/20 flex items-center justify-center">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center space-x-4 flex-1">
+                            <div className="w-12 h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none">
                               {membership.organization.image ? (
                                 <img
                                   src={membership.organization.image}
@@ -774,28 +785,44 @@ export default function UserDetails() {
                                 <Building2 className="w-6 h-6 text-white" />
                               )}
                             </div>
-                            <div>
-                              <h3 className="text-white font-medium">
+                            <div className="flex-1">
+                              <h3 className="text-white font-light inline-flex items-start">
                                 {membership.organization.name}
+                                <sup className="text-xs text-gray-500 ml-2 mt-0.5">
+                                  <span className='mr-1'>[</span>
+                                  <span className='text-white/80 font-mono text-xs'>{membership.organization.slug}</span>
+                                  <span className='ml-1'>]</span>
+                                </sup>
                               </h3>
-                              <p className="text-gray-400 text-sm">
-                                @{membership.organization.slug}
+                              <p className="text-gray-400 text-sm font-sans mt-1">
+                                in {membership.organization.slug}
                               </p>
-                              <div className="flex items-center space-x-2 mt-1">
-                                <Badge variant="outline" className="rounded-none text-xs">
-                                  {membership.role}
-                                </Badge>
-                                <span className="text-gray-400 text-xs">
-                                  Joined {new Date(membership.joinedAt).toLocaleDateString()}
-                                </span>
-                              </div>
                             </div>
                           </div>
+                          <div className="flex flex-col items-end space-y-2">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-gray-500 font-mono text-xs uppercase">Joined: </span>
+                              <span className="text-white font-mono text-xs">
+                                {new Date(membership.joinedAt).toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                                , {new Date(membership.joinedAt).toLocaleTimeString('en-US', {
+                                  hour: 'numeric',
+                                  minute: '2-digit',
+                                  hour12: true,
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-end">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleRemoveFromOrganization(membership.id)}
-                            className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                            className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none"
                           >
                             <UserMinus className="w-4 h-4 mr-1" />
                             Remove
@@ -823,31 +850,49 @@ export default function UserDetails() {
                         key={membership.id}
                         className="border border-dashed border-white/10 rounded-none p-4 hover:bg-white/5 transition-colors"
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center space-x-4 flex-1">
+                            <div className="w-12 h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none">
                               <Users className="w-6 h-6 text-white" />
                             </div>
-                            <div>
-                              <h3 className="text-white font-medium">{membership.team.name}</h3>
-                              <p className="text-gray-400 text-sm">
-                                in {membership.team.organizationName}
+                            <div className="flex-1">
+                              <h3 className="text-white font-light inline-flex items-start">
+                                {membership.team.name}
+                                <sup className="text-xs text-gray-500 ml-2 mt-0.5">
+                                  <span className='mr-1'>[</span>
+                                  <span className='text-white/80 font-mono text-xs'>{membership.team.organizationSlug || membership.team.organizationName}</span>
+                                  <span className='ml-1'>]</span>
+                                </sup>
+                              </h3>
+                              <p className="text-gray-400 text-sm font-sans mt-1">
+                                in {membership.team.organizationSlug || membership.team.organizationName}
                               </p>
-                              <div className="flex items-center space-x-2 mt-1">
-                                <Badge variant="outline" className="rounded-none text-xs">
-                                  {membership.role}
-                                </Badge>
-                                <span className="text-gray-400 text-xs">
-                                  Joined {new Date(membership.joinedAt).toLocaleDateString()}
-                                </span>
-                              </div>
                             </div>
                           </div>
+                          <div className="flex flex-col items-end space-y-2">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-gray-500 font-mono text-xs uppercase">Joined: </span>
+                              <span className="text-white font-mono text-xs">
+                                {new Date(membership.joinedAt).toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                                , {new Date(membership.joinedAt).toLocaleTimeString('en-US', {
+                                  hour: 'numeric',
+                                  minute: '2-digit',
+                                  hour12: true,
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-end">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleRemoveFromTeam(membership.id)}
-                            className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                            className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none"
                           >
                             <UserMinus className="w-4 h-4 mr-1" />
                             Remove
@@ -883,7 +928,7 @@ export default function UserDetails() {
 
                 {sessions.length === 0 ? (
                   <div className="text-center py-12">
-                    <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <Clock1 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-white mb-2">No Sessions</h3>
                     <p className="text-gray-400">This user has no active sessions.</p>
                   </div>
@@ -894,62 +939,62 @@ export default function UserDetails() {
                         key={session.id}
                         className="border border-dashed border-white/10 rounded-none p-4 hover:bg-white/5 transition-colors"
                       >
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center space-x-4 flex-1">
-                            <div className="w-12 -mt-2 h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none">
+                            <div className="w-12 h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none">
                               <Monitor className="w-6 h-6 text-white" />
                             </div>
                             <div className="flex-1">
-                              <div className="flex items-center space-x-3 mb-2">
-                                <h3 className="text-white font-medium">
-                                  Session {session.id.substring(0, 8)}...
-                                </h3>
-                              </div>
-                              <div className="flex items-center space-x-4 mb-1">
-                                <div className="flex items-center space-x-2">
-                                  <Globe className="w-4 h-4 text-white" />
-                                  <span className="text-white text-sm">{session.ipAddress}</span>
-                                </div>
-                                <div className="flex items-center space-x-1">
-                                  <span className="text-gray-400 text-xs">📍</span>
-                                  <span className="text-gray-300 text-sm">
-                                    {sessionLocations[session.id]?.city || '...'},{' '}
-                                    {sessionLocations[session.id]?.country || '...'}
+                              <h3 className="text-white font-light inline-flex items-start">
+                                Session {session.id.substring(0, 8)}...
+                                <sup className="text-xs text-gray-500 ml-2 mt-0.5">
+                                  <span className='mr-1'>[</span>
+                                  <span className='text-white/80 font-mono text-xs'>{session.ipAddress}</span>
+                                  <span className='ml-1'>]</span>
+                                </sup>
+                              </h3>
+                              <div className="flex items-center space-x-2 mt-2">
+                                <Globe className="w-3.5 h-3.5 text-gray-400" />
+                                <span className="text-gray-400 uppercase font-mono text-xs">
+                                  {sessionLocations[session.id]?.city || '...'},{' '}
+                                  {sessionLocations[session.id]?.country || '...'}
+                                </span>
+                                {sessionLocations[session.id]?.countryCode && (
+                                  <span className="text-xs ml-1">
+                                    {getCountryFlag(sessionLocations[session.id]?.countryCode)}
                                   </span>
-                                  {sessionLocations[session.id]?.countryCode && (
-                                    <span className="text-sm ml-1">
-                                      {getCountryFlag(sessionLocations[session.id]?.countryCode)}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                  <Clock className="w-4 h-4 text-white" />
-                                  <span className="text-gray-400 text-sm">Expires:</span>
-                                  <span className="text-white text-sm">
-                                    {new Date(session.expiresAt).toLocaleDateString('en-US', {
-                                      year: 'numeric',
-                                      month: 'short',
-                                      day: 'numeric',
-                                      hour: 'numeric',
-                                      minute: '2-digit',
-                                      hour12: true,
-                                    })}
-                                  </span>
-                                </div>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDeleteSession(session.id)}
-                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
-                                >
-                                  <Ban className="w-4 h-4 mr-1" />
-                                  Revoke
-                                </Button>
+                                )}
                               </div>
                             </div>
                           </div>
+                          <div className="flex flex-col items-end space-y-2">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-gray-500 font-mono text-xs uppercase">Expires: </span>
+                              <span className="text-white font-mono text-xs">
+                                {new Date(session.expiresAt).toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                                , {new Date(session.expiresAt).toLocaleTimeString('en-US', {
+                                  hour: 'numeric',
+                                  minute: '2-digit',
+                                  hour12: true,
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteSession(session.id)}
+                            className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none"
+                          >
+                            <Ban className="w-4 h-4 mr-1" />
+                            Revoke
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -1029,7 +1074,7 @@ export default function UserDetails() {
 
       {showBanModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black border border-dashed border-red-400/50 rounded-none p-6 w-full max-w-md">
+          <div className="bg-black border border-red-400/20 rounded-none p-6 w-full max-w-md">
             <h2 className="text-xl font-bold text-white mb-4">Ban User</h2>
             <p className="text-gray-400 mb-4">
               Ban <strong>{user.name}</strong> from accessing the system.
@@ -1094,7 +1139,7 @@ export default function UserDetails() {
 
       {showUnbanModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black border border-dashed border-green-400/50 rounded-none p-6 w-full max-w-md">
+          <div className="bg-black border border-green-400/20 rounded-none p-6 w-full max-w-md">
             <h2 className="text-xl font-bold text-white mb-4">Unban User</h2>
             <p className="text-gray-400 mb-6">
               Are you sure you want to unban <strong>{user.name}</strong>? This will restore their
@@ -1110,7 +1155,7 @@ export default function UserDetails() {
               </Button>
               <Button
                 onClick={handleUnbanUser}
-                className="bg-green-600 text-white hover:bg-green-700 rounded-none"
+                className="bg-green-400 text-white hover:bg-green-700 rounded-none"
               >
                 Unban User
               </Button>
@@ -1122,9 +1167,18 @@ export default function UserDetails() {
       {/* Session Seed Modal */}
       {showSessionSeedModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
+          <div className="overflow-x-hidden bg-black/90 border border-white/10 p-6 w-full pt-4 max-w-2xl rounded-none">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg text-white font-light">Seed Sessions</h3>
+              <h3 className="text-sm text-white flex items-center justify-center font-light uppercase">
+                <span className='text-white/50 mr-2'>
+                  [
+                </span>
+                <Monitor className="inline mr-2 w-3 h-3 text-white" />
+                <span className='font-mono text-white/70 uppercase'>Seed Sessions</span>
+                <span className='text-white/50 ml-2'>
+                  ]
+                </span>
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1134,14 +1188,12 @@ export default function UserDetails() {
                 <X className="w-4 h-4" />
               </Button>
             </div>
+            <hr className="border-white/10 -mx-10 border-dashed -mt-4 mb-4" />
             <div className="space-y-6">
+              {/* Session Seeding */}
               <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Clock className="w-5 h-5 text-white" />
-                  <h4 className="text-white font-light">Create Sessions for {user?.name}</h4>
-                </div>
-                <div className="space-y-3">
-                  <div>
+                <div className="flex items-center space-x-3">
+                  <div className="flex-1">
                     <Label htmlFor="session-count" className="text-sm text-gray-400 font-light">
                       Number of sessions
                     </Label>
@@ -1154,9 +1206,29 @@ export default function UserDetails() {
                       className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                     />
                   </div>
-                  <p className="text-xs text-gray-400">
-                    Each session will have a unique token, IP address, and 7-day expiration.
-                  </p>
+                  <Button
+                    onClick={() => {
+                      const count = parseInt(
+                        (document.getElementById('session-count') as HTMLInputElement)?.value || '3',
+                        10
+                      );
+                      handleSeedSessions(count);
+                    }}
+                    disabled={isSeeding}
+                    className="bg-transparent hover:bg-white/90 bg-white text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
+                  >
+                    {isSeeding ? (
+                      <>
+                        <Loader className="w-3 h-3 mr-2 animate-spin" />
+                        Seeding...
+                      </>
+                    ) : (
+                      <>
+                        <Database className="w-3 h-3 mr-2" />
+                        Seed Sessions
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
 
@@ -1167,41 +1239,19 @@ export default function UserDetails() {
                     lines={seedingLogs}
                     isRunning={isSeeding}
                     className="w-full"
-                    defaultCollapsed={false}
+                    defaultCollapsed={true}
                   />
                 </div>
               )}
             </div>
-            <div className="flex justify-end space-x-2 mt-6 pt-6 border-t border-dashed border-white/10">
+            <hr className="border-white/10 -mx-10 border-dashed mt-10" />
+            <div className="flex justify-end mt-6 pt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowSessionSeedModal(false)}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  const count = parseInt(
-                    (document.getElementById('session-count') as HTMLInputElement)?.value || '3',
-                    10
-                  );
-                  handleSeedSessions(count);
-                }}
-                disabled={isSeeding}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
-              >
-                {isSeeding ? (
-                  <>
-                    <Loader className="w-4 h-4 mr-2 animate-spin" />
-                    Seeding...
-                  </>
-                ) : (
-                  <>
-                    <Database className="w-4 h-4 mr-2" />
-                    Seed Sessions
-                  </>
-                )}
+                Close
               </Button>
             </div>
           </div>

@@ -1,3 +1,4 @@
+// @ts-ignore
 import { PrismaClient } from "./generated/prisma/index.js";
 
 declare global {

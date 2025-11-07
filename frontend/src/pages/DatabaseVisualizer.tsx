@@ -13,7 +13,7 @@ import {
 } from '@xyflow/react';
 import { useCallback, useEffect, useState } from 'react';
 import '@xyflow/react/dist/style.css';
-import { Database, Settings } from 'lucide-react';
+import { Database, Settings, Sparkles } from 'lucide-react';
 import { DatabaseSchemaNode, type DatabaseSchemaNodeData } from '../components/DatabaseSchemaNode';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
@@ -88,6 +88,9 @@ const AVAILABLE_PLUGINS: PluginInfo[] = [
   },
 ];
 
+// Feature flag to enable/disable the "Coming Soon" overlay
+const SHOW_COMING_SOON_OVERLAY = true;
+
 export default function DatabaseVisualizer() {
   const [schema, setSchema] = useState<Schema | null>(null);
   const [loading, setLoading] = useState(true);
@@ -102,28 +105,27 @@ export default function DatabaseVisualizer() {
     return plugin?.color || 'bg-gray-500';
   }, []);
 
-  const getPluginForField = useCallback((
-    tableName: string,
-    _fieldName: string,
-    plugins: string[]
-  ): string => {
-    if (
-      tableName === 'user' ||
-      tableName === 'session' ||
-      tableName === 'account' ||
-      tableName === 'verification'
-    ) {
-      return 'core';
-    }
-
-    for (const plugin of plugins) {
-      if (tableName === plugin || tableName.includes(plugin)) {
-        return plugin;
+  const getPluginForField = useCallback(
+    (tableName: string, _fieldName: string, plugins: string[]): string => {
+      if (
+        tableName === 'user' ||
+        tableName === 'session' ||
+        tableName === 'account' ||
+        tableName === 'verification'
+      ) {
+        return 'core';
       }
-    }
 
-    return 'core';
-  }, []);
+      for (const plugin of plugins) {
+        if (tableName === plugin || tableName.includes(plugin)) {
+          return plugin;
+        }
+      }
+
+      return 'core';
+    },
+    []
+  );
 
   const fetchEnabledPlugins = useCallback(async () => {
     try {
@@ -206,9 +208,9 @@ export default function DatabaseVisualizer() {
           displayName: table.displayName,
           isForeign: false,
           plugin: getPluginForField(table.name, '', selectedPlugins),
-          columns: columns.map(col => ({
+          columns: columns.map((col) => ({
             ...col,
-            description: table.fields.find(f => f.name === col.name)?.description || '',
+            description: table.fields.find((f) => f.name === col.name)?.description || '',
           })),
           relationships: table.relationships,
         } as DatabaseSchemaNodeData,
@@ -307,8 +309,9 @@ export default function DatabaseVisualizer() {
     );
   }
 
-  return (
-    <div className="p-6 h-screen flex flex-col bg-black">
+  // Render the main content
+  const mainContent = (
+    <>
       <div className="mb-6">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center space-x-3">
@@ -339,14 +342,13 @@ export default function DatabaseVisualizer() {
                       htmlFor={plugin.name}
                       className="text-sm font-medium text-white cursor-pointer"
                     >
-                      {plugin.displayName.slice(0, 1).toUpperCase() + plugin.displayName.slice(1).replace('-', ' ')}
+                      {plugin.displayName.slice(0, 1).toUpperCase() +
+                        plugin.displayName.slice(1).replace('-', ' ')}
                     </label>
                   </div>
                 ))
               ) : (
-                <div className="text-sm text-white/70">
-                  No plugins detected in configuration
-                </div>
+                <div className="text-sm text-white/70">No plugins detected in configuration</div>
               )}
             </CardContent>
           </Card>
@@ -423,6 +425,51 @@ export default function DatabaseVisualizer() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
+  if (SHOW_COMING_SOON_OVERLAY) {
+    return (
+      <div className="overflow-hidden p-6 h-[90vh] flex flex-col opacity-70 bg-black relative">
+        <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div
+            className="absolute inset-0 backdrop-blur-sm"
+            style={{ WebkitBackdropFilter: 'blur(8px)', backdropFilter: 'blur(8px)' }}
+          />
+          <div className="relative -mt-6 bg-black/50 border border-dashed border-white/20 rounded-none p-12 max-w-2xl mx-6 text-center pointer-events-auto">
+            <div className="flex items-center justify-center mb-4">
+              <div className="relative">
+                <Database className="w-16 h-16 text-white opacity-50" />
+                <Sparkles className="w-8 h-8 text-white opacity-80 absolute -top-2 -right-2 animate-pulse" />
+              </div>
+            </div>
+            <h2 className="text-3xl font-mono uppercase font-light text-white mb-3">Coming Soon</h2>
+            <p className="text-lg text-gray-300 font-light mb-6 leading-relaxed">
+              We will be having this feature soon. This
+              feature will allow you to explore your Better Auth database structure with beautiful,
+              interactive graphs showing all tables, relationships, and data flow.
+            </p>
+            <div className="flex items-center justify-center space-x-6 text-sm text-gray-400">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                <span>Interactive Tables</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full" />
+                <span>Relationship Mapping</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-purple-500 rounded-full" />
+                <span>Real-time Updates</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Blurred Content Behind */}
+        <div className="blur-sm opacity-50 pointer-events-none">{mainContent}</div>
+      </div>
+    );
+  }
+
+  return <div className="p-6 h-screen flex flex-col bg-black">{mainContent}</div>;
 }

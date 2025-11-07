@@ -5,6 +5,7 @@ import { createJiti } from 'jiti';
 export interface AuthAdapter {
   createUser: (data: any) => Promise<any>;
   createSession: (data: any) => Promise<any>;
+  deletUser?: (id: string) => Promise<any>;
   createAccount: (data: any) => Promise<any>;
   createVerification: (data: any) => Promise<any>;
   createOrganization: (data: any) => Promise<any>;
@@ -72,18 +73,17 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
 
     authAdapter = {
       createUser: async (data: any) => {
-        const user = await adapter.create({
-          model: 'user',
-          data: {
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            emailVerified: false,
-            name: data.name,
-            email: data.email?.toLowerCase(),
-            image: data.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
-          },
-        });
-
+          const user = await adapter.create({
+            model: 'user',
+            data: {
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              emailVerified: false,
+              name: data.name,
+              email: data.email?.toLowerCase(),
+              image: data.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
+            },
+          });
         if (data.password) {
           try {
             await adapter.create({
@@ -97,7 +97,7 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
                 updatedAt: new Date(),
               },
             });
-          } catch (_accountError) {}
+          } catch (_accountError) { }
         }
 
         return user;

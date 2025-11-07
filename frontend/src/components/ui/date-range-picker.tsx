@@ -1,6 +1,5 @@
 'use client';
 
-import { ChevronDownIcon } from 'lucide-react';
 import * as React from 'react';
 import type { DateRange } from 'react-day-picker';
 
@@ -51,7 +50,6 @@ export function DateRangePicker({ value, onChange, className }: DateRangePickerP
             ) : (
               'Pick a date range'
             )}
-            <ChevronDownIcon className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">

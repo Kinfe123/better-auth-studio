@@ -1,9 +1,8 @@
-import { Building2, Database, LayoutDashboard, Search, Settings, Users } from 'lucide-react';
+import { Building2, Database, LayoutDashboard, Search, Settings, Users, Wrench } from 'lucide-react';
 import { type ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCounts } from '../contexts/CountsContext';
 import CommandPalette from './CommandPalette';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 
 interface LayoutProps {
@@ -36,7 +35,7 @@ export default function Layout({ children }: LayoutProps) {
         if (data.studio?.version) {
           setStudioVersion(`v${data.studio.version}`);
         }
-      } catch (_error) {}
+      } catch (_error) { }
     };
 
     fetchVersion();
@@ -64,6 +63,7 @@ export default function Layout({ children }: LayoutProps) {
       badge: loading ? '...' : formatCount(counts.organizations),
     },
     { name: 'Database', href: '/database', icon: Database },
+    { name: 'Tools', href: '/tools', icon: Wrench },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
@@ -72,13 +72,19 @@ export default function Layout({ children }: LayoutProps) {
       <div className="bg-black/70 border-b border-white/15">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-black font-bold text-lg">⚡</span>
+            <div className="flex items-end justify-end space-x-2">
+              <div className="w-7 h-7 border border-dashed border-white/20 rounded-lg flex items-center justify-center">
+                <span className="text-black font-bold text-md">⚡</span>
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-white">Better Auth Studio</h1>
-                <p className="text-xs text-gray-300">{studioVersion}</p>
+              <div className='mb-0'>
+                <h1 className="text-md inline-flex mb-0 items-start font-light font-mono uppercase text-white">Better-Auth Studio
+                  <sup className="text-sm text-gray-500 ml-1 mt-0">
+                    <span className='mr-1'>[</span>
+                    <span className='text-white/80 lowercase font-mono text-xs'>{studioVersion}</span>
+                    <span className='ml-1'>]</span>
+                  </sup>
+                </h1>
+                {/* <p className="text-xs text-gray-300">{studioVersion}</p> */}
               </div>
             </div>
           </div>
@@ -90,11 +96,11 @@ export default function Layout({ children }: LayoutProps) {
                 type="text"
                 placeholder="Search..."
                 onClick={() => setIsCommandPaletteOpen(true)}
-                className="pl-10 pr-4 py-2  bg-black border rounded-none border-gray-600 text-white border-dashed focus:ring-2 focus:ring-white focus:border-transparent transition-colors placeholder-gray-400 cursor-pointer"
+                className="pl-10 pr-4 py-2  bg-black border rounded-none border-gray-600 text-white border-dashed border-white/20 focus:ring-2 focus:ring-white focus:border-transparent transition-colors placeholder-gray-400 cursor-pointer"
                 readOnly
               />
-              <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400 border border-dashed border-white/20 rounded-sm px-1.5 py-0.5">
-                ⌘K
+              <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400 border border-dashed border-white/10 rounded-sm px-1.5 py-0.5">
+                ⌘ K
               </kbd>
             </div>
             <a href="https://better-auth.com/docs" target="_blank" rel="noopener">
@@ -117,7 +123,6 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </div>
 
-      {/* Top Navigation Tabs */}
       <div className="bg-black/50 border-b border-white/10">
         <div className="px-6">
           <nav className="flex space-x-8">
@@ -127,22 +132,22 @@ export default function Layout({ children }: LayoutProps) {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${
-                    isActive
+                  className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${isActive
                       ? 'border-white text-white'
                       : 'border-transparent text-gray-400 hover:text-white hover:border-gray-300'
-                  }`}
+                    }`}
                 >
                   <item.icon className="w-4 h-4" />
-                  <span>{item.name}</span>
-                  {item.badge && (
-                    <Badge
-                      variant="secondary"
-                      className="text-xs bg-white/10 border border-white/20 rounded-sm"
-                    >
-                      {item.badge}
-                    </Badge>
-                  )}
+                  <span className="inline-flex items-start">
+                    {item.name}
+                    {item.badge && (
+                      <sup className="text-xs text-gray-500 ml-1">
+                        <span className='mr-0.5'>[</span>
+                        <span className='text-white/80 font-mono text-xs'>{item.badge}</span>
+                        <span className='ml-0.5'>]</span>
+                      </sup>
+                    )}
+                  </span>
                 </Link>
               );
             })}

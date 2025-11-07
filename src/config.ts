@@ -64,6 +64,9 @@ export interface AuthConfig {
   socialProviders?: Array<{
     id: string;
     name: string;
+    clientId?: string;
+    clientSecret?: string;
+    redirectURI?: string;
     enabled: boolean;
   }>;
   trustedOrigins?: string[];
@@ -400,6 +403,9 @@ export async function findAuthConfig(configPath?: string): Promise<AuthConfig | 
           ? Object.keys(betterAuthConfig.socialProviders).map((provider) => ({
               id: provider,
               name: provider,
+              clientId: betterAuthConfig.socialProviders[provider].clientId,
+              clientSecret: betterAuthConfig.socialProviders[provider].clientSecret,
+              redirectURI: betterAuthConfig.socialProviders[provider].redirectURI,
               enabled: true,
             }))
           : [],

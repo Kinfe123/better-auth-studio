@@ -1,5 +1,6 @@
 import {
   Building2,
+  Calendar as CalendarIcon,
   Database,
   Download,
   Edit,
@@ -12,10 +13,14 @@ import {
   X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import type { DateRange } from 'react-day-picker';
+import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Terminal } from '../components/Terminal';
 import { Button } from '../components/ui/button';
+import { Calendar } from '../components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Pagination } from '../components/ui/pagination';
@@ -24,7 +29,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from '../components/ui/select';
 import { useCounts } from '../contexts/CountsContext';
 
@@ -47,16 +51,24 @@ interface PluginStatus {
 
 export default function Organizations() {
   const navigate = useNavigate();
-  const { refetchCounts } = useCounts();
+  const { counts, refetchCounts } = useCounts();
+  
+  interface FilterConfig {
+    type: string;
+    value?: any;
+    dateRange?: DateRange;
+  }
+  
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [pluginStatus, setPluginStatus] = useState<PluginStatus | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [filter, _setFilter] = useState('all');
+  const [activeFilters, setActiveFilters] = useState<FilterConfig[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [organizationsPerPage] = useState(20);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
+  const [_, _setShowCreateTeamModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -73,7 +85,6 @@ export default function Organizations() {
   >([]);
   const [isSeeding, setIsSeeding] = useState(false);
   const [createFormData, setCreateFormData] = useState({ name: '', slug: '' });
-  const [createTeamFormData, setCreateTeamFormData] = useState({ name: '', organizationId: '' });
   const [editFormData, setEditFormData] = useState({ name: '', slug: '' });
 
   useEffect(() => {
@@ -138,7 +149,7 @@ export default function Organizations() {
     try {
       const response = await fetch('/api/organizations?limit=10000');
       const data = await response.json();
-      console.log({lenght: data.organizations.length}) 
+      console.log({ lenght: data.organizations.length });
       setOrganizations(data.organizations || []);
     } catch (error) {
       console.error('Failed to fetch organizations:', error);
@@ -230,90 +241,6 @@ export default function Organizations() {
       setIsSeeding(false);
     }
   };
-
-  const handleSeedTeams = async (count: number) => {
-    setSeedingLogs([]);
-    setIsSeeding(true);
-
-    setSeedingLogs([
-      {
-        id: 'start',
-        type: 'info',
-        message: `Starting team seeding process for ${count} teams...`,
-        timestamp: new Date(),
-      },
-    ]);
-
-    try {
-      const response = await fetch('/api/seed/teams', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ count }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        const progressLogs = result.results.map((r: any, index: number) => {
-          if (r.success) {
-            return {
-              id: `team-${index}`,
-              type: 'progress' as const,
-              message: `Creating team: ${r.team.name}`,
-              timestamp: new Date(),
-              status: 'completed' as const,
-            };
-          } else {
-            return {
-              id: `team-${index}`,
-              type: 'error' as const,
-              message: `Failed to create team ${index + 1}: ${r.error}`,
-              timestamp: new Date(),
-            };
-          }
-        });
-
-        setSeedingLogs((prev) => [...prev, ...progressLogs]);
-
-        const successCount = result.results.filter((r: any) => r.success).length;
-        setSeedingLogs((prev) => [
-          ...prev,
-          {
-            id: 'complete',
-            type: 'success',
-            message: `✅ Seeding completed! Created ${successCount}/${count} teams successfully`,
-            timestamp: new Date(),
-          },
-        ]);
-
-        await fetchOrganizations();
-        await refetchCounts();
-      } else {
-        setSeedingLogs((prev) => [
-          ...prev,
-          {
-            id: 'error',
-            type: 'error',
-            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
-            timestamp: new Date(),
-          },
-        ]);
-      }
-    } catch (error) {
-      setSeedingLogs((prev) => [
-        ...prev,
-        {
-          id: 'error',
-          type: 'error',
-          message: `❌ Network error: ${error}`,
-          timestamp: new Date(),
-        },
-      ]);
-    } finally {
-      setIsSeeding(false);
-    }
-  };
-
   const openViewModal = (organization: Organization) => {
     setSelectedOrganization(organization);
     setShowViewModal(true);
@@ -365,45 +292,6 @@ export default function Organizations() {
       toast.error('Error creating organization', { id: toastId });
     }
   };
-
-  const handleCreateTeam = async () => {
-    if (!createTeamFormData.name) {
-      toast.error('Please fill in the team name');
-      return;
-    }
-
-    if (!createTeamFormData.organizationId) {
-      toast.error('Please select an organization');
-      return;
-    }
-
-    const toastId = toast.loading('Creating team...');
-
-    try {
-      const response = await fetch('/api/teams', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: createTeamFormData.name,
-          organizationId: createTeamFormData.organizationId,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        setShowCreateTeamModal(false);
-        setCreateTeamFormData({ name: '', organizationId: '' });
-        toast.success('Team created successfully!', { id: toastId });
-      } else {
-        toast.error(`Error creating team: ${result.error || 'Unknown error'}`, { id: toastId });
-      }
-    } catch (error) {
-      console.error('Error creating team:', error);
-      toast.error('Error creating team', { id: toastId });
-    }
-  };
-
   const handleUpdateOrganization = async () => {
     if (!selectedOrganization) {
       toast.error('No organization selected');
@@ -515,12 +403,49 @@ export default function Organizations() {
     toast.success(`Exported ${organizations.length} organizations to CSV`);
   };
 
+  const addFilter = (filterType: string) => {
+    if (activeFilters.some((f) => f.type === filterType)) return;
+    setActiveFilters([...activeFilters, { type: filterType }]);
+  };
+
+  const removeFilter = (filterType: string) => {
+    setActiveFilters(activeFilters.filter((f) => f.type !== filterType));
+  };
+
+  const clearFilters = () => {
+    setActiveFilters([]);
+  };
+
+  const updateFilterDateRange = (filterType: string, dateRange: DateRange | undefined) => {
+    setActiveFilters((prev) =>
+      prev.map((f) => (f.type === filterType ? { ...f, dateRange } : f))
+    );
+  };
+
   const filteredOrganizations = organizations.filter((organization) => {
     const matchesSearch =
       organization.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       organization.slug.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filter === 'all' || organization.metadata?.status === filter;
-    return matchesSearch && matchesFilter;
+
+    if (activeFilters.length === 0) {
+      return matchesSearch;
+    }
+
+    const matchesFilters = activeFilters.every((filter) => {
+      switch (filter.type) {
+        case 'createdAt': {
+          if (!filter.dateRange?.from && !filter.dateRange?.to) return true;
+          const orgDate = new Date(organization.createdAt);
+          if (filter.dateRange?.from && filter.dateRange.from > orgDate) return false;
+          if (filter.dateRange?.to && filter.dateRange.to < orgDate) return false;
+          return true;
+        }
+        default:
+          return true;
+      }
+    });
+
+    return matchesSearch && matchesFilters;
   });
 
   const totalPages = Math.ceil(filteredOrganizations.length / organizationsPerPage);
@@ -534,7 +459,7 @@ export default function Organizations() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-32">
+      <div className="flex min-h-screen items-center justify-center h-full">
         <div className="flex flex-col items-center space-y-3">
           <Loader className="w-6 h-6 text-white animate-spin" />
           <div className="text-white text-sm">Loading organizations...</div>
@@ -649,8 +574,15 @@ export default function Organizations() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl text-white font-light">Organizations ({organizations.length})</h1>
-          <p className="text-gray-400 mt-1">Manage your organizations and teams</p>
+          <h1 className="text-2xl relative text-white font-light inline-flex items-start">
+            Organizations
+            <sup className="text-xs text-gray-500 ml-1 mt-0">
+              <span className='mr-1'>[</span>
+              <span className='text-white font-mono text-sm'>{counts.organizations}</span>
+              <span className='ml-1'>]</span>
+            </sup>
+          </h1>
+          <p className="text-gray-400 font-light text-sm mt-1 uppercase font-mono">Manage your organizations and teams</p>
         </div>
         <div className="flex items-center space-x-3">
           <Button
@@ -667,13 +599,7 @@ export default function Organizations() {
             <Database className="w-4 h-4 mr-2" />
             Seed
           </Button>
-          <Button
-            className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
-            onClick={() => setShowCreateTeamModal(true)}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create Team
-          </Button>
+          
           <Button
             className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
             onClick={() => setShowCreateModal(true)}
@@ -685,30 +611,117 @@ export default function Organizations() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center space-x-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            placeholder="Search organizations..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
-          />
+      <div className="space-y-3">
+        <div className="flex items-center space-x-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Search organizations..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+            />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Select value="" onValueChange={addFilter}>
+              <SelectTrigger className="w-[180px]">
+                <div className="flex mr-3 items-center space-x-2">
+                  <Plus className="w-4 h-4" />
+                  <span>Add Filter</span>
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                {!activeFilters.some((f) => f.type === 'createdAt') && (
+                  <SelectItem value="createdAt">Created Date</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {activeFilters.length > 0 && (
+            <div className="flex items-center space-x-2">
+              <Button onClick={clearFilters}>
+                Clear all
+              </Button>
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center space-x-2">
-          <Filter className="w-4 h-4 text-gray-400" />
-          <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        {/* Active Filters */}
+        {activeFilters.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex flex-wrap gap-3">
+              {activeFilters.map((filter) => (
+                <div
+                  key={filter.type}
+                  className="inline-flex items-center gap-2 px-3 py-2 bg-white/10 border border-white/20 rounded-sm"
+                >
+                  <Filter className="w-3 h-3 text-white" />
+
+                  {filter.type === 'createdAt' && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-white">Created:</span>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="h-8 px-3 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                          >
+                            <CalendarIcon className="mr-1 h-3 w-3" />
+                            {filter.dateRange?.from ? format(filter.dateRange.from, 'MMM dd yyyy') : 'From'}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                          <Calendar
+                            mode="single"
+                            selected={filter.dateRange?.from}
+                            onSelect={(date) =>
+                              updateFilterDateRange('createdAt', { from: date, to: filter.dateRange?.to })
+                            }
+                            initialFocus
+                            className="rounded-none"
+                          />
+                        </PopoverContent>
+                      </Popover>
+
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="h-8 px-3 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                          >
+                            <CalendarIcon className="mr-1 h-3 w-3" />
+                            {filter.dateRange?.to ? format(filter.dateRange.to, 'MMM dd yyyy') : 'To'}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                          <Calendar
+                            mode="single"
+                            selected={filter.dateRange?.to}
+                            onSelect={(date) =>
+                              updateFilterDateRange('createdAt', { from: filter.dateRange?.from, to: date })
+                            }
+                            initialFocus
+                            disabled={(date) => (filter.dateRange?.from ? date < filter.dateRange.from : false)}
+                            className="rounded-none"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => removeFilter(filter.type)}
+                    className="ml-1 hover:bg-white/20 rounded-full p-0.5"
+                  >
+                    <X className="w-3 h-3 text-white" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Organizations Table */}
@@ -849,9 +862,14 @@ export default function Organizations() {
       {/* Seed Modal */}
       {showSeedModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
+          <div className="overflow-x-hidden bg-black/90 border border-white/10 p-6 w-full pt-4 max-w-2xl rounded-none">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg text-white font-light">Seed Data</h3>
+              <h3 className="text-sm text-white flex items-center justify-center font-light uppercase">
+                <span className="text-white/50 mr-2">[</span>
+                <Building2 className="inline mr-2 w-3.5 h-3.5 text-white" />
+                <span className="font-mono text-white/70 uppercase">Seed Organizations</span>
+                <span className="text-white/50 ml-2">]</span>
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -861,13 +879,10 @@ export default function Organizations() {
                 <X className="w-4 h-4" />
               </Button>
             </div>
+            <hr className="border-white/10 -mx-10 border-dashed -mt-4 mb-4" />
             <div className="space-y-6">
               {/* Organization Seeding */}
               <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Building2 className="w-5 h-5 text-white" />
-                  <h4 className="text-white font-light">Seed Organizations</h4>
-                </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
                     <Label
@@ -889,7 +904,8 @@ export default function Organizations() {
                     onClick={() => {
                       const count = parseInt(
                         (document.getElementById('organization-count') as HTMLInputElement)
-                          ?.value || '5'
+                          ?.value || '5',
+                        10
                       );
                       handleSeedOrganizations(count);
                     }}
@@ -910,52 +926,6 @@ export default function Organizations() {
                   </Button>
                 </div>
               </div>
-
-              {/* Team Seeding */}
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Plus className="w-5 h-5 text-white" />
-                  <h4 className="text-white font-light">Seed Teams</h4>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="flex-1">
-                    <Label htmlFor="team-count" className="text-sm text-gray-400 font-light">
-                      Number of teams
-                    </Label>
-                    <Input
-                      id="team-count"
-                      type="number"
-                      min="1"
-                      max="100"
-                      defaultValue="5"
-                      className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
-                    />
-                  </div>
-                  <Button
-                    onClick={() => {
-                      const count = parseInt(
-                        (document.getElementById('team-count') as HTMLInputElement)?.value || '5'
-                      );
-                      handleSeedTeams(count);
-                    }}
-                    disabled={isSeeding}
-                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
-                  >
-                    {isSeeding ? (
-                      <>
-                        <Loader className="w-3 h-3 mr-2 animate-spin" />
-                        Seeding...
-                      </>
-                    ) : (
-                      <>
-                        <Database className="w-3 h-3 mr-2" />
-                        Seed Teams
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-
               {/* Seeding Logs */}
               {seedingLogs.length > 0 && (
                 <div className="mt-6">
@@ -969,88 +939,14 @@ export default function Organizations() {
                 </div>
               )}
             </div>
-            <div className="flex justify-end mt-6 pt-6 border-t border-dashed border-white/10">
+            <hr className="border-white/10 -mx-10 border-dashed mt-10" />
+            <div className="flex justify-end mt-6 pt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowSeedModal(false)}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
                 Close
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Create Team Modal */}
-      {showCreateTeamModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Create Team</h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowCreateTeamModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="team-name" className="text-sm text-gray-400 font-light">
-                  Team Name
-                </Label>
-                <Input
-                  id="team-name"
-                  value={createTeamFormData.name}
-                  onChange={(e) =>
-                    setCreateTeamFormData((prev) => ({ ...prev, name: e.target.value }))
-                  }
-                  placeholder="Enter team name"
-                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
-                />
-              </div>
-              <div>
-                <Label htmlFor="team-organization" className="text-sm text-gray-400 font-light">
-                  Organization
-                </Label>
-                <Select
-                  value={createTeamFormData.organizationId}
-                  onValueChange={(value) =>
-                    setCreateTeamFormData((prev) => ({ ...prev, organizationId: value }))
-                  }
-                >
-                  <SelectTrigger className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none">
-                    <SelectValue placeholder="Select organization" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {organizations.map((org) => (
-                      <SelectItem key={org.id} value={org.id}>
-                        {org.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="flex justify-end space-x-3 mt-6">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowCreateTeamModal(false);
-                  setCreateTeamFormData({ name: '', organizationId: '' });
-                }}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleCreateTeam}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
-              >
-                Create
               </Button>
             </div>
           </div>

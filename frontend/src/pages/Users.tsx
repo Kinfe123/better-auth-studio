@@ -1,5 +1,6 @@
 import {
   Ban,
+  Calendar as CalendarIcon,
   Check,
   Database,
   Download,
@@ -11,6 +12,7 @@ import {
   MoreVertical,
   Plus,
   Search,
+  Shield,
   Trash2,
   UserPlus,
   Users as UsersIcon,
@@ -18,11 +20,13 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
+import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Terminal } from '../components/Terminal';
 import { Button } from '../components/ui/button';
-import { DateRangePicker } from '../components/ui/date-range-picker';
+import { Calendar } from '../components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Pagination } from '../components/ui/pagination';
@@ -45,7 +49,7 @@ interface User {
 
 export default function Users() {
   const navigate = useNavigate();
-  const { refetchCounts } = useCounts();
+  const { counts, refetchCounts } = useCounts();
   interface FilterConfig {
     type: string;
     value?: any;
@@ -65,6 +69,7 @@ export default function Users() {
   const [showSeedModal, setShowSeedModal] = useState(false);
   const [showBanModal, setShowBanModal] = useState(false);
   const [showUnbanModal, setShowUnbanModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null);
   const [banReason, setBanReason] = useState('');
@@ -391,6 +396,43 @@ export default function Users() {
     }
   };
 
+  const handleUpdatePassword = async () => {
+    if (!selectedUser) {
+      toast.error('No user selected');
+      return;
+    }
+
+    const password = (document.getElementById('update-password') as HTMLInputElement)?.value;
+
+    if (!password) {
+      toast.error('Please enter a new password');
+      return;
+    }
+
+    const toastId = toast.loading('Updating password...');
+
+    try {
+      const response = await fetch(`/api/users/${selectedUser.id}/password`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        toast.success('Password updated successfully!', { id: toastId });
+        setShowPasswordModal(false);
+        setSelectedUser(null);
+        (document.getElementById('update-password') as HTMLInputElement).value = '';
+      } else {
+        toast.error(`Error updating password: ${result.error || 'Unknown error'}`, { id: toastId });
+      }
+    } catch (_error) {
+      toast.error('Error updating password', { id: toastId });
+    }
+  };
+
   const exportUsersToCSV = () => {
     if (users.length === 0) {
       toast.error('No users to export');
@@ -496,7 +538,7 @@ export default function Users() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-32">
+      <div className="flex min-h-screen items-center justify-center h-full">
         <div className="flex flex-col items-center space-y-3">
           <Loader className="w-6 h-6 text-white animate-spin" />
           <div className="text-white text-sm">Loading users...</div>
@@ -504,13 +546,19 @@ export default function Users() {
       </div>
     );
   }
-
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl text-white font-light">Users ({users.length})</h1>
-          <p className="text-gray-400 mt-1">Manage your application users</p>
+          <h1 className="text-2xl relative text-white font-light inline-flex items-start">
+            Users
+            <sup className="text-xs text-gray-500 ml-1 mt-0">
+              <span className='mr-1'>[</span>
+              <span className='text-white font-mono text-sm'>{counts.users}</span>
+              <span className='ml-1'>]</span>
+            </sup>
+          </h1>
+          <p className="text-gray-400 font-light text-sm mt-1 uppercase font-mono">Manage your application users</p>
           <div className="flex items-center space-x-4 mt-2">
             {bannedCount > 0 && (
               <span className="text-sm text-red-400 flex items-center space-x-1">
@@ -561,7 +609,7 @@ export default function Users() {
           <div className="flex items-center space-x-2">
             <Select value="" onValueChange={addFilter}>
               <SelectTrigger className="w-[180px]">
-                <div className="flex items-center space-x-2">
+                <div className="flex mr-3 items-center space-x-2">
                   <Plus className="w-4 h-4" />
                   <span>Add Filter</span>
                 </div>
@@ -582,21 +630,21 @@ export default function Users() {
               </SelectContent>
             </Select>
           </div>
+          {activeFilters.length > 0 && (
+            <div className="flex items-center space-x-2">
+              <Button
+                onClick={() => setActiveFilters([])}
+                className=""
+              >
+                Clear all
+              </Button>
+            </div>
+            )}
         </div>
 
         {/* Active Filters */}
         {activeFilters.length > 0 && (
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">Active filters:</span>
-              <button
-                onClick={() => setActiveFilters([])}
-                className="text-xs text-gray-400 hover:text-white underline"
-              >
-                Clear all
-              </button>
-            </div>
-
             <div className="flex flex-wrap gap-3">
               {activeFilters.map((filter) => (
                 <div
@@ -656,10 +704,48 @@ export default function Users() {
                   {filter.type === 'createdAt' && (
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-white">Created:</span>
-                      <DateRangePicker
-                        value={filter.dateRange}
-                        onChange={(range) => updateFilterDateRange('createdAt', range)}
-                      />
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="h-8 px-3 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                          >
+                            <CalendarIcon className="mr-1 h-3 w-3" />
+                            {filter.dateRange?.from ? format(filter.dateRange.from, 'MMM dd yyyy') : 'From'}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                          <Calendar
+                            mode="single"
+                            selected={filter.dateRange?.from}
+                            onSelect={(date) => updateFilterDateRange('createdAt', { from: date, to: filter.dateRange?.to })}
+                            initialFocus
+                            className="rounded-none"
+                          />
+                        </PopoverContent>
+                      </Popover>
+
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="h-8 px-3 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                          >
+                            <CalendarIcon className="mr-1 h-3 w-3" />
+                            {filter.dateRange?.to ? format(filter.dateRange.to, 'MMM dd yyyy') : 'To'}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                          <Calendar
+                            mode="single"
+                            selected={filter.dateRange?.to}
+                            onSelect={(date) => updateFilterDateRange('createdAt', { from: filter.dateRange?.from, to: date })}
+                            initialFocus
+                            disabled={(date) => filter.dateRange?.from ? date < filter.dateRange.from : false}
+                            className="rounded-none"
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
                   )}
 
@@ -742,8 +828,7 @@ export default function Users() {
                 currentUsers.map((user) => (
                   <tr
                     key={user.id}
-                    className={`border-b border-dashed hover:bg-white/5 cursor-pointer ${
-                      user.banned ? 'border-red-500/30 bg-red-500/5' : 'border-white/5'
+                    className={`border-b border-dashed hover:bg-white/5 cursor-pointer ${user.banned ? 'border-red-500/30 bg-red-500/5' : 'border-white/5'
                     }`}
                     onClick={() => navigate(`/users/${user.id}`)}
                   >
@@ -756,8 +841,7 @@ export default function Users() {
                               `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`
                             }
                             alt={user.name}
-                            className={`w-10 h-10 rounded-none border border-dashed ${
-                              user.banned ? 'border-red-400/50 opacity-60' : 'border-white/20'
+                            className={`w-10 h-10 rounded-none border border-dashed ${user.banned ? 'border-red-400/50 opacity-60' : 'border-white/20'
                             }`}
                           />
                           {user.banned && (
@@ -844,6 +928,18 @@ export default function Users() {
                               <Edit className="w-4 h-4" />
                               <span>Edit User</span>
                             </button>
+                            <button
+                              className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center space-x-2"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActionMenuOpen(null);
+                                setSelectedUser(user);
+                                setShowPasswordModal(true);
+                              }}
+                            >
+                              <Shield className="w-4 h-4" />
+                              <span>Update Password</span>
+                            </button>
                             {adminPluginEnabled &&
                               (user.banned ? (
                                 <button
@@ -909,9 +1005,18 @@ export default function Users() {
       {/* Seed Modal */}
       {showSeedModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
+          <div className="overflow-x-hidden bg-black/90 border border-white/10 p-6 w-full pt-4 max-w-2xl rounded-none">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg text-white font-light">Seed Data</h3>
+              <h3 className="text-sm text-white flex items-center justify-center font-light uppercase">
+                <span className='text-white/50 mr-2'>
+                  [
+                </span>
+                  <UsersIcon className="inline mr-2 w-3 h-3 text-white" />
+                <span className='font-mono text-white/70 uppercase'>Seed User</span>
+                <span className='text-white/50 ml-2'>
+                  ]
+                </span>
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -921,12 +1026,12 @@ export default function Users() {
                 <X className="w-4 h-4" />
               </Button>
             </div>
+            <hr className="border-white/10 -mx-10 border-dashed -mt-4 mb-4" />
             <div className="space-y-6">
               {/* User Seeding */}
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
-                  <UsersIcon className="w-5 h-5 text-white" />
-                  <h4 className="text-white font-light">Seed Users</h4>
+                  {/* <h4 className="text-white font-light">Seed Users</h4> */}
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
@@ -980,7 +1085,8 @@ export default function Users() {
                 </div>
               )}
             </div>
-            <div className="flex justify-end mt-6 pt-6 border-t border-dashed border-white/10">
+            <hr className="border-white/10 -mx-10 border-dashed mt-10" />
+            <div className="flex justify-end mt-6 pt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowSeedModal(false)}
@@ -993,10 +1099,9 @@ export default function Users() {
         </div>
       )}
 
-      {/* Create User Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+          <div className="bg-black/90 border border-white/10 p-6 w-full max-w-md rounded-none">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg text-white font-light">Create User</h3>
               <Button
@@ -1251,7 +1356,7 @@ export default function Users() {
       {/* Ban User Modal */}
       {showBanModal && selectedUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black border border-dashed border-red-400/50 rounded-none p-6 w-full max-w-md">
+          <div className="bg-black border border-red-400/20 rounded-none p-6 w-full max-w-md">
             <h2 className="text-xl font-bold text-white mb-4">Ban User</h2>
             <p className="text-gray-400 mb-4">
               Ban <strong>{selectedUser.name}</strong> from accessing the system.
@@ -1340,6 +1445,75 @@ export default function Users() {
                 className="bg-green-600 text-white hover:bg-green-700 rounded-none"
               >
                 Unban User
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Update Password Modal */}
+      {showPasswordModal && selectedUser && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light">Update Password</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowPasswordModal(false);
+                  setSelectedUser(null);
+                  (document.getElementById('update-password') as HTMLInputElement).value = '';
+                }}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <img
+                  src={
+                    selectedUser.image ||
+                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedUser.id}`
+                  }
+                  alt={selectedUser.name}
+                  className="w-16 h-16 rounded-none border border-dashed border-white/20"
+                />
+                <div>
+                  <div className="text-white font-light">{selectedUser.name}</div>
+                  <div className="text-sm text-gray-400">{selectedUser.email}</div>
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="update-password" className="text-sm text-gray-400 font-light">
+                  New Password
+                </Label>
+                <Input
+                  id="update-password"
+                  type="password"
+                  placeholder="Enter new password"
+                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowPasswordModal(false);
+                  setSelectedUser(null);
+                  (document.getElementById('update-password') as HTMLInputElement).value = '';
+                }}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdatePassword}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+              >
+                Update Password
               </Button>
             </div>
           </div>

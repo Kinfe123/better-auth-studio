@@ -5,7 +5,6 @@ import {
   CheckCircle,
   Clock,
   Database,
-  Edit,
   Loader,
   Mail,
   Send,
@@ -13,7 +12,8 @@ import {
   UserPlus,
   Users,
   X,
-} from 'lucide-react';
+} from '../components/PixelIcons';
+import { Edit } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -700,15 +700,16 @@ export default function OrganizationDetails() {
 
   return (
     <div className="space-y-6 p-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Link to="/organizations">
-            <Button variant="ghost" className="text-gray-400 hover:text-white rounded-none">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Organizations
-            </Button>
-          </Link>
+          <span className="mb-4 ml-0 flex justify-start items-start text-left border-none text-white">
+            <span className='font-light'>
+              <span
+                onClick={() => navigate('/organizations')}
+                className='uppercase cursor-pointer text-white/80 font-mono text-sm'>orgs / </span>
+              <span className='text-white font-mono text-sm'>{orgId}</span>
+            </span>
+          </span>
         </div>
 
         <div className="flex items-center space-x-3">
@@ -737,8 +738,14 @@ export default function OrganizationDetails() {
           <Building2 className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h1 className="text-2xl text-white font-light">{organization.name}</h1>
-          <p className="text-gray-400">{organization.slug}</p>
+          <h1 className="text-2xl text-white font-light inline-flex items-center">
+            {organization.name}
+            <sup className="text-xs text-gray-500 ml-2">
+              <span className='mr-1'>[</span>
+              <span className='text-white/80 font-mono text-xs'>{organization.slug}</span>
+              <span className='ml-1'>]</span>
+            </sup>
+          </h1>
         </div>
       </div>
 
@@ -754,13 +761,14 @@ export default function OrganizationDetails() {
             }`}
           >
             <Building2 className="w-4 h-4" />
-            <span>Details</span>
-            <Badge
-              variant="secondary"
-              className="text-xs bg-white/10 border border-white/20 rounded-sm"
-            >
-              {members.length + invitations.length + teams.length}
-            </Badge>
+            <span className="inline-flex items-start">
+              Details
+              <sup className="text-xs text-gray-500 ml-1">
+                <span className='mr-0.5'>[</span>
+                <span className='text-white/80 font-mono text-xs'>0</span>
+                <span className='ml-0.5'>]</span>
+              </sup>
+            </span>
           </button>
           <button
             onClick={() => setActiveTab('members')}
@@ -771,15 +779,14 @@ export default function OrganizationDetails() {
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>Members</span>
-            {members.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="text-xs bg-white/10 border border-white/20 rounded-sm"
-              >
-                {members.length}
-              </Badge>
-            )}
+            <span className="inline-flex items-start">
+              Members
+              <sup className="text-xs text-gray-500 ml-1">
+                <span className='mr-0.5'>[</span>
+                <span className='text-white/80 font-mono text-xs'>{members.length}</span>
+                <span className='ml-0.5'>]</span>
+              </sup>
+            </span>
           </button>
           <button
             onClick={() => setActiveTab('invitations')}
@@ -790,15 +797,14 @@ export default function OrganizationDetails() {
             }`}
           >
             <Mail className="w-4 h-4" />
-            <span>Invitations</span>
-            {invitations.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="text-xs bg-white/10 border border-white/20 rounded-sm"
-              >
-                {invitations.length}
-              </Badge>
-            )}
+            <span className="inline-flex items-start">
+              Invitations
+              <sup className="text-xs text-gray-500 ml-1">
+                <span className='mr-0.5'>[</span>
+                <span className='text-white/80 font-mono text-xs'>{invitations.length}</span>
+                <span className='ml-0.5'>]</span>
+              </sup>
+            </span>
           </button>
           <button
             onClick={() => setActiveTab('teams')}
@@ -809,15 +815,14 @@ export default function OrganizationDetails() {
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>Teams</span>
-            {teams.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="text-xs bg-white/10 border border-white/20 rounded-sm"
-              >
-                {teams.length}
-              </Badge>
-            )}
+            <span className="inline-flex items-start">
+              Teams
+              <sup className="text-xs text-gray-500 ml-1">
+                <span className='mr-0.5'>[</span>
+                <span className='text-white/80 font-mono text-xs'>{teams.length}</span>
+                <span className='ml-0.5'>]</span>
+              </sup>
+            </span>
           </button>
         </nav>
       </div>
@@ -830,16 +835,16 @@ export default function OrganizationDetails() {
             <h3 className="text-lg text-white font-light mb-4">Organization Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="text-sm text-gray-400 font-light">Name</label>
-                <p className="text-white mt-1">{organization.name}</p>
+                <label className="text-sm text-gray-400 font-mono uppercase">Name</label>
+                <p className="text-white font-sans mt-1">{organization.name}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-400 font-light">Slug</label>
-                <p className="text-white mt-1">{organization.slug}</p>
+                <label className="text-sm text-gray-400 font-mono uppercase">Slug</label>
+                <p className="text-white font-mono mt-1">{organization.slug}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-400 font-light">Created</label>
-                <p className="text-white mt-1">
+                <label className="text-sm text-gray-400 font-mono uppercase">Created</label>
+                <p className="text-white font-sans mt-1">
                   {new Date(organization.createdAt).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -855,8 +860,8 @@ export default function OrganizationDetails() {
               <div className="flex items-center space-x-3">
                 <Users className="w-8 h-8 text-white" />
                 <div>
-                  <p className="text-2xl text-white font-light">{members.length}</p>
-                  <p className="text-sm text-gray-400">Members</p>
+                  <p className="text-2xl text-white font-sans font-light">{members.length}</p>
+                  <p className="text-sm text-gray-400 font-mono uppercase">Members</p>
                 </div>
               </div>
             </div>
@@ -864,8 +869,8 @@ export default function OrganizationDetails() {
               <div className="flex items-center space-x-3">
                 <Users className="w-8 h-8 text-white" />
                 <div>
-                  <p className="text-2xl text-white font-light">{teams.length}</p>
-                  <p className="text-sm text-gray-400">Teams</p>
+                  <p className="text-2xl text-white font-sans font-light">{teams.length}</p>
+                  <p className="text-sm text-gray-400 font-mono uppercase">Teams</p>
                 </div>
               </div>
             </div>
@@ -873,8 +878,8 @@ export default function OrganizationDetails() {
               <div className="flex items-center space-x-3">
                 <Mail className="w-8 h-8 text-white" />
                 <div>
-                  <p className="text-2xl text-white font-light">{invitations.length}</p>
-                  <p className="text-sm text-gray-400">Invitations</p>
+                  <p className="text-2xl text-white font-sans font-light">{invitations.length}</p>
+                  <p className="text-sm text-gray-400 font-mono uppercase">Invitations</p>
                 </div>
               </div>
             </div>
@@ -882,13 +887,13 @@ export default function OrganizationDetails() {
               <div className="flex items-center space-x-3">
                 <Calendar className="w-8 h-8 text-white" />
                 <div>
-                  <p className="text-2xl text-white font-light">
+                  <p className="text-2xl text-white font-sans font-light">
                     {Math.ceil(
                       (new Date().getTime() - new Date(organization.createdAt).getTime()) /
                         (1000 * 60 * 60 * 24)
                     )}
                   </p>
-                  <p className="text-sm text-gray-400">Days Active</p>
+                  <p className="text-sm text-gray-400 font-mono uppercase">Days Active</p>
                 </div>
               </div>
             </div>
@@ -901,8 +906,15 @@ export default function OrganizationDetails() {
           {/* Teams Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg text-white font-light">Teams ({teams.length})</h3>
-              <p className="text-gray-400 mt-1">Manage teams within this organization</p>
+              <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                Teams
+                <sup className="text-xs text-gray-500 ml-1 mt-0">
+                  <span className='mr-1'>[</span>
+                  <span className='text-white font-mono text-xs'>{teams.length}</span>
+                  <span className='ml-1'>]</span>
+                </sup>
+              </h3>
+              <p className="text-gray-400 mt-1 uppercase font-mono text-xs font-light">Manage teams within this organization</p>
             </div>
             <div className="flex items-center space-x-3">
               <Button
@@ -1096,8 +1108,14 @@ export default function OrganizationDetails() {
           {/* Members Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg text-white font-light">Members ({members.length})</h3>
-              <p className="text-gray-400 mt-1">Manage organization members and their roles</p>
+              <h3 className="text-lg relative text-white font-light inline-flex items-start">Members
+                <sup className="text-xs text-gray-500 ml-1 mt-0">
+                  <span className='mr-1'>[</span>
+                  <span className='text-white font-mono text-xs'>{members.length}</span>
+                  <span className='ml-1'>]</span>
+                </sup>
+              </h3>
+              <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">Manage organization members and their roles</p>
             </div>
           </div>
 
@@ -1203,8 +1221,14 @@ export default function OrganizationDetails() {
           {/* Invitations Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg text-white font-light">Invitations ({invitations.length})</h3>
-              <p className="text-gray-400 mt-1">Manage pending invitations to this organization</p>
+              <h3 className="text-lg relative text-white font-light inline-flex items-start">Invitations
+                <sup className="text-xs text-gray-500 ml-1 mt-0">
+                  <span className='mr-1'>[</span>
+                  <span className='text-white font-mono text-xs'>{invitations.length}</span>
+                  <span className='ml-1'>]</span>
+                </sup>
+              </h3>
+              <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">Manage pending invitations to this organization</p>
             </div>
           </div>
 
