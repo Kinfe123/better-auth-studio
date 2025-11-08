@@ -184,11 +184,11 @@ const TERMINAL_SCRIPT: TerminalLine[] = [
   { text: "$ Seeding 10 mock users...", tone: "command" },
   { text: "⌁ inserting mock records with hashed credentials", tone: "info" },
   { text: "✔ seeding completed in 43ms", tone: "success" },
-  { text: "— runnning migrations for clerk...", tone: "command" },
+  { text: "$ running migration --provider clerk", tone: "command" },
   { text: "✔ migrated 182 entries in 213ms", tone: "success" },
   { text: "$ testing github oauth...", tone: "command" },
   { text: "⌁ redirecting to https://github.com/login/oauth", tone: "info" },
-  { text: "✔ oauth session verified — kinfishtech@gmail.com", tone: "success" },
+  { text: "✔ oauth succeeded — kinfishtech@gmail.com", tone: "success" },
   { text: "$ testing database connection...", tone: "command" },
   { text: "⌁ checking database connection with adapter.findMany()", tone: "info" },
   { text: "✔ connection established → first user email: kinfishtech@gmail.com", tone: "success" },
@@ -222,32 +222,37 @@ interface HeroProps {
 export const Hero: React.FC<HeroProps> = ({ title, description, links, version }) => {
   const [copied, setCopied] = useState(false);
   const [visibleTerminalLines, setVisibleTerminalLines] = useState<TerminalLine[]>([]);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let index = 0;
-    setVisibleTerminalLines([TERMINAL_SCRIPT[index]]);
-    index = (index + 1) % TERMINAL_SCRIPT.length;
+    setVisibleTerminalLines([]);
 
-    const interval = setInterval(() => {
-      setVisibleTerminalLines((prev) => {
-        const nextLine = TERMINAL_SCRIPT[index];
-        index = (index + 1) % TERMINAL_SCRIPT.length;
+    const timeouts: NodeJS.Timeout[] = [];
 
-        if (!nextLine) {
-          return [TERMINAL_SCRIPT[0]];
+    TERMINAL_SCRIPT.forEach((line, lineIndex) => {
+      const timeout = setTimeout(() => {
+        setVisibleTerminalLines((prev) => [...prev, line]);
+        const container = containerRef.current;
+        if (container) {
+          requestAnimationFrame(() => {
+            container.scrollTo({
+              top: container.scrollHeight,
+              behavior: "smooth",
+            });
+          });
         }
+      }, lineIndex * 1400);
+      timeouts.push(timeout);
+    });
 
-        const nextLines =
-          prev.length >= 15 ? [...prev.slice(1), nextLine] : [...prev, nextLine];
-
-        return nextLines;
-      });
-    }, 1600);
-
-    return () => clearInterval(interval);
+    return () => {
+      timeouts.forEach(clearTimeout);
+    };
   }, []);
 
   return (
+    <>
     <div className="h-svh w-screen relative bg-[#0A0A0A]">
       <Navbar links={links} />
       <div className="absolute inset-0">
@@ -335,36 +340,47 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
         </div>
       </div>
 
-      <div className="hidden z-999 md:block absolute bottom-6 right-6 lg:right-12 w-[420px] bg-transparent lg:w-[520px]">
-        <div className="relative z-999 bg-transparent overflow-hidden border border-white/15 border-dashed rounded-none animate-[terminal-pop_0.6s_ease-out]">
-          <div className="absolute inset-0 bg-transparent opacity-80" />
-          <div className="relative px-5 pt-4 pb-0 font-mono text-[12px] text-white shadow-[0_12px_80px_rgba(255,255,255,0.18)]">
+      <div className="hidden md:block absolute top-6 right-6 lg:right-12 w-[420px] lg:w-[520px]">
+        <div className="relative overflow-hidden border border-white/20 border-dashed rounded-none bg-transparent backdrop-blur-2xl animate-[terminal-pop_0.6s_ease-out]">
+          <div className="absolute inset-0 bg-linear-to-br from-transparent/20 via-transparent/5 to-transparent opacity-70 blur-3xl" />
+          <div className="relative px-6 pt-4 pb-0 font-mono text-[12px] text-white">
             <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.35em] text-white/60 mb-3">
-              <span className="text-white/40 text-[10px]">terminal</span>
-              {/* <span className="text-white/40 tracking-tight">Better Auth Studio</span> */}
+              <span className="text-white/40 text-[10px]">
+             <span>[</span> 
+              <span className="text-white/70 uppercase tracking-[0.25em] mx-1">Better Auth Studio</span>
+              <span>]</span>
+              </span>
             </div>
-            <div className="space-y-1.5 min-h-[350px] overflow-hidden">
+            <div ref={containerRef} className="space-y-1.5 min-h-[350px] max-h-[350px] overflow-y-auto pr-1 custom-scroll">
               {visibleTerminalLines.map((line, idx) => (
                 <div
                   key={`${line.text}-${idx}`}
-                  className={`flex items-start gap-2 whitespace-pre-wrap leading-relaxed ${toneClassName(line.tone)} transition-all duration-300 translate-y-0 opacity-100`}
+                  className={`flex items-start gap-2 whitespace-pre-wrap leading-relaxed ${toneClassName(line.tone)} opacity-0`}
                   style={{
-                    animation: `line-enter 0.35s ease-out forwards`,
+                    animation: `line-enter 0.45s ease-out forwards`,
                     animationDelay: `${idx * 0.04}s`,
                   }}
                 >
                   <span>{line.text}</span>
                 </div>
               ))}
+              {/* <div
+                className={`flex items-start gap-2 whitespace-pre-wrap leading-relaxed text-white/50 ${
+                  visibleTerminalLines.length === TERMINAL_SCRIPT.length ? "opacity-100" : "opacity-0"
+                } transition-opacity duration-300`}
+              >
+                <span className="inline-flex w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse mt-1" />
+                <span className="uppercase tracking-[0.25em]">end of replay</span>
+              </div> */}
             </div>
-            <div className="px-3 mt-4 py-2 border-t border-dashed border-white/10 bg-black/20 backdrop-blur-sm">
+            <div className="mx-auto mt-4 py-1  border-t border-dashed border-white/10 backdrop-blur-sm">
               <div className="flex items-center justify-between text-[10px] text-white/60 uppercase tracking-[0.22em]">
                 <div className="flex items-center space-x-3">
                   <span>Status: {visibleTerminalLines.length === 0 ? "Idle" : "Live"}</span>
                   <span>Lines: {visibleTerminalLines.length}</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+                  <div className="w-1.5 h-1.5 mr-1 bg-emerald-400 rounded-full animate-pulse" />
                   <span>better auth studio</span>
                 </div>
               </div>
@@ -373,5 +389,28 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
         </div>
       </div>
     </div>
+    <style jsx global>{`
+      @keyframes terminal-pop {
+        0% {
+          transform: translateY(40px) scale(0.98);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+      }
+      @keyframes line-enter {
+        0% {
+          transform: translateY(8px);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    `}</style>
+    </>
   );
 }
