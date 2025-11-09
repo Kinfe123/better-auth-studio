@@ -24,19 +24,15 @@ export default function Changelog() {
               <ul className="list-none space-y-2 text-sm font-light tracking-tight text-white/70 ml-4">
                 <li className="flex items-start">
                   <span className="text-white/50 mr-3">•</span>
-                  <strong className="pr-2">Dashboard 2.0</strong> with configurable period chips, custom date windows, and live organization / team metrics synced to backend analytics
+                  <strong className="pr-2">Dashboard 2.0</strong> with configurable period chips, and live organization / team metrics synced to backend endpoints
                 </li>
                 <li className="flex items-start">
                   <span className="text-white/50 mr-3">•</span>
-                  <strong className="pr-2">Tools Workspace</strong> housing Test OAuth, Run Migration, and Test Database actions with auto-scrolling terminals and session-aware logging
+                  <strong className="pr-2">Tools Workspace</strong> with housing Test OAuth, Run Migration, and Test Database actions.
                 </li>
                 <li className="flex items-start">
                   <span className="text-white/50 mr-3">•</span>
-                  <strong className="pr-2">OAuth Diagnostics</strong> including Better Auth state verification, provider selection modal, social popup orchestration, and concise success feedback with user identity display
-                </li>
-                <li className="flex items-start">
-                  <span className="text-white/50 mr-3">•</span>
-                  <strong className="pr-2">Migration Blueprints</strong> for Clerk plus placeholders for Supabase, Auth0, and NextAuth with copy-ready scripts and custom playground
+                  Migration Blueprint for Clerk plus placeholders for Supabase, Auth0, and NextAuth with copy-ready scripts and custom playground
                 </li>
                 <li className="flex items-start">
                   <span className="text-white/50 mr-3">•</span>
@@ -45,14 +41,6 @@ export default function Changelog() {
                 <li className="flex items-start">
                   <span className="text-white/50 mr-3">•</span>
                   <strong className="pr-2">Geist Typography</strong> applied to OAuth bootstraps and modals for a cohesive type system across browser surfaces
-                </li>
-                <li className="flex items-start">
-                  <span className="text-white/50 mr-3">•</span>
-                  <strong className="pr-2">UI Clean-up</strong> removing legacy comments, aligning seed dialogs, and mirroring filter experiences between Users and Organizations
-                </li>
-                <li className="flex items-start">
-                  <span className="text-white/50 mr-3">•</span>
-                  <strong className="pr-2">Changelog Updates</strong> capturing the latest design refinements and tooling capabilities
                 </li>
               </ul>
             </div>
