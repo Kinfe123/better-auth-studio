@@ -58,7 +58,7 @@ export async function getAuthData(
 
     if (!adapter) {
       // No adapter available, falling back to mock data
-      return getMockData(type, options);
+      console.log('No adapter available, falling back to mock data');
     }
 
     switch (type) {

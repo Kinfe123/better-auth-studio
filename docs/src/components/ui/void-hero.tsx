@@ -171,7 +171,7 @@ interface TerminalLine {
 }
 
 const TERMINAL_SCRIPT: TerminalLine[] = [
-  { text: "$ npx better-auth-studio@latest", tone: "command" },
+  { text: "$ npx better-auth-studio@latest start", tone: "command" },
   { text: "Starting Better Auth Studio…", tone: "info" },
   { text: "✔ Found Better Auth configuration", tone: "success" },
   { text: "Database: Prisma (sqlite) v6.15.0", tone: "info" },

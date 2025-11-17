@@ -4,7 +4,7 @@ export async function getAuthData(_authConfig, type = 'stats', options, configPa
         const adapter = await getAuthAdapter(configPath);
         if (!adapter) {
             // No adapter available, falling back to mock data
-            return getMockData(type, options);
+            console.log('No adapter available, falling back to mock data');
         }
         switch (type) {
             case 'stats':
