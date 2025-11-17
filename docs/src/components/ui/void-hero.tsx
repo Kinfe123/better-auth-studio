@@ -401,7 +401,7 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
                 {typedTerminalCommand && (
                   <div className="flex items-start gap-2 whitespace-pre-wrap leading-relaxed text-white/80">
                     <span>{typedTerminalCommand}</span>
-                    <span className="ml-1 inline-block h-4 w-[2px] bg-white/80 animate-cursor" />
+                    <span className="ml-1 inline-block h-4 w-[8px] bg-white/80 animate-cursor" />
                   </div>
                 )}
                 {terminalLogs.map((line, idx) => (
