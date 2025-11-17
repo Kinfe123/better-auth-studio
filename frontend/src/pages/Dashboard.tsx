@@ -1422,7 +1422,7 @@ export default function Dashboard() {
         {/* Bottom Row - Three Columns */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Two Small Cards */}
-          <div className="space-y-4">
+          <div className="space-y-4 overflow-x-hidden">
             {/* Active Users Daily */}
             <div className="bg-white/5 border border-white/10 p-6 pb-2 relative">
               {/* Top-left corner */}

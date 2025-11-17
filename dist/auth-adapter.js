@@ -5,7 +5,7 @@ const _authInstance = null;
 let authAdapter = null;
 export async function getAuthAdapter(configPath) {
     try {
-        const authConfigPath = configPath ? configPath : await findAuthConfigPath();
+        const authConfigPath = await findAuthConfigPath();
         if (!authConfigPath) {
             return null;
         }

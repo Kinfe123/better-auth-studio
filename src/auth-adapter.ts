@@ -27,7 +27,7 @@ let authAdapter: AuthAdapter | null = null;
 
 export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter | null> {
   try {
-    const authConfigPath = configPath ? configPath : await findAuthConfigPath();
+    const authConfigPath = await findAuthConfigPath();
     if (!authConfigPath) {
       return null;
     }
