@@ -62,15 +62,6 @@ jobs:
           pnpm install
         fi
         
-        # Install frontend dependencies
-        echo "📦 Installing frontend dependencies..."
-        cd frontend
-        echo "🧹 Cleaning existing frontend dependencies..."
-        rm -rf node_modules pnpm-lock.yaml
-        echo "📦 Installing fresh frontend dependencies..."
-        pnpm install
-        cd ..
-      
     - name: Lint packages
       run: pnpm run lint || echo "Linting completed with warnings"
       

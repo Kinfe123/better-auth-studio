@@ -373,7 +373,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 debugLogs: authConfig.database?.debugLogs || false,
                 url: authConfig.database?.url,
                 adapterConfig: adapterConfig,
-                dialect: adapterProvider
+                dialect: adapterProvider,
             },
             emailVerification: {
                 sendOnSignUp: authConfig.emailVerification?.sendOnSignUp || false,
