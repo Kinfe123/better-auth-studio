@@ -1,5 +1,0 @@
-ignoredBuiltDependencies:
-  - esbuild
-
-overrides:
-  better-auth-studio: 'link:'
