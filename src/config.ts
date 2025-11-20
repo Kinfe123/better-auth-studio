@@ -407,14 +407,6 @@ export async function findAuthConfig(configPath?: string): Promise<AuthConfig | 
               const hasCredentials = Boolean(
                 providerConfig?.clientId && providerConfig?.clientSecret
               );
-
-              if (!hasCredentials && !warnedMissingProviders.has(provider)) {
-                logger.warn(
-                  `[#better-auth]: Social provider ${provider} is missing a clientId or clientSecret.`
-                );
-                warnedMissingProviders.add(provider);
-              }
-
               return {
                 id: provider,
                 name: provider,
