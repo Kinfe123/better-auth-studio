@@ -41,6 +41,13 @@ function App() {
           theme="dark"
           position="top-right"
           richColors
+          toastOptions={{
+            style: {
+              border: 'dashed 1px #ffffff20',
+              borderRadius: '0',
+            },
+            className: 'font-mono uppercase',
+          }} 
           closeButton
         />
       </Router>
