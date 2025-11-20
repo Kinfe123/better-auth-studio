@@ -134,7 +134,7 @@ jobs:
           popd >/dev/null
         fi
     - name: Run security audit
-      run: pnpm audit --audit-level moderate
+      run: pnpm audit --audit-level high 
       
     - name: Check for known vulnerabilities
       run: |
