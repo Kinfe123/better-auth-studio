@@ -25,7 +25,6 @@ export default function Installation() {
           </PixelCard>
         </section>
 
-        {/* Beta Version Callout */}
         <section>
           <PixelCard variant="highlight">
             <div className="flex items-start">
@@ -49,15 +48,12 @@ export default function Installation() {
           </PixelCard>
         </section>
 
-        {/* Quick Start */}
         <section>
           <h2 className="text-2xl font-light tracking-tight mb-6 text-white">QUICK START</h2>
           
-          {/* Installation */}
           <PixelCard className="mb-6">
             <h3 className="text-lg font-light tracking-tight mb-4 text-white">Installation</h3>
             
-            {/* Stable Version */}
             <div className="mb-4">
               <p className="text-sm font-light tracking-tight text-white/70 mb-2">
                 <strong>Stable version:</strong>
@@ -65,7 +61,6 @@ export default function Installation() {
               <CodeBlock code="pnpm add -g better-auth-studio" />
             </div>
 
-            {/* Beta Version */}
             <div className="mb-4">
               <p className="text-sm font-light tracking-tight text-white/70 mb-2">
                 <strong>Beta version (recommended):</strong>
@@ -79,7 +74,6 @@ export default function Installation() {
             <CodeBlock code="pnpx better-auth-studio@beta" />
           </PixelCard>
 
-          {/* Basic Usage */}
           <PixelCard>
             <h3 className="text-lg font-light tracking-tight mb-4 text-white">Basic Usage</h3>
             <div className="space-y-4">
@@ -116,7 +110,6 @@ export default function Installation() {
           </PixelCard>
         </section>
 
-        {/* Prerequisites */}
         <section>
           <h2 className="text-2xl font-light tracking-tight mb-6 text-white">PREREQUISITES</h2>
           <PixelCard>
@@ -140,11 +133,9 @@ export default function Installation() {
           </PixelCard>
         </section>
 
-        {/* Configuration */}
         <section>
           <h2 className="text-2xl font-light tracking-tight mb-6 text-white">CONFIGURATION</h2>
           
-          {/* Supported Database Adapters */}
           <PixelCard className="mb-6">
             <h3 className="text-lg font-light tracking-tight mb-4 text-white">Supported Database Adapters</h3>
             <p className="text-sm font-light tracking-tight text-white/70 mb-4">
@@ -174,11 +165,9 @@ export default function Installation() {
             </div>
           </PixelCard>
 
-          {/* Example Configuration Files */}
           <PixelCard>
             <h3 className="text-lg font-light tracking-tight mb-6 text-white">Example Configuration Files</h3>
             
-            {/* Prisma Setup */}
             <div className="mb-6">
               <h4 className="font-light tracking-tight mb-3 text-white">Prisma Setup</h4>
             <PixelCard variant="code">
@@ -201,7 +190,6 @@ export const auth = betterAuth({
             </PixelCard>
             </div>
 
-            {/* Drizzle Setup */}
             <div className="mb-6">
               <h4 className="font-light tracking-tight mb-3 text-white">Drizzle Setup</h4>
             <PixelCard variant="code">
@@ -222,7 +210,6 @@ export const auth = betterAuth({
             </PixelCard>
             </div>
 
-            {/* SQLite Setup */}
             <div>
               <h4 className="font-light tracking-tight mb-3 text-white">SQLite Setup</h4>
             <PixelCard variant="code">
@@ -242,11 +229,9 @@ export const auth = betterAuth({
           </PixelCard>
         </section>
 
-        {/* Features */}
         <section>
           <h2 className="text-2xl font-light tracking-tight mb-6 text-white">FEATURES</h2>
           
-          {/* Dashboard */}
           <PixelCard className="mb-4">
             <h3 className="text-lg font-light tracking-tight mb-3 text-white">📊 Dashboard</h3>
             <ul className="list-none space-y-2 text-sm font-light tracking-tight text-white/70">
@@ -257,7 +242,6 @@ export const auth = betterAuth({
             </ul>
           </PixelCard>
 
-          {/* User Management */}
           <PixelCard className="mb-4">
             <h3 className="text-lg font-light tracking-tight mb-3 text-white">👥 User Management</h3>
             <ul className="list-none space-y-2 text-sm font-light tracking-tight text-white/70">
@@ -288,7 +272,6 @@ export const auth = betterAuth({
             </ul>
           </PixelCard>
 
-          {/* Organization Management */}
           <PixelCard className="mb-4">
             <h3 className="text-lg font-light tracking-tight mb-3 text-white">🏢 Organization Management</h3>
             <ul className="list-none space-y-2 text-sm font-light tracking-tight text-white/70">
@@ -323,7 +306,6 @@ export const auth = betterAuth({
             </ul>
           </PixelCard>
 
-          {/* Settings & Configuration */}
           <PixelCard>
             <h3 className="text-lg font-light tracking-tight mb-3 text-white">⚙️ Settings & Configuration</h3>
             <ul className="list-none space-y-2 text-sm font-light tracking-tight text-white/70">
@@ -347,11 +329,8 @@ export const auth = betterAuth({
           </PixelCard>
         </section>
 
-        {/* Command Line Options */}
         <section>
           <h2 className="text-2xl font-light tracking-tight mb-6 text-white">COMMAND LINE OPTIONS</h2>
-          
-          {/* Start Studio */}
           <PixelCard className="mb-6">
             <h3 className="text-lg font-light tracking-tight mb-4 text-white">Start Studio</h3>
             <CodeBlock code="pnpx better-auth-studio start [options]" className="mb-4" />
@@ -401,7 +380,6 @@ export const auth = betterAuth({
             </div>
           </PixelCard>
 
-          {/* Other Commands */}
           <PixelCard>
             <h3 className="text-lg font-light tracking-tight mb-4 text-white">Other Commands</h3>
             <div className="space-y-3">
@@ -422,11 +400,8 @@ export const auth = betterAuth({
           </PixelCard>
         </section>
 
-        {/* Development */}
         <section>
           <h2 className="text-2xl font-light tracking-tight mb-6 text-white">DEVELOPMENT</h2>
-          
-          {/* Running from Source */}
           <PixelCard className="mb-6">
             <h3 className="text-lg font-light tracking-tight mb-4 text-white">Running from Source</h3>
             <div className="space-y-4">
@@ -460,8 +435,6 @@ export const auth = betterAuth({
               </div>
             </div>
           </PixelCard>
-
-          {/* Contributing */}
           <PixelCard>
             <h3 className="text-lg font-light tracking-tight mb-4 text-white">Contributing</h3>
             <ol className="list-none space-y-2 text-sm font-light tracking-tight text-white/70">
@@ -488,8 +461,6 @@ export const auth = betterAuth({
             </ol>
           </PixelCard>
         </section>
-
-        {/* Support */}
         <section>
           <h2 className="text-2xl font-light tracking-tight mb-6 text-white">SUPPORT</h2>
           <PixelCard>
