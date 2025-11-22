@@ -442,16 +442,17 @@ export default function TeamDetails() {
 
       {activeTab === 'members' && (
         <div className="space-y-6">
-          {/* Members Header */}
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg relative text-white font-light inline-flex items-start">
                 Team Members
-                <sup className="text-xs text-gray-500 ml-1 mt-0">
-                  <span className="mr-1">[</span>
-                  <span className="text-white/80 font-mono text-xs">{members.length}</span>
-                  <span className="ml-1">]</span>
-                </sup>
+                <AnimatedNumber
+                  value={members.length}
+                  className="text-white/80 font-mono text-xs"
+                  prefix={<span className="mr-0.5 text-gray-500">[</span>}
+                  suffix={<span className="ml-0.5 text-gray-500">]</span>}
+                  format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                />
               </h3>
               <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
                 Manage members of this team
