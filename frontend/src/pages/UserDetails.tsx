@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { AnimatedNumber } from '../components/AnimatedNumber';
+import { CopyableId } from '../components/CopyableId';
 import {
   Ban,
   Building2,
@@ -577,20 +578,10 @@ export default function UserDetails() {
               <div>
                 <h1 className="text-3xl font-light text-white inline-flex items-center">
                   {user.name}
-                  <sup
-                    className="text-xs text-gray-500 ml-2 cursor-pointer hover:text-white transition-colors"
-                    onClick={() => {
-                      navigator.clipboard.writeText(user.id);
-                      toast.success('User ID copied to clipboard');
-                    }}
-                    title="Click to copy User ID"
-                  >
-                    <span className="mr-1">[</span>
-                    <span className="text-white/80 font-mono text-xs">
-                      {user.id.slice(0, 8)}...
-                    </span>
-                    <span className="ml-1">]</span>
-                  </sup>
+                  <CopyableId
+                    id={user.id}
+                    variant="subscript"
+                  />
                   {user.banned && (
                     <sup className="ml-2 px-2 pt-2 pb-2 -mt-1 py-0.5 text-[10px] font-mono uppercase border border-dashed border-red-500/30 bg-red-500/10 text-red-400/80 rounded-none">
                       Banned

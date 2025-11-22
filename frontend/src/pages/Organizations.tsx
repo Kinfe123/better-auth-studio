@@ -18,6 +18,7 @@ import type { DateRange } from 'react-day-picker';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { AnimatedNumber } from '../components/AnimatedNumber';
+import { CopyableId } from '../components/CopyableId';
 import { Terminal } from '../components/Terminal';
 import { Button } from '../components/ui/button';
 import { Calendar } from '../components/ui/calendar';
@@ -797,7 +798,7 @@ export default function Organizations() {
                         </div>
                         <div>
                           <div className="text-white font-light">{organization.name}</div>
-                          <div className="text-sm text-gray-400">ID: {organization.id}</div>
+                          <CopyableId id={organization.id} />
                         </div>
                       </div>
                     </td>
@@ -1194,10 +1195,7 @@ export default function Organizations() {
                 </div>
               </div>
               <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">ID:</span>
-                  <span className="text-white text-sm">{selectedOrganization.id}</span>
-                </div>
+                <CopyableId id={selectedOrganization.id} variant="detail" />
                 <div className="flex justify-between">
                   <span className="text-gray-400">Created:</span>
                   <span className="text-white text-sm">

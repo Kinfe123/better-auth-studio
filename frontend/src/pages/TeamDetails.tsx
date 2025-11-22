@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { AnimatedNumber } from '../components/AnimatedNumber';
+import { CopyableId } from '../components/CopyableId';
 import {
   Building2,
   Calendar,
@@ -77,7 +78,6 @@ export default function TeamDetails() {
       const response = await fetch(`/api/teams/${teamId}`);
       const data = await response.json();
 
-      // Handle both response formats: { success: true, team: ... } and { team: ... }
       if (data.success && data.team) {
         setTeam(data.team);
         setTeamFormData({ name: data.team.name });
@@ -306,11 +306,7 @@ export default function TeamDetails() {
         <div>
           <h1 className="text-2xl text-white font-light inline-flex items-center">
             {team.name}
-            <sup className="text-xs text-gray-500 ml-2">
-              <span className="mr-1">[</span>
-              <span className="text-white/80 font-mono text-xs">{teamId}</span>
-              <span className="ml-1">]</span>
-            </sup>
+            {teamId && <CopyableId id={teamId} variant="subscript" />}
           </h1>
           <div className="flex items-center space-x-2 mt-1">
             {team.organization && (
@@ -492,7 +488,7 @@ export default function TeamDetails() {
                             />
                             <div>
                               <div className="text-white font-light">{member.user.name}</div>
-                              <div className="text-sm text-gray-400">ID: {member.user.id}</div>
+                              <CopyableId id={member.user.id} />
                             </div>
                           </div>
                         </td>
@@ -701,6 +697,7 @@ export default function TeamDetails() {
               </Button>
               <Button
                 onClick={handleUpdateTeam}
+                disabled={teamFormData.name === team.name}
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
               >
                 Update Team

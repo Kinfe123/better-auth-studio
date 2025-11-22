@@ -1956,7 +1956,7 @@ export default function Dashboard() {
               <div className="space-y-3 overflow-y-auto custom-scrollbar max-h-[400px]">
                 {securityPatches.length === 0 && (
                   <div className="text-sm flex items-center justify-center text-gray-400">
-                    <div className='flex items-cneter justify-center'>
+                    <div className='flex mt-5 items-center justify-center'>
                       <Shield className="w-4 h-4 text-gray-400 mr-2" />
                       <p className="text-center">
                         No security insights found

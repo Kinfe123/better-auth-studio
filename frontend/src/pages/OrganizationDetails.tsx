@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { AnimatedNumber } from '../components/AnimatedNumber';
+import { CopyableId } from '../components/CopyableId';
 import {
   ArrowLeft,
   Building2,
@@ -1133,7 +1134,7 @@ export default function OrganizationDetails() {
                             </div>
                             <div>
                               <div className="text-white font-light">{team.name}</div>
-                              <div className="text-sm text-gray-400">Team ID: {team.id}</div>
+                              <CopyableId id={team.id} label="Team ID" />
                             </div>
                           </div>
                         </td>
@@ -1247,7 +1248,7 @@ export default function OrganizationDetails() {
                             />
                             <div>
                               <div className="text-white font-light">{member.user.name}</div>
-                              <div className="text-sm text-gray-400">ID: {member.user.id}</div>
+                              <CopyableId id={member.user.id} />
                             </div>
                           </div>
                         </td>
@@ -1621,7 +1622,7 @@ export default function OrganizationDetails() {
                 </div>
                 <div>
                   <div className="text-white font-light">{selectedTeam.name}</div>
-                  <div className="text-sm text-gray-400">Team ID: {selectedTeam.id}</div>
+                  <CopyableId id={selectedTeam.id} label="Team ID" variant="detail" />
                 </div>
               </div>
               <div>
@@ -1681,7 +1682,7 @@ export default function OrganizationDetails() {
                 </div>
                 <div>
                   <div className="text-white font-light">{selectedTeam.name}</div>
-                  <div className="text-sm text-gray-400">Team ID: {selectedTeam.id}</div>
+                  <CopyableId id={selectedTeam.id} label="Team ID" variant="detail" />
                 </div>
               </div>
               <p className="text-gray-400">

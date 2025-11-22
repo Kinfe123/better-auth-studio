@@ -118,6 +118,7 @@ const jitiOptions = (cwd) => {
                 ],
             },
         },
+        debug: false,
         extensions: ['.ts', '.tsx', '.js', '.jsx'],
         alias,
     };

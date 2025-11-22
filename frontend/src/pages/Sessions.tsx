@@ -1,5 +1,6 @@
 import { Database, Edit, Eye, Filter, Loader, Plus, Search, Trash2, User, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import { CopyableId } from '../components/CopyableId';
 import { Terminal } from '../components/Terminal';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -360,7 +361,7 @@ export default function Sessions() {
                         <div className="text-white font-light">
                           Session {session.id.slice(0, 8)}...
                         </div>
-                        <div className="text-sm text-gray-400">ID: {session.id}</div>
+                        <CopyableId id={session.id} />
                       </div>
                     </div>
                   </td>
@@ -752,14 +753,8 @@ export default function Sessions() {
                 </div>
               </div>
               <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">ID:</span>
-                  <span className="text-white text-sm">{selectedSession.id}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">User ID:</span>
-                  <span className="text-white text-sm">{selectedSession.userId}</span>
-                </div>
+                <CopyableId id={selectedSession.id} variant="detail" />
+                <CopyableId id={selectedSession.userId} label="User ID" variant="detail" />
                 <div className="flex justify-between">
                   <span className="text-gray-400">Status:</span>
                   <span className="text-white text-sm">

@@ -9,16 +9,7 @@ import { BetterAuthError, logger } from 'better-auth';
 import { loadConfig } from 'c12';
 import { addSvelteKitEnvModules } from './add-svelte-kit-env-modules.js';
 import { getTsconfigInfo } from './get-tsconfig-info.js';
-
-interface JitiOptions {
-  transformOptions?: {
-    babel?: {
-      presets?: any[];
-    };
-  };
-  extensions?: string[];
-  alias?: Record<string, string>;
-}
+import { JitiOptions as JO } from "jiti/native"
 
 export interface AuthProvider {
   type: string;
@@ -55,7 +46,7 @@ export interface AuthConfig {
     requireEmailVerification?: boolean;
     maxPasswordLength?: number;
     minPasswordLength?: number;
-    resetPasswordTokenExpiresIn?: number;
+     resetPasswordTokenExpiresIn?: number;
     autoSignIn?: boolean;
     revokeSessionsOnPasswordReset?: boolean;
     [key: string]: any;
@@ -207,7 +198,7 @@ function getPathAliases(cwd: string): Record<string, string> | null {
 /**
  * .tsx files are not supported by Jiti.
  */
-const jitiOptions = (cwd: string): JitiOptions => {
+const jitiOptions = (cwd: string): JO => {
   const alias = getPathAliases(cwd) || {};
   return {
     transformOptions: {
@@ -224,6 +215,7 @@ const jitiOptions = (cwd: string): JitiOptions => {
         ],
       },
     },
+    debug: false,
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias,
   };
