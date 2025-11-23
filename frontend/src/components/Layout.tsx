@@ -11,7 +11,6 @@ import { type ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCounts } from '../contexts/CountsContext';
 import CommandPalette from './CommandPalette';
-import { Button } from './ui/button';
 
 interface LayoutProps {
   children: ReactNode;
