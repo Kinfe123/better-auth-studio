@@ -8,23 +8,9 @@ import { Command } from 'commander';
 import { findAuthConfig } from './config.js';
 import { startStudio } from './studio.js';
 import { detectDatabaseWithDialect } from './utils/database-detection.js';
-
+import { possibleConfigFiles } from './utils';
 async function findAuthConfigPath(): Promise<string | null> {
-  const possibleConfigFiles = [
-    'auth.ts',
-    'auth.js',
-    'src/auth.ts',
-    'src/auth.js',
-    'lib/auth.ts',
-    'lib/auth.js',
-    'better-auth.config.ts',
-    'better-auth.config.js',
-    'better-auth.config.json',
-    'auth.config.ts',
-    'auth.config.js',
-    'auth.config.json',
-    'studio-config.json',
-  ];
+  
 
   let currentDir = process.cwd();
   const maxDepth = 10;

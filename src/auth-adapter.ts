@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createJiti } from 'jiti';
 import { InternalAdapter } from "better-auth"
-
+import { possibleConfigFiles } from './utils.js';
 type OptionalFields<T> = { [K in keyof T]?: T[K] };
 
 type UserInternalAdapter = OptionalFields<InternalAdapter>
@@ -199,43 +199,7 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
 }
 
 async function findAuthConfigPath(): Promise<string | null> {
-  const possibleConfigFiles = [
-    'auth.ts',
-    'auth.js',
-    'app/auth.ts',
-    'app/auth.js',
-    'apps/auth.ts',
-    'apps/auth.js',
-    'server/auth.ts',
-    'server/auth.js',
-    'src/auth.ts',
-    'src/auth.js',
-    'lib/auth.ts',
-    'utils/auth.ts',
-    'utils/auth.js',
-    'utils/auth.tsx',
-    'utils/auth.jsx',
-    'utils/auth.server.ts',
-    'utils/auth.server.js',
-    'utils/auth.server.tsx',
-    'utils/auth.server.jsx',
-    'utils/lib/auth.ts',
-    'utils/lib/auth.js',
-    'utils/lib/auth.tsx',
-    'utils/lib/auth.jsx',
-    'utils/lib/auth.server.ts',
-    'utils/lib/auth.server.js',
-    'utils/lib/auth.server.tsx',
-    'utils/lib/auth.server.jsx',
-    'lib/auth.js',
-    'better-auth.config.ts',
-    'better-auth.config.js',
-    'better-auth.config.json',
-    'auth.config.ts',
-    'auth.config.js',
-    'auth.config.json',
-    'studio-config.json',
-  ];
+  
 
   let currentDir = process.cwd();
   const maxDepth = 10;
