@@ -551,13 +551,6 @@ export default function Tools() {
           ? `✅ ${result.provider} OAuth succeeded — ${userDetails}`
           : `✅ ${result.provider} OAuth succeeded!`;
         logSessionMessage(sessionId, 'success', 'completed', successMessage, 'completed');
-        logSessionMessage(
-          sessionId,
-          'info',
-          'timestamp',
-          `⏰ Completed at ${new Date(result.timestamp).toLocaleTimeString()}`,
-          'completed'
-        );
         toast.success(`OAuth test for ${result.provider} passed!`);
         closeOAuthWindow();
         setRunningTool(null);
