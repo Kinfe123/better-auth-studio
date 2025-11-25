@@ -200,7 +200,7 @@ pnpx better-auth-studio --help
 ### Running from Source
 ```bash
 # Clone the repository
-git clone https://github.com/better-auth/better-auth-studio.git
+git clone https://github.com/Kinfe123/better-auth-studio.git
 cd better-auth-studio
 
 # Install dependencies
@@ -219,6 +219,10 @@ pnpm run dev
 3. Make your changes
 4. Add tests if applicable
 5. Submit a pull request
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🤝 Support
 
