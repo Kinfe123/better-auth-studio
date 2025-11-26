@@ -1,8 +1,7 @@
-import { betterAuth } from "better-auth";
+import { betterAuth , Account } from "better-auth";
 import { admin, organization } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
-
 export const auth = betterAuth({
   secret: process.env.AUTH_SECRET || "better-auth-secret-123456789",
   database: prismaAdapter(prisma, { provider: "sqlite" }),
@@ -19,6 +18,11 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       redirectURI: "http://localhost:3000/api/auth/callback/google"
     },
+    discord: {
+      clientId: process.env.DISCORD_CLIENT_ID!,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+      redirectURI: "http://localhost:3000/api/auth/callback/discord"
+    }
   },
   emailAndPassword: {
     enabled: true,
@@ -28,7 +32,6 @@ export const auth = betterAuth({
     maxPasswordLength: 128,
     autoSignIn: true,
     sendResetPassword: async ({ user, url, token }) => {
-      // Send reset password email
       console.log(`Reset password email for ${user.email}: ${url}`);
     },
     resetPasswordTokenExpiresIn: 3600, // 1 hour
@@ -60,3 +63,4 @@ export const auth = betterAuth({
   },
   trustedOrigins: ["http://localhost:3002", "http://localhost:3000"],
 });
+

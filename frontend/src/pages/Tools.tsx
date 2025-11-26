@@ -1,4 +1,4 @@
-import { Code, Github, Globe, Key, TestTube } from 'lucide-react';
+import { Code, Eye, EyeOff, Github, Globe, Key, TestTube } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -14,6 +14,9 @@ import {
 } from '../components/PixelIcons';
 import { Terminal } from '../components/Terminal';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { createHash } from '@better-auth/utils/hash';
 
 interface Tool {
   id: string;
@@ -349,6 +352,14 @@ export default function Tools() {
   const [showMigrationModal, setShowMigrationModal] = useState(false);
   const [selectedMigration, setSelectedMigration] = useState<string>('');
   const [customMigrationCode, setCustomMigrationCode] = useState<string>(DEFAULT_CUSTOM_MIGRATION);
+  const [showPasswordHasher, setShowPasswordHasher] = useState(false);
+  const [hashInput, setHashInput] = useState('');
+  const [hashSalt, setHashSalt] = useState('');
+  const [hashAlgorithm, setHashAlgorithm] = useState<'SHA-256' | 'SHA-384' | 'SHA-512'>('SHA-256');
+  const [hashEncoding, setHashEncoding] = useState<'hex' | 'base64' | 'base64url'>('hex');
+  const [hashOutput, setHashOutput] = useState<string | null>(null);
+  const [hashingPassword, setHashingPassword] = useState(false);
+  const [showPlainPassword, setShowPlainPassword] = useState(false);
 
   const addLog = (
     type: 'info' | 'success' | 'error' | 'progress',
@@ -392,6 +403,36 @@ export default function Tools() {
     setSelectedMigration(providerId);
     if (providerId !== 'custom') {
       setCustomMigrationCode(DEFAULT_CUSTOM_MIGRATION);
+    }
+  };
+
+  const openPasswordHasher = () => {
+    setHashInput('');
+    setHashSalt('');
+    setHashOutput(null);
+    setHashAlgorithm('SHA-256');
+    setHashEncoding('hex');
+    setShowPasswordHasher(true);
+  };
+
+  const handleHashPassword = async () => {
+    if (!hashInput.trim()) {
+      toast.error('Enter a password to hash');
+      return;
+    }
+
+    try {
+      setHashingPassword(true);
+      const payload = hashSalt ? `${hashSalt}:${hashInput}` : hashInput;
+      const hasher = createHash(hashAlgorithm, hashEncoding);
+      const hashedValue = (await hasher.digest(payload)) as string;
+      setHashOutput(hashedValue);
+      toast.success('Password hashed successfully');
+    } catch (error) {
+      toast.error('Failed to hash password');
+      console.error(error);
+    } finally {
+      setHashingPassword(false);
     }
   };
 
@@ -1011,6 +1052,8 @@ export default function Tools() {
     }
   };
 
+  const enabledToolIds = new Set(['test-oauth', 'test-db', 'hash-password']);
+
   const tools: Tool[] = [
     {
       id: 'test-oauth',
@@ -1019,6 +1062,14 @@ export default function Tools() {
       icon: Globe,
       action: handleTestOAuth,
       category: 'oauth',
+    },
+    {
+      id: 'hash-password',
+      name: 'Hash Password',
+      description: 'Generate SHA hashes',
+      icon: Key,
+      action: openPasswordHasher,
+      category: 'utilities',
     },
     {
       id: 'run-migration',
@@ -1126,18 +1177,18 @@ export default function Tools() {
                 {category.tools.map((tool) => {
                   const Icon = tool.icon;
                   const isRunning = runningTool === tool.id;
+                  const isEnabled = enabledToolIds.has(tool.id);
+                  const isDisabled =
+                    !isEnabled || (runningTool !== null && runningTool !== tool.id) || isRunning;
+
                   return (
                     <button
                       key={tool.id}
                       onClick={() => tool.action()}
-                      disabled={
-                        (tool.id !== 'test-oauth' && tool.id !== 'test-db') ||
-                        isRunning ||
-                        runningTool !== null
-                      }
-                      className={`relative flex items-center space-x-4 p-4 bg-black/30 border border-dashed border-white/20 rounded-none transition-colors text-left group ${tool.id !== 'test-oauth' && tool.id !== 'test-db'
-                        ? 'opacity-60 cursor-not-allowed'
-                        : 'hover:bg-black/50 disabled:opacity-50 disabled:cursor-not-allowed'
+                      disabled={isDisabled}
+                      className={`relative flex items-center space-x-4 p-4 bg-black/30 border border-dashed border-white/20 rounded-none transition-colors text-left group ${isEnabled
+                        ? 'hover:bg-black/50 disabled:opacity-50 disabled:cursor-not-allowed'
+                        : 'opacity-60 cursor-not-allowed'
                         }`}
                     >
                       <div className="p-2 bg-white/10 rounded-none group-hover:bg-white/20 transition-colors">
@@ -1154,7 +1205,7 @@ export default function Tools() {
                           {tool.description}
                         </p>
                       </div>
-                      {tool.id !== 'test-oauth' && tool.id !== 'test-db' && (
+                      {!isEnabled && (
                         <span className="absolute top-2 right-3 text-[10px] font-mono uppercase tracking-[0.2em] text-white/60">
                           Coming Soon
                         </span>
@@ -1168,6 +1219,141 @@ export default function Tools() {
           ))}
         </div>
       </div>
+      {showPasswordHasher && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-2">
+                <Key className="w-5 h-5 text-white" />
+                <h3 className="text-xl text-white font-light uppercase tracking-wider">
+                  Password Hasher
+                </h3>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowPasswordHasher(false)}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-xs uppercase font-mono text-gray-400">Algorithm</Label>
+                  <select
+                    value={hashAlgorithm}
+                    onChange={(event) =>
+                      setHashAlgorithm(event.target.value as 'SHA-256' | 'SHA-384' | 'SHA-512')
+                    }
+                    className="mt-2 w-full bg-black border border-dashed border-white/20 text-white px-3 py-2 text-sm focus:outline-none"
+                  >
+                    <option value="SHA-256">SHA-256</option>
+                    <option value="SHA-384">SHA-384</option>
+                    <option value="SHA-512">SHA-512</option>
+                  </select>
+                </div>
+                <div>
+                  <Label className="text-xs uppercase font-mono text-gray-400">Encoding</Label>
+                  <select
+                    value={hashEncoding}
+                    onChange={(event) =>
+                      setHashEncoding(event.target.value as 'hex' | 'base64' | 'base64url')
+                    }
+                    className="mt-2 w-full bg-black border border-dashed border-white/20 text-white px-3 py-2 text-sm focus:outline-none"
+                  >
+                    <option value="hex">Hex</option>
+                    <option value="base64">Base64</option>
+                    <option value="base64url">Base64 URL</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-xs uppercase font-mono text-gray-400">
+                    Salt (optional)
+                  </Label>
+                  <Input
+                    value={hashSalt}
+                    onChange={(event) => setHashSalt(event.target.value)}
+                    placeholder="e.g. project-specific-salt"
+                    className="mt-2 bg-black border border-dashed border-white/20 text-white rounded-none"
+                  />
+                  <p className="text-[11px] text-gray-500 mt-1 font-mono">
+                    Salt is prepended (<span className="text-white/80">salt:password</span>)
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-xs uppercase font-mono text-gray-400">Password</Label>
+                  <div className="relative mt-2">
+                    <Input
+                      type={showPlainPassword ? 'text' : 'password'}
+                      value={hashInput}
+                      onChange={(event) => setHashInput(event.target.value)}
+                      placeholder="Enter password"
+                      className="bg-black border border-dashed border-white/20 text-white rounded-none pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPlainPassword((prev) => !prev)}
+                      className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white"
+                      aria-label={showPlainPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPlainPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {hashOutput && (
+                <div>
+                  <Label className="text-xs uppercase font-mono text-gray-400">
+                    Hash Result
+                  </Label>
+                  <div className="mt-2 flex items-center space-x-2">
+                    <Input
+                      value={hashOutput}
+                      readOnly
+                      className="flex-1 bg-black border border-dashed border-white/20 text-white rounded-none"
+                    />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => hashOutput && copyToClipboard(hashOutput)}
+                      className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="flex justify-end space-x-3 mt-8 border-t border-dashed border-white/10 pt-6">
+              <Button
+                variant="outline"
+                onClick={() => setShowPasswordHasher(false)}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Close
+              </Button>
+              <Button
+                onClick={handleHashPassword}
+                disabled={hashingPassword}
+                className="rounded-none"
+              >
+                {hashingPassword ? (
+                  <>
+                    <Loader className="w-4 h-4 mr-2 animate-spin" />
+                    Hashing...
+                  </>
+                ) : (
+                  'Hash Password'
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       {showOAuthModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-black/90 border border-dashed border-white/20 p-8 w-full max-w-2xl rounded-none">
