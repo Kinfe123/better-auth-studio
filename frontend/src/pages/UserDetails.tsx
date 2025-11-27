@@ -796,8 +796,8 @@ export default function UserDetails() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === tab.id
-                      ? 'border-white text-white'
-                      : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                    ? 'border-white text-white'
+                    : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
                     }`}
                 >
                   <tab.icon className="w-4 h-4 text-white/90" />
@@ -833,11 +833,11 @@ export default function UserDetails() {
                       <User className="w-4 h-4 text-gray-400 mt-1" />
                       <div className="flex-1">
                         <div className="text-xs uppercase font-mono text-gray-500 mb-1">
-                         Name 
+                          Name
                         </div>
                         <div className="text-white font-sans text-sm">
-                        {user.name} 
-                         </div>
+                          {user.name}
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
@@ -1116,16 +1116,17 @@ export default function UserDetails() {
                             <div className="flex-1">
                               <h3 className="text-white font-light inline-flex items-start">
                                 {formatProviderName(account.providerId)}
-                                <sup className="text-xs text-gray-500 ml-2 mt-0.5">
+                                <CopyableId id={account.email || user.email || `Account ID: ${account.id}`} variant="subscript" nonSliced={account.email || user.email ? true : false} />
+                                {/* <sup className="text-xs text-gray-500 ml-2 mt-0.5">
                                   <span className="mr-1">[</span>
                                   <span className="text-white/80 font-mono text-xs">
-                                    {account.providerId}
+                                    {account.email || user.email || `Account ID: ${account.id}`}
                                   </span>
                                   <span className="ml-1">]</span>
-                                </sup>
+                                </sup> */}
                               </h3>
-                              <p className="text-gray-400 text-sm font-sans mt-1">
-                                {account.email || `Account ID: ${account.id}`}
+                              <p className="text-gray-400 tracking-tight uppercase text-xs font-mono mt-1">
+                                {`ID: ${account.id}`}
                               </p>
                             </div>
                           </div>

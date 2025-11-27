@@ -5,11 +5,12 @@ import { toast } from 'sonner';
 interface CopyableIdProps {
   id: string;
   label?: string;
+  nonSliced?: boolean;
   className?: string;
   variant?: 'inline' | 'detail' | 'subscript';
 }
 
-export function CopyableId({ id, label = 'ID', className = '', variant = 'inline' }: CopyableIdProps) {
+export function CopyableId({ id, label = 'ID', className = '', variant = 'inline'  , nonSliced = false}: CopyableIdProps) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async () => {
@@ -52,7 +53,7 @@ export function CopyableId({ id, label = 'ID', className = '', variant = 'inline
       >
         <span className="mr-1">[</span>
         <span className="text-white/80 font-mono text-xs">
-          {id.slice(0, 8)}...
+          {nonSliced ? id : id.slice(0, 8)}
         </span>
         <span className="ml-1">]</span>
       </sup>
