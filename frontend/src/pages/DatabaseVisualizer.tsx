@@ -447,7 +447,7 @@ export default function DatabaseVisualizer() {
       
       {/* Table Details Modal */}
       {selectedTable && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setSelectedTable(null)}>
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onClick={() => setSelectedTable(null)}>
           <div 
             className="bg-black border border-dashed border-white/20 rounded-none p-5 w-full max-w-3xl max-h-[75vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
@@ -478,11 +478,11 @@ export default function DatabaseVisualizer() {
                 {selectedTable.fields.map((field, index) => (
                   <div
                     key={field.name}
-                    className={`flex items-center border-b border-dashed border-white/10 py-2.5 ${index === selectedTable.fields.length - 1 ? 'border-b-0' : ''}`}
+                    className={`border-b border-dashed border-white/10 py-3 ${index === selectedTable.fields.length - 1 ? 'border-b-0' : ''}`}
                   >
-                    <div className="flex-1 flex items-center space-x-3">
-                      <span className="text-white font-mono text-sm min-w-[120px]">{field.name}</span>
-                      <div className="flex items-center space-x-2 flex-1">
+                    <div className="flex items-start justify-between mb-1.5">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-white font-mono text-sm">{field.name}</span>
                         {field.primaryKey && (
                           <span className="px-1.5 py-0.5 text-[9px] font-mono uppercase border border-dashed border-white/15 bg-white/5 text-white/80 rounded-none">
                             PK
@@ -499,14 +499,23 @@ export default function DatabaseVisualizer() {
                           </span>
                         )}
                       </div>
-                      <span className="text-xs text-gray-400 font-mono uppercase min-w-[80px] text-right">{field.type}</span>
+                      <span className="text-xs text-gray-400 font-mono uppercase">{field.type}</span>
+                    </div>
+                    <div className="ml-0 space-y-0.5">
+                      {field.description && (
+                        <p className="text-xs text-gray-500 font-light">{field.description}</p>
+                      )}
+                      {field.defaultValue !== undefined && (
+                        <p className="text-xs text-gray-500 font-mono">
+                          Default: <span className="text-gray-400">{String(field.defaultValue)}</span>
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Relationships Section */}
             {selectedTable.relationships.length > 0 && (
               <div className="mb-6">
                 <hr className="border-white/10 border-dashed mb-4" />
@@ -520,18 +529,23 @@ export default function DatabaseVisualizer() {
                     return (
                       <div
                         key={`${rel.target}-${rel.field}-${index}`}
-                        className={`flex items-center border-b border-dashed border-white/10 py-2.5 ${index === selectedTable.relationships.length - 1 ? 'border-b-0' : ''}`}
+                        className={`border-b border-dashed border-white/10 py-3 ${index === selectedTable.relationships.length - 1 ? 'border-b-0' : ''}`}
                       >
-                        <div className="flex-1 flex items-center space-x-3">
-                          <span className="text-white font-mono text-sm min-w-[100px]">{rel.field}</span>
-                          <span className="text-xs text-gray-400">→</span>
-                          <span className="text-white font-mono text-sm flex-1">
-                            {targetTable?.displayName || rel.target}
-                          </span>
-                          <span className="px-1.5 py-0.5 text-[9px] font-mono uppercase border border-dashed border-white/15 bg-white/5 text-white/80 rounded-none min-w-[40px] text-center">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-white font-mono text-sm">{rel.field}</span>
+                            <span className="text-xs text-gray-400">→</span>
+                            <span className="text-white font-mono text-sm">
+                              {targetTable?.displayName || rel.target}
+                            </span>
+                          </div>
+                          <span className="px-1.5 py-0.5 text-[9px] font-mono uppercase border border-dashed border-white/15 bg-white/5 text-white/80 rounded-none">
                             {relationshipLabel}
                           </span>
                         </div>
+                        <p className="text-xs text-gray-500 mt-1 font-mono uppercase ml-0">
+                          {rel.type.replace('-', ' ')}
+                        </p>
                       </div>
                     );
                   })}
@@ -539,8 +553,7 @@ export default function DatabaseVisualizer() {
               </div>
             )}
 
-            {/* Summary */}
-            <div className="border-t border-dashed border-white/10 pt-3 mt-4">
+            <div className="border-t border-dashed border-white/20 pt-3 mt-4">
               <div className="grid grid-cols-3 gap-4 text-sm">
                 <div>
                   <span className="text-gray-400 uppercase font-mono text-xs">Fields</span>
