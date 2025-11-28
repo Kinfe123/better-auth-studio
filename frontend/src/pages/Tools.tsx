@@ -1250,7 +1250,7 @@ export default function Tools() {
           });
         }
         
-        addLog('info', `📥 Downloading ${result.filename}...`, 'completed');
+        addLog('info', `Downloading ${result.filename}...`, 'completed');
 
         // Create download link
         const blob = new Blob([result.data], {

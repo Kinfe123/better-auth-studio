@@ -284,12 +284,11 @@ export default function UserDetails() {
         const sessionData = await sessionResponse.json();
         const sessions = sessionData.sessions || [];
         setSessions(sessions);
-        // Resolve locations for sessions
         resolveSessionLocations(sessions);
       }
     } catch (_error) { }
   }, [
-    userId, // Resolve locations for sessions
+    userId, 
     resolveSessionLocations,
   ]);
 
