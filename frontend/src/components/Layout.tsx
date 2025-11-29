@@ -338,7 +338,7 @@ export default function Layout({ children }: LayoutProps) {
               </kbd>
             </div>
             <a
-              href="https://better-auth.com/docs"
+              href="https://better-auth-studio.vercel.app/docs"
               target="_blank"
               rel="noopener"
               className="group flex items-center"
@@ -348,7 +348,7 @@ export default function Layout({ children }: LayoutProps) {
               <span className="text-white/70 text-xs ml-2 transition-colors duration-150 group-hover:text-white group-hover:bg-gray-500/20 rounded px-0.5">]</span>
             </a>
             <a
-              href="https://better-auth.com/support"
+              href="https://better-auth.com/docs"
               target="_blank"
               rel="noopener"
               className="group flex items-center"

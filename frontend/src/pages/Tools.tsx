@@ -1,4 +1,4 @@
-import { AlertCircle, Code, Download, Eye, EyeOff, Globe, Info, Key, Shield, TestTube, XCircle, Zap } from 'lucide-react';
+import { AlertCircle, Code, Download, Eye, EyeOff, FileText, Globe, Info, Key, Shield, TestTube, XCircle, Zap } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -403,6 +403,15 @@ export default function Tools() {
   const [tokenCustomClaims, setTokenCustomClaims] = useState('{\n  \n}');
   const [tokenResult, setTokenResult] = useState<any>(null);
   const [isGeneratingToken, setIsGeneratingToken] = useState(false);
+  const [showUuidModal, setShowUuidModal] = useState(false);
+  const [uuidCount, setUuidCount] = useState<string>('1');
+  const [uuidResults, setUuidResults] = useState<string[]>([]);
+  const [uuidInput, setUuidInput] = useState('');
+  const [uuidValidation, setUuidValidation] = useState<{
+    isValid: boolean;
+    version?: string;
+    variant?: string;
+  } | null>(null);
 
   // Prevent body scroll when Config Validator modal is open
   useEffect(() => {
@@ -415,6 +424,18 @@ export default function Tools() {
       document.body.style.overflow = '';
     };
   }, [showConfigValidator]);
+
+  // Prevent body scroll when UUID Generator modal is open
+  useEffect(() => {
+    if (showUuidModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showUuidModal]);
 
   const addLog = (
     type: 'info' | 'success' | 'error' | 'progress',
@@ -1112,6 +1133,76 @@ export default function Tools() {
     setShowJwtModal(true);
   };
 
+  const handleOpenUuidGenerator = () => {
+    setUuidCount('1');
+    setUuidResults([]);
+    setUuidInput('');
+    setUuidValidation(null);
+    setShowUuidModal(true);
+  };
+
+  const handleGenerateUuids = () => {
+    const count = Math.min(Math.max(parseInt(uuidCount) || 1, 1), 100);
+    const results: string[] = [];
+    for (let i = 0; i < count; i++) {
+      try {
+        const uuid = crypto.randomUUID();
+        results.push(uuid);
+      } catch (error) {
+        toast.error('Failed to generate UUID');
+        return;
+      }
+    }
+    setUuidResults(results);
+    toast.success(`Generated ${results.length} UUID(s)`);
+  };
+
+  const handleValidateUuid = () => {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const trimmed = uuidInput.trim();
+    
+    if (!trimmed) {
+      setUuidValidation(null);
+      return;
+    }
+
+    const isValid = uuidRegex.test(trimmed);
+    if (!isValid) {
+      setUuidValidation({ isValid: false });
+      return;
+    }
+
+    // Extract version and variant
+    const parts = trimmed.split('-');
+    const versionHex = parts[2]?.[0];
+    const variantHex = parts[3]?.[0];
+    
+    let version: string | undefined;
+    let variant: string | undefined;
+
+    if (versionHex) {
+      const versionNum = parseInt(versionHex, 16);
+      if (versionNum >= 1 && versionNum <= 5) {
+        version = `v${versionNum}`;
+      } else if (versionNum === 0) {
+        version = 'v1 (time-based)';
+      }
+    }
+
+    if (variantHex) {
+      const variantNum = parseInt(variantHex, 16);
+      if (variantNum >= 8 && variantNum <= 11) {
+        variant = 'RFC 4122';
+      } else if (variantNum >= 12 && variantNum <= 15) {
+        variant = 'Microsoft';
+      } else if (variantNum >= 0 && variantNum <= 7) {
+        variant = 'Reserved';
+      }
+    }
+
+    setUuidValidation({ isValid: true, version, variant });
+  };
+
   const handleOpenTokenGenerator = () => {
     setTokenType('api_key');
     setTokenSubject('');
@@ -1394,6 +1485,7 @@ export default function Tools() {
     'jwt-decoder',
     'token-generator',
     'validate-config',
+    'uuid-generator',
   ]);
 
   const tools: Tool[] = [
@@ -1475,6 +1567,14 @@ export default function Tools() {
       description: 'Mint short-lived test tokens',
       icon: Zap,
       action: handleOpenTokenGenerator,
+      category: 'utilities',
+    },
+    {
+      id: 'uuid-generator',
+      name: 'UUID Generator',
+      description: 'Generate and validate UUIDs',
+      icon: FileText,
+      action: handleOpenUuidGenerator,
       category: 'utilities',
     },
   ];
@@ -2712,6 +2812,201 @@ export default function Tools() {
               >
                 Close
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* UUID Generator Modal */}
+      {showUuidModal && (
+        <div 
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] overflow-hidden"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowUuidModal(false);
+            }
+          }}
+        >
+          <div 
+            className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-2">
+                <FileText className="w-5 h-5 text-white" />
+                <h3 className="text-xl text-white font-light uppercase tracking-wider">UUID Generator</h3>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowUuidModal(false)}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Generate UUIDs Section */}
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">Generate UUIDs</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                      Count (1-100)
+                    </Label>
+                    <Input
+                      type="number"
+                      value={uuidCount}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        // Allow empty string for typing
+                        if (value === '') {
+                          setUuidCount('');
+                          return;
+                        }
+                        // Only update if it's a valid number
+                        const num = parseInt(value);
+                        if (!isNaN(num)) {
+                          setUuidCount(value);
+                        }
+                      }}
+                      onBlur={(event) => {
+                        const value = event.target.value;
+                        const num = parseInt(value);
+                        if (isNaN(num) || num < 1) {
+                          setUuidCount('1');
+                        } else if (num > 100) {
+                          setUuidCount('100');
+                        } else {
+                          setUuidCount(String(num));
+                        }
+                      }}
+                      min="1"
+                      max="100"
+                      className="bg-black border border-dashed border-white/20 text-white rounded-none"
+                    />
+                  </div>
+                  <div className="flex items-end justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setUuidCount('1');
+                        setUuidResults([]);
+                      }}
+                      className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                    >
+                      Clear
+                    </Button>
+                    <Button onClick={handleGenerateUuids} className="rounded-none">
+                      Generate UUIDs
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Validate UUID Section */}
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">Validate UUID</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Input
+                      value={uuidInput}
+                      onChange={(event) => {
+                        setUuidInput(event.target.value);
+                      }}
+                      onBlur={handleValidateUuid}
+                      placeholder="Paste UUID to validate"
+                      className="bg-black border border-dashed border-white/20 text-white font-mono text-xs rounded-none"
+                    />
+                  </div>
+                  <div className="flex items-end justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setUuidInput('');
+                        setUuidValidation(null);
+                      }}
+                      className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                    >
+                      Clear
+                    </Button>
+                  </div>
+                </div>
+                {uuidValidation && (
+                  <div className={`mt-2 border border-dashed p-3 rounded-none ${
+                    uuidValidation.isValid 
+                      ? 'border-white/10 bg-black/40' 
+                      : 'border-red-500/30 bg-red-500/10'
+                  }`}>
+                    <div className="text-xs font-mono space-y-1">
+                      <div className={`${uuidValidation.isValid ? 'text-green-400' : 'text-red-300'}`}>
+                        {uuidValidation.isValid ? '✓ Valid UUID' : '✗ Invalid UUID'}
+                      </div>
+                      {uuidValidation.isValid && uuidValidation.version && (
+                        <div className="text-gray-400">Version: {uuidValidation.version}</div>
+                      )}
+                      {uuidValidation.isValid && uuidValidation.variant && (
+                        <div className="text-gray-400">Variant: {uuidValidation.variant}</div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Generated UUIDs Results */}
+              {uuidResults.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs uppercase font-mono text-gray-400">Generated UUIDs</Label>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(uuidResults.join('\n'))}
+                      className="text-gray-400 hover:text-white rounded-none"
+                    >
+                      <Copy className="w-4 h-4 mr-1" />
+                      Copy All
+                    </Button>
+                  </div>
+                  <div className="border border-dashed border-white/10 p-3">
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {uuidResults.map((uuid, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-black/40 border border-dashed border-white/10">
+                          <span className="text-white font-mono text-xs break-all">{uuid}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(uuid)}
+                            className="text-gray-400 hover:text-white rounded-none ml-2"
+                          >
+                            <Copy className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* UUID Info */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+                <div className="border border-dashed border-white/10 p-3 space-y-2">
+                  <div className="text-gray-400 uppercase tracking-wider">Version</div>
+                  <p className="text-white text-sm">v4 (Random)</p>
+                  <p className="text-gray-500 text-xs">Cryptographically random</p>
+                </div>
+                <div className="border border-dashed border-white/10 p-3 space-y-2">
+                  <div className="text-gray-400 uppercase tracking-wider">Format</div>
+                  <p className="text-white text-sm">8-4-4-4-12</p>
+                  <p className="text-gray-500 text-xs">36 characters</p>
+                </div>
+                <div className="border border-dashed border-white/10 p-3 space-y-2">
+                  <div className="text-gray-400 uppercase tracking-wider">Standard</div>
+                  <p className="text-white text-sm">RFC 4122</p>
+                  <p className="text-gray-500 text-xs">Universally unique</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
