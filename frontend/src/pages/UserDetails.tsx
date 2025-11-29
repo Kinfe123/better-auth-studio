@@ -1,11 +1,9 @@
-import { Clock1, Edit, Link2 } from 'lucide-react';
+import { Clock1, Edit, Link2, MoreVertical, Shield, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { AnimatedNumber } from '../components/AnimatedNumber';
 import { CopyableId } from '../components/CopyableId';
-
-import { getProviderIcon } from '../lib/icons';
 import {
   Ban,
   Building2,
@@ -22,12 +20,18 @@ import {
   Users,
   X,
 } from '../components/PixelIcons';
-import { MoreVertical, Shield, Trash2 } from 'lucide-react';
 import { Terminal } from '../components/Terminal';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
+import { getProviderIcon } from '../lib/icons';
 
 interface User {
   id: string;
@@ -225,11 +229,8 @@ export default function UserDetails() {
 
   const formatProviderName = (providerId?: string) => {
     if (!providerId) return 'Unknown Provider';
-    return providerId
-      .replace(/[_-]/g, ' ')
-      .replace(/\b\w/g, (char) => char.toUpperCase());
+    return providerId.replace(/[_-]/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
   };
-
 
   const formatDateTime = (value?: string | null) => {
     if (!value) return 'Unknown';
@@ -286,11 +287,8 @@ export default function UserDetails() {
         setSessions(sessions);
         resolveSessionLocations(sessions);
       }
-    } catch (_error) { }
-  }, [
-    userId, 
-    resolveSessionLocations,
-  ]);
+    } catch (_error) {}
+  }, [userId, resolveSessionLocations]);
 
   const fetchUserAccounts = useCallback(async () => {
     try {
@@ -299,7 +297,7 @@ export default function UserDetails() {
         const data = await response.json();
         setAccounts(data.accounts || []);
       }
-    } catch (_error) { }
+    } catch (_error) {}
   }, [userId]);
 
   const handleEditUser = async () => {
@@ -763,10 +761,7 @@ export default function UserDetails() {
               <div>
                 <h1 className="text-3xl font-light text-white inline-flex items-center">
                   {user.name}
-                  <CopyableId
-                    id={user.id}
-                    variant="subscript"
-                  />
+                  <CopyableId id={user.id} variant="subscript" />
                   {user.role && (
                     <sup className="ml-2 px-2 pt-2 pb-2 -mt-1 py-0.5 text-[10px] font-mono uppercase border border-dashed border-white/15 bg-white/5 text-white/80 rounded-none">
                       {user.role}
@@ -777,7 +772,6 @@ export default function UserDetails() {
                       Banned
                     </sup>
                   )}
-
                 </h1>
                 <p className="text-gray-400 font-mono text-sm">{user.email}</p>
               </div>
@@ -888,10 +882,11 @@ export default function UserDetails() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === tab.id
-                    ? 'border-white text-white'
-                    : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-                    }`}
+                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+                    activeTab === tab.id
+                      ? 'border-white text-white'
+                      : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                  }`}
                 >
                   <tab.icon className="w-4 h-4 text-white/90" />
                   <span className="inline-flex items-start">
@@ -925,12 +920,8 @@ export default function UserDetails() {
                     <div className="flex items-start space-x-3">
                       <User className="w-4 h-4 text-gray-400 mt-1" />
                       <div className="flex-1">
-                        <div className="text-xs uppercase font-mono text-gray-500 mb-1">
-                          Name
-                        </div>
-                        <div className="text-white font-sans text-sm">
-                          {user.name}
-                        </div>
+                        <div className="text-xs uppercase font-mono text-gray-500 mb-1">Name</div>
+                        <div className="text-white font-sans text-sm">{user.name}</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
@@ -1208,9 +1199,7 @@ export default function UserDetails() {
                   <div className="text-center py-12">
                     <Link2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-white mb-2">No Linked Accounts</h3>
-                    <p className="text-gray-400">
-                      This user has not connected any accounts yet.
-                    </p>
+                    <p className="text-gray-400">This user has not connected any accounts yet.</p>
                   </div>
                 ) : (
                   <div className="grid gap-4">
@@ -1227,7 +1216,11 @@ export default function UserDetails() {
                             <div className="flex-1">
                               <h3 className="text-white font-light inline-flex items-start">
                                 {formatProviderName(account.providerId)}
-                                <CopyableId id={account.accountId} variant="subscript" nonSliced={account.email || user.email ? true : false} />
+                                <CopyableId
+                                  id={account.accountId}
+                                  variant="subscript"
+                                  nonSliced={account.email || user.email ? true : false}
+                                />
                               </h3>
                               <p className="text-gray-400 tracking-tight uppercase text-xs font-mono mt-1">
                                 {`ID: ${account.id}`}
@@ -1418,7 +1411,11 @@ export default function UserDetails() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">Role</label>
-                <Select className="bg-black text-white" value={editRole} onValueChange={setEditRole}>
+                <Select
+                  className="bg-black text-white"
+                  value={editRole}
+                  onValueChange={setEditRole}
+                >
                   <SelectTrigger className="w-full border border-dashed border-white/20 bg-black text-white rounded-none">
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
@@ -1633,7 +1630,8 @@ export default function UserDetails() {
               </Button>
               <Button
                 onClick={async () => {
-                  const password = (document.getElementById('new-password') as HTMLInputElement)?.value;
+                  const password = (document.getElementById('new-password') as HTMLInputElement)
+                    ?.value;
                   if (!password) {
                     toast.error('Please enter a password');
                     return;
@@ -1651,7 +1649,9 @@ export default function UserDetails() {
                       (document.getElementById('new-password') as HTMLInputElement).value = '';
                       toast.success('Password updated successfully!', { id: toastId });
                     } else {
-                      toast.error(`Error updating password: ${result.error || 'Unknown error'}`, { id: toastId });
+                      toast.error(`Error updating password: ${result.error || 'Unknown error'}`, {
+                        id: toastId,
+                      });
                     }
                   } catch (_error) {
                     toast.error('Error updating password', { id: toastId });
@@ -1708,7 +1708,7 @@ export default function UserDetails() {
                     onClick={() => {
                       const count = parseInt(
                         (document.getElementById('session-count') as HTMLInputElement)?.value ||
-                        '3',
+                          '3',
                         10
                       );
                       handleSeedSessions(count);
@@ -1827,8 +1827,7 @@ export default function UserDetails() {
                 <Button
                   onClick={() => {
                     const count = parseInt(
-                      (document.getElementById('account-count') as HTMLInputElement)?.value ||
-                        '3',
+                      (document.getElementById('account-count') as HTMLInputElement)?.value || '3',
                       10
                     );
                     handleSeedAccounts(count, accountSeedProvider);

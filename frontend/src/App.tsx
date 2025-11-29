@@ -49,7 +49,7 @@ function App() {
               borderRadius: '0',
             },
             className: 'font-mono uppercase',
-          }} 
+          }}
           closeButton
         />
       </Router>

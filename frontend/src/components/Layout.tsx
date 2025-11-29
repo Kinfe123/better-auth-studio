@@ -377,9 +377,13 @@ export default function Layout({ children }: LayoutProps) {
               rel="noopener"
               className="group flex items-center"
             >
-              <span className="text-white/70 text-xs mr-2 transition-colors duration-150 group-hover:text-white group-hover:bg-gray-500/20 rounded px-0.5">[</span>
+              <span className="text-white/70 text-xs mr-2 transition-colors duration-150 group-hover:text-white group-hover:bg-gray-500/20 rounded px-0.5">
+                [
+              </span>
               <span className="text-white/80 font-mono text-sm uppercase">Docs</span>
-              <span className="text-white/70 text-xs ml-2 transition-colors duration-150 group-hover:text-white group-hover:bg-gray-500/20 rounded px-0.5">]</span>
+              <span className="text-white/70 text-xs ml-2 transition-colors duration-150 group-hover:text-white group-hover:bg-gray-500/20 rounded px-0.5">
+                ]
+              </span>
             </a>
             <a
               href="https://better-auth.com/docs"
@@ -387,9 +391,13 @@ export default function Layout({ children }: LayoutProps) {
               rel="noopener"
               className="group flex items-center"
             >
-              <span className="text-white/70 text-xs mr-2 transition-colors duration-150 group-hover:text-white group-hover:bg-gray-500/20 rounded px-0.5">[</span>
+              <span className="text-white/70 text-xs mr-2 transition-colors duration-150 group-hover:text-white group-hover:bg-gray-500/20 rounded px-0.5">
+                [
+              </span>
               <span className="text-white/80 font-mono text-sm uppercase">Support</span>
-              <span className="text-white/70 text-xs ml-2 transition-colors duration-150 group-hover:text-white group-hover:bg-gray-500/20 rounded px-0.5">]</span>
+              <span className="text-white/70 text-xs ml-2 transition-colors duration-150 group-hover:text-white group-hover:bg-gray-500/20 rounded px-0.5">
+                ]
+              </span>
             </a>
           </div>
         </div>

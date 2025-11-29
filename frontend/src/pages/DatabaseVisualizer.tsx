@@ -14,10 +14,10 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import { Link2, Settings, X } from 'lucide-react';
-import { DatabaseSchemaNode, type DatabaseSchemaNodeData } from '../components/DatabaseSchemaNode';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Analytics } from '@/components/PixelIcons';
+import { DatabaseSchemaNode, type DatabaseSchemaNodeData } from '../components/DatabaseSchemaNode';
 import { Button } from '../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
 const nodeTypes = {
   databaseSchemaNode: DatabaseSchemaNode,
@@ -130,9 +130,7 @@ export default function DatabaseVisualizer() {
     }
 
     const contributions: PluginContribution[] = enabledPlugins.map((plugin) => {
-      const pluginTables = schema.tables.filter(
-        (table) => (table.origin || 'core') === plugin.id
-      );
+      const pluginTables = schema.tables.filter((table) => (table.origin || 'core') === plugin.id);
 
       const tableCount = pluginTables.length;
       const fieldCount = pluginTables.reduce((sum, table) => sum + table.fields.length, 0);
@@ -296,7 +294,7 @@ export default function DatabaseVisualizer() {
             </p>
           </div>
         </div>
-        <div className='flex flex-col items-center space-y-8 mb-4'>
+        <div className="flex flex-col items-center space-y-8 mb-4">
           <hr className="w-full border-white/15 h-px" />
           <hr className="w-full border-white/15 h-px" />
         </div>
@@ -304,10 +302,10 @@ export default function DatabaseVisualizer() {
       <div className="flex-1 grid grid-cols-4 gap-6 mt-6">
         <div className="col-span-1 space-y-4">
           <Card className="rounded-none bg-black h-fit shadow-sm border border-white/15">
-            <CardHeader className='border-b border-white/15 pb-3 -pt-2 mb-2'>
+            <CardHeader className="border-b border-white/15 pb-3 -pt-2 mb-2">
               <CardTitle className="font-light text-xl text-white flex items-center space-x-2">
                 <Settings className="w-4 h-4" />
-                <span className='uppercase font-mono text-xs tracking-tight'>Detected Tables</span>
+                <span className="uppercase font-mono text-xs tracking-tight">Detected Tables</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -332,32 +330,42 @@ export default function DatabaseVisualizer() {
                   ))}
                 </div>
               ) : (
-                <div className="text-sm text-white/70">No tables detected in Better Auth context</div>
+                <div className="text-sm text-white/70">
+                  No tables detected in Better Auth context
+                </div>
               )}
             </CardContent>
           </Card>
 
           {schema && (
             <Card className="rounded-none bg-black shadow-sm border border-white/15">
-              <CardHeader className='border-b border-white/15 pb-3 -pt-2 mb-2'>
+              <CardHeader className="border-b border-white/15 pb-3 -pt-2 mb-2">
                 <CardTitle className="font-light text-xl text-white flex items-center space-x-2">
                   <Analytics className="w-4 h-4" />
-                  <span className='uppercase font-mono text-xs tracking-tight'>Schema Summary</span>
+                  <span className="uppercase font-mono text-xs tracking-tight">Schema Summary</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 pt-2">
                 <div className="flex justify-between items-baseline">
-                  <span className="text-gray-400 uppercase font-mono text-xs tracking-wider">Tables</span>
-                  <span className="text-white text-sm font-mono font-light">{schema.tables.length}</span>
+                  <span className="text-gray-400 uppercase font-mono text-xs tracking-wider">
+                    Tables
+                  </span>
+                  <span className="text-white text-sm font-mono font-light">
+                    {schema.tables.length}
+                  </span>
                 </div>
                 <div className="flex justify-between items-baseline">
-                  <span className="text-gray-400 uppercase font-mono text-xs tracking-wider">Total Fields</span>
+                  <span className="text-gray-400 uppercase font-mono text-xs tracking-wider">
+                    Total Fields
+                  </span>
                   <span className="text-white text-sm font-mono font-light">
                     {schema.tables.reduce((sum, table) => sum + table.fields.length, 0)}
                   </span>
                 </div>
                 <div className="flex justify-between items-baseline">
-                  <span className="text-gray-400 uppercase font-mono text-xs tracking-wider">Relationships</span>
+                  <span className="text-gray-400 uppercase font-mono text-xs tracking-wider">
+                    Relationships
+                  </span>
                   <span className="text-white text-sm font-mono font-light">
                     {schema.tables.reduce((sum, table) => sum + table.relationships.length, 0)}
                   </span>
@@ -452,10 +460,13 @@ export default function DatabaseVisualizer() {
   return (
     <div className="h-screen flex flex-col bg-black">
       {mainContent}
-      
+
       {selectedTable && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onClick={() => setSelectedTable(null)}>
-          <div 
+        <div
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+          onClick={() => setSelectedTable(null)}
+        >
+          <div
             className="bg-black border border-dashed border-white/20 rounded-none p-5 w-full max-w-3xl max-h-[75vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
@@ -479,12 +490,18 @@ export default function DatabaseVisualizer() {
             <hr className="border-white/20 border-dashed mb-4" />
 
             <div className="mb-6">
-              <h4 className="text-xs uppercase font-mono text-gray-400 mb-3 tracking-wider">Fields</h4>
+              <h4 className="text-xs uppercase font-mono text-gray-400 mb-3 tracking-wider">
+                Fields
+              </h4>
               <div className="space-y-0">
                 {selectedTable.fields.map((field, index) => {
-                  const relatedInfo = selectedTable.relationships.find((rel) => rel.field === field.name);
+                  const relatedInfo = selectedTable.relationships.find(
+                    (rel) => rel.field === field.name
+                  );
                   const relatedTarget =
-                    relatedInfo && schema ? schema.tables.find((t) => t.name === relatedInfo.target) : null;
+                    relatedInfo && schema
+                      ? schema.tables.find((t) => t.name === relatedInfo.target)
+                      : null;
 
                   return (
                     <div
@@ -523,7 +540,9 @@ export default function DatabaseVisualizer() {
                             </button>
                           )}
                         </div>
-                        <span className="text-xs text-gray-400 font-mono uppercase">{field.type}</span>
+                        <span className="text-xs text-gray-400 font-mono uppercase">
+                          {field.type}
+                        </span>
                       </div>
                       <div className="ml-0 space-y-0.5">
                         {field.description && (
@@ -531,7 +550,8 @@ export default function DatabaseVisualizer() {
                         )}
                         {field.defaultValue !== undefined && (
                           <p className="text-xs text-gray-500 font-mono">
-                            Default: <span className="text-gray-400">{String(field.defaultValue)}</span>
+                            Default:{' '}
+                            <span className="text-gray-400">{String(field.defaultValue)}</span>
                           </p>
                         )}
                       </div>
@@ -544,13 +564,19 @@ export default function DatabaseVisualizer() {
             {selectedTable.relationships.length > 0 && (
               <div className="mb-6">
                 <hr className="border-white/10 border-dashed mb-4" />
-                <h4 className="text-xs uppercase font-mono text-gray-400 mb-3 tracking-wider">Relationships</h4>
+                <h4 className="text-xs uppercase font-mono text-gray-400 mb-3 tracking-wider">
+                  Relationships
+                </h4>
                 <div className="space-y-0">
                   {selectedTable.relationships.map((rel, index) => {
                     const targetTable = schema?.tables.find((t) => t.name === rel.target);
                     const relationshipLabel =
-                      rel.type === 'one-to-one' ? '1:1' : rel.type === 'many-to-one' ? 'N:1' : '1:N';
-                    
+                      rel.type === 'one-to-one'
+                        ? '1:1'
+                        : rel.type === 'many-to-one'
+                          ? 'N:1'
+                          : '1:N';
+
                     return (
                       <div
                         key={`${rel.target}-${rel.field}-${index}`}
@@ -587,15 +613,25 @@ export default function DatabaseVisualizer() {
             <div className="border-t border-dashed border-white/20 pt-4 mt-6">
               <div className="grid grid-cols-3 gap-6">
                 <div className="space-y-1">
-                  <span className="text-gray-400 uppercase font-mono text-xs tracking-wider block">Fields</span>
-                  <p className="text-white text-lg font-mono font-light">{selectedTable.fields.length}</p>
+                  <span className="text-gray-400 uppercase font-mono text-xs tracking-wider block">
+                    Fields
+                  </span>
+                  <p className="text-white text-lg font-mono font-light">
+                    {selectedTable.fields.length}
+                  </p>
                 </div>
                 <div className="border-l border-dashed border-white/20 pl-6 space-y-1">
-                  <span className="text-gray-400 uppercase font-mono text-xs tracking-wider block">Relationships</span>
-                  <p className="text-white text-lg font-mono font-light">{selectedTable.relationships.length}</p>
+                  <span className="text-gray-400 uppercase font-mono text-xs tracking-wider block">
+                    Relationships
+                  </span>
+                  <p className="text-white text-lg font-mono font-light">
+                    {selectedTable.relationships.length}
+                  </p>
                 </div>
                 <div className="border-l border-dashed border-white/20 pl-6 space-y-1">
-                  <span className="text-gray-400 uppercase font-mono text-xs tracking-wider block">Origin</span>
+                  <span className="text-gray-400 uppercase font-mono text-xs tracking-wider block">
+                    Origin
+                  </span>
                   <p className="text-white text-sm uppercase font-mono font-light">
                     {selectedTable.origin === 'core' ? 'Core' : 'Extended'}
                   </p>

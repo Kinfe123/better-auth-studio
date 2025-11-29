@@ -1,8 +1,22 @@
-import { AlertCircle, Code, Download, Eye, EyeOff, FileText, Globe, Info, Key, Shield, TestTube, XCircle, Zap } from 'lucide-react';
+import { createHash } from '@better-auth/utils/hash';
+import {
+  AlertCircle,
+  Code,
+  Download,
+  Eye,
+  EyeOff,
+  FileText,
+  Globe,
+  Info,
+  Key,
+  Shield,
+  TestTube,
+  XCircle,
+  Zap,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { getProviderIcon } from '../lib/icons';
 import {
   ArrowRight,
   Check,
@@ -18,7 +32,7 @@ import { Terminal } from '../components/Terminal';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { createHash } from '@better-auth/utils/hash';
+import { getProviderIcon } from '../lib/icons';
 
 interface Tool {
   id: string;
@@ -383,7 +397,9 @@ export default function Tools() {
   } | null>(null);
   const [expandedProviders, setExpandedProviders] = useState<Set<string>>(new Set());
   const [showExportModal, setShowExportModal] = useState(false);
-  const [availableTables, setAvailableTables] = useState<Array<{ name: string; displayName: string }>>([]);
+  const [availableTables, setAvailableTables] = useState<
+    Array<{ name: string; displayName: string }>
+  >([]);
   const [selectedTables, setSelectedTables] = useState<Set<string>>(new Set());
   const [exportFormat, setExportFormat] = useState<'json' | 'csv'>('json');
   const [exportLimit, setExportLimit] = useState<string>('1000');
@@ -520,7 +536,6 @@ export default function Tools() {
     }
   };
 
-
   const closeOAuthWindow = () => {
     if (oauthWindowRef.current && !oauthWindowRef.current.closed) {
       oauthWindowRef.current.close();
@@ -547,12 +562,12 @@ export default function Tools() {
         prev.map((line) =>
           line.id === existingId
             ? {
-              ...line,
-              type,
-              message,
-              status,
-              timestamp: new Date(),
-            }
+                ...line,
+                type,
+                message,
+                status,
+                timestamp: new Date(),
+              }
             : line
         )
       );
@@ -710,7 +725,7 @@ export default function Tools() {
         handleOAuthResult(result);
         // Clean up URL
         setSearchParams({});
-      } catch (_error) { }
+      } catch (_error) {}
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, setSearchParams, handleOAuthResult]);
@@ -724,7 +739,7 @@ export default function Tools() {
         if (result.success && result.providers) {
           setOauthProviders(result.providers.filter((p: OAuthProvider) => p.enabled));
         }
-      } catch (_error) { }
+      } catch (_error) {}
     };
     fetchProviders();
   }, []);
@@ -831,7 +846,7 @@ export default function Tools() {
               if (storedSession) {
                 try {
                   providerName = JSON.parse(storedSession).provider || providerName;
-                } catch (_) { }
+                } catch (_) {}
               }
               handleOAuthResult({
                 success: false,
@@ -1009,7 +1024,7 @@ export default function Tools() {
 
       if (result.success !== undefined) {
         setConfigValidationResults(result);
-        
+
         addLog('info', `Found ${result.summary.total} validation checks`, 'completed');
         if (result.summary.errors > 0) {
           addLog('error', `❌ ${result.summary.errors} error(s) found`, 'failed');
@@ -1071,41 +1086,40 @@ export default function Tools() {
       setRunningTool(null);
     }
   };
+  // const handleGenerateApiKey = async () => {
+  //   setRunningTool('generate-api-key');
+  //   setShowLogs(true);
+  //   setToolLogs([]);
 
-  const handleGenerateApiKey = async () => {
-    setRunningTool('generate-api-key');
-    setShowLogs(true);
-    setToolLogs([]);
+  //   addLog('info', 'Generating new API key...', 'running');
 
-    addLog('info', 'Generating new API key...', 'running');
+  //   try {
+  //     const response = await fetch('/api/tools/generate-api-key', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //     });
 
-    try {
-      const response = await fetch('/api/tools/generate-api-key', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
+  //     const result = await response.json();
 
-      const result = await response.json();
-
-      if (result.success && result.apiKey) {
-        addLog('success', '✅ API key generated successfully!', 'completed');
-        addLog('info', `API Key: ${result.apiKey}`, 'completed');
-        toast.success('API key generated successfully');
-      } else {
-        addLog(
-          'error',
-          `❌ Failed to generate API key: ${result.error || 'Unknown error'}`,
-          'failed'
-        );
-        toast.error('Failed to generate API key');
-      }
-    } catch (error) {
-      addLog('error', `❌ Network error: ${error}`, 'failed');
-      toast.error('Failed to generate API key');
-    } finally {
-      setRunningTool(null);
-    }
-  };
+  //     if (result.success && result.apiKey) {
+  //       addLog('success', '✅ API key generated successfully!', 'completed');
+  //       addLog('info', `API Key: ${result.apiKey}`, 'completed');
+  //       toast.success('API key generated successfully');
+  //     } else {
+  //       addLog(
+  //         'error',
+  //         `❌ Failed to generate API key: ${result.error || 'Unknown error'}`,
+  //         'failed'
+  //       );
+  //       toast.error('Failed to generate API key');
+  //     }
+  //   } catch (error) {
+  //     addLog('error', `❌ Network error: ${error}`, 'failed');
+  //     toast.error('Failed to generate API key');
+  //   } finally {
+  //     setRunningTool(null);
+  //   }
+  // };
   const formatDateTime = (value?: string) => {
     if (!value) return 'N/A';
     const date = new Date(value);
@@ -1159,7 +1173,7 @@ export default function Tools() {
   const handleValidateUuid = () => {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const trimmed = uuidInput.trim();
-    
+
     if (!trimmed) {
       setUuidValidation(null);
       return;
@@ -1175,7 +1189,7 @@ export default function Tools() {
     const parts = trimmed.split('-');
     const versionHex = parts[2]?.[0];
     const variantHex = parts[3]?.[0];
-    
+
     let version: string | undefined;
     let variant: string | undefined;
 
@@ -1372,7 +1386,11 @@ export default function Tools() {
 
     try {
       addLog('info', `📦 Starting export of ${selectedTables.size} table(s)...`, 'running');
-      addLog('progress', `Format: ${exportFormat.toUpperCase()} | Limit: ${limit} rows per table`, 'running');
+      addLog(
+        'progress',
+        `Format: ${exportFormat.toUpperCase()} | Limit: ${limit} rows per table`,
+        'running'
+      );
 
       const response = await fetch('/api/tools/export', {
         method: 'POST',
@@ -1388,14 +1406,14 @@ export default function Tools() {
 
       if (result.success) {
         addLog('success', '✅ Export completed successfully!', 'completed');
-        
+
         // Log row counts
         if (result.rowCounts) {
           Object.entries(result.rowCounts).forEach(([table, count]) => {
             addLog('info', `  • ${table}: ${count} rows`, 'completed');
           });
         }
-        
+
         addLog('info', `Downloading ${result.filename}...`, 'completed');
 
         // Create download link
@@ -1417,7 +1435,11 @@ export default function Tools() {
         throw new Error(result.error || 'Export failed');
       }
     } catch (error) {
-      addLog('error', `❌ Export failed: ${error instanceof Error ? error.message : error}`, 'failed');
+      addLog(
+        'error',
+        `❌ Export failed: ${error instanceof Error ? error.message : error}`,
+        'failed'
+      );
       toast.error('Export failed');
     } finally {
       setIsExporting(false);
@@ -1448,19 +1470,21 @@ export default function Tools() {
         toast.success('Health check passed');
       } else {
         addLog('error', '❌ Better Auth health check failed', 'failed');
-        
+
         if (data.failedEndpoints && data.failedEndpoints.length > 0) {
-          data.failedEndpoints.forEach((failed: { endpoint: string; status?: number | null; error?: string }) => {
-            const statusInfo = failed.status ? ` (Status: ${failed.status})` : '';
-            const errorInfo = failed.error ? ` - ${failed.error}` : '';
-            addLog(
-              'error',
-              `   • Endpoint ${failed.endpoint}${statusInfo}${errorInfo}`,
-              'failed'
-            );
-          });
+          data.failedEndpoints.forEach(
+            (failed: { endpoint: string; status?: number | null; error?: string }) => {
+              const statusInfo = failed.status ? ` (Status: ${failed.status})` : '';
+              const errorInfo = failed.error ? ` - ${failed.error}` : '';
+              addLog(
+                'error',
+                `   • Endpoint ${failed.endpoint}${statusInfo}${errorInfo}`,
+                'failed'
+              );
+            }
+          );
         }
-        
+
         toast.error('Health check failed');
       }
     } catch (error) {
@@ -1529,14 +1553,6 @@ export default function Tools() {
       category: 'utilities',
     },
     {
-      id: 'generate-api-key',
-      name: 'Generate API Key',
-      description: 'Generate a new API key',
-      icon: Key,
-      action: handleGenerateApiKey,
-      category: 'utilities',
-    },
-    {
       id: 'health-check',
       name: 'Health Check',
       description: 'Run system health check',
@@ -1594,14 +1610,14 @@ export default function Tools() {
     <div className="space-y-8 bg-black w-full min-h-screen">
       <div className="w-full flex flex-col">
         <div className="flex items-center justify-between p-5 pt-7">
-          <div className='pb-8'>
+          <div className="pb-8">
             <h1 className="text-3xl font-normal text-white tracking-tight">Tools</h1>
             <p className="text-gray-300 mt-2 uppercase font-mono font-light text-xs">
               Utility tools for managing and testing your Better Auth setup
             </p>
           </div>
         </div>
-        <div className='flex flex-col items-center space-y-8'>
+        <div className="flex flex-col items-center space-y-8">
           <hr className="w-full border-white/15 h-px" />
           <hr className="w-full border-white/15 h-px" />
         </div>
@@ -1651,10 +1667,11 @@ export default function Tools() {
                       key={tool.id}
                       onClick={() => tool.action()}
                       disabled={isDisabled}
-                      className={`relative flex items-center space-x-4 p-4 bg-black/30 border border-dashed border-white/20 rounded-none transition-colors text-left group ${isEnabled
-                        ? 'hover:bg-black/50 disabled:opacity-50 disabled:cursor-not-allowed'
-                        : 'opacity-60 cursor-not-allowed'
-                        }`}
+                      className={`relative flex items-center space-x-4 p-4 bg-black/30 border border-dashed border-white/20 rounded-none transition-colors text-left group ${
+                        isEnabled
+                          ? 'hover:bg-black/50 disabled:opacity-50 disabled:cursor-not-allowed'
+                          : 'opacity-60 cursor-not-allowed'
+                      }`}
                     >
                       <div className="p-2 bg-white/10 rounded-none group-hover:bg-white/20 transition-colors">
                         {isRunning ? (
@@ -1765,16 +1782,18 @@ export default function Tools() {
                       className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white"
                       aria-label={showPlainPassword ? 'Hide password' : 'Show password'}
                     >
-                      {showPlainPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showPlainPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                 </div>
               </div>
               {hashOutput && (
                 <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400">
-                    Hash Result
-                  </Label>
+                  <Label className="text-xs uppercase font-mono text-gray-400">Hash Result</Label>
                   <div className="mt-2 flex items-center space-x-2">
                     <Input
                       value={hashOutput}
@@ -1864,10 +1883,11 @@ export default function Tools() {
                             startOAuthTest(provider.id);
                           }, 100);
                         }}
-                        className={`w-full flex items-center space-x-4 p-4 border rounded-none transition-all text-left group ${selectedProvider === provider.id
-                          ? 'border-white/50 bg-white/10'
-                          : 'border-dashed border-white/20 hover:bg-white/5 hover:border-white/30'
-                          }`}
+                        className={`w-full flex items-center space-x-4 p-4 border rounded-none transition-all text-left group ${
+                          selectedProvider === provider.id
+                            ? 'border-white/50 bg-white/10'
+                            : 'border-dashed border-white/20 hover:bg-white/5 hover:border-white/30'
+                        }`}
                       >
                         <div className="flex-shrink-0">{getProviderIcon(provider.id)}</div>
                         <div className="flex-1 min-w-0">
@@ -1876,10 +1896,11 @@ export default function Tools() {
                           </p>
                         </div>
                         <ArrowRight
-                          className={`w-5 h-5 transition-colors flex-shrink-0 ${selectedProvider === provider.id
-                            ? 'text-white'
-                            : 'text-gray-400 group-hover:text-white'
-                            }`}
+                          className={`w-5 h-5 transition-colors flex-shrink-0 ${
+                            selectedProvider === provider.id
+                              ? 'text-white'
+                              : 'text-gray-400 group-hover:text-white'
+                          }`}
                         />
                       </button>
                     ))}
@@ -1933,12 +1954,13 @@ export default function Tools() {
                       key={provider.id}
                       onClick={() => handleSelectMigration(provider.id)}
                       disabled={provider.disabled}
-                      className={`w-full flex items-center space-x-3 p-4 border transition-colors rounded-none text-left ${provider.disabled
-                        ? 'border-dashed border-white/10 bg-black/30 cursor-not-allowed opacity-60'
-                        : isActive
-                          ? 'border-white/60 bg-white/10'
-                          : 'border-dashed border-white/20 hover:bg-white/5 hover:border-white/40'
-                        }`}
+                      className={`w-full flex items-center space-x-3 p-4 border transition-colors rounded-none text-left ${
+                        provider.disabled
+                          ? 'border-dashed border-white/10 bg-black/30 cursor-not-allowed opacity-60'
+                          : isActive
+                            ? 'border-white/60 bg-white/10'
+                            : 'border-dashed border-white/20 hover:bg-white/5 hover:border-white/40'
+                      }`}
                     >
                       <div className="flex-shrink-0 w-10 h-10 bg-white/10 flex items-center justify-center">
                         {provider.logo ? provider.logo : <Code className="w-6 h-6 text-white" />}
@@ -2094,8 +2116,10 @@ export default function Tools() {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Download className="w-5 h-5 text-white" />
-                <h3 className="text-xl text-white font-light uppercase tracking-wider">Export Data</h3>
-    </div>
+                <h3 className="text-xl text-white font-light uppercase tracking-wider">
+                  Export Data
+                </h3>
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
@@ -2108,7 +2132,9 @@ export default function Tools() {
 
             <div className="space-y-6">
               <div>
-                <Label className="text-xs uppercase font-mono text-gray-400 mb-3 block">Export Format</Label>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-3 block">
+                  Export Format
+                </Label>
                 <div className="flex space-x-4">
                   <button
                     onClick={() => setExportFormat('json')}
@@ -2134,7 +2160,10 @@ export default function Tools() {
               </div>
 
               <div>
-                <Label htmlFor="export-limit" className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                <Label
+                  htmlFor="export-limit"
+                  className="text-xs uppercase font-mono text-gray-400 mb-2 block"
+                >
                   Row Limit Per Table
                 </Label>
                 <Input
@@ -2192,8 +2221,12 @@ export default function Tools() {
                           >
                             <div className="flex items-center justify-between">
                               <div>
-                                <span className="text-white text-sm font-mono">{table.displayName}</span>
-                                <span className="text-xs text-gray-400 ml-2 font-mono">({table.name})</span>
+                                <span className="text-white text-sm font-mono">
+                                  {table.displayName}
+                                </span>
+                                <span className="text-xs text-gray-400 ml-2 font-mono">
+                                  ({table.name})
+                                </span>
                               </div>
                               {isSelected && <Check className="w-4 h-4 text-white" />}
                             </div>
@@ -2241,7 +2274,9 @@ export default function Tools() {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Shield className="w-5 h-5 text-white" />
-                <h3 className="text-xl text-white font-light uppercase tracking-wider">JWT Decoder</h3>
+                <h3 className="text-xl text-white font-light uppercase tracking-wider">
+                  JWT Decoder
+                </h3>
               </div>
               <Button
                 variant="ghost"
@@ -2255,7 +2290,9 @@ export default function Tools() {
 
             <div className="space-y-4">
               <div>
-                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">JWT Token</Label>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  JWT Token
+                </Label>
                 <textarea
                   value={jwtInput}
                   onChange={(event) => setJwtInput(event.target.value)}
@@ -2288,7 +2325,11 @@ export default function Tools() {
                   >
                     Clear
                   </Button>
-                  <Button onClick={handleDecodeJwt} disabled={isDecodingJwt} className="rounded-none">
+                  <Button
+                    onClick={handleDecodeJwt}
+                    disabled={isDecodingJwt}
+                    className="rounded-none"
+                  >
                     {isDecodingJwt ? (
                       <>
                         <Loader className="w-4 h-4 mr-2 animate-spin" />
@@ -2310,7 +2351,9 @@ export default function Tools() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
                     <div className="border border-dashed border-white/10 p-3 space-y-2">
                       <div className="text-gray-400 uppercase tracking-wider">Signature</div>
-                      <p className={`text-sm ${jwtResult.verified ? 'text-green-400' : 'text-yellow-300'}`}>
+                      <p
+                        className={`text-sm ${jwtResult.verified ? 'text-green-400' : 'text-yellow-300'}`}
+                      >
                         {jwtResult.verified ? 'Verified (HS256)' : 'Not verified'}
                       </p>
                       <p className="text-gray-400 break-all">{jwtResult.signature || 'None'}</p>
@@ -2351,7 +2394,9 @@ export default function Tools() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(JSON.stringify(jwtResult.payload, null, 2))}
+                          onClick={() =>
+                            copyToClipboard(JSON.stringify(jwtResult.payload, null, 2))
+                          }
                           className="text-gray-400 hover:text-white rounded-none"
                         >
                           <Copy className="w-4 h-4" />
@@ -2364,7 +2409,9 @@ export default function Tools() {
                   </div>
                   {jwtResult.customClaims && Object.keys(jwtResult.customClaims).length > 0 && (
                     <div className="border border-dashed border-white/10 p-3">
-                      <div className="text-xs uppercase font-mono text-gray-400 mb-2">Custom Claims</div>
+                      <div className="text-xs uppercase font-mono text-gray-400 mb-2">
+                        Custom Claims
+                      </div>
                       <pre className="text-[11px] text-gray-100 font-mono bg-black/40 p-3 overflow-x-auto max-h-64">
                         {JSON.stringify(jwtResult.customClaims, null, 2)}
                       </pre>
@@ -2382,7 +2429,9 @@ export default function Tools() {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Zap className="w-5 h-5 text-white" />
-                <h3 className="text-xl text-white font-light uppercase tracking-wider">Token Generator</h3>
+                <h3 className="text-xl text-white font-light uppercase tracking-wider">
+                  Token Generator
+                </h3>
               </div>
               <Button
                 variant="ghost"
@@ -2396,7 +2445,9 @@ export default function Tools() {
 
             <div className="space-y-6">
               <div>
-                <Label className="text-xs uppercase font-mono text-gray-400 mb-3 block">Token Type</Label>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-3 block">
+                  Token Type
+                </Label>
                 <div className="flex flex-wrap gap-3">
                   {[
                     { id: 'api_key', label: 'API Key' },
@@ -2430,7 +2481,9 @@ export default function Tools() {
                   />
                 </div>
                 <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">Audience (optional)</Label>
+                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                    Audience (optional)
+                  </Label>
                   <Input
                     value={tokenAudience}
                     onChange={(event) => setTokenAudience(event.target.value)}
@@ -2468,7 +2521,9 @@ export default function Tools() {
 
               {tokenType === 'jwt' && (
                 <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">Custom Claims (JSON)</Label>
+                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                    Custom Claims (JSON)
+                  </Label>
                   <textarea
                     value={tokenCustomClaims}
                     onChange={(event) => setTokenCustomClaims(event.target.value)}
@@ -2494,7 +2549,11 @@ export default function Tools() {
                 >
                   Reset
                 </Button>
-                <Button onClick={handleGenerateToken} disabled={isGeneratingToken} className="rounded-none">
+                <Button
+                  onClick={handleGenerateToken}
+                  disabled={isGeneratingToken}
+                  className="rounded-none"
+                >
                   {isGeneratingToken ? (
                     <>
                       <Loader className="w-4 h-4 mr-2 animate-spin" />
@@ -2511,7 +2570,9 @@ export default function Tools() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs uppercase font-mono text-gray-400">Generated Token</p>
-                      <p className="text-white font-mono text-sm break-all mt-1">{tokenResult.token}</p>
+                      <p className="text-white font-mono text-sm break-all mt-1">
+                        {tokenResult.token}
+                      </p>
                     </div>
                     <Button
                       variant="ghost"
@@ -2525,7 +2586,9 @@ export default function Tools() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
                     <div>
                       <p className="text-gray-400 uppercase tracking-wider">Type</p>
-                      <p className="text-white mt-1 capitalize">{tokenResult.type.replace('_', ' ')}</p>
+                      <p className="text-white mt-1 capitalize">
+                        {tokenResult.type.replace('_', ' ')}
+                      </p>
                     </div>
                     <div>
                       <p className="text-gray-400 uppercase tracking-wider">Expires</p>
@@ -2555,7 +2618,7 @@ export default function Tools() {
 
       {/* Config Validator Modal */}
       {showConfigValidator && configValidationResults && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 overflow-hidden"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -2564,7 +2627,7 @@ export default function Tools() {
             }
           }}
         >
-          <div 
+          <div
             className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
@@ -2593,19 +2656,27 @@ export default function Tools() {
               <div className="text-xs uppercase font-mono text-gray-400 mb-3">Summary</div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-left border-r border-dashed border-white/10 pr-4 last:border-r-0">
-                  <div className="text-2xl font-mono text-white">{configValidationResults.summary.total}</div>
+                  <div className="text-2xl font-mono text-white">
+                    {configValidationResults.summary.total}
+                  </div>
                   <div className="text-xs text-gray-400 uppercase mt-1 font-mono">Total Checks</div>
                 </div>
                 <div className="text-left border-r border-dashed border-white/10 pr-4 last:border-r-0">
-                  <div className="text-2xl font-mono text-white">{configValidationResults.summary.passes}</div>
+                  <div className="text-2xl font-mono text-white">
+                    {configValidationResults.summary.passes}
+                  </div>
                   <div className="text-xs text-gray-400 uppercase mt-1 font-mono">Passed</div>
                 </div>
                 <div className="text-left border-r border-dashed border-white/10 pr-4 last:border-r-0">
-                  <div className="text-2xl font-mono text-white">{configValidationResults.summary.errors}</div>
+                  <div className="text-2xl font-mono text-white">
+                    {configValidationResults.summary.errors}
+                  </div>
                   <div className="text-xs text-gray-400 uppercase mt-1 font-mono">Errors</div>
                 </div>
                 <div className="text-left">
-                  <div className="text-2xl font-mono text-white">{configValidationResults.summary.warnings}</div>
+                  <div className="text-2xl font-mono text-white">
+                    {configValidationResults.summary.warnings}
+                  </div>
                   <div className="text-xs text-gray-400 uppercase mt-1 font-mono">Warnings</div>
                 </div>
               </div>
@@ -2614,32 +2685,38 @@ export default function Tools() {
             {/* Results by Category */}
             <div className="space-y-4">
               {Object.entries(
-                configValidationResults.results.reduce((acc, result) => {
-                  if (!acc[result.category]) {
-                    acc[result.category] = [];
-                  }
-                  acc[result.category].push(result);
-                  return acc;
-                }, {} as Record<string, typeof configValidationResults.results>)
+                configValidationResults.results.reduce(
+                  (acc, result) => {
+                    if (!acc[result.category]) {
+                      acc[result.category] = [];
+                    }
+                    acc[result.category].push(result);
+                    return acc;
+                  },
+                  {} as Record<string, typeof configValidationResults.results>
+                )
               ).map(([category, results]) => {
                 if (category === 'OAuth Providers') {
-                  const providerGroups = results.reduce((acc, result) => {
-                    const match = result.check.match(/^(.+?)\s*-\s*(.+)$/);
-                    if (match) {
-                      const providerName = match[1];
-                      const checkType = match[2];
-                      if (!acc[providerName]) {
-                        acc[providerName] = [];
+                  const providerGroups = results.reduce(
+                    (acc, result) => {
+                      const match = result.check.match(/^(.+?)\s*-\s*(.+)$/);
+                      if (match) {
+                        const providerName = match[1];
+                        const checkType = match[2];
+                        if (!acc[providerName]) {
+                          acc[providerName] = [];
+                        }
+                        acc[providerName].push({ ...result, check: checkType });
+                      } else {
+                        if (!acc['General']) {
+                          acc['General'] = [];
+                        }
+                        acc['General'].push(result);
                       }
-                      acc[providerName].push({ ...result, check: checkType });
-                    } else {
-                      if (!acc['General']) {
-                        acc['General'] = [];
-                      }
-                      acc['General'].push(result);
-                    }
-                    return acc;
-                  }, {} as Record<string, typeof results>);
+                      return acc;
+                    },
+                    {} as Record<string, typeof results>
+                  );
 
                   return (
                     <div key={category} className="border border-dashed border-white/10 p-4">
@@ -2657,7 +2734,10 @@ export default function Tools() {
                           const allPassed = providerResults.every((r) => r.status === 'pass');
 
                           return (
-                            <div key={providerName} className="border border-dashed border-white/10">
+                            <div
+                              key={providerName}
+                              className="border border-dashed border-white/10"
+                            >
                               <button
                                 onClick={() => {
                                   setExpandedProviders((prev) => {
@@ -2678,9 +2758,12 @@ export default function Tools() {
                                       isExpanded ? 'rotate-90' : ''
                                     }`}
                                   />
-                                  <span className="text-white font-mono text-sm">{providerName}</span>
+                                  <span className="text-white font-mono text-sm">
+                                    {providerName}
+                                  </span>
                                   <span className="text-xs text-gray-500 font-mono">
-                                    ({providerResults.length} check{providerResults.length !== 1 ? 's' : ''})
+                                    ({providerResults.length} check
+                                    {providerResults.length !== 1 ? 's' : ''})
                                   </span>
                                 </div>
                                 <div className="flex items-center space-x-2">
@@ -2701,7 +2784,9 @@ export default function Tools() {
                                     <div
                                       key={`${providerName}-${result.check}-${index}`}
                                       className={`p-3 border-l border-dashed border-white/15 ${
-                                        result.status === 'pass' ? 'bg-green-600/[8%]' : 'bg-red-600/[8%]'
+                                        result.status === 'pass'
+                                          ? 'bg-green-600/[8%]'
+                                          : 'bg-red-600/[8%]'
                                       }`}
                                     >
                                       <div className="flex items-start space-x-3">
@@ -2718,7 +2803,9 @@ export default function Tools() {
                                         </div>
                                         <div className="flex-1 text-left">
                                           <div className="flex items-center space-x-2 mb-1">
-                                            <span className="text-white font-mono text-sm">{result.check}</span>
+                                            <span className="text-white font-mono text-sm">
+                                              {result.check}
+                                            </span>
                                             <span className="text-xs px-2 py-0.5 border border-dashed border-white/20 text-white/60 font-mono">
                                               {result.status.toUpperCase()}
                                             </span>
@@ -2726,8 +2813,12 @@ export default function Tools() {
                                           <p className="text-gray-300 text-sm">{result.message}</p>
                                           {result.suggestion && (
                                             <div className="mt-2 p-2 bg-black/40 border border-dashed border-white/10">
-                                              <p className="text-xs text-gray-400 uppercase mb-1 font-mono">Suggestion</p>
-                                              <p className="text-xs text-gray-300">{result.suggestion}</p>
+                                              <p className="text-xs text-gray-400 uppercase mb-1 font-mono">
+                                                Suggestion
+                                              </p>
+                                              <p className="text-xs text-gray-300">
+                                                {result.suggestion}
+                                              </p>
                                             </div>
                                           )}
                                         </div>
@@ -2783,7 +2874,9 @@ export default function Tools() {
                               <p className="text-gray-300 text-sm">{result.message}</p>
                               {result.suggestion && (
                                 <div className="mt-2 p-2 bg-black/40 border border-dashed border-white/10">
-                                  <p className="text-xs text-gray-400 uppercase mb-1 font-mono">Suggestion</p>
+                                  <p className="text-xs text-gray-400 uppercase mb-1 font-mono">
+                                    Suggestion
+                                  </p>
                                   <p className="text-xs text-gray-300">{result.suggestion}</p>
                                 </div>
                               )}
@@ -2815,7 +2908,7 @@ export default function Tools() {
 
       {/* UUID Generator Modal */}
       {showUuidModal && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] overflow-hidden"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -2823,14 +2916,16 @@ export default function Tools() {
             }
           }}
         >
-          <div 
+          <div
             className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <FileText className="w-5 h-5 text-white" />
-                <h3 className="text-xl text-white font-light uppercase tracking-wider">UUID Generator</h3>
+                <h3 className="text-xl text-white font-light uppercase tracking-wider">
+                  UUID Generator
+                </h3>
               </div>
               <Button
                 variant="ghost"
@@ -2845,7 +2940,9 @@ export default function Tools() {
             <div className="space-y-4">
               {/* Generate UUIDs Section */}
               <div>
-                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">Generate UUIDs</Label>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Generate UUIDs
+                </Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
@@ -2903,7 +3000,9 @@ export default function Tools() {
 
               {/* Validate UUID Section */}
               <div>
-                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">Validate UUID</Label>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Validate UUID
+                </Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Input
@@ -2930,13 +3029,17 @@ export default function Tools() {
                   </div>
                 </div>
                 {uuidValidation && (
-                  <div className={`mt-2 border border-dashed p-3 rounded-none ${
-                    uuidValidation.isValid 
-                      ? 'border-white/10 bg-black/40' 
-                      : 'border-red-500/30 bg-red-500/10'
-                  }`}>
+                  <div
+                    className={`mt-2 border border-dashed p-3 rounded-none ${
+                      uuidValidation.isValid
+                        ? 'border-white/10 bg-black/40'
+                        : 'border-red-500/30 bg-red-500/10'
+                    }`}
+                  >
                     <div className="text-xs font-mono space-y-1">
-                      <div className={`${uuidValidation.isValid ? 'text-green-400' : 'text-red-300'}`}>
+                      <div
+                        className={`${uuidValidation.isValid ? 'text-green-400' : 'text-red-300'}`}
+                      >
                         {uuidValidation.isValid ? '✓ Valid UUID' : '✗ Invalid UUID'}
                       </div>
                       {uuidValidation.isValid && uuidValidation.version && (
@@ -2954,7 +3057,9 @@ export default function Tools() {
               {uuidResults.length > 0 && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <Label className="text-xs uppercase font-mono text-gray-400">Generated UUIDs</Label>
+                    <Label className="text-xs uppercase font-mono text-gray-400">
+                      Generated UUIDs
+                    </Label>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -2968,7 +3073,10 @@ export default function Tools() {
                   <div className="border border-dashed border-white/10 p-3">
                     <div className="space-y-2 max-h-64 overflow-y-auto">
                       {uuidResults.map((uuid, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-black/40 border border-dashed border-white/10">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-2 bg-black/40 border border-dashed border-white/10"
+                        >
                           <span className="text-white font-mono text-xs break-all">{uuid}</span>
                           <Button
                             variant="ghost"

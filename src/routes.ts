@@ -43,7 +43,7 @@ function getStudioVersion(): string {
       const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
       return packageJson.version || '1.0.0';
     }
-  } catch (_error) { }
+  } catch (_error) {}
   return '1.0.0';
 }
 
@@ -116,7 +116,7 @@ export async function safeImportAuthConfig(authConfigPath: string): Promise<any>
       }
 
       const jiti = createJiti(import.meta.url, {
-        debug: false, 
+        debug: false,
         fsCache: true,
         moduleCache: true,
         interopDefault: true,
@@ -249,7 +249,11 @@ export function createRoutes(
 ): Router {
   const router = Router();
   const base64UrlEncode = (value: Buffer | string) =>
-    Buffer.from(value).toString('base64').replace(/=+$/u, '').replace(/\+/gu, '-').replace(/\//gu, '_');
+    Buffer.from(value)
+      .toString('base64')
+      .replace(/=+$/u, '')
+      .replace(/\+/gu, '-')
+      .replace(/\//gu, '_');
   const base64UrlDecode = (value: string) => {
     const normalized = value.replace(/-/gu, '+').replace(/_/gu, '/');
     const padded = normalized + '==='.slice((normalized.length + 3) % 4);
@@ -323,7 +327,7 @@ export function createRoutes(
               '1.0.0';
             currentVersion = versionString.replace(/[\^~>=<]/g, '');
           }
-        } catch { }
+        } catch {}
       }
 
       let latestVersion = currentVersion;
@@ -402,7 +406,7 @@ export function createRoutes(
         adapterConfig = (adapterResult as any).options.adapterConfig;
         adapterProvider = (adapterResult as any).options.provider;
       }
-    } catch (_error) { }
+    } catch (_error) {}
 
     try {
       const detectedDb = await detectDatabaseWithDialect();
@@ -412,7 +416,7 @@ export function createRoutes(
         databaseAdapter = detectedDb.adapter || detectedDb.name;
         databaseVersion = detectedDb.version;
       }
-    } catch (_error) { }
+    } catch (_error) {}
 
     if (databaseType === 'unknown') {
       const configPath = await findAuthConfigPath();
@@ -475,12 +479,12 @@ export function createRoutes(
 
       socialProviders: authConfig.socialProviders
         ? authConfig.socialProviders.map((provider: any) => ({
-          type: provider.id,
-          clientId: provider.clientId,
-          clientSecret: provider.clientSecret,
-          redirectUri: provider.redirectUri,
-          ...provider,
-        }))
+            type: provider.id,
+            clientId: provider.clientId,
+            clientSecret: provider.clientSecret,
+            redirectUri: provider.redirectUri,
+            ...provider,
+          }))
         : authConfig.providers || [],
 
       user: {
@@ -646,14 +650,14 @@ export function createRoutes(
             const users = await adapter.findMany({ model: 'user', limit: 100000 });
             userCount = users?.length || 0;
           }
-        } catch (_error) { }
+        } catch (_error) {}
 
         try {
           if (typeof adapter.findMany === 'function') {
             const sessions = await adapter.findMany({ model: 'session', limit: 100000 });
             sessionCount = sessions?.length || 0;
           }
-        } catch (_error) { }
+        } catch (_error) {}
 
         if (organizationPluginEnabled) {
           try {
@@ -827,18 +831,18 @@ export function createRoutes(
           id: membership.id,
           organization: organization
             ? {
-              id: organization.id,
-              name: organization.name || 'Unknown Organization',
-              slug: organization.slug || 'unknown',
-              image: organization.image,
-              createdAt: organization.createdAt,
-            }
+                id: organization.id,
+                name: organization.name || 'Unknown Organization',
+                slug: organization.slug || 'unknown',
+                image: organization.image,
+                createdAt: organization.createdAt,
+              }
             : {
-              id: membership.organizationId,
-              name: 'Unknown Organization',
-              slug: 'unknown',
-              createdAt: membership.createdAt,
-            },
+                id: membership.organizationId,
+                name: 'Unknown Organization',
+                slug: 'unknown',
+                createdAt: membership.createdAt,
+              },
           role: membership.role || 'member',
           joinedAt: membership.createdAt,
         };
@@ -876,21 +880,21 @@ export function createRoutes(
           id: membership.id,
           team: team
             ? {
-              id: team.id,
-              name: team.name || 'Unknown Team',
-              organizationId: team.organizationId,
-              organizationName: organization
-                ? organization.name || 'Unknown Organization'
-                : 'Unknown Organization',
-              organizationSlug: organization ? organization.slug || 'unknown' : 'unknown',
-            }
+                id: team.id,
+                name: team.name || 'Unknown Team',
+                organizationId: team.organizationId,
+                organizationName: organization
+                  ? organization.name || 'Unknown Organization'
+                  : 'Unknown Organization',
+                organizationSlug: organization ? organization.slug || 'unknown' : 'unknown',
+              }
             : {
-              id: membership.teamId,
-              name: 'Unknown Team',
-              organizationId: 'unknown',
-              organizationName: 'Unknown Organization',
-              organizationSlug: 'unknown',
-            },
+                id: membership.teamId,
+                name: 'Unknown Team',
+                organizationId: 'unknown',
+                organizationName: 'Unknown Organization',
+                organizationSlug: 'unknown',
+              },
           role: membership.role || 'member',
           joinedAt: membership.createdAt,
         };
@@ -1092,7 +1096,7 @@ export function createRoutes(
           limit: 1,
         });
         organization = orgs && orgs.length > 0 ? orgs[0] : null;
-      } catch (_error) { }
+      } catch (_error) {}
 
       const transformedTeam = {
         id: team.id,
@@ -1104,9 +1108,9 @@ export function createRoutes(
         memberCount: team.memberCount || 0,
         organization: organization
           ? {
-            id: organization.id,
-            name: organization.name,
-          }
+              id: organization.id,
+              name: organization.name,
+            }
           : null,
       };
 
@@ -1201,7 +1205,7 @@ export function createRoutes(
           res.json({ users: transformedUsers });
           return;
         }
-      } catch (_adapterError) { }
+      } catch (_adapterError) {}
 
       const result = await getAuthData(authConfig, 'users', { page, limit, search }, configPath);
 
@@ -1436,7 +1440,7 @@ export function createRoutes(
                 ok: false,
                 status: response.status,
                 error: response.statusText,
-              }
+              };
             }
             return {
               label: check.label,
@@ -1501,7 +1505,11 @@ export function createRoutes(
         status: 'pass' | 'fail' | 'warning',
         message: string,
         suggestion?: string,
-        severity: 'error' | 'warning' | 'info' = status === 'fail' ? 'error' : status === 'warning' ? 'warning' : 'info'
+        severity: 'error' | 'warning' | 'info' = status === 'fail'
+          ? 'error'
+          : status === 'warning'
+            ? 'warning'
+            : 'info'
       ) => {
         results.push({ category, check, status, message, suggestion, severity });
       };
@@ -1527,7 +1535,12 @@ export function createRoutes(
           'warning'
         );
       } else {
-        addResult('Core Config', 'Secret Key', 'pass', 'Secret key is configured and meets length requirements');
+        addResult(
+          'Core Config',
+          'Secret Key',
+          'pass',
+          'Secret key is configured and meets length requirements'
+        );
       }
 
       const baseURL = authConfig.baseURL || process.env.BETTER_AUTH_URL;
@@ -1625,7 +1638,12 @@ export function createRoutes(
           'warning'
         );
       } else {
-        addResult('Database', 'Connection String', 'pass', 'Database connection string is configured');
+        addResult(
+          'Database',
+          'Connection String',
+          'pass',
+          'Database connection string is configured'
+        );
       }
 
       // 3. OAuth/Social Providers
@@ -1640,7 +1658,12 @@ export function createRoutes(
           'info'
         );
       } else {
-        addResult('OAuth Providers', 'Providers', 'pass', `${socialProviders.length} OAuth provider(s) configured`);
+        addResult(
+          'OAuth Providers',
+          'Providers',
+          'pass',
+          `${socialProviders.length} OAuth provider(s) configured`
+        );
 
         socialProviders.forEach((provider) => {
           if (provider.enabled) {
@@ -1654,7 +1677,12 @@ export function createRoutes(
                 'error'
               );
             } else {
-              addResult('OAuth Providers', `${provider.name} - Client ID`, 'pass', 'Client ID is configured');
+              addResult(
+                'OAuth Providers',
+                `${provider.name} - Client ID`,
+                'pass',
+                'Client ID is configured'
+              );
             }
 
             if (!provider.clientSecret) {
@@ -1667,11 +1695,17 @@ export function createRoutes(
                 'error'
               );
             } else {
-              addResult('OAuth Providers', `${provider.name} - Client Secret`, 'pass', 'Client Secret is configured');
+              addResult(
+                'OAuth Providers',
+                `${provider.name} - Client Secret`,
+                'pass',
+                'Client Secret is configured'
+              );
             }
 
             if (provider.redirectURI) {
-              const baseUrl = authConfig.baseURL || process.env.BETTER_AUTH_URL || 'http://localhost:3000';
+              const baseUrl =
+                authConfig.baseURL || process.env.BETTER_AUTH_URL || 'http://localhost:3000';
               const expectedRedirect = `${baseUrl}${authConfig.basePath || '/api/auth'}/callback/${provider.id}`;
               if (!provider.redirectURI.includes(baseUrl)) {
                 addResult(
@@ -1683,7 +1717,12 @@ export function createRoutes(
                   'warning'
                 );
               } else {
-                addResult('OAuth Providers', `${provider.name} - Redirect URI`, 'pass', 'Redirect URI is configured');
+                addResult(
+                  'OAuth Providers',
+                  `${provider.name} - Redirect URI`,
+                  'pass',
+                  'Redirect URI is configured'
+                );
               }
             } else {
               addResult(
@@ -1702,7 +1741,12 @@ export function createRoutes(
       // 4. Email & Password
       const emailAndPassword = authConfig.emailAndPassword;
       if (emailAndPassword?.enabled) {
-        addResult('Email & Password', 'Enabled', 'pass', 'Email and password authentication is enabled');
+        addResult(
+          'Email & Password',
+          'Enabled',
+          'pass',
+          'Email and password authentication is enabled'
+        );
 
         if (emailAndPassword.minPasswordLength && emailAndPassword.minPasswordLength < 8) {
           addResult(
@@ -1813,7 +1857,12 @@ export function createRoutes(
             'error'
           );
         } else {
-          addResult('Security', 'Trusted Origins', 'pass', `${trustedOrigins.length} trusted origin(s) configured`);
+          addResult(
+            'Security',
+            'Trusted Origins',
+            'pass',
+            `${trustedOrigins.length} trusted origin(s) configured`
+          );
         }
       }
 
@@ -1830,7 +1879,12 @@ export function createRoutes(
           'error'
         );
       } else {
-        addResult('Environment', 'Required Variables', 'pass', 'All required environment variables are set');
+        addResult(
+          'Environment',
+          'Required Variables',
+          'pass',
+          'All required environment variables are set'
+        );
       }
 
       // Summary
@@ -2806,7 +2860,10 @@ export function createRoutes(
       const table = {
         name,
         displayName: formatDisplayName(name),
-        origin: tableMeta?.plugin?.id || tableMeta?.pluginId || (CONTEXT_CORE_TABLES.has(name) ? 'core' : 'extended'),
+        origin:
+          tableMeta?.plugin?.id ||
+          tableMeta?.pluginId ||
+          (CONTEXT_CORE_TABLES.has(name) ? 'core' : 'extended'),
         order: tableMeta?.order ?? Number.MAX_SAFE_INTEGER,
         fields,
         relationships: [] as any[],
@@ -2973,7 +3030,7 @@ export function createRoutes(
           }));
           res.json({ success: true, invitations: transformedInvitations });
           return;
-        } catch (_error) { }
+        } catch (_error) {}
       }
 
       res.json({ success: true, invitations: [] });
@@ -3012,12 +3069,12 @@ export function createRoutes(
                     joinedAt: member.joinedAt || member.createdAt,
                     user: user
                       ? {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
-                        image: user.image,
-                        emailVerified: user.emailVerified,
-                      }
+                          id: user.id,
+                          name: user.name,
+                          email: user.email,
+                          image: user.image,
+                          emailVerified: user.emailVerified,
+                        }
                       : null,
                   };
                 }
@@ -3032,7 +3089,7 @@ export function createRoutes(
 
           res.json({ success: true, members: validMembers });
           return;
-        } catch (_error) { }
+        } catch (_error) {}
       }
 
       res.json({ success: true, members: [] });
@@ -3375,7 +3432,7 @@ export function createRoutes(
 
           res.json({ success: true, teams: transformedTeams });
           return;
-        } catch (_error) { }
+        } catch (_error) {}
       }
 
       res.json({ success: true, teams: [] });
@@ -3456,12 +3513,12 @@ export function createRoutes(
                     joinedAt: member.joinedAt || member.createdAt,
                     user: user
                       ? {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
-                        image: user.image,
-                        emailVerified: user.emailVerified,
-                      }
+                          id: user.id,
+                          name: user.name,
+                          email: user.email,
+                          image: user.image,
+                          emailVerified: user.emailVerified,
+                        }
                       : null,
                   };
                 }
@@ -3476,7 +3533,7 @@ export function createRoutes(
 
           res.json({ success: true, members: validMembers });
           return;
-        } catch (_error) { }
+        } catch (_error) {}
       }
 
       res.json({ success: true, members: [] });
@@ -3793,7 +3850,7 @@ export function createRoutes(
           results.push({
             success: true,
             user: {
-             ...user, 
+              ...user,
             },
           });
         } catch (error) {
@@ -4548,7 +4605,7 @@ export function createRoutes(
           .sort((a, b) => b.created - a.created)[0];
 
         recentAccount = accountCandidate?.account ?? null;
-      } catch (_accountError) { }
+      } catch (_accountError) {}
 
       try {
         const sessions = await adapter.findMany({
@@ -4561,16 +4618,16 @@ export function createRoutes(
             session: sessionItem,
             created: parseDate(
               sessionItem.createdAt ||
-              sessionItem.created_at ||
-              sessionItem.updatedAt ||
-              sessionItem.updated_at
+                sessionItem.created_at ||
+                sessionItem.updatedAt ||
+                sessionItem.updated_at
             ),
           }))
           .filter((entry) => entry.created >= threshold)
           .sort((a, b) => b.created - a.created)[0];
 
         recentSession = sessionCandidate?.session ?? null;
-      } catch (_sessionError) { }
+      } catch (_sessionError) {}
 
       if (recentAccount || recentSession) {
         let userInfo: any = null;
@@ -4593,7 +4650,7 @@ export function createRoutes(
               };
             }
           }
-        } catch (_userError) { }
+        } catch (_userError) {}
         const result = {
           testSessionId: testSessionId as string,
           provider,
@@ -4601,15 +4658,15 @@ export function createRoutes(
           userInfo,
           account: recentAccount
             ? {
-              id: recentAccount.id,
-              userId: recentAccount.userId,
-            }
+                id: recentAccount.id,
+                userId: recentAccount.userId,
+              }
             : null,
           session: recentSession
             ? {
-              id: recentSession.id,
-              userId: recentSession.userId,
-            }
+                id: recentSession.id,
+                userId: recentSession.userId,
+              }
             : null,
           timestamp: new Date().toISOString(),
         };
@@ -4636,7 +4693,9 @@ export function createRoutes(
 
       const segments = token.split('.');
       if (segments.length < 2) {
-        return res.status(400).json({ success: false, error: 'Token must have at least header and payload' });
+        return res
+          .status(400)
+          .json({ success: false, error: 'Token must have at least header and payload' });
       }
 
       let header: Record<string, any> = {};
@@ -4654,10 +4713,13 @@ export function createRoutes(
       let usedSecret: string | null = null;
 
       if (signature && header.alg === 'HS256') {
-        const secretToUse = typeof secret === 'string' && secret.trim().length > 0 ? secret : authConfig.secret;
+        const secretToUse =
+          typeof secret === 'string' && secret.trim().length > 0 ? secret : authConfig.secret;
         if (secretToUse) {
           const signingInput = `${segments[0]}.${segments[1]}`;
-          const expected = createHmac('sha256', secretToUse).update(signingInput).digest('base64url');
+          const expected = createHmac('sha256', secretToUse)
+            .update(signingInput)
+            .digest('base64url');
           verified = expected === signature;
           usedSecret = secretToUse === authConfig.secret ? 'authConfig.secret' : 'custom';
         }
@@ -4666,8 +4728,12 @@ export function createRoutes(
       const now = Date.now();
       const issuedAtSeconds = typeof payload.iat === 'number' ? payload.iat : null;
       const expiresAtSeconds = typeof payload.exp === 'number' ? payload.exp : null;
-      const issuedAtFormatted = issuedAtSeconds ? new Date(issuedAtSeconds * 1000).toISOString() : null;
-      const expiresAtFormatted = expiresAtSeconds ? new Date(expiresAtSeconds * 1000).toISOString() : null;
+      const issuedAtFormatted = issuedAtSeconds
+        ? new Date(issuedAtSeconds * 1000).toISOString()
+        : null;
+      const expiresAtFormatted = expiresAtSeconds
+        ? new Date(expiresAtSeconds * 1000).toISOString()
+        : null;
       const issuedAgo =
         issuedAtSeconds && issuedAtFormatted
           ? `${formatRelativeDuration(now - issuedAtSeconds * 1000)} ago`
@@ -4726,7 +4792,9 @@ export function createRoutes(
       } = req.body || {};
 
       const safeType = typeof type === 'string' ? type : 'api_key';
-      const expiresMinutes = Number.isFinite(Number(expiresInMinutes)) ? Number(expiresInMinutes) : 15;
+      const expiresMinutes = Number.isFinite(Number(expiresInMinutes))
+        ? Number(expiresInMinutes)
+        : 15;
       const boundedMinutes = Math.min(Math.max(expiresMinutes, 1), 1440);
       const expiresAt = new Date(Date.now() + boundedMinutes * 60 * 1000).toISOString();
 
@@ -4745,7 +4813,9 @@ export function createRoutes(
 
       if (safeType === 'jwt') {
         const claims =
-          customClaims && typeof customClaims === 'object' ? (customClaims as Record<string, any>) : {};
+          customClaims && typeof customClaims === 'object'
+            ? (customClaims as Record<string, any>)
+            : {};
         const nowSeconds = Math.floor(Date.now() / 1000);
         const payload = {
           iss: authConfig.baseURL || 'better-auth-studio',
@@ -4759,9 +4829,10 @@ export function createRoutes(
         const header = { alg: 'HS256', typ: 'JWT' };
         const encodedHeader = base64UrlEncode(JSON.stringify(header));
         const encodedPayload = base64UrlEncode(JSON.stringify(payload));
-        const secretToUse = typeof secretOverride === 'string' && secretOverride.trim().length > 0
-          ? secretOverride
-          : authConfig.secret || 'better-auth-secret';
+        const secretToUse =
+          typeof secretOverride === 'string' && secretOverride.trim().length > 0
+            ? secretOverride
+            : authConfig.secret || 'better-auth-secret';
         const signature = createHmac('sha256', secretToUse)
           .update(`${encodedHeader}.${encodedPayload}`)
           .digest('base64url');
@@ -4825,35 +4896,36 @@ export function createRoutes(
       if (exportFormat === 'csv') {
         // Convert to CSV
         const csvRows: string[] = [];
-        
+
         for (const [tableName, rows] of Object.entries(exportData)) {
           if (rows.length === 0) continue;
-          
+
           // Add table header
           csvRows.push(`\n=== ${tableName.toUpperCase()} ===\n`);
-          
+
           // Get all unique keys from all rows
           const allKeys = new Set<string>();
           rows.forEach((row: any) => {
             Object.keys(row).forEach((key) => allKeys.add(key));
           });
           const headers = Array.from(allKeys);
-          
+
           // Write CSV header
           csvRows.push(headers.map((h) => `"${h}"`).join(','));
-          
+
           // Write CSV rows
           rows.forEach((row: any) => {
             const values = headers.map((header) => {
               const value = row[header];
               if (value === null || value === undefined) return '';
-              if (typeof value === 'object') return `"${JSON.stringify(value).replace(/"/g, '""')}"`;
+              if (typeof value === 'object')
+                return `"${JSON.stringify(value).replace(/"/g, '""')}"`;
               return `"${String(value).replace(/"/g, '""')}"`;
             });
             csvRows.push(values.join(','));
           });
         }
-        
+
         output = csvRows.join('\n');
         filename = `better-auth-export-${new Date().toISOString().split('T')[0]}.csv`;
         contentType = 'text/csv';

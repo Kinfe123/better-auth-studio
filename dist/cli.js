@@ -2,10 +2,10 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import chalk from 'chalk';
 import chokidar from 'chokidar';
 import { Command } from 'commander';
 import { WebSocket } from 'ws';
-import chalk from 'chalk';
 import { findAuthConfig } from './config.js';
 import { startStudio } from './studio.js';
 import { detectDatabaseWithDialect } from './utils/database-detection.js';

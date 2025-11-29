@@ -1,4 +1,4 @@
-import { InternalAdapter } from "better-auth";
+import type { InternalAdapter } from 'better-auth';
 type OptionalFields<T> = {
     [K in keyof T]?: T[K];
 };

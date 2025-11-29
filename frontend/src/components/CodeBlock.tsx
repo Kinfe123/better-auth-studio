@@ -42,12 +42,15 @@ export function CodeBlock({
       background: 'transparent',
       fontSize: '13px',
       lineHeight: '1.6',
-      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
+      fontFamily:
+        'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
     },
   };
 
   return (
-    <div className={`bg-black border border-white/10 rounded-none overflow-hidden shadow-2xl ${className}`}>
+    <div
+      className={`bg-black border border-white/10 rounded-none overflow-hidden shadow-2xl ${className}`}
+    >
       <div className="bg-black/50 border border-dashed border-white/20 flex items-center justify-between px-4 py-2.5">
         <div className="flex items-center space-x-2.5">
           <FileCode className="w-4 h-4 text-white" />
@@ -62,7 +65,7 @@ export function CodeBlock({
           {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
         </Button>
       </div>
-      
+
       <div className="overflow-x-auto h-[500px] bg-black">
         <SyntaxHighlighter
           language={language}
@@ -75,7 +78,8 @@ export function CodeBlock({
           }}
           codeTagProps={{
             style: {
-              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
+              fontFamily:
+                'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
               fontSize: '13px',
               lineHeight: '1.6',
             },

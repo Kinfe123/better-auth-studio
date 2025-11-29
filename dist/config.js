@@ -38,8 +38,7 @@ function resolveReferencePath(configDir, refPath) {
                 return resolvedPath;
             }
         }
-        catch {
-        }
+        catch { }
     }
     return path.resolve(configDir, refPath, 'tsconfig.json');
 }

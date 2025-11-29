@@ -469,7 +469,9 @@ export default function Organizations() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl text-white font-light">Organizations</h1>
-            <p className="text-gray-400 font-light text-sm mt-1 uppercase font-mono">Manage your application organizations</p>
+            <p className="text-gray-400 font-light text-sm mt-1 uppercase font-mono">
+              Manage your application organizations
+            </p>
           </div>
         </div>
 

@@ -1,12 +1,12 @@
 import { createServer } from 'node:http';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import chalk from 'chalk';
 import cors from 'cors';
 import express from 'express';
 import open from 'open';
 import { WebSocketServer } from 'ws';
 import { createRoutes } from './routes.js';
-import chalk from 'chalk';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 export async function startStudio(options) {

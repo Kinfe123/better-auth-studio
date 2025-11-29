@@ -1,11 +1,12 @@
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import type { InternalAdapter } from 'better-auth';
 import { createJiti } from 'jiti';
-import { InternalAdapter } from "better-auth"
 import { possibleConfigFiles } from './utils.js';
+
 type OptionalFields<T> = { [K in keyof T]?: T[K] };
 
-type UserInternalAdapter = OptionalFields<InternalAdapter>
+type UserInternalAdapter = OptionalFields<InternalAdapter>;
 
 // combining the internal adapter with the custom one for the studio
 export interface AuthAdapter extends UserInternalAdapter {
@@ -101,7 +102,7 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
                 updatedAt: new Date(),
               },
             });
-          } catch (_accountError) { }
+          } catch (_accountError) {}
         }
 
         return user;
@@ -200,8 +201,6 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
 }
 
 async function findAuthConfigPath(): Promise<string | null> {
-  
-
   let currentDir = process.cwd();
   const maxDepth = 10;
   let depth = 0;
@@ -418,7 +417,12 @@ export async function createMockSession(adapter: AuthAdapter, userId: string, in
   return await adapter?.createSession(sessionData);
 }
 
-export async function createMockAccount(adapter: AuthAdapter, userId: string, index: number, providerId?: string) {
+export async function createMockAccount(
+  adapter: AuthAdapter,
+  userId: string,
+  index: number,
+  providerId?: string
+) {
   // List of common OAuth providers
   const providers = [
     'github',
@@ -441,9 +445,10 @@ export async function createMockAccount(adapter: AuthAdapter, userId: string, in
   ];
 
   // Use provided providerId or select randomly
-  const selectedProvider = providerId && providerId !== 'random' 
-    ? providerId 
-    : providers[Math.floor(Math.random() * providers.length)];
+  const selectedProvider =
+    providerId && providerId !== 'random'
+      ? providerId
+      : providers[Math.floor(Math.random() * providers.length)];
 
   const accountData = {
     userId: userId,

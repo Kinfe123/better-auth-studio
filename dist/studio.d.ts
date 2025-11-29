@@ -1,5 +1,5 @@
-import { WebSocketServer } from 'ws';
 import type { WebSocket } from 'ws';
+import { WebSocketServer } from 'ws';
 import type { AuthConfig } from './config.js';
 interface StudioOptions {
     port: number;

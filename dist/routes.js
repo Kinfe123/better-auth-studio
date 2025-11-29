@@ -202,7 +202,11 @@ async function findAuthConfigPath() {
 }
 export function createRoutes(authConfig, configPath, geoDbPath) {
     const router = Router();
-    const base64UrlEncode = (value) => Buffer.from(value).toString('base64').replace(/=+$/u, '').replace(/\+/gu, '-').replace(/\//gu, '_');
+    const base64UrlEncode = (value) => Buffer.from(value)
+        .toString('base64')
+        .replace(/=+$/u, '')
+        .replace(/\+/gu, '-')
+        .replace(/\//gu, '_');
     const base64UrlDecode = (value) => {
         const normalized = value.replace(/-/gu, '+').replace(/_/gu, '/');
         const padded = normalized + '==='.slice((normalized.length + 3) % 4);
@@ -1347,7 +1351,11 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
     router.post('/api/tools/validate-config', async (_req, res) => {
         try {
             const results = [];
-            const addResult = (category, check, status, message, suggestion, severity = status === 'fail' ? 'error' : status === 'warning' ? 'warning' : 'info') => {
+            const addResult = (category, check, status, message, suggestion, severity = status === 'fail'
+                ? 'error'
+                : status === 'warning'
+                    ? 'warning'
+                    : 'info') => {
                 results.push({ category, check, status, message, suggestion, severity });
             };
             // 1. Core Configuration Checks
@@ -2444,7 +2452,9 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             const table = {
                 name,
                 displayName: formatDisplayName(name),
-                origin: tableMeta?.plugin?.id || tableMeta?.pluginId || (CONTEXT_CORE_TABLES.has(name) ? 'core' : 'extended'),
+                origin: tableMeta?.plugin?.id ||
+                    tableMeta?.pluginId ||
+                    (CONTEXT_CORE_TABLES.has(name) ? 'core' : 'extended'),
                 order: tableMeta?.order ?? Number.MAX_SAFE_INTEGER,
                 fields,
                 relationships: [],
@@ -4122,7 +4132,9 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             }
             const segments = token.split('.');
             if (segments.length < 2) {
-                return res.status(400).json({ success: false, error: 'Token must have at least header and payload' });
+                return res
+                    .status(400)
+                    .json({ success: false, error: 'Token must have at least header and payload' });
             }
             let header = {};
             let payload = {};
@@ -4140,7 +4152,9 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 const secretToUse = typeof secret === 'string' && secret.trim().length > 0 ? secret : authConfig.secret;
                 if (secretToUse) {
                     const signingInput = `${segments[0]}.${segments[1]}`;
-                    const expected = createHmac('sha256', secretToUse).update(signingInput).digest('base64url');
+                    const expected = createHmac('sha256', secretToUse)
+                        .update(signingInput)
+                        .digest('base64url');
                     verified = expected === signature;
                     usedSecret = secretToUse === authConfig.secret ? 'authConfig.secret' : 'custom';
                 }
@@ -4148,8 +4162,12 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             const now = Date.now();
             const issuedAtSeconds = typeof payload.iat === 'number' ? payload.iat : null;
             const expiresAtSeconds = typeof payload.exp === 'number' ? payload.exp : null;
-            const issuedAtFormatted = issuedAtSeconds ? new Date(issuedAtSeconds * 1000).toISOString() : null;
-            const expiresAtFormatted = expiresAtSeconds ? new Date(expiresAtSeconds * 1000).toISOString() : null;
+            const issuedAtFormatted = issuedAtSeconds
+                ? new Date(issuedAtSeconds * 1000).toISOString()
+                : null;
+            const expiresAtFormatted = expiresAtSeconds
+                ? new Date(expiresAtSeconds * 1000).toISOString()
+                : null;
             const issuedAgo = issuedAtSeconds && issuedAtFormatted
                 ? `${formatRelativeDuration(now - issuedAtSeconds * 1000)} ago`
                 : null;
@@ -4194,7 +4212,9 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
         try {
             const { type = 'api_key', subject, audience, expiresInMinutes = 15, customClaims, secretOverride, } = req.body || {};
             const safeType = typeof type === 'string' ? type : 'api_key';
-            const expiresMinutes = Number.isFinite(Number(expiresInMinutes)) ? Number(expiresInMinutes) : 15;
+            const expiresMinutes = Number.isFinite(Number(expiresInMinutes))
+                ? Number(expiresInMinutes)
+                : 15;
             const boundedMinutes = Math.min(Math.max(expiresMinutes, 1), 1440);
             const expiresAt = new Date(Date.now() + boundedMinutes * 60 * 1000).toISOString();
             if (safeType === 'api_key') {
@@ -4210,7 +4230,9 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 });
             }
             if (safeType === 'jwt') {
-                const claims = customClaims && typeof customClaims === 'object' ? customClaims : {};
+                const claims = customClaims && typeof customClaims === 'object'
+                    ? customClaims
+                    : {};
                 const nowSeconds = Math.floor(Date.now() / 1000);
                 const payload = {
                     iss: authConfig.baseURL || 'better-auth-studio',

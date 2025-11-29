@@ -495,11 +495,11 @@ export default function Dashboard() {
 
         setActivityLabels(
           signups?.labels ||
-          logins?.labels ||
-          orgs?.labels ||
-          teamsMetrics?.labels ||
-          sessionsMetrics?.labels ||
-          []
+            logins?.labels ||
+            orgs?.labels ||
+            teamsMetrics?.labels ||
+            sessionsMetrics?.labels ||
+            []
         );
       } finally {
         setActivityLoading(false);
@@ -1175,10 +1175,11 @@ export default function Dashboard() {
                     <button
                       key={period}
                       onClick={() => setSelectedUserPeriod(period)}
-                      className={`px-2 py-1 text-xs font-light transition-colors whitespace-nowrap ${selectedUserPeriod === period
-                        ? 'bg-white/20 text-white border border-white/30'
-                        : 'text-gray-500 hover:text-white'
-                        }`}
+                      className={`px-2 py-1 text-xs font-light transition-colors whitespace-nowrap ${
+                        selectedUserPeriod === period
+                          ? 'bg-white/20 text-white border border-white/30'
+                          : 'text-gray-500 hover:text-white'
+                      }`}
                     >
                       {period}
                     </button>
@@ -1333,10 +1334,11 @@ export default function Dashboard() {
                     <button
                       key={period}
                       onClick={() => setActivityPeriod(period)}
-                      className={`px-2 py-1 text-xs font-light transition-colors whitespace-nowrap ${activityPeriod === period
-                        ? 'bg-white/20 text-white border border-white/30'
-                        : 'text-gray-500 hover:text-white'
-                        }`}
+                      className={`px-2 py-1 text-xs font-light transition-colors whitespace-nowrap ${
+                        activityPeriod === period
+                          ? 'bg-white/20 text-white border border-white/30'
+                          : 'text-gray-500 hover:text-white'
+                      }`}
                     >
                       {period}
                     </button>
@@ -1951,11 +1953,9 @@ export default function Dashboard() {
               <div className="space-y-3 overflow-y-auto custom-scrollbar max-h-[400px]">
                 {securityPatches.length === 0 && (
                   <div className="text-sm flex items-center justify-center text-gray-400">
-                    <div className='flex mt-5 items-center justify-center'>
+                    <div className="flex mt-5 items-center justify-center">
                       <Shield className="w-4 h-4 text-gray-400 mr-2" />
-                      <p className="text-center">
-                        No security insights found
-                      </p>
+                      <p className="text-center">No security insights found</p>
                     </div>
                   </div>
                 )}

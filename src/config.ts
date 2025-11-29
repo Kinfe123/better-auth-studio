@@ -7,9 +7,9 @@ import babelPresetTypeScript from '@babel/preset-typescript';
 import type { BetterAuthOptions } from 'better-auth';
 import { BetterAuthError, logger } from 'better-auth';
 import { loadConfig } from 'c12';
+import type { JitiOptions as JO } from 'jiti/native';
 import { addSvelteKitEnvModules } from './add-svelte-kit-env-modules.js';
 import { getTsconfigInfo } from './get-tsconfig-info.js';
-import { JitiOptions as JO } from "jiti/native"
 export interface AuthProvider {
   type: string;
   clientId?: string;
@@ -39,8 +39,7 @@ export interface AuthConfig {
     connectionString?: string;
     [key: string]: any;
   };
-  emailAndPassword?:
-  BetterAuthOptions['emailAndPassword'];
+  emailAndPassword?: BetterAuthOptions['emailAndPassword'];
   socialProviders?: Array<{
     id: string;
     name: string;
@@ -75,7 +74,6 @@ possiblePaths = [
   ...possiblePaths.map((it) => `apps/${it}`),
 ];
 
-
 function resolveReferencePath(configDir: string, refPath: string): string {
   const resolvedPath = path.resolve(configDir, refPath);
 
@@ -89,8 +87,7 @@ function resolveReferencePath(configDir: string, refPath: string): string {
       if (stats.isFile()) {
         return resolvedPath;
       }
-    } catch {
-    }
+    } catch {}
   }
 
   return path.resolve(configDir, refPath, 'tsconfig.json');
@@ -212,16 +209,16 @@ export async function getConfig({
     let configFile: any | null = null;
     if (configPath) {
       let resolvedPath: string = path.join(cwd, configPath);
-      if (existsSync(configPath)) resolvedPath = configPath; 
+      if (existsSync(configPath)) resolvedPath = configPath;
       const { config } = await loadConfig<
         | {
-          auth: {
-            options: BetterAuthOptions;
-          };
-        }
+            auth: {
+              options: BetterAuthOptions;
+            };
+          }
         | {
-          options: BetterAuthOptions;
-        }
+            options: BetterAuthOptions;
+          }
       >({
         configFile: resolvedPath,
         dotenv: true,
@@ -328,7 +325,6 @@ export async function getConfig({
 
 export { possiblePaths };
 
-
 export async function findAuthConfig(configPath?: string): Promise<AuthConfig | null> {
   try {
     const betterAuthConfig = await getConfig({
@@ -349,19 +345,19 @@ export async function findAuthConfig(configPath?: string): Promise<AuthConfig | 
         },
         socialProviders: betterAuthConfig.socialProviders
           ? Object.keys(betterAuthConfig.socialProviders).map((provider) => {
-            const providerConfig = betterAuthConfig.socialProviders?.[provider];
-            const hasCredentials = Boolean(
-              providerConfig?.clientId && providerConfig?.clientSecret
-            );
-            return {
-              id: provider,
-              name: provider,
-              clientId: providerConfig?.clientId,
-              clientSecret: providerConfig?.clientSecret,
-              redirectURI: providerConfig?.redirectURI,
-              enabled: Boolean(hasCredentials && providerConfig?.redirectURI),
-            };
-          })
+              const providerConfig = betterAuthConfig.socialProviders?.[provider];
+              const hasCredentials = Boolean(
+                providerConfig?.clientId && providerConfig?.clientSecret
+              );
+              return {
+                id: provider,
+                name: provider,
+                clientId: providerConfig?.clientId,
+                clientSecret: providerConfig?.clientSecret,
+                redirectURI: providerConfig?.redirectURI,
+                enabled: Boolean(hasCredentials && providerConfig?.redirectURI),
+              };
+            })
           : [],
         trustedOrigins: Array.isArray(betterAuthConfig.trustedOrigins)
           ? betterAuthConfig.trustedOrigins

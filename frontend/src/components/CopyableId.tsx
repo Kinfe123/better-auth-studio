@@ -1,4 +1,4 @@
-import { Copy, Check } from 'lucide-react';
+import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -10,7 +10,13 @@ interface CopyableIdProps {
   variant?: 'inline' | 'detail' | 'subscript';
 }
 
-export function CopyableId({ id, label = 'ID', className = '', variant = 'inline'  , nonSliced = false}: CopyableIdProps) {
+export function CopyableId({
+  id,
+  label = 'ID',
+  className = '',
+  variant = 'inline',
+  nonSliced = false,
+}: CopyableIdProps) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async () => {
@@ -52,9 +58,7 @@ export function CopyableId({ id, label = 'ID', className = '', variant = 'inline
         title="Click to copy User ID"
       >
         <span className="mr-1">[</span>
-        <span className="text-white/80 font-mono text-xs">
-          {nonSliced ? id : id.slice(0, 8)}
-        </span>
+        <span className="text-white/80 font-mono text-xs">{nonSliced ? id : id.slice(0, 8)}</span>
         <span className="ml-1">]</span>
       </sup>
     );
@@ -76,4 +80,3 @@ export function CopyableId({ id, label = 'ID', className = '', variant = 'inline
     </button>
   );
 }
-

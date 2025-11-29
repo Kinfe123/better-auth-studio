@@ -3,14 +3,15 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import chalk from 'chalk';
 import chokidar from 'chokidar';
 import { Command } from 'commander';
 import { WebSocket } from 'ws';
-import chalk from 'chalk';
 import { findAuthConfig } from './config.js';
 import { startStudio } from './studio.js';
 import { detectDatabaseWithDialect } from './utils/database-detection.js';
 import { possibleConfigFiles } from './utils.js';
+
 async function findAuthConfigPath(): Promise<string | null> {
   let currentDir = process.cwd();
   const maxDepth = 10;
@@ -328,13 +329,13 @@ program
   .option('--no-open', 'Do not open browser automatically')
   .action(async (options) => {
     try {
-    const resolvedConfigPath =
-      normalizeConfigPath(options.config) || (await findAuthConfigPath());
-    const configPathForRoutes = resolvedConfigPath
-      ? relative(process.cwd(), resolvedConfigPath) || resolvedConfigPath
-      : undefined;
+      const resolvedConfigPath =
+        normalizeConfigPath(options.config) || (await findAuthConfigPath());
+      const configPathForRoutes = resolvedConfigPath
+        ? relative(process.cwd(), resolvedConfigPath) || resolvedConfigPath
+        : undefined;
 
-    const authConfig = await findAuthConfig(configPathForRoutes);
+      const authConfig = await findAuthConfig(configPathForRoutes);
       if (!authConfig) {
         if (options.config) {
         } else {
@@ -395,19 +396,19 @@ program
         }
       }
 
-    if (options.watch && !configPathForRoutes) {
-      console.warn(
-        '⚠ Unable to locate your auth config file. Watch mode will be disabled for this session.'
-      );
-    }
+      if (options.watch && !configPathForRoutes) {
+        console.warn(
+          '⚠ Unable to locate your auth config file. Watch mode will be disabled for this session.'
+        );
+      }
 
-    if (options.watch && configPathForRoutes) {
+      if (options.watch && configPathForRoutes) {
         await startStudioWithWatch({
           port: parseInt(options.port, 10),
           host: options.host,
           openBrowser: options.open,
           authConfig,
-        configPath: configPathForRoutes,
+          configPath: configPathForRoutes,
           watchMode: true,
           geoDbPath: options.geoDb,
         });
@@ -417,7 +418,7 @@ program
           host: options.host,
           openBrowser: options.open,
           authConfig,
-        configPath: configPathForRoutes,
+          configPath: configPathForRoutes,
           watchMode: false,
           geoDbPath: options.geoDb,
         });

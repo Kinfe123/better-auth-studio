@@ -32,7 +32,13 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Pagination } from '../components/ui/pagination';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
 import { useCounts } from '../contexts/CountsContext';
 
 interface User {
@@ -1090,7 +1096,11 @@ export default function Users() {
                     <Label htmlFor="seed-role" className="text-sm text-gray-400 font-light">
                       Role (optional)
                     </Label>
-                    <Select className='bg-black text-white' value={seedRole} onValueChange={setSeedRole}>
+                    <Select
+                      className="bg-black text-white"
+                      value={seedRole}
+                      onValueChange={setSeedRole}
+                    >
                       <SelectTrigger
                         id="seed-role"
                         className="mt-1 border border-dashed border-white/20 bg-black text-white rounded-none"
@@ -1211,7 +1221,11 @@ export default function Users() {
                 <Label htmlFor="create-role" className="text-sm text-gray-400 font-light">
                   Role
                 </Label>
-                <Select className="bg-black text-white" value={createRole} onValueChange={setCreateRole}>
+                <Select
+                  className="bg-black text-white"
+                  value={createRole}
+                  onValueChange={setCreateRole}
+                >
                   <SelectTrigger
                     id="create-role"
                     className="mt-1 border border-dashed border-white/20 bg-black text-white rounded-none"
