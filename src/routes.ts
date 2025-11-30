@@ -4962,7 +4962,11 @@ export function createRoutes(
         return res.status(400).json({ success: false, error: 'Password is required' });
       }
 
-      const emailAndPassword = authConfig.emailAndPassword as { minPasswordLength?: number; maxPasswordLength?: number } || {};
+      const emailAndPassword =
+        (authConfig.emailAndPassword as {
+          minPasswordLength?: number;
+          maxPasswordLength?: number;
+        }) || {};
       const minLength = emailAndPassword?.minPasswordLength || 8;
       const maxLength = emailAndPassword?.maxPasswordLength || 128;
 
@@ -5027,7 +5031,7 @@ export function createRoutes(
       if (hasNumber) score += 0.5;
 
       // Special character check
-      const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+      const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
       checks.push({
         name: 'Special Character',
         passed: hasSpecialChar,
@@ -5036,14 +5040,7 @@ export function createRoutes(
       if (hasSpecialChar) score += 0.5;
 
       // Common patterns check
-      const commonPatterns = [
-        /12345/,
-        /password/i,
-        /qwerty/i,
-        /abc123/i,
-        /admin/i,
-        /letmein/i,
-      ];
+      const commonPatterns = [/12345/, /password/i, /qwerty/i, /abc123/i, /admin/i, /letmein/i];
       const hasCommonPattern = commonPatterns.some((pattern) => pattern.test(password));
       checks.push({
         name: 'Common Pattern',
@@ -5060,9 +5057,7 @@ export function createRoutes(
       checks.push({
         name: 'Character Variety',
         passed: entropyCheck,
-        message: entropyCheck
-          ? 'Good character variety'
-          : 'Low character variety (repetitive)',
+        message: entropyCheck ? 'Good character variety' : 'Low character variety (repetitive)',
       });
       if (entropyCheck) score += 0.5;
 

@@ -3286,7 +3286,9 @@ export default function Tools() {
                           passwordStrength.meetsConfig ? 'text-green-400' : 'text-red-300'
                         }`}
                       >
-                        {passwordStrength.meetsConfig ? '✓ Meets Requirements' : '✗ Fails Requirements'}
+                        {passwordStrength.meetsConfig
+                          ? '✓ Meets Requirements'
+                          : '✗ Fails Requirements'}
                       </p>
                       <p className="text-gray-500 text-xs">
                         {passwordStrength.configRequirements.minLength} -{' '}
