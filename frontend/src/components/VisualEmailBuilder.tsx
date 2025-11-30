@@ -517,7 +517,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                             moveBlock(block.id, 'up');
                           }}
                           disabled={index === 0}
-                          className="h-7 w-7 p-0 bg-black/90 border border-dashed border-white/30 hover:bg-white/30 hover:border-white/60 rounded-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-7 w-7 p-0 bg-black/90 border border-dashed border-white/30 hover:bg-black/30 hover:border-white/60 rounded-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                           title="Move up"
                         >
                           <ChevronUp className="w-4 h-4 text-white" />
@@ -528,7 +528,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                             moveBlock(block.id, 'down');
                           }}
                           disabled={index === blocks.length - 1}
-                          className="h-7 w-7 p-0 bg-black/90 border border-dashed border-white/30 hover:bg-white/30 hover:border-white/60 rounded-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-7 w-7 p-0 bg-black/90 border border-dashed border-white/30 hover:bg-black/30 hover:border-white/60 rounded-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                           title="Move down"
                         >
                           <ChevronDown className="w-4 h-4 text-white" />
@@ -538,7 +538,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                             e.stopPropagation();
                             duplicateBlock(block.id);
                           }}
-                          className="h-7 w-7 p-0 bg-black/90 border border-dashed border-white/30 hover:bg-white/30 hover:border-white/60 rounded-none transition-all flex items-center justify-center"
+                          className="h-7 w-7 p-0 bg-black/90 border border-dashed border-white/30 hover:bg-black/30 hover:border-white/60 rounded-none transition-all flex items-center justify-center"
                           title="Duplicate"
                         >
                           <Copy className="w-4 h-4 text-white" />
