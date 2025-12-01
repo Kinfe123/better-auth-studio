@@ -1306,7 +1306,6 @@ export default function Tools() {
       return;
     }
 
-    // Extract version and variant
     const parts = trimmed.split('-');
     const versionHex = parts[2]?.[0];
     const variantHex = parts[3]?.[0];
@@ -1528,7 +1527,6 @@ export default function Tools() {
       if (result.success) {
         addLog('success', '✅ Export completed successfully!', 'completed');
 
-        // Log row counts
         if (result.rowCounts) {
           Object.entries(result.rowCounts).forEach(([table, count]) => {
             addLog('info', `  • ${table}: ${count} rows`, 'completed');
@@ -1537,7 +1535,6 @@ export default function Tools() {
 
         addLog('info', `Downloading ${result.filename}...`, 'completed');
 
-        // Create download link
         const blob = new Blob([result.data], {
           type: result.contentType || (exportFormat === 'json' ? 'application/json' : 'text/csv'),
         });
