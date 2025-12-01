@@ -979,7 +979,7 @@ export default function UserDetails() {
                   </h3>
                   <hr className="border-white/10 -mx-10 border-dashed my-4" />
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 bg-black/30 border border-white/5 rounded-none">
+                    <div className="flex items-center justify-between p-3 bg-black/30 border border-white/10 rounded-none">
                       <div className="flex items-center space-x-3">
                         <Mail className="w-4 h-4 text-gray-400" />
                         <div>
@@ -989,13 +989,13 @@ export default function UserDetails() {
                         </div>
                       </div>
                       <div
-                        className={`px-2 rounded-none py-1 text-xs font-mono ${user.emailVerified ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+                        className={`px-2 rounded-none border border-dashed border-white/20 uppercase py-1 text-xs font-mono ${user.emailVerified ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
                       >
                         {user.emailVerified ? 'Verified' : 'Unverified'}
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-black/30 border border-white/5 rounded-none">
+                    <div className="flex items-center justify-between p-3 bg-black/30 border border-white/10 rounded-none">
                       <div className="flex items-center space-x-3">
                         <Database className="w-4 h-4 text-gray-400" />
                         <div>
@@ -1005,7 +1005,7 @@ export default function UserDetails() {
                         </div>
                       </div>
                       <div
-                        className={`px-2 rounded-none py-1 text-xs font-mono ${user.twoFactorEnabled ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+                        className={`px-2 rounded-none border border-dashed border-white/20 uppercase py-1 text-xs font-mono ${user.twoFactorEnabled ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
                       >
                         {user.twoFactorEnabled ? 'Enabled' : 'Disabled'}
                       </div>
@@ -1120,14 +1120,11 @@ export default function UserDetails() {
                             <div className="flex-1">
                               <h3 className="text-white font-light inline-flex items-start">
                                 {membership.team.name}
-                                <sup className="text-xs text-gray-500 ml-2 mt-0.5">
-                                  <span className="mr-1">[</span>
-                                  <span className="text-white/80 font-mono text-xs">
-                                    {membership.team.organizationSlug ||
-                                      membership.team.organizationName}
-                                  </span>
-                                  <span className="ml-1">]</span>
-                                </sup>
+                                <CopyableId
+                                  id={membership.team.id}
+                                  variant="subscript"
+                                  nonSliced={membership.team.organizationSlug || membership.team.organizationName ? true : false}
+                                />
                               </h3>
                               <p className="text-gray-400 text-sm font-sans mt-1">
                                 in{' '}
