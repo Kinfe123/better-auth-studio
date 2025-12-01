@@ -456,6 +456,17 @@ export default function Tools() {
   } | null>(null);
   const [isFetchingCredentials, setIsFetchingCredentials] = useState(false);
   const [showOAuthSecret, setShowOAuthSecret] = useState(false);
+  const [showSecretGeneratorModal, setShowSecretGeneratorModal] = useState(false);
+  const [secretResult, setSecretResult] = useState<{
+    secret: string;
+    format: string;
+    length: number;
+    entropy: number;
+    envFormat: string;
+  } | null>(null);
+  const [isGeneratingSecret, setIsGeneratingSecret] = useState(false);
+  const [secretLength, setSecretLength] = useState(32);
+  const [secretFormat, setSecretFormat] = useState<'hex' | 'base64'>('hex');
   useEffect(() => {
     if (showConfigValidator) {
       document.body.style.overflow = 'hidden';
@@ -488,6 +499,17 @@ export default function Tools() {
       document.body.style.overflow = '';
     };
   }, [showOAuthCredentialsModal]);
+
+  useEffect(() => {
+    if (showSecretGeneratorModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showSecretGeneratorModal]);
 
   useEffect(() => {
     if (showUuidModal) {
@@ -1207,6 +1229,48 @@ export default function Tools() {
     }
   };
 
+  const handleOpenSecretGenerator = () => {
+    setShowSecretGeneratorModal(true);
+    setSecretResult(null);
+    setSecretLength(32);
+    setSecretFormat('hex');
+  };
+
+  const handleGenerateSecret = async () => {
+    setIsGeneratingSecret(true);
+    setSecretResult(null);
+
+    try {
+      const response = await fetch('/api/tools/generate-secret', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          length: secretLength,
+          format: secretFormat,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate secret');
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        setSecretResult(data);
+        toast.success('Secret generated successfully');
+      } else {
+        throw new Error(data.message || 'Failed to generate secret');
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to generate secret');
+      console.error(error);
+    } finally {
+      setIsGeneratingSecret(false);
+    }
+  };
+
   const handleOpenOAuthCredentials = async () => {
     setShowOAuthCredentialsModal(true);
     setSelectedProvider('google');
@@ -1629,6 +1693,7 @@ export default function Tools() {
     'uuid-generator',
     'password-strength',
     'oauth-credentials',
+    'secret-generator',
   ]);
 
   const tools: Tool[] = [
@@ -1727,6 +1792,14 @@ export default function Tools() {
       icon: Globe,
       action: handleOpenOAuthCredentials,
       category: 'oauth',
+    },
+    {
+      id: 'secret-generator',
+      name: 'Secret Generator',
+      description: 'Generate secure AUTH_SECRET for Better Auth',
+      icon: Key,
+      action: handleOpenSecretGenerator,
+      category: 'utilities',
     },
   ];
 
@@ -3568,6 +3641,185 @@ export default function Tools() {
                             <Copy className="w-4 h-4" />
                           </Button>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      {showSecretGeneratorModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] overflow-hidden">
+          <div className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-2">
+                <Key className="w-5 h-5 text-white" />
+                <h3 className="text-xl text-white font-light uppercase tracking-wider">
+                  Secret Generator
+                </h3>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSecretGeneratorModal(false)}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                    Length (bytes)
+                  </Label>
+                  <Input
+                    type="number"
+                    value={secretLength}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      if (val >= 16 && val <= 128) {
+                        setSecretLength(val);
+                      }
+                    }}
+                    min="16"
+                    max="128"
+                    className="bg-black border border-dashed border-white/20 text-white font-mono text-xs rounded-none"
+                  />
+                  <p className="text-[11px] text-gray-500 font-mono mt-1">
+                    Recommended: 32 bytes (256 bits)
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                    Format
+                  </Label>
+                  <div className="flex gap-3">
+                    {[
+                      { id: 'hex', label: 'Hex' },
+                      { id: 'base64', label: 'Base64' },
+                    ].map((option) => (
+                      <button
+                        key={option.id}
+                        onClick={() => setSecretFormat(option.id as 'hex' | 'base64')}
+                        className={`px-4 py-2 border rounded-none text-sm uppercase font-mono transition-colors flex-1 ${
+                          secretFormat === option.id
+                            ? 'border-white/60 bg-white/10 text-white'
+                            : 'border-dashed border-white/20 text-gray-400 hover:border-white/40'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSecretResult(null);
+                    setSecretLength(32);
+                    setSecretFormat('hex');
+                  }}
+                  className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                >
+                  Clear
+                </Button>
+                <Button
+                  onClick={handleGenerateSecret}
+                  disabled={isGeneratingSecret}
+                  className="rounded-none"
+                >
+                  {isGeneratingSecret ? (
+                    <>
+                      <Loader className="w-4 h-4 mr-2 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    'Generate Secret'
+                  )}
+                </Button>
+              </div>
+
+              {secretResult && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+                    <div className="border border-dashed border-white/10 p-3 space-y-2">
+                      <div className="text-gray-400 uppercase tracking-wider">Length</div>
+                      <p className="text-white text-sm">{secretResult.length} bytes</p>
+                    </div>
+                    <div className="border border-dashed border-white/10 p-3 space-y-2">
+                      <div className="text-gray-400 uppercase tracking-wider">Entropy</div>
+                      <p className="text-white text-sm">{secretResult.entropy} bits</p>
+                    </div>
+                    <div className="border border-dashed border-white/10 p-3 space-y-2">
+                      <div className="text-gray-400 uppercase tracking-wider">Format</div>
+                      <p className="text-white text-sm uppercase">{secretResult.format}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                      Generated Secret
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        value={secretResult.secret}
+                        readOnly
+                        className="bg-black border border-dashed border-white/20 text-white font-mono text-xs pr-10 rounded-none"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(secretResult.secret)}
+                        className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white rounded-none"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                      Environment Variable Format
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        value={secretResult.envFormat}
+                        readOnly
+                        className="bg-black border border-dashed border-white/20 text-white font-mono text-xs pr-10 rounded-none"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(secretResult.envFormat)}
+                        className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white rounded-none"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <p className="text-[11px] text-gray-500 font-mono mt-2">
+                      Add this to your <code className="text-gray-400">.env</code> file. Keep it
+                      secret and never commit it to version control.
+                    </p>
+                  </div>
+
+                  <div className="border border-dashed border-white/20 bg-black text-gray-300 text-xs font-mono p-3 rounded-none">
+                    <div className="flex items-start space-x-2">
+                      <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" />
+                      <div>
+                        <div className="uppercase font-mono mb-2 text-gray-400 tracking-wider">Security Best Practices</div>
+                        <ul className="list-disc list-inside space-y-1 text-[11px] text-gray-300">
+                          <li>Use a minimum of 32 bytes (256 bits) for production</li>
+                          <li>Store secrets in environment variables, never in code</li>
+                          <li>Use different secrets for development and production</li>
+                          <li>Rotate secrets periodically for enhanced security</li>
+                        </ul>
                       </div>
                     </div>
                   </div>

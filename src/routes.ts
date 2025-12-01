@@ -5210,5 +5210,35 @@ export function createRoutes(
     }
   });
 
+  router.post('/api/tools/generate-secret', async (_req: Request, res: Response) => {
+    try {
+      const { length = 32, format = 'hex' } = _req.body || {};
+      
+      const secretLength = typeof length === 'number' && length >= 16 && length <= 128 ? length : 32;
+      const secretFormat = format === 'base64' ? 'base64' : 'hex';
+      
+      const secretBytes = randomBytes(secretLength);
+      const secret = secretFormat === 'hex' 
+        ? secretBytes.toString('hex')
+        : secretBytes.toString('base64');
+      
+      const entropy = secretLength * 8; // bits of entropy
+      
+      res.json({
+        success: true,
+        secret,
+        format: secretFormat,
+        length: secretLength,
+        entropy,
+        envFormat: `AUTH_SECRET=${secret}`,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to generate secret',
+      });
+    }
+  });
+
   return router;
 }
