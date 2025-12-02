@@ -501,6 +501,16 @@ export default function Tools() {
     };
   }, [ showOAuthCredentialsModal]);
   useEffect(() => {
+    if (showEnvConfirmModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showEnvConfirmModal]);
+  useEffect(() => {
     if (showPasswordStrengthModal) {
       document.body.style.overflow = 'hidden';
     } else {
