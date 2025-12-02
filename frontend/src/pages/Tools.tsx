@@ -3772,9 +3772,9 @@ export default function Tools() {
                         <div className="text-xs font-mono">
                           {envWriteResult.success ? (
                             <span className="text-green-400 uppercase">
-                              ✓ {envWriteResult.message.toLowerCase()} →{' '}
-                              <span className="normal-case text-gray-400">
-                                {envWriteResult.path}
+                              ✓ {envWriteResult.message.toLowerCase()}
+                              <span className="block normal-case text-gray-400">
+                               <span className="text-gray-400 mr-1">{'>'}</span>  {envWriteResult.path}
                               </span>
                             </span>
                           ) : (
