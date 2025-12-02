@@ -5305,24 +5305,20 @@ export function createRoutes(
       const envPath = join(process.cwd(), '.env');
       const envLocalPath = join(process.cwd(), '.env.local');
       
-      // Try .env.local first, then .env
       let targetPath = existsSync(envLocalPath) ? envLocalPath : envPath;
       let envContent = existsSync(targetPath) ? readFileSync(targetPath, 'utf-8') : '';
 
-      // Parse existing .env file
       const envLines = envContent.split('\n');
       const envMap = new Map<string, { line: string; index: number }>();
       const newLines: string[] = [];
 
       envLines.forEach((line, index) => {
         const trimmed = line.trim();
-        // Skip empty lines and comments
         if (!trimmed || trimmed.startsWith('#')) {
           newLines.push(line);
           return;
         }
 
-        // Parse KEY=VALUE format
         const match = trimmed.match(/^([^=#]+)=(.*)$/);
         if (match) {
           const key = match[1].trim();
@@ -5334,12 +5330,10 @@ export function createRoutes(
         }
       });
 
-      // Generate environment variable names
       const providerUpper = provider.toUpperCase();
       let clientIdKey = `${providerUpper}_CLIENT_ID`;
       let clientSecretKey = `${providerUpper}_CLIENT_SECRET`;
 
-      // Handle append action - find next available suffix
       if (action === 'append') {
         let suffix = 2;
         while (envMap.has(clientIdKey) || envMap.has(clientSecretKey)) {
@@ -5349,7 +5343,6 @@ export function createRoutes(
         }
       }
 
-      // Update or add credentials
       let updated = false;
       
       if (action === 'override' && envMap.has(clientIdKey)) {
@@ -5361,9 +5354,7 @@ export function createRoutes(
         while (newLines.length > 0 && !newLines[newLines.length - 1].trim()) {
           newLines.pop();
         }
-        // Add newline if file has content
         if (newLines.length > 0 && newLines[newLines.length - 1] && !newLines[newLines.length - 1].endsWith('\n')) {
-          // Ensure there's a newline before adding
           if (!newLines[newLines.length - 1].endsWith('\r\n') && !newLines[newLines.length - 1].endsWith('\n')) {
             newLines.push('');
           }
@@ -5377,18 +5368,15 @@ export function createRoutes(
         newLines[existing.index] = `${clientSecretKey}=${clientSecret}`;
         updated = true;
       } else if (!envMap.has(clientSecretKey)) {
-        // Find the index where we added clientId and add secret right after
         const clientIdIndex = newLines.findIndex((line) => line.startsWith(`${clientIdKey}=`));
         if (clientIdIndex >= 0) {
           newLines.splice(clientIdIndex + 1, 0, `${clientSecretKey}=${clientSecret}`);
         } else {
-          // If clientId wasn't found (shouldn't happen), add at end
           newLines.push(`${clientSecretKey}=${clientSecret}`);
         }
         updated = true;
       }
 
-      // Write back to file
       const newContent = newLines.join('\n');
       writeFileSync(targetPath, newContent, 'utf-8');
 
