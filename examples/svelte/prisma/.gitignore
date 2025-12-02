@@ -2,6 +2,7 @@
 node_modules
 /build
 /.svelte-kit
+.svelte-kit/
 /package
 .env
 .env.*
@@ -9,4 +10,5 @@ node_modules
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 drizzle/
+
 

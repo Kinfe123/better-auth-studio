@@ -14,8 +14,8 @@
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "studio": "pnpm db:generate && node ../../../dist/cli.js start",
-    "studio:dev": "pnpm db:generate && node ../../../dist/cli.js start --port 3002 --config ./src/lib/auth.ts"
+    "studio": "pnpm db:generate && pnpx better-auth-studio start",
+    "studio:dev": "pnpm db:generate && npx better-auth-studio start --port 3002 --watch --config ./src/lib/auth.ts"
   },
   "devDependencies": {
     "@prisma/client": "^5.0.0",
