@@ -4,14 +4,18 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../lib/db";
 import * as schema from "../auth-schema";
 
+const baseURL = process.env.BETTER_AUTH_URL || "http://localhost:3000";
+
 export const auth = betterAuth({
   secret: process.env.AUTH_SECRET || "better-auth-secret-123456789",
   database: drizzleAdapter(db, { provider: "pg", schema: schema }),
+  baseURL,
+  basePath: "/api/auth",
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      redirectURI: "http://localhost:3000/api/auth/callback/github"
+      redirectURI: `${baseURL}/api/auth/callback/github`
     }
   },
   emailAndPassword: {

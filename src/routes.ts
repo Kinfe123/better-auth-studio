@@ -43,7 +43,7 @@ function getStudioVersion(): string {
       const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
       return packageJson.version || '1.0.0';
     }
-  } catch (_error) {}
+  } catch (_error) { }
   return '1.0.0';
 }
 
@@ -327,7 +327,7 @@ export function createRoutes(
               '1.0.0';
             currentVersion = versionString.replace(/[\^~>=<]/g, '');
           }
-        } catch {}
+        } catch { }
       }
 
       let latestVersion = currentVersion;
@@ -406,7 +406,7 @@ export function createRoutes(
         adapterConfig = (adapterResult as any).options.adapterConfig;
         adapterProvider = (adapterResult as any).options.provider;
       }
-    } catch (_error) {}
+    } catch (_error) { }
 
     try {
       const detectedDb = await detectDatabaseWithDialect();
@@ -416,7 +416,7 @@ export function createRoutes(
         databaseAdapter = detectedDb.adapter || detectedDb.name;
         databaseVersion = detectedDb.version;
       }
-    } catch (_error) {}
+    } catch (_error) { }
 
     if (databaseType === 'unknown') {
       const configPath = await findAuthConfigPath();
@@ -479,12 +479,12 @@ export function createRoutes(
 
       socialProviders: authConfig.socialProviders
         ? authConfig.socialProviders.map((provider: any) => ({
-            type: provider.id,
-            clientId: provider.clientId,
-            clientSecret: provider.clientSecret,
-            redirectUri: provider.redirectUri,
-            ...provider,
-          }))
+          type: provider.id,
+          clientId: provider.clientId,
+          clientSecret: provider.clientSecret,
+          redirectUri: provider.redirectUri,
+          ...provider,
+        }))
         : authConfig.providers || [],
 
       user: {
@@ -650,14 +650,14 @@ export function createRoutes(
             const users = await adapter.findMany({ model: 'user', limit: 100000 });
             userCount = users?.length || 0;
           }
-        } catch (_error) {}
+        } catch (_error) { }
 
         try {
           if (typeof adapter.findMany === 'function') {
             const sessions = await adapter.findMany({ model: 'session', limit: 100000 });
             sessionCount = sessions?.length || 0;
           }
-        } catch (_error) {}
+        } catch (_error) { }
 
         if (organizationPluginEnabled) {
           try {
@@ -831,18 +831,18 @@ export function createRoutes(
           id: membership.id,
           organization: organization
             ? {
-                id: organization.id,
-                name: organization.name || 'Unknown Organization',
-                slug: organization.slug || 'unknown',
-                image: organization.image,
-                createdAt: organization.createdAt,
-              }
+              id: organization.id,
+              name: organization.name || 'Unknown Organization',
+              slug: organization.slug || 'unknown',
+              image: organization.image,
+              createdAt: organization.createdAt,
+            }
             : {
-                id: membership.organizationId,
-                name: 'Unknown Organization',
-                slug: 'unknown',
-                createdAt: membership.createdAt,
-              },
+              id: membership.organizationId,
+              name: 'Unknown Organization',
+              slug: 'unknown',
+              createdAt: membership.createdAt,
+            },
           role: membership.role || 'member',
           joinedAt: membership.createdAt,
         };
@@ -880,21 +880,21 @@ export function createRoutes(
           id: membership.id,
           team: team
             ? {
-                id: team.id,
-                name: team.name || 'Unknown Team',
-                organizationId: team.organizationId,
-                organizationName: organization
-                  ? organization.name || 'Unknown Organization'
-                  : 'Unknown Organization',
-                organizationSlug: organization ? organization.slug || 'unknown' : 'unknown',
-              }
+              id: team.id,
+              name: team.name || 'Unknown Team',
+              organizationId: team.organizationId,
+              organizationName: organization
+                ? organization.name || 'Unknown Organization'
+                : 'Unknown Organization',
+              organizationSlug: organization ? organization.slug || 'unknown' : 'unknown',
+            }
             : {
-                id: membership.teamId,
-                name: 'Unknown Team',
-                organizationId: 'unknown',
-                organizationName: 'Unknown Organization',
-                organizationSlug: 'unknown',
-              },
+              id: membership.teamId,
+              name: 'Unknown Team',
+              organizationId: 'unknown',
+              organizationName: 'Unknown Organization',
+              organizationSlug: 'unknown',
+            },
           role: membership.role || 'member',
           joinedAt: membership.createdAt,
         };
@@ -1096,7 +1096,7 @@ export function createRoutes(
           limit: 1,
         });
         organization = orgs && orgs.length > 0 ? orgs[0] : null;
-      } catch (_error) {}
+      } catch (_error) { }
 
       const transformedTeam = {
         id: team.id,
@@ -1108,9 +1108,9 @@ export function createRoutes(
         memberCount: team.memberCount || 0,
         organization: organization
           ? {
-              id: organization.id,
-              name: organization.name,
-            }
+            id: organization.id,
+            name: organization.name,
+          }
           : null,
       };
 
@@ -1205,7 +1205,7 @@ export function createRoutes(
           res.json({ users: transformedUsers });
           return;
         }
-      } catch (_adapterError) {}
+      } catch (_adapterError) { }
 
       const result = await getAuthData(authConfig, 'users', { page, limit, search }, configPath);
 
@@ -1421,17 +1421,38 @@ export function createRoutes(
       const basePath =
         basePathRaw === '/' ? '' : basePathRaw.startsWith('/') ? basePathRaw : `/${basePathRaw}`;
       const endpointChecks = [
-        { label: 'Sign In', method: 'OPTIONS', path: '/sign-in/email' },
-        { label: 'Sign Up', method: 'OPTIONS', path: '/sign-up/email' },
+        { 
+          label: 'Sign In', 
+          method: 'POST', 
+          path: '/sign-in/email',
+          body: JSON.stringify({
+            email: `test-${Date.now()}@example.com`,
+            password: 'test-password-123',
+          }),
+        },
+        { 
+          label: 'Get Session', 
+          method: 'GET', 
+          path: '/get-session',
+        },
       ] as const;
 
       const checks = await Promise.all(
         endpointChecks.map(async (check) => {
           const targetUrl = `${baseUrl}${basePath}${check.path}`;
           try {
-            const response = await fetch(targetUrl, {
+            const fetchOptions: RequestInit = {
               method: check.method,
-            });
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            };
+
+            if (check.method === 'POST' && check.body) {
+              fetchOptions.body = check.body;
+            }
+
+            const response = await fetch(targetUrl, fetchOptions);
             const ok = response.status < 500 && response.status !== 404 && response.status !== 302;
             if (!ok) {
               return {
@@ -3030,7 +3051,7 @@ export function createRoutes(
           }));
           res.json({ success: true, invitations: transformedInvitations });
           return;
-        } catch (_error) {}
+        } catch (_error) { }
       }
 
       res.json({ success: true, invitations: [] });
@@ -3069,12 +3090,12 @@ export function createRoutes(
                     joinedAt: member.joinedAt || member.createdAt,
                     user: user
                       ? {
-                          id: user.id,
-                          name: user.name,
-                          email: user.email,
-                          image: user.image,
-                          emailVerified: user.emailVerified,
-                        }
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
+                        emailVerified: user.emailVerified,
+                      }
                       : null,
                   };
                 }
@@ -3089,7 +3110,7 @@ export function createRoutes(
 
           res.json({ success: true, members: validMembers });
           return;
-        } catch (_error) {}
+        } catch (_error) { }
       }
 
       res.json({ success: true, members: [] });
@@ -3432,7 +3453,7 @@ export function createRoutes(
 
           res.json({ success: true, teams: transformedTeams });
           return;
-        } catch (_error) {}
+        } catch (_error) { }
       }
 
       res.json({ success: true, teams: [] });
@@ -3513,12 +3534,12 @@ export function createRoutes(
                     joinedAt: member.joinedAt || member.createdAt,
                     user: user
                       ? {
-                          id: user.id,
-                          name: user.name,
-                          email: user.email,
-                          image: user.image,
-                          emailVerified: user.emailVerified,
-                        }
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
+                        emailVerified: user.emailVerified,
+                      }
                       : null,
                   };
                 }
@@ -3533,7 +3554,7 @@ export function createRoutes(
 
           res.json({ success: true, members: validMembers });
           return;
-        } catch (_error) {}
+        } catch (_error) { }
       }
 
       res.json({ success: true, members: [] });
@@ -4605,7 +4626,7 @@ export function createRoutes(
           .sort((a, b) => b.created - a.created)[0];
 
         recentAccount = accountCandidate?.account ?? null;
-      } catch (_accountError) {}
+      } catch (_accountError) { }
 
       try {
         const sessions = await adapter.findMany({
@@ -4618,16 +4639,16 @@ export function createRoutes(
             session: sessionItem,
             created: parseDate(
               sessionItem.createdAt ||
-                sessionItem.created_at ||
-                sessionItem.updatedAt ||
-                sessionItem.updated_at
+              sessionItem.created_at ||
+              sessionItem.updatedAt ||
+              sessionItem.updated_at
             ),
           }))
           .filter((entry) => entry.created >= threshold)
           .sort((a, b) => b.created - a.created)[0];
 
         recentSession = sessionCandidate?.session ?? null;
-      } catch (_sessionError) {}
+      } catch (_sessionError) { }
 
       if (recentAccount || recentSession) {
         let userInfo: any = null;
@@ -4650,7 +4671,7 @@ export function createRoutes(
               };
             }
           }
-        } catch (_userError) {}
+        } catch (_userError) { }
         const result = {
           testSessionId: testSessionId as string,
           provider,
@@ -4658,15 +4679,15 @@ export function createRoutes(
           userInfo,
           account: recentAccount
             ? {
-                id: recentAccount.id,
-                userId: recentAccount.userId,
-              }
+              id: recentAccount.id,
+              userId: recentAccount.userId,
+            }
             : null,
           session: recentSession
             ? {
-                id: recentSession.id,
-                userId: recentSession.userId,
-              }
+              id: recentSession.id,
+              userId: recentSession.userId,
+            }
             : null,
           timestamp: new Date().toISOString(),
         };

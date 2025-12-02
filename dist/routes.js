@@ -1284,15 +1284,34 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             const basePathRaw = authConfig.basePath || '/api/auth';
             const basePath = basePathRaw === '/' ? '' : basePathRaw.startsWith('/') ? basePathRaw : `/${basePathRaw}`;
             const endpointChecks = [
-                { label: 'Sign In', method: 'OPTIONS', path: '/sign-in/email' },
-                { label: 'Sign Up', method: 'OPTIONS', path: '/sign-up/email' },
+                {
+                    label: 'Sign In',
+                    method: 'POST',
+                    path: '/sign-in/email',
+                    body: JSON.stringify({
+                        email: `test-${Date.now()}@example.com`,
+                        password: 'test-password-123',
+                    }),
+                },
+                {
+                    label: 'Get Session',
+                    method: 'GET',
+                    path: '/get-session',
+                },
             ];
             const checks = await Promise.all(endpointChecks.map(async (check) => {
                 const targetUrl = `${baseUrl}${basePath}${check.path}`;
                 try {
-                    const response = await fetch(targetUrl, {
+                    const fetchOptions = {
                         method: check.method,
-                    });
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    };
+                    if (check.method === 'POST' && check.body) {
+                        fetchOptions.body = check.body;
+                    }
+                    const response = await fetch(targetUrl, fetchOptions);
                     const ok = response.status < 500 && response.status !== 404 && response.status !== 302;
                     if (!ok) {
                         return {
