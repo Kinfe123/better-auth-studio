@@ -16,7 +16,6 @@ async function findAuthConfigPath(): Promise<string | null> {
   let currentDir = process.cwd();
   const maxDepth = 10;
   let depth = 0;
-
   while (currentDir && depth < maxDepth) {
     for (const configFile of possibleConfigFiles) {
       const configPath = join(currentDir, configFile);

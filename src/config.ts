@@ -236,7 +236,7 @@ export async function getConfig({
           );
         }
         logger.error(
-          `[#better-auth]: Couldn't read your auth config in ${resolvedPath}. Make sure to default export your auth instance or to export as a variable named auth.`
+          `Couldn't read your auth config in ${resolvedPath}. Make sure to default export your auth instance or to export as a variable named auth.`
         );
         process.exit(1);
       }
@@ -266,9 +266,9 @@ export async function getConfig({
                   "Couldn't read your auth config. Make sure to default export your auth instance or to export as a variable named auth."
                 );
               }
-              logger.error("[#better-auth]: Couldn't read your auth config.");
+              logger.error("Couldn't read your auth config.");
               logger.info(
-                '[#better-auth]: Make sure to default export your auth instance or to export as a variable named auth.'
+                'Make sure to default export your auth instance or to export as a variable named auth.'
               );
               process.exit(1);
             }
@@ -295,7 +295,7 @@ export async function getConfig({
           if (shouldThrowOnError) {
             throw e;
           }
-          logger.error("[#better-auth]: Couldn't read your auth config.", e);
+          logger.error("Couldn't read your auth config.", e);
           process.exit(1);
         }
       }
