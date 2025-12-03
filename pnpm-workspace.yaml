@@ -2,4 +2,3 @@ packages:
   - 'frontend/**'
   - 'docs/**'
   - 'src/**'
-  - 'examples/**'
