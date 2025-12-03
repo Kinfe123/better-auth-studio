@@ -55,7 +55,6 @@ export async function getAuthData(
 ): Promise<any> {
   try {
     const adapter = await getAuthAdapter(configPath);
-    console.log({ adapter: (adapter as any)?.options?.adapterConfig })
     setTimeout(() => {
       if (adapter === null) {
         console.log(
