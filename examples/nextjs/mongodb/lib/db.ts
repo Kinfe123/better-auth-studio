@@ -10,7 +10,7 @@ if (!MONGODB_URI) {
 const mongodb = new MongoClient(MONGODB_URI).db(DB_NAME);
 
 const client = mongodb.client;
-
+// @ts-ignore
 if (!client.topology?.isConnected()) {
   client.connect().catch((error) => {
     console.error('MongoDB connection error:', error);
