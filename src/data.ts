@@ -57,8 +57,9 @@ export async function getAuthData(
     const adapter = await getAuthAdapter(configPath);
     setTimeout(() => {
       if (adapter === null) {
+        const githubUrl = 'https://github.com/Kinfe123/better-auth-studio/issues';
         console.log(
-          'No adapter found. if you think this is an issue from our side. please file a github issue at https://github.com/Kinfe123/better-auth/issues'
+          `No adapter found. if you think this is an issue from our side. please file a github issue at \x1b]8;;${githubUrl}\x1b\\${githubUrl}\x1b]8;;\x1b\\`
         );
       }
     }, 2000);
