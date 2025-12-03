@@ -1,4 +1,4 @@
-import { Edit } from 'lucide-react';
+import { ArrowUpRight, Edit } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -1242,7 +1242,7 @@ export default function OrganizationDetails() {
                     {members.map((member) => (
                       <tr
                         key={member.id}
-                        className="border-b border-dashed border-white/5 hover:bg-white/5"
+                        className="border-b border-dashed border-white/5 hover:bg-white/5 group"
                       >
                         <td className="py-4 px-4">
                           <div className="flex items-center space-x-3">
@@ -1255,7 +1255,19 @@ export default function OrganizationDetails() {
                               className="w-10 h-10 rounded-none border border-dashed border-white/20"
                             />
                             <div>
-                              <div className="text-white font-light">{member.user.name}</div>
+                              <div className="text-white font-light inline-flex items-center gap-2">
+                                <span>{member.user.name}</span>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(`/users/${member.user.id}`);
+                                  }}
+                                  className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
+                                  title="View user details"
+                                >
+                                  <ArrowUpRight className="w-4 h-4" />
+                                </button>
+                              </div>
                               <CopyableId id={member.user.id} />
                             </div>
                           </div>
