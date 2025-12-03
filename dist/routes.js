@@ -3323,6 +3323,212 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             res.status(500).json({ error: 'Failed to delete organization' });
         }
     });
+    // Dynamic Roles API Endpoints
+    router.get('/api/organizations/:orgId/roles', async (req, res) => {
+        try {
+            const { orgId } = req.params;
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter) {
+                return res.status(500).json({ error: 'Auth adapter not available' });
+            }
+            // Check if role table exists, if not return default roles
+            try {
+                const roles = await adapter.findMany({
+                    model: 'role',
+                    where: [{ field: 'organizationId', value: orgId }],
+                    limit: 1000,
+                });
+                res.json({ roles: roles || [] });
+            }
+            catch (_error) {
+                // If role table doesn't exist, return default roles
+                res.json({
+                    roles: [
+                        { id: 'owner', name: 'Owner', organizationId: orgId, isDefault: true },
+                        { id: 'admin', name: 'Admin', organizationId: orgId, isDefault: true },
+                        { id: 'member', name: 'Member', organizationId: orgId, isDefault: true },
+                    ]
+                });
+            }
+        }
+        catch (_error) {
+            res.status(500).json({ error: 'Failed to fetch roles' });
+        }
+    });
+    router.post('/api/organizations/:orgId/roles', async (req, res) => {
+        try {
+            const { orgId } = req.params;
+            const { name, permissions } = req.body;
+            if (!name) {
+                return res.status(400).json({ error: 'Role name is required' });
+            }
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter) {
+                return res.status(500).json({ error: 'Auth adapter not available' });
+            }
+            if (!adapter.create) {
+                return res.status(500).json({ error: 'Adapter create method not available' });
+            }
+            const roleData = {
+                id: `role_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                name,
+                organizationId: orgId,
+                permissions: permissions || {},
+                createdAt: new Date(),
+                isDefault: false,
+            };
+            const role = await adapter.create({
+                model: 'role',
+                data: roleData,
+            });
+            res.json({ success: true, role });
+        }
+        catch (_error) {
+            res.status(500).json({ error: 'Failed to create role' });
+        }
+    });
+    router.put('/api/organizations/:orgId/roles/:roleId', async (req, res) => {
+        try {
+            const { orgId, roleId } = req.params;
+            const { name, permissions } = req.body;
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter) {
+                return res.status(500).json({ error: 'Auth adapter not available' });
+            }
+            if (!adapter.update) {
+                return res.status(500).json({ error: 'Adapter update method not available' });
+            }
+            const updateData = {};
+            if (name !== undefined)
+                updateData.name = name;
+            if (permissions !== undefined)
+                updateData.permissions = permissions;
+            updateData.updatedAt = new Date();
+            const updatedRole = await adapter.update({
+                model: 'role',
+                where: [
+                    { field: 'id', value: roleId },
+                    { field: 'organizationId', value: orgId },
+                ],
+                update: updateData,
+            });
+            res.json({ success: true, role: updatedRole });
+        }
+        catch (_error) {
+            res.status(500).json({ error: 'Failed to update role' });
+        }
+    });
+    router.delete('/api/organizations/:orgId/roles/:roleId', async (req, res) => {
+        try {
+            const { orgId, roleId } = req.params;
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter) {
+                return res.status(500).json({ error: 'Auth adapter not available' });
+            }
+            if (!adapter.delete) {
+                return res.status(500).json({ error: 'Adapter delete method not available' });
+            }
+            // Check if role is default (owner, admin, member)
+            const defaultRoles = ['owner', 'admin', 'member'];
+            if (defaultRoles.includes(roleId)) {
+                return res.status(400).json({ error: 'Cannot delete default roles' });
+            }
+            // Check if any members are using this role
+            const members = await adapter.findMany({
+                model: 'member',
+                where: [
+                    { field: 'organizationId', value: orgId },
+                    { field: 'role', value: roleId },
+                ],
+                limit: 1,
+            });
+            if (members && members.length > 0) {
+                return res.status(400).json({
+                    error: 'Cannot delete role that is assigned to members. Please reassign members first.'
+                });
+            }
+            await adapter.delete({
+                model: 'role',
+                where: [
+                    { field: 'id', value: roleId },
+                    { field: 'organizationId', value: orgId },
+                ],
+            });
+            res.json({ success: true });
+        }
+        catch (_error) {
+            res.status(500).json({ error: 'Failed to delete role' });
+        }
+    });
+    router.put('/api/organizations/:orgId/members/:memberId/role', async (req, res) => {
+        try {
+            const { orgId, memberId } = req.params;
+            const { role } = req.body;
+            if (!role) {
+                return res.status(400).json({ error: 'Role is required' });
+            }
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter) {
+                return res.status(500).json({ error: 'Auth adapter not available' });
+            }
+            if (!adapter.update) {
+                return res.status(500).json({ error: 'Adapter update method not available' });
+            }
+            const updatedMember = await adapter.update({
+                model: 'member',
+                where: [
+                    { field: 'id', value: memberId },
+                    { field: 'organizationId', value: orgId },
+                ],
+                update: { role },
+            });
+            res.json({ success: true, member: updatedMember });
+        }
+        catch (_error) {
+            res.status(500).json({ error: 'Failed to update member role' });
+        }
+    });
+    router.get('/api/plugins/organization/roles-config', async (_req, res) => {
+        try {
+            const authConfigPath = configPath || (await findAuthConfigPath());
+            if (!authConfigPath) {
+                return res.json({
+                    dynamicRolesEnabled: false,
+                    error: 'No auth config found',
+                });
+            }
+            try {
+                const { getConfig } = await import('./config.js');
+                const betterAuthConfig = await getConfig({
+                    cwd: process.cwd(),
+                    configPath: authConfigPath,
+                    shouldThrowOnError: false,
+                });
+                if (betterAuthConfig) {
+                    const plugins = betterAuthConfig?.plugins || [];
+                    const organizationPlugin = plugins.find((plugin) => plugin.id === 'organization');
+                    // Check if roles are configured (dynamic roles)
+                    const hasRoles = organizationPlugin?.roles && Array.isArray(organizationPlugin.roles);
+                    const dynamicRolesEnabled = hasRoles && organizationPlugin.roles.length > 0;
+                    return res.json({
+                        dynamicRolesEnabled,
+                        roles: organizationPlugin?.roles || [],
+                        organizationPlugin: organizationPlugin || null,
+                    });
+                }
+                res.json({
+                    dynamicRolesEnabled: false,
+                    error: 'Failed to load auth config',
+                });
+            }
+            catch (_error) {
+                res.status(500).json({ error: 'Failed to check roles config' });
+            }
+        }
+        catch (_error) {
+            res.status(500).json({ error: 'Failed to check roles config' });
+        }
+    });
     router.post('/api/users', async (req, res) => {
         try {
             const adapter = await getAuthAdapterWithConfig();

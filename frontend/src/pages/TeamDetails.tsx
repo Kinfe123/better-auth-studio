@@ -71,6 +71,8 @@ export default function TeamDetails() {
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [teamFormData, setTeamFormData] = useState({ name: '' });
+  const [roles, setRoles] = useState<Array<{ id: string; name: string; organizationId: string; isDefault?: boolean }>>([]);
+  const [_dynamicRolesEnabled, setDynamicRolesEnabled] = useState(false);
 
   const fetchTeam = useCallback(async () => {
     if (!teamId) return;
@@ -121,12 +123,45 @@ export default function TeamDetails() {
       toast.error('Failed to load users');
     }
   };
+  const fetchRoles = useCallback(async () => {
+    if (!orgId) return;
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/roles`);
+      const data = await response.json();
+      setRoles(data.roles || []);
+    } catch (_error) {
+      // Set default roles if fetch fails
+      setRoles([
+        { id: 'owner', name: 'Owner', organizationId: orgId || '', isDefault: true },
+        { id: 'admin', name: 'Admin', organizationId: orgId || '', isDefault: true },
+        { id: 'member', name: 'Member', organizationId: orgId || '', isDefault: true },
+      ]);
+    }
+  }, [orgId]);
+
+  const checkDynamicRolesEnabled = useCallback(async () => {
+    try {
+      const response = await fetch('/api/plugins/organization/roles-config');
+      const data = await response.json();
+      setDynamicRolesEnabled(data.dynamicRolesEnabled || false);
+    } catch (_error) {
+      setDynamicRolesEnabled(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (teamId) {
       fetchTeam();
       fetchTeamMembers();
     }
   }, [teamId, fetchTeam, fetchTeamMembers]);
+
+  useEffect(() => {
+    if (orgId) {
+      checkDynamicRolesEnabled();
+      fetchRoles();
+    }
+  }, [orgId, checkDynamicRolesEnabled, fetchRoles]);
 
   const handleUpdateTeam = async () => {
     if (!teamFormData.name) {
@@ -498,7 +533,7 @@ export default function TeamDetails() {
                             variant="secondary"
                             className="text-xs bg-blue-900/10 border border-dashed border-blue-500/30 text-blue-400/70 rounded-none capitalize"
                           >
-                            {member.role}
+                            {roles.find((r) => r.id === member.role)?.name || member.role}
                           </Badge>
                         </td>
                         <td className="py-4 px-4 text-sm text-gray-400">

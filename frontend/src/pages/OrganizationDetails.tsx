@@ -14,6 +14,7 @@ import {
   Loader,
   Mail,
   Send,
+  Shield,
   Trash2,
   UserPlus,
   Users,
@@ -86,11 +87,20 @@ export default function OrganizationDetails() {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'details' | 'members' | 'invitations' | 'teams'>(
+  const [activeTab, setActiveTab] = useState<'details' | 'members' | 'invitations' | 'teams' | 'roles'>(
     'details'
   );
   const [teamsEnabled, setTeamsEnabled] = useState(false);
   const [_, setOrganizationEnabled] = useState(false);
+  const [dynamicRolesEnabled, setDynamicRolesEnabled] = useState(false);
+  const [roles, setRoles] = useState<Array<{ id: string; name: string; organizationId: string; isDefault?: boolean; permissions?: any }>>([]);
+  const [showCreateRoleModal, setShowCreateRoleModal] = useState(false);
+  const [showEditRoleModal, setShowEditRoleModal] = useState(false);
+  const [showDeleteRoleModal, setShowDeleteRoleModal] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<{ id: string; name: string; permissions?: any } | null>(null);
+  const [roleFormData, setRoleFormData] = useState({ name: '' });
+  const [selectedInviteRole, setSelectedInviteRole] = useState('member');
+  const [editingMemberRole, setEditingMemberRole] = useState<{ memberId: string; currentRole: string } | null>(null);
 
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showSeedMembersModal, setShowSeedMembersModal] = useState(false);
@@ -141,9 +151,11 @@ export default function OrganizationDetails() {
       fetchOrganization();
       checkOrganizationEnabled();
       checkTeamsEnabled();
+      checkDynamicRolesEnabled();
       fetchInvitations();
       fetchMembers();
       fetchTeams();
+      fetchRoles();
     }
   }, [orgId]);
 
@@ -162,6 +174,12 @@ export default function OrganizationDetails() {
   useEffect(() => {
     if (activeTab === 'invitations' && orgId) {
       fetchInvitations();
+    }
+  }, [activeTab, orgId]);
+
+  useEffect(() => {
+    if (activeTab === 'roles' && orgId) {
+      fetchRoles();
     }
   }, [activeTab, orgId]);
 
@@ -209,6 +227,146 @@ export default function OrganizationDetails() {
     } catch (error) {
       console.error('Failed to check organization status:', error);
       setOrganizationEnabled(false);
+    }
+  };
+
+  const checkDynamicRolesEnabled = async () => {
+    try {
+      const response = await fetch('/api/plugins/organization/roles-config');
+      const data = await response.json();
+      console.log({data})
+      setDynamicRolesEnabled(data.organizationPlugin.options.dynamicAccessControl.enabled || false);
+    } catch (error) {
+      console.error('Failed to check dynamic roles status:', error);
+      setDynamicRolesEnabled(false);
+    }
+  };
+
+  const fetchRoles = async () => {
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/roles`);
+      const data = await response.json();
+      setRoles(data.roles || []);
+    } catch (error) {
+      console.error('Failed to fetch roles:', error);
+      // Set default roles if fetch fails
+      setRoles([
+        { id: 'owner', name: 'Owner', organizationId: orgId || '', isDefault: true },
+        { id: 'admin', name: 'Admin', organizationId: orgId || '', isDefault: true },
+        { id: 'member', name: 'Member', organizationId: orgId || '', isDefault: true },
+      ]);
+    }
+  };
+
+  const handleCreateRole = async () => {
+    if (!roleFormData.name.trim()) {
+      toast.error('Role name is required');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/roles`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: roleFormData.name,
+          permissions: {},
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchRoles();
+        setShowCreateRoleModal(false);
+        setRoleFormData({ name: '' });
+        toast.success('Role created successfully!');
+      } else {
+        toast.error(result.error || 'Failed to create role');
+      }
+    } catch (error) {
+      console.error('Error creating role:', error);
+      toast.error('Failed to create role');
+    }
+  };
+
+  const handleUpdateRole = async () => {
+    if (!selectedRole || !roleFormData.name.trim()) {
+      toast.error('Role name is required');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/roles/${selectedRole.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: roleFormData.name,
+          permissions: selectedRole.permissions || {},
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchRoles();
+        setShowEditRoleModal(false);
+        setSelectedRole(null);
+        setRoleFormData({ name: '' });
+        toast.success('Role updated successfully!');
+      } else {
+        toast.error(result.error || 'Failed to update role');
+      }
+    } catch (error) {
+      console.error('Error updating role:', error);
+      toast.error('Failed to update role');
+    }
+  };
+
+  const handleDeleteRole = async () => {
+    if (!selectedRole) return;
+
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/roles/${selectedRole.id}`, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchRoles();
+        setShowDeleteRoleModal(false);
+        setSelectedRole(null);
+        toast.success('Role deleted successfully!');
+      } else {
+        toast.error(result.error || 'Failed to delete role');
+      }
+    } catch (error) {
+      console.error('Error deleting role:', error);
+      toast.error('Failed to delete role');
+    }
+  };
+
+  const handleUpdateMemberRole = async (memberId: string, newRole: string) => {
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/members/${memberId}/role`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: newRole }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchMembers();
+        setEditingMemberRole(null);
+        toast.success('Member role updated successfully!');
+      } else {
+        toast.error(result.error || 'Failed to update member role');
+      }
+    } catch (error) {
+      console.error('Error updating member role:', error);
+      toast.error('Failed to update member role');
     }
   };
 
@@ -505,6 +663,9 @@ export default function OrganizationDetails() {
 
   const openInviteModal = () => {
     fetchAvailableUsers();
+    if (dynamicRolesEnabled) {
+      fetchRoles();
+    }
     setShowInviteModal(true);
   };
 
@@ -528,7 +689,7 @@ export default function OrganizationDetails() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: inviteEmail,
-          role: 'member',
+          role: selectedInviteRole,
           inviterId: selectedInviterId,
         }),
       });
@@ -916,6 +1077,30 @@ export default function OrganizationDetails() {
               </sup>
             </span>
           </button>
+          {dynamicRolesEnabled && (
+            <button
+              onClick={() => setActiveTab('roles')}
+              className={`flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${
+                activeTab === 'roles'
+                  ? 'border-white text-white'
+                  : 'border-transparent text-gray-400 hover:text-white hover:border-gray-300'
+              }`}
+            >
+              <Shield className="w-4 h-4" />
+              <span className="inline-flex items-start">
+                Roles
+                <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
+                  <AnimatedNumber
+                    value={roles.length}
+                    className="text-white/80 font-mono text-xs"
+                    prefix={<span className="mr-0.5 text-gray-500">[</span>}
+                    suffix={<span className="ml-0.5 text-gray-500">]</span>}
+                    format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                  />
+                </sup>
+              </span>
+            </button>
+          )}
         </nav>
       </div>
 
@@ -1254,12 +1439,47 @@ export default function OrganizationDetails() {
                         </td>
                         <td className="py-4 px-4 text-white">{member.user.email}</td>
                         <td className="py-4 px-4">
-                          <Badge
-                            variant="secondary"
-                            className="text-xs bg-blue-900/10 border border-dashed rounded-none border-blue-500/30 text-blue-400/70 capitalize"
-                          >
-                            {member.role}
-                          </Badge>
+                          {editingMemberRole?.memberId === member.id ? (
+                            <Select
+                              value={editingMemberRole.currentRole}
+                              onValueChange={(value) => {
+                                handleUpdateMemberRole(member.id, value);
+                              }}
+                            >
+                              <SelectTrigger className="w-32 border border-dashed border-white/20 bg-black/30 text-white rounded-none">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {roles.map((role) => (
+                                  <SelectItem key={role.id} value={role.id}>
+                                    {role.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <div className="flex items-center space-x-2">
+                              <Badge
+                                variant="secondary"
+                                className="text-xs bg-blue-900/10 border border-dashed rounded-none border-blue-500/30 text-blue-400/70 capitalize"
+                              >
+                                {roles.find((r) => r.id === member.role)?.name || member.role}
+                              </Badge>
+                              {dynamicRolesEnabled && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-gray-400 hover:text-white rounded-none p-1 h-6 w-6"
+                                  onClick={() => {
+                                    setEditingMemberRole({ memberId: member.id, currentRole: member.role });
+                                  }}
+                                  title="Change role"
+                                >
+                                  <Edit className="w-3 h-3" />
+                                </Button>
+                              )}
+                            </div>
+                          )}
                         </td>
                         <td className="py-4 px-4 text-sm text-gray-400">
                           {new Date(member.joinedAt).toLocaleDateString()}
@@ -1451,6 +1671,137 @@ export default function OrganizationDetails() {
         </div>
       )}
 
+      {activeTab === 'roles' && dynamicRolesEnabled && (
+        <div className="space-y-6">
+          {/* Roles Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                Roles
+                <sup className="text-xs text-gray-500 ml-1 mt-0">
+                  <span className="mr-1">[</span>
+                  <span className="text-white font-mono text-xs">{roles.length}</span>
+                  <span className="ml-1">]</span>
+                </sup>
+              </h3>
+              <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
+                Manage organization roles and permissions
+              </p>
+            </div>
+            <Button
+              onClick={() => {
+                setRoleFormData({ name: '' });
+                setShowCreateRoleModal(true);
+              }}
+              className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Create Role
+            </Button>
+          </div>
+
+          {/* Roles List */}
+          {roles.length > 0 ? (
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-dashed border-white/10">
+                      <th className="text-left py-4 px-4 text-white font-light">Name</th>
+                      <th className="text-left py-4 px-4 text-white font-light">Type</th>
+                      <th className="text-right py-4 px-4 text-white font-light">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {roles.map((role) => (
+                      <tr
+                        key={role.id}
+                        className="border-b border-dashed border-white/5 hover:bg-white/5"
+                      >
+                        <td className="py-4 px-4">
+                          <div className="text-white font-light">{role.name}</div>
+                          <CopyableId id={role.id} />
+                        </td>
+                        <td className="py-4 px-4">
+                          {role.isDefault ? (
+                            <Badge
+                              variant="secondary"
+                              className="text-xs bg-blue-900/10 border border-dashed rounded-none border-blue-500/30 text-blue-400/70"
+                            >
+                              Default
+                            </Badge>
+                          ) : (
+                            <Badge
+                              variant="secondary"
+                              className="text-xs bg-gray-900/10 border border-dashed rounded-none border-gray-500/30 text-gray-400/70"
+                            >
+                              Custom
+                            </Badge>
+                          )}
+                        </td>
+                        <td className="py-4 px-4 text-right">
+                          <div className="flex items-center justify-end space-x-2">
+                            {!role.isDefault && (
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                                  onClick={() => {
+                                    setSelectedRole(role);
+                                    setRoleFormData({ name: role.name });
+                                    setShowEditRoleModal(true);
+                                  }}
+                                >
+                                  <Edit className="w-4 h-4 mr-1" />
+                                  Edit
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                                  onClick={() => {
+                                    setSelectedRole(role);
+                                    setShowDeleteRoleModal(true);
+                                  }}
+                                >
+                                  <Trash2 className="w-4 h-4 mr-1" />
+                                  Delete
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
+              <div className="text-center">
+                <Shield className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl text-white font-light mb-2">No Roles Yet</h3>
+                <p className="text-gray-400 mb-6">
+                  Create custom roles to manage permissions in your organization.
+                </p>
+                <Button
+                  onClick={() => {
+                    setRoleFormData({ name: '' });
+                    setShowCreateRoleModal(true);
+                  }}
+                  className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Create First Role
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Invite User Modal */}
       {showInviteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -1513,6 +1864,28 @@ export default function OrganizationDetails() {
                   </SelectContent>
                 </Select>
               </div>
+              {dynamicRolesEnabled && (
+                <div>
+                  <Label htmlFor="role-select" className="text-sm text-gray-400 font-light">
+                    Role
+                  </Label>
+                  <Select value={selectedInviteRole} onValueChange={setSelectedInviteRole}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a role..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roles.map((role) => (
+                        <SelectItem key={role.id} value={role.id}>
+                          {role.name}
+                          {role.isDefault && (
+                            <span className="text-xs text-gray-500 ml-2">(default)</span>
+                          )}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
             <div className="flex justify-end space-x-3 mt-6">
               <Button
@@ -1521,6 +1894,7 @@ export default function OrganizationDetails() {
                   setShowInviteModal(false);
                   setInviteEmail('');
                   setSelectedInviterId('');
+                  setSelectedInviteRole('member');
                 }}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
@@ -1963,6 +2337,162 @@ export default function OrganizationDetails() {
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
               >
                 Update
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Role Modal */}
+      {showCreateRoleModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light">Create Role</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowCreateRoleModal(false);
+                  setRoleFormData({ name: '' });
+                }}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="role-name" className="text-sm text-gray-400 font-light">
+                  Role Name
+                </Label>
+                <Input
+                  id="role-name"
+                  value={roleFormData.name}
+                  onChange={(e) => setRoleFormData({ name: e.target.value })}
+                  placeholder="e.g. Developer, Manager"
+                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCreateRoleModal(false);
+                  setRoleFormData({ name: '' });
+                }}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCreateRole}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+              >
+                Create Role
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Role Modal */}
+      {showEditRoleModal && selectedRole && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light">Edit Role</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowEditRoleModal(false);
+                  setSelectedRole(null);
+                  setRoleFormData({ name: '' });
+                }}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="edit-role-name" className="text-sm text-gray-400 font-light">
+                  Role Name
+                </Label>
+                <Input
+                  id="edit-role-name"
+                  value={roleFormData.name}
+                  onChange={(e) => setRoleFormData({ name: e.target.value })}
+                  placeholder="e.g. Developer, Manager"
+                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowEditRoleModal(false);
+                  setSelectedRole(null);
+                  setRoleFormData({ name: '' });
+                }}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdateRole}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+              >
+                Update Role
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Role Modal */}
+      {showDeleteRoleModal && selectedRole && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light">Delete Role</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowDeleteRoleModal(false);
+                  setSelectedRole(null);
+                }}
+                className="text-gray-400 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <p className="text-gray-300">
+                Are you sure you want to delete the role <span className="text-white font-semibold">{selectedRole.name}</span>?
+                This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowDeleteRoleModal(false);
+                  setSelectedRole(null);
+                }}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDeleteRole}
+                className="bg-red-600 hover:bg-red-700 text-white border border-red-500/20 rounded-none"
+              >
+                Delete Role
               </Button>
             </div>
           </div>

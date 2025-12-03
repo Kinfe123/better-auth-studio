@@ -43,6 +43,9 @@ export const auth = betterAuth({
       teams: {
         enabled: true,
       },
+      dynamicAccessControl: {
+        enabled: true,
+      }
     }),
     admin()
   ],
