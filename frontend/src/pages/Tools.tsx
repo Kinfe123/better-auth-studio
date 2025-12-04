@@ -3472,7 +3472,7 @@ export default function Tools() {
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">
                   Password Strength Checker
                 </h3>
-    </div>
+              </div>
               <Button
                 variant="ghost"
                 size="sm"

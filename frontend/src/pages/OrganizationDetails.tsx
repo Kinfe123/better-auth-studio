@@ -837,641 +837,645 @@ export default function OrganizationDetails() {
       <div className="border border-dashed border-white/20 rounded-none">
         <div className="border-b border-dashed border-white/20">
           <nav className="flex space-x-8 px-6">
-          <button
-            onClick={() => setActiveTab('details')}
-            className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-              activeTab === 'details'
-                ? 'border-white text-white'
-                : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-            }`}
-          >
-            <Building2 className="w-4 h-4 text-white/90" />
-            <span className="inline-flex items-start">
-              Details
-              <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
-                <AnimatedNumber
-                  value={0}
-                  className="text-white/80 font-mono text-xs"
-                  prefix={<span className="mr-0.5 text-gray-500">[</span>}
-                  suffix={<span className="ml-0.5 text-gray-500">]</span>}
-                  format={{ notation: 'standard', maximumFractionDigits: 0 }}
-                />
-              </sup>
-            </span>
-          </button>
-          <button
-            onClick={() => setActiveTab('members')}
-            className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-              activeTab === 'members'
-                ? 'border-white text-white'
-                : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-            }`}
-          >
-            <Users className="w-4 h-4 text-white/90" />
-            <span className="inline-flex items-start">
-              Members
-              <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
-                <AnimatedNumber
-                  value={members.length}
-                  className="text-white/80 font-mono text-xs"
-                  prefix={<span className="mr-0.5 text-gray-500">[</span>}
-                  suffix={<span className="ml-0.5 text-gray-500">]</span>}
-                  format={{ notation: 'standard', maximumFractionDigits: 0 }}
-                />
-              </sup>
-            </span>
-          </button>
-          <button
-            onClick={() => setActiveTab('invitations')}
-            className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-              activeTab === 'invitations'
-                ? 'border-white text-white'
-                : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-            }`}
-          >
-            <Mail className="w-4 h-4 text-white/90" />
-            <span className="inline-flex items-start">
-              Invitations
-              <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
-                <AnimatedNumber
-                  value={invitations.length}
-                  className="text-white/80 font-mono text-xs"
-                  prefix={<span className="mr-0.5 text-gray-500">[</span>}
-                  suffix={<span className="ml-0.5 text-gray-500">]</span>}
-                  format={{ notation: 'standard', maximumFractionDigits: 0 }}
-                />
-              </sup>
-            </span>
-          </button>
-          <button
-            onClick={() => setActiveTab('teams')}
-            className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-              activeTab === 'teams'
-                ? 'border-white text-white'
-                : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-            }`}
-          >
-            <Users className="w-4 h-4 text-white/90" />
-            <span className="inline-flex items-start">
-              Teams
-              <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
-                <AnimatedNumber
-                  value={teams.length}
-                  className="text-white/80 font-mono text-xs"
-                  prefix={<span className="mr-0.5 text-gray-500">[</span>}
-                  suffix={<span className="ml-0.5 text-gray-500">]</span>}
-                  format={{ notation: 'standard', maximumFractionDigits: 0 }}
-                />
-              </sup>
-            </span>
-          </button>
-        </nav>
+            <button
+              onClick={() => setActiveTab('details')}
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+                activeTab === 'details'
+                  ? 'border-white text-white'
+                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+              }`}
+            >
+              <Building2 className="w-4 h-4 text-white/90" />
+              <span className="inline-flex items-start">
+                Details
+                <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
+                  <AnimatedNumber
+                    value={0}
+                    className="text-white/80 font-mono text-xs"
+                    prefix={<span className="mr-0.5 text-gray-500">[</span>}
+                    suffix={<span className="ml-0.5 text-gray-500">]</span>}
+                    format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                  />
+                </sup>
+              </span>
+            </button>
+            <button
+              onClick={() => setActiveTab('members')}
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+                activeTab === 'members'
+                  ? 'border-white text-white'
+                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+              }`}
+            >
+              <Users className="w-4 h-4 text-white/90" />
+              <span className="inline-flex items-start">
+                Members
+                <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
+                  <AnimatedNumber
+                    value={members.length}
+                    className="text-white/80 font-mono text-xs"
+                    prefix={<span className="mr-0.5 text-gray-500">[</span>}
+                    suffix={<span className="ml-0.5 text-gray-500">]</span>}
+                    format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                  />
+                </sup>
+              </span>
+            </button>
+            <button
+              onClick={() => setActiveTab('invitations')}
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+                activeTab === 'invitations'
+                  ? 'border-white text-white'
+                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+              }`}
+            >
+              <Mail className="w-4 h-4 text-white/90" />
+              <span className="inline-flex items-start">
+                Invitations
+                <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
+                  <AnimatedNumber
+                    value={invitations.length}
+                    className="text-white/80 font-mono text-xs"
+                    prefix={<span className="mr-0.5 text-gray-500">[</span>}
+                    suffix={<span className="ml-0.5 text-gray-500">]</span>}
+                    format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                  />
+                </sup>
+              </span>
+            </button>
+            <button
+              onClick={() => setActiveTab('teams')}
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+                activeTab === 'teams'
+                  ? 'border-white text-white'
+                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+              }`}
+            >
+              <Users className="w-4 h-4 text-white/90" />
+              <span className="inline-flex items-start">
+                Teams
+                <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
+                  <AnimatedNumber
+                    value={teams.length}
+                    className="text-white/80 font-mono text-xs"
+                    prefix={<span className="mr-0.5 text-gray-500">[</span>}
+                    suffix={<span className="ml-0.5 text-gray-500">]</span>}
+                    format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                  />
+                </sup>
+              </span>
+            </button>
+          </nav>
         </div>
 
         <div className="p-6">
-      {/* Tab Content */}
-      {activeTab === 'details' && (
-        <div className="space-y-6">
-          {/* Organization Information */}
-          <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-            <h3 className="text-lg text-white font-light mb-4">Organization Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-sm text-gray-400 font-mono uppercase">Name</label>
-                <p className="text-white font-sans mt-1">{organization.name}</p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-400 font-mono uppercase">Slug</label>
-                <p className="text-white font-mono mt-1">{organization.slug}</p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-400 font-mono uppercase">Created</label>
-                <p className="text-white font-sans mt-1">
-                  {new Date(organization.createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-              <div className="flex items-center space-x-3">
-                <Users className="w-8 h-8 text-white" />
-                <div>
-                  <p className="text-2xl text-white font-sans font-light">{members.length}</p>
-                  <p className="text-sm text-gray-400 font-mono uppercase">Members</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-              <div className="flex items-center space-x-3">
-                <Users className="w-8 h-8 text-white" />
-                <div>
-                  <p className="text-2xl text-white font-sans font-light">{teams.length}</p>
-                  <p className="text-sm text-gray-400 font-mono uppercase">Teams</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-              <div className="flex items-center space-x-3">
-                <Mail className="w-8 h-8 text-white" />
-                <div>
-                  <p className="text-2xl text-white font-sans font-light">{invitations.length}</p>
-                  <p className="text-sm text-gray-400 font-mono uppercase">Invitations</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-              <div className="flex items-center space-x-3">
-                <Calendar className="w-8 h-8 text-white" />
-                <div>
-                  <p className="text-2xl text-white font-sans font-light">
-                    {Math.ceil(
-                      (new Date().getTime() - new Date(organization.createdAt).getTime()) /
-                        (1000 * 60 * 60 * 24)
-                    )}
-                  </p>
-                  <p className="text-sm text-gray-400 font-mono uppercase">Days Active</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'teams' && (
-        <div className="space-y-6">
-          {/* Teams Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg relative text-white font-light inline-flex items-start">
-                Teams
-                <sup className="text-xs text-gray-500 ml-1 mt-0">
-                  <span className="mr-1">[</span>
-                  <span className="text-white font-mono text-xs">{teams.length}</span>
-                  <span className="ml-1">]</span>
-                </sup>
-              </h3>
-              <p className="text-gray-400 mt-1 uppercase font-mono text-xs font-light">
-                Manage teams within this organization
-              </p>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Button
-                onClick={() => setShowSeedTeamsModal(true)}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
-              >
-                <Database className="w-4 h-4 mr-2" />
-                Seed Teams
-              </Button>
-              <Button
-                onClick={() => setShowCreateTeamModal(true)}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
-              >
-                <UserPlus className="w-4 h-4 mr-2" />
-                Create Team
-              </Button>
-            </div>
-          </div>
-
-          {!teamsEnabled ? (
-            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-8">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <Users className="w-12 h-12 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl text-white font-light mb-2">Teams Feature Required</h3>
-                  <p className="text-gray-300 mb-6">
-                    To use Teams in Better Auth Studio, you need to enable the teams feature in your
-                    organization plugin configuration.
-                  </p>
-
-                  <div className="bg-black/50 border border-dashed border-white/20 rounded-none p-4 mb-6">
-                    <h4 className="text-white font-light mb-3">Follow these steps:</h4>
-                    <ol className="text-gray-300 space-y-2 text-sm list-decimal list-inside">
-                      <li>Update your auth configuration file to enable teams:</li>
-                    </ol>
-
-                    <div className="mt-4 bg-black/70 border border-dashed border-white/10 rounded-none p-3 overflow-x-auto">
-                      <pre className="text-sm text-gray-300">
-                        <span className="text-blue-400">import</span> {`{ betterAuth }`}{' '}
-                        <span className="text-blue-400">from</span>{' '}
-                        <span className="text-green-400">"better-auth"</span> <br />
-                        <span className="text-blue-400">import</span> {`{ organization }`}{' '}
-                        <span className="text-blue-400">from</span>{' '}
-                        <span className="text-green-400">"better-auth/plugins/organization"</span>{' '}
-                        <br />
-                        <span className="text-blue-400">export const</span>{' '}
-                        <span className="text-yellow-300">auth</span> ={' '}
-                        <span className="text-yellow-300">betterAuth</span>({`{`} <br />
-                        <span className="text-gray-500 pl-10">
-                          // ... your existing configuration
-                        </span>{' '}
-                        <br />
-                        <span className="text-red-300 pl-10">plugins</span>: [ <br />
-                        <span className="text-yellow-300 pl-12">organization</span>({`{`} <br />
-                        <span className="text-red-300 pl-16">teams</span>: {`{`} <br />
-                        <span className="text-yellow-300 pl-20">enabled</span>:{' '}
-                        <span className="text-blue-400">true</span> <br />
-                        <span className="pl-16">{`}`}</span> <br />
-                        <span className="pl-12">{`})`}</span> <br />
-                        <span className="pl-10">]</span> <br />
-                        {`}`}) <br />
-                      </pre>
-                    </div>
-
-                    <div className="mt-4">
-                      <p className="text-gray-400 text-sm">
-                        2. Run migrations to create the teams table
-                      </p>
-                    </div>
-                    <div className="mt-2">
-                      <p className="text-gray-400 text-sm">
-                        3. Restart your application to apply the changes
-                      </p>
-                    </div>
+          {/* Tab Content */}
+          {activeTab === 'details' && (
+            <div className="space-y-6">
+              {/* Organization Information */}
+              <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+                <h3 className="text-lg text-white font-light mb-4">Organization Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-sm text-gray-400 font-mono uppercase">Name</label>
+                    <p className="text-white font-sans mt-1">{organization.name}</p>
                   </div>
-
-                  <Button
-                    onClick={() => window.location.reload()}
-                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
-                  >
-                    Check Again
-                  </Button>
-
-                  <div className="mt-4 text-xs text-gray-500">
-                    Need help? Check the{' '}
-                    <a
-                      href="https://better-auth.com/docs/plugins/organization"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-white hover:underline"
-                    >
-                      Better Auth Organization Plugin Documentation
-                    </a>
+                  <div>
+                    <label className="text-sm text-gray-400 font-mono uppercase">Slug</label>
+                    <p className="text-white font-mono mt-1">{organization.slug}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-400 font-mono uppercase">Created</label>
+                    <p className="text-white font-sans mt-1">
+                      {new Date(organization.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </p>
                   </div>
                 </div>
               </div>
-            </div>
-          ) : teams.length > 0 ? (
-            <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-dashed border-white/10">
-                      <th className="text-left py-4 px-4 text-white font-light">Team</th>
-                      <th className="text-left py-4 px-4 text-white font-light">Members</th>
-                      <th className="text-left py-4 px-4 text-white font-light">Created</th>
-                      <th className="text-right py-4 px-4 text-white font-light">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {teams.map((team) => (
-                      <tr
-                        key={team.id}
-                        className="border-b border-dashed border-white/5 hover:bg-white/5 cursor-pointer"
-                        onClick={() => navigate(`/organizations/${orgId}/teams/${team.id}`)}
-                      >
-                        <td className="py-4 px-4">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-                              <Users className="w-5 h-5 text-white" />
-                            </div>
-                            <div>
-                              <div className="text-white font-light">{team.name}</div>
-                              <CopyableId id={team.id} label="Team ID" />
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 text-white">{team.memberCount || 0}</td>
-                        <td className="py-4 px-4 text-sm text-gray-400">
-                          {new Date(team.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="py-4 px-4 text-right">
-                          <div className="flex items-center justify-end space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openEditTeamModal(team);
-                              }}
-                            >
-                              <Edit className="w-4 h-4 mr-1" />
-                              Edit
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openDeleteTeamModal(team);
-                              }}
-                            >
-                              <Trash2 className="w-4 h-4 mr-1" />
-                              Delete
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
-              <div className="text-center">
-                <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl text-white font-light mb-2">No Teams Yet</h3>
-                <p className="text-gray-400 mb-6">
-                  Create your first team to start organizing members within this organization.
-                </p>
-                <Button
-                  onClick={() => setShowCreateTeamModal(true)}
-                  className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
-                >
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  Create First Team
-                </Button>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+                  <div className="flex items-center space-x-3">
+                    <Users className="w-8 h-8 text-white" />
+                    <div>
+                      <p className="text-2xl text-white font-sans font-light">{members.length}</p>
+                      <p className="text-sm text-gray-400 font-mono uppercase">Members</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+                  <div className="flex items-center space-x-3">
+                    <Users className="w-8 h-8 text-white" />
+                    <div>
+                      <p className="text-2xl text-white font-sans font-light">{teams.length}</p>
+                      <p className="text-sm text-gray-400 font-mono uppercase">Teams</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+                  <div className="flex items-center space-x-3">
+                    <Mail className="w-8 h-8 text-white" />
+                    <div>
+                      <p className="text-2xl text-white font-sans font-light">
+                        {invitations.length}
+                      </p>
+                      <p className="text-sm text-gray-400 font-mono uppercase">Invitations</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+                  <div className="flex items-center space-x-3">
+                    <Calendar className="w-8 h-8 text-white" />
+                    <div>
+                      <p className="text-2xl text-white font-sans font-light">
+                        {Math.ceil(
+                          (new Date().getTime() - new Date(organization.createdAt).getTime()) /
+                            (1000 * 60 * 60 * 24)
+                        )}
+                      </p>
+                      <p className="text-sm text-gray-400 font-mono uppercase">Days Active</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
-        </div>
-      )}
 
-      {activeTab === 'members' && (
-        <div className="space-y-6">
-          {/* Members Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg relative text-white font-light inline-flex items-start">
-                Members
-                <sup className="text-xs text-gray-500 ml-1 mt-0">
-                  <span className="mr-1">[</span>
-                  <span className="text-white font-mono text-xs">{members.length}</span>
-                  <span className="ml-1">]</span>
-                </sup>
-              </h3>
-              <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
-                Manage organization members and their roles
-              </p>
-            </div>
-          </div>
-
-          {/* Members List */}
-          {members.length > 0 ? (
-            <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-dashed border-white/10">
-                      <th className="text-left py-4 px-4 text-white font-light">User</th>
-                      <th className="text-left py-4 px-4 text-white font-light">Email</th>
-                      <th className="text-left py-4 px-4 text-white font-light">Role</th>
-                      <th className="text-left py-4 px-4 text-white font-light">Joined</th>
-                      <th className="text-right py-4 px-4 text-white font-light">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {members.map((member) => (
-                      <tr
-                        key={member.id}
-                        className="border-b border-dashed border-white/5 hover:bg-white/5 group"
-                      >
-                        <td className="py-4 px-4">
-                          <div className="flex items-center space-x-3">
-                            <img
-                              src={
-                                member.user.image ||
-                                `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.user.id}`
-                              }
-                              alt={member.user.name}
-                              className="w-10 h-10 rounded-none border border-dashed border-white/20"
-                            />
-                            <div>
-                              <div className="text-white font-light inline-flex items-center gap-2">
-                                <span>{member.user.name}</span>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(`/users/${member.user.id}`);
-                                  }}
-                                  className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
-                                  title="View user details"
-                                >
-                                  <ArrowUpRight className="w-4 h-4" />
-                                </button>
-                              </div>
-                              <CopyableId id={member.user.id} />
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 text-white">{member.user.email}</td>
-                        <td className="py-4 px-4">
-                          <Badge
-                            variant="secondary"
-                            className="text-xs bg-blue-900/10 border border-dashed rounded-none border-blue-500/30 text-blue-400/70 capitalize"
-                          >
-                            {member.role}
-                          </Badge>
-                        </td>
-                        <td className="py-4 px-4 text-sm text-gray-400">
-                          {new Date(member.joinedAt).toLocaleDateString()}
-                        </td>
-                        <td className="py-4 px-4 text-right">
-                          <div className="flex items-center justify-end space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
-                              onClick={() => handleRemoveMember(member.id, member.user.name)}
-                            >
-                              <Trash2 className="w-4 h-4 mr-1" />
-                              Remove
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
-              <div className="text-center">
-                <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl text-white font-light mb-2">No Members Yet</h3>
-                <p className="text-gray-400 mb-6">
-                  Invite users or seed members from existing users to get started.
-                </p>
-                <div className="flex items-center justify-center space-x-3">
+          {activeTab === 'teams' && (
+            <div className="space-y-6">
+              {/* Teams Header */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                    Teams
+                    <sup className="text-xs text-gray-500 ml-1 mt-0">
+                      <span className="mr-1">[</span>
+                      <span className="text-white font-mono text-xs">{teams.length}</span>
+                      <span className="ml-1">]</span>
+                    </sup>
+                  </h3>
+                  <p className="text-gray-400 mt-1 uppercase font-mono text-xs font-light">
+                    Manage teams within this organization
+                  </p>
+                </div>
+                <div className="flex items-center space-x-3">
                   <Button
-                    onClick={() => setShowSeedMembersModal(true)}
+                    onClick={() => setShowSeedTeamsModal(true)}
                     className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
                   >
-                    <Users className="w-4 h-4 mr-2" />
-                    Seed Members
+                    <Database className="w-4 h-4 mr-2" />
+                    Seed Teams
                   </Button>
                   <Button
-                    onClick={openInviteModal}
-                    className="bg-white text-white bg-transparent border border-white/20 rounded-none"
+                    onClick={() => setShowCreateTeamModal(true)}
+                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
                   >
-                    <Mail className="w-4 h-4 mr-2" />
-                    Invite User
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Create Team
                   </Button>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
-      )}
 
-      {activeTab === 'invitations' && (
-        <div className="space-y-6">
-          {/* Invitations Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg relative text-white font-light inline-flex items-start">
-                Invitations
-                <sup className="text-xs text-gray-500 ml-1 mt-0">
-                  <span className="mr-1">[</span>
-                  <span className="text-white font-mono text-xs">{invitations.length}</span>
-                  <span className="ml-1">]</span>
-                </sup>
-              </h3>
-              <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
-                Manage pending invitations to this organization
-              </p>
-            </div>
-          </div>
+              {!teamsEnabled ? (
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-8">
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0">
+                      <Users className="w-12 h-12 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl text-white font-light mb-2">Teams Feature Required</h3>
+                      <p className="text-gray-300 mb-6">
+                        To use Teams in Better Auth Studio, you need to enable the teams feature in
+                        your organization plugin configuration.
+                      </p>
 
-          {/* Invitations List */}
-          {invitations.length > 0 ? (
-            <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-dashed border-white/10">
-                      <th className="text-left py-4 px-4 text-white font-light">Email</th>
-                      <th className="text-left py-4 px-4 text-white font-light">Role</th>
-                      <th className="text-left py-4 px-4 text-white font-light">Status</th>
-                      <th className="text-left py-4 px-4 text-white font-light">Expires</th>
-                      <th className="text-right py-4 px-4 text-white font-light">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {invitations.map((invitation) => (
-                      <tr
-                        key={invitation.id}
-                        className="border-b border-dashed border-white/5 hover:bg-white/5"
+                      <div className="bg-black/50 border border-dashed border-white/20 rounded-none p-4 mb-6">
+                        <h4 className="text-white font-light mb-3">Follow these steps:</h4>
+                        <ol className="text-gray-300 space-y-2 text-sm list-decimal list-inside">
+                          <li>Update your auth configuration file to enable teams:</li>
+                        </ol>
+
+                        <div className="mt-4 bg-black/70 border border-dashed border-white/10 rounded-none p-3 overflow-x-auto">
+                          <pre className="text-sm text-gray-300">
+                            <span className="text-blue-400">import</span> {`{ betterAuth }`}{' '}
+                            <span className="text-blue-400">from</span>{' '}
+                            <span className="text-green-400">"better-auth"</span> <br />
+                            <span className="text-blue-400">import</span> {`{ organization }`}{' '}
+                            <span className="text-blue-400">from</span>{' '}
+                            <span className="text-green-400">
+                              "better-auth/plugins/organization"
+                            </span>{' '}
+                            <br />
+                            <span className="text-blue-400">export const</span>{' '}
+                            <span className="text-yellow-300">auth</span> ={' '}
+                            <span className="text-yellow-300">betterAuth</span>({`{`} <br />
+                            <span className="text-gray-500 pl-10">
+                              // ... your existing configuration
+                            </span>{' '}
+                            <br />
+                            <span className="text-red-300 pl-10">plugins</span>: [ <br />
+                            <span className="text-yellow-300 pl-12">organization</span>({`{`} <br />
+                            <span className="text-red-300 pl-16">teams</span>: {`{`} <br />
+                            <span className="text-yellow-300 pl-20">enabled</span>:{' '}
+                            <span className="text-blue-400">true</span> <br />
+                            <span className="pl-16">{`}`}</span> <br />
+                            <span className="pl-12">{`})`}</span> <br />
+                            <span className="pl-10">]</span> <br />
+                            {`}`}) <br />
+                          </pre>
+                        </div>
+
+                        <div className="mt-4">
+                          <p className="text-gray-400 text-sm">
+                            2. Run migrations to create the teams table
+                          </p>
+                        </div>
+                        <div className="mt-2">
+                          <p className="text-gray-400 text-sm">
+                            3. Restart your application to apply the changes
+                          </p>
+                        </div>
+                      </div>
+
+                      <Button
+                        onClick={() => window.location.reload()}
+                        className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
                       >
-                        <td className="py-4 px-4">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-                              <Mail className="w-5 h-5 text-white" />
-                            </div>
-                            <div>
-                              <div className="text-white font-light">{invitation.email}</div>
-                              <div className="text-sm text-gray-400">
-                                Expires on{' '}
-                                {new Date(invitation.expiresAt).toLocaleDateString('en-US', {
-                                  month: 'short',
-                                  year: 'numeric',
-                                  day: 'numeric',
-                                })}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 text-white capitalize">{invitation.role}</td>
-                        <td className="py-4 px-4">
-                          <Badge
-                            variant="secondary"
-                            className={`text-xs font-normal rounded-none border-dashed flex items-center gap-1 w-fit ${
-                              invitation.status === 'pending'
-                                ? 'bg-yellow-900/10 border border-yellow-500/30 text-yellow-400/70'
-                                : invitation.status === 'accepted'
-                                  ? 'bg-green-900/10 border border-green-500/30 text-green-400/70'
-                                  : 'bg-red-900/10 border border-red-500/30 text-red-400/70'
-                            }`}
+                        Check Again
+                      </Button>
+
+                      <div className="mt-4 text-xs text-gray-500">
+                        Need help? Check the{' '}
+                        <a
+                          href="https://better-auth.com/docs/plugins/organization"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-white hover:underline"
+                        >
+                          Better Auth Organization Plugin Documentation
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : teams.length > 0 ? (
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-dashed border-white/10">
+                          <th className="text-left py-4 px-4 text-white font-light">Team</th>
+                          <th className="text-left py-4 px-4 text-white font-light">Members</th>
+                          <th className="text-left py-4 px-4 text-white font-light">Created</th>
+                          <th className="text-right py-4 px-4 text-white font-light">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {teams.map((team) => (
+                          <tr
+                            key={team.id}
+                            className="border-b border-dashed border-white/5 hover:bg-white/5 cursor-pointer"
+                            onClick={() => navigate(`/organizations/${orgId}/teams/${team.id}`)}
                           >
-                            {invitation.status === 'pending' && <Clock className="w-3 h-3" />}
-                            {invitation.status === 'accepted' && (
-                              <CheckCircle className="w-3 h-3" />
-                            )}
-                            {invitation.status === 'expired' && <X className="w-3 h-3" />}
-                            {invitation.status}
-                          </Badge>
-                        </td>
-                        <td className="py-4 px-4 text-sm text-gray-400">
-                          {new Date(invitation.expiresAt).toLocaleDateString()}
-                          <br />
-                          <span className="text-xs text-gray-400">
-                            {new Date(invitation.expiresAt).toLocaleTimeString([], {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
-                          </span>
-                        </td>
-                        <td className="py-4 px-4 text-right">
-                          <div className="flex items-center justify-end space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
-                              onClick={() =>
-                                handleResendInvitation(invitation.id, invitation.email)
-                              }
-                            >
-                              <Send className="w-4 h-4 mr-1" />
-                              Resend
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
-                              onClick={() => handleCancelInvitation(invitation.id)}
-                            >
-                              <Trash2 className="w-4 h-4 mr-1" />
-                              Cancel
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
-              <div className="text-center">
-                <Mail className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl text-white font-light mb-2">No Invitations</h3>
-                <p className="text-gray-400 mb-6">
-                  Start inviting users to join this organization.
-                </p>
-                <Button
-                  onClick={openInviteModal}
-                  className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Send First Invitation
-                </Button>
-              </div>
+                            <td className="py-4 px-4">
+                              <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
+                                  <Users className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                  <div className="text-white font-light">{team.name}</div>
+                                  <CopyableId id={team.id} label="Team ID" />
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-4 px-4 text-white">{team.memberCount || 0}</td>
+                            <td className="py-4 px-4 text-sm text-gray-400">
+                              {new Date(team.createdAt).toLocaleDateString()}
+                            </td>
+                            <td className="py-4 px-4 text-right">
+                              <div className="flex items-center justify-end space-x-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openEditTeamModal(team);
+                                  }}
+                                >
+                                  <Edit className="w-4 h-4 mr-1" />
+                                  Edit
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openDeleteTeamModal(team);
+                                  }}
+                                >
+                                  <Trash2 className="w-4 h-4 mr-1" />
+                                  Delete
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
+                  <div className="text-center">
+                    <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-xl text-white font-light mb-2">No Teams Yet</h3>
+                    <p className="text-gray-400 mb-6">
+                      Create your first team to start organizing members within this organization.
+                    </p>
+                    <Button
+                      onClick={() => setShowCreateTeamModal(true)}
+                      className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                    >
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Create First Team
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
-        </div>
-      )}
+
+          {activeTab === 'members' && (
+            <div className="space-y-6">
+              {/* Members Header */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                    Members
+                    <sup className="text-xs text-gray-500 ml-1 mt-0">
+                      <span className="mr-1">[</span>
+                      <span className="text-white font-mono text-xs">{members.length}</span>
+                      <span className="ml-1">]</span>
+                    </sup>
+                  </h3>
+                  <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
+                    Manage organization members and their roles
+                  </p>
+                </div>
+              </div>
+
+              {/* Members List */}
+              {members.length > 0 ? (
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-dashed border-white/10">
+                          <th className="text-left py-4 px-4 text-white font-light">User</th>
+                          <th className="text-left py-4 px-4 text-white font-light">Email</th>
+                          <th className="text-left py-4 px-4 text-white font-light">Role</th>
+                          <th className="text-left py-4 px-4 text-white font-light">Joined</th>
+                          <th className="text-right py-4 px-4 text-white font-light">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {members.map((member) => (
+                          <tr
+                            key={member.id}
+                            className="border-b border-dashed border-white/5 hover:bg-white/5 group"
+                          >
+                            <td className="py-4 px-4">
+                              <div className="flex items-center space-x-3">
+                                <img
+                                  src={
+                                    member.user.image ||
+                                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.user.id}`
+                                  }
+                                  alt={member.user.name}
+                                  className="w-10 h-10 rounded-none border border-dashed border-white/20"
+                                />
+                                <div>
+                                  <div className="text-white font-light inline-flex items-center gap-2">
+                                    <span>{member.user.name}</span>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/users/${member.user.id}`);
+                                      }}
+                                      className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
+                                      title="View user details"
+                                    >
+                                      <ArrowUpRight className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                  <CopyableId id={member.user.id} />
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-4 px-4 text-white">{member.user.email}</td>
+                            <td className="py-4 px-4">
+                              <Badge
+                                variant="secondary"
+                                className="text-xs bg-blue-900/10 border border-dashed rounded-none border-blue-500/30 text-blue-400/70 capitalize"
+                              >
+                                {member.role}
+                              </Badge>
+                            </td>
+                            <td className="py-4 px-4 text-sm text-gray-400">
+                              {new Date(member.joinedAt).toLocaleDateString()}
+                            </td>
+                            <td className="py-4 px-4 text-right">
+                              <div className="flex items-center justify-end space-x-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                                  onClick={() => handleRemoveMember(member.id, member.user.name)}
+                                >
+                                  <Trash2 className="w-4 h-4 mr-1" />
+                                  Remove
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
+                  <div className="text-center">
+                    <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-xl text-white font-light mb-2">No Members Yet</h3>
+                    <p className="text-gray-400 mb-6">
+                      Invite users or seed members from existing users to get started.
+                    </p>
+                    <div className="flex items-center justify-center space-x-3">
+                      <Button
+                        onClick={() => setShowSeedMembersModal(true)}
+                        className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
+                      >
+                        <Users className="w-4 h-4 mr-2" />
+                        Seed Members
+                      </Button>
+                      <Button
+                        onClick={openInviteModal}
+                        className="bg-white text-white bg-transparent border border-white/20 rounded-none"
+                      >
+                        <Mail className="w-4 h-4 mr-2" />
+                        Invite User
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'invitations' && (
+            <div className="space-y-6">
+              {/* Invitations Header */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                    Invitations
+                    <sup className="text-xs text-gray-500 ml-1 mt-0">
+                      <span className="mr-1">[</span>
+                      <span className="text-white font-mono text-xs">{invitations.length}</span>
+                      <span className="ml-1">]</span>
+                    </sup>
+                  </h3>
+                  <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
+                    Manage pending invitations to this organization
+                  </p>
+                </div>
+              </div>
+
+              {/* Invitations List */}
+              {invitations.length > 0 ? (
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-dashed border-white/10">
+                          <th className="text-left py-4 px-4 text-white font-light">Email</th>
+                          <th className="text-left py-4 px-4 text-white font-light">Role</th>
+                          <th className="text-left py-4 px-4 text-white font-light">Status</th>
+                          <th className="text-left py-4 px-4 text-white font-light">Expires</th>
+                          <th className="text-right py-4 px-4 text-white font-light">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {invitations.map((invitation) => (
+                          <tr
+                            key={invitation.id}
+                            className="border-b border-dashed border-white/5 hover:bg-white/5"
+                          >
+                            <td className="py-4 px-4">
+                              <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
+                                  <Mail className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                  <div className="text-white font-light">{invitation.email}</div>
+                                  <div className="text-sm text-gray-400">
+                                    Expires on{' '}
+                                    {new Date(invitation.expiresAt).toLocaleDateString('en-US', {
+                                      month: 'short',
+                                      year: 'numeric',
+                                      day: 'numeric',
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-4 px-4 text-white capitalize">{invitation.role}</td>
+                            <td className="py-4 px-4">
+                              <Badge
+                                variant="secondary"
+                                className={`text-xs font-normal rounded-none border-dashed flex items-center gap-1 w-fit ${
+                                  invitation.status === 'pending'
+                                    ? 'bg-yellow-900/10 border border-yellow-500/30 text-yellow-400/70'
+                                    : invitation.status === 'accepted'
+                                      ? 'bg-green-900/10 border border-green-500/30 text-green-400/70'
+                                      : 'bg-red-900/10 border border-red-500/30 text-red-400/70'
+                                }`}
+                              >
+                                {invitation.status === 'pending' && <Clock className="w-3 h-3" />}
+                                {invitation.status === 'accepted' && (
+                                  <CheckCircle className="w-3 h-3" />
+                                )}
+                                {invitation.status === 'expired' && <X className="w-3 h-3" />}
+                                {invitation.status}
+                              </Badge>
+                            </td>
+                            <td className="py-4 px-4 text-sm text-gray-400">
+                              {new Date(invitation.expiresAt).toLocaleDateString()}
+                              <br />
+                              <span className="text-xs text-gray-400">
+                                {new Date(invitation.expiresAt).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4 text-right">
+                              <div className="flex items-center justify-end space-x-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                                  onClick={() =>
+                                    handleResendInvitation(invitation.id, invitation.email)
+                                  }
+                                >
+                                  <Send className="w-4 h-4 mr-1" />
+                                  Resend
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                                  onClick={() => handleCancelInvitation(invitation.id)}
+                                >
+                                  <Trash2 className="w-4 h-4 mr-1" />
+                                  Cancel
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
+                  <div className="text-center">
+                    <Mail className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-xl text-white font-light mb-2">No Invitations</h3>
+                    <p className="text-gray-400 mb-6">
+                      Start inviting users to join this organization.
+                    </p>
+                    <Button
+                      onClick={openInviteModal}
+                      className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                    >
+                      <Mail className="w-4 h-4 mr-2" />
+                      Send First Invitation
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

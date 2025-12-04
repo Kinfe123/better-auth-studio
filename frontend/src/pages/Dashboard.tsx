@@ -1213,8 +1213,8 @@ export default function Dashboard() {
                             const rect = e.currentTarget.getBoundingClientRect();
                             const x = rect.left + rect.width / 2;
                             const y = rect.top;
-                            const tooltipWidth = 150; 
-                            const tooltipHeight = 60; 
+                            const tooltipWidth = 150;
+                            const tooltipHeight = 60;
                             const constrainedX = Math.max(
                               tooltipWidth / 2,
                               Math.min(window.innerWidth - tooltipWidth / 2, x)
