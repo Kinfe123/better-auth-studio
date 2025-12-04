@@ -84,7 +84,7 @@ export default function Installation() {
               <p className="text-sm font-light tracking-tight text-white/70 mb-2">
                 <strong>Recommended: Install as dev dependency</strong> (for project-specific versions):
               </p>
-              <CodeBlock code="pnpm add -D better-auth-studio" />
+              <CodeBlock code="pnpm add -D better-auth-studio@latest" />
               <p className="text-xs font-light tracking-tight text-white/60 mt-2">
                 This keeps the studio version consistent across your team and project.
               </p>
@@ -94,7 +94,7 @@ export default function Installation() {
               <p className="text-sm font-light tracking-tight text-white/70 mb-2">
                 <strong>Stable version (global):</strong>
               </p>
-              <CodeBlock code="pnpm add -g better-auth-studio" />
+              <CodeBlock code="pnpm add -g better-auth-studio@latest" />
             </div>
 
             <div className="mb-4">
