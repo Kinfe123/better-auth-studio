@@ -4704,13 +4704,26 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 const match = trimmed.match(/^([^=#]+)=(.*)$/);
                 if (match) {
                     const key = match[1].trim();
-                    const value = match[2].trim();
+                    let value = match[2].trim();
+                    // Remove surrounding quotes if present (handles both single and double quotes)
+                    if (value.length >= 2) {
+                        if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+                            value = value.slice(1, -1).trim();
+                        }
+                    }
                     if (key === clientIdKey || key === clientSecretKey) {
                         existingCredentials[key] = value;
                     }
                 }
             });
-            const hasExisting = existingCredentials[clientIdKey] || existingCredentials[clientSecretKey];
+            // Only consider it as existing if the values are not empty (after stripping quotes)
+            const isValueEmpty = (val) => {
+                if (!val)
+                    return true;
+                return val.trim() === '';
+            };
+            const hasExisting = !isValueEmpty(existingCredentials[clientIdKey]) ||
+                !isValueEmpty(existingCredentials[clientSecretKey]);
             res.json({
                 success: true,
                 hasExisting,
@@ -4751,7 +4764,9 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 if (match) {
                     const key = match[1].trim();
                     const value = match[2].trim();
-                    envMap.set(key, { line, index });
+                    if (value.trim() !== '') {
+                        envMap.set(key, { line, index });
+                    }
                     newLines.push(line);
                 }
                 else {
@@ -4770,13 +4785,20 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 }
             }
             let updated = false;
+            const clientIdLineIndex = envLines.findIndex((line) => {
+                const trimmed = line.trim();
+                return trimmed.startsWith(`${clientIdKey}=`);
+            });
             if (action === 'override' && envMap.has(clientIdKey)) {
                 const existing = envMap.get(clientIdKey);
                 newLines[existing.index] = `${clientIdKey}=${clientId}`;
                 updated = true;
             }
-            else if (!envMap.has(clientIdKey)) {
-                // Remove trailing empty lines
+            else if (clientIdLineIndex >= 0 && !envMap.has(clientIdKey)) {
+                newLines[clientIdLineIndex] = `${clientIdKey}=${clientId}`;
+                updated = true;
+            }
+            else if (!envMap.has(clientIdKey) && clientIdLineIndex < 0) {
                 while (newLines.length > 0 && !newLines[newLines.length - 1].trim()) {
                     newLines.pop();
                 }
@@ -4791,12 +4813,20 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
                 newLines.push(`${clientIdKey}=${clientId}`);
                 updated = true;
             }
+            const clientSecretLineIndex = envLines.findIndex((line) => {
+                const trimmed = line.trim();
+                return trimmed.startsWith(`${clientSecretKey}=`);
+            });
             if (action === 'override' && envMap.has(clientSecretKey)) {
                 const existing = envMap.get(clientSecretKey);
                 newLines[existing.index] = `${clientSecretKey}=${clientSecret}`;
                 updated = true;
             }
-            else if (!envMap.has(clientSecretKey)) {
+            else if (clientSecretLineIndex >= 0 && !envMap.has(clientSecretKey)) {
+                newLines[clientSecretLineIndex] = `${clientSecretKey}=${clientSecret}`;
+                updated = true;
+            }
+            else if (!envMap.has(clientSecretKey) && clientSecretLineIndex < 0) {
                 const clientIdIndex = newLines.findIndex((line) => line.startsWith(`${clientIdKey}=`));
                 if (clientIdIndex >= 0) {
                     newLines.splice(clientIdIndex + 1, 0, `${clientSecretKey}=${clientSecret}`);

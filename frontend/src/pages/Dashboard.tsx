@@ -588,22 +588,17 @@ export default function Dashboard() {
     fetchTeamMetrics();
   }, [teamsPeriod, teamsDateFrom, teamsDateTo, fetchAnalytics]);
 
-  // Fetch daily percentages for stats bar
   useEffect(() => {
     const fetchDailyPercentages = async () => {
-      // Fetch Users daily percentage
       const usersData = await fetchAnalytics('users', '1D');
       if (usersData) setUsersDailyPercentage(usersData.percentageChange || 0);
 
-      // Fetch Organizations daily percentage
       const orgsData = await fetchAnalytics('organizations', '1D');
       if (orgsData) setOrganizationsDailyPercentage(orgsData.percentageChange || 0);
 
-      // Fetch Sessions daily percentage (using activeUsers as proxy for sessions)
       const sessionsData = await fetchAnalytics('activeUsers', '1D');
       if (sessionsData) setSessionsDailyPercentage(sessionsData.percentageChange || 0);
 
-      // Fetch Activity Hits daily percentage and total (sum of all activity types)
       const [signupsData, loginsData, orgsDataForActivity, teamsData, sessionsMetricsData] =
         await Promise.all([
           fetchAnalytics('newUsers', '1D'),
@@ -631,7 +626,6 @@ export default function Dashboard() {
       const activityHitsTotal = dailyTotals.reduce((sum, val) => sum + val, 0);
       setActivityHitsDailyTotal(activityHitsTotal);
 
-      // Calculate percentage change by comparing with previous day
       const previousDayTotals = [
         signupsData?.previousTotal || 0,
         loginsData?.previousTotal || 0,
@@ -730,7 +724,6 @@ export default function Dashboard() {
     setTimeout(() => setSelectedPatch(null), 300);
   };
 
-  // Generate x-axis labels based on selected period
   const getChartLabels = (period: string, dataSource: 'users' | 'newUsers' = 'users') => {
     const labels = dataSource === 'users' ? totalUsersLabels : newUsersLabels;
     const lengths: Record<string, number> = {
@@ -744,14 +737,11 @@ export default function Dashboard() {
     };
     const expectedLength = lengths[period] || 7;
 
-    // If we have labels from API, use them (but simplify for x-axis)
     if (labels && labels.length > 0 && labels.length === expectedLength) {
       if (period === '1D') {
-        // For 1D, show every 4 hours
         return labels
           .filter((_, i) => i % 4 === 0)
           .map((label) => {
-            // Convert hour format to am/pm
             const hour = parseInt(label.replace('h', ''), 10);
             if (hour === 0) return '12am';
             if (hour < 12) return `${hour}am`;
@@ -760,13 +750,11 @@ export default function Dashboard() {
           });
       }
       if (period === '1W') {
-        // For 1W, use day names directly (Mon, Tue, Wed, etc.)
         return labels.map((label) => {
           return label.length > 3 ? label.substring(0, 3) : label;
         });
       }
       if (period === '1M') {
-        // For 1M, show day numbers only for x-axis (labels are like "Nov 5")
         return labels.map((label) => {
           const parts = label.split(' ');
           if (parts.length >= 2) {
@@ -776,20 +764,17 @@ export default function Dashboard() {
         });
       }
       if (period === '1Y' || period === '3M' || period === '6M') {
-        // For months, use short month names (Jan, Feb, Mar, etc.)
         return labels.map((label) => {
           // Labels should already be month names like "Nov", "Dec", etc.
           return label.length > 3 ? label.substring(0, 3) : label;
         });
       }
-      // For other periods, use labels directly but shorten them
       return labels.map((label) => {
         if (label.length > 3) return label.substring(0, 3);
         return label;
       });
     }
 
-    // Fallback: generate labels dynamically based on current date
     const now = new Date();
     switch (period) {
       case '1D':
@@ -830,7 +815,6 @@ export default function Dashboard() {
     }
   };
 
-  // Generate detailed labels for tooltips
   const getDetailedLabels = (period: string, dataSource: 'users' | 'newUsers' = 'users') => {
     const labels = dataSource === 'users' ? totalUsersLabels : newUsersLabels;
     const lengths: Record<string, number> = {
@@ -844,10 +828,8 @@ export default function Dashboard() {
     };
     const expectedLength = lengths[period] || 7;
 
-    // If we have labels from API, use them
     if (labels && labels.length > 0 && labels.length === expectedLength) {
       if (period === '1D') {
-        // Convert hour format to am/pm for tooltips
         return labels.map((label) => {
           const hour = parseInt(label.replace('h', ''), 10);
           if (hour === 0) return '12am';
@@ -857,7 +839,6 @@ export default function Dashboard() {
         });
       }
       if (period === '1Y' || period === '3M' || period === '6M') {
-        // For months, convert short names to full names
         return labels.map((label) => {
           const monthNames = [
             'January',
@@ -956,7 +937,6 @@ export default function Dashboard() {
     };
     const expectedLength = lengths[period] || 7;
 
-    // If no data yet, return placeholder
     if (!data || data.length === 0) {
       return Array(expectedLength).fill(0);
     }
@@ -1298,7 +1278,6 @@ export default function Dashboard() {
                     </div>
                   )}
                 </div>
-                {/* X-axis labels */}
                 <div
                   className={`flex justify-between ${selectedUserPeriod === '1M' ? 'text-[10px]' : 'text-xs'} text-gray-500 font-mono`}
                 >
@@ -1330,7 +1309,7 @@ export default function Dashboard() {
                   <p className="text-xs text-gray-400">Tracked events in selected period</p>
                 </div>
                 <div className="flex items-center space-x-1 overflow-x-auto">
-                  {['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL'].map((period) => (
+                  {['1D', '1W', '3M', '6M', '1Y', 'ALL'].map((period) => (
                     <button
                       key={period}
                       onClick={() => setActivityPeriod(period)}
