@@ -31,8 +31,10 @@ import {
 } from '../components/PixelIcons';
 import { Terminal } from '../components/Terminal';
 import { Button } from '../components/ui/button';
+import { Checkbox } from '../components/ui/checkbox';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { CodeBlock } from '../components/CodeBlock';
 import { getProviderIcon } from '../lib/icons';
@@ -486,17 +488,17 @@ export default function Tools() {
   const [pluginName, setPluginName] = useState('');
   const [pluginDescription, setPluginDescription] = useState('');
   const [pluginTables, setPluginTables] = useState<Array<{ name: string; fields: Array<{ name: string; type: string; required: boolean; unique: boolean }> }>>([]);
-  const [pluginHooks, setPluginHooks] = useState<Array<{ 
-    name: string; 
-    timing: 'before' | 'after'; 
-    action: 'sign-up' | 'sign-in' | 'custom'; 
+  const [pluginHooks, setPluginHooks] = useState<Array<{
+    name: string;
+    timing: 'before' | 'after';
+    action: 'sign-up' | 'sign-in' | 'custom';
     customPath?: string;
     customMatcher?: string;
     hookLogic: string;
     expanded?: boolean;
   }>>([]);
-  const [pluginMiddleware, setPluginMiddleware] = useState<Array<{ 
-    name: string; 
+  const [pluginMiddleware, setPluginMiddleware] = useState<Array<{
+    name: string;
     path: string;
     pathType: 'exact' | 'prefix' | 'regex';
     middlewareLogic: string;
@@ -702,12 +704,12 @@ export default function Tools() {
         prev.map((line) =>
           line.id === existingId
             ? {
-                ...line,
-                type,
-                message,
-                status,
-                timestamp: new Date(),
-              }
+              ...line,
+              type,
+              message,
+              status,
+              timestamp: new Date(),
+            }
             : line
         )
       );
@@ -864,7 +866,7 @@ export default function Tools() {
         handleOAuthResult(result);
         // Clean up URL
         setSearchParams({});
-      } catch (_error) {}
+      } catch (_error) { }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, setSearchParams, handleOAuthResult]);
@@ -878,7 +880,7 @@ export default function Tools() {
         if (result.success && result.providers) {
           setOauthProviders(result.providers.filter((p: OAuthProvider) => p.enabled));
         }
-      } catch (_error) {}
+      } catch (_error) { }
     };
     fetchProviders();
   }, []);
@@ -985,7 +987,7 @@ export default function Tools() {
               if (storedSession) {
                 try {
                   providerName = JSON.parse(storedSession).provider || providerName;
-                } catch (_) {}
+                } catch (_) { }
               }
               handleOAuthResult({
                 success: false,
@@ -2139,11 +2141,10 @@ export default function Tools() {
                       key={tool.id}
                       onClick={() => tool.action()}
                       disabled={isDisabled}
-                      className={`relative flex items-center space-x-4 p-4 bg-black/30 border border-dashed border-white/20 rounded-none transition-colors text-left group ${
-                        isEnabled
+                      className={`relative flex items-center space-x-4 p-4 bg-black/30 border border-dashed border-white/20 rounded-none transition-colors text-left group ${isEnabled
                           ? 'hover:bg-black/50 disabled:opacity-50 disabled:cursor-not-allowed'
                           : 'opacity-60 cursor-not-allowed'
-                      }`}
+                        }`}
                     >
                       <div className="p-2 bg-white/10 rounded-none group-hover:bg-white/20 transition-colors">
                         {isRunning ? (
@@ -2355,11 +2356,10 @@ export default function Tools() {
                             startOAuthTest(provider.id);
                           }, 100);
                         }}
-                        className={`w-full flex items-center space-x-4 p-4 border rounded-none transition-all text-left group ${
-                          selectedProvider === provider.id
+                        className={`w-full flex items-center space-x-4 p-4 border rounded-none transition-all text-left group ${selectedProvider === provider.id
                             ? 'border-white/50 bg-white/10'
                             : 'border-dashed border-white/20 hover:bg-white/5 hover:border-white/30'
-                        }`}
+                          }`}
                       >
                         <div className="flex-shrink-0">{getProviderIcon(provider.id)}</div>
                         <div className="flex-1 min-w-0">
@@ -2368,11 +2368,10 @@ export default function Tools() {
                           </p>
                         </div>
                         <ArrowRight
-                          className={`w-5 h-5 transition-colors flex-shrink-0 ${
-                            selectedProvider === provider.id
+                          className={`w-5 h-5 transition-colors flex-shrink-0 ${selectedProvider === provider.id
                               ? 'text-white'
                               : 'text-gray-400 group-hover:text-white'
-                          }`}
+                            }`}
                         />
                       </button>
                     ))}
@@ -2426,13 +2425,12 @@ export default function Tools() {
                       key={provider.id}
                       onClick={() => handleSelectMigration(provider.id)}
                       disabled={provider.disabled}
-                      className={`w-full flex items-center space-x-3 p-4 border transition-colors rounded-none text-left ${
-                        provider.disabled
+                      className={`w-full flex items-center space-x-3 p-4 border transition-colors rounded-none text-left ${provider.disabled
                           ? 'border-dashed border-white/10 bg-black/30 cursor-not-allowed opacity-60'
                           : isActive
                             ? 'border-white/60 bg-white/10'
                             : 'border-dashed border-white/20 hover:bg-white/5 hover:border-white/40'
-                      }`}
+                        }`}
                     >
                       <div className="flex-shrink-0 w-10 h-10 bg-white/10 flex items-center justify-center">
                         {provider.logo ? provider.logo : <Code className="w-6 h-6 text-white" />}
@@ -2610,21 +2608,19 @@ export default function Tools() {
                 <div className="flex space-x-4">
                   <button
                     onClick={() => setExportFormat('json')}
-                    className={`px-4 py-2 border rounded-none transition-colors ${
-                      exportFormat === 'json'
+                    className={`px-4 py-2 border rounded-none transition-colors ${exportFormat === 'json'
                         ? 'border-white/50 bg-white/10 text-white'
                         : 'border-dashed border-white/20 text-gray-400 hover:border-white/30'
-                    }`}
+                      }`}
                   >
                     JSON
                   </button>
                   <button
                     onClick={() => setExportFormat('csv')}
-                    className={`px-4 py-2 border rounded-none transition-colors ${
-                      exportFormat === 'csv'
+                    className={`px-4 py-2 border rounded-none transition-colors ${exportFormat === 'csv'
                         ? 'border-white/50 bg-white/10 text-white'
                         : 'border-dashed border-white/20 text-gray-400 hover:border-white/30'
-                    }`}
+                      }`}
                   >
                     CSV
                   </button>
@@ -2687,9 +2683,8 @@ export default function Tools() {
                           <button
                             key={table.name}
                             onClick={() => toggleTableSelection(table.name)}
-                            className={`w-full text-left p-3 border-b border-dashed border-white/10 last:border-b-0 transition-colors ${
-                              isSelected ? 'bg-white/10 border-white/30' : 'hover:bg-white/5'
-                            }`}
+                            className={`w-full text-left p-3 border-b border-dashed border-white/10 last:border-b-0 transition-colors ${isSelected ? 'bg-white/10 border-white/30' : 'hover:bg-white/5'
+                              }`}
                           >
                             <div className="flex items-center justify-between">
                               <div>
@@ -2928,11 +2923,10 @@ export default function Tools() {
                     <button
                       key={option.id}
                       onClick={() => setTokenType(option.id as 'api_key' | 'jwt')}
-                      className={`px-4 py-2 border rounded-none text-sm uppercase font-mono transition-colors ${
-                        tokenType === option.id
+                      className={`px-4 py-2 border rounded-none text-sm uppercase font-mono transition-colors ${tokenType === option.id
                           ? 'border-white/60 bg-white/10 text-white'
                           : 'border-dashed border-white/20 text-gray-400 hover:border-white/40'
-                      }`}
+                        }`}
                     >
                       {option.label}
                     </button>
@@ -3160,13 +3154,13 @@ export default function Tools() {
                 {pluginTables.length === 0 ? (
                   <p className="text-xs text-gray-500 font-mono">No tables added</p>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {pluginTables.map((table, tableIndex) => (
                       <div
                         key={tableIndex}
-                        className="border border-dashed border-white/10 p-3 space-y-2"
+                        className="border px-5 border-dashed border-white/10 p-3 relative"
                       >
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-2 relative">
                           <Input
                             value={table.name}
                             onChange={(e) => {
@@ -3188,93 +3182,163 @@ export default function Tools() {
                             <X className="w-4 h-4" />
                           </Button>
                         </div>
-                        <div className="space-y-1">
-                          {table.fields.map((field, fieldIndex) => (
-                            <div key={fieldIndex} className="flex items-center space-x-2">
-                              <Input
-                                value={field.name}
-                                onChange={(e) => {
-                                  const newTables = [...pluginTables];
-                                  newTables[tableIndex].fields[fieldIndex].name = e.target.value;
-                                  setPluginTables(newTables);
-                                }}
-                                placeholder="Field name"
-                                className="bg-black border border-dashed border-white/20 text-white text-xs rounded-none flex-1"
-                              />
-                              <select
-                                value={field.type}
-                                onChange={(e) => {
-                                  const newTables = [...pluginTables];
-                                  newTables[tableIndex].fields[fieldIndex].type = e.target.value;
-                                  setPluginTables(newTables);
-                                }}
-                                className="bg-black border border-dashed border-white/20 text-white text-xs rounded-none px-2 py-1"
-                              >
-                                <option value="string">string</option>
-                                <option value="number">number</option>
-                                <option value="boolean">boolean</option>
-                                <option value="date">date</option>
-                              </select>
-                              <label className="text-xs text-gray-400 flex items-center space-x-1">
-                                <input
-                                  type="checkbox"
-                                  checked={field.required}
-                                  onChange={(e) => {
-                                    const newTables = [...pluginTables];
-                                    newTables[tableIndex].fields[fieldIndex].required = e.target.checked;
-                                    setPluginTables(newTables);
-                                  }}
-                                  className="rounded-none"
-                                />
-                                <span>Required</span>
-                              </label>
-                              <label className="text-xs text-gray-400 flex items-center space-x-1">
-                                <input
-                                  type="checkbox"
-                                  checked={field.unique}
-                                  onChange={(e) => {
-                                    const newTables = [...pluginTables];
-                                    newTables[tableIndex].fields[fieldIndex].unique = e.target.checked;
-                                    setPluginTables(newTables);
-                                  }}
-                                  className="rounded-none"
-                                />
-                                <span>Unique</span>
-                              </label>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  const newTables = [...pluginTables];
-                                  newTables[tableIndex].fields = newTables[tableIndex].fields.filter(
-                                    (_, i) => i !== fieldIndex
+
+                        {table.fields.length > 0 && (
+                          <>
+                            <div
+                              className="absolute w-px bg-white/20"
+                              style={{
+                                left: '7px',
+                                top: '31px',
+                                bottom: '12px'
+                              }}
+                            />
+                            <div className='absolute h-px w-[15px] bg-white/20' style={{ left: '7px', top: '31px', bottom: '12px' }} />
+
+                            <div className="mt-3 relative">
+                              <div className="space-y-0 pl-6">
+                                {table.fields.map((field, fieldIndex) => {
+                                  // const isLast = fieldIndex === table.fields.length - 1;
+                                  return (
+                                    <div key={fieldIndex} className="relative">
+                                          <div
+                                            className="absolute h-px bg-white/30 top-1/2 -translate-y-1/2"
+                                            style={{
+                                              left: '-36px',
+                                              width: '36px'
+                                            }}
+                                          />
+                                      <div className="flex items-center space-x-2 py-2">
+                                        <Input
+                                          value={field.name}
+                                          onChange={(e) => {
+                                            const newTables = [...pluginTables];
+                                            newTables[tableIndex].fields[fieldIndex].name = e.target.value;
+                                            setPluginTables(newTables);
+                                          }}
+                                          placeholder="Field name"
+                                          className="bg-black border border-dashed border-white/20 text-white text-xs rounded-none flex-1"
+                                        />
+                                        <Select
+                                          value={field.type}
+                                          onValueChange={(value: string) => {
+                                            const newTables = [...pluginTables];
+                                            newTables[tableIndex].fields[fieldIndex].type = value;
+                                            setPluginTables(newTables);
+                                          }}
+                                        >
+                                          <SelectTrigger className="h-full w-52 border px-0 border-dashed border-white/20 text-white/90 text-xs rounded-none py-1">
+                                            <SelectValue className='font-mono uppercase text-[10px] px-0 text-white/90' />
+                                          </SelectTrigger>
+                                          <SelectContent className='font-mono uppercase text-[10px]'>
+                                            <SelectItem className='sm:text-[11px] text-white/90 border-b border-dashed last:border-b-0' value="string">string</SelectItem>
+                                            <SelectItem className='sm:text-[11px] text-white/90 border-b border-dashed last:border-b-0' value="number">number</SelectItem>
+                                            <SelectItem className='sm:text-[11px] text-white/90 border-b border-dashed last:border-b-0' value="boolean">boolean</SelectItem>
+                                            <SelectItem className='sm:text-[11px] text-white/90 border-b border-dashed last:border-b-0' value="date">date</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                        <div className="flex items-center space-x-2">
+                                          <Checkbox
+                                            id={`required-${tableIndex}-${fieldIndex}`}
+                                            checked={field.required}
+                                            onCheckedChange={(checked) => {
+                                              const newTables = [...pluginTables];
+                                              newTables[tableIndex].fields[fieldIndex].required = checked === true;
+                                              setPluginTables(newTables);
+                                            }}
+                                          />
+                                          <Label htmlFor={`required-${tableIndex}-${fieldIndex}`} className="text-xs text-gray-400 font-mono uppercase cursor-pointer">
+                                            Required
+                                          </Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                          <Checkbox
+                                            id={`unique-${tableIndex}-${fieldIndex}`}
+                                            checked={field.unique}
+                                            onCheckedChange={(checked) => {
+                                              const newTables = [...pluginTables];
+                                              newTables[tableIndex].fields[fieldIndex].unique = checked === true;
+                                              setPluginTables(newTables);
+                                            }}
+                                          />
+                                          <Label htmlFor={`unique-${tableIndex}-${fieldIndex}`} className="text-xs text-gray-400 font-mono uppercase cursor-pointer">
+                                            Unique
+                                          </Label>
+                                        </div>
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => {
+                                            const newTables = [...pluginTables];
+                                            newTables[tableIndex].fields = newTables[tableIndex].fields.filter(
+                                              (_, i) => i !== fieldIndex
+                                            );
+                                            setPluginTables(newTables);
+                                          }}
+                                          className="text-red-400 hover:text-red-300 rounded-none"
+                                        >
+                                          <X className="w-3 h-3" />
+                                        </Button>
+                                      </div>
+                                    </div>
                                   );
-                                  setPluginTables(newTables);
-                                }}
-                                className="text-red-400 hover:text-red-300 rounded-none"
-                              >
-                                <X className="w-3 h-3" />
-                              </Button>
+                                })}
+
+                                <div className="relative pt-2">
+                                  {/* L-shape: Horizontal line for add button */}
+                                  <div
+                                    className="absolute h-px bg-white/30"
+                                    style={{
+                                      left: '-36px',
+                                      width: '36px',
+                                      top: '31px'
+                                    }}
+                                  />
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                      const newTables = [...pluginTables];
+                                      newTables[tableIndex].fields.push({
+                                        name: '',
+                                        type: 'string',
+                                        required: false,
+                                        unique: false,
+                                      });
+                                      setPluginTables(newTables);
+                                    }}
+                                    className="text-xs text-gray-400 hover:text-white rounded-none"
+                                  >
+                                    + Add Field
+                                  </Button>
+                                </div>
+                              </div>
                             </div>
-                          ))}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              const newTables = [...pluginTables];
-                              newTables[tableIndex].fields.push({
-                                name: '',
-                                type: 'string',
-                                required: false,
-                                unique: false,
-                              });
-                              setPluginTables(newTables);
-                            }}
-                            className="text-xs text-gray-400 hover:text-white rounded-none"
-                          >
-                            + Add Field
-                          </Button>
-                        </div>
+                          </>
+                        )}
+
+                        {/* Add Field button when no fields exist */}
+                        {table.fields.length === 0 && (
+                          <div className="mt-3">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const newTables = [...pluginTables];
+                                newTables[tableIndex].fields.push({
+                                  name: '',
+                                  type: 'string',
+                                  required: false,
+                                  unique: false,
+                                });
+                                setPluginTables(newTables);
+                              }}
+                              className="text-xs text-gray-400 hover:text-white rounded-none"
+                            >
+                              + Add Field
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -3293,9 +3357,9 @@ export default function Tools() {
                     onClick={() =>
                       setPluginHooks([
                         ...pluginHooks,
-                        { 
-                          name: '', 
-                          timing: 'before', 
+                        {
+                          name: '',
+                          timing: 'before',
                           action: 'sign-up',
                           hookLogic: 'const context = ctx;',
                           expanded: true,
@@ -3323,9 +3387,8 @@ export default function Tools() {
                               {hookLabel}
                             </span>
                             <ChevronRight
-                              className={`w-4 h-4 text-white/60 transition-transform ${
-                                hook.expanded ? 'rotate-90' : ''
-                              }`}
+                              className={`w-4 h-4 text-white/60 transition-transform ${hook.expanded ? 'rotate-90' : ''
+                                }`}
                             />
                           </button>
                           {hook.expanded && (
@@ -3350,85 +3413,61 @@ export default function Tools() {
                                   <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                                     Timing
                                   </Label>
-                                  <div className="flex space-x-4">
-                                    <label className="flex items-center space-x-2 cursor-pointer">
-                                      <input
-                                        type="radio"
-                                        name={`hook-timing-${index}`}
-                                        checked={hook.timing === 'before'}
-                                        onChange={() => {
-                                          const newHooks = [...pluginHooks];
-                                          newHooks[index].timing = 'before';
-                                          setPluginHooks(newHooks);
-                                        }}
-                                        className="w-4 h-4 border border-white/20 bg-black text-white focus:ring-white focus:ring-offset-0 rounded-none"
-                                      />
-                                      <span className="text-xs text-white font-mono">Before</span>
-                                    </label>
-                                    <label className="flex items-center space-x-2 cursor-pointer">
-                                      <input
-                                        type="radio"
-                                        name={`hook-timing-${index}`}
-                                        checked={hook.timing === 'after'}
-                                        onChange={() => {
-                                          const newHooks = [...pluginHooks];
-                                          newHooks[index].timing = 'after';
-                                          setPluginHooks(newHooks);
-                                        }}
-                                        className="w-4 h-4 border border-white/20 bg-black text-white focus:ring-white focus:ring-offset-0 rounded-none"
-                                      />
-                                      <span className="text-xs text-white font-mono">After</span>
-                                    </label>
-                                  </div>
+                                  <RadioGroup
+                                    value={hook.timing}
+                                    onValueChange={(value: 'before' | 'after') => {
+                                      const newHooks = [...pluginHooks];
+                                      newHooks[index].timing = value;
+                                      setPluginHooks(newHooks);
+                                    }}
+                                    className="flex space-x-4"
+                                  >
+                                    <div className="flex items-center space-x-2">
+                                      <RadioGroupItem value="before" id={`hook-timing-before-${index}`} />
+                                      <Label htmlFor={`hook-timing-before-${index}`} className="text-xs text-white font-mono cursor-pointer">
+                                        Before
+                                      </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                      <RadioGroupItem value="after" id={`hook-timing-after-${index}`} />
+                                      <Label htmlFor={`hook-timing-after-${index}`} className="text-xs text-white font-mono cursor-pointer">
+                                        After
+                                      </Label>
+                                    </div>
+                                  </RadioGroup>
                                 </div>
                                 <div>
                                   <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                                     Action
                                   </Label>
-                                  <div className="flex space-x-4">
-                                    <label className="flex items-center space-x-2 cursor-pointer">
-                                      <input
-                                        type="radio"
-                                        name={`hook-action-${index}`}
-                                        checked={hook.action === 'sign-up'}
-                                        onChange={() => {
-                                          const newHooks = [...pluginHooks];
-                                          newHooks[index].action = 'sign-up';
-                                          setPluginHooks(newHooks);
-                                        }}
-                                        className="w-4 h-4 border border-white/20 bg-black text-white focus:ring-white focus:ring-offset-0 rounded-none"
-                                      />
-                                      <span className="text-xs text-white font-mono">Sign-up</span>
-                                    </label>
-                                    <label className="flex items-center space-x-2 cursor-pointer">
-                                      <input
-                                        type="radio"
-                                        name={`hook-action-${index}`}
-                                        checked={hook.action === 'sign-in'}
-                                        onChange={() => {
-                                          const newHooks = [...pluginHooks];
-                                          newHooks[index].action = 'sign-in';
-                                          setPluginHooks(newHooks);
-                                        }}
-                                        className="w-4 h-4 border border-white/20 bg-black text-white focus:ring-white focus:ring-offset-0 rounded-none"
-                                      />
-                                      <span className="text-xs text-white font-mono">Sign-in</span>
-                                    </label>
-                                    <label className="flex items-center space-x-2 cursor-pointer">
-                                      <input
-                                        type="radio"
-                                        name={`hook-action-${index}`}
-                                        checked={hook.action === 'custom'}
-                                        onChange={() => {
-                                          const newHooks = [...pluginHooks];
-                                          newHooks[index].action = 'custom';
-                                          setPluginHooks(newHooks);
-                                        }}
-                                        className="w-4 h-4 border border-white/20 bg-black text-white focus:ring-white focus:ring-offset-0 rounded-none"
-                                      />
-                                      <span className="text-xs text-white font-mono">Custom</span>
-                                    </label>
-                                  </div>
+                                  <RadioGroup
+                                    value={hook.action}
+                                    onValueChange={(value: 'sign-up' | 'sign-in' | 'custom') => {
+                                      const newHooks = [...pluginHooks];
+                                      newHooks[index].action = value;
+                                      setPluginHooks(newHooks);
+                                    }}
+                                    className="flex space-x-4"
+                                  >
+                                    <div className="flex items-center space-x-2">
+                                      <RadioGroupItem value="sign-up" id={`hook-action-signup-${index}`} />
+                                      <Label htmlFor={`hook-action-signup-${index}`} className="text-xs text-white font-mono cursor-pointer">
+                                        Sign-up
+                                      </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                      <RadioGroupItem value="sign-in" id={`hook-action-signin-${index}`} />
+                                      <Label htmlFor={`hook-action-signin-${index}`} className="text-xs text-white font-mono cursor-pointer">
+                                        Sign-in
+                                      </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                      <RadioGroupItem value="custom" id={`hook-action-custom-${index}`} />
+                                      <Label htmlFor={`hook-action-custom-${index}`} className="text-xs text-white font-mono cursor-pointer">
+                                        Custom
+                                      </Label>
+                                    </div>
+                                  </RadioGroup>
                                 </div>
                               </div>
                               {hook.action === 'custom' && (
@@ -3518,8 +3557,8 @@ export default function Tools() {
                     onClick={() =>
                       setPluginMiddleware([
                         ...pluginMiddleware,
-                        { 
-                          name: '', 
+                        {
+                          name: '',
                           path: '/my-plugin/protected',
                           pathType: 'exact',
                           middlewareLogic: 'const context = ctx;',
@@ -3548,9 +3587,8 @@ export default function Tools() {
                               {mwLabel}
                             </span>
                             <ChevronRight
-                              className={`w-4 h-4 text-white/60 transition-transform ${
-                                mw.expanded ? 'rotate-90' : ''
-                              }`}
+                              className={`w-4 h-4 text-white/60 transition-transform ${mw.expanded ? 'rotate-90' : ''
+                                }`}
                             />
                           </button>
                           {mw.expanded && (
@@ -3648,15 +3686,16 @@ export default function Tools() {
               </div>
 
               <div>
-                <label className="text-xs uppercase font-mono text-gray-400 flex items-center space-x-2">
-                  <input
-                    type="checkbox"
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="rate-limit"
                     checked={pluginRateLimit}
-                    onChange={(e) => setPluginRateLimit(e.target.checked)}
-                    className="rounded-none"
+                    onCheckedChange={(checked) => setPluginRateLimit(checked === true)}
                   />
-                  <span>Include Rate Limiting</span>
-                </label>
+                  <Label htmlFor="rate-limit" className="text-xs uppercase font-mono text-gray-400 cursor-pointer">
+                    Include Rate Limiting
+                  </Label>
+                </div>
               </div>
 
               <div className="flex items-center justify-end space-x-2">
@@ -3748,11 +3787,10 @@ export default function Tools() {
                       <button
                         key={tab.id}
                         onClick={() => setActiveCodeTab(tab.id as any)}
-                        className={`px-3 py-2 text-xs uppercase font-mono border-b-2 transition-colors ${
-                          activeCodeTab === tab.id
+                        className={`px-3 py-2 text-xs uppercase font-mono border-b-2 transition-colors ${activeCodeTab === tab.id
                             ? 'border-white text-white'
                             : 'border-transparent text-gray-400 hover:text-white'
-                        }`}
+                          }`}
                       >
                         {tab.label}
                       </button>
@@ -3911,9 +3949,8 @@ export default function Tools() {
                               >
                                 <div className="flex items-center space-x-2">
                                   <ChevronRight
-                                    className={`w-4 h-4 text-white/60 transition-transform ${
-                                      isExpanded ? 'rotate-90' : ''
-                                    }`}
+                                    className={`w-4 h-4 text-white/60 transition-transform ${isExpanded ? 'rotate-90' : ''
+                                      }`}
                                   />
                                   <span className="text-white font-mono text-sm">
                                     {providerName}
@@ -3940,11 +3977,10 @@ export default function Tools() {
                                   {providerResults.map((result, index) => (
                                     <div
                                       key={`${providerName}-${result.check}-${index}`}
-                                      className={`p-3 border-l border-dashed border-white/15 ${
-                                        result.status === 'pass'
+                                      className={`p-3 border-l border-dashed border-white/15 ${result.status === 'pass'
                                           ? 'bg-green-600/[8%]'
                                           : 'bg-red-600/[8%]'
-                                      }`}
+                                        }`}
                                     >
                                       <div className="flex items-start space-x-3">
                                         <div className="mt-0.5">
@@ -4005,9 +4041,8 @@ export default function Tools() {
                       {results.map((result, index) => (
                         <div
                           key={`${result.category}-${result.check}-${index}`}
-                          className={`p-3 border-l border-dashed border-white/15 ${
-                            result.status === 'pass' ? 'bg-green-600/[8%]' : 'bg-red-600/[8%]'
-                          }`}
+                          className={`p-3 border-l border-dashed border-white/15 ${result.status === 'pass' ? 'bg-green-600/[8%]' : 'bg-red-600/[8%]'
+                            }`}
                         >
                           <div className="flex items-start space-x-3">
                             <div className="mt-0.5">
@@ -4187,11 +4222,10 @@ export default function Tools() {
                 </div>
                 {uuidValidation && (
                   <div
-                    className={`mt-2 border border-dashed p-3 rounded-none ${
-                      uuidValidation.isValid
+                    className={`mt-2 border border-dashed p-3 rounded-none ${uuidValidation.isValid
                         ? 'border-white/10 bg-black/40'
                         : 'border-red-500/30 bg-red-500/10'
-                    }`}
+                      }`}
                   >
                     <div className="text-xs font-mono space-y-1">
                       <div
@@ -4282,7 +4316,7 @@ export default function Tools() {
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">
                   Password Strength Checker
                 </h3>
-    </div>
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
@@ -4350,8 +4384,7 @@ export default function Tools() {
                     <div className="border border-dashed border-white/10 p-3 space-y-2">
                       <div className="text-gray-400 uppercase tracking-wider">Strength</div>
                       <p
-                        className={`text-sm font-medium ${
-                          passwordStrength.strength === 'very-strong'
+                        className={`text-sm font-medium ${passwordStrength.strength === 'very-strong'
                             ? 'text-green-400'
                             : passwordStrength.strength === 'strong'
                               ? 'text-green-300'
@@ -4360,7 +4393,7 @@ export default function Tools() {
                                 : passwordStrength.strength === 'fair'
                                   ? 'text-orange-300'
                                   : 'text-red-300'
-                        }`}
+                          }`}
                       >
                         {passwordStrength.strength
                           .split('-')
@@ -4369,8 +4402,7 @@ export default function Tools() {
                       </p>
                       <div className="w-full bg-black/40 h-2 rounded-none">
                         <div
-                          className={`h-full transition-all ${
-                            passwordStrength.strength === 'very-strong'
+                          className={`h-full transition-all ${passwordStrength.strength === 'very-strong'
                               ? 'bg-green-400 w-full'
                               : passwordStrength.strength === 'strong'
                                 ? 'bg-green-300 w-4/5'
@@ -4379,7 +4411,7 @@ export default function Tools() {
                                   : passwordStrength.strength === 'fair'
                                     ? 'bg-orange-300 w-2/5'
                                     : 'bg-red-300 w-1/5'
-                          }`}
+                            }`}
                         />
                       </div>
                     </div>
@@ -4401,9 +4433,8 @@ export default function Tools() {
                     <div className="border border-dashed border-white/10 p-3 space-y-2">
                       <div className="text-gray-400 uppercase tracking-wider">Config Match</div>
                       <p
-                        className={`text-sm ${
-                          passwordStrength.meetsConfig ? 'text-green-400' : 'text-red-300'
-                        }`}
+                        className={`text-sm ${passwordStrength.meetsConfig ? 'text-green-400' : 'text-red-300'
+                          }`}
                       >
                         {passwordStrength.meetsConfig
                           ? '✓ Meets Requirements'
@@ -4427,9 +4458,8 @@ export default function Tools() {
                           <span className="text-white font-mono text-xs">{check.name}</span>
                           <div className="flex items-center space-x-2">
                             <span
-                              className={`text-xs font-mono ${
-                                check.passed ? 'text-green-400' : 'text-red-300'
-                              }`}
+                              className={`text-xs font-mono ${check.passed ? 'text-green-400' : 'text-red-300'
+                                }`}
                             >
                               {check.passed ? '✓' : '✗'}
                             </span>
@@ -4478,11 +4508,10 @@ export default function Tools() {
                       <button
                         key={providerId}
                         onClick={() => setSelectedProvider(providerId)}
-                        className={`px-4 py-2 border rounded-none text-sm uppercase font-mono transition-colors ${
-                          isSelected
+                        className={`px-4 py-2 border rounded-none text-sm uppercase font-mono transition-colors ${isSelected
                             ? 'border-white/60 bg-white/10 text-white'
                             : 'border-dashed border-white/20 text-gray-400 hover:border-white/40'
-                        }`}
+                          }`}
                       >
                         {providerId.charAt(0).toUpperCase() + providerId.slice(1)}
                       </button>
@@ -4697,11 +4726,10 @@ export default function Tools() {
                       <button
                         key={option.id}
                         onClick={() => setSecretFormat(option.id as 'hex' | 'base64')}
-                        className={`px-4 py-2 border rounded-none text-sm uppercase font-mono transition-colors flex-1 ${
-                          secretFormat === option.id
+                        className={`px-4 py-2 border rounded-none text-sm uppercase font-mono transition-colors flex-1 ${secretFormat === option.id
                             ? 'border-white/60 bg-white/10 text-white'
                             : 'border-dashed border-white/20 text-gray-400 hover:border-white/40'
-                        }`}
+                          }`}
                       >
                         {option.label}
                       </button>

@@ -4390,15 +4390,19 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             const camelCaseName = sanitizedName.charAt(0).toLowerCase() + sanitizedName.slice(1);
             const pascalCaseName = sanitizedName.charAt(0).toUpperCase() + sanitizedName.slice(1);
             // Generate server plugin code
-            let serverPluginCode = `import type { BetterAuthPlugin } from "better-auth/types";
+            let serverPluginCode = `import type { BetterAuthPlugin, GenericEndpointContext } from "better-auth";
+import { createAuthEndpoint, createAuthMiddleware } from "better-auth/plugins";
 import type { Database } from "better-auth/adapters";
+${middleware.length > 0 || hooks.some((h) => h.action === 'custom') ? 'import { sessionMiddleware } from "better-auth/api";' : ''}
+${middleware.length > 0 ? 'import * as z from "zod/v4";' : ''}
+${tables.length > 0 ? 'import type { InferSelectModel, InferInsertModel } from "better-auth/adapters";' : ''}
 
 export interface ${pascalCaseName}Options {
 ${tables.length > 0 ? '  // Database tables configuration\n' : ''}${tables
                 .map((table) => `  ${table.name}?: {\n    fields?: Record<string, any>;\n  };`)
                 .join('\n')}
 ${hooks.length > 0 ? '\n  // Hooks configuration\n' : ''}${hooks
-                .map((hook) => `  ${hook.name}?: (context: any) => Promise<void> | void;`)
+                .map((hook) => `  ${hook.name}?: (ctx: GenericEndpointContext) => Promise<void> | void;`)
                 .join('\n')}
 ${middleware.length > 0 ? '\n  // Middleware configuration\n' : ''}${middleware
                 .map((mw) => `  ${mw.name}?: (req: any, res: any, next: any) => Promise<void> | void;`)
@@ -4407,6 +4411,32 @@ ${rateLimit ? '\n  // Rate limiting\n  rateLimit?: {\n    windowMs?: number;\n  
 }
 
 export function ${camelCaseName}(options: ${pascalCaseName}Options = {}): BetterAuthPlugin {
+  const customHookEndpoints: Record<string, any> = {};
+  
+${hooks.filter((h) => h.action === 'custom' && h.customPath).map((hook, idx) => {
+                const endpointName = hook.name.trim() ? hook.name.toLowerCase().replace(/[^a-zA-Z0-9]/g, '') : `customHook${idx + 1}`;
+                return `  customHookEndpoints["${endpointName}"] = createAuthEndpoint(
+    "${hook.customPath}",
+    {
+      method: "POST",
+      use: [
+        sessionMiddleware,
+        createAuthMiddleware(async (ctx) => {
+          // ${hook.name || 'Custom hook'}
+          ${hook.customMatcher ? `if (!(${hook.customMatcher})) {
+            throw new Error("Custom matcher condition not met");
+          }` : ''}
+          ${hook.hookLogic || '// Hook logic here'}
+        }),
+      ],
+    },
+    async (ctx) => {
+      ${hook.hookLogic || '// Endpoint handler logic here'}
+      return ctx.json({ success: true });
+    },
+  );`;
+            }).join('\n\n')}
+
   return {
     id: "${camelCaseName}",
     name: "${sanitizedName}",
@@ -4439,58 +4469,95 @@ ${table.fields?.map((field) => `            ${field.name}: {
                 .join('\n\n')}
       },
     },` : ''}
-    ${hooks.length > 0 ? `hooks: {
-${hooks
-                .map((hook) => {
-                const hookId = `${hook.timing}-${hook.action}${hook.action === 'custom' && hook.customPath ? `-${hook.customPath.replace(/[^a-zA-Z0-9]/g, '-')}` : ''}`;
-                let hookCode = '';
-                if (hook.action === 'custom' && hook.customPath) {
-                    hookCode = `      "${hookId}": async (ctx) => {
-        // ${hook.name || 'Custom hook'}
-        ${hook.customMatcher ? `if (!(${hook.customMatcher})) return;` : ''}
-        ${hook.hookLogic || '// Hook logic here'}
-      },`;
-                }
-                else {
-                    hookCode = `      "${hookId}": async (ctx) => {
-        // ${hook.name || `${hook.timing} ${hook.action} hook`}
-        ${hook.hookLogic || '// Hook logic here'}
-      },`;
-                }
-                return hookCode;
-            })
-                .join('\n\n')}
-    },` : ''}
-    ${middleware.length > 0 ? `middleware: [
-${middleware
-                .map((mw) => {
-                const mwName = mw.name.trim() || 'middleware';
+    ${middleware.length > 0 || hooks.some((h) => h.action === 'custom' && h.customPath) ? `endpoints: {
+${hooks.filter((h) => h.action === 'custom' && h.customPath).map((hook, idx) => {
+                const endpointName = hook.name.trim() ? hook.name.toLowerCase().replace(/[^a-zA-Z0-9]/g, '') : `customHook${idx + 1}`;
+                return `      ${endpointName}: customHookEndpoints["${endpointName}"],`;
+            }).join('\n')}
+${middleware.length > 0 ? '      ' : ''}${middleware
+                .map((mw, idx) => {
+                const mwName = mw.name.trim() || `middleware${idx + 1}`;
+                const endpointName = mwName.charAt(0).toLowerCase() + mwName.slice(1).replace(/[^a-zA-Z0-9]/g, '');
                 let pathMatch = '';
                 if (mw.pathType === 'exact') {
-                    pathMatch = `req.path === "${mw.path}"`;
+                    pathMatch = `ctx.request.path === "${mw.path}"`;
                 }
                 else if (mw.pathType === 'prefix') {
-                    pathMatch = `req.path.startsWith("${mw.path}")`;
+                    pathMatch = `ctx.request.path.startsWith("${mw.path}")`;
                 }
                 else if (mw.pathType === 'regex') {
-                    pathMatch = `new RegExp("${mw.path.replace(/"/g, '\\"')}").test(req.path)`;
+                    pathMatch = `new RegExp("${mw.path.replace(/"/g, '\\"')}").test(ctx.request.path)`;
                 }
-                return `      async (req, res, next) => {
-        // ${mwName}
-        if (${pathMatch}) {
-          ${mw.middlewareLogic || '// Middleware logic here'}
-        }
-        next();
-      },`;
+                return `${endpointName}: createAuthEndpoint(
+        "${mw.path}",
+        {
+          method: "POST",
+          use: [
+            sessionMiddleware,
+            createAuthMiddleware(async (ctx) => {
+              // ${mwName}
+              ${mw.middlewareLogic || '// Middleware logic here'}
+            }),
+          ],
+        },
+        async (ctx) => {
+          ${mw.middlewareLogic || '// Endpoint handler logic here'}
+          return ctx.json({ success: true });
+        },
+      ),`;
             })
-                .join('\n')}
-    ],` : ''}
+                .join('\n      ')}
+    },` : ''}
+    ${hooks.length > 0 ? `init(ctx) {
+      return {
+        options: {
+          databaseHooks: {
+            ${hooks.some((h) => h.action === 'sign-up') ? `user: {
+              create: {
+                ${hooks.filter((h) => h.action === 'sign-up').map((hook) => {
+                return `${hook.timing}: {
+                    async ${hook.timing}(user, ctx) {
+                      // ${hook.name || `${hook.timing} sign-up hook`}
+                      ${hook.customMatcher ? `if (!(${hook.customMatcher})) return;` : ''}
+                      ${hook.hookLogic || '// Hook logic here'}
+                    },
+                  },`;
+            }).join('\n')}
+              },
+            },` : ''}
+            ${hooks.some((h) => h.action === 'sign-in') ? `session: {
+              create: {
+                ${hooks.filter((h) => h.action === 'sign-in').map((hook) => {
+                return `${hook.timing}: {
+                    async ${hook.timing}(session, ctx) {
+                      // ${hook.name || `${hook.timing} sign-in hook`}
+                      ${hook.customMatcher ? `if (!(${hook.customMatcher})) return;` : ''}
+                      ${hook.hookLogic || '// Hook logic here'}
+                    },
+                  },`;
+            }).join('\n')}
+              },
+            },` : ''}
+          },
+        },
+      };
+    },` : ''}
+    ${tables.length > 0 ? `schema: {
+${tables.map((table) => {
+                return `      ${table.name}: {
+        id: "string",
+        createdAt: "date",
+        updatedAt: "date",
+${table.fields?.map((field) => `        ${field.name}: "${field.type}",`).join('\n') || ''}
+      },`;
+            }).join('\n')}
+    },` : ''}
     ${rateLimit ? `rateLimit: {
       windowMs: options.rateLimit?.windowMs || 15 * 60 * 1000, // 15 minutes
       max: options.rateLimit?.max || 100,
     },` : ''}
-  };
-}
+  } satisfies BetterAuthPlugin;
+};
 `;
             // Generate client plugin code
             const clientPluginCode = `import type { BetterAuthClientPlugin } from "better-auth/client";
