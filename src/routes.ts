@@ -5046,7 +5046,7 @@ ${fields}
       ),`;
       }).join('\n') : '';
 
-      // Generate rate limit
+      // Generate rate limit (single config object, not array)
       const rateLimitCode = rateLimit ? (() => {
         const rl = rateLimit as any;
         let pathMatcher = '';
@@ -5060,11 +5060,9 @@ ${fields}
           pathMatcher = `(path: string) => true`;
         }
         
-        return `      {
-        window: ${rl.window || 15 * 60 * 1000},
-        max: ${rl.max || 100},
-        pathMatcher: ${pathMatcher},
-      }`;
+        return `    window: ${rl.window || 15 * 60 * 1000},
+    max: ${rl.max || 100},
+    pathMatcher: ${pathMatcher}`;
       })() : '';
 
       // Helper function to clean up code (remove empty lines, trim spaces)
@@ -5109,7 +5107,7 @@ ${fields}
       }
       
       if (rateLimitCode) {
-        pluginParts.push(`    rateLimit: [\n${rateLimitCode}\n    ]`);
+        pluginParts.push(`    rateLimit: {\n${rateLimitCode}\n    }`);
       }
 
       // Generate server plugin code
