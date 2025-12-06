@@ -4337,7 +4337,6 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             if (!pluginName || typeof pluginName !== 'string' || pluginName.trim().length === 0) {
                 return res.status(400).json({ success: false, error: 'Plugin name is required' });
             }
-            // Validate plugin name (must be valid identifier)
             const validNameRegex = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
             if (!validNameRegex.test(pluginName.trim())) {
                 return res.status(400).json({
@@ -4349,23 +4348,32 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
             const camelCaseName = sanitizedName.charAt(0).toLowerCase() + sanitizedName.slice(1);
             const pascalCaseName = sanitizedName.charAt(0).toUpperCase() + sanitizedName.slice(1);
             // Generate schema
-            const schemaCode = tables.length > 0 ? tables.map((table) => {
-                const fields = table.fields?.filter((f) => f.name.trim()).map((field) => {
-                    let attrStr = `type: "${field.type}"`;
-                    if (field.required)
-                        attrStr += ',\n            required: true';
-                    if (field.unique)
-                        attrStr += ',\n            unique: true';
-                    return `          ${field.name}: {\n            ${attrStr}\n          }`;
-                }).join(',\n') || '';
-                return `      ${table.name}: {
+            const schemaCode = tables.length > 0
+                ? tables
+                    .map((table) => {
+                    const fields = table.fields
+                        ?.filter((f) => f.name.trim())
+                        .map((field) => {
+                        let attrStr = `type: "${field.type}"`;
+                        if (field.required)
+                            attrStr += ',\n            required: true';
+                        if (field.unique)
+                            attrStr += ',\n            unique: true';
+                        return `          ${field.name}: {\n            ${attrStr}\n          }`;
+                    })
+                        .join(',\n') || '';
+                    return `      ${table.name}: {
         fields: {
 ${fields}
         },
       }`;
-            }).join(',\n') : '';
+                })
+                    .join(',\n')
+                : '';
             // Generate hooks
-            const beforeHooks = hooks.filter((h) => h.timing === 'before').map((hook) => {
+            const beforeHooks = hooks
+                .filter((h) => h.timing === 'before')
+                .map((hook) => {
                 let matcher = '';
                 if (hook.action === 'sign-up') {
                     matcher = `(ctx) => ctx.path.startsWith("/sign-up")`;
@@ -4390,7 +4398,9 @@ ${fields}
           }),
         }`;
             });
-            const afterHooks = hooks.filter((h) => h.timing === 'after').map((hook) => {
+            const afterHooks = hooks
+                .filter((h) => h.timing === 'after')
+                .map((hook) => {
                 let matcher = '';
                 if (hook.action === 'sign-up') {
                     matcher = `(ctx) => ctx.path.startsWith("/sign-up")`;
@@ -4416,7 +4426,8 @@ ${fields}
         }`;
             });
             // Generate middleware
-            const middlewareCode = middleware.map((mw) => {
+            const middlewareCode = middleware
+                .map((mw) => {
                 return `      {
         path: "${mw.path}",
         middleware: createAuthMiddleware(async (ctx) => {
@@ -4424,23 +4435,31 @@ ${fields}
           ${mw.middlewareLogic || '// Middleware logic here'}
         }),
       }`;
-            }).join(',\n');
+            })
+                .join(',\n');
             // Generate endpoints
-            const endpointsCode = endpoints.length > 0 ? endpoints.map((endpoint) => {
-                const endpointName = endpoint.name?.trim() || `endpoint${endpoints.indexOf(endpoint) + 1}`;
-                const sanitizedName = endpointName.replace(/[^a-zA-Z0-9]/g, '');
-                const endpointPath = endpoint.path?.trim() || `/${camelCaseName}/${sanitizedName}`;
-                const handlerLogic = endpoint.handlerLogic || '// Endpoint handler logic here\n          return ctx.json({ success: true });';
-                const formattedHandlerLogic = handlerLogic.split('\n').map((line) => {
-                    const trimmed = line.trim();
-                    if (!trimmed)
-                        return '';
-                    if (!line.startsWith('          ')) {
-                        return '          ' + trimmed;
-                    }
-                    return line;
-                }).filter(Boolean).join('\n');
-                return `      ${sanitizedName}: createAuthEndpoint(
+            const endpointsCode = endpoints.length > 0
+                ? endpoints
+                    .map((endpoint) => {
+                    const endpointName = endpoint.name?.trim() || `endpoint${endpoints.indexOf(endpoint) + 1}`;
+                    const sanitizedName = endpointName.replace(/[^a-zA-Z0-9]/g, '');
+                    const endpointPath = endpoint.path?.trim() || `/${camelCaseName}/${sanitizedName}`;
+                    const handlerLogic = endpoint.handlerLogic ||
+                        '// Endpoint handler logic here\n          return ctx.json({ success: true });';
+                    const formattedHandlerLogic = handlerLogic
+                        .split('\n')
+                        .map((line) => {
+                        const trimmed = line.trim();
+                        if (!trimmed)
+                            return '';
+                        if (!line.startsWith('          ')) {
+                            return '          ' + trimmed;
+                        }
+                        return line;
+                    })
+                        .filter(Boolean)
+                        .join('\n');
+                    return `      ${sanitizedName}: createAuthEndpoint(
         "${endpointPath}",
         {
           method: "${endpoint.method || 'POST'}" as const,
@@ -4450,32 +4469,36 @@ ${fields}
 ${formattedHandlerLogic}
         },
       ),`;
-            }).join('\n') : '';
-            const rateLimitCode = rateLimit ? (() => {
-                const rl = rateLimit;
-                let pathMatcher = '';
-                if (rl.pathType === 'exact') {
-                    pathMatcher = `(path: string) => path === "${rl.path}"`;
-                }
-                else if (rl.pathType === 'prefix') {
-                    pathMatcher = `(path: string) => path.startsWith("${rl.path}")`;
-                }
-                else if (rl.pathType === 'regex') {
-                    pathMatcher = `(path: string) => new RegExp("${rl.path.replace(/"/g, '\\"')}").test(path)`;
-                }
-                else {
-                    pathMatcher = `(path: string) => true`;
-                }
-                const windowValue = rl.window && rl.window > 0 ? rl.window : 15 * 60 * 1000;
-                const maxValue = rl.max && rl.max > 0 ? rl.max : 100;
-                return `      window: ${windowValue},
+                })
+                    .join('\n')
+                : '';
+            const rateLimitCode = rateLimit
+                ? (() => {
+                    const rl = rateLimit;
+                    let pathMatcher = '';
+                    if (rl.pathType === 'exact') {
+                        pathMatcher = `(path: string) => path === "${rl.path}"`;
+                    }
+                    else if (rl.pathType === 'prefix') {
+                        pathMatcher = `(path: string) => path.startsWith("${rl.path}")`;
+                    }
+                    else if (rl.pathType === 'regex') {
+                        pathMatcher = `(path: string) => new RegExp("${rl.path.replace(/"/g, '\\"')}").test(path)`;
+                    }
+                    else {
+                        pathMatcher = `(path: string) => true`;
+                    }
+                    const windowValue = rl.window && rl.window > 0 ? rl.window : 15 * 60 * 1000;
+                    const maxValue = rl.max && rl.max > 0 ? rl.max : 100;
+                    return `      window: ${windowValue},
       max: ${maxValue},
       pathMatcher: ${pathMatcher}`;
-            })() : '';
+                })()
+                : '';
             const cleanCode = (code) => {
                 return code
                     .split('\n')
-                    .map(line => line.trimEnd())
+                    .map((line) => line.trimEnd())
                     .filter((line, index, arr) => {
                     if (line === '' && arr[index + 1] === '')
                         return false;
@@ -4526,11 +4549,15 @@ ${serverPluginBody}
   } satisfies BetterAuthPlugin;
 };
 `);
-            const pathMethods = endpoints.length > 0 ? endpoints.map((endpoint) => {
-                const endpointPath = endpoint.path?.trim() || '';
-                const method = endpoint.method || 'POST';
-                return `      "${endpointPath}": "${method}"`;
-            }).join(',\n') : '';
+            const pathMethods = endpoints.length > 0
+                ? endpoints
+                    .map((endpoint) => {
+                    const endpointPath = endpoint.path?.trim() || '';
+                    const method = endpoint.method || 'POST';
+                    return `      "${endpointPath}": "${method}"`;
+                })
+                    .join(',\n')
+                : '';
             const sessionAffectingPaths = endpoints
                 .filter((endpoint) => {
                 const path = endpoint.path?.trim() || '';
@@ -4581,7 +4608,8 @@ export const auth = betterAuth({
                 solid: 'import.meta.env.PUBLIC_BETTER_AUTH_URL || "http://localhost:5173"',
                 vue: 'import.meta.env.PUBLIC_BETTER_AUTH_URL || "http://localhost:5173"',
             };
-            const baseURL = baseURLMap[clientFramework] || 'process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000"';
+            const baseURL = baseURLMap[clientFramework] ||
+                'process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000"';
             const clientSetupCode = cleanCode(`import { createAuthClient } from "${frameworkImport}";
 import { ${camelCaseName}Client } from "./plugin/${camelCaseName}/client";
 
