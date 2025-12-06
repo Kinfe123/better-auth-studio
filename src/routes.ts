@@ -4929,7 +4929,7 @@ export function createRoutes(
       const {
         pluginName,
         description,
-        clientFramework = 'client',
+        clientFramework = 'react',
         tables = [],
         hooks = [],
         middleware = [],
@@ -5138,7 +5138,7 @@ ${formattedHandlerLogic}
         ? `    id: "${camelCaseName}" as const,\n${pluginParts.join(',\n')}`
         : `    id: "${camelCaseName}" as const`;
 
-      const serverPluginCode = cleanCode(`// plugin/${camelCaseName}/index.ts
+      const serverPluginCode = cleanCode(`import type { BetterAuthPlugin } from "@better-auth/core";
 ${imports.join('\n')}
 
 ${description ? `/**\n * ${description.replace(/\n/g, '\n * ')}\n */` : ''}
@@ -5172,8 +5172,7 @@ ${serverPluginBody}
         ? `\n    atomListeners: [\n${sessionAffectingPaths.join(',\n')}\n    ],` 
         : '';
 
-      const clientPluginCode = cleanCode(`// plugin/${camelCaseName}/client/index.ts
-import type { BetterAuthClientPlugin } from "@better-auth/core";
+      const clientPluginCode = cleanCode(`import type { BetterAuthClientPlugin } from "@better-auth/core";
 import type { ${camelCaseName} } from "..";
 
 export const ${camelCaseName}Client = () => {
@@ -5185,8 +5184,7 @@ export const ${camelCaseName}Client = () => {
 `);
 
       // Generate server setup code
-      const serverSetupCode = cleanCode(`
-import { betterAuth } from "@better-auth/core";
+      const serverSetupCode = cleanCode(`import { betterAuth } from "@better-auth/core";
 import { ${camelCaseName} } from "./plugin/${camelCaseName}";
 
 export const auth = betterAuth({
@@ -5203,14 +5201,25 @@ export const auth = betterAuth({
         solid: 'better-auth/solid',
         vue: 'better-auth/vue',
       };
-      const frameworkImport = frameworkImportMap[clientFramework] || 'better-auth/client';
+      const frameworkImport = frameworkImportMap[clientFramework] || 'better-auth/react';
 
-      const clientSetupCode = cleanCode(`
-import { createAuthClient } from "${frameworkImport}";
-${endpoints.length > 0 ? `import { ${camelCaseName}Client } from "./plugin/${camelCaseName}/client";` : ''}
+      // Get baseURL based on framework
+      const baseURLMap: Record<string, string> = {
+        react: 'process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000"',
+        svelte: 'import.meta.env.PUBLIC_BETTER_AUTH_URL || "http://localhost:5173"',
+        solid: 'import.meta.env.PUBLIC_BETTER_AUTH_URL || "http://localhost:5173"',
+        vue: 'import.meta.env.PUBLIC_BETTER_AUTH_URL || "http://localhost:5173"',
+      };
+      const baseURL = baseURLMap[clientFramework] || 'process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000"';
+
+      const clientSetupCode = cleanCode(`import { createAuthClient } from "${frameworkImport}";
+import { ${camelCaseName}Client } from "./plugin/${camelCaseName}/client";
 
 export const authClient = createAuthClient({
-  ${endpoints.length > 0 ? `plugins: [\n    ${camelCaseName}Client(),\n    // ... other plugins\n  ],` : ''}
+  baseURL: ${baseURL},
+  plugins: [
+    ${camelCaseName}Client(),
+  ],
 });
 `);
 

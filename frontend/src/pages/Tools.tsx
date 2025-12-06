@@ -1612,7 +1612,7 @@ export default function Tools() {
   const handleOpenPluginGenerator = () => {
     setPluginName('');
     setPluginDescription('');
-    setClientFramework('client');
+    setClientFramework('react');
     setPluginTables([]);
     setPluginHooks([]);
     setPluginMiddleware([]);
@@ -1656,18 +1656,28 @@ export default function Tools() {
       svelte: 'better-auth/svelte',
       solid: 'better-auth/solid',
       vue: 'better-auth/vue',
-      client: 'better-auth/client',
     };
-    const frameworkImport = frameworkImportMap[framework] || 'better-auth/client';
+    const frameworkImport = frameworkImportMap[framework] || 'better-auth/react';
     
     const camelCaseName = pluginResult.name.charAt(0).toLowerCase() + pluginResult.name.slice(1);
-    const hasEndpoints = pluginResult.server && pluginResult.server.includes('endpoints:');
+    
+    // Get baseURL based on framework
+    const baseURLMap: Record<string, string> = {
+      react: 'process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000"',
+      svelte: 'import.meta.env.PUBLIC_BETTER_AUTH_URL || "http://localhost:5173"',
+      solid: 'import.meta.env.PUBLIC_BETTER_AUTH_URL || "http://localhost:5173"',
+      vue: 'import.meta.env.PUBLIC_BETTER_AUTH_URL || "http://localhost:5173"',
+    };
+    const baseURL = baseURLMap[framework] || 'process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000"';
     
     const clientSetupCode = `import { createAuthClient } from "${frameworkImport}";
-${hasEndpoints ? `import { ${camelCaseName}Client } from "./plugin/${camelCaseName}/client";` : ''}
+import { ${camelCaseName}Client } from "./plugin/${camelCaseName}/client";
 
 export const authClient = createAuthClient({
-  ${hasEndpoints ? `plugins: [\n    ${camelCaseName}Client(),\n    // ... other plugins\n  ],` : ''}
+  baseURL: ${baseURL},
+  plugins: [
+    ${camelCaseName}Client(),
+  ],
 });`;
 
     setPluginResult({
@@ -4063,7 +4073,7 @@ export const authClient = createAuthClient({
                   onClick={() => {
                     setPluginName('');
                     setPluginDescription('');
-                    setClientFramework('client');
+                    setClientFramework('react');
                     setPluginTables([]);
                     setPluginHooks([]);
                     setPluginMiddleware([]);
@@ -4121,15 +4131,14 @@ export const authClient = createAuthClient({
                               regenerateClientSetupCode(value);
                             }}
                           >
-                            <SelectTrigger className="bg-black border border-dashed border-white/20 text-white rounded-none w-[180px] h-8 text-xs">
-                              <SelectValue />
+                            <SelectTrigger className="bg-black border border-dashed border-white/20 text-white rounded-none w-[220px] h-10 text-xs font-mono uppercase px-4 py-2">
+                              <SelectValue className="font-mono uppercase text-xs text-white" />
                             </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="client">Generic (better-auth/client)</SelectItem>
-                              <SelectItem value="react">React (better-auth/react)</SelectItem>
-                              <SelectItem value="svelte">Svelte (better-auth/svelte)</SelectItem>
-                              <SelectItem value="solid">Solid (better-auth/solid)</SelectItem>
-                              <SelectItem value="vue">Vue (better-auth/vue)</SelectItem>
+                            <SelectContent className="font-mono uppercase text-xs bg-black border border-dashed border-white/20">
+                              <SelectItem value="react" className="text-white/90 border-b border-dashed border-white/10 last:border-b-0 py-3 px-4 hover:bg-white/5 cursor-pointer">React (better-auth/react)</SelectItem>
+                              <SelectItem value="svelte" className="text-white/90 border-b border-dashed border-white/10 last:border-b-0 py-3 px-4 hover:bg-white/5 cursor-pointer">Svelte (better-auth/svelte)</SelectItem>
+                              <SelectItem value="solid" className="text-white/90 border-b border-dashed border-white/10 last:border-b-0 py-3 px-4 hover:bg-white/5 cursor-pointer">Solid (better-auth/solid)</SelectItem>
+                              <SelectItem value="vue" className="text-white/90 border-b border-dashed border-white/10 last:border-b-0 py-3 px-4 hover:bg-white/5 cursor-pointer">Vue (better-auth/vue)</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>

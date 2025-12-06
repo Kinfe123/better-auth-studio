@@ -4333,7 +4333,7 @@ export function createRoutes(authConfig, configPath, geoDbPath) {
     });
     router.post('/api/tools/plugin-generator', async (req, res) => {
         try {
-            const { pluginName, description, clientFramework = 'client', tables = [], hooks = [], middleware = [], endpoints = [], rateLimit, } = req.body || {};
+            const { pluginName, description, clientFramework = 'react', tables = [], hooks = [], middleware = [], endpoints = [], rateLimit, } = req.body || {};
             if (!pluginName || typeof pluginName !== 'string' || pluginName.trim().length === 0) {
                 return res.status(400).json({ success: false, error: 'Plugin name is required' });
             }
@@ -4524,7 +4524,7 @@ ${formattedHandlerLogic}
             const serverPluginBody = pluginParts.length > 0
                 ? `    id: "${camelCaseName}" as const,\n${pluginParts.join(',\n')}`
                 : `    id: "${camelCaseName}" as const`;
-            const serverPluginCode = cleanCode(`// plugin/${camelCaseName}/index.ts
+            const serverPluginCode = cleanCode(`import type { BetterAuthPlugin } from "@better-auth/core";
 ${imports.join('\n')}
 
 ${description ? `/**\n * ${description.replace(/\n/g, '\n * ')}\n */` : ''}
@@ -4554,8 +4554,7 @@ ${serverPluginBody}
             const atomListenersCode = sessionAffectingPaths.length > 0
                 ? `\n    atomListeners: [\n${sessionAffectingPaths.join(',\n')}\n    ],`
                 : '';
-            const clientPluginCode = cleanCode(`// plugin/${camelCaseName}/client/index.ts
-import type { BetterAuthClientPlugin } from "@better-auth/core";
+            const clientPluginCode = cleanCode(`import type { BetterAuthClientPlugin } from "@better-auth/core";
 import type { ${camelCaseName} } from "..";
 
 export const ${camelCaseName}Client = () => {
@@ -4566,8 +4565,7 @@ export const ${camelCaseName}Client = () => {
 };
 `);
             // Generate server setup code
-            const serverSetupCode = cleanCode(`
-import { betterAuth } from "@better-auth/core";
+            const serverSetupCode = cleanCode(`import { betterAuth } from "@better-auth/core";
 import { ${camelCaseName} } from "./plugin/${camelCaseName}";
 
 export const auth = betterAuth({
@@ -4583,13 +4581,23 @@ export const auth = betterAuth({
                 solid: 'better-auth/solid',
                 vue: 'better-auth/vue',
             };
-            const frameworkImport = frameworkImportMap[clientFramework] || 'better-auth/client';
-            const clientSetupCode = cleanCode(`
-import { createAuthClient } from "${frameworkImport}";
-${endpoints.length > 0 ? `import { ${camelCaseName}Client } from "./plugin/${camelCaseName}/client";` : ''}
+            const frameworkImport = frameworkImportMap[clientFramework] || 'better-auth/react';
+            // Get baseURL based on framework
+            const baseURLMap = {
+                react: 'process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000"',
+                svelte: 'import.meta.env.PUBLIC_BETTER_AUTH_URL || "http://localhost:5173"',
+                solid: 'import.meta.env.PUBLIC_BETTER_AUTH_URL || "http://localhost:5173"',
+                vue: 'import.meta.env.PUBLIC_BETTER_AUTH_URL || "http://localhost:5173"',
+            };
+            const baseURL = baseURLMap[clientFramework] || 'process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000"';
+            const clientSetupCode = cleanCode(`import { createAuthClient } from "${frameworkImport}";
+import { ${camelCaseName}Client } from "./plugin/${camelCaseName}/client";
 
 export const authClient = createAuthClient({
-  ${endpoints.length > 0 ? `plugins: [\n    ${camelCaseName}Client(),\n    // ... other plugins\n  ],` : ''}
+  baseURL: ${baseURL},
+  plugins: [
+    ${camelCaseName}Client(),
+  ],
 });
 `);
             return res.json({
