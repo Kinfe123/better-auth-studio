@@ -187,42 +187,6 @@ const emailTemplates: Record<string, EmailTemplate> = {
     ],
     category: 'organization',
   },
-  welcome: {
-    id: 'welcome',
-    name: 'Welcome Email',
-    subject: 'Welcome to {{app.name}}',
-    html: `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome</title>
-</head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="margin-bottom: 30px;">
-    <img src="https://www.better-auth.com/logo.png" alt="Better Auth" style="max-width: 70px; height: auto; display: block;">
-  </div>
-  <div style="background: #000; color: #fff; padding: 20px; text-align: center; margin-bottom: 30px;">
-    <h1 style="margin: 0; font-size: 24px; font-weight: 300;">Welcome!</h1>
-  </div>
-  
-  <p>Hello {{user.name}},</p>
-  
-  <p>Welcome to {{app.name}}! We're excited to have you on board.</p>
-  
-  <p>Get started by exploring your dashboard and setting up your profile.</p>
-  
-  <div style="text-align: center; margin: 30px 0;">
-    <a href="{{dashboardUrl}}" style="display: inline-block; background: #000; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: 500;">Go to Dashboard</a>
-  </div>
-  
-  <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-  <p style="color: #999; font-size: 12px; text-align: center;">© {{year}} Better Auth. All rights reserved.</p>
-</body>
-</html>`,
-    fields: ['user.name', 'user.email', 'app.name', 'dashboardUrl'],
-    category: 'notification',
-  },
   'email-otp': {
     id: 'email-otp',
     name: 'Email OTP',
