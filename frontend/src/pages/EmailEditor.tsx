@@ -246,15 +246,21 @@ const emailTemplates: Record<string, EmailTemplate> = {
   
   <p>Your verification code is:</p>
   
-  <div style="text-align: center; margin: 30px 0;">
-    <div style="display: inline-block; background: #f5f5f5; border: 2px dashed #000; padding: 20px 40px; font-size: 32px; font-weight: bold; letter-spacing: 8px; font-family: monospace;">
-      {{otp}}
+  <div style="text-align: center; margin: 40px 0;">
+    <div style="display: inline-flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+      {{otpDigits}}
     </div>
   </div>
   
-  <p style="color: #666; font-size: 14px;">This code will expire in {{expiresIn}}.</p>
+  <p style="text-align: center; color: #666; font-size: 16px; font-weight: 500; letter-spacing: 4px; font-family: monospace; margin: 20px 0;">
+    {{otp}}
+  </p>
   
-  <p style="color: #666; font-size: 14px; margin-top: 30px;">If you didn't request this code, please ignore this email.</p>
+  <p style="color: #666; font-size: 14px; text-align: center; margin-top: 30px;">
+    This code will expire in <strong style="color: #000;">{{expiresIn}}</strong>.
+  </p>
+  
+  <p style="color: #666; font-size: 14px; margin-top: 20px;">If you didn't request this code, please ignore this email.</p>
   
   <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
   <p style="color: #999; font-size: 12px; text-align: center;">© {{year}} Better Auth. All rights reserved.</p>
@@ -393,11 +399,21 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     sendResetPassword: async ({ user, url, token }) => {
+      const subject = \`${escapedSubject}\`
+        .replace(/{{user.name}}/g, user?.name || '')
+        .replace(/{{user.email}}/g, user?.email || '');
+
+      const html = \`${escapedHtml}\`
+        .replace(/{{user.name}}/g, user?.name || '')
+        .replace(/{{user.email}}/g, user?.email || '')
+        .replace(/{{url}}/g, url || '')
+        .replace(/{{token}}/g, token || '');
+
       await resend.emails.send({
         from: 'noreply@yourdomain.com',
         to: user.email,
-        subject: \`${escapedSubject}\`,
-        html: \`${escapedHtml}\`,
+        subject,
+        html,
       });
     },
   },
@@ -412,11 +428,21 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     sendVerificationEmail: async ({ user, url, token }) => {
+      const subject = \`${escapedSubject}\`
+        .replace(/{{user.name}}/g, user?.name || '')
+        .replace(/{{user.email}}/g, user?.email || '');
+
+      const html = \`${escapedHtml}\`
+        .replace(/{{user.name}}/g, user?.name || '')
+        .replace(/{{user.email}}/g, user?.email || '')
+        .replace(/{{url}}/g, url || '')
+        .replace(/{{token}}/g, token || '');
+
       await resend.emails.send({
         from: 'noreply@yourdomain.com',
         to: user.email,
-        subject: \`${escapedSubject}\`,
-        html: \`${escapedHtml}\`,
+        subject,
+        html,
       });
     },
   },
@@ -430,11 +456,19 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     sendMagicLinkEmail: async ({ email, url, token }) => {
+      const subject = \`${escapedSubject}\`
+        .replace(/{{user.email}}/g, email || '');
+
+      const html = \`${escapedHtml}\`
+        .replace(/{{user.email}}/g, email || '')
+        .replace(/{{url}}/g, url || '')
+        .replace(/{{token}}/g, token || '');
+
       await resend.emails.send({
         from: 'noreply@yourdomain.com',
         to: email,
-        subject: \`${escapedSubject}\`,
-        html: \`${escapedHtml}\`,
+        subject,
+        html,
       });
     },
   },
@@ -491,11 +525,25 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     sendWelcomeEmail: async ({ user }) => {
+      const appName = process.env.APP_NAME || 'Your App';
+      const dashboardUrl = process.env.DASHBOARD_URL || 'https://yourdomain.com/dashboard';
+
+      const subject = \`${escapedSubject}\`
+        .replace(/{{user.name}}/g, user?.name || '')
+        .replace(/{{user.email}}/g, user?.email || '')
+        .replace(/{{app.name}}/g, appName);
+
+      const html = \`${escapedHtml}\`
+        .replace(/{{user.name}}/g, user?.name || '')
+        .replace(/{{user.email}}/g, user?.email || '')
+        .replace(/{{app.name}}/g, appName)
+        .replace(/{{dashboardUrl}}/g, dashboardUrl);
+
       await resend.emails.send({
         from: 'noreply@yourdomain.com',
         to: user.email,
-        subject: \`${escapedSubject}\`,
-        html: \`${escapedHtml}\`,
+        subject,
+        html,
       });
     },
   },
@@ -511,11 +559,35 @@ export const auth = betterAuth({
     emailOTP({
       overrideDefaultEmailVerification: true,
       async sendVerificationOTP({ email, otp, type }) {
+        // Split OTP into individual digits for better UI
+        const otpDigits = (otp || '').split('');
+        const otpBoxes = otpDigits.map(
+          (digit) => \`<div style="display: inline-block; width: 50px; height: 60px; line-height: 60px; text-align: center; background: #f5f5f5; border: 2px solid #000; border-radius: 8px; font-size: 28px; font-weight: bold; font-family: monospace; margin: 0 4px;">\${digit}</div>\`
+        ).join('');
+
+        // Calculate expiresIn (default 10 minutes if not provided)
+        // You can adjust this based on your OTP expiration settings
+        const expiresInMinutes = 10;
+        const expiresIn = expiresInMinutes === 1 ? '1 minute' : \`\${expiresInMinutes} minutes\`;
+
+        const subject = \`${escapedSubject}\`
+          .replace(/{{email}}/g, email || '')
+          .replace(/{{otp}}/g, otp || '')
+          .replace(/{{type}}/g, type || '')
+          .replace(/{{expiresIn}}/g, expiresIn);
+
+        const html = \`${escapedHtml}\`
+          .replace(/{{email}}/g, email || '')
+          .replace(/{{otp}}/g, otp || '')
+          .replace(/{{type}}/g, type || '')
+          .replace(/{{expiresIn}}/g, expiresIn)
+          .replace(/{{otpDigits}}/g, otpBoxes);
+
         await resend.emails.send({
           from: 'noreply@yourdomain.com',
           to: email,
-          subject: \`${escapedSubject}\`,
-          html: \`${escapedHtml}\`,
+          subject,
+          html,
         });
       },
     }),

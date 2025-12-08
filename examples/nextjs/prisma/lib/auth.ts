@@ -2,7 +2,6 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { organization, admin } from 'better-auth/plugins';
 import { prisma } from './db';
-import { Invitation } from 'better-auth/plugins';
 export const auth = betterAuth({
   secret: process.env.AUTH_SECRET || 'better-auth-secret-123456789',
   database: prismaAdapter(prisma, { provider: 'postgresql' }),
