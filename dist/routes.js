@@ -5291,6 +5291,152 @@ export const authClient = createAuthClient({
             });
         }
     });
+    // Apply org invitation email template into examples auth.ts
+    router.post('/api/tools/apply-email-template', async (req, res) => {
+        try {
+            const { subject, html, templateId } = req.body || {};
+            if (!subject || !html || !templateId) {
+                return res
+                    .status(400)
+                    .json({ success: false, message: 'templateId, subject and html are required' });
+            }
+            const authPath = join(process.cwd(), 'examples/nextjs/prisma/lib/auth.ts');
+            if (!existsSync(authPath)) {
+                return res.status(404).json({ success: false, message: 'auth.ts not found' });
+            }
+            let fileContent = readFileSync(authPath, 'utf-8');
+            const escapedSubject = subject.replace(/`/g, '\\`').replace(/\${/g, '\\${');
+            const escapedHtml = html.replace(/`/g, '\\`').replace(/\${/g, '\\${');
+            // Ensure Resend import
+            if (!fileContent.includes("from 'resend'")) {
+                fileContent = `import { Resend } from 'resend';\n` + fileContent;
+            }
+            // Ensure resend instance
+            if (!fileContent.includes('const resend = new Resend(')) {
+                // place after imports
+                const importBlockEnd = fileContent.indexOf('\n', fileContent.lastIndexOf('import'));
+                if (importBlockEnd > -1) {
+                    fileContent =
+                        fileContent.slice(0, importBlockEnd + 1) +
+                            `const resend = new Resend(process.env.RESEND_API_KEY || '');\n` +
+                            fileContent.slice(importBlockEnd + 1);
+                }
+                else {
+                    fileContent = `const resend = new Resend(process.env.RESEND_API_KEY || '');\n` + fileContent;
+                }
+            }
+            const handlers = {
+                'password-reset': {
+                    regex: /sendResetPassword\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
+                    fn: `sendResetPassword: async ({ user, url, token }, request) => {
+        void sendEmail({
+          to: user.email,
+          subject: "Reset your password",
+          text: \\\`Click the link to reset your password: \\\${url}\\\`,
+        });
+      }`,
+                },
+                'email-verification': {
+                    regex: /sendVerificationEmail\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
+                    fn: `sendVerificationEmail: async ({ user, url, token }, request) => {
+        void sendEmail({
+          to: user.email,
+          subject: "Verify your email address",
+          text: \\\`Click the link to verify your email: \\\${url}\\\`,
+        });
+      }`,
+                },
+                'magic-link': {
+                    regex: /sendMagicLink\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
+                    fn: `sendMagicLink: async ({ email, token, url }, ctx) => {
+        void sendEmail({
+          to: email,
+          subject: "Sign in to your account",
+          text: \\\`Click the link to sign in: \\\${url}\\\`,
+        });
+      }`,
+                },
+                'org-invitation': {
+                    regex: /sendInvitationEmail\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
+                    fn: `sendInvitationEmail: async ({ data, request }) => {
+        const { invitation, organization, inviter } = data;
+        const url =
+          (invitation as any)?.url ||
+          (invitation as any)?.link ||
+          request?.url ||
+          invitation.id;
+
+        const subject = \\\`${escapedSubject}\\\`
+          .replace(/{{organization.name}}/g, organization?.name || '')
+          .replace(/{{invitation.role}}/g, invitation.role || '')
+          .replace(/{{inviter.user.name}}/g, inviter?.user?.name || '')
+          .replace(/{{inviter.user.email}}/g, inviter?.user?.email || '');
+
+        const html = \\\`${escapedHtml}\\\`
+          .replace(/{{invitation.url}}/g, url)
+          .replace(/{{invitation.role}}/g, invitation.role || '')
+          .replace(/{{organization.name}}/g, organization?.name || '')
+          .replace(/{{inviter.user.name}}/g, inviter?.user?.name || '')
+          .replace(/{{inviter.user.email}}/g, inviter?.user?.email || '');
+
+        await sendEmail({
+          to: invitation.email,
+          subject,
+          text: url,
+        });
+      }`,
+                },
+            };
+            const handler = handlers[templateId];
+            if (!handler) {
+                return res
+                    .status(400)
+                    .json({ success: false, message: 'Unsupported templateId for apply' });
+            }
+            // ensure sendEmail helper exists
+            if (!fileContent.includes('const sendEmail = async')) {
+                const insertPoint = fileContent.indexOf('export const auth');
+                fileContent =
+                    fileContent.slice(0, insertPoint) +
+                        `const sendEmail = async ({ to, subject, text }: { to: string; subject: string; text: string }) => {\n  console.log(\`Sending email to \${to} | \${subject} | \${text}\`);\n};\n\n` +
+                        fileContent.slice(insertPoint);
+            }
+            if (handler.regex.test(fileContent)) {
+                fileContent = fileContent.replace(handler.regex, `${handler.fn},`);
+            }
+            else {
+                // try to inject into emailAndPassword or organization plugin based on template
+                if (templateId === 'org-invitation') {
+                    const orgPluginRegex = /organization\(\s*\{\s*/;
+                    if (!orgPluginRegex.test(fileContent)) {
+                        return res.status(400).json({
+                            success: false,
+                            message: 'organization plugin config not found in auth.ts',
+                        });
+                    }
+                    fileContent = fileContent.replace(orgPluginRegex, (m) => `${m}${handler.fn},\n      `);
+                }
+                else {
+                    const emailAndPasswordRegex = /emailAndPassword\s*:\s*\{\s*/;
+                    if (!emailAndPasswordRegex.test(fileContent)) {
+                        return res.status(400).json({
+                            success: false,
+                            message: 'emailAndPassword config not found in auth.ts',
+                        });
+                    }
+                    fileContent = fileContent.replace(emailAndPasswordRegex, (m) => `${m}${handler.fn},\n    `);
+                }
+            }
+            writeFileSync(authPath, fileContent, 'utf-8');
+            res.json({ success: true, path: authPath });
+        }
+        catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error?.message || 'Failed to apply invitation template',
+            });
+        }
+    });
     return router;
 }
 //# sourceMappingURL=routes.js.map

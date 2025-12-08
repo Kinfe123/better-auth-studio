@@ -441,6 +441,7 @@ export const auth = betterAuth({
 });`,
       'org-invitation': `import { Resend } from 'resend';
 import { organization } from 'better-auth/plugins';
+import type { User, Organization, Invitation, Member } from 'better-auth/types';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -450,21 +451,26 @@ export const auth = betterAuth({
     organization({
       sendInvitationEmail: async (data, request) => {
         const { invitation, organization, inviter } = data;
-        const url =
-          (invitation as any)?.url ||
-          (invitation as any)?.link ||
-          request?.url ||
-          invitation.id;
+        const baseUrl = process.env.BETTER_AUTH_URL || 'http://localhost:3000';
+        const url = \`\${baseUrl}/accept-invitation?id=\${invitation.id}\`;
 
         const subject = \`${escapedSubject}\`
-          .replace(/{{org.name}}/g, organization?.name || '')
+          .replace(/{{organization.name}}/g, organization?.name || '')
+          .replace(/{{invitation.role}}/g, invitation.role || '')
+          .replace(/{{inviter.user.name}}/g, inviter?.user?.name || '')
+          .replace(/{{inviter.user.email}}/g, inviter?.user?.email || '')
+          .replace(/{{invitation.email}}/g, invitation.email || '');
 
         const html = \`${escapedHtml}\`
           .replace(/{{invitation.url}}/g, url)
           .replace(/{{invitation.role}}/g, invitation.role || '')
           .replace(/{{organization.name}}/g, organization?.name || '')
+          .replace(/{{organization.slug}}/g, organization?.slug || '')
           .replace(/{{inviter.user.name}}/g, inviter?.user?.name || '')
-          .replace(/{{inviter.user.email}}/g, inviter?.user?.email || '');
+          .replace(/{{inviter.user.email}}/g, inviter?.user?.email || '')
+          .replace(/{{invitation.email}}/g, invitation.email || '')
+          .replace(/{{invitation.expiresAt}}/g, invitation.expiresAt?.toLocaleString() || '')
+          .replace(/{{expiresIn}}/g, invitation.expiresAt ? \`\${Math.ceil((invitation.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days\` : '');
 
         await resend.emails.send({
           from: 'noreply@yourdomain.com',
@@ -623,16 +629,6 @@ export const auth = betterAuth({
                     <Copy className="w-4 h-4 mr-2" />
                     Copy HTML
                   </Button>
-                  {selectedTemplate && (
-                    <Button
-                      variant="outline"
-                      onClick={() => handleApplyToAuth(selectedTemplate)}
-                      disabled={isApplying}
-                      className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
-                    >
-                      {isApplying ? 'Applying...' : 'Apply to auth.ts'}
-                    </Button>
-                  )}
                 </div>
               </div>
               <div className="flex-1 flex flex-col overflow-hidden">
@@ -782,6 +778,15 @@ export const auth = betterAuth({
                 language="typescript"
                 fileName="auth.ts"
               />
+            </div>
+            <div className="flex items-center justify-end p-6 border-t border-white/15 bg-black/50">
+              <Button
+                onClick={() => handleApplyToAuth(selectedTemplate)}
+                disabled={isApplying}
+                className="bg-white text-black hover:bg-white/90 rounded-none font-mono uppercase text-xs px-6 py-2"
+              >
+                {isApplying ? 'Applying...' : 'Apply to auth config'}
+              </Button>
             </div>
           </div>
         </div>

@@ -6024,7 +6024,6 @@ export const authClient = createAuthClient({
     }
   });
 
-  // Apply org invitation email template into examples auth.ts
   router.post('/api/tools/apply-email-template', async (req: Request, res: Response) => {
     try {
       const { subject, html, templateId } = req.body || {};
@@ -6044,14 +6043,11 @@ export const authClient = createAuthClient({
       const escapedSubject = subject.replace(/`/g, '\\`').replace(/\${/g, '\\${');
       const escapedHtml = html.replace(/`/g, '\\`').replace(/\${/g, '\\${');
 
-      // Ensure Resend import
       if (!fileContent.includes("from 'resend'")) {
         fileContent = `import { Resend } from 'resend';\n` + fileContent;
       }
 
-      // Ensure resend instance
       if (!fileContent.includes('const resend = new Resend(')) {
-        // place after imports
         const importBlockEnd = fileContent.indexOf('\n', fileContent.lastIndexOf('import'));
         if (importBlockEnd > -1) {
           fileContent =
@@ -6103,31 +6099,50 @@ export const authClient = createAuthClient({
         'org-invitation': {
           regex:
             /sendInvitationEmail\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
-          fn: `sendInvitationEmail: async ({ data, request }) => {
+          fn: `sendInvitationEmail: async ({ data, request }: {
+        data: {
+          invitation: {
+            id: string;
+            organizationId: string;
+            email: string;
+            role: string;
+            status: "pending" | "accepted" | "rejected" | "canceled";
+            inviterId: string;
+            expiresAt: Date;
+            createdAt: Date;
+            teamId?: string | null | undefined;
+          };
+          organization: { name?: string; slug?: string };
+          inviter: { user: { name?: string; email?: string } };
+        };
+        request?: Request;
+      }) => {
         const { invitation, organization, inviter } = data;
-        const url =
-          (invitation as any)?.url ||
-          (invitation as any)?.link ||
-          request?.url ||
-          invitation.id;
+        const baseUrl = process.env.BETTER_AUTH_URL || 'http://localhost:3000';
+        const url = \\\`\\\${baseUrl}/accept-invitation?id=\\\${invitation.id}\\\`;
 
         const subject = \\\`${escapedSubject}\\\`
           .replace(/{{organization.name}}/g, organization?.name || '')
           .replace(/{{invitation.role}}/g, invitation.role || '')
           .replace(/{{inviter.user.name}}/g, inviter?.user?.name || '')
-          .replace(/{{inviter.user.email}}/g, inviter?.user?.email || '');
+          .replace(/{{inviter.user.email}}/g, inviter?.user?.email || '')
+          .replace(/{{invitation.email}}/g, invitation.email || '');
 
         const html = \\\`${escapedHtml}\\\`
           .replace(/{{invitation.url}}/g, url)
           .replace(/{{invitation.role}}/g, invitation.role || '')
           .replace(/{{organization.name}}/g, organization?.name || '')
+          .replace(/{{organization.slug}}/g, organization?.slug || '')
           .replace(/{{inviter.user.name}}/g, inviter?.user?.name || '')
-          .replace(/{{inviter.user.email}}/g, inviter?.user?.email || '');
+          .replace(/{{inviter.user.email}}/g, inviter?.user?.email || '')
+          .replace(/{{invitation.email}}/g, invitation.email || '')
+          .replace(/{{invitation.expiresAt}}/g, invitation.expiresAt?.toLocaleString() || '')
+          .replace(/{{expiresIn}}/g, invitation.expiresAt ? \\\`\\\${Math.ceil((invitation.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days\\\` : '');
 
-        await sendEmail({
+        void sendEmail({
           to: invitation.email,
           subject,
-          text: url,
+          html,
         });
       }`,
         },
@@ -6140,19 +6155,17 @@ export const authClient = createAuthClient({
           .json({ success: false, message: 'Unsupported templateId for apply' });
       }
 
-      // ensure sendEmail helper exists
       if (!fileContent.includes('const sendEmail = async')) {
         const insertPoint = fileContent.indexOf('export const auth');
         fileContent =
           fileContent.slice(0, insertPoint) +
-          `const sendEmail = async ({ to, subject, text }: { to: string; subject: string; text: string }) => {\n  console.log(\`Sending email to \${to} | \${subject} | \${text}\`);\n};\n\n` +
+          `const sendEmail = async ({ to, subject, text, html }: { to: string; subject: string; text?: string; html?: string }) => {\n  console.log(\`Sending email to \${to} | \${subject}\`);\n  if (text) console.log('Text content:', text);\n  if (html) console.log('HTML content:', html);\n};\n\n` +
           fileContent.slice(insertPoint);
       }
 
       if (handler.regex.test(fileContent)) {
         fileContent = fileContent.replace(handler.regex, `${handler.fn},`);
       } else {
-        // try to inject into emailAndPassword or organization plugin based on template
         if (templateId === 'org-invitation') {
           const orgPluginRegex = /organization\(\s*\{\s*/;
           if (!orgPluginRegex.test(fileContent)) {
