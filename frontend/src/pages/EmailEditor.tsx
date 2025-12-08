@@ -296,10 +296,8 @@ export default function EmailEditor() {
   };
 
   const handleApplyToAuth = async (templateId: string) => {
-    const subjectToApply =
-      emailSubject || emailTemplates[templateId]?.subject || 'Email subject';
-    const htmlToApply =
-      renderedHtml || emailHtml || emailTemplates[templateId]?.html || '';
+    const subjectToApply = emailSubject || emailTemplates[templateId]?.subject || 'Email subject';
+    const htmlToApply = renderedHtml || emailHtml || emailTemplates[templateId]?.html || '';
     setIsApplying(true);
     try {
       const resp = await fetch('/api/tools/apply-email-template', {
@@ -715,10 +713,7 @@ export const auth = betterAuth({
                 )}
 
                 <div className="flex-1 overflow-hidden">
-                  <VisualEmailBuilder
-                    html={memoizedHtml}
-                    onChange={handleHtmlChange}
-                  />
+                  <VisualEmailBuilder html={memoizedHtml} onChange={handleHtmlChange} />
                 </div>
               </div>
             </>

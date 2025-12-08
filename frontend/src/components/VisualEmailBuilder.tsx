@@ -322,12 +322,17 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
   }, [editingBlockId]);
 
   useEffect(() => {
-    if (html && html !== lastHtmlRef.current && !isInternalUpdateRef.current && !isEditingRef.current) {
+    if (
+      html &&
+      html !== lastHtmlRef.current &&
+      !isInternalUpdateRef.current &&
+      !isEditingRef.current
+    ) {
       const parsedBlocks = parseHtmlToBlocks(html);
       const currentSelectedId = selectedBlockId || stableSelectedBlockIdRef.current;
-      
+
       setBlocks((prevBlocks) => {
-        const blocksStructureChanged = 
+        const blocksStructureChanged =
           prevBlocks.length !== parsedBlocks.length ||
           prevBlocks.some((block, index) => {
             const newBlock = parsedBlocks[index];
@@ -342,10 +347,10 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
             setSelectedBlockId(null);
             stableSelectedBlockIdRef.current = null;
           }
-          
+
           return parsedBlocks;
         }
-        
+
         return prevBlocks;
       });
 
@@ -547,7 +552,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
     const target = e.target as HTMLElement;
     setSelectedBlockId(blockId);
     stableSelectedBlockIdRef.current = blockId;
-    
+
     if (target.contentEditable === 'true') {
       if (editingBlockId !== blockId) {
         startEditing(blockId);
@@ -643,7 +648,8 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
     }
   };
 
-  const stableBlockForSidebar = selectedBlock || (selectedBlockId ? lastSelectedBlockRef.current : null);
+  const stableBlockForSidebar =
+    selectedBlock || (selectedBlockId ? lastSelectedBlockRef.current : null);
 
   return (
     <div className="flex-1 flex overflow-hidden h-full min-h-0">
@@ -749,7 +755,8 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               ) : (
                 blocks.map((block, index) => {
                   const isSelected = selectedBlockId === block.id;
-                  const showControls = selectedBlockId === block.id || stableSelectedBlockIdRef.current === block.id;
+                  const showControls =
+                    selectedBlockId === block.id || stableSelectedBlockIdRef.current === block.id;
                   const isEditing = editingBlockId === block.id;
 
                   return (
@@ -1015,324 +1022,180 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
           className="w-96 h-[calc(100vh-400px)] border-l border-dashed border-white/20 bg-black/40 flex flex-col flex-shrink-0 overflow-scroll"
           style={{ minWidth: '384px', maxWidth: '384px' }}
         >
-            <div className="p-4 border-b border-dashed border-white/10 bg-black/40 z-10 flex-shrink-0">
-              <Label className="text-xs uppercase font-mono text-gray-400">
-                {stableBlockForSidebar.type.charAt(0).toUpperCase() + stableBlockForSidebar.type.slice(1)}{' '}
-                Properties
-              </Label>
-            </div>
+          <div className="p-4 border-b border-dashed border-white/10 bg-black/40 z-10 flex-shrink-0">
+            <Label className="text-xs uppercase font-mono text-gray-400">
+              {stableBlockForSidebar.type.charAt(0).toUpperCase() +
+                stableBlockForSidebar.type.slice(1)}{' '}
+              Properties
+            </Label>
+          </div>
 
-            <div
-              className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4"
-              style={{ overscrollBehavior: 'contain', minHeight: 0 }}
-            >
-              {stableBlockForSidebar.type !== 'divider' && stableBlockForSidebar.type !== 'image' && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Content
-                  </Label>
-                  <Input
-                    value={stableBlockForSidebar.content}
-                    onChange={(e) => updateBlock(stableBlockForSidebar.id, { content: e.target.value })}
-                    className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Double-click on canvas to edit inline
-                  </p>
-                </div>
-              )}
-              {(stableBlockForSidebar.type === 'heading' ||
-                stableBlockForSidebar.type === 'paragraph' ||
-                stableBlockForSidebar.type === 'button') && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Text Formatting
-                  </Label>
-                  <div className="flex gap-2">
-                    <Button
-                      variant={stableBlockForSidebar.styles.fontWeight === 'bold' ? 'default' : 'ghost'}
-                      size="sm"
-                      onClick={() =>
-                        updateBlock(stableBlockForSidebar.id, {
-                          styles: {
-                            ...stableBlockForSidebar.styles,
-                            fontWeight:
-                              stableBlockForSidebar.styles.fontWeight === 'bold' ? 'normal' : 'bold',
-                          },
-                        })
-                      }
-                      className="h-8 w-8 p-0 rounded-none border border-dashed border-white/20 hover:bg-white/10"
-                      title="Bold"
-                    >
-                      <Bold className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant={stableBlockForSidebar.styles.fontStyle === 'italic' ? 'default' : 'ghost'}
-                      size="sm"
-                      onClick={() =>
-                        updateBlock(stableBlockForSidebar.id, {
-                          styles: {
-                            ...stableBlockForSidebar.styles,
-                            fontStyle:
-                              stableBlockForSidebar.styles.fontStyle === 'italic' ? 'normal' : 'italic',
-                          },
-                        })
-                      }
-                      className="h-8 w-8 p-0 rounded-none border border-dashed border-white/20 hover:bg-white/10"
-                      title="Italic"
-                    >
-                      <Italic className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant={
-                        stableBlockForSidebar.styles.textDecoration === 'underline' ? 'default' : 'ghost'
-                      }
-                      size="sm"
-                      onClick={() =>
-                        updateBlock(stableBlockForSidebar.id, {
-                          styles: {
-                            ...stableBlockForSidebar.styles,
-                            textDecoration:
-                              stableBlockForSidebar.styles.textDecoration === 'underline'
-                                ? 'none'
-                                : 'underline',
-                          },
-                        })
-                      }
-                      className="h-8 w-8 p-0 rounded-none border border-dashed border-white/20 hover:bg-white/10"
-                      title="Underline"
-                    >
-                      <Underline className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant={
-                        stableBlockForSidebar.styles.textDecoration === 'line-through' ? 'default' : 'ghost'
-                      }
-                      size="sm"
-                      onClick={() =>
-                        updateBlock(stableBlockForSidebar.id, {
-                          styles: {
-                            ...stableBlockForSidebar.styles,
-                            textDecoration:
-                              stableBlockForSidebar.styles.textDecoration === 'line-through'
-                                ? 'none'
-                                : 'line-through',
-                          },
-                        })
-                      }
-                      className="h-8 w-8 p-0 rounded-none border border-dashed border-white/20 hover:bg-white/10"
-                      title="Strikethrough"
-                    >
-                      <Strikethrough className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {stableBlockForSidebar.type === 'button' && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Link URL
-                  </Label>
-                  <Input
-                    value={stableBlockForSidebar.attributes?.href || ''}
-                    onChange={(e) =>
-                      updateBlock(stableBlockForSidebar.id, {
-                        attributes: { ...stableBlockForSidebar.attributes, href: e.target.value },
-                      })
+          <div
+            className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4"
+            style={{ overscrollBehavior: 'contain', minHeight: 0 }}
+          >
+            {stableBlockForSidebar.type !== 'divider' && stableBlockForSidebar.type !== 'image' && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Content
+                </Label>
+                <Input
+                  value={stableBlockForSidebar.content}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, { content: e.target.value })
+                  }
+                  className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                />
+                <p className="text-xs text-gray-500 mt-1">Double-click on canvas to edit inline</p>
+              </div>
+            )}
+            {(stableBlockForSidebar.type === 'heading' ||
+              stableBlockForSidebar.type === 'paragraph' ||
+              stableBlockForSidebar.type === 'button') && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Text Formatting
+                </Label>
+                <div className="flex gap-2">
+                  <Button
+                    variant={
+                      stableBlockForSidebar.styles.fontWeight === 'bold' ? 'default' : 'ghost'
                     }
-                    placeholder="{{url}}"
-                    className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                  />
-                </div>
-              )}
-
-              {stableBlockForSidebar.type === 'image' && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Image URL
-                  </Label>
-                  <Input
-                    value={stableBlockForSidebar.attributes?.src || ''}
-                    onChange={(e) =>
-                      updateBlock(stableBlockForSidebar.id, {
-                        attributes: { ...stableBlockForSidebar.attributes, src: e.target.value },
-                      })
-                    }
-                    placeholder="https://example.com/image.jpg"
-                    className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                  />
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block mt-3">
-                    Alt Text
-                  </Label>
-                  <Input
-                    value={stableBlockForSidebar.attributes?.alt || ''}
-                    onChange={(e) =>
-                      updateBlock(stableBlockForSidebar.id, {
-                        attributes: { ...stableBlockForSidebar.attributes, alt: e.target.value },
-                      })
-                    }
-                    placeholder="Image description"
-                    className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                  />
-                  <div className="mt-3">
-                    <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                      Alignment
-                    </Label>
-                    <div className="flex gap-2">
-                      {[
-                        { value: 'left' as const, icon: AlignLeft },
-                        { value: 'center' as const, icon: AlignCenter },
-                        { value: 'right' as const, icon: AlignRight },
-                      ].map(({ value: align, icon: Icon }) => (
-                        <Button
-                          key={align}
-                          variant={stableBlockForSidebar.styles.textAlign === align ? 'default' : 'ghost'}
-                          size="sm"
-                          onClick={() =>
-                            updateBlock(stableBlockForSidebar.id, {
-                              styles: { ...stableBlockForSidebar.styles, textAlign: align },
-                            })
-                          }
-                          className="flex-1 rounded-none border border-dashed border-white/20 flex items-center justify-center"
-                          title={align.charAt(0).toUpperCase() + align.slice(1)}
-                        >
-                          <Icon className="w-4 h-4" />
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {(stableBlockForSidebar.type === 'heading' ||
-                stableBlockForSidebar.type === 'paragraph' ||
-                stableBlockForSidebar.type === 'button') && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Font Family
-                  </Label>
-                  <select
-                    value={stableBlockForSidebar.styles.fontFamily || 'inherit'}
-                    onChange={(e) =>
-                      updateBlock(stableBlockForSidebar.id, {
-                        styles: { ...stableBlockForSidebar.styles, fontFamily: e.target.value },
-                      })
-                    }
-                    className="w-full bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs p-2 focus:outline-none focus:border-white/40"
-                  >
-                    <option value="inherit">System Default</option>
-                    <option value="Arial, sans-serif">Arial</option>
-                    <option value="'Helvetica Neue', Helvetica, sans-serif">Helvetica</option>
-                    <option value="'Times New Roman', serif">Times New Roman</option>
-                    <option value="Georgia, serif">Georgia</option>
-                    <option value="'Courier New', monospace">Courier New</option>
-                    <option value="Verdana, sans-serif">Verdana</option>
-                    <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
-                    <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
-                  </select>
-                </div>
-              )}
-
-              {(stableBlockForSidebar.type === 'heading' ||
-                stableBlockForSidebar.type === 'paragraph' ||
-                stableBlockForSidebar.type === 'button') && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Font Size
-                  </Label>
-                  <Input
-                    value={stableBlockForSidebar.styles.fontSize ?? ''}
-                    onChange={(e) =>
-                      updateBlock(stableBlockForSidebar.id, {
-                        styles: { ...stableBlockForSidebar.styles, fontSize: e.target.value || undefined },
-                      })
-                    }
-                    placeholder="16px"
-                    className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                  />
-                </div>
-              )}
-
-              {stableBlockForSidebar.type !== 'divider' && stableBlockForSidebar.type !== 'image' && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Text Color
-                  </Label>
-                  <Input
-                    type="color"
-                    value={stableBlockForSidebar.styles.color || '#333333'}
-                    onChange={(e) =>
-                      updateBlock(stableBlockForSidebar.id, {
-                        styles: { ...stableBlockForSidebar.styles, color: e.target.value },
-                      })
-                    }
-                    className="h-8 w-full bg-black border border-dashed border-white/20 rounded-none"
-                  />
-                </div>
-              )}
-
-              {(stableBlockForSidebar.type === 'button' ||
-                stableBlockForSidebar.type === 'heading' ||
-                stableBlockForSidebar.type === 'paragraph') && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Background Color
-                  </Label>
-                  <Input
-                    type="color"
-                    value={stableBlockForSidebar.styles.backgroundColor || '#ffffff'}
-                    onChange={(e) => {
-                      const newBackgroundColor = e.target.value;
-                      const currentPadding = stableBlockForSidebar.styles.padding;
-                      const hasBackgroundColor =
-                        newBackgroundColor && newBackgroundColor !== '#ffffff';
-                      const shouldAddPadding =
-                        hasBackgroundColor && (!currentPadding || currentPadding === '0');
-
+                    size="sm"
+                    onClick={() =>
                       updateBlock(stableBlockForSidebar.id, {
                         styles: {
                           ...stableBlockForSidebar.styles,
-                          backgroundColor: hasBackgroundColor ? newBackgroundColor : undefined,
-                          padding: shouldAddPadding
-                            ? '8px 12px'
-                            : hasBackgroundColor
-                              ? currentPadding || '8px 12px'
-                              : currentPadding === '8px 12px'
-                                ? '0'
-                                : currentPadding,
+                          fontWeight:
+                            stableBlockForSidebar.styles.fontWeight === 'bold' ? 'normal' : 'bold',
                         },
-                      });
-                    }}
-                    className="h-8 w-full bg-black border border-dashed border-white/20 rounded-none"
-                  />
-                  {stableBlockForSidebar.styles.backgroundColor &&
-                    stableBlockForSidebar.styles.backgroundColor !== '#ffffff' && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          const currentPadding = stableBlockForSidebar.styles.padding;
-                          updateBlock(stableBlockForSidebar.id, {
-                            styles: {
-                              ...stableBlockForSidebar.styles,
-                              backgroundColor: undefined,
-                              padding: currentPadding === '8px 12px' ? '0' : currentPadding,
-                            },
-                          });
-                        }}
-                        className="text-xs text-gray-400 hover:text-white mt-1 rounded-none"
-                      >
-                        Clear Background
-                      </Button>
-                    )}
+                      })
+                    }
+                    className="h-8 w-8 p-0 rounded-none border border-dashed border-white/20 hover:bg-white/10"
+                    title="Bold"
+                  >
+                    <Bold className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={
+                      stableBlockForSidebar.styles.fontStyle === 'italic' ? 'default' : 'ghost'
+                    }
+                    size="sm"
+                    onClick={() =>
+                      updateBlock(stableBlockForSidebar.id, {
+                        styles: {
+                          ...stableBlockForSidebar.styles,
+                          fontStyle:
+                            stableBlockForSidebar.styles.fontStyle === 'italic'
+                              ? 'normal'
+                              : 'italic',
+                        },
+                      })
+                    }
+                    className="h-8 w-8 p-0 rounded-none border border-dashed border-white/20 hover:bg-white/10"
+                    title="Italic"
+                  >
+                    <Italic className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={
+                      stableBlockForSidebar.styles.textDecoration === 'underline'
+                        ? 'default'
+                        : 'ghost'
+                    }
+                    size="sm"
+                    onClick={() =>
+                      updateBlock(stableBlockForSidebar.id, {
+                        styles: {
+                          ...stableBlockForSidebar.styles,
+                          textDecoration:
+                            stableBlockForSidebar.styles.textDecoration === 'underline'
+                              ? 'none'
+                              : 'underline',
+                        },
+                      })
+                    }
+                    className="h-8 w-8 p-0 rounded-none border border-dashed border-white/20 hover:bg-white/10"
+                    title="Underline"
+                  >
+                    <Underline className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={
+                      stableBlockForSidebar.styles.textDecoration === 'line-through'
+                        ? 'default'
+                        : 'ghost'
+                    }
+                    size="sm"
+                    onClick={() =>
+                      updateBlock(stableBlockForSidebar.id, {
+                        styles: {
+                          ...stableBlockForSidebar.styles,
+                          textDecoration:
+                            stableBlockForSidebar.styles.textDecoration === 'line-through'
+                              ? 'none'
+                              : 'line-through',
+                        },
+                      })
+                    }
+                    className="h-8 w-8 p-0 rounded-none border border-dashed border-white/20 hover:bg-white/10"
+                    title="Strikethrough"
+                  >
+                    <Strikethrough className="w-4 h-4" />
+                  </Button>
                 </div>
-              )}
+              </div>
+            )}
 
-              {stableBlockForSidebar.type !== 'divider' && stableBlockForSidebar.type !== 'image' && (
-                <div>
+            {stableBlockForSidebar.type === 'button' && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Link URL
+                </Label>
+                <Input
+                  value={stableBlockForSidebar.attributes?.href || ''}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      attributes: { ...stableBlockForSidebar.attributes, href: e.target.value },
+                    })
+                  }
+                  placeholder="{{url}}"
+                  className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                />
+              </div>
+            )}
+
+            {stableBlockForSidebar.type === 'image' && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Image URL
+                </Label>
+                <Input
+                  value={stableBlockForSidebar.attributes?.src || ''}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      attributes: { ...stableBlockForSidebar.attributes, src: e.target.value },
+                    })
+                  }
+                  placeholder="https://example.com/image.jpg"
+                  className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                />
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block mt-3">
+                  Alt Text
+                </Label>
+                <Input
+                  value={stableBlockForSidebar.attributes?.alt || ''}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      attributes: { ...stableBlockForSidebar.attributes, alt: e.target.value },
+                    })
+                  }
+                  placeholder="Image description"
+                  className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                />
+                <div className="mt-3">
                   <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Text Align
+                    Alignment
                   </Label>
                   <div className="flex gap-2">
                     {[
@@ -1342,7 +1205,9 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                     ].map(({ value: align, icon: Icon }) => (
                       <Button
                         key={align}
-                        variant={stableBlockForSidebar.styles.textAlign === align ? 'default' : 'ghost'}
+                        variant={
+                          stableBlockForSidebar.styles.textAlign === align ? 'default' : 'ghost'
+                        }
                         size="sm"
                         onClick={() =>
                           updateBlock(stableBlockForSidebar.id, {
@@ -1350,193 +1215,371 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                           })
                         }
                         className="flex-1 rounded-none border border-dashed border-white/20 flex items-center justify-center"
-                        title={align}
+                        title={align.charAt(0).toUpperCase() + align.slice(1)}
                       >
                         <Icon className="w-4 h-4" />
                       </Button>
                     ))}
                   </div>
                 </div>
-              )}
+              </div>
+            )}
 
-              {(stableBlockForSidebar.type === 'heading' || stableBlockForSidebar.type === 'paragraph') && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Line Height
-                  </Label>
-                  <Input
-                    value={stableBlockForSidebar.styles.lineHeight ?? ''}
-                    onChange={(e) =>
-                      updateBlock(stableBlockForSidebar.id, {
-                        styles: {
-                          ...stableBlockForSidebar.styles,
-                          lineHeight: e.target.value || undefined,
-                        },
-                      })
-                    }
-                    placeholder="1.6"
-                    className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                  />
-                </div>
-              )}
+            {(stableBlockForSidebar.type === 'heading' ||
+              stableBlockForSidebar.type === 'paragraph' ||
+              stableBlockForSidebar.type === 'button') && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Font Family
+                </Label>
+                <select
+                  value={stableBlockForSidebar.styles.fontFamily || 'inherit'}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      styles: { ...stableBlockForSidebar.styles, fontFamily: e.target.value },
+                    })
+                  }
+                  className="w-full bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs p-2 focus:outline-none focus:border-white/40"
+                >
+                  <option value="inherit">System Default</option>
+                  <option value="Arial, sans-serif">Arial</option>
+                  <option value="'Helvetica Neue', Helvetica, sans-serif">Helvetica</option>
+                  <option value="'Times New Roman', serif">Times New Roman</option>
+                  <option value="Georgia, serif">Georgia</option>
+                  <option value="'Courier New', monospace">Courier New</option>
+                  <option value="Verdana, sans-serif">Verdana</option>
+                  <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                  <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+                </select>
+              </div>
+            )}
 
-              {(stableBlockForSidebar.type === 'heading' ||
-                stableBlockForSidebar.type === 'paragraph' ||
-                stableBlockForSidebar.type === 'button') && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Letter Spacing
-                  </Label>
-                  <Input
-                    value={stableBlockForSidebar.styles.letterSpacing ?? ''}
-                    onChange={(e) =>
-                      updateBlock(stableBlockForSidebar.id, {
-                        styles: {
-                          ...stableBlockForSidebar.styles,
-                          letterSpacing: e.target.value || undefined,
-                        },
-                      })
-                    }
-                    placeholder="0px"
-                    className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                  />
-                </div>
-              )}
+            {(stableBlockForSidebar.type === 'heading' ||
+              stableBlockForSidebar.type === 'paragraph' ||
+              stableBlockForSidebar.type === 'button') && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Font Size
+                </Label>
+                <Input
+                  value={stableBlockForSidebar.styles.fontSize ?? ''}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      styles: {
+                        ...stableBlockForSidebar.styles,
+                        fontSize: e.target.value || undefined,
+                      },
+                    })
+                  }
+                  placeholder="16px"
+                  className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                />
+              </div>
+            )}
 
-              {stableBlockForSidebar.type !== 'divider' && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Margin
-                  </Label>
-                  <Input
-                    value={stableBlockForSidebar.styles.margin ?? ''}
-                    onChange={(e) =>
-                      updateBlock(stableBlockForSidebar.id, {
-                        styles: { ...stableBlockForSidebar.styles, margin: e.target.value || undefined },
-                      })
-                    }
-                    placeholder="16px 0"
-                    className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">e.g., 16px 0 or 10px 20px 10px 20px</p>
-                </div>
-              )}
+            {stableBlockForSidebar.type !== 'divider' && stableBlockForSidebar.type !== 'image' && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Text Color
+                </Label>
+                <Input
+                  type="color"
+                  value={stableBlockForSidebar.styles.color || '#333333'}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      styles: { ...stableBlockForSidebar.styles, color: e.target.value },
+                    })
+                  }
+                  className="h-8 w-full bg-black border border-dashed border-white/20 rounded-none"
+                />
+              </div>
+            )}
 
-              {(stableBlockForSidebar.type === 'button' || stableBlockForSidebar.type === 'heading') && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Padding
-                  </Label>
-                  <Input
-                    value={stableBlockForSidebar.styles.padding ?? ''}
-                    onChange={(e) =>
-                      updateBlock(stableBlockForSidebar.id, {
-                        styles: { ...stableBlockForSidebar.styles, padding: e.target.value || undefined },
-                      })
-                    }
-                    placeholder="12px 30px"
-                    className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    e.g., 12px 30px or 10px 20px 10px 20px
-                  </p>
-                </div>
-              )}
+            {(stableBlockForSidebar.type === 'button' ||
+              stableBlockForSidebar.type === 'heading' ||
+              stableBlockForSidebar.type === 'paragraph') && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Background Color
+                </Label>
+                <Input
+                  type="color"
+                  value={stableBlockForSidebar.styles.backgroundColor || '#ffffff'}
+                  onChange={(e) => {
+                    const newBackgroundColor = e.target.value;
+                    const currentPadding = stableBlockForSidebar.styles.padding;
+                    const hasBackgroundColor =
+                      newBackgroundColor && newBackgroundColor !== '#ffffff';
+                    const shouldAddPadding =
+                      hasBackgroundColor && (!currentPadding || currentPadding === '0');
 
-              {stableBlockForSidebar.type === 'button' && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Border Radius
-                  </Label>
-                  <Input
-                    value={stableBlockForSidebar.styles.borderRadius ?? ''}
-                    onChange={(e) =>
-                      updateBlock(stableBlockForSidebar.id, {
-                        styles: {
-                          ...stableBlockForSidebar.styles,
-                          borderRadius: e.target.value || undefined,
-                        },
-                      })
-                    }
-                    placeholder="4px"
-                    className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                  />
-                </div>
-              )}
-
-              {stableBlockForSidebar.type === 'button' && (
-                <div>
-                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Border
-                  </Label>
-                  <Input
-                    value={stableBlockForSidebar.styles.border ?? ''}
-                    onChange={(e) =>
-                      updateBlock(stableBlockForSidebar.id, {
-                        styles: { ...stableBlockForSidebar.styles, border: e.target.value || undefined },
-                      })
-                    }
-                    placeholder="1px solid #000"
-                    className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">e.g., 1px solid #000 or none</p>
-                </div>
-              )}
-
-              {stableBlockForSidebar.type === 'image' && (
-                <>
-                  <div>
-                    <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                      Width
-                    </Label>
-                    <Input
-                      value={stableBlockForSidebar.styles.width ?? ''}
-                      onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      styles: {
+                        ...stableBlockForSidebar.styles,
+                        backgroundColor: hasBackgroundColor ? newBackgroundColor : undefined,
+                        padding: shouldAddPadding
+                          ? '8px 12px'
+                          : hasBackgroundColor
+                            ? currentPadding || '8px 12px'
+                            : currentPadding === '8px 12px'
+                              ? '0'
+                              : currentPadding,
+                      },
+                    });
+                  }}
+                  className="h-8 w-full bg-black border border-dashed border-white/20 rounded-none"
+                />
+                {stableBlockForSidebar.styles.backgroundColor &&
+                  stableBlockForSidebar.styles.backgroundColor !== '#ffffff' && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        const currentPadding = stableBlockForSidebar.styles.padding;
                         updateBlock(stableBlockForSidebar.id, {
-                          styles: { ...stableBlockForSidebar.styles, width: e.target.value || undefined },
+                          styles: {
+                            ...stableBlockForSidebar.styles,
+                            backgroundColor: undefined,
+                            padding: currentPadding === '8px 12px' ? '0' : currentPadding,
+                          },
+                        });
+                      }}
+                      className="text-xs text-gray-400 hover:text-white mt-1 rounded-none"
+                    >
+                      Clear Background
+                    </Button>
+                  )}
+              </div>
+            )}
+
+            {stableBlockForSidebar.type !== 'divider' && stableBlockForSidebar.type !== 'image' && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Text Align
+                </Label>
+                <div className="flex gap-2">
+                  {[
+                    { value: 'left' as const, icon: AlignLeft },
+                    { value: 'center' as const, icon: AlignCenter },
+                    { value: 'right' as const, icon: AlignRight },
+                  ].map(({ value: align, icon: Icon }) => (
+                    <Button
+                      key={align}
+                      variant={
+                        stableBlockForSidebar.styles.textAlign === align ? 'default' : 'ghost'
+                      }
+                      size="sm"
+                      onClick={() =>
+                        updateBlock(stableBlockForSidebar.id, {
+                          styles: { ...stableBlockForSidebar.styles, textAlign: align },
                         })
                       }
-                      placeholder="100%"
-                      className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                      Height
-                    </Label>
-                    <Input
-                      value={stableBlockForSidebar.styles.height ?? ''}
-                      onChange={(e) =>
-                        updateBlock(stableBlockForSidebar.id, {
-                          styles: { ...stableBlockForSidebar.styles, height: e.target.value || undefined },
-                        })
-                      }
-                      placeholder="auto"
-                      className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
-                    />
-                  </div>
-                </>
-              )}
+                      className="flex-1 rounded-none border border-dashed border-white/20 flex items-center justify-center"
+                      title={align}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-              {stableBlockForSidebar.type === 'divider' && (
+            {(stableBlockForSidebar.type === 'heading' ||
+              stableBlockForSidebar.type === 'paragraph') && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Line Height
+                </Label>
+                <Input
+                  value={stableBlockForSidebar.styles.lineHeight ?? ''}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      styles: {
+                        ...stableBlockForSidebar.styles,
+                        lineHeight: e.target.value || undefined,
+                      },
+                    })
+                  }
+                  placeholder="1.6"
+                  className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                />
+              </div>
+            )}
+
+            {(stableBlockForSidebar.type === 'heading' ||
+              stableBlockForSidebar.type === 'paragraph' ||
+              stableBlockForSidebar.type === 'button') && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Letter Spacing
+                </Label>
+                <Input
+                  value={stableBlockForSidebar.styles.letterSpacing ?? ''}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      styles: {
+                        ...stableBlockForSidebar.styles,
+                        letterSpacing: e.target.value || undefined,
+                      },
+                    })
+                  }
+                  placeholder="0px"
+                  className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                />
+              </div>
+            )}
+
+            {stableBlockForSidebar.type !== 'divider' && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Margin
+                </Label>
+                <Input
+                  value={stableBlockForSidebar.styles.margin ?? ''}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      styles: {
+                        ...stableBlockForSidebar.styles,
+                        margin: e.target.value || undefined,
+                      },
+                    })
+                  }
+                  placeholder="16px 0"
+                  className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                />
+                <p className="text-xs text-gray-500 mt-1">e.g., 16px 0 or 10px 20px 10px 20px</p>
+              </div>
+            )}
+
+            {(stableBlockForSidebar.type === 'button' ||
+              stableBlockForSidebar.type === 'heading') && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Padding
+                </Label>
+                <Input
+                  value={stableBlockForSidebar.styles.padding ?? ''}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      styles: {
+                        ...stableBlockForSidebar.styles,
+                        padding: e.target.value || undefined,
+                      },
+                    })
+                  }
+                  placeholder="12px 30px"
+                  className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                />
+                <p className="text-xs text-gray-500 mt-1">e.g., 12px 30px or 10px 20px 10px 20px</p>
+              </div>
+            )}
+
+            {stableBlockForSidebar.type === 'button' && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Border Radius
+                </Label>
+                <Input
+                  value={stableBlockForSidebar.styles.borderRadius ?? ''}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      styles: {
+                        ...stableBlockForSidebar.styles,
+                        borderRadius: e.target.value || undefined,
+                      },
+                    })
+                  }
+                  placeholder="4px"
+                  className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                />
+              </div>
+            )}
+
+            {stableBlockForSidebar.type === 'button' && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Border
+                </Label>
+                <Input
+                  value={stableBlockForSidebar.styles.border ?? ''}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      styles: {
+                        ...stableBlockForSidebar.styles,
+                        border: e.target.value || undefined,
+                      },
+                    })
+                  }
+                  placeholder="1px solid #000"
+                  className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                />
+                <p className="text-xs text-gray-500 mt-1">e.g., 1px solid #000 or none</p>
+              </div>
+            )}
+
+            {stableBlockForSidebar.type === 'image' && (
+              <>
                 <div>
                   <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
-                    Border Style
+                    Width
                   </Label>
                   <Input
-                    value={stableBlockForSidebar.styles.border ?? ''}
+                    value={stableBlockForSidebar.styles.width ?? ''}
                     onChange={(e) =>
                       updateBlock(stableBlockForSidebar.id, {
-                        styles: { ...stableBlockForSidebar.styles, border: e.target.value || undefined },
+                        styles: {
+                          ...stableBlockForSidebar.styles,
+                          width: e.target.value || undefined,
+                        },
                       })
                     }
-                    placeholder="1px solid #eeeeee"
+                    placeholder="100%"
                     className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
                   />
-                  <p className="text-xs text-gray-500 mt-1">e.g., 2px dashed #ccc</p>
                 </div>
-              )}
-            </div>
+                <div>
+                  <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                    Height
+                  </Label>
+                  <Input
+                    value={stableBlockForSidebar.styles.height ?? ''}
+                    onChange={(e) =>
+                      updateBlock(stableBlockForSidebar.id, {
+                        styles: {
+                          ...stableBlockForSidebar.styles,
+                          height: e.target.value || undefined,
+                        },
+                      })
+                    }
+                    placeholder="auto"
+                    className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                  />
+                </div>
+              </>
+            )}
+
+            {stableBlockForSidebar.type === 'divider' && (
+              <div>
+                <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+                  Border Style
+                </Label>
+                <Input
+                  value={stableBlockForSidebar.styles.border ?? ''}
+                  onChange={(e) =>
+                    updateBlock(stableBlockForSidebar.id, {
+                      styles: {
+                        ...stableBlockForSidebar.styles,
+                        border: e.target.value || undefined,
+                      },
+                    })
+                  }
+                  placeholder="1px solid #eeeeee"
+                  className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs"
+                />
+                <p className="text-xs text-gray-500 mt-1">e.g., 2px dashed #ccc</p>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

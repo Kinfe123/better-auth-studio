@@ -6052,7 +6052,8 @@ export const authClient = createAuthClient({
             `const resend = new Resend(process.env.RESEND_API_KEY || '');\n` +
             fileContent.slice(importBlockEnd + 1);
         } else {
-          fileContent = `const resend = new Resend(process.env.RESEND_API_KEY || '');\n` + fileContent;
+          fileContent =
+            `const resend = new Resend(process.env.RESEND_API_KEY || '');\n` + fileContent;
         }
       }
 
@@ -6061,8 +6062,7 @@ export const authClient = createAuthClient({
         { regex: RegExp; fn: string; injectRegex?: RegExp; injectLabel?: string }
       > = {
         'password-reset': {
-          regex:
-            /sendResetPassword\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
+          regex: /sendResetPassword\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
           fn: `sendResetPassword: async ({ user, url, token }, request) => {
         const subject = \\\`${escapedSubject}\\\`
           .replace(/{{user.name}}/g, user?.name || '')
@@ -6082,8 +6082,7 @@ export const authClient = createAuthClient({
       }`,
         },
         'email-verification': {
-          regex:
-            /sendVerificationEmail\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
+          regex: /sendVerificationEmail\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
           fn: `sendVerificationEmail: async ({ user, url, token }, request) => {
         const subject = \\\`${escapedSubject}\\\`
           .replace(/{{user.name}}/g, user?.name || '')
@@ -6103,8 +6102,7 @@ export const authClient = createAuthClient({
       }`,
         },
         'magic-link': {
-          regex:
-            /sendMagicLink\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
+          regex: /sendMagicLink\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
           fn: `sendMagicLink: async ({ email, token, url }, ctx) => {
         const subject = \\\`${escapedSubject}\\\`
           .replace(/{{user.email}}/g, email || '');
@@ -6122,8 +6120,7 @@ export const authClient = createAuthClient({
       }`,
         },
         'org-invitation': {
-          regex:
-            /sendInvitationEmail\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
+          regex: /sendInvitationEmail\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
           fn: `sendInvitationEmail: async ({ data, request }: {
         data: {
           invitation: {
@@ -6208,7 +6205,10 @@ export const authClient = createAuthClient({
               message: 'emailAndPassword config not found in auth.ts',
             });
           }
-          fileContent = fileContent.replace(emailAndPasswordRegex, (m) => `${m}${handler.fn},\n    `);
+          fileContent = fileContent.replace(
+            emailAndPasswordRegex,
+            (m) => `${m}${handler.fn},\n    `
+          );
         }
       }
 
