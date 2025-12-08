@@ -5315,7 +5315,8 @@ export const authClient = createAuthClient({
                             fileContent.slice(importBlockEnd + 1);
                 }
                 else {
-                    fileContent = `const resend = new Resend(process.env.RESEND_API_KEY || '');\n` + fileContent;
+                    fileContent =
+                        `const resend = new Resend(process.env.RESEND_API_KEY || '');\n` + fileContent;
                 }
             }
             const handlers = {

@@ -73,6 +73,10 @@ const emailTemplates: Record<string, EmailTemplate> = {
   <div style="margin-bottom: 30px;">
     <img src="https://www.better-auth.com/logo.png" alt="Better Auth" style="max-width: 70px; height: auto; display: block;">
   </div>
+  <div style="background: #000; color: #fff; padding: 20px; text-align: center; margin-bottom: 30px;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 300;">Verify Your Email</h1>
+  </div>
+  
   <p>Hello {{user.name}},</p>
   
   <p>Thank you for signing up! Please verify your email address by clicking the button below:</p>
@@ -216,7 +220,7 @@ const emailTemplates: Record<string, EmailTemplate> = {
     {{otp}}
   </p>
   
-  <p style="color: #666; font-size: 14px; text-align: center; margin-top: 30px;">
+  <p style="color: #666; font-size: 14px; text-align: left; margin-top: 30px;">
     This code will expire in <strong style="color: #000;">{{expiresIn}}</strong>.
   </p>
   
@@ -296,8 +300,10 @@ export default function EmailEditor() {
   };
 
   const handleApplyToAuth = async (templateId: string) => {
-    const subjectToApply = emailSubject || emailTemplates[templateId]?.subject || 'Email subject';
-    const htmlToApply = renderedHtml || emailHtml || emailTemplates[templateId]?.html || '';
+    const subjectToApply =
+      emailSubject || emailTemplates[templateId]?.subject || 'Email subject';
+    const htmlToApply =
+      renderedHtml || emailHtml || emailTemplates[templateId]?.html || '';
     setIsApplying(true);
     try {
       const resp = await fetch('/api/tools/apply-email-template', {
@@ -713,7 +719,10 @@ export const auth = betterAuth({
                 )}
 
                 <div className="flex-1 overflow-hidden">
-                  <VisualEmailBuilder html={memoizedHtml} onChange={handleHtmlChange} />
+                  <VisualEmailBuilder
+                    html={memoizedHtml}
+                    onChange={handleHtmlChange}
+                  />
                 </div>
               </div>
             </>
