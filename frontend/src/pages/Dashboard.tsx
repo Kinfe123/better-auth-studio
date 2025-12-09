@@ -501,7 +501,6 @@ export default function Dashboard() {
     fetchData();
   }, [activityPeriod, newUsersDateFrom, newUsersDateTo, fetchAnalytics]);
 
-  // Fetch active users card analytics
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchAnalytics('activeUsers', '1D');
@@ -509,13 +508,6 @@ export default function Dashboard() {
     };
     fetchData();
   }, [fetchAnalytics]);
-
-  useEffect(() => {
-    // if (!loading) {
-    //   setOrganizationsCount(counts.organizations || 0);
-    //   setTeamsCount(counts.teams || 0);
-    // }
-  }, [counts.organizations, counts.teams, loading]);
 
   useEffect(() => {
     const fetchOrganizationMetrics = async () => {
@@ -641,7 +633,6 @@ export default function Dashboard() {
   }, [fetchAnalytics]);
 
   useEffect(() => {
-    // Check better-auth version
     const checkBetterAuthVersion = async () => {
       try {
         const response = await fetch('/api/version-check');
@@ -654,20 +645,17 @@ export default function Dashboard() {
           });
         }
       } catch (_error) {
-        // Fallback: try to get from package.json endpoint
         try {
           const pkgResponse = await fetch('/api/package-info');
           const pkgData = await pkgResponse.json();
           const current = pkgData.betterAuthVersion || '1.0.0';
-          // For now, set a mock latest version (in production, fetch from npm registry)
-          const latest = '1.5.0'; // This should be fetched from npm registry
+          const latest = '1.5.0';
           setBetterAuthVersion({
             current,
             latest,
             isOutdated: current !== latest,
           });
         } catch {
-          // Set default
           setBetterAuthVersion({
             current: '1.0.0',
             latest: '1.5.0',
