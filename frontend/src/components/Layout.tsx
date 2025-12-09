@@ -409,6 +409,9 @@ export default function Layout({ children }: LayoutProps) {
               const isActive = location.pathname === item.href;
               return (
                 <div key={item.name} className="flex items-center">
+                 {index === 0 && (
+                    <div className="h-[50px] -my-5 w-px bg-transparent border-dashed border-r border-white/20" />
+                 )} 
                   <Link
                     to={item.href}
                     className={`flex items-center space-x-2 border-x-0 px-8 py-4 text-sm font-medium border-b-2 transition-all duration-200 relative ${
