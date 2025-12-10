@@ -900,7 +900,7 @@ export default function UserDetails() {
                 >
                   <tab.icon className="w-4 h-4 text-white/90" />
                   <span className="inline-flex items-start">
-                    <span className="">{tab.name}</span>
+                    <span className="font-mono uppercase text-xs font-normal">{tab.name}</span>
                     {tab.count !== undefined && (
                       <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
                         <AnimatedNumber

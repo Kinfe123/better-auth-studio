@@ -334,7 +334,7 @@ export default function TeamDetails() {
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>Details</span>
+            <span className="font-mono uppercase text-xs font-normal">Details</span>
           </button>
           <button
             onClick={() => setActiveTab('members')}
@@ -345,7 +345,7 @@ export default function TeamDetails() {
             }`}
           >
             <Users className="w-4 h-4" />
-            <span className="inline-flex items-start">
+            <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
               Members
               <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
                 <AnimatedNumber

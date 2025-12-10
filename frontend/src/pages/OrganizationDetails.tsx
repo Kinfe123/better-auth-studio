@@ -824,11 +824,7 @@ export default function OrganizationDetails() {
         <div>
           <h1 className="text-2xl text-white font-light inline-flex items-center">
             {organization.name}
-            <sup className="text-xs text-gray-500 ml-2">
-              <span className="mr-1">[</span>
-              <span className="text-white/80 font-mono text-xs">{organization.slug}</span>
-              <span className="ml-1">]</span>
-            </sup>
+            <CopyableId id={organization.slug} nonSliced={true} variant="subscript" />
           </h1>
         </div>
       </div>
@@ -846,7 +842,7 @@ export default function OrganizationDetails() {
               }`}
             >
               <Building2 className="w-4 h-4 text-white/90" />
-              <span className="inline-flex items-start">
+              <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
                 Details
                 <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
                   <AnimatedNumber
@@ -868,7 +864,7 @@ export default function OrganizationDetails() {
               }`}
             >
               <Users className="w-4 h-4 text-white/90" />
-              <span className="inline-flex items-start">
+              <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
                 Members
                 <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
                   <AnimatedNumber
@@ -890,7 +886,7 @@ export default function OrganizationDetails() {
               }`}
             >
               <Mail className="w-4 h-4 text-white/90" />
-              <span className="inline-flex items-start">
+              <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
                 Invitations
                 <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
                   <AnimatedNumber
@@ -912,7 +908,7 @@ export default function OrganizationDetails() {
               }`}
             >
               <Users className="w-4 h-4 text-white/90" />
-              <span className="inline-flex items-start">
+              <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
                 Teams
                 <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
                   <AnimatedNumber
