@@ -1,3 +1,4 @@
+import type { BetterAuthOptions } from 'better-auth';
 import {
   AlertTriangle,
   Bell,
@@ -23,7 +24,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useWebSocket } from '../hooks/useWebSocket';
-import { BetterAuthOptions } from "better-auth"
+
 interface AuthConfig {
   appName?: string;
   baseURL?: string;
@@ -38,11 +39,10 @@ interface AuthConfig {
     casing?: string;
     debugLogs?: boolean;
     adapterConfig?: BetterAuthOptions['database']['adapterConfig'];
-   
   };
   secondaryStorage?: BetterAuthOptions['secondaryStorage'];
   emailVerification?: BetterAuthOptions['emailVerification'];
-  emailAndPassword?: BetterAuthOptions['emailAndPassword'] 
+  emailAndPassword?: BetterAuthOptions['emailAndPassword'];
   socialProviders?: Array<{
     type: string;
     clientId?: string;
@@ -59,15 +59,15 @@ interface AuthConfig {
       deleteTokenExpiresIn?: number;
     };
   };
-  session?: BetterAuthOptions['session'],
-  account?: BetterAuthOptions['account'],
-  verification?: BetterAuthOptions['verification']
+  session?: BetterAuthOptions['session'];
+  account?: BetterAuthOptions['account'];
+  verification?: BetterAuthOptions['verification'];
   trustedOrigins?: BetterAuthOptions['trustedOrigins'];
   rateLimit?: BetterAuthOptions['rateLimit'];
-  advanced?:  BetterAuthOptions['advanced']
+  advanced?: BetterAuthOptions['advanced'];
   logger?: BetterAuthOptions['logger'];
   disabledPaths?: BetterAuthOptions['disabledPaths'];
-  telemetry?: BetterAuthOptions['telemetry']
+  telemetry?: BetterAuthOptions['telemetry'];
 }
 
 interface SystemInfo {
@@ -409,7 +409,7 @@ export default function Settings() {
                     {databaseInfo?.displayName ||
                       (config?.database?.type &&
                         config?.database?.type.charAt(0).toUpperCase() +
-                        config?.database?.type.slice(1)) ||
+                          config?.database?.type.slice(1)) ||
                       'Unknown'}
                   </p>
                   <p className="text-[10px] font-light uppercase font-mono text-gray-400">
