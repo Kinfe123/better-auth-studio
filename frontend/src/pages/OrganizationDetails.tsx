@@ -835,11 +835,10 @@ export default function OrganizationDetails() {
           <nav className="flex space-x-8 px-6">
             <button
               onClick={() => setActiveTab('details')}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'details'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-              }`}
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'details'
+                ? 'border-white text-white'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                }`}
             >
               <Building2 className="w-4 h-4 text-white/90" />
               <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
@@ -857,11 +856,10 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab('members')}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'members'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-              }`}
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'members'
+                ? 'border-white text-white'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                }`}
             >
               <Users className="w-4 h-4 text-white/90" />
               <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
@@ -879,11 +877,10 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab('invitations')}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'invitations'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-              }`}
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'invitations'
+                ? 'border-white text-white'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                }`}
             >
               <Mail className="w-4 h-4 text-white/90" />
               <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
@@ -901,11 +898,10 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab('teams')}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'teams'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-              }`}
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'teams'
+                ? 'border-white text-white'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                }`}
             >
               <Users className="w-4 h-4 text-white/90" />
               <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
@@ -928,9 +924,11 @@ export default function OrganizationDetails() {
           {/* Tab Content */}
           {activeTab === 'details' && (
             <div className="space-y-6">
-              {/* Organization Information */}
               <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-                <h3 className="text-lg text-white font-light mb-4">Organization Information</h3>
+                <h3 className="text-sm uppercase font-mono text-gray-400 mb-4 tracking-wider">
+                  ORGANIZATION INFORMATION
+                </h3>
+                <hr className="border-white/15 -mx-10 border-dashed my-4" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="text-sm text-gray-400 font-mono uppercase">Name</label>
@@ -958,7 +956,12 @@ export default function OrganizationDetails() {
                   <div className="flex items-center space-x-3">
                     <Users className="w-8 h-8 text-white" />
                     <div>
-                      <p className="text-2xl text-white font-sans font-light">{members.length}</p>
+                      <p className="text-2xl text-white font-sans font-light">
+                        <AnimatedNumber
+                          value={members.length}
+                          format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                        />
+                      </p>
                       <p className="text-sm text-gray-400 font-mono uppercase">Members</p>
                     </div>
                   </div>
@@ -967,7 +970,12 @@ export default function OrganizationDetails() {
                   <div className="flex items-center space-x-3">
                     <Users className="w-8 h-8 text-white" />
                     <div>
-                      <p className="text-2xl text-white font-sans font-light">{teams.length}</p>
+                      <p className="text-2xl text-white font-sans font-light">
+                        <AnimatedNumber
+                          value={teams.length}
+                          format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                        />
+                      </p>
                       <p className="text-sm text-gray-400 font-mono uppercase">Teams</p>
                     </div>
                   </div>
@@ -977,7 +985,10 @@ export default function OrganizationDetails() {
                     <Mail className="w-8 h-8 text-white" />
                     <div>
                       <p className="text-2xl text-white font-sans font-light">
-                        {invitations.length}
+                        <AnimatedNumber
+                          value={invitations.length}
+                          format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                        />
                       </p>
                       <p className="text-sm text-gray-400 font-mono uppercase">Invitations</p>
                     </div>
@@ -988,10 +999,13 @@ export default function OrganizationDetails() {
                     <Calendar className="w-8 h-8 text-white" />
                     <div>
                       <p className="text-2xl text-white font-sans font-light">
-                        {Math.ceil(
-                          (new Date().getTime() - new Date(organization.createdAt).getTime()) /
-                            (1000 * 60 * 60 * 24)
-                        )}
+                        <AnimatedNumber
+                          value={Math.ceil(
+                            (new Date().getTime() - new Date(organization.createdAt).getTime()) /
+                              (1000 * 60 * 60 * 24)
+                          )}
+                          format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                        />
                       </p>
                       <p className="text-sm text-gray-400 font-mono uppercase">Days Active</p>
                     </div>
@@ -1396,13 +1410,12 @@ export default function OrganizationDetails() {
                             <td className="py-4 px-4">
                               <Badge
                                 variant="secondary"
-                                className={`text-xs font-normal rounded-none border-dashed flex items-center gap-1 w-fit ${
-                                  invitation.status === 'pending'
-                                    ? 'bg-yellow-900/10 border border-yellow-500/30 text-yellow-400/70'
-                                    : invitation.status === 'accepted'
-                                      ? 'bg-green-900/10 border border-green-500/30 text-green-400/70'
-                                      : 'bg-red-900/10 border border-red-500/30 text-red-400/70'
-                                }`}
+                                className={`text-xs font-normal rounded-none border-dashed flex items-center gap-1 w-fit ${invitation.status === 'pending'
+                                  ? 'bg-yellow-900/10 border border-yellow-500/30 text-yellow-400/70'
+                                  : invitation.status === 'accepted'
+                                    ? 'bg-green-900/10 border border-green-500/30 text-green-400/70'
+                                    : 'bg-red-900/10 border border-red-500/30 text-red-400/70'
+                                  }`}
                               >
                                 {invitation.status === 'pending' && <Clock className="w-3 h-3" />}
                                 {invitation.status === 'accepted' && (
