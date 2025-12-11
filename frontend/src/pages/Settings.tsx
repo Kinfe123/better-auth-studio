@@ -37,19 +37,8 @@ interface AuthConfig {
     version?: string;
     casing?: string;
     debugLogs?: boolean;
-    adapterConfig?: {
-      adapterId?: string;
-      adapterName?: string;
-      usePlural?: boolean;
-      debugLogs?: boolean;
-      supportsBooleans?: boolean;
-      supportsDates?: boolean;
-      supportsJSON?: boolean;
-      supportsNumericIds?: boolean;
-      disableTransformInput?: boolean;
-      disableTransformOutput?: boolean;
-      [key: string]: any;
-    };
+    adapterConfig?: BetterAuthOptions['database']['adapterConfig'];
+   
   };
   secondaryStorage?: BetterAuthOptions['secondaryStorage'];
   emailVerification?: BetterAuthOptions['emailVerification'];
@@ -70,35 +59,9 @@ interface AuthConfig {
       deleteTokenExpiresIn?: number;
     };
   };
-  session?: {
-    modelName?: string;
-    expiresIn?: number;
-    updateAge?: number;
-    disableSessionRefresh?: boolean;
-    storeSessionInDatabase?: boolean;
-    preserveSessionInDatabase?: boolean;
-    cookieCache?: {
-      enabled?: boolean;
-      maxAge?: number;
-    };
-    freshAge?: number;
-  };
-  account?: {
-    modelName?: string;
-    updateAccountOnSignIn?: boolean;
-    accountLinking?: {
-      enabled?: boolean;
-      trustedProviders?: string[];
-      allowDifferentEmails?: boolean;
-      allowUnlinkingAll?: boolean;
-      updateUserInfoOnLink?: boolean;
-    };
-    encryptOAuthTokens?: boolean;
-  };
-  verification?: {
-    modelName?: string;
-    disableCleanup?: boolean;
-  };
+  session?: BetterAuthOptions['session'],
+  account?: BetterAuthOptions['account'],
+  verification?: BetterAuthOptions['verification']
   trustedOrigins?: BetterAuthOptions['trustedOrigins'];
   rateLimit?: BetterAuthOptions['rateLimit'];
   advanced?:  BetterAuthOptions['advanced']
