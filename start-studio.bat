@@ -13,6 +13,5 @@ if "%1"=="" (
 echo 📡 Starting on port: %PORT%
 echo 🔧 Using test configuration (GitHub OAuth disabled)
 
-REM Start the studio
 echo 🔧 Starting Better Auth Studio with environment variables...
 better-auth-studio start --port %PORT%

@@ -14,6 +14,5 @@ fi
 echo "📡 Starting on port: $PORT"
 echo "🔧 Using test configuration (GitHub OAuth disabled)"
 
-# Start the studio
 echo "🔧 Starting Better Auth Studio with environment variables..."
 better-auth-studio start --port "$PORT"
