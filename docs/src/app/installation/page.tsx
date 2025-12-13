@@ -42,10 +42,6 @@ export default function Installation() {
             <div className="flex items-start">
               <span className="text-white/50 mr-3 text-lg">🚀</span>
               <div>
-                <h3 className="text-lg font-light tracking-tight mb-2 text-white">Try the Beta Version</h3>
-                <p className="text-sm font-light tracking-tight text-white/70 mb-3">
-                  Experience the latest features, patches, and improvements by installing the beta version. The beta includes recent bug fixes, performance enhancements, and new functionality that may not be available in the stable release yet.
-                </p>
                 <div className="space-y-2">
                   <div>
                     <p className="text-xs font-light tracking-tight text-white/60 mb-1">
