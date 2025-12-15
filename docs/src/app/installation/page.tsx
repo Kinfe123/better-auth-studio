@@ -18,7 +18,7 @@ export default function Installation() {
               <div>
                 <h3 className="text-lg font-light tracking-tight mb-2 text-white">Hosted Version</h3>
                 <p className="text-sm font-light tracking-tight text-white/70">
-                  For the hosted version, please join the waitlist: <a href="https://better-auth.build" target="_blank" rel="noopener" className="underline underline-offset-2 font-bold">better-auth.build</a>
+                  For the hosted version, make sure to join the waitlist: <a href="https://better-auth.build" target="_blank" rel="noopener" className="underline underline-offset-2 font-bold">better-auth.build</a>
                 </p>
               </div>
             </div>

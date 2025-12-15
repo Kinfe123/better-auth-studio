@@ -493,7 +493,7 @@ export function createRoutes(
         adapterConfig: adapterConfig,
         dialect: adapterProvider,
       },
-      emailVerification:  authConfig.emailVerification,
+      emailVerification: authConfig.emailVerification,
       emailAndPassword: authConfig.emailAndPassword,
       socialProviders: authConfig.socialProviders
         ? authConfig.socialProviders.map((provider: any) => ({
@@ -515,14 +515,14 @@ export function createRoutes(
           deleteTokenExpiresIn: authConfig.user?.deleteUser?.deleteTokenExpiresIn || 86400,
         },
       },
-      session: authConfig.session, 
-      account: authConfig.account, 
+      session: authConfig.session,
+      account: authConfig.account,
       verification: {
         modelName: authConfig.verification?.modelName || 'verification',
         disableCleanup: authConfig.verification?.disableCleanup || false,
       },
       trustedOrigins: authConfig.trustedOrigins,
-      rateLimit: authConfig.rateLimit, 
+      rateLimit: authConfig.rateLimit,
       advanced: authConfig.advanced,
       disabledPaths: authConfig.disabledPaths || [],
       telemetry: authConfig.telemetry,
