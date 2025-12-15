@@ -244,7 +244,6 @@ export async function getConfig({
       }
       configFile = 'auth' in config ? config.auth?.options : config.options;
     }
-
     if (!configFile) {
       for (const possiblePath of possiblePaths) {
         try {
@@ -259,6 +258,7 @@ export async function getConfig({
             configFile: possiblePath,
             jitiOptions: jitiOptions(cwd, noCache),
           });
+          console.log({config})
           const hasConfig = Object.keys(config).length > 0;
           if (hasConfig) {
             configFile = config.auth?.options || config.default?.options || null;
@@ -302,6 +302,7 @@ export async function getConfig({
         }
       }
     }
+    console.log({configFile})
     return configFile;
   } catch (e) {
     if (
