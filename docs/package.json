@@ -19,7 +19,7 @@
     "lucide-react": "^0.544.0",
     "motion": "^12.23.24",
     "next": "15.5.8",
-    "postprocessing": "^6.37.8",
+    "postprocessing": "^6.38.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-syntax-highlighter": "^15.6.6",

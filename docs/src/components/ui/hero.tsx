@@ -54,8 +54,9 @@ function Shape() {
         <sphereGeometry args={[0.8, 32, 32]} />
         <meshPhysicalMaterial
           color="#ffffff"
-          emissive={"white"}
-          emissiveIntensity={1}
+          emissive="#ffffff"
+          emissiveIntensity={2}
+          toneMapped={false}
         />
       </mesh>
     </>
