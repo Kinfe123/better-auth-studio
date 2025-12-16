@@ -45,7 +45,6 @@ export default function Changelog() {
 
         <section>
           <h2 className="text-2xl font-light tracking-tight mb-6 text-white">RECENT UPDATES</h2>
-
           <PixelCard className="mb-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-light tracking-tight text-white">Email Editor & Database Visualization Enhancements</h3>
@@ -101,7 +100,6 @@ export default function Changelog() {
               </div>
             </div>
           </PixelCard>
-
           <PixelCard className="mb-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-light tracking-tight text-white">Email Editor Enhancements & Password Strength Tool</h3>
@@ -199,7 +197,7 @@ export default function Changelog() {
               </div>
             </div>
           </PixelCard>
-
+          
           <PixelCard className="mb-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-light tracking-tight text-white">Shadcn UI Integration & Admin Functionality</h3>

@@ -18,7 +18,7 @@ export default function Installation() {
               <div>
                 <h3 className="text-lg font-light tracking-tight mb-2 text-white">Hosted Version</h3>
                 <p className="text-sm font-light tracking-tight text-white/70">
-                  For the hosted version, please to join the waitlist: <a href="https://better-auth.build" target="_blank" rel="noopener" className="underline underline-offset-2 font-bold">better-auth.build</a>
+                  For the hosted version, please join the waitlist: <a href="https://better-auth.build" target="_blank" rel="noopener" className="underline underline-offset-2 font-bold">better-auth.build</a>
                 </p>
               </div>
             </div>
@@ -42,6 +42,10 @@ export default function Installation() {
             <div className="flex items-start">
               <span className="text-white/50 mr-3 text-lg">🚀</span>
               <div>
+                <h3 className="text-lg font-light tracking-tight mb-2 text-white">Try the Beta Version</h3>
+                <p className="text-sm font-light tracking-tight text-white/70 mb-3">
+                  Experience the latest features, patches, and improvements by installing the beta version. The beta includes recent bug fixes, performance enhancements, and new functionality that may not be available in the stable release yet.
+                </p>
                 <div className="space-y-2">
                   <div>
                     <p className="text-xs font-light tracking-tight text-white/60 mb-1">
@@ -482,7 +486,7 @@ export const auth = betterAuth({
                 <p className="text-sm font-light tracking-tight text-white/70 mb-2">
                   Clone the repository:
                 </p>
-                <CodeBlock code="git clone https://github.com/Kinfe123/better-auth-studio.git" />
+                <CodeBlock code="git clone https://github.com/better-auth/better-auth-studio.git" />
                 <CodeBlock code="cd better-auth-studio" className="mt-2" />
               </div>
               
