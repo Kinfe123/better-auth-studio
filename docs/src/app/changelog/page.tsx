@@ -129,31 +129,31 @@ export default function Changelog() {
                       fill="currentColor"
                     />
                   </svg>
-                  v1.0.30 <span className="text-white/50 ml-2">/ 2025-11-08</span>
+                  v1.0.70 <span className="text-white/50 ml-2">/ 2025-01-31</span>
                 </span>
               </h3>
             </div>
             <p className="text-sm font-light tracking-tight text-white/70 mb-4 pt-4">
-              Massive studio refresh featuring a rebuilt analytics dashboard, refined black & white interface, and an all-new Tools command center with guided OAuth diagnostics, migration helpers, and database connectivity checks.
+              Enhanced email editor with code export, field simulator, and alignment icons. Added Password Strength Checker tool with comprehensive validation. Improved navigation with dynamic count badges.
             </p>
             <div className="space-y-3">
               <h4 className="font-light tracking-tight text-white flex items-center"><ZapIcon />New Features</h4>
               <ul className="list-none space-y-2 text-sm font-light tracking-tight text-white/70 ml-4">
                 <li className="flex items-start">
                   <ChevronIcon />
-                  <strong className="pr-2">Dashboard 2.0</strong> with configurable period chips, and live organization / team metrics synced to backend endpoints
+                  <strong className="pr-2">Email Editor</strong> with code export modal and syntax highlighting
                 </li>
                 <li className="flex items-start">
                   <ChevronIcon />
-                  <strong className="pr-2">Tools Workspace</strong> with housing Test OAuth, Run Migration, and Test Database actions.
+                  <strong className="pr-2">Field Simulator</strong> for real-time preview of email templates with dynamic placeholders
                 </li>
                 <li className="flex items-start">
                   <ChevronIcon />
-                  Migration Blueprint for Clerk plus placeholders for Supabase, Auth0, and NextAuth with copy-ready scripts and custom playground
+                  <strong className="pr-2">Password Strength Checker</strong> tool with comprehensive validation and visual indicators
                 </li>
                 <li className="flex items-start">
                   <ChevronIcon />
-                  <strong className="pr-2">Database Smoke Tests</strong> leveraging adapter introspection to preview sample records and confirm connectivity
+                  <strong className="pr-2">Navigation Enhancements</strong> with dynamic count badges for Database, Emails, and Tools
                 </li>
               </ul>
             </div>
