@@ -227,6 +227,7 @@ pnpx better-auth-studio start [options]
 - `--host <string>` - Specify host (default: localhost)
 - `--no-open` - Don't automatically open browser
 - `--config <path>` - Path to auth config file (default: auto-detect)
+- `--watch` - Watch for changes in auth config file and reload server automatically
 
 **Examples:**
 ```bash
@@ -241,6 +242,12 @@ pnpm better-auth-studio start --no-open
 
 # Use custom config file
 pnpm better-auth-studio start --config ./custom-auth.ts
+
+# Enable watch mode for auto-reload on config changes
+pnpm better-auth-studio start --watch
+
+# Combine multiple options
+pnpx better-auth-studio start --port 3001 --watch --config ./src/auth.ts
 ```
 
 ### Using `--config` Option
@@ -268,6 +275,18 @@ The `--config` option allows you to specify a custom path to your Better Auth co
   ```bash
   pnpm better-auth-studio start --config /path/to/project/auth.ts
   ```
+
+### Using `--watch` Option
+
+Automatically reload the server when your `auth.ts` file changes. Perfect for development when iterating on your auth configuration.
+
+**Example:**
+```bash
+# Start with watch mode enabled
+pnpx better-auth-studio start --watch
+```
+
+**How it works:** Monitors your auth config file for changes, automatically restarts the server, and updates the browser UI via WebSocket - no manual refresh needed.
 
 ### Other Commands
 ```bash

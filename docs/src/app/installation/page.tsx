@@ -560,6 +560,10 @@ export const auth = betterAuth({
                 <span className="text-white/50 mr-3">•</span>
                 <code className="bg-white/10 px-1 text-white/90">--config &lt;path&gt;</code> - Path to auth config file (default: auto-detect)
               </li>
+              <li className="flex items-start">
+                <span className="text-white/50 mr-3">•</span>
+                <code className="bg-white/10 px-1 text-white/90">--watch</code> - Watch for changes in auth config file and reload server automatically
+              </li>
             </ul>
 
             <h4 className="font-light tracking-tight mb-3 text-white">Examples:</h4>
@@ -586,6 +590,20 @@ export const auth = betterAuth({
                   Use custom config file:
                 </p>
                 <CodeBlock code="pnpm better-auth-studio start --config ./custom-auth.ts" />
+              </div>
+
+              <div>
+                <p className="text-sm font-light tracking-tight text-white/70 mb-2">
+                  Enable watch mode for auto-reload on config changes:
+                </p>
+                <CodeBlock code="pnpm better-auth-studio start --watch" />
+              </div>
+
+              <div>
+                <p className="text-sm font-light tracking-tight text-white/70 mb-2">
+                  Combine multiple options:
+                </p>
+                <CodeBlock code="pnpx better-auth-studio start --port 3001 --watch --config ./src/auth.ts" />
               </div>
             </div>
           </PixelCard>
@@ -628,6 +646,47 @@ export const auth = betterAuth({
             <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-none">
               <p className="text-xs font-light tracking-tight text-white/70">
                 <strong>Note:</strong> TypeScript path aliases (like <code className="bg-white/10 px-1 text-white/90">$lib</code>, <code className="bg-white/10 px-1 text-white/90">$app/*</code>) are automatically resolved based on your <code className="bg-white/10 px-1 text-white/90">tsconfig.json</code>.
+              </p>
+            </div>
+          </PixelCard>
+
+          <PixelCard className="mb-6 relative">
+            <div className="absolute -top-10 left-0">
+              <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
+                <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
+                <span className="relative z-10 inline-flex gap-[2px] items-center">
+                  <svg
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className="w-3 h-3 inline-flex mr-1 text-white/50"
+                  >
+                    <path
+                      d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 2a8 8 0 110 16 8 8 0 010-16zm-1 3v5.4l4.2 2.5.8-1.3-3.5-2V7h-1.5z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  Using the <code className="bg-white/10 px-1 text-white/90">--watch</code> Option
+                </span>
+              </h3>
+            </div>
+
+            <p className="text-sm font-light tracking-tight text-white/70 mb-4 pt-4">
+              Automatically reload the server when your <code className="bg-white/10 px-1 text-white/90">auth.ts</code> file changes. Ideal for development when iterating on your auth configuration.
+            </p>
+
+            <div className="space-y-3 mb-4">
+              <div>
+                <p className="text-sm font-light tracking-tight text-white/70 mb-2">
+                  Enable watch mode:
+                </p>
+                <CodeBlock code="pnpx better-auth-studio start --watch" />
+              </div>
+            </div>
+
+            <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-none">
+              <p className="text-xs font-light tracking-tight text-white/70">
+                <strong className="text-white/90">How it works:</strong> Monitors your auth config file for changes, automatically restarts the server, and updates the browser UI via WebSocket - no manual refresh needed.
               </p>
             </div>
           </PixelCard>
