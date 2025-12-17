@@ -13,6 +13,7 @@ import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCounts } from '../contexts/CountsContext';
 import { useWebSocket } from '../hooks/useWebSocket';
+import { STUDIO_VERSION } from '../lib/version';
 import CommandPalette from './CommandPalette';
 
 interface LayoutProps {
@@ -101,7 +102,7 @@ export default function Layout({ children }: LayoutProps) {
   const { counts, loading } = useCounts();
   const navigate = useNavigate();
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-  const [studioVersion, setStudioVersion] = useState('v1.0.0');
+  const [studioVersion, setStudioVersion] = useState(`v${STUDIO_VERSION}`);
   const [watchState, setWatchState] = useState<WatchIndicatorState>({
     status: 'connecting',
   });
