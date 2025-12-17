@@ -298,7 +298,7 @@ export default function Dashboard() {
     // });
 
     // Only return unpatched (pending) security issues
-    return patches.filter(patch => patch.status !== 'applied');
+    return patches.filter((patch) => patch.status !== 'applied');
   };
 
   const securityPatches = getSecurityPatches();
