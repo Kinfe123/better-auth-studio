@@ -480,7 +480,7 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
               </div>
               <div
                 ref={containerRef}
-                className="flex flex-col gap-1 overflow-y-auto pr-1 custom-scroll transition-all duration-500"
+                className="flex flex-col gap-1 overflow-y-auto pr-1 scrollbar-hide transition-all duration-500"
                 style={{ height: terminalHeight }}
               >
                 {typedTerminalCommand && (
