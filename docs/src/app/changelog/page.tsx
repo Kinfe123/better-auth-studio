@@ -1,22 +1,99 @@
 import PixelLayout from "@/components/PixelLayout";
 import PixelCard from "@/components/PixelCard";
-import {
-  ZapIcon,
-  MailIcon,
-  DatabaseIcon,
-  ShieldIcon,
-  AnalyticsIcon,
-  CommandIcon,
-  LayoutIcon,
-  SearchIcon,
-  GlobeIcon,
-  SettingsIcon,
-  TrendingIcon,
-  RocketIcon,
-  ArrowRightIcon,
-  ChevronIcon,
-  CalendarIcon,
-} from "@/components/icons";
+
+
+const ZapIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2 text-white/70">
+    <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" fill="currentColor" />
+  </svg>
+);
+
+const MailIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2 text-white/70">
+    <path d="M22 6v12H2V6h20zm-2 2H4v8h16V8zm-2 2v2H6v-2h12z" fill="currentColor" />
+  </svg>
+);
+
+const DatabaseIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2 text-white/70">
+    <path d="M6 2h12v2h2v2h-2v2h2v2h-2v2h2v2h-2v2h2v2h-2v2H6v-2H4v-2h2v-2H4v-2h2v-2H4V8h2V6H4V4h2V2zm2 2v2h8V4H8zm8 4H8v2h8V8zm-8 4v2h8v-2H8zm0 4v2h8v-2H8z" fill="currentColor" />
+  </svg>
+);
+
+const ShieldIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2 text-white/70">
+    <path d="M12 2l-8 3v7c0 5 3.5 9.2 8 10 4.5-.8 8-5 8-10V5l-8-3zm0 2.2L18 6v5c0 3.8-2.6 7.2-6 7.9-3.4-.7-6-4.1-6-7.9V6l6-1.8z" fill="currentColor" />
+  </svg>
+);
+
+const AnalyticsIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2 text-white/70">
+    <path d="M3 3h2v18H3V3zm6 6h2v12H9V9zm6-4h2v16h-2V5zm6 8h2v8h-2v-8z" fill="currentColor" />
+  </svg>
+);
+
+const CommandIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2 text-white/70">
+    <path d="M6 2h4v4H6V2zm0 6h4v4H6V8zm0 6h4v4H6v-4zm0 6h4v4H6v-4zm8-18h4v4h-4V2zm0 6h4v4h-4V8zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4z" fill="currentColor" />
+  </svg>
+);
+
+const LayoutIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2 text-white/70">
+    <path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h10v4H7V7zm0 6h4v4H7v-4zm6 0h4v4h-4v-4z" fill="currentColor" />
+  </svg>
+);
+
+const SearchIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2 text-white/70">
+    <path d="M10 2a8 8 0 015.3 14l5.4 5.3-1.4 1.4-5.3-5.4A8 8 0 1110 2zm0 2a6 6 0 100 12 6 6 0 000-12z" fill="currentColor" />
+  </svg>
+);
+
+const GlobeIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2 text-white/70">
+    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 2c1.8 0 3.4.6 4.7 1.6l-1.4 1.4c-1-.6-2.1-1-3.3-1s-2.3.4-3.3 1L7.3 5.6C8.6 4.6 10.2 4 12 4zm0 16c-1.8 0-3.4-.6-4.7-1.6l1.4-1.4c1 .6 2.1 1 3.3 1s2.3-.4 3.3-1l1.4 1.4c-1.3 1-2.9 1.6-4.7 1.6z" fill="currentColor" />
+  </svg>
+);
+
+const SettingsIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2 text-white/70">
+    <path d="M12 8a4 4 0 100 8 4 4 0 000-8zm0 2a2 2 0 110 4 2 2 0 010-4z" fill="currentColor" />
+    <path d="M11 2h2v3h-2V2zm0 17h2v3h-2v-3zM3 11h3v2H3v-2zm15 0h3v2h-3v-2zM5.6 5.6l2.1 2.1-1.4 1.4-2.1-2.1 1.4-1.4zm11.3 9.7l2.1 2.1-1.4 1.4-2.1-2.1 1.4-1.4zM7.7 16.9l-2.1 2.1-1.4-1.4 2.1-2.1 1.4 1.4zM17.6 7.1l-2.1 2.1-1.4-1.4 2.1-2.1 1.4 1.4z" fill="currentColor" />
+  </svg>
+);
+
+const TrendingIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2 text-white/70">
+    <path d="M16 6h6v6h-2V9.4l-4.3 4.3-4-4-5.4 5.4-1.4-1.4 6.7-6.7 4 4L19.6 8H16V6z" fill="currentColor" />
+  </svg>
+);
+
+const RocketIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-2 text-white/70">
+    <path d="M16 5v2h-2V5h2zm-4 4V7h2v2h-2zm-2 2V9h2v2h-2zm0 2H8v-2h2v2zm2 2v-2h-2v2h2zm0 0h2v2h-2v-2zm4 4v-2h-2v2h2z" fill="currentColor" />
+  </svg>
+);
+
+const ArrowRightIcon = () => (
+  <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 mr-3 text-white/50">
+    <path d="M8 4h2v2H8V4zm2 2h2v2h-2V6zm2 2h2v2h-2V8zm2 2h2v2h-2v-2zm0 2v2h-2v-2h2zm-2 2v2h-2v-2h2zm-2 2v2H8v-2h2zm-2-2H6v-2h2v2zm2-2H8v-2h2v2zm2-2h-2V8h2v2z" fill="currentColor" />
+  </svg>
+);
+
+const ChevronIcon = () => (
+  <svg
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    className="w-3 h-3 mr-2 text-white/50"
+  >
+    <path
+      d="M8 5v2h2V5H8zm4 4V7h-2v2h2zm2 2V9h-2v2h2zm0 2h2v-2h-2v2zm-2 2v-2h2v2h-2zm0 0h-2v2h2v-2zm-4 4v-2h2v2H8z"
+      fill="currentColor"
+    />
+  </svg>
+);
 
 const versionHistory = [
   { version: "v1.0.31", date: "2025-01-31", description: "Enhanced email editor with code export, field simulator, and alignment icons. Added Password Strength Checker tool with comprehensive validation. Improved navigation with dynamic count badges." },
@@ -57,7 +134,7 @@ export default function Changelog() {
                       fill="currentColor"
                     />
                   </svg>
-                  v1.0.70 <span className="text-white/50 ml-2">/ 2025-12-12</span>
+                  v1.0.71 <span className="text-white/50 ml-2">/ 2025-12-17</span>
                 </span>
               </h3>
             </div>
