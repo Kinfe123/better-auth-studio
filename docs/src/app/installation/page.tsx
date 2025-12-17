@@ -606,7 +606,7 @@ export const auth = betterAuth({
                       fill="currentColor"
                     />
                   </svg>
-                  Using the --config Option
+                  Using the <code className="bg-white/10 px-1 text-white/90">--config</code> Option
                 </span>
               </h3>
             </div>
@@ -697,7 +697,7 @@ export const auth = betterAuth({
                 <p className="text-sm font-light tracking-tight text-white/70 mb-2">
                   Clone the repository:
                 </p>
-                <CodeBlock code="git clone https://github.com/better-auth/better-auth-studio.git" />
+                <CodeBlock code="git clone https://github.com/Kinfe123/better-auth-studio.git" />
                 <CodeBlock code="cd better-auth-studio" className="mt-2" />
               </div>
 
