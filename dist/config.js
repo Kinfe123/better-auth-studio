@@ -113,7 +113,6 @@ function resolveAliasedImports(configFilePath, cwd) {
     const content = fs.readFileSync(configFilePath, 'utf-8');
     const configDir = path.dirname(path.resolve(configFilePath));
     const tsconfigAliases = getPathAliases(configDir) || {};
-    // Match imports like: import ... from '@/lib/email' or import ... from "@/prisma"
     const aliasImportRegex = /import\s+.*?\s+from\s+['"](@[^'"]+)['"]/g;
     let match;
     while ((match = aliasImportRegex.exec(content)) !== null) {
@@ -148,10 +147,8 @@ function resolveAliasedImports(configFilePath, cwd) {
 const jitiOptions = (cwd, configFilePath, noCache = false) => {
     let alias = {};
     if (configFilePath) {
-        // Resolve specific aliased imports from the config file
         alias = resolveAliasedImports(configFilePath, cwd);
     }
-    // Fallback to general tsconfig aliases
     const generalAliases = getPathAliases(cwd) || {};
     alias = { ...generalAliases, ...alias };
     return {

@@ -1081,7 +1081,7 @@ export default function OrganizationDetails() {
                             <span className="text-blue-400">import</span> {`{ organization }`}{' '}
                             <span className="text-blue-400">from</span>{' '}
                             <span className="text-green-400">
-                              "better-auth/plugins/organization"
+                              "better-auth/plugins"
                             </span>{' '}
                             <br />
                             <span className="text-blue-400">export const</span>{' '}
