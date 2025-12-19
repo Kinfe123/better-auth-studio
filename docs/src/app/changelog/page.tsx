@@ -146,19 +146,19 @@ export default function Changelog() {
               <ul className="list-none space-y-2 text-sm font-light tracking-tight text-white/70 ml-4">
                 <li className="flex items-center">
                   <ChevronIcon />
-                  <strong className="pr-2">Email Editor</strong> with code export modal and syntax highlighting
+                  Email Editor with code export modal and syntax highlighting
                 </li>
                 <li className="flex items-center">
                   <ChevronIcon />
-                  <strong className="pr-2">Database Highlight Visualizer</strong> for interactive schema exploration and relationship mapping
+                Database Highlight Visualizer for interactive schema exploration and relationship mapping
                 </li>
                 <li className="flex items-center">
                   <ChevronIcon />
-                  <strong className="pr-2">Field Simulator</strong> for real-time preview of email templates with dynamic placeholders
+                Field Simulator for real-time preview of email templates with dynamic placeholders
                 </li>
                 <li className="flex items-center">
                   <ChevronIcon />
-                  <strong className="pr-2">Password Strength Checker</strong> tool with comprehensive validation and visual indicators
+                Password Strength Checker tool with comprehensive validation and visual indicators
                 </li>
               </ul>
             </div>
