@@ -1411,7 +1411,7 @@ export default function OrganizationDetails() {
                             <td className="py-4 px-4">
                               <Badge
                                 variant="secondary"
-                                className={`text-xs font-normal rounded-none border-dashed flex items-center gap-1 w-fit ${
+                                className={`text-xs font-normal font-mono uppercase rounded-none border-dashed flex items-center gap-1 w-fit ${
                                   invitation.status === 'pending'
                                     ? 'bg-yellow-900/10 border border-yellow-500/30 text-yellow-400/70'
                                     : invitation.status === 'accepted'
@@ -1419,11 +1419,11 @@ export default function OrganizationDetails() {
                                       : 'bg-red-900/10 border border-red-500/30 text-red-400/70'
                                 }`}
                               >
-                                {invitation.status === 'pending' && <Clock className="w-3 h-3" />}
+                                {invitation.status === 'pending' && <Clock className="w-2 h-2" />}
                                 {invitation.status === 'accepted' && (
                                   <CheckCircle className="w-3 h-3" />
                                 )}
-                                {invitation.status === 'expired' && <X className="w-3 h-3" />}
+                                {invitation.status === 'expired' && <X className="w-2 h-2" />}
                                 {invitation.status}
                               </Badge>
                             </td>
