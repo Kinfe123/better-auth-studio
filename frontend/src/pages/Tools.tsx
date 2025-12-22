@@ -655,6 +655,36 @@ export default function Tools() {
     };
   }, [showUuidModal]);
   useEffect(() => {
+    if (showJwtModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showJwtModal]);
+  useEffect(() => {
+    if (showPasswordHasher) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showPasswordHasher]);
+  useEffect(() => {
+    if (showTokenGeneratorModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showTokenGeneratorModal]);
+  useEffect(() => {
     if (showPluginGeneratorModal) {
       document.body.style.overflow = 'hidden';
     } else {

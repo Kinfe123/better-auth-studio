@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { existsSync } from 'node:fs';
-import { dirname, join, resolve, parse } from 'node:path';
+import { dirname, join, parse, resolve } from 'node:path';
 // @ts-expect-error - No types available
 import babelPresetReact from '@babel/preset-react';
 // @ts-expect-error - No types available
