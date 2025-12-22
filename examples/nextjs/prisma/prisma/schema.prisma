@@ -53,6 +53,7 @@ model Session {
 
   @@unique([token])
   @@map("session")
+  @@index([userId])
 }
 
 model Account {
@@ -72,6 +73,7 @@ model Account {
   updatedAt             DateTime  @updatedAt
 
   @@map("account")
+  @@index([userId])
 }
 
 model Verification {
@@ -83,6 +85,7 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+  @@index([identifier])
 }
 
 model Organization {
@@ -110,6 +113,8 @@ model Member {
   createdAt      DateTime
 
   @@map("member")
+  @@index([organizationId])
+  @@index([userId])
 }
 
 model Invitation {
@@ -124,7 +129,11 @@ model Invitation {
   inviterId      String
   user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+
   @@map("invitation")
+  @@index([organizationId])
+  @@index([email])
 }
 
 model Team {
@@ -137,6 +146,7 @@ model Team {
   teammembers    TeamMember[]
 
   @@map("team")
+  @@index([organizationId])
 }
 
 model TeamMember {
@@ -148,4 +158,6 @@ model TeamMember {
   createdAt DateTime?
 
   @@map("teamMember")
+  @@index([teamId])
+  @@index([userId])
 }
