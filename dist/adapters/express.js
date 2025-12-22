@@ -5,14 +5,10 @@ import { handleStudioRequest } from '../core/handler.js';
  */
 export function betterAuthStudio(config) {
     const router = Router();
-    // Catch all requests
     router.all('*', async (req, res, next) => {
         try {
-            // Convert Express → Universal
             const universalReq = convertExpressToUniversal(req);
-            // Handle request
             const universalRes = await handleStudioRequest(universalReq, config);
-            // Convert Universal → Express
             sendExpressResponse(res, universalRes);
         }
         catch (error) {
