@@ -485,6 +485,18 @@ export function createRoutes(
     return (accessConfig?.sessionDuration || 7 * 24 * 60 * 60) * 1000;
   };
 
+  const getAllowedEmails = (): string[] | null => {
+    return accessConfig?.allowEmails && accessConfig.allowEmails.length > 0 
+      ? accessConfig.allowEmails.map(e => e.toLowerCase()) 
+      : null;
+  };
+
+  const isEmailAllowed = (email: string): boolean => {
+    const allowedEmails = getAllowedEmails();
+    if (!allowedEmails) return true;
+    return allowedEmails.includes(email.toLowerCase());
+  };
+
   router.post('/api/auth/sign-in', async (req: Request, res: Response) => {
     try {
       if (!authInstance) {
@@ -566,6 +578,13 @@ export function createRoutes(
             });
           }
 
+          if (!isEmailAllowed(user.email)) {
+            return res.status(403).json({
+              success: false,
+              message: 'Access denied. Your email is not authorized to access this dashboard.',
+            });
+          }
+
           const studioSession = createStudioSession(user, getSessionDuration());
           const encryptedSession = encryptSession(studioSession, getSessionSecret());
 
@@ -614,6 +633,13 @@ export function createRoutes(
           success: false,
           message: `Access denied. Required role: ${allowedRoles.join(' or ')}`,
           userRole: user.role || 'none',
+        });
+      }
+
+      if (!isEmailAllowed(user.email)) {
+        return res.status(403).json({
+          success: false,
+          message: 'Access denied. Your email is not authorized to access this dashboard.',
         });
       }
 
@@ -679,6 +705,13 @@ export function createRoutes(
           success: false,
           message: `Access denied. Required role: ${allowedRoles.join(' or ')}`,
           userRole: user.role || 'none',
+        });
+      }
+
+      if (!isEmailAllowed(user.email)) {
+        return res.status(403).json({
+          success: false,
+          message: 'Access denied. Your email is not authorized to access this dashboard.',
         });
       }
 
