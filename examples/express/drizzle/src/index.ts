@@ -1,8 +1,13 @@
+import 'dotenv/config';
 import express from 'express';
 import { auth } from './auth.js';
+import { toNodeHandler } from 'better-auth/node';
+import { betterAuthStudio } from 'better-auth-studio/express';
+import studioConfig from '../studio.config';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 app.use(express.json());
 
 app.get('/health', (req, res) => {
@@ -13,25 +18,22 @@ app.get('/health', (req, res) => {
   });
 });
 
+app.use('/api/studio', betterAuthStudio(studioConfig));
+
 app.get('/', async (req, res) => {
-  const users = await (await auth.$context).adapter.findMany({
-    model: "user",
-  })
   res.json({
     message: 'Better Auth Test Project',
     description: 'This is a test project for Better Auth Studio',
-    users: JSON.stringify(users, null, 2),
     endpoints: {
       health: '/health',
-      auth: '/api/auth/*'
+      auth: '/api/auth/*',
+      studio: '/api/studio'
     }
   });
 });
 
-// Better Auth routes
-app.use('/api/auth', auth.handler);
+app.all('/api/auth/*', toNodeHandler(auth));
 
-// Start server
 app.listen(PORT, () => {
   console.log(`🚀 Better Auth Test Project running on http://localhost:${PORT}`);
 });

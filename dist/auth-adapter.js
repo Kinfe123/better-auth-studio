@@ -102,6 +102,7 @@ export async function getAuthAdapter(configPath) {
                         image: data.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
                     },
                 });
+                const hashedPassword = await hashPassword(data.password);
                 if (data.password) {
                     try {
                         await adapter.create({
@@ -110,7 +111,7 @@ export async function getAuthAdapter(configPath) {
                                 userId: user.id,
                                 providerId: 'credential',
                                 accountId: user.id,
-                                password: data.password,
+                                password: hashedPassword,
                                 createdAt: new Date(),
                                 updatedAt: new Date(),
                             },

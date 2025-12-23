@@ -2,10 +2,12 @@ import {
   Building2,
   Database,
   LayoutDashboard,
+  LogOut,
   Mail,
   RefreshCw,
   Search,
   Settings,
+  User,
   Users,
   Wrench,
 } from 'lucide-react';
@@ -14,6 +16,23 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCounts } from '../contexts/CountsContext';
 import { useWebSocket } from '../hooks/useWebSocket';
 import CommandPalette from './CommandPalette';
+
+interface UserProfile {
+  id: string;
+  email: string;
+  name?: string;
+  image?: string;
+  role?: string;
+}
+
+function getStudioConfig() {
+  return (window as any).__STUDIO_CONFIG__ || {};
+}
+
+function checkIsSelfHosted(): boolean {
+  const cfg = getStudioConfig();
+  return !!cfg.basePath;
+}
 
 interface LayoutProps {
   children: ReactNode;
@@ -110,6 +129,15 @@ export default function Layout({ children }: LayoutProps) {
   const refreshRecoveryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingHardRefreshRef = useRef(false);
 
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isSelfHosted, setIsSelfHosted] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setIsSelfHosted(checkIsSelfHosted());
+  }, []);
+
   const clearRecoveryTimeout = () => {
     if (refreshRecoveryTimeoutRef.current) {
       clearTimeout(refreshRecoveryTimeoutRef.current);
@@ -142,6 +170,58 @@ export default function Layout({ children }: LayoutProps) {
   }, []);
 
   useEffect(() => {
+    if (!isSelfHosted) return;
+
+    const fetchUserProfile = async () => {
+      try {
+        const basePath = getStudioConfig().basePath || '';
+        const response = await fetch(`${basePath}/auth/session`, { credentials: 'include' });
+        const data = await response.json();
+        if (data.authenticated && data.user) {
+          setUserProfile(data.user);
+        }
+      } catch {
+        setUserProfile(null);
+      }
+    };
+
+    fetchUserProfile();
+  }, [isSelfHosted]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    if (isProfileOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isProfileOpen]);
+
+  const handleLogout = async () => {
+    try {
+      const basePath = getStudioConfig().basePath || '';
+      await fetch(`${basePath}/auth/logout`, { method: 'GET', credentials: 'include' });
+      navigate('/login');
+    } catch {
+      navigate('/login');
+    }
+  };
+
+  const getInitials = (name?: string, email?: string): string => {
+    if (name) {
+      return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    }
+    if (email) {
+      return email[0].toUpperCase();
+    }
+    return '?';
+  };
+
+  useEffect(() => {
     const fetchVersion = async () => {
       try {
         const response = await fetch('/api/config');
@@ -149,7 +229,7 @@ export default function Layout({ children }: LayoutProps) {
         if (data.studio?.version) {
           setStudioVersion(`v${data.studio.version}`);
         }
-      } catch (_error) {}
+      } catch (_error) { }
     };
 
     const fetchSchemaCount = async () => {
@@ -363,19 +443,6 @@ export default function Layout({ children }: LayoutProps) {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search..."
-                onClick={() => setIsCommandPaletteOpen(true)}
-                className="pl-10 pr-4 py-2  bg-black border rounded-none border-gray-600 text-white border-dashed border-white/20 focus:ring-2 focus:ring-white focus:border-transparent transition-colors placeholder-gray-400 cursor-pointer"
-                readOnly
-              />
-              <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400 border border-dashed border-white/10 rounded-sm px-1.5 py-0.5">
-                ⌘ K
-              </kbd>
-            </div>
             <a
               href="https://better-auth-studio.vercel.app/docs"
               target="_blank"
@@ -404,6 +471,100 @@ export default function Layout({ children }: LayoutProps) {
                 ]
               </span>
             </a>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search..."
+                onClick={() => setIsCommandPaletteOpen(true)}
+                className="pl-10 pr-4 py-2  bg-black border rounded-none border-gray-600 text-white border-dashed border-white/20 focus:ring-2 focus:ring-white focus:border-transparent transition-colors placeholder-gray-400 cursor-pointer"
+                readOnly
+              />
+              <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400 border border-dashed border-white/10 rounded-sm px-1.5 py-0.5">
+                ⌘ K
+              </kbd>
+            </div>
+
+
+            {isSelfHosted && userProfile && (
+              <div className="relative" ref={profileRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="w-8 h-8 border border-dashed border-white/30 bg-black flex items-center justify-center hover:border-white/50 transition-colors overflow-hidden"
+                >
+                  {userProfile.image ? (
+                    <img
+                      src={userProfile.image}
+                      alt={userProfile.name || userProfile.email}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-white text-xs font-mono uppercase">
+                      {getInitials(userProfile.name, userProfile.email)}
+                    </span>
+                  )}
+                </button>
+
+                {isProfileOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-64 border border-dashed border-white/20 bg-black z-50">
+                    <div className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 border border-dashed border-white/30 bg-black flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          {userProfile.image ? (
+                            <img
+                              src={userProfile.image}
+                              alt={userProfile.name || userProfile.email}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <User className="w-5 h-5 text-white/50" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-white text-[10px] font-mono uppercase truncate">
+                            {userProfile.name || 'User'}
+                          </p>
+                          <p className="text-white/40 text-xs font-mono truncate">
+                            {userProfile.email}
+                          </p>
+                          {userProfile.role && (
+                            <span className="inline-block mt-1 text-[9px] tracking-wider font-mono uppercase text-white/60 border border-dashed border-white/20 px-1.5 py-0.5">
+                              {userProfile.role}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center">
+                      <hr className="w-full border-white/10 h-px" />
+                      <div className="relative z-20 h-5 w-full bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[5%]" />
+                      <hr className="w-full border-white/10 h-px" />
+                    </div>
+
+                    <div className="py-2">
+                      <Link
+                        to="/settings"
+                        onClick={() => setIsProfileOpen(false)}
+                        className="flex items-center gap-3 px-3 py-3 text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+                      >
+                        <Settings className="w-4 h-4" />
+                        <span className="text-xs font-mono uppercase">Settings</span>
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-3 py-3 text-red-400/70 hover:text-red-400 hover:bg-red-500/5 transition-colors"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span className="text-xs font-mono uppercase">Logout</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -419,11 +580,10 @@ export default function Layout({ children }: LayoutProps) {
                   )}
                   <Link
                     to={item.href}
-                    className={`flex items-center space-x-2 border-x-0 px-8 py-4 text-sm font-medium border-b-2 transition-all duration-200 relative ${
-                      isActive
-                        ? 'border-white text-white'
-                        : 'border-transparent text-gray-400 hover:text-white hover:border-gray-500/50'
-                    }`}
+                    className={`flex items-center space-x-2 border-x-0 px-8 py-4 text-sm font-medium border-b-2 transition-all duration-200 relative ${isActive
+                      ? 'border-white text-white'
+                      : 'border-transparent text-gray-400 hover:text-white hover:border-gray-500/50'
+                      }`}
                   >
                     <item.icon className="w-4 h-4" />
                     <span className="inline-flex font-mono uppercase border-x-0 font-light text-xs items-start">

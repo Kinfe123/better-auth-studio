@@ -37,17 +37,19 @@ export async function handleStudioRequest(
       path = '/';
     }
 
-    // Static assets: serve directly
     if (path.startsWith('/assets/') || path === '/vite.svg') {
       return handleStaticFile(path, config);
     }
 
-    // Root path: serve index.html
     if (path === '/') {
       return handleStaticFile(path, config);
     }
 
-    // CLI studio: paths already have /api/ prefix
+    const spaRoutes = ['/login', '/access-denied'];
+    if (spaRoutes.some((r) => path === r || path.startsWith(r + '?'))) {
+      return handleStaticFile(path, config);
+    }
+
     if (path.startsWith('/api/')) {
       return await handleApiRoute(request, path, config);
     }
@@ -102,9 +104,29 @@ async function handleApiRoute(
       body: request.body,
       auth: config.auth,
       basePath: config.basePath || '/api/studio',
+      accessConfig: config.access,
     });
 
-    return jsonResponse(result.status, result.data);
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    
+    if (result.cookies && result.cookies.length > 0) {
+      const cookieStrings = result.cookies.map((c) => {
+        let cookie = `${c.name}=${c.value}`;
+        if (c.options.httpOnly) cookie += '; HttpOnly';
+        if (c.options.secure) cookie += '; Secure';
+        if (c.options.sameSite) cookie += `; SameSite=${c.options.sameSite}`;
+        if (c.options.maxAge !== undefined) cookie += `; Max-Age=${Math.floor(c.options.maxAge / 1000)}`;
+        if (c.options.path) cookie += `; Path=${c.options.path}`;
+        return cookie;
+      });
+      headers['Set-Cookie'] = cookieStrings.join(', ');
+    }
+
+    return {
+      status: result.status,
+      headers,
+      body: JSON.stringify(result.data),
+    };
   } catch (error) {
     console.error('API route error:', error);
     return jsonResponse(500, { error: 'Internal server error' });

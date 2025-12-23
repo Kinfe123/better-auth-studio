@@ -13,12 +13,19 @@ export interface StudioMetadata {
   customStyles?: string;
 }
 
+export interface StudioAccessConfig {
+  roles?: string[];
+  allowEmails?: string[];
+  sessionDuration?: number;
+  secret?: string;
+}
+
 export interface StudioConfig {
   basePath?: string;
   metadata?: StudioMetadata;
   auth?: any;
-  allowAccess?: (session: any) => Promise<boolean> | boolean;
-  [key: string]: any; // Allow additional properties
+  access?: StudioAccessConfig;
+  [key: string]: any;
 }
 
 export interface WindowStudioConfig {

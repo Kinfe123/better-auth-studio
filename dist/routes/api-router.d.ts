@@ -1,3 +1,4 @@
+import type { StudioAccessConfig } from '../utils/html-injector.js';
 export type ApiContext = {
     path: string;
     method: string;
@@ -5,14 +6,16 @@ export type ApiContext = {
     body?: any;
     auth: any;
     basePath?: string;
+    accessConfig?: StudioAccessConfig;
 };
 export type ApiResponse = {
     status: number;
     data: any;
+    cookies?: Array<{
+        name: string;
+        value: string;
+        options: any;
+    }>;
 };
-/**
- * Route API requests to the correct handler
- * This integrates with the existing routes.ts logic
- */
 export declare function routeApiRequest(ctx: ApiContext): Promise<ApiResponse>;
 //# sourceMappingURL=api-router.d.ts.map

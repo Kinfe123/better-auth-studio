@@ -9,11 +9,17 @@ export interface StudioMetadata {
     theme?: 'light' | 'dark';
     customStyles?: string;
 }
+export interface StudioAccessConfig {
+    roles?: string[];
+    allowEmails?: string[];
+    sessionDuration?: number;
+    secret?: string;
+}
 export interface StudioConfig {
     basePath?: string;
     metadata?: StudioMetadata;
     auth?: any;
-    allowAccess?: (session: any) => Promise<boolean> | boolean;
+    access?: StudioAccessConfig;
     [key: string]: any;
 }
 export interface WindowStudioConfig {

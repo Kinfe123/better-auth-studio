@@ -27,6 +27,15 @@ import { possiblePaths } from './config.js';
 import { getAuthData } from './data.js';
 import { initializeGeoService, resolveIPLocation, setGeoDbPath } from './geo-service.js';
 import { detectDatabaseWithDialect } from './utils/database-detection.js';
+import {
+  createStudioSession,
+  decryptSession,
+  encryptSession,
+  isSessionValid,
+  STUDIO_COOKIE_NAME,
+  type StudioSession,
+} from './utils/session.js';
+import type { StudioAccessConfig } from './utils/html-injector.js';
 
 const config = {
   N: 16384,
@@ -42,6 +51,30 @@ async function generateKey(password: string, salt: string) {
     dkLen: config.dkLen,
     maxmem: 128 * config.N * config.r * 2,
   });
+}
+
+async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
+  if (!storedHash || typeof storedHash !== 'string') {
+    return false;
+  }
+  
+  const parts = storedHash.split(':');
+  if (parts.length !== 2) {
+    return false;
+  }
+  
+  const [salt, storedKey] = parts;
+  if (!salt || !storedKey) {
+    return false;
+  }
+  
+  try {
+    const key = await generateKey(password, salt);
+    const keyHex = hex.encode(key);
+    return keyHex === storedKey;
+  } catch {
+    return false;
+  }
 }
 
 function getStudioVersion(): string {
@@ -285,8 +318,10 @@ export function createRoutes(
   authConfig: AuthConfig,
   configPath?: string,
   geoDbPath?: string,
-  preloadedAdapter?: any, // Optional preloaded adapter for self-hosted studio
-  preloadedAuthOptions?: any // Optional auth options for self-hosted (avoids reloading config)
+  preloadedAdapter?: any,
+  preloadedAuthOptions?: any,
+  accessConfig?: StudioAccessConfig,
+  authInstance?: any
 ): Router {
   const isSelfHosted = !!preloadedAdapter;
 
@@ -436,6 +471,273 @@ export function createRoutes(
         cwd: process.cwd(),
       },
     });
+  });
+
+  const getSessionSecret = (): string => {
+    return accessConfig?.secret || preloadedAuthOptions?.secret || process.env.BETTER_AUTH_SECRET || 'studio-default-secret';
+  };
+
+  const getAllowedRoles = (): string[] => {
+    return accessConfig?.roles || ['admin'];
+  };
+
+  const getSessionDuration = (): number => {
+    return (accessConfig?.sessionDuration || 7 * 24 * 60 * 60) * 1000;
+  };
+
+  router.post('/api/auth/sign-in', async (req: Request, res: Response) => {
+    try {
+      if (!authInstance) {
+        return res.status(500).json({ success: false, message: 'Auth not configured' });
+      }
+
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ success: false, message: 'Email and password required' });
+      }
+
+      const adapter = await getAuthAdapter();
+      
+      let signInResult: any = null;
+      let signInError: string | null = null;
+
+      try {
+        signInResult = await authInstance.api.signInEmail({
+          body: { email, password },
+        });
+      } catch (err: any) {
+        signInError = err?.message || 'Sign-in failed';
+      }
+
+      if (!signInResult || signInResult.error || signInError) {
+        const errorMessage = signInError || signInResult?.error?.message || 'Invalid credentials';
+        
+        if (errorMessage.includes('Invalid password hash') && adapter?.findMany) {
+          const users = await adapter.findMany({
+            model: 'user',
+            where: [{ field: 'email', value: email }],
+            limit: 1,
+          });
+          
+          if (!users || users.length === 0) {
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
+          }
+
+          const userId = users[0].id;
+          const accounts = await adapter.findMany({
+            model: 'account',
+            where: [{ field: 'userId', value: userId }],
+            limit: 10,
+          });
+
+          const credentialAccount = accounts?.find(
+            (acc: any) => acc.providerId === 'credential' || acc.providerId === 'email'
+          );
+
+          if (!credentialAccount) {
+            return res.status(401).json({
+              success: false,
+              message: 'No password set for this account. Please use social login or reset your password.',
+            });
+          }
+
+          if (!credentialAccount.password) {
+            return res.status(401).json({
+              success: false,
+              message: 'Password not configured. Please reset your password.',
+            });
+          }
+
+          const isValidPassword = await verifyPassword(password, credentialAccount.password);
+          if (!isValidPassword) {
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
+          }
+
+          const userRole = users[0].role;
+          const user = { id: userId, email: users[0].email, name: users[0].name, role: userRole };
+          const allowedRoles = getAllowedRoles();
+
+          if (!allowedRoles.includes(user.role)) {
+            return res.status(403).json({
+              success: false,
+              message: `Access denied. Required role: ${allowedRoles.join(' or ')}`,
+              userRole: user.role || 'none',
+            });
+          }
+
+          const studioSession = createStudioSession(user, getSessionDuration());
+          const encryptedSession = encryptSession(studioSession, getSessionSecret());
+
+          res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: getSessionDuration(),
+            path: '/',
+          });
+
+          return res.json({
+            success: true,
+            user: { id: user.id, email: user.email, name: user.name, role: user.role },
+          });
+        }
+
+        return res.status(401).json({
+          success: false,
+          message: errorMessage,
+        });
+      }
+
+      const userId = signInResult.user?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      }
+
+      let userRole: string | null = null;
+      if (adapter?.findMany) {
+        const users = await adapter.findMany({ 
+          model: 'user', 
+          where: [{ field: 'id', value: userId }], 
+          limit: 1 
+        });
+        if (users && users.length > 0) {
+          userRole = users[0].role;
+        }
+      }
+
+      const user = { ...signInResult.user, role: userRole };
+      const allowedRoles = getAllowedRoles();
+
+      if (!allowedRoles.includes(user.role)) {
+        return res.status(403).json({
+          success: false,
+          message: `Access denied. Required role: ${allowedRoles.join(' or ')}`,
+          userRole: user.role || 'none',
+        });
+      }
+
+      const studioSession = createStudioSession(user, getSessionDuration());
+      const encryptedSession = encryptSession(studioSession, getSessionSecret());
+
+      res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: getSessionDuration(),
+        path: '/',
+      });
+
+      return res.json({
+        success: true,
+        user: { id: user.id, email: user.email, name: user.name, role: user.role },
+      });
+    } catch (error: any) {
+      console.error('Sign-in error:', error);
+      return res.status(401).json({
+        success: false,
+        message: error?.message || 'Invalid credentials',
+      });
+    }
+  });
+
+  router.get('/api/auth/oauth/:provider', async (req: Request, res: Response) => {
+    try {
+      if (!authInstance) {
+        return res.status(500).json({ success: false, message: 'Auth not configured' });
+      }
+
+      const provider = req.params.provider;
+      const callbackURL = req.query.callbackURL as string;
+      const authBasePath = authInstance.options?.basePath || '/api/auth';
+
+      const oauthUrl = `${authBasePath}/sign-in/${provider}?callbackURL=${encodeURIComponent(callbackURL || '/')}`;
+      return res.redirect(oauthUrl);
+    } catch (error) {
+      console.error('OAuth redirect error:', error);
+      return res.status(500).json({ success: false, message: 'OAuth redirect failed' });
+    }
+  });
+
+  router.post('/api/auth/verify', async (req: Request, res: Response) => {
+    try {
+      if (!authInstance) {
+        return res.status(500).json({ success: false, message: 'Auth not configured' });
+      }
+
+      const session = await authInstance.api.getSession({ headers: req.headers });
+
+      if (!session?.user) {
+        return res.status(401).json({ success: false, message: 'Not authenticated' });
+      }
+
+      const user = session.user;
+      const allowedRoles = getAllowedRoles();
+
+      if (!allowedRoles.includes(user.role)) {
+        return res.status(403).json({
+          success: false,
+          message: `Access denied. Required role: ${allowedRoles.join(' or ')}`,
+          userRole: user.role || 'none',
+        });
+      }
+
+      const studioSession = createStudioSession(user, getSessionDuration());
+      const encryptedSession = encryptSession(studioSession, getSessionSecret());
+
+      res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: getSessionDuration(),
+        path: '/',
+      });
+
+      return res.json({
+        success: true,
+        user: { id: user.id, email: user.email, name: user.name, role: user.role },
+      });
+    } catch (error) {
+      console.error('Auth verify error:', error);
+      return res.status(500).json({ success: false, message: 'Failed to verify session' });
+    }
+  });
+
+  router.get('/api/auth/session', (req: Request, res: Response) => {
+    const sessionCookie = req.cookies?.[STUDIO_COOKIE_NAME];
+
+    if (!sessionCookie) {
+      return res.json({ authenticated: false });
+    }
+
+    const session = decryptSession(sessionCookie, getSessionSecret());
+
+    if (!isSessionValid(session)) {
+      return res.json({ authenticated: false, reason: 'expired' });
+    }
+
+    return res.json({
+      authenticated: true,
+      user: {
+        id: session!.userId,
+        email: session!.email,
+        name: session!.name,
+        role: session!.role,
+        image: session!.image,
+      },
+    });
+  });
+
+  router.get('/api/auth/logout', (_req: Request, res: Response) => {
+    res.cookie(STUDIO_COOKIE_NAME, '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 0,
+      path: '/',
+    });
+
+    return res.json({ success: true, message: 'Logged out' });
   });
 
   router.get('/api/version-check', async (_req: Request, res: Response) => {
@@ -5814,7 +6116,8 @@ export async function handleStudioApiRequest(ctx: {
   auth: any;
   basePath?: string;
   configPath?: string;
-}): Promise<{ status: number; data: any }> {
+  accessConfig?: StudioAccessConfig;
+}): Promise<{ status: number; data: any; cookies?: Array<{ name: string; value: string; options: any }> }> {
   let preloadedAdapter: any = null;
   if (ctx.auth) {
     try {
@@ -5831,7 +6134,9 @@ export async function handleStudioApiRequest(ctx: {
     ctx.configPath || '',
     undefined,
     preloadedAdapter,
-    authOptions
+    authOptions,
+    ctx.accessConfig,
+    ctx.auth
   );
 
   const [pathname, queryString] = ctx.path.split('?');
@@ -5849,6 +6154,19 @@ export async function handleStudioApiRequest(ctx: {
       return { status: 404, data: { error: 'Not found', path: pathname } };
     }
 
+    const cookies: Array<{ name: string; value: string; options: any }> = [];
+    
+    const parseCookies = (cookieHeader: string): Record<string, string> => {
+      const result: Record<string, string> = {};
+      if (cookieHeader) {
+        cookieHeader.split(';').forEach((cookie) => {
+          const [key, ...rest] = cookie.split('=');
+          if (key) result[key.trim()] = rest.join('=').trim();
+        });
+      }
+      return result;
+    };
+
     const mockReq: any = {
       method: ctx.method,
       url: ctx.path,
@@ -5858,6 +6176,7 @@ export async function handleStudioApiRequest(ctx: {
       body: ctx.body,
       query: query,
       params: route.params,
+      cookies: parseCookies(ctx.headers['cookie'] || ctx.headers['Cookie'] || ''),
     };
 
     let responseStatus = 200;
@@ -5876,10 +6195,19 @@ export async function handleStudioApiRequest(ctx: {
         responseData = data;
         return mockRes;
       },
+      cookie: (name: string, value: string, options: any) => {
+        cookies.push({ name, value, options });
+        return mockRes;
+      },
+      redirect: (url: string) => {
+        responseStatus = 302;
+        responseData = { redirect: url };
+        return mockRes;
+      },
     };
 
     await route.handler(mockReq, mockRes);
-    return { status: responseStatus, data: responseData };
+    return { status: responseStatus, data: responseData, cookies };
   } catch (error) {
     console.error('Studio API error:', error);
     return { status: 500, data: { error: 'Internal server error' } };

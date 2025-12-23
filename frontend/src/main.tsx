@@ -18,12 +18,12 @@ window.fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response>
     url = '';
   }
 
-  // For self-hosted studio (basePath is set), rewrite API URLs:
-  // /api/stats → /api/studio/stats (strip /api prefix, add basePath)
-  // For CLI studio (basePath is empty), keep URLs unchanged
-  if (url.startsWith('/api/') && basePath && !url.startsWith(basePath)) {
-    // Strip '/api' prefix and prepend basePath
-    // /api/stats → /stats → /api/studio/stats
+  const isStudioApiCall = url.startsWith('/api/') && 
+    !url.startsWith('/api/auth/') && 
+    basePath && 
+    !url.startsWith(basePath);
+
+  if (isStudioApiCall) {
     url = basePath + url.slice(4);
 
     if (typeof input === 'string') {

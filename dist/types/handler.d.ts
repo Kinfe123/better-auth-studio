@@ -38,10 +38,16 @@ export type StudioMetadata = {
     }>;
     custom?: Record<string, any>;
 };
+export type StudioAccessConfig = {
+    roles?: string[];
+    allowEmails?: string[];
+    sessionDuration?: number;
+    secret?: string;
+};
 export type StudioConfig = {
     auth: any;
     basePath?: string;
-    allowAccess?: (session: any) => Promise<boolean> | boolean;
+    access?: StudioAccessConfig;
     metadata?: StudioMetadata;
 };
 export type WindowStudioConfig = {

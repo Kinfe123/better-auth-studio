@@ -1,7 +1,3 @@
-/**
- * Route API requests to the correct handler
- * This integrates with the existing routes.ts logic
- */
 export async function routeApiRequest(ctx) {
     const { handleStudioApiRequest } = await import('../routes.js');
     try {
