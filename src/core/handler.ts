@@ -9,6 +9,7 @@ import type {
   WindowStudioConfig,
 } from '../types/handler.js';
 import { serveIndexHtml as getIndexHtml } from '../utils/html-injector.js';
+import { decryptSession, isSessionValid, STUDIO_COOKIE_NAME } from '../utils/session.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -51,6 +52,12 @@ export async function handleStudioRequest(
     }
 
     if (path.startsWith('/api/')) {
+      if (isSelfHosted && isProtectedApiPath(path)) {
+        const sessionResult = verifyStudioSession(request, config);
+        if (!sessionResult.valid) {
+          return jsonResponse(401, { error: 'Unauthorized', message: sessionResult.error });
+        }
+      }
       return await handleApiRoute(request, path, config);
     }
 
@@ -66,7 +73,14 @@ export async function handleStudioRequest(
       // If client wants JSON or this looks like an API call, route to API
       // /users → /api/users, /config → /api/config
       if (wantsJson) {
-        return await handleApiRoute(request, '/api' + path, config);
+        const apiPath = '/api' + path;
+        if (isProtectedApiPath(apiPath)) {
+          const sessionResult = verifyStudioSession(request, config);
+          if (!sessionResult.valid) {
+            return jsonResponse(401, { error: 'Unauthorized', message: sessionResult.error });
+          }
+        }
+        return await handleApiRoute(request, apiPath, config);
       }
 
       // Otherwise, it's a browser navigation - serve SPA
@@ -84,9 +98,49 @@ export async function handleStudioRequest(
   }
 }
 
-async function checkAccess(request: UniversalRequest, config: StudioConfig): Promise<boolean> {
-  // TODO: Implement access control
-  return true;
+function getSessionSecret(config: StudioConfig): string {
+  return config.access?.secret || config.auth?.options?.secret || process.env.BETTER_AUTH_SECRET || 'studio-default-secret';
+}
+
+function parseCookies(cookieHeader: string | undefined): Record<string, string> {
+  if (!cookieHeader) return {};
+  const cookies: Record<string, string> = {};
+  cookieHeader.split(';').forEach(part => {
+    const [name, ...rest] = part.trim().split('=');
+    if (name) {
+      cookies[name] = rest.join('=');
+    }
+  });
+  return cookies;
+}
+
+function verifyStudioSession(request: UniversalRequest, config: StudioConfig): { valid: boolean; session?: any; error?: string } {
+  const cookieHeader = request.headers['cookie'] || request.headers['Cookie'];
+  const cookies = parseCookies(cookieHeader as string);
+  const sessionCookie = cookies[STUDIO_COOKIE_NAME];
+  
+  if (!sessionCookie) {
+    return { valid: false, error: 'No session cookie' };
+  }
+
+  const session = decryptSession(sessionCookie, getSessionSecret(config));
+  if (!isSessionValid(session)) {
+    return { valid: false, error: 'Session expired' };
+  }
+
+  return { valid: true, session };
+}
+
+function isProtectedApiPath(path: string): boolean {
+  const publicPaths = [
+    '/api/auth/sign-in',
+    '/api/auth/session',
+    '/api/auth/logout',
+    '/api/auth/verify',
+    '/api/auth/oauth',
+    '/api/health',
+  ];
+  return !publicPaths.some(p => path.startsWith(p));
 }
 
 async function handleApiRoute(

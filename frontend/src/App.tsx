@@ -65,58 +65,58 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 
 function MainRoutes() {
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/users/:userId" element={<UserDetails />} />
-        <Route path="/organizations" element={<Organizations />} />
-        <Route path="/organizations/:orgId" element={<OrganizationDetails />} />
-        <Route path="/teams" element={<Teams />} />
-        <Route path="/teams/:teamId" element={<TeamDetails />} />
-        <Route path="/organizations/:orgId/teams/:teamId" element={<TeamDetails />} />
-        <Route path="/sessions" element={<Sessions />} />
-        <Route path="/database" element={<DatabaseVisualizer />} />
-        <Route path="/database/demo" element={<DatabaseSchemaNodeDemo />} />
-        <Route path="/emails" element={<EmailEditor />} />
-        <Route path="/tools" element={<Tools />} />
-        <Route path="/settings" element={<Settings />} />
-      </Routes>
-    </Layout>
+    <CountsProvider>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/:userId" element={<UserDetails />} />
+          <Route path="/organizations" element={<Organizations />} />
+          <Route path="/organizations/:orgId" element={<OrganizationDetails />} />
+          <Route path="/teams" element={<Teams />} />
+          <Route path="/teams/:teamId" element={<TeamDetails />} />
+          <Route path="/organizations/:orgId/teams/:teamId" element={<TeamDetails />} />
+          <Route path="/sessions" element={<Sessions />} />
+          <Route path="/database" element={<DatabaseVisualizer />} />
+          <Route path="/database/demo" element={<DatabaseSchemaNodeDemo />} />
+          <Route path="/emails" element={<EmailEditor />} />
+          <Route path="/tools" element={<Tools />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </Layout>
+    </CountsProvider>
   );
 }
 
 function App() {
   return (
-    <CountsProvider>
-      <Router basename={basePath}>
-        {isSelfHosted ? (
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/access-denied" element={<AccessDenied />} />
-            <Route path="/*" element={<AuthGuard><MainRoutes /></AuthGuard>} />
-          </Routes>
-        ) : (
-          <Routes>
-            <Route path="/*" element={<MainRoutes />} />
-          </Routes>
-        )}
-        <Toaster
-          className="rounded-none border-dashed border-white/20"
-          theme="dark"
-          position="top-right"
-          richColors
-          toastOptions={{
-            style: {
-              border: 'dashed 1px #ffffff20',
-              borderRadius: '0',
-            },
-            className: 'font-mono uppercase',
-          }}
-          closeButton
-        />
-      </Router>
-    </CountsProvider>
+    <Router basename={basePath}>
+      {isSelfHosted ? (
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/access-denied" element={<AccessDenied />} />
+          <Route path="/*" element={<AuthGuard><MainRoutes /></AuthGuard>} />
+        </Routes>
+      ) : (
+        <Routes>
+          <Route path="/*" element={<MainRoutes />} />
+        </Routes>
+      )}
+      <Toaster
+        className="rounded-none border-dashed border-white/20"
+        theme="dark"
+        position="top-right"
+        richColors
+        toastOptions={{
+          style: {
+            border: 'dashed 1px #ffffff20',
+            borderRadius: '0',
+          },
+          className: 'font-mono uppercase',
+        }}
+        closeButton
+      />
+    </Router>
   );
 }
 

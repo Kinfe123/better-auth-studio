@@ -447,6 +447,35 @@ export function createRoutes(
     return getAuthAdapter(configPath);
   };
 
+  if (isSelfHosted) {
+    router.use((req: Request, res: Response, next) => {
+      const path = req.path;
+      const publicPaths = [
+        '/api/auth/sign-in',
+        '/api/auth/session',
+        '/api/auth/logout',
+        '/api/auth/verify',
+        '/api/auth/oauth',
+        '/api/health',
+      ];
+
+      const isPublic = publicPaths.some(p => path.startsWith(p));
+      if (isPublic) {
+        return next();
+      }
+
+      if (path.startsWith('/api/')) {
+        const result = verifyStudioSession(req);
+        if (!result.valid) {
+          return res.status(401).json({ error: 'Unauthorized', message: result.error });
+        }
+        (req as any).studioSession = result.session;
+      }
+
+      next();
+    });
+  }
+
   router.get('/api/health', (_req: Request, res: Response) => {
     const uptime = process.uptime();
     const hours = Math.floor(uptime / 3600);
@@ -495,6 +524,38 @@ export function createRoutes(
     const allowedEmails = getAllowedEmails();
     if (!allowedEmails) return true;
     return allowedEmails.includes(email.toLowerCase());
+  };
+
+  const verifyStudioSession = (req: Request): { valid: boolean; session?: any; error?: string } => {
+    if (!isSelfHosted) {
+      return { valid: true };
+    }
+
+    const sessionCookie = req.cookies?.[STUDIO_COOKIE_NAME];
+    if (!sessionCookie) {
+      return { valid: false, error: 'No session cookie' };
+    }
+
+    const session = decryptSession(sessionCookie, getSessionSecret());
+    if (!isSessionValid(session)) {
+      return { valid: false, error: 'Session expired' };
+    }
+
+    return { valid: true, session };
+  };
+
+  const requireAuth = (req: Request, res: Response, next: () => void) => {
+    if (!isSelfHosted) {
+      return next();
+    }
+
+    const result = verifyStudioSession(req);
+    if (!result.valid) {
+      return res.status(401).json({ error: 'Unauthorized', message: result.error });
+    }
+
+    (req as any).studioSession = result.session;
+    next();
   };
 
   router.post('/api/auth/sign-in', async (req: Request, res: Response) => {

@@ -370,6 +370,31 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         }
         return getAuthAdapter(configPath);
     };
+    if (isSelfHosted) {
+        router.use((req, res, next) => {
+            const path = req.path;
+            const publicPaths = [
+                '/api/auth/sign-in',
+                '/api/auth/session',
+                '/api/auth/logout',
+                '/api/auth/verify',
+                '/api/auth/oauth',
+                '/api/health',
+            ];
+            const isPublic = publicPaths.some(p => path.startsWith(p));
+            if (isPublic) {
+                return next();
+            }
+            if (path.startsWith('/api/')) {
+                const result = verifyStudioSession(req);
+                if (!result.valid) {
+                    return res.status(401).json({ error: 'Unauthorized', message: result.error });
+                }
+                req.studioSession = result.session;
+            }
+            next();
+        });
+    }
     router.get('/api/health', (_req, res) => {
         const uptime = process.uptime();
         const hours = Math.floor(uptime / 3600);
@@ -413,6 +438,31 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         if (!allowedEmails)
             return true;
         return allowedEmails.includes(email.toLowerCase());
+    };
+    const verifyStudioSession = (req) => {
+        if (!isSelfHosted) {
+            return { valid: true };
+        }
+        const sessionCookie = req.cookies?.[STUDIO_COOKIE_NAME];
+        if (!sessionCookie) {
+            return { valid: false, error: 'No session cookie' };
+        }
+        const session = decryptSession(sessionCookie, getSessionSecret());
+        if (!isSessionValid(session)) {
+            return { valid: false, error: 'Session expired' };
+        }
+        return { valid: true, session };
+    };
+    const requireAuth = (req, res, next) => {
+        if (!isSelfHosted) {
+            return next();
+        }
+        const result = verifyStudioSession(req);
+        if (!result.valid) {
+            return res.status(401).json({ error: 'Unauthorized', message: result.error });
+        }
+        req.studioSession = result.session;
+        next();
     };
     router.post('/api/auth/sign-in', async (req, res) => {
         try {
