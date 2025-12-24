@@ -210,21 +210,21 @@ function findPublicDir(): string | null {
   // node_modules/better-auth-studio/dist/core/handler.js
   // node_modules/better-auth-studio/dist/public/
   // So from __dirname (dist/core), we need to go up one level (../public)
-  
+
   // Use both __dirname and __realdir to handle symlinks (pnpm on Vercel)
   const baseDirs = [__dirname, __realdir];
   const candidates: string[] = [];
-  
+
   for (const baseDir of baseDirs) {
     candidates.push(
-      resolve(baseDir, '../public'),           // dist/core -> dist/public (production)
-      resolve(baseDir, '../../public'),        // dist/core -> root/public (development)
-      resolve(baseDir, '../../../public'),     // nested node_modules
-      resolve(baseDir, '../../dist/public'),   // alternative build structure
+      resolve(baseDir, '../public'), // dist/core -> dist/public (production)
+      resolve(baseDir, '../../public'), // dist/core -> root/public (development)
+      resolve(baseDir, '../../../public'), // nested node_modules
+      resolve(baseDir, '../../dist/public'), // alternative build structure
       resolve(baseDir, '../../../dist/public') // deeply nested
     );
   }
-  
+
   // For pnpm on Vercel, also check the actual package location in the store
   const pnpmMatch = __dirname.match(/(.+\/.pnpm\/[^/]+\/node_modules\/better-auth-studio)\//);
   if (pnpmMatch) {
@@ -232,10 +232,10 @@ function findPublicDir(): string | null {
     candidates.unshift(
       join(pnpmPackageRoot, 'dist', 'public'),
       join(pnpmPackageRoot, 'public'),
-      join(pnpmPackageRoot, '..', 'dist', 'public'),
+      join(pnpmPackageRoot, '..', 'dist', 'public')
     );
   }
-  
+
   // Also try to find package.json and work from there
   try {
     let searchDir = __dirname;
@@ -244,10 +244,7 @@ function findPublicDir(): string | null {
       if (existsSync(pkgPath)) {
         const pkgContent = readFileSync(pkgPath, 'utf-8');
         if (pkgContent.includes('"name": "better-auth-studio"')) {
-          candidates.unshift(
-            join(searchDir, 'dist', 'public'),
-            join(searchDir, 'public')
-          );
+          candidates.unshift(join(searchDir, 'dist', 'public'), join(searchDir, 'public'));
           break;
         }
       }
@@ -269,9 +266,7 @@ function findPublicDir(): string | null {
           }
         }
       }
-    } catch (error) {
-      continue;
-    }
+    } catch (error) {}
   }
 
   // Fallback: return the first existing directory
@@ -280,15 +275,13 @@ function findPublicDir(): string | null {
       if (existsSync(candidate) && statSync(candidate).isDirectory()) {
         return candidate;
       }
-    } catch (error) {
-      continue;
-    }
+    } catch (error) {}
   }
 
   // Log error details for debugging
   console.error('[Studio] Could not find public directory');
   console.error('[Studio] Tried paths:', candidates.slice(0, 5).join(', '), '...');
-  
+
   return null;
 }
 
@@ -338,7 +331,7 @@ function handleStaticFile(path: string, config: StudioConfig): UniversalResponse
 </html>`,
       };
     }
-    
+
     return jsonResponse(503, {
       error: 'Public directory not found',
       message: 'Studio UI assets could not be located. This may be a deployment issue.',

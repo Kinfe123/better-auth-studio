@@ -22,7 +22,7 @@ console.log('[better-auth-studio] Package root:', packageRoot);
 try {
   const packageContents = fs.readdirSync(packageRoot);
   console.log('[better-auth-studio] Package contents:', packageContents.join(', '));
-  
+
   if (fs.existsSync(distDir)) {
     const distContents = fs.readdirSync(distDir);
     console.log('[better-auth-studio] dist/ contents:', distContents.join(', '));
@@ -34,8 +34,10 @@ try {
 }
 
 // Check if either public directory exists
-const hasPublicInDist = fs.existsSync(publicInDist) && fs.existsSync(path.join(publicInDist, 'index.html'));
-const hasPublicInRoot = fs.existsSync(publicInRoot) && fs.existsSync(path.join(publicInRoot, 'index.html'));
+const hasPublicInDist =
+  fs.existsSync(publicInDist) && fs.existsSync(path.join(publicInDist, 'index.html'));
+const hasPublicInRoot =
+  fs.existsSync(publicInRoot) && fs.existsSync(path.join(publicInRoot, 'index.html'));
 
 console.log('[better-auth-studio] Checking public directories...');
 console.log('[better-auth-studio] - dist/public exists:', hasPublicInDist);
@@ -43,7 +45,7 @@ console.log('[better-auth-studio] - public/ exists:', hasPublicInRoot);
 
 if (hasPublicInDist || hasPublicInRoot) {
   console.log('[better-auth-studio] ✓ Public directory found');
-  
+
   // Ensure both locations have the public files for maximum compatibility
   if (hasPublicInRoot && !hasPublicInDist) {
     try {
@@ -64,21 +66,25 @@ if (hasPublicInDist || hasPublicInRoot) {
     }
   }
 } else {
-  console.warn('[better-auth-studio] ⚠ Warning: Public directory not found. Studio UI may not work correctly.');
-  console.warn('[better-auth-studio] Please report this issue at: https://github.com/better-auth/better-auth-studio/issues');
+  console.warn(
+    '[better-auth-studio] ⚠ Warning: Public directory not found. Studio UI may not work correctly.'
+  );
+  console.warn(
+    '[better-auth-studio] Please report this issue at: https://github.com/better-auth/better-auth-studio/issues'
+  );
 }
 
 function copyRecursive(src, dest) {
   if (!fs.existsSync(dest)) {
     fs.mkdirSync(dest, { recursive: true });
   }
-  
+
   const entries = fs.readdirSync(src, { withFileTypes: true });
-  
+
   for (const entry of entries) {
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
-    
+
     if (entry.isDirectory()) {
       copyRecursive(srcPath, destPath);
     } else {
@@ -86,4 +92,3 @@ function copyRecursive(src, dest) {
     }
   }
 }
-

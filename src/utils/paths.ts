@@ -10,5 +10,3 @@ export const possiblePaths = [
   ...basePaths.map((it) => `app/${it}`),
   ...basePaths.map((it) => `apps/${it}`),
 ];
-
-
