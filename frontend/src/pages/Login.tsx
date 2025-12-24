@@ -1,7 +1,6 @@
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { assetPath } from '@/lib/utils';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -70,13 +69,8 @@ export default function LoginPage() {
         <div className="border border-dashed border-white/20 bg-black p-6">
           <div className="mb-6">
             <div className="flex relative justify-between items-center gap-2 mb-4">
-              <img
-                src={assetPath('/logo.png')}
-                alt="Logo"
-                className="absolute w-14 h-16 -left-10 pb-2"
-              />
-              <span className="flex w-full text-right justify-end items-end text-white text-xs font-mono uppercase tracking-wider">
-                better auth studio
+              <span className="flex w-full text-left justify-start items-center text-white text-xs font-mono uppercase tracking-wider">
+                better auth <span className="bg-white text-black px-1 ml-1 rounded-none">studio</span>
               </span>
             </div>
             <div className="flex flex-col items-center justify-center mt-2">
@@ -141,12 +135,6 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6">
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-[repeating-linear-gradient(90deg,#ffffff10,#ffffff10_4px,transparent_4px,transparent_8px)]" />
-              <span className="text-white/30 text-[10px] font-mono uppercase">or</span>
-              <div className="flex-1 h-px bg-[repeating-linear-gradient(90deg,#ffffff10,#ffffff10_4px,transparent_4px,transparent_8px)]" />
-            </div>
-
             <div className="mt-4 grid grid-cols-2 gap-2">
               {/* <button
                                 type="button"

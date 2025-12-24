@@ -206,11 +206,8 @@ async function handleApiRoute(
 }
 
 function findPublicDir(): string | null {
-  // Vercel recommendation: use process.cwd() to find files relative to project root
-  // This helps Vercel's Node File Trace include the files in the bundle
   const candidates: string[] = [];
 
-  // Method 1: Use process.cwd() to find node_modules (Vercel's recommended approach)
   try {
     const cwd = process.cwd();
     const nodeModulesPath = join(cwd, 'node_modules');
@@ -235,26 +232,22 @@ function findPublicDir(): string | null {
           }
         }
       } catch (err) {
-        // Silent failure
       }
     }
   } catch (err) {
-    // Silent failure
   }
 
-  // Method 2: Use __dirname relative paths (fallback for non-Vercel deployments)
   const baseDirs = [__dirname, __realdir];
   for (const baseDir of baseDirs) {
     candidates.push(
-      resolve(baseDir, '../public'), // dist/core -> dist/public (production)
-      resolve(baseDir, '../../public'), // dist/core -> root/public (development)
-      resolve(baseDir, '../../../public'), // nested node_modules
-      resolve(baseDir, '../../dist/public'), // alternative build structure
-      resolve(baseDir, '../../../dist/public') // deeply nested
+      resolve(baseDir, '../public'),
+      resolve(baseDir, '../../public'),
+      resolve(baseDir, '../../../public'),
+      resolve(baseDir, '../../dist/public'),
+      resolve(baseDir, '../../../dist/public')
     );
   }
 
-  // Method 3: For pnpm on Vercel, check the actual package location in the store
   const pnpmMatch = __dirname.match(/(.+\/.pnpm\/[^/]+\/node_modules\/better-auth-studio)\//);
   if (pnpmMatch) {
     const pnpmPackageRoot = pnpmMatch[1];
@@ -265,7 +258,6 @@ function findPublicDir(): string | null {
     );
   }
 
-  // Method 4: Find package.json and work from there
   try {
     let searchDir = __dirname;
     for (let i = 0; i < 5; i++) {
@@ -280,10 +272,8 @@ function findPublicDir(): string | null {
       searchDir = resolve(searchDir, '..');
     }
   } catch (err) {
-    // Silent failure
   }
 
-  // First, try to find a directory with index.html
   for (const candidate of candidates) {
     try {
       if (existsSync(candidate)) {
@@ -298,7 +288,6 @@ function findPublicDir(): string | null {
     } catch (error) {}
   }
 
-  // Fallback: return the first existing directory
   for (const candidate of candidates) {
     try {
       if (existsSync(candidate) && statSync(candidate).isDirectory()) {
@@ -307,7 +296,6 @@ function findPublicDir(): string | null {
     } catch (error) {}
   }
 
-  // Log error details for debugging
   console.error('[Studio] Could not find public directory');
   console.error('[Studio] Tried paths:', candidates.slice(0, 5).join(', '), '...');
 
@@ -322,7 +310,6 @@ function handleStaticFile(path: string, config: StudioConfig): UniversalResponse
   }
 
   if (!cachedPublicDir) {
-    // Fallback: serve a basic error page with instructions
     if (path === '/' || path === '') {
       return {
         status: 503,
@@ -334,11 +321,82 @@ function handleStaticFile(path: string, config: StudioConfig): UniversalResponse
 <html>
 <head>
   <title>Better Auth Studio - Setup Required</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; line-height: 1.6; }
-    h1 { color: #e53e3e; }
-    code { background: #f7fafc; padding: 2px 6px; border-radius: 3px; }
-    .steps { background: #edf2f7; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Geist Mono', monospace; 
+      background: #000000; 
+      color: #e5e5e5; 
+      max-width: 700px; 
+      margin: 50px auto; 
+      padding: 30px; 
+      line-height: 1.7; 
+    }
+    h1 { 
+      color: #ff4444; 
+      font-size: 24px; 
+      font-weight: 600; 
+      margin-bottom: 16px; 
+    }
+    p { 
+      color: #b3b3b3; 
+      margin-bottom: 24px; 
+    }
+    code { 
+      background: #1a1a1a; 
+      color: #4ade80; 
+      padding: 3px 8px; 
+      border-radius: 4px; 
+      font-size: 14px; 
+      border: 1px solid #2a2a2a;
+    }
+    .steps { 
+      background: #0a0a0a; 
+      border: 1px solid #1a1a1a;
+      padding: 24px; 
+      border-radius: 8px; 
+      margin: 24px 0; 
+    }
+    .steps h3 {
+      color: #e5e5e5;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .steps ol {
+      margin-left: 20px;
+      color: #b3b3b3;
+    }
+    .steps li {
+      margin-bottom: 16px;
+    }
+    .steps li strong {
+      color: #e5e5e5;
+    }
+    pre { 
+      background: #0a0a0a; 
+      color: #4ade80; 
+      padding: 16px; 
+      border-radius: 6px; 
+      overflow-x: auto; 
+      margin: 12px 0; 
+      border: 1px solid #1a1a1a;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    a { 
+      color: #60a5fa; 
+      text-decoration: none; 
+      border-bottom: 1px solid #60a5fa;
+      transition: color 0.2s;
+    }
+    a:hover { 
+      color: #93c5fd; 
+      border-bottom-color: #93c5fd;
+    }
   </style>
 </head>
 <body>
@@ -349,8 +407,7 @@ function handleStaticFile(path: string, config: StudioConfig): UniversalResponse
         <h3>To fix this:</h3>
         <ol>
           <li><strong>For Next.js:</strong> Add to <code>next.config.js</code>:
-            <pre style="background: #1a202c; color: #e2e8f0; padding: 10px; border-radius: 4px; overflow-x: auto; margin: 10px 0;">
-experimental: {
+            <pre>experimental: {
   outputFileTracingIncludes: {
     '/api/studio': ['./node_modules/better-auth-studio/dist/public/**/*', './node_modules/better-auth-studio/public/**/*'],
   },
@@ -361,7 +418,7 @@ experimental: {
         </ol>
       </div>
   
-  <p><strong>Need help?</strong> Visit <a href="https://github.com/better-auth/better-auth-studio/issues">GitHub Issues</a></p>
+  <p><strong>Need help?</strong> Visit <a href="https://github.com/Kinfe123/better-auth-studio/issues">GitHub Issues</a></p>
 </body>
 </html>`,
       };
@@ -407,7 +464,7 @@ function handleStaticFileFromDir(
 
 function serveIndexHtml(publicDir: string, config: StudioConfig): UniversalResponse {
   const html = getIndexHtml(publicDir, {
-    basePath: config.basePath || '/api/studio', // Default basePath for self-hosted
+    basePath: config.basePath || '/api/studio',
     metadata: config.metadata as any,
   });
 
@@ -448,7 +505,6 @@ function getContentType(ext: string): string {
 }
 
 function getCacheControl(path: string): string {
-  // Cache static assets aggressively
   if (path.match(/\.(js|css|png|jpg|jpeg|svg|woff|woff2|ttf)$/)) {
     return 'public, max-age=31536000, immutable';
   }
