@@ -70,7 +70,8 @@ export default function LoginPage() {
           <div className="mb-6">
             <div className="flex relative justify-between items-center gap-2 mb-4">
               <span className="flex w-full text-left justify-start items-center text-white text-xs font-mono uppercase tracking-wider">
-                better auth <span className="bg-white text-black px-1 ml-1 rounded-none">studio</span>
+                better auth{' '}
+                <span className="bg-white text-black px-1 ml-1 rounded-none">studio</span>
               </span>
             </div>
             <div className="flex flex-col items-center justify-center mt-2">

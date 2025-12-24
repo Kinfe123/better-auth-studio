@@ -212,12 +212,12 @@ function findPublicDir(): string | null {
     const cwd = process.cwd();
     const nodeModulesPath = join(cwd, 'node_modules');
     const pnpmStorePath = join(nodeModulesPath, '.pnpm');
-    
+
     candidates.push(
       join(nodeModulesPath, 'better-auth-studio', 'dist', 'public'),
       join(nodeModulesPath, 'better-auth-studio', 'public')
     );
-    
+
     // Check pnpm store if it exists
     if (existsSync(pnpmStorePath)) {
       try {
@@ -231,11 +231,9 @@ function findPublicDir(): string | null {
             );
           }
         }
-      } catch (err) {
-      }
+      } catch (err) {}
     }
-  } catch (err) {
-  }
+  } catch (err) {}
 
   const baseDirs = [__dirname, __realdir];
   for (const baseDir of baseDirs) {
@@ -271,8 +269,7 @@ function findPublicDir(): string | null {
       }
       searchDir = resolve(searchDir, '..');
     }
-  } catch (err) {
-  }
+  } catch (err) {}
 
   for (const candidate of candidates) {
     try {
@@ -425,7 +422,8 @@ function handleStaticFile(path: string, config: StudioConfig): UniversalResponse
     return jsonResponse(503, {
       error: 'Public directory not found',
       message: 'Studio UI assets could not be located. This is likely a Vercel bundling issue.',
-      suggestion: 'For Next.js, add outputFileTracingIncludes to next.config.js to include the public directory. See the HTML error page for details.',
+      suggestion:
+        'For Next.js, add outputFileTracingIncludes to next.config.js to include the public directory. See the HTML error page for details.',
     });
   }
 
