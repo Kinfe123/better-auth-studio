@@ -179,7 +179,7 @@ export default function Changelog() {
               </ul>
               <div className="bg-black/50 border border-white/10 p-3 mt-4">
                 <p className="text-xs font-light tracking-tight text-white/70">
-                  <strong className="text-white/90">Note:</strong> Self-hosting is currently in beta. Please report any issues on GitHub. For Next.js deployments, ensure you add the <code className="text-white/80">outputFileTracingIncludes</code> configuration to your <code className="text-white/80">next.config.ts</code>.
+                  <strong className="text-white/90">Note:</strong> Self-hosting is currently in beta. Please report any issues on GitHub. For Next.js deployments, ensure you add the <code className="text-white/80 px-1">outputFileTracingIncludes</code> configuration to your <code className="text-white/80 px-1">next.config.ts</code>.
                 </p>
               </div>
             </div>
@@ -266,7 +266,7 @@ export default function Changelog() {
                 <ul className="list-none space-y-2 text-sm font-light tracking-tight text-white/70 ml-4">
                   <li className="flex items-center">
                     <ChevronIcon />
-                    Added required <code className="text-white/80">outputFileTracingIncludes</code> configuration for Vercel deployments
+                    Added required <code className="text-white/80 px-1">outputFileTracingIncludes</code> configuration for Vercel deployments
                   </li>
                   <li className="flex items-center">
                     <ChevronIcon />
@@ -284,11 +284,11 @@ export default function Changelog() {
                 <ul className="list-none space-y-2 text-sm font-light tracking-tight text-white/70 ml-4">
                   <li className="flex items-center">
                     <ChevronIcon />
-                    All endpoints now properly use <code className="text-white/80">preloadedAuthOptions</code> in self-hosted mode
+                    All endpoints now properly use <code className="text-white/80 px-1">preloadedAuthOptions</code> in self-hosted mode
                   </li>
                   <li className="flex items-center">
                     <ChevronIcon />
-                    Enhanced <code className="text-white/80">getAuthData</code> function to support preloaded adapters
+                    Enhanced <code className="text-white/80 px-1">getAuthData</code> function to support preloaded adapters
                   </li>
                   <li className="flex items-center">
                     <ChevronIcon />
