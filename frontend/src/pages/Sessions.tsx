@@ -1,5 +1,6 @@
 import { Database, Edit, Eye, Filter, Loader, Plus, Search, Trash2, User, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { CopyableId } from '../components/CopyableId';
 import { Terminal } from '../components/Terminal';
 import { Button } from '../components/ui/button';
@@ -32,6 +33,8 @@ export default function Sessions() {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showSeedModal, setShowSeedModal] = useState(false);
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [seedingLogs, setSeedingLogs] = useState<
     Array<{
       id: string;
@@ -238,11 +241,33 @@ export default function Sessions() {
   };
 
   const handleCreateSession = async (_sessionData: any) => {
-    setShowCreateModal(false);
+    setIsCreating(true);
+    const toastId = toast.loading('Creating session...');
+    try {
+      // TODO: Implement actual session creation
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setShowCreateModal(false);
+      toast.success('Session created successfully!', { id: toastId });
+    } catch (error) {
+      toast.error('Error creating session', { id: toastId });
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const handleUpdateSession = async (_sessionData: any) => {
-    setShowEditModal(false);
+    setIsUpdating(true);
+    const toastId = toast.loading('Updating session...');
+    try {
+      // TODO: Implement actual session update
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setShowEditModal(false);
+      toast.success('Session updated successfully!', { id: toastId });
+    } catch (error) {
+      toast.error('Error updating session', { id: toastId });
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const handleDeleteSession = async () => {
@@ -554,22 +579,29 @@ export default function Sessions() {
 
       {/* Create Session Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Create Session</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Create Session</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowCreateModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
               <div>
-                <Label htmlFor="create-user-id" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="create-user-id" className="text-xs text-white/80 font-mono uppercase">
                   User ID
                 </Label>
                 <Input
@@ -578,7 +610,7 @@ export default function Sessions() {
                 />
               </div>
               <div>
-                <Label htmlFor="create-expires" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="create-expires" className="text-xs text-white/80 font-mono uppercase">
                   Expires At
                 </Label>
                 <Input
@@ -598,9 +630,10 @@ export default function Sessions() {
               </Button>
               <Button
                 onClick={() => handleCreateSession({})}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                disabled={isCreating}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
-                Create
+                {isCreating ? 'Creating...' : 'Create'}
               </Button>
             </div>
           </div>
@@ -666,9 +699,10 @@ export default function Sessions() {
               </Button>
               <Button
                 onClick={() => handleUpdateSession({})}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                disabled={isUpdating}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
-                Update
+                {isUpdating ? 'Updating...' : 'Update'}
               </Button>
             </div>
           </div>

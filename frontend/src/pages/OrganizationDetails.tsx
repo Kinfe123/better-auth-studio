@@ -107,6 +107,8 @@ export default function OrganizationDetails() {
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [teamFormData, setTeamFormData] = useState({ name: '' });
   const [inviting, setInviting] = useState(false);
+  const [isCreatingTeam, setIsCreatingTeam] = useState(false);
+  const [isUpdatingTeam, setIsUpdatingTeam] = useState(false);
   const [seedingLogs, setSeedingLogs] = useState<
     Array<{
       id: string;
@@ -645,6 +647,7 @@ export default function OrganizationDetails() {
       return;
     }
 
+    setIsCreatingTeam(true);
     const toastId = toast.loading('Creating team...');
 
     try {
@@ -670,6 +673,8 @@ export default function OrganizationDetails() {
     } catch (error) {
       console.error('Error creating team:', error);
       toast.error('Error creating team', { id: toastId });
+    } finally {
+      setIsCreatingTeam(false);
     }
   };
 
@@ -679,6 +684,7 @@ export default function OrganizationDetails() {
       return;
     }
 
+    setIsUpdatingTeam(true);
     const toastId = toast.loading('Updating team...');
 
     try {
@@ -704,6 +710,8 @@ export default function OrganizationDetails() {
     } catch (error) {
       console.error('Error updating team:', error);
       toast.error('Error updating team', { id: toastId });
+    } finally {
+      setIsUpdatingTeam(false);
     }
   };
 
@@ -1580,10 +1588,10 @@ export default function OrganizationDetails() {
 
       {/* Create Team Modal */}
       {showCreateTeamModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Create Team</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Create Team</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1591,14 +1599,21 @@ export default function OrganizationDetails() {
                   setShowCreateTeamModal(false);
                   setTeamFormData({ name: '' });
                 }}
-                className="text-gray-400 hover:text-white rounded-none"
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
               <div>
-                <Label htmlFor="team-name" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="team-name" className="text-xs text-white/80 font-mono uppercase">
                   Team Name
                 </Label>
                 <Input
@@ -1623,9 +1638,10 @@ export default function OrganizationDetails() {
               </Button>
               <Button
                 onClick={handleCreateTeam}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                disabled={isCreatingTeam}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
-                Create Team
+                {isCreatingTeam ? 'Creating...' : 'Create Team'}
               </Button>
             </div>
           </div>
@@ -1688,9 +1704,10 @@ export default function OrganizationDetails() {
               </Button>
               <Button
                 onClick={handleUpdateTeam}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                disabled={isUpdatingTeam}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
-                Update Team
+                {isUpdatingTeam ? 'Updating...' : 'Update Team'}
               </Button>
             </div>
           </div>

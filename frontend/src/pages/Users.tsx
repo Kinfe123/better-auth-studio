@@ -1203,10 +1203,10 @@ export default function Users() {
       )}
 
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-white/10 p-6 w-full max-w-md rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Create User</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Create User</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1214,14 +1214,21 @@ export default function Users() {
                   setShowCreateModal(false);
                   setCreateRole('');
                 }}
-                className="text-gray-400 hover:text-white rounded-none"
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
               <div>
-                <Label htmlFor="create-name" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="create-name" className="text-xs text-white/80 font-mono uppercase">
                   Name
                 </Label>
                 <Input
@@ -1230,7 +1237,7 @@ export default function Users() {
                 />
               </div>
               <div>
-                <Label htmlFor="create-email" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="create-email" className="text-xs text-white/80 font-mono uppercase">
                   Email
                 </Label>
                 <Input
@@ -1240,7 +1247,7 @@ export default function Users() {
                 />
               </div>
               <div>
-                <Label htmlFor="create-password" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="create-password" className="text-xs text-white/80 font-mono uppercase">
                   Password
                 </Label>
                 <Input
@@ -1250,17 +1257,13 @@ export default function Users() {
                 />
               </div>
               <div>
-                <Label htmlFor="create-role" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="create-role" className="text-xs text-white/80 font-mono uppercase">
                   Role
                 </Label>
-                <Select
-                  className="bg-black text-white"
-                  value={createRole}
-                  onValueChange={setCreateRole}
-                >
+                <Select value={createRole} onValueChange={setCreateRole}>
                   <SelectTrigger
                     id="create-role"
-                    className="mt-1 border border-dashed border-white/20 bg-black text-white rounded-none"
+                    className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                   >
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
@@ -1286,7 +1289,7 @@ export default function Users() {
               <Button
                 onClick={handleCreateUser}
                 disabled={isCreating}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
                 {isCreating ? 'Creating...' : 'Create'}
               </Button>

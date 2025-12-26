@@ -78,6 +78,7 @@ export default function Organizations() {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showSeedModal, setShowSeedModal] = useState(false);
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
+  const [isCreating, setIsCreating] = useState(false)
   const [seedingLogs, setSeedingLogs] = useState<
     Array<{
       id: string;
@@ -277,7 +278,7 @@ export default function Organizations() {
     }
 
     const toastId = toast.loading('Creating organization...');
-
+    setIsCreating(true)
     try {
       const response = await fetch('/api/organizations', {
         method: 'POST',
@@ -303,6 +304,8 @@ export default function Organizations() {
     } catch (error) {
       console.error('Error creating organization:', error);
       toast.error('Error creating organization', { id: toastId });
+    } finally {
+      setIsCreating(false)
     }
   };
   const handleUpdateOrganization = async () => {
@@ -533,7 +536,7 @@ export default function Organizations() {
                     <span className="text-gray-500 pl-10">// ... your existing configuration</span>{' '}
                     <br />
                     <span className="text-red-300 pl-10">plugins</span>: [ <br />
-                    <span className="text-yellow-300 pl-12">organization({})</span>
+                    <span className="text-yellow-300 pl-12">organization({ })</span>
                     <br />
                     <span className="pl-10">]</span> <br />
                     {`}`}) <br />
@@ -987,22 +990,29 @@ export default function Organizations() {
 
       {/* Create Organization Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Create Organization</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Create Organization</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowCreateModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
               <div>
-                <Label htmlFor="create-name" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="create-name" className="text-xs text-white/80 font-mono uppercase">
                   Name
                 </Label>
                 <Input
@@ -1014,7 +1024,7 @@ export default function Organizations() {
                 />
               </div>
               <div>
-                <Label htmlFor="create-slug" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="create-slug" className="text-xs text-white/80 font-mono uppercase">
                   Slug
                 </Label>
                 <Input
@@ -1042,9 +1052,10 @@ export default function Organizations() {
               </Button>
               <Button
                 onClick={handleCreateOrganization}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                disabled={isCreating}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
-                Create
+                {isCreating ? 'Creating...' : 'Create'}
               </Button>
             </div>
           </div>
@@ -1290,3 +1301,4 @@ export default function Organizations() {
     </div>
   );
 }
+

@@ -291,10 +291,8 @@ function generateMockSessions(count) {
 async function getRealAnalytics(adapter, options) {
     try {
         const { period, type, from, to } = options;
-        // Get all users and sessions from the database
         let users = [];
         let sessions = [];
-        // Try to fetch with higher limits
         if (adapter.findMany) {
             users = await adapter.findMany({ model: 'user', limit: 100000 }).catch(() => []);
             sessions = await adapter.findMany({ model: 'session', limit: 100000 }).catch(() => []);
@@ -309,7 +307,6 @@ async function getRealAnalytics(adapter, options) {
         const teams = adapter.findMany
             ? await adapter.findMany({ model: 'team', limit: 100000 }).catch(() => [])
             : [];
-        // Determine the time range
         const now = new Date();
         let startDate;
         const endDate = to ? new Date(to) : now;
@@ -463,7 +460,6 @@ async function getRealAnalytics(adapter, options) {
                 buckets.push({ start: bucketStart, end: bucketEnd, label });
             }
         }
-        // Count items in each bucket based on type
         let data = [];
         if (type === 'users') {
             // For users, count users created within each bucket (non-cumulative)
@@ -531,7 +527,6 @@ async function getRealAnalytics(adapter, options) {
         };
     }
     catch (_error) {
-        // Return empty data on error
         return {
             data: [],
             labels: [],
