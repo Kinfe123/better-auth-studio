@@ -1092,7 +1092,6 @@ export function createRoutes(
           organizationPluginEnabled = !!organizationPlugin;
           
           if (organizationPlugin) {
-            // Check multiple possible paths for teams configuration
             teamsPluginEnabled =
               organizationPlugin.options?.teams?.enabled === true ||
               organizationPlugin.teams?.enabled === true ||
@@ -2885,7 +2884,6 @@ export function createRoutes(
 
       const plugins = betterAuthConfig.plugins || [];
       const organizationPlugin = plugins.find((plugin: any) => plugin.id === 'organization');
-
       if (organizationPlugin) {
         let teamsEnabled = false;
         
@@ -2904,7 +2902,8 @@ export function createRoutes(
           else if (organizationPlugin.teams && typeof organizationPlugin.teams === 'object') {
           teamsEnabled = organizationPlugin.teams.enabled === true;
         }
-        
+        const teamSchema = organizationPlugin.schema
+        teamsEnabled = 'team' in teamSchema;
         return res.json({
           enabled: teamsEnabled,
           configPath: isSelfHosted ? null : configPath || null,

@@ -933,7 +933,6 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                     const organizationPlugin = plugins.find((plugin) => plugin.id === 'organization');
                     organizationPluginEnabled = !!organizationPlugin;
                     if (organizationPlugin) {
-                        // Check multiple possible paths for teams configuration
                         teamsPluginEnabled =
                             organizationPlugin.options?.teams?.enabled === true ||
                                 organizationPlugin.teams?.enabled === true ||
