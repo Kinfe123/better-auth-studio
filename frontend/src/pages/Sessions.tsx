@@ -717,20 +717,27 @@ export default function Sessions() {
 
       {/* Delete Session Modal */}
       {showDeleteModal && selectedSession && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Delete Session</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Delete Session</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowDeleteModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
                 <div className="w-16 h-16 rounded-none border border-dashed border-white/20 bg-white/10 flex items-center justify-center">
                   <Database className="w-8 h-8 text-white" />
@@ -767,64 +774,84 @@ export default function Sessions() {
 
       {/* View Session Modal */}
       {showViewModal && selectedSession && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Session Details</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Session Details</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowViewModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-16 h-16 rounded-none border border-dashed border-white/20 bg-white/10 flex items-center justify-center">
-                  <Database className="w-8 h-8 text-white" />
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-6 mt-4">
+              <div className="flex items-center gap-3">
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
+                  <Database className="w-7 h-7 text-white" />
                 </div>
-                <div>
-                  <div className="text-white font-light">
-                    Session {selectedSession.id.slice(0, 8)}...
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>Session {selectedSession.id.slice(0, 8)}...</span>
+                    <CopyableId id={selectedSession.id} variant="subscript" nonSliced />
                   </div>
                   <div className="text-sm text-gray-400">{selectedSession.userId}</div>
                 </div>
               </div>
-              <div className="space-y-2">
-                <CopyableId id={selectedSession.id} variant="detail" />
-                <CopyableId id={selectedSession.userId} label="User ID" variant="detail" />
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Status:</span>
-                  <span className="text-white text-sm">
-                    {new Date(selectedSession.expiresAt) > new Date() ? 'Active' : 'Expired'}
-                  </span>
+
+              <div className="space-y-2 text-sm">
+                {[
+                  {
+                    label: 'Status',
+                    value: new Date(selectedSession.expiresAt) > new Date() ? 'Active' : 'Expired',
+                  },
+                  {
+                    label: 'Expires',
+                    value: new Date(selectedSession.expiresAt).toLocaleString(),
+                  },
+                  {
+                    label: 'Created',
+                    value: new Date(selectedSession.createdAt).toLocaleString(),
+                  },
+                  {
+                    label: 'Updated',
+                    value: new Date(selectedSession.updatedAt).toLocaleString(),
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="flex items-center justify-between border border-dashed border-white/15 bg-black/90 px-3 py-2 rounded-none"
+                  >
+                    <div className="text-[11px] font-mono font-light uppercase tracking-wide text-gray-400">
+                      {item.label}
+                    </div>
+                    <div className="text-[10px] font-mono uppercase text-white text-right break-words max-w-[60%]">
+                      {item.value}
+                    </div>
+                  </div>
+                ))}
+                <div className="mt-2">
+                  <CopyableId id={selectedSession.id} variant="detail" />
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Expires:</span>
-                  <span className="text-white text-sm">
-                    {new Date(selectedSession.expiresAt).toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Created:</span>
-                  <span className="text-white text-sm">
-                    {new Date(selectedSession.createdAt).toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Updated:</span>
-                  <span className="text-white text-sm">
-                    {new Date(selectedSession.updatedAt).toLocaleString()}
-                  </span>
+                <div>
+                  <CopyableId id={selectedSession.userId} label="User ID" variant="detail" />
                 </div>
               </div>
             </div>
-            <div className="flex justify-end mt-6">
+
+            <div className="flex justify-end mt-8">
               <Button
                 onClick={() => setShowViewModal(false)}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                className="border border-white/20 bg-white text-black hover:bg-white/90 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Close
               </Button>

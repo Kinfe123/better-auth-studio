@@ -92,6 +92,11 @@ export default function Users() {
   const [banExpiresIn, setBanExpiresIn] = useState<number | undefined>();
   const [adminPluginEnabled, setAdminPluginEnabled] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isBanning, setIsBanning] = useState(false);
+  const [isUnbanning, setIsUnbanning] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [editRole, setEditRole] = useState<string>('');
   const [seedRole, setSeedRole] = useState<string>('');
   const [createRole, setCreateRole] = useState<string>('');
@@ -105,7 +110,6 @@ export default function Users() {
     }>
   >([]);
   const [isSeeding, setIsSeeding] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -336,6 +340,7 @@ export default function Users() {
       return;
     }
 
+    setIsDeleting(true);
     const toastId = toast.loading('Deleting user...');
 
     try {
@@ -357,6 +362,8 @@ export default function Users() {
       }
     } catch (_error) {
       toast.error('Error deleting user', { id: toastId });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -368,6 +375,7 @@ export default function Users() {
       return;
     }
 
+    setIsBanning(true);
     const toastId = toast.loading('Banning user...');
     try {
       const response = await fetch('/api/admin/ban-user', {
@@ -396,6 +404,8 @@ export default function Users() {
       }
     } catch (_error) {
       toast.error('Error banning user', { id: toastId });
+    } finally {
+      setIsBanning(false);
     }
   };
 
@@ -407,6 +417,7 @@ export default function Users() {
       return;
     }
 
+    setIsUnbanning(true);
     const toastId = toast.loading('Unbanning user...');
     try {
       const response = await fetch('/api/admin/unban-user', {
@@ -431,6 +442,8 @@ export default function Users() {
       }
     } catch (_error) {
       toast.error('Error unbanning user', { id: toastId });
+    } finally {
+      setIsUnbanning(false);
     }
   };
 
@@ -447,6 +460,7 @@ export default function Users() {
       return;
     }
 
+    setIsUpdatingPassword(true);
     const toastId = toast.loading('Updating password...');
 
     try {
@@ -468,6 +482,8 @@ export default function Users() {
       }
     } catch (_error) {
       toast.error('Error updating password', { id: toastId });
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -885,9 +901,8 @@ export default function Users() {
                 currentUsers.map((user) => (
                   <tr
                     key={user.id}
-                    className={`border-b border-dashed hover:bg-white/5 cursor-pointer ${
-                      user.banned ? 'border-red-500/30 bg-red-500/5' : 'border-white/5'
-                    }`}
+                    className={`border-b border-dashed hover:bg-white/5 cursor-pointer ${user.banned ? 'border-red-500/30 bg-red-500/5' : 'border-white/5'
+                      }`}
                     onClick={() => navigate(`/users/${user.id}`)}
                   >
                     <td className="py-4 px-4">
@@ -899,9 +914,8 @@ export default function Users() {
                               `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`
                             }
                             alt={user.name}
-                            className={`w-10 h-10 rounded-none border border-dashed ${
-                              user.banned ? 'border-red-400/50 opacity-60' : 'border-white/20'
-                            }`}
+                            className={`w-10 h-10 rounded-none border border-dashed ${user.banned ? 'border-red-400/50 opacity-60' : 'border-white/20'
+                              }`}
                           />
                           {user.banned && (
                             <div className="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5">
@@ -983,29 +997,29 @@ export default function Users() {
                             onClick={(e) => e.stopPropagation()}
                           >
                             <button
-                              className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center space-x-2"
+                              className="w-full px-4 py-2 text-left text-[11px] border-b border-dashed border-white/20 text-white/70 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setActionMenuOpen(null);
                                 openViewModal(user);
                               }}
                             >
-                              <Eye className="w-4 h-4" />
                               <span>View</span>
+                              <Eye className="w-3 h-3 text-white/10 group-hover:text-white/70 transition-colors" />
                             </button>
                             <button
-                              className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center space-x-2"
+                              className="w-full px-4 py-2 text-left text-[11px] border-b border-dashed border-white/20 text-white/70 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setActionMenuOpen(null);
                                 openEditModal(user);
                               }}
                             >
-                              <Edit className="w-4 h-4" />
                               <span>Edit User</span>
+                              <Edit className="w-3 h-3 text-white/10 group-hover:text-white/70 transition-colors" />
                             </button>
                             <button
-                              className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center space-x-2"
+                              className="w-full px-4 py-2 text-left text-[11px] border-b border-dashed border-white/20 text-white/70 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setActionMenuOpen(null);
@@ -1013,13 +1027,13 @@ export default function Users() {
                                 setShowPasswordModal(true);
                               }}
                             >
-                              <Shield className="w-4 h-4" />
                               <span>Update Password</span>
+                              <Shield className="w-3 h-3 text-white/10 group-hover:text-white/70 transition-colors" />
                             </button>
                             {adminPluginEnabled &&
                               (user.banned ? (
                                 <button
-                                  className="w-full px-4 py-2 text-left text-sm text-green-400 hover:bg-white/10 flex items-center space-x-2"
+                                  className="w-full px-4 py-2 text-left text-[11px] text-green-400 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setSelectedUser(user);
@@ -1027,12 +1041,12 @@ export default function Users() {
                                     setActionMenuOpen(null);
                                   }}
                                 >
-                                  <Ban className="w-4 h-4" />
                                   <span>Unban User</span>
+                                  <Ban className="w-3 h-3 text-green-400/10 group-hover:text-green-400/70 transition-colors" />
                                 </button>
                               ) : (
                                 <button
-                                  className="w-full px-4 py-2 text-left text-sm text-yellow-400 hover:bg-white/10 flex items-center space-x-2"
+                                  className="w-full px-4 py-2 text-left text-[11px] text-yellow-400 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setSelectedUser(user);
@@ -1040,21 +1054,25 @@ export default function Users() {
                                     setActionMenuOpen(null);
                                   }}
                                 >
-                                  <Ban className="w-4 h-4" />
                                   <span>Ban User</span>
+                                  <Ban className="w-3 h-3 text-yellow-400/10 group-hover:text-yellow-400/70 transition-colors" />
                                 </button>
                               ))}
-                            <div className="border-t border-white/10 my-1"></div>
+                            <div className="flex flex-col items-center justify-center">
+                              <hr className="w-[calc(100%)] border-white/10 h-px" />
+                              <div className="relative z-20 h-2 w-[calc(100%)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+                              <hr className="w-[calc(100%)] border-white/10 h-px" />
+                            </div>
                             <button
-                              className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-white/10 flex items-center space-x-2"
+                              className="w-full px-4 py-2 text-left text-[11px] text-red-400 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setActionMenuOpen(null);
                                 openDeleteModal(user);
                               }}
                             >
-                              <Trash2 className="w-4 h-4" />
                               <span>Delete User</span>
+                              <Trash2 className="w-3 h-3 text-red-400/30 group-hover:text-red-400/70 transition-colors" />
                             </button>
                           </div>
                         )}
@@ -1348,7 +1366,7 @@ export default function Users() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="edit-name" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="edit-name" className="text-xs text-white/80 font-mono uppercase">
                   Name
                 </Label>
                 <Input
@@ -1359,7 +1377,7 @@ export default function Users() {
                 />
               </div>
               <div>
-                <Label htmlFor="edit-email" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="edit-email" className="text-xs text-white/80 font-mono uppercase">
                   Email
                 </Label>
                 <Input
@@ -1371,7 +1389,7 @@ export default function Users() {
                 />
               </div>
               <div>
-                <Label htmlFor="edit-role" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="edit-role" className="text-xs text-white/80 font-mono uppercase">
                   Role
                 </Label>
                 <Select value={editRole} onValueChange={setEditRole}>
@@ -1397,14 +1415,14 @@ export default function Users() {
                   setEditRole('');
                 }}
                 disabled={isUpdating}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleUpdateUser}
                 disabled={isUpdating}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
                 {isUpdating ? 'Updating...' : 'Update'}
               </Button>
@@ -1414,31 +1432,44 @@ export default function Users() {
       )}
       {/* Delete User Modal */}
       {showDeleteModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Delete User</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Delete User</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowDeleteModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
-                <img
-                  src={
-                    selectedUser.image ||
-                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedUser.id}`
-                  }
-                  alt={selectedUser.name}
-                  className="w-16 h-16 rounded-none border border-dashed border-white/20"
-                />
-                <div>
-                  <div className="text-white font-light">{selectedUser.name}</div>
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center overflow-hidden">
+                  {selectedUser.image ? (
+                    <img
+                      src={selectedUser.image}
+                      alt={selectedUser.name}
+                      className="w-14 h-14 object-cover"
+                    />
+                  ) : (
+                    <User className="w-7 h-7 text-white" />
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{selectedUser.name}</span>
+                    <CopyableId id={selectedUser.id} variant="subscript" nonSliced={true} />
+                  </div>
                   <div className="text-sm text-gray-400">{selectedUser.email}</div>
                 </div>
               </div>
@@ -1450,15 +1481,17 @@ export default function Users() {
               <Button
                 variant="outline"
                 onClick={() => setShowDeleteModal(false)}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isDeleting}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleDeleteUser}
-                className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none"
+                disabled={isDeleting}
+                className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                Delete
+                {isDeleting ? 'Deleting...' : 'Delete'}
               </Button>
             </div>
           </div>
@@ -1536,7 +1569,7 @@ export default function Users() {
             <div className="flex justify-end gap-3 mt-8">
               <Button
                 onClick={() => setShowViewModal(false)}
-                className="border border-white/20 bg-white/5 text-white hover:bg-white/10 rounded-none"
+                className="border border-white/20 bg-white/5 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Close
               </Button>
@@ -1545,7 +1578,7 @@ export default function Users() {
                   setShowViewModal(false);
                   navigate(`/users/${selectedUser.id}`);
                 }}
-                className="border border-white/20 bg-white text-black hover:bg-white/90 rounded-none"
+                className="border border-white/20 bg-white text-black hover:bg-white/90 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 View Details
               </Button>
@@ -1556,16 +1589,55 @@ export default function Users() {
 
       {/* Ban User Modal */}
       {showBanModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black border border-red-400/20 rounded-none p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-white mb-4">Ban User</h2>
-            <p className="text-gray-400 mb-4">
-              Ban <strong>{selectedUser.name}</strong> from accessing the system.
-            </p>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light uppercase font-mono">Ban User</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowBanModal(false);
+                  setBanReason('');
+                  setBanExpiresIn(undefined);
+                  setSelectedUser(null);
+                }}
+                disabled={isBanning}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
 
-            <div className="space-y-4 mb-6">
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center overflow-hidden">
+                  {selectedUser.image ? (
+                    <img
+                      src={selectedUser.image}
+                      alt={selectedUser.name}
+                      className="w-14 h-14 object-cover"
+                    />
+                  ) : (
+                    <User className="w-7 h-7 text-white" />
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{selectedUser.name}</span>
+                    <CopyableId id={selectedUser.id} variant="subscript" nonSliced={true} />
+                  </div>
+                  <div className="text-sm text-gray-400">{selectedUser.email}</div>
+                </div>
+              </div>
               <div>
-                <Label htmlFor="banReason" className="text-white">
+                <Label htmlFor="banReason" className="text-xs text-white/80 font-mono uppercase">
                   Ban Reason
                 </Label>
                 <Input
@@ -1573,12 +1645,12 @@ export default function Users() {
                   value={banReason}
                   onChange={(e) => setBanReason(e.target.value)}
                   placeholder="Enter reason for ban (optional)"
-                  className="bg-black border border-dashed border-white/20 text-white rounded-none"
+                  disabled={isBanning}
+                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
-
               <div>
-                <Label htmlFor="banExpires" className="text-white">
+                <Label htmlFor="banExpires" className="text-xs text-white/80 font-mono uppercase">
                   Ban Duration (seconds)
                 </Label>
                 <Input
@@ -1589,15 +1661,16 @@ export default function Users() {
                     setBanExpiresIn(e.target.value ? Number(e.target.value) : undefined)
                   }
                   placeholder="Leave empty for permanent ban"
-                  className="bg-black border border-dashed border-white/20 text-white rounded-none"
+                  disabled={isBanning}
+                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-gray-400 mt-1 font-mono">
                   Examples: 3600 (1 hour), 86400 (1 day), 604800 (1 week)
                 </p>
               </div>
             </div>
 
-            <div className="flex justify-end space-x-2">
+            <div className="flex justify-end space-x-3 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1606,15 +1679,17 @@ export default function Users() {
                   setBanExpiresIn(undefined);
                   setSelectedUser(null);
                 }}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isBanning}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleBanUser}
-                className="bg-red-600 text-white hover:bg-red-700 rounded-none"
+                disabled={isBanning}
+                className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                Ban User
+                {isBanning ? 'Banning...' : 'Ban User'}
               </Button>
             </div>
           </div>
@@ -1623,29 +1698,74 @@ export default function Users() {
 
       {/* Unban User Modal */}
       {showUnbanModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black border border-dashed border-green-400/50 rounded-none p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-white mb-4">Unban User</h2>
-            <p className="text-gray-400 mb-6">
-              Are you sure you want to unban <strong>{selectedUser.name}</strong>? This will restore
-              their access to the system.
-            </p>
-            <div className="flex justify-end space-x-2">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light uppercase font-mono">Unban User</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowUnbanModal(false);
+                  setSelectedUser(null);
+                }}
+                disabled={isUnbanning}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center overflow-hidden">
+                  {selectedUser.image ? (
+                    <img
+                      src={selectedUser.image}
+                      alt={selectedUser.name}
+                      className="w-14 h-14 object-cover"
+                    />
+                  ) : (
+                    <User className="w-7 h-7 text-white" />
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{selectedUser.name}</span>
+                    <CopyableId id={selectedUser.id} variant="subscript" nonSliced={true} />
+                  </div>
+                  <div className="text-sm text-gray-400">{selectedUser.email}</div>
+                </div>
+              </div>
+              <p className="text-gray-400">
+                Are you sure you want to unban this user? This will restore their access to the system.
+              </p>
+            </div>
+
+            <div className="flex justify-end space-x-3 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {
                   setShowUnbanModal(false);
                   setSelectedUser(null);
                 }}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isUnbanning}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleUnbanUser}
-                className="bg-green-600 text-white hover:bg-green-700 rounded-none"
+                disabled={isUnbanning}
+                className="bg-green-400 hover:bg-green-500 text-white border border-green-400 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                Unban User
+                {isUnbanning ? 'Unbanning...' : 'Unban User'}
               </Button>
             </div>
           </div>
@@ -1654,10 +1774,10 @@ export default function Users() {
 
       {/* Update Password Modal */}
       {showPasswordModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Update Password</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Update Password</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1666,34 +1786,49 @@ export default function Users() {
                   setSelectedUser(null);
                   (document.getElementById('update-password') as HTMLInputElement).value = '';
                 }}
-                className="text-gray-400 hover:text-white rounded-none"
+                disabled={isUpdatingPassword}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
-                <img
-                  src={
-                    selectedUser.image ||
-                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedUser.id}`
-                  }
-                  alt={selectedUser.name}
-                  className="w-16 h-16 rounded-none border border-dashed border-white/20"
-                />
-                <div>
-                  <div className="text-white font-light">{selectedUser.name}</div>
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center overflow-hidden">
+                  {selectedUser.image ? (
+                    <img
+                      src={selectedUser.image}
+                      alt={selectedUser.name}
+                      className="w-14 h-14 object-cover"
+                    />
+                  ) : (
+                    <User className="w-7 h-7 text-white" />
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{selectedUser.name}</span>
+                    <CopyableId id={selectedUser.id} variant="subscript" nonSliced={true} />
+                  </div>
                   <div className="text-sm text-gray-400">{selectedUser.email}</div>
                 </div>
               </div>
               <div>
-                <Label htmlFor="update-password" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="update-password" className="text-xs text-white/80 font-mono uppercase">
                   New Password
                 </Label>
                 <Input
                   id="update-password"
                   type="password"
                   placeholder="Enter new password"
+                  disabled={isUpdatingPassword}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
@@ -1706,15 +1841,17 @@ export default function Users() {
                   setSelectedUser(null);
                   (document.getElementById('update-password') as HTMLInputElement).value = '';
                 }}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isUpdatingPassword}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleUpdatePassword}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                disabled={isUpdatingPassword}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                Update Password
+                {isUpdatingPassword ? 'Updating...' : 'Update Password'}
               </Button>
             </div>
           </div>

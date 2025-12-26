@@ -79,6 +79,7 @@ export default function Organizations() {
   const [showSeedModal, setShowSeedModal] = useState(false);
   const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [seedingLogs, setSeedingLogs] = useState<
     Array<{
       id: string;
@@ -354,6 +355,7 @@ export default function Organizations() {
   };
 
   const handleDeleteOrganization = async () => {
+    setIsDeleting(true);
     if (!selectedOrganization) {
       toast.error('No organization selected');
       return;
@@ -383,6 +385,8 @@ export default function Organizations() {
     } catch (error) {
       console.error('Error deleting organization:', error);
       toast.error('Error deleting organization', { id: toastId });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -537,7 +541,7 @@ export default function Organizations() {
                     <span className="text-gray-500 pl-10">// ... your existing configuration</span>{' '}
                     <br />
                     <span className="text-red-300 pl-10">plugins</span>: [ <br />
-                    <span className="text-yellow-300 pl-12">organization({})</span>
+                    <span className="text-yellow-300 pl-12">organization({ })</span>
                     <br />
                     <span className="pl-10">]</span> <br />
                     {`}`}) <br />
@@ -1023,6 +1027,7 @@ export default function Organizations() {
                   value={createFormData.name}
                   onChange={(e) => handleCreateNameChange(e.target.value)}
                   placeholder="e.g. Acme Corp"
+                  disabled={isCreating}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
@@ -1035,9 +1040,10 @@ export default function Organizations() {
                   value={createFormData.slug}
                   onChange={(e) => handleCreateSlugChange(e.target.value)}
                   placeholder="e.g. acme-corp"
+                  disabled={isCreating}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 mt-1 font-mono">
                   Auto-generated from name. You can edit it manually.
                 </p>
               </div>
@@ -1049,14 +1055,15 @@ export default function Organizations() {
                   setShowCreateModal(false);
                   setCreateFormData({ name: '', slug: '' });
                 }}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isCreating}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleCreateOrganization}
                 disabled={isCreating}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
                 {isCreating ? 'Creating...' : 'Create'}
               </Button>
@@ -1093,6 +1100,7 @@ export default function Organizations() {
                   setSelectedOrganization(null);
                   setEditFormData({ name: '', slug: '' });
                 }}
+                disabled={isUpdating}
                 className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
@@ -1119,7 +1127,7 @@ export default function Organizations() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="edit-name" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="edit-name" className="text-xs text-white/80 font-mono uppercase">
                   Name
                 </Label>
                 <Input
@@ -1127,11 +1135,12 @@ export default function Organizations() {
                   value={editFormData.name}
                   onChange={(e) => handleEditNameChange(e.target.value)}
                   placeholder="e.g. Acme Corp"
+                  disabled={isUpdating}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
               <div>
-                <Label htmlFor="edit-slug" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="edit-slug" className="text-xs text-white/80 font-mono uppercase">
                   Slug
                 </Label>
                 <Input
@@ -1139,9 +1148,10 @@ export default function Organizations() {
                   value={editFormData.slug}
                   onChange={(e) => handleEditSlugChange(e.target.value)}
                   placeholder="e.g. acme-corp"
+                  disabled={isUpdating}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 mt-1 font-mono">
                   Auto-generated from name. You can edit it manually.
                 </p>
               </div>
@@ -1154,14 +1164,14 @@ export default function Organizations() {
                   setEditFormData({ name: '', slug: '' });
                 }}
                 disabled={isUpdating}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleUpdateOrganization}
                 disabled={isUpdating}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
                 {isUpdating ? 'Updating...' : 'Update'}
               </Button>
@@ -1172,27 +1182,35 @@ export default function Organizations() {
 
       {/* Delete Organization Modal */}
       {showDeleteModal && selectedOrganization && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-xl rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-xl shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Delete Organization</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Delete Organization</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowDeleteModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                disabled={isDeleting}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
-                <div className="w-16 h-16 rounded-none border border-dashed border-white/20 bg-white/10 flex items-center justify-center">
-                  <Building2 className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
+                  <Building2 className="w-7 h-7 text-white" />
                 </div>
-                <div>
-                  <div className="text-white inline-flex font-light">
-                    {selectedOrganization.name}
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{selectedOrganization.name}</span>
                     <CopyableId id={selectedOrganization.id} variant="subscript" nonSliced={true} />
                   </div>
                   <div className="text-sm text-gray-400">{selectedOrganization.slug}</div>
@@ -1206,15 +1224,17 @@ export default function Organizations() {
               <Button
                 variant="outline"
                 onClick={() => setShowDeleteModal(false)}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isDeleting}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
+                disabled={isDeleting}
                 onClick={handleDeleteOrganization}
-                className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none"
+                className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                Delete
+                {isDeleting ? 'Deleting...' : 'Delete'}
               </Button>
             </div>
           </div>
@@ -1283,7 +1303,7 @@ export default function Organizations() {
             <div className="flex justify-end gap-3 mt-8">
               <Button
                 onClick={() => setShowViewModal(false)}
-                className="border border-white/20 bg-white/5 text-white hover:bg-white/10 rounded-none"
+                className="border border-white/20 bg-white/5 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Close
               </Button>
@@ -1292,7 +1312,7 @@ export default function Organizations() {
                   setShowViewModal(false);
                   navigate(`/organizations/${selectedOrganization.id}`);
                 }}
-                className="border border-white/20 bg-white text-black hover:bg-white/90 rounded-none"
+                className="border border-white/20 bg-white text-black hover:bg-white/90 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 View Details
               </Button>

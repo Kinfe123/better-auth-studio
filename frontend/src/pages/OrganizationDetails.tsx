@@ -109,6 +109,7 @@ export default function OrganizationDetails() {
   const [inviting, setInviting] = useState(false);
   const [isCreatingTeam, setIsCreatingTeam] = useState(false);
   const [isUpdatingTeam, setIsUpdatingTeam] = useState(false);
+  const [isDeletingTeam, setIsDeletingTeam] = useState(false);
   const [seedingLogs, setSeedingLogs] = useState<
     Array<{
       id: string;
@@ -721,6 +722,7 @@ export default function OrganizationDetails() {
       return;
     }
 
+    setIsDeletingTeam(true);
     const toastId = toast.loading('Deleting team...');
 
     try {
@@ -742,6 +744,8 @@ export default function OrganizationDetails() {
     } catch (error) {
       console.error('Error deleting team:', error);
       toast.error('Error deleting team', { id: toastId });
+    } finally {
+      setIsDeletingTeam(false);
     }
   };
 
@@ -1506,11 +1510,11 @@ export default function OrganizationDetails() {
       </div>
 
       {/* Invite User Modal */}
-      {showInviteModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+      {showInviteModal && organization && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-xl shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Invite User</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Invite User</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1519,14 +1523,34 @@ export default function OrganizationDetails() {
                   setInviteEmail('');
                   setSelectedInviterId('');
                 }}
-                className="text-gray-400 hover:text-white rounded-none"
+                disabled={inviting}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
+                  <Building2 className="w-7 h-7 text-white" />
+                </div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{organization.name}</span>
+                    <CopyableId id={organization.id} variant="subscript" nonSliced={true} />
+                  </div>
+                  <div className="text-sm text-gray-400">{organization.slug}</div>
+                </div>
+              </div>
               <div>
-                <Label htmlFor="invite-email" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="invite-email" className="text-xs text-white/80 font-mono uppercase">
                   Email Address
                 </Label>
                 <Input
@@ -1535,15 +1559,19 @@ export default function OrganizationDetails() {
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   placeholder="user@example.com"
+                  disabled={inviting}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
               <div>
-                <Label htmlFor="inviter-select" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="inviter-select" className="text-xs text-white/80 font-mono uppercase">
                   Inviter
                 </Label>
                 <Select value={selectedInviterId} onValueChange={setSelectedInviterId}>
-                  <SelectTrigger>
+                  <SelectTrigger 
+                    className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                    disabled={inviting}
+                  >
                     <SelectValue placeholder="Select an inviter..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -1576,16 +1604,16 @@ export default function OrganizationDetails() {
                   setInviteEmail('');
                   setSelectedInviterId('');
                 }}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={inviting}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleInviteUser}
                 disabled={inviting}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                <Send className="w-4 h-4 mr-2" />
                 {inviting ? 'Sending...' : 'Send Invitation'}
               </Button>
             </div>
@@ -1639,14 +1667,15 @@ export default function OrganizationDetails() {
                   setShowCreateTeamModal(false);
                   setTeamFormData({ name: '' });
                 }}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isCreatingTeam}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleCreateTeam}
                 disabled={isCreatingTeam}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
                 {isCreatingTeam ? 'Creating...' : 'Create Team'}
               </Button>
@@ -1657,10 +1686,10 @@ export default function OrganizationDetails() {
 
       {/* Edit Team Modal */}
       {showEditTeamModal && selectedTeam && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-lg rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Edit Team</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Edit Team</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1668,25 +1697,33 @@ export default function OrganizationDetails() {
                   setShowEditTeamModal(false);
                   setTeamFormData({ name: '' });
                 }}
-                className="text-gray-400 hover:text-white rounded-none"
+                disabled={isUpdatingTeam}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
-                <div className="w-16 h-16 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-                  <Users className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
+                  <Users className="w-7 h-7 text-white" />
                 </div>
-                <div>
-                  <div className="text-white font-light">
-                    {selectedTeam.name}
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{selectedTeam.name}</span>
                     <CopyableId id={selectedTeam.id} variant="subscript" nonSliced={true} />
                   </div>
                 </div>
               </div>
               <div>
-                <Label htmlFor="edit-team-name" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="edit-team-name" className="text-xs text-white/80 font-mono uppercase">
                   Team Name
                 </Label>
                 <Input
@@ -1694,6 +1731,7 @@ export default function OrganizationDetails() {
                   value={teamFormData.name}
                   onChange={(e) => handleTeamNameChange(e.target.value)}
                   placeholder="e.g. Development Team"
+                  disabled={isUpdatingTeam}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
@@ -1705,14 +1743,15 @@ export default function OrganizationDetails() {
                   setShowEditTeamModal(false);
                   setTeamFormData({ name: '' });
                 }}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isUpdatingTeam}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleUpdateTeam}
                 disabled={isUpdatingTeam}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
                 {isUpdatingTeam ? 'Updating...' : 'Update Team'}
               </Button>
@@ -1723,30 +1762,37 @@ export default function OrganizationDetails() {
 
       {/* Delete Team Modal */}
       {showDeleteTeamModal && selectedTeam && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-lg rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Delete Team</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Delete Team</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowDeleteTeamModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                disabled={isDeletingTeam}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
-                <div className="w-16 h-16 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-                  <Users className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
+                  <Users className="w-7 h-7 text-white" />
                 </div>
-                <div>
-                  <div className="text-white inline-flex font-light">
-                    {selectedTeam.name}
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{selectedTeam.name}</span>
                     <CopyableId id={selectedTeam.id} variant="subscript" nonSliced={true} />
                   </div>
-                  <CopyableId id={selectedTeam.id} label="Team ID" variant="detail" />
                 </div>
               </div>
               <p className="text-gray-400">
@@ -1757,15 +1803,17 @@ export default function OrganizationDetails() {
               <Button
                 variant="outline"
                 onClick={() => setShowDeleteTeamModal(false)}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isDeletingTeam}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleDeleteTeam}
-                className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none"
+                disabled={isDeletingTeam}
+                className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                Delete Team
+                {isDeletingTeam ? 'Deleting...' : 'Delete Team'}
               </Button>
             </div>
           </div>
@@ -1773,29 +1821,49 @@ export default function OrganizationDetails() {
       )}
 
       {/* Seed Members Modal */}
-      {showSeedMembersModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg text-white font-light">Seed Members</h3>
+      {showSeedMembersModal && organization && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-2xl shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light uppercase font-mono">Seed Members</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowSeedMembersModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                disabled={isSeeding}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-6">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-6 mt-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
+                  <Building2 className="w-7 h-7 text-white" />
+                </div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{organization.name}</span>
+                    <CopyableId id={organization.id} variant="subscript" nonSliced={true} />
+                  </div>
+                  <div className="text-sm text-gray-400">{organization.slug}</div>
+                </div>
+              </div>
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Users className="w-5 h-5 text-white" />
-                  <h4 className="text-white font-light">Add Members from Existing Users</h4>
+                  <h4 className="text-white font-light font-mono uppercase text-xs">Add Members from Existing Users</h4>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
-                    <Label htmlFor="member-count" className="text-sm text-gray-400 font-light">
+                    <Label htmlFor="member-count" className="text-xs text-white/80 font-mono uppercase">
                       Number of members to add
                     </Label>
                     <Input
@@ -1804,6 +1872,7 @@ export default function OrganizationDetails() {
                       min="1"
                       max="50"
                       defaultValue="5"
+                      disabled={isSeeding}
                       className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                     />
                   </div>
@@ -1815,7 +1884,7 @@ export default function OrganizationDetails() {
                       handleSeedMembers(count);
                     }}
                     disabled={isSeeding}
-                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
+                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
                   >
                     {isSeeding ? (
                       <>
@@ -1845,11 +1914,12 @@ export default function OrganizationDetails() {
                 </div>
               )}
             </div>
-            <div className="flex justify-end mt-6 pt-6 border-t border-dashed border-white/10">
+            <div className="flex justify-end mt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowSeedMembersModal(false)}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isSeeding}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Close
               </Button>
@@ -1859,29 +1929,49 @@ export default function OrganizationDetails() {
       )}
 
       {/* Seed Teams Modal */}
-      {showSeedTeamsModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg text-white font-light">Seed Teams</h3>
+      {showSeedTeamsModal && organization && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-2xl shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light uppercase font-mono">Seed Teams</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowSeedTeamsModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                disabled={isTeamSeeding}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-6">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-6 mt-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
+                  <Building2 className="w-7 h-7 text-white" />
+                </div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{organization.name}</span>
+                    <CopyableId id={organization.id} variant="subscript" nonSliced={true} />
+                  </div>
+                  <div className="text-sm text-gray-400">{organization.slug}</div>
+                </div>
+              </div>
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Building2 className="w-5 h-5 text-white" />
-                  <h4 className="text-white font-light">Create Teams</h4>
+                  <h4 className="text-white font-light font-mono uppercase text-xs">Create Teams</h4>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
-                    <Label htmlFor="team-count" className="text-sm text-gray-400 font-light">
+                    <Label htmlFor="team-count" className="text-xs text-white/80 font-mono uppercase">
                       Number of teams to create
                     </Label>
                     <Input
@@ -1890,6 +1980,7 @@ export default function OrganizationDetails() {
                       min="1"
                       max="20"
                       defaultValue="3"
+                      disabled={isTeamSeeding}
                       className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                     />
                   </div>
@@ -1901,7 +1992,7 @@ export default function OrganizationDetails() {
                       handleSeedTeams(count);
                     }}
                     disabled={isTeamSeeding}
-                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
+                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
                   >
                     {isTeamSeeding ? (
                       <>
@@ -1956,7 +2047,7 @@ export default function OrganizationDetails() {
           }}
         >
           <div
-            className="bg-black border border-white/15 p-6 w-full max-w-lg rounded-none shadow-2xl"
+            className="bg-black border border-white/15 p-6 w-full max-w-xl rounded-none shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
@@ -1996,7 +2087,7 @@ export default function OrganizationDetails() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="edit-name" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="edit-name" className="text-xs text-white/80 font-mono uppercase">
                   Name
                 </Label>
                 <Input
@@ -2008,7 +2099,7 @@ export default function OrganizationDetails() {
                 />
               </div>
               <div>
-                <Label htmlFor="edit-slug" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="edit-slug" className="text-xs text-white/80 font-mono uppercase">
                   Slug
                 </Label>
                 <Input

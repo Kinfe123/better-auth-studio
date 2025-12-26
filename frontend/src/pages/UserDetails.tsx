@@ -811,7 +811,7 @@ export default function UserDetails() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <button
-                      className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center space-x-2"
+                      className="w-full px-4 py-2 text-left text-[11px] text-white/70 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                       onClick={(e) => {
                         e.stopPropagation();
                         setActionMenuOpen(false);
@@ -819,57 +819,61 @@ export default function UserDetails() {
                         setEditRole(user.role || '');
                       }}
                     >
-                      <Edit className="w-4 h-4" />
                       <span>Edit User</span>
+                      <Edit className="w-3 h-3 text-white/10 group-hover:text-white/70 transition-colors" />
                     </button>
                     <button
-                      className="w-full px-4 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center space-x-2"
+                      className="w-full px-4 py-2 text-left text-[11px] text-white/70 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                       onClick={(e) => {
                         e.stopPropagation();
                         setActionMenuOpen(false);
                         setShowPasswordModal(true);
                       }}
                     >
-                      <Shield className="w-4 h-4" />
                       <span>Update Password</span>
+                      <Shield className="w-3 h-3 text-white/10 group-hover:text-white/70 transition-colors" />
                     </button>
                     {adminPluginEnabled &&
                       (user.banned ? (
                         <button
-                          className="w-full px-4 py-2 text-left text-sm text-green-400 hover:bg-white/10 flex items-center space-x-2"
+                          className="w-full px-4 py-2 text-left text-[11px] text-green-400 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                           onClick={(e) => {
                             e.stopPropagation();
                             setActionMenuOpen(false);
                             setShowUnbanModal(true);
                           }}
                         >
-                          <Ban className="w-4 h-4" />
                           <span>Unban User</span>
+                          <Ban className="w-3 h-3 text-green-400/10 group-hover:text-green-400/70 transition-colors" />
                         </button>
                       ) : (
                         <button
-                          className="w-full px-4 py-2 text-left text-sm text-yellow-400 hover:bg-white/10 flex items-center space-x-2"
+                          className="w-full px-4 py-2 text-left text-[11px] text-yellow-400 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                           onClick={(e) => {
                             e.stopPropagation();
                             setActionMenuOpen(false);
                             setShowBanModal(true);
                           }}
                         >
-                          <Ban className="w-4 h-4" />
                           <span>Ban User</span>
+                          <Ban className="w-3 h-3 text-yellow-400/10 group-hover:text-yellow-400/70 transition-colors" />
                         </button>
                       ))}
-                    <div className="border-t border-white/10 my-1"></div>
+                    <div className="flex flex-col items-center justify-center">
+                      <hr className="w-[calc(100%)] border-white/10 h-px" />
+                      <div className="relative z-20 h-2 w-[calc(100%)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+                      <hr className="w-[calc(100%)] border-white/10 h-px" />
+                    </div>
                     <button
-                      className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-white/10 flex items-center space-x-2"
+                      className="w-full px-4 py-2 text-left text-[11px] text-red-400 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                       onClick={(e) => {
                         e.stopPropagation();
                         setActionMenuOpen(false);
                         setShowDeleteModal(true);
                       }}
                     >
-                      <Trash2 className="w-4 h-4" />
                       <span>Delete User</span>
+                      <Trash2 className="w-3 h-3 text-red-400/10 group-hover:text-red-400/70 transition-colors" />
                     </button>
                   </div>
                 )}
@@ -1671,20 +1675,27 @@ export default function UserDetails() {
 
       {/* Delete User Modal */}
       {showDeleteModal && user && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Delete User</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Delete User</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowDeleteModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
                 <div className="w-16 h-16 bg-black/80 border border-dashed border-white/20 flex items-center justify-center">
                   {user.image ? (
