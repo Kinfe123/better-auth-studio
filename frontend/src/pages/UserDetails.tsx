@@ -148,6 +148,10 @@ export default function UserDetails() {
   >([]);
   const [isSeeding, setIsSeeding] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isBanning, setIsBanning] = useState(false);
+  const [isUnbanning, setIsUnbanning] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [sessionLocations, setSessionLocations] = useState<Record<string, LocationData>>({});
   const sessionLocationsRef = useRef<Record<string, LocationData>>({});
 
@@ -341,6 +345,7 @@ export default function UserDetails() {
   const handleDeleteUser = async () => {
     if (!user) return;
 
+    setIsDeleting(true);
     const toastId = toast.loading('Deleting user...');
     try {
       const response = await fetch(`/api/users/${userId}`, {
@@ -358,6 +363,8 @@ export default function UserDetails() {
       }
     } catch (_error) {
       toast.error('Error deleting user', { id: toastId });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -371,6 +378,7 @@ export default function UserDetails() {
       return;
     }
 
+    setIsBanning(true);
     const toastId = toast.loading('Banning user...');
     try {
       const response = await fetch('/api/admin/ban-user', {
@@ -409,6 +417,8 @@ export default function UserDetails() {
       }
     } catch (_error) {
       toast.error('Error banning user', { id: toastId });
+    } finally {
+      setIsBanning(false);
     }
   };
 
@@ -422,6 +432,7 @@ export default function UserDetails() {
       return;
     }
 
+    setIsUnbanning(true);
     const toastId = toast.loading('Unbanning user...');
     try {
       const response = await fetch('/api/admin/unban-user', {
@@ -457,6 +468,8 @@ export default function UserDetails() {
       }
     } catch (_error) {
       toast.error('Error unbanning user', { id: toastId });
+    } finally {
+      setIsUnbanning(false);
     }
   };
 
@@ -1516,18 +1529,19 @@ export default function UserDetails() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="edit-name" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="edit-name" className="text-xs text-white/80 font-mono uppercase">
                   Name
                 </Label>
                 <Input
                   id="edit-name"
                   defaultValue={user?.name || ''}
                   placeholder="e.g. John Doe"
+                  disabled={isUpdating}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
               <div>
-                <Label htmlFor="edit-email" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="edit-email" className="text-xs text-white/80 font-mono uppercase">
                   Email
                 </Label>
                 <Input
@@ -1535,17 +1549,19 @@ export default function UserDetails() {
                   type="email"
                   defaultValue={user?.email || ''}
                   placeholder="e.g. john@example.com"
+                  disabled={isUpdating}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
               <div>
-                <Label htmlFor="edit-role" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="edit-role" className="text-xs text-white/80 font-mono uppercase">
                   Role
                 </Label>
                 <Select value={editRole} onValueChange={setEditRole}>
                   <SelectTrigger
                     id="edit-role"
                     className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                    disabled={isUpdating}
                   >
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
@@ -1565,14 +1581,14 @@ export default function UserDetails() {
                   setEditRole('');
                 }}
                 disabled={isUpdating}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleEditUser}
                 disabled={isUpdating}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
                 {isUpdating ? 'Updating...' : 'Update'}
               </Button>
@@ -1581,17 +1597,51 @@ export default function UserDetails() {
         </div>
       )}
 
-      {showBanModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black border border-red-400/20 rounded-none p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-white mb-4">Ban User</h2>
-            <p className="text-gray-400 mb-4">
-              Ban <strong>{user.name}</strong> from accessing the system.
-            </p>
+      {showBanModal && user && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light uppercase font-mono">Ban User</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowBanModal(false);
+                  setBanReason('');
+                  setBanExpiresIn(undefined);
+                }}
+                disabled={isBanning}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
 
-            <div className="space-y-4 mb-6">
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center overflow-hidden">
+                  {user.image ? (
+                    <img src={user.image} alt={user.name} className="w-14 h-14 object-cover" />
+                  ) : (
+                    <User className="w-7 h-7 text-white" />
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{user.name}</span>
+                    <CopyableId id={user.id} variant="subscript" nonSliced={true} />
+                  </div>
+                  <div className="text-sm text-gray-400">{user.email}</div>
+                </div>
+              </div>
               <div>
-                <Label htmlFor="banReason" className="text-white">
+                <Label htmlFor="banReason" className="text-xs text-white/80 font-mono uppercase">
                   Ban Reason
                 </Label>
                 <Input
@@ -1599,12 +1649,12 @@ export default function UserDetails() {
                   value={banReason}
                   onChange={(e) => setBanReason(e.target.value)}
                   placeholder="Enter reason for ban (optional)"
-                  className="bg-black border border-dashed border-white/20 text-white rounded-none"
+                  disabled={isBanning}
+                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
-
               <div>
-                <Label htmlFor="banExpires" className="text-white">
+                <Label htmlFor="banExpires" className="text-xs text-white/80 font-mono uppercase">
                   Ban Duration (seconds)
                 </Label>
                 <Input
@@ -1615,15 +1665,16 @@ export default function UserDetails() {
                     setBanExpiresIn(e.target.value ? Number(e.target.value) : undefined)
                   }
                   placeholder="Leave empty for permanent ban"
-                  className="bg-black border border-dashed border-white/20 text-white rounded-none"
+                  disabled={isBanning}
+                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-gray-400 mt-1 font-mono">
                   Examples: 3600 (1 hour), 86400 (1 day), 604800 (1 week)
                 </p>
               </div>
             </div>
 
-            <div className="flex justify-end space-x-2">
+            <div className="flex justify-end space-x-3 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1631,42 +1682,82 @@ export default function UserDetails() {
                   setBanReason('');
                   setBanExpiresIn(undefined);
                 }}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isBanning}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleBanUser}
-                className="bg-red-600 text-white hover:bg-red-700 rounded-none"
+                disabled={isBanning}
+                className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                Ban User
+                {isBanning ? 'Banning...' : 'Ban User'}
               </Button>
             </div>
           </div>
         </div>
       )}
 
-      {showUnbanModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black border border-green-400/20 rounded-none p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-white mb-4">Unban User</h2>
-            <p className="text-gray-400 mb-6">
-              Are you sure you want to unban <strong>{user.name}</strong>? This will restore their
-              access to the system.
-            </p>
-            <div className="flex justify-end space-x-2">
+      {showUnbanModal && user && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light uppercase font-mono">Unban User</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowUnbanModal(false)}
+                disabled={isUnbanning}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center overflow-hidden">
+                  {user.image ? (
+                    <img src={user.image} alt={user.name} className="w-14 h-14 object-cover" />
+                  ) : (
+                    <User className="w-7 h-7 text-white" />
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{user.name}</span>
+                    <CopyableId id={user.id} variant="subscript" nonSliced={true} />
+                  </div>
+                  <div className="text-sm text-gray-400">{user.email}</div>
+                </div>
+              </div>
+              <p className="text-gray-400">
+                Are you sure you want to unban this user? This will restore their access to the system.
+              </p>
+            </div>
+
+            <div className="flex justify-end space-x-3 mt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowUnbanModal(false)}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isUnbanning}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleUnbanUser}
-                className="bg-green-400 text-white hover:bg-green-700 rounded-none"
+                disabled={isUnbanning}
+                className="bg-green-400 hover:bg-green-500 text-white border border-green-400 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                Unban User
+                {isUnbanning ? 'Unbanning...' : 'Unban User'}
               </Button>
             </div>
           </div>
@@ -1697,15 +1788,18 @@ export default function UserDetails() {
 
             <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
-                <div className="w-16 h-16 bg-black/80 border border-dashed border-white/20 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center overflow-hidden">
                   {user.image ? (
-                    <img src={user.image} alt={user.name} className="w-16 h-16 object-cover" />
+                    <img src={user.image} alt={user.name} className="w-14 h-14 object-cover" />
                   ) : (
-                    <User className="w-8 h-8 text-white" />
+                    <User className="w-7 h-7 text-white" />
                   )}
                 </div>
-                <div>
-                  <div className="text-white font-light">{user.name}</div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{user.name}</span>
+                    <CopyableId id={user.id} variant="subscript" nonSliced={true} />
+                  </div>
                   <div className="text-sm text-gray-400">{user.email}</div>
                 </div>
               </div>
@@ -1717,15 +1811,17 @@ export default function UserDetails() {
               <Button
                 variant="outline"
                 onClick={() => setShowDeleteModal(false)}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isDeleting}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleDeleteUser}
-                className="bg-red-500 hover:bg-red-600 text-white border border-red-500 rounded-none"
+                disabled={isDeleting}
+                className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                Delete
+                {isDeleting ? 'Deleting...' : 'Delete'}
               </Button>
             </div>
           </div>
@@ -1734,27 +1830,52 @@ export default function UserDetails() {
 
       {/* Password Update Modal */}
       {showPasswordModal && user && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Update Password</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Update Password</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowPasswordModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                disabled={isUpdatingPassword}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-4">
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center overflow-hidden">
+                  {user.image ? (
+                    <img src={user.image} alt={user.name} className="w-14 h-14 object-cover" />
+                  ) : (
+                    <User className="w-7 h-7 text-white" />
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{user.name}</span>
+                    <CopyableId id={user.id} variant="subscript" nonSliced={true} />
+                  </div>
+                  <div className="text-sm text-gray-400">{user.email}</div>
+                </div>
+              </div>
               <div>
-                <Label htmlFor="new-password" className="text-sm text-gray-400 font-light">
+                <Label htmlFor="new-password" className="text-xs text-white/80 font-mono uppercase">
                   New Password
                 </Label>
                 <Input
                   id="new-password"
                   type="password"
+                  disabled={isUpdatingPassword}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
@@ -1763,7 +1884,8 @@ export default function UserDetails() {
               <Button
                 variant="outline"
                 onClick={() => setShowPasswordModal(false)}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isUpdatingPassword}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
                 Cancel
               </Button>
@@ -1775,6 +1897,7 @@ export default function UserDetails() {
                     toast.error('Please enter a password');
                     return;
                   }
+                  setIsUpdatingPassword(true);
                   const toastId = toast.loading('Updating password...');
                   try {
                     const response = await fetch(`/api/users/${userId}/password`, {
@@ -1794,11 +1917,14 @@ export default function UserDetails() {
                     }
                   } catch (_error) {
                     toast.error('Error updating password', { id: toastId });
+                  } finally {
+                    setIsUpdatingPassword(false);
                   }
                 }}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+                disabled={isUpdatingPassword}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                Update
+                {isUpdatingPassword ? 'Updating...' : 'Update Password'}
               </Button>
             </div>
           </div>
@@ -1806,72 +1932,61 @@ export default function UserDetails() {
       )}
 
       {/* Session Seed Modal */}
-      {showSessionSeedModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-hidden">
-          <div className="overflow-x-hidden overflow-y-auto bg-black/90 border border-white/10 p-6 w-full pt-4 max-w-2xl rounded-none max-h-[90vh]">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-sm text-white flex items-center justify-center font-light uppercase">
-                <span className="text-white/50 mr-2">[</span>
-                <Monitor className="inline mr-2 w-3 h-3 text-white" />
-                <span className="font-mono text-white/70 uppercase">Seed Sessions</span>
-                <span className="text-white/50 ml-2">]</span>
-              </h3>
+      {showSessionSeedModal && user && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-xl shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light uppercase font-mono">Seed Sessions</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowSessionSeedModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                disabled={isSeeding}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <hr className="border-white/10 -mx-10 border-dashed -mt-4 mb-4" />
-            <div className="space-y-6">
-              {/* Session Seeding */}
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="flex-1">
-                    <Label htmlFor="session-count" className="text-sm text-gray-400 font-light">
-                      Number of sessions
-                    </Label>
-                    <Input
-                      id="session-count"
-                      type="number"
-                      min="1"
-                      max="50"
-                      defaultValue="3"
-                      className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
-                    />
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center overflow-hidden">
+                  {user.image ? (
+                    <img src={user.image} alt={user.name} className="w-14 h-14 object-cover" />
+                  ) : (
+                    <User className="w-7 h-7 text-white" />
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{user.name}</span>
+                    <CopyableId id={user.id} variant="subscript" nonSliced={true} />
                   </div>
-                  <Button
-                    onClick={() => {
-                      const count = parseInt(
-                        (document.getElementById('session-count') as HTMLInputElement)?.value ||
-                          '3',
-                        10
-                      );
-                      handleSeedSessions(count);
-                    }}
-                    disabled={isSeeding}
-                    className="bg-transparent hover:bg-white/90 bg-white text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
-                  >
-                    {isSeeding ? (
-                      <>
-                        <Loader className="w-3 h-3 mr-2 animate-spin" />
-                        Seeding...
-                      </>
-                    ) : (
-                      <>
-                        <Database className="w-3 h-3 mr-2" />
-                        Seed Sessions
-                      </>
-                    )}
-                  </Button>
+                  <div className="text-sm text-gray-400">{user.email}</div>
                 </div>
               </div>
-
+              <div>
+                <Label htmlFor="session-count" className="text-xs text-white/80 font-mono uppercase">
+                  Number of Sessions
+                </Label>
+                <Input
+                  id="session-count"
+                  type="number"
+                  min="1"
+                  max="50"
+                  defaultValue="3"
+                  disabled={isSeeding}
+                  className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                />
+              </div>
               {seedingLogs.length > 0 && (
-                <div className="mt-6">
+                <div className="mt-4">
                   <Terminal
                     title="Session Seeding Terminal"
                     lines={seedingLogs}
@@ -1882,114 +1997,134 @@ export default function UserDetails() {
                 </div>
               )}
             </div>
-            <hr className="border-white/10 -mx-10 border-dashed mt-10" />
-            <div className="flex justify-end mt-6 pt-6">
+
+            <div className="flex justify-end space-x-3 mt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowSessionSeedModal(false)}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isSeeding}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
-                Close
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  const count = parseInt(
+                    (document.getElementById('session-count') as HTMLInputElement)?.value || '3',
+                    10
+                  );
+                  handleSeedSessions(count);
+                }}
+                disabled={isSeeding}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
+              >
+                {isSeeding ? (
+                  <>
+                    <Loader className="w-3 h-3 mr-2 animate-spin" />
+                    Seeding...
+                  </>
+                ) : (
+                  <>
+                    <Database className="w-3 h-3 mr-2" />
+                    Seed Sessions
+                  </>
+                )}
               </Button>
             </div>
           </div>
         </div>
       )}
-      {showAccountSeedModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-hidden">
-          <div className="overflow-x-hidden overflow-y-auto bg-black/90 border border-white/10 p-6 w-full pt-4 max-w-2xl rounded-none max-h-[90vh]">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-sm text-white flex items-center justify-center font-light uppercase">
-                <span className="text-white/50 mr-2">[</span>
-                <Link2 className="inline mr-2 w-3 h-3 text-white" />
-                <span className="font-mono text-white/70 uppercase">Seed Accounts</span>
-                <span className="text-white/50 ml-2">]</span>
-              </h3>
+      {showAccountSeedModal && user && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-xl shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg text-white font-light uppercase font-mono">Seed Accounts</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowAccountSeedModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                disabled={isSeeding}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <hr className="border-white/10 -mx-10 border-dashed -mt-4 mb-4" />
-            <div className="space-y-6">
-              {/* Account Seeding */}
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="account-count" className="text-sm text-gray-400 font-light">
-                      Number of accounts
-                    </Label>
-                    <Input
-                      id="account-count"
-                      type="number"
-                      min="1"
-                      max="50"
-                      defaultValue="3"
-                      className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="account-provider" className="text-sm text-gray-400 font-light">
-                      Provider
-                    </Label>
-                    <Select value={accountSeedProvider} onValueChange={setAccountSeedProvider}>
-                      <SelectTrigger className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none">
-                        <SelectValue placeholder="Select provider" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-black border border-dashed border-white/20">
-                        <SelectItem value="random">Mix (Random)</SelectItem>
-                        <SelectItem value="github">GitHub</SelectItem>
-                        <SelectItem value="google">Google</SelectItem>
-                        <SelectItem value="discord">Discord</SelectItem>
-                        <SelectItem value="facebook">Facebook</SelectItem>
-                        <SelectItem value="twitter">Twitter</SelectItem>
-                        <SelectItem value="linkedin">LinkedIn</SelectItem>
-                        <SelectItem value="apple">Apple</SelectItem>
-                        <SelectItem value="microsoft">Microsoft</SelectItem>
-                        <SelectItem value="gitlab">GitLab</SelectItem>
-                        <SelectItem value="bitbucket">Bitbucket</SelectItem>
-                        <SelectItem value="spotify">Spotify</SelectItem>
-                        <SelectItem value="twitch">Twitch</SelectItem>
-                        <SelectItem value="reddit">Reddit</SelectItem>
-                        <SelectItem value="slack">Slack</SelectItem>
-                        <SelectItem value="notion">Notion</SelectItem>
-                        <SelectItem value="tiktok">TikTok</SelectItem>
-                        <SelectItem value="zoom">Zoom</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <Button
-                  onClick={() => {
-                    const count = parseInt(
-                      (document.getElementById('account-count') as HTMLInputElement)?.value || '3',
-                      10
-                    );
-                    handleSeedAccounts(count, accountSeedProvider);
-                  }}
-                  disabled={isSeeding}
-                  className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
-                >
-                  {isSeeding ? (
-                    <>
-                      <Loader className="w-3 h-3 mr-2 animate-spin" />
-                      Seeding...
-                    </>
-                  ) : (
-                    <>
-                      <Link2 className="w-3 h-3 mr-2" />
-                      Seed Accounts
-                    </>
-                  )}
-                </Button>
-              </div>
 
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center overflow-hidden">
+                  {user.image ? (
+                    <img src={user.image} alt={user.name} className="w-14 h-14 object-cover" />
+                  ) : (
+                    <User className="w-7 h-7 text-white" />
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <div className="text-white font-medium leading-tight flex items-center gap-2">
+                    <span>{user.name}</span>
+                    <CopyableId id={user.id} variant="subscript" nonSliced={true} />
+                  </div>
+                  <div className="text-sm text-gray-400">{user.email}</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="account-count" className="text-xs text-white/80 font-mono uppercase">
+                    Number of Accounts
+                  </Label>
+                  <Input
+                    id="account-count"
+                    type="number"
+                    min="1"
+                    max="50"
+                    defaultValue="3"
+                    disabled={isSeeding}
+                    className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="account-provider" className="text-xs text-white/80 font-mono uppercase">
+                    Provider
+                  </Label>
+                  <Select value={accountSeedProvider} onValueChange={setAccountSeedProvider}>
+                    <SelectTrigger
+                      id="account-provider"
+                      disabled={isSeeding}
+                      className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                    >
+                      <SelectValue placeholder="Select provider" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-black border border-dashed border-white/20">
+                      <SelectItem value="random">Mix (Random)</SelectItem>
+                      <SelectItem value="github">GitHub</SelectItem>
+                      <SelectItem value="google">Google</SelectItem>
+                      <SelectItem value="discord">Discord</SelectItem>
+                      <SelectItem value="facebook">Facebook</SelectItem>
+                      <SelectItem value="twitter">Twitter</SelectItem>
+                      <SelectItem value="linkedin">LinkedIn</SelectItem>
+                      <SelectItem value="apple">Apple</SelectItem>
+                      <SelectItem value="microsoft">Microsoft</SelectItem>
+                      <SelectItem value="gitlab">GitLab</SelectItem>
+                      <SelectItem value="bitbucket">Bitbucket</SelectItem>
+                      <SelectItem value="spotify">Spotify</SelectItem>
+                      <SelectItem value="twitch">Twitch</SelectItem>
+                      <SelectItem value="reddit">Reddit</SelectItem>
+                      <SelectItem value="slack">Slack</SelectItem>
+                      <SelectItem value="notion">Notion</SelectItem>
+                      <SelectItem value="tiktok">TikTok</SelectItem>
+                      <SelectItem value="zoom">Zoom</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               {seedingLogs.length > 0 && (
-                <div className="mt-6">
+                <div className="mt-4">
                   <Terminal
                     title="Account Seeding Terminal"
                     lines={seedingLogs}
@@ -2000,14 +2135,38 @@ export default function UserDetails() {
                 </div>
               )}
             </div>
-            <hr className="border-white/10 -mx-10 border-dashed mt-10" />
-            <div className="flex justify-end mt-6 pt-6">
+
+            <div className="flex justify-end space-x-3 mt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowAccountSeedModal(false)}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                disabled={isSeeding}
+                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
               >
-                Close
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  const count = parseInt(
+                    (document.getElementById('account-count') as HTMLInputElement)?.value || '3',
+                    10
+                  );
+                  handleSeedAccounts(count, accountSeedProvider);
+                }}
+                disabled={isSeeding}
+                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
+              >
+                {isSeeding ? (
+                  <>
+                    <Loader className="w-3 h-3 mr-2 animate-spin" />
+                    Seeding...
+                  </>
+                ) : (
+                  <>
+                    <Link2 className="w-3 h-3 mr-2" />
+                    Seed Accounts
+                  </>
+                )}
               </Button>
             </div>
           </div>

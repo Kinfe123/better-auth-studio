@@ -824,7 +824,6 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             }
         }
         catch (_error) { }
-        // Get studio version - always fetch from npm registry for latest version
         let studioVersion = '1.0.0';
         try {
             const response = await fetch('https://registry.npmjs.org/better-auth-studio/latest', {
@@ -836,7 +835,6 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             }
         }
         catch (_npmError) {
-            // Fallback to local version if npm fetch fails
             studioVersion = getStudioVersion();
         }
         if (databaseType === 'unknown' && !isSelfHosted) {
