@@ -854,10 +854,16 @@ export default function Users() {
             <thead>
               <tr className="border-b border-dashed border-white/10">
                 <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">User</th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">Email Status</th>
+                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                  Email Status
+                </th>
                 <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">Role</th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">Created</th>
-                <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">Actions</th>
+                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                  Created
+                </th>
+                <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -901,8 +907,9 @@ export default function Users() {
                 currentUsers.map((user) => (
                   <tr
                     key={user.id}
-                    className={`border-b border-dashed hover:bg-white/5 cursor-pointer ${user.banned ? 'border-red-500/30 bg-red-500/5' : 'border-white/5'
-                      }`}
+                    className={`border-b border-dashed hover:bg-white/5 cursor-pointer ${
+                      user.banned ? 'border-red-500/30 bg-red-500/5' : 'border-white/5'
+                    }`}
                     onClick={() => navigate(`/users/${user.id}`)}
                   >
                     <td className="py-4 px-4">
@@ -914,8 +921,9 @@ export default function Users() {
                               `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`
                             }
                             alt={user.name}
-                            className={`w-10 h-10 rounded-none border border-dashed ${user.banned ? 'border-red-400/50 opacity-60' : 'border-white/20'
-                              }`}
+                            className={`w-10 h-10 rounded-none border border-dashed ${
+                              user.banned ? 'border-red-400/50 opacity-60' : 'border-white/20'
+                            }`}
                           />
                           {user.banned && (
                             <div className="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5">
@@ -1744,7 +1752,8 @@ export default function Users() {
                 </div>
               </div>
               <p className="text-gray-400">
-                Are you sure you want to unban this user? This will restore their access to the system.
+                Are you sure you want to unban this user? This will restore their access to the
+                system.
               </p>
             </div>
 
@@ -1821,7 +1830,10 @@ export default function Users() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="update-password" className="text-xs text-white/80 font-mono uppercase">
+                <Label
+                  htmlFor="update-password"
+                  className="text-xs text-white/80 font-mono uppercase"
+                >
                   New Password
                 </Label>
                 <Input

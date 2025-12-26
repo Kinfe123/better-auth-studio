@@ -1267,11 +1267,21 @@ export default function OrganizationDetails() {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-dashed border-white/10">
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">User</th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">Email</th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">Role</th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">Joined</th>
-                          <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">Actions</th>
+                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                            User
+                          </th>
+                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                            Email
+                          </th>
+                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                            Role
+                          </th>
+                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                            Joined
+                          </th>
+                          <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                            Actions
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1564,11 +1574,14 @@ export default function OrganizationDetails() {
                 />
               </div>
               <div>
-                <Label htmlFor="inviter-select" className="text-xs text-white/80 font-mono uppercase">
+                <Label
+                  htmlFor="inviter-select"
+                  className="text-xs text-white/80 font-mono uppercase"
+                >
                   Inviter
                 </Label>
                 <Select value={selectedInviterId} onValueChange={setSelectedInviterId}>
-                  <SelectTrigger 
+                  <SelectTrigger
                     className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                     disabled={inviting}
                   >
@@ -1723,7 +1736,10 @@ export default function OrganizationDetails() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="edit-team-name" className="text-xs text-white/80 font-mono uppercase">
+                <Label
+                  htmlFor="edit-team-name"
+                  className="text-xs text-white/80 font-mono uppercase"
+                >
                   Team Name
                 </Label>
                 <Input
@@ -1859,11 +1875,16 @@ export default function OrganizationDetails() {
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Users className="w-5 h-5 text-white" />
-                  <h4 className="text-white font-light font-mono uppercase text-xs">Add Members from Existing Users</h4>
+                  <h4 className="text-white font-light font-mono uppercase text-xs">
+                    Add Members from Existing Users
+                  </h4>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
-                    <Label htmlFor="member-count" className="text-xs text-white/80 font-mono uppercase">
+                    <Label
+                      htmlFor="member-count"
+                      className="text-xs text-white/80 font-mono uppercase"
+                    >
                       Number of members to add
                     </Label>
                     <Input
@@ -1967,11 +1988,16 @@ export default function OrganizationDetails() {
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Building2 className="w-5 h-5 text-white" />
-                  <h4 className="text-white font-light font-mono uppercase text-xs">Create Teams</h4>
+                  <h4 className="text-white font-light font-mono uppercase text-xs">
+                    Create Teams
+                  </h4>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
-                    <Label htmlFor="team-count" className="text-xs text-white/80 font-mono uppercase">
+                    <Label
+                      htmlFor="team-count"
+                      className="text-xs text-white/80 font-mono uppercase"
+                    >
                       Number of teams to create
                     </Label>
                     <Input

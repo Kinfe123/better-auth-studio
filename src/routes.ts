@@ -9,13 +9,13 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, join as pathJoin, sep as pathSep } from 'node:path';
-import { createRequire } from 'module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 // @ts-expect-error
 import { hex } from '@better-auth/utils/hex';
 import { scryptAsync } from '@noble/hashes/scrypt.js';
 import { type Request, type Response, Router } from 'express';
 import { createJiti } from 'jiti';
+import { createRequire } from 'module';
 import {
   createMockAccount,
   createMockSession,
@@ -100,10 +100,8 @@ function getStudioVersion(): string {
         const packageJson = JSON.parse(readFileSync(resolvedPath, 'utf-8'));
         return packageJson.version || '1.0.0';
       }
-    } catch (_resolveError) {
-    }
-  } catch (_error) {
-  }
+    } catch (_resolveError) {}
+  } catch (_error) {}
   return '1.0.0';
 }
 
