@@ -2402,6 +2402,8 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 else if (organizationPlugin.teams && typeof organizationPlugin.teams === 'object') {
                     teamsEnabled = organizationPlugin.teams.enabled === true;
                 }
+                const teamSchema = organizationPlugin.schema;
+                teamsEnabled = 'team' in teamSchema;
                 return res.json({
                     enabled: teamsEnabled,
                     configPath: isSelfHosted ? null : configPath || null,
@@ -2773,22 +2775,50 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         try {
             const { orgId } = req.params;
             const adapter = await getAuthAdapterWithConfig();
-            if (adapter && typeof adapter.findMany === 'function') {
+            if (!adapter) {
+                return res.status(500).json({
+                    success: false,
+                    error: 'Auth adapter not available',
+                    teams: []
+                });
+            }
+            if (typeof adapter.findMany !== 'function') {
+                return res.status(500).json({
+                    success: false,
+                    error: 'Adapter findMany method not available',
+                    teams: []
+                });
+            }
+            try {
+                let teams = [];
                 try {
-                    const teams = await adapter.findMany({
+                    teams = await adapter.findMany({
                         model: 'team',
                         where: [{ field: 'organizationId', value: orgId }],
                         limit: 10000,
                     });
-                    const transformedTeams = await Promise.all((teams || []).map(async (team) => {
-                        if (!adapter.findMany) {
-                            return null;
+                }
+                catch (whereError) {
+                    const allTeams = await adapter.findMany({
+                        model: 'team',
+                        limit: 10000,
+                    });
+                    teams = (allTeams || []).filter((team) => team.organizationId === orgId);
+                }
+                if (!teams || teams.length === 0) {
+                    return res.json({ success: true, teams: [] });
+                }
+                const transformedTeams = await Promise.all((teams || []).map(async (team) => {
+                    try {
+                        let memberCount = 0;
+                        if (adapter.findMany) {
+                            const teamMembers = await adapter.findMany({
+                                model: 'teamMember',
+                                where: [{ field: 'teamId', value: team.id }],
+                                limit: 10000,
+                            });
+                            memberCount = teamMembers ? teamMembers.length : 0;
                         }
-                        const teamMembers = await adapter.findMany({
-                            model: 'teamMember',
-                            where: [{ field: 'teamId', value: team.id }],
-                            limit: 10000,
-                        });
                         return {
                             id: team.id,
                             name: team.name,
@@ -2796,18 +2826,41 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                             metadata: team.metadata,
                             createdAt: team.createdAt,
                             updatedAt: team.updatedAt,
-                            memberCount: teamMembers ? teamMembers.length : 0,
+                            memberCount: memberCount,
                         };
-                    }));
-                    res.json({ success: true, teams: transformedTeams });
-                    return;
-                }
-                catch (_error) { }
+                    }
+                    catch (_error) {
+                        return {
+                            id: team.id,
+                            name: team.name,
+                            organizationId: team.organizationId,
+                            metadata: team.metadata,
+                            createdAt: team.createdAt,
+                            updatedAt: team.updatedAt,
+                            memberCount: 0,
+                        };
+                    }
+                }));
+                const validTeams = transformedTeams.filter((team) => team !== null);
+                return res.json({ success: true, teams: validTeams });
             }
-            res.json({ success: true, teams: [] });
+            catch (error) {
+                // Log the error for debugging but return empty array
+                console.error('[Studio] Error fetching teams:', error?.message || error);
+                return res.json({
+                    success: true,
+                    teams: [],
+                    error: error?.message || 'Failed to fetch teams'
+                });
+            }
         }
-        catch (_error) {
-            res.status(500).json({ error: 'Failed to fetch teams' });
+        catch (error) {
+            console.error('[Studio] Error in /api/organizations/:orgId/teams:', error?.message || error);
+            res.status(500).json({
+                success: false,
+                error: 'Failed to fetch teams',
+                message: error?.message || 'Unknown error'
+            });
         }
     });
     router.post('/api/organizations/:orgId/teams', async (req, res) => {
