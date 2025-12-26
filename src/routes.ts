@@ -9,6 +9,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, join as pathJoin, sep as pathSep } from 'node:path';
+import { createRequire } from 'module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 // @ts-expect-error
 import { hex } from '@better-auth/utils/hex';
@@ -85,7 +86,24 @@ function getStudioVersion(): string {
       const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
       return packageJson.version || '1.0.0';
     }
-  } catch (_error) {}
+
+    const nodeModulesPath = join(process.cwd(), 'node_modules/better-auth-studio/package.json');
+    if (existsSync(nodeModulesPath)) {
+      const packageJson = JSON.parse(readFileSync(nodeModulesPath, 'utf-8'));
+      return packageJson.version || '1.0.0';
+    }
+
+    try {
+      const require = createRequire(import.meta.url);
+      const resolvedPath = require.resolve('better-auth-studio/package.json');
+      if (existsSync(resolvedPath)) {
+        const packageJson = JSON.parse(readFileSync(resolvedPath, 'utf-8'));
+        return packageJson.version || '1.0.0';
+      }
+    } catch (_resolveError) {
+    }
+  } catch (_error) {
+  }
   return '1.0.0';
 }
 
@@ -957,6 +975,23 @@ export function createRoutes(
       }
     } catch (_error) {}
 
+    // Get studio version - try local first, then npm as fallback
+    let studioVersion = getStudioVersion();
+    if (studioVersion === '1.0.0') {
+      // Fallback: try to fetch from npm registry
+      try {
+        const response = await fetch('https://registry.npmjs.org/better-auth-studio/latest', {
+          signal: AbortSignal.timeout(2000), // 2 second timeout
+        });
+        if (response.ok) {
+          const data = (await response.json()) as { version?: string };
+          studioVersion = data.version || '1.0.0';
+        }
+      } catch (_npmError) {
+        // Ignore npm fetch errors, use default
+      }
+    }
+
     if (databaseType === 'unknown' && !isSelfHosted) {
       const authConfigPath = configPath || (await findAuthConfigPath());
       if (authConfigPath) {
@@ -1033,7 +1068,7 @@ export function createRoutes(
       disabledPaths: effectiveConfig.disabledPaths || [],
       telemetry: effectiveConfig.telemetry,
       studio: {
-        version: getStudioVersion(),
+        version: studioVersion,
         nodeVersion: process.version,
         platform: process.platform,
         uptime: process.uptime(),

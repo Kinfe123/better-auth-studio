@@ -1,6 +1,7 @@
 import { createHmac, randomBytes } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync, } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { createRequire } from 'module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 // @ts-expect-error
 import { hex } from '@better-auth/utils/hex';
@@ -57,8 +58,24 @@ function getStudioVersion() {
             const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
             return packageJson.version || '1.0.0';
         }
+        const nodeModulesPath = join(process.cwd(), 'node_modules/better-auth-studio/package.json');
+        if (existsSync(nodeModulesPath)) {
+            const packageJson = JSON.parse(readFileSync(nodeModulesPath, 'utf-8'));
+            return packageJson.version || '1.0.0';
+        }
+        try {
+            const require = createRequire(import.meta.url);
+            const resolvedPath = require.resolve('better-auth-studio/package.json');
+            if (existsSync(resolvedPath)) {
+                const packageJson = JSON.parse(readFileSync(resolvedPath, 'utf-8'));
+                return packageJson.version || '1.0.0';
+            }
+        }
+        catch (_resolveError) {
+        }
     }
-    catch (_error) { }
+    catch (_error) {
+    }
     return '1.0.0';
 }
 function _resolveModuleWithExtensions(id, parent) {
@@ -809,6 +826,23 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             }
         }
         catch (_error) { }
+        // Get studio version - try local first, then npm as fallback
+        let studioVersion = getStudioVersion();
+        if (studioVersion === '1.0.0') {
+            // Fallback: try to fetch from npm registry
+            try {
+                const response = await fetch('https://registry.npmjs.org/better-auth-studio/latest', {
+                    signal: AbortSignal.timeout(2000), // 2 second timeout
+                });
+                if (response.ok) {
+                    const data = (await response.json());
+                    studioVersion = data.version || '1.0.0';
+                }
+            }
+            catch (_npmError) {
+                // Ignore npm fetch errors, use default
+            }
+        }
         if (databaseType === 'unknown' && !isSelfHosted) {
             const authConfigPath = configPath || (await findAuthConfigPath());
             if (authConfigPath) {
@@ -885,7 +919,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             disabledPaths: effectiveConfig.disabledPaths || [],
             telemetry: effectiveConfig.telemetry,
             studio: {
-                version: getStudioVersion(),
+                version: studioVersion,
                 nodeVersion: process.version,
                 platform: process.platform,
                 uptime: process.uptime(),
@@ -2396,7 +2430,8 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 else if (organizationPlugin.config?.teams?.enabled === true) {
                     teamsEnabled = true;
                 }
-                else if (organizationPlugin.options?.teams && typeof organizationPlugin.options.teams === 'object') {
+                else if (organizationPlugin.options?.teams &&
+                    typeof organizationPlugin.options.teams === 'object') {
                     teamsEnabled = organizationPlugin.options.teams.enabled === true;
                 }
                 else if (organizationPlugin.teams && typeof organizationPlugin.teams === 'object') {
@@ -2779,14 +2814,14 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 return res.status(500).json({
                     success: false,
                     error: 'Auth adapter not available',
-                    teams: []
+                    teams: [],
                 });
             }
             if (typeof adapter.findMany !== 'function') {
                 return res.status(500).json({
                     success: false,
                     error: 'Adapter findMany method not available',
-                    teams: []
+                    teams: [],
                 });
             }
             try {
@@ -2848,7 +2883,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 return res.json({
                     success: true,
                     teams: [],
-                    error: error?.message || 'Failed to fetch teams'
+                    error: error?.message || 'Failed to fetch teams',
                 });
             }
         }
@@ -2856,7 +2891,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             res.status(500).json({
                 success: false,
                 error: 'Failed to fetch teams',
-                message: error?.message || 'Unknown error'
+                message: error?.message || 'Unknown error',
             });
         }
     });
@@ -2986,7 +3021,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                             existingMember = existing && existing.length > 0 ? existing[0] : null;
                         }
                         catch (_findError) {
-                            // if where clause isn't working. 
+                            // if where clause isn't working.
                             try {
                                 const allMembers = await adapter.findMany({
                                     model: 'teamMember',
@@ -2994,8 +3029,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                                 });
                                 existingMember = (allMembers || []).find((m) => m.teamId === teamId && m.userId === userId);
                             }
-                            catch (_fallbackError) {
-                            }
+                            catch (_fallbackError) { }
                         }
                     }
                     if (existingMember) {
@@ -3039,7 +3073,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             res.status(500).json({
                 success: false,
                 error: 'Failed to add team members',
-                message: error?.message || 'Unknown error'
+                message: error?.message || 'Unknown error',
             });
         }
     });
