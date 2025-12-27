@@ -1448,20 +1448,20 @@ export default function UserDetails() {
                                 </span>
                               </div>
                               <div className="flex items-center space-x-2">
-                              <span className="text-gray-500 font-mono text-xs uppercase">
-                                Created:{' '}
-                              </span>
-                              <span className="text-white font-mono text-xs">
-                                {new Date(session.createdAt).toLocaleDateString('en-US', {
-                                  year: 'numeric',
-                                  month: 'short',
-                                  day: 'numeric',
-                                })}
-                                ,{' '}
-                                {new Date(session.createdAt).toLocaleTimeString('en-US', {
-                                  hour: 'numeric',
-                                  minute: '2-digit',
-                                  hour12: true,
+                                <span className="text-gray-500 font-mono text-xs uppercase">
+                                  Created:{' '}
+                                </span>
+                                <span className="text-white font-mono text-xs">
+                                  {new Date(session.createdAt).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                  })}
+                                  ,{' '}
+                                  {new Date(session.createdAt).toLocaleTimeString('en-US', {
+                                    hour: 'numeric',
+                                    minute: '2-digit',
+                                    hour12: true,
                                   })}
                                 </span>
                               </div>
