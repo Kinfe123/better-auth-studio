@@ -24,6 +24,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useWebSocket } from '../hooks/useWebSocket';
+import { getProviderIcon } from '../lib/icons';
 
 interface AuthConfig {
   appName?: string;
@@ -234,20 +235,6 @@ export default function Settings() {
     fetchDatabaseInfo();
   }, [fetchConfig, fetchDatabaseInfo, fetchPlugins, fetchSystemInfo]);
 
-  const getProviderIcon = (provider: string) => {
-    switch (provider.toLowerCase()) {
-      case 'google':
-        return <Globe className="w-5 h-5 text-white" />;
-      case 'github':
-        return <Shield className="w-5 h-5 text-white" />;
-      case 'discord':
-        return <Globe className="w-5 h-5 text-white" />;
-      case 'twitter':
-        return <Globe className="w-5 h-5 text-white" />;
-      default:
-        return <Globe className="w-5 h-5 text-white" />;
-    }
-  };
 
   if (loading) {
     return (
@@ -553,7 +540,9 @@ export default function Settings() {
                   className="flex items-center justify-between p-3 px-5 border-b border-white/15 last:border-b-0"
                 >
                   <div className="flex items-center space-x-3">
-                    {getProviderIcon(provider.type)}
+                    <div className="w-10 h-10 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none">
+                      {getProviderIcon(provider.type)}
+                    </div>
                     <div>
                       <p className="text-sm font-light uppercase text-white capitalize">
                         {provider.type}
