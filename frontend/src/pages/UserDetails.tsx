@@ -1532,26 +1532,25 @@ export default function UserDetails() {
                             </div>
                           </div>
                           <div className="flex flex-col items-end space-y-2">
-                           <div className="flex items-center space-x-2">
-                                <span className="text-gray-500 font-mono text-xs uppercase">
-                                  Expires:{' '}
-                                </span>
-                                <span className="text-white font-mono text-xs">
-                                  {new Date(session.expiresAt).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: 'numeric',
-                                  })}
-                                  ,{' '}
-                                  {new Date(session.expiresAt).toLocaleTimeString('en-US', {
-                                    hour: 'numeric',
-                                    minute: '2-digit',
-                                    hour12: true,
-                                  })}
-                                </span>
-                              </div> 
                             <div className="flex items-center space-x-2">
-                              
+                              <span className="text-gray-500 font-mono text-xs uppercase">
+                                Expires:{' '}
+                              </span>
+                              <span className="text-white font-mono text-xs">
+                                {new Date(session.expiresAt).toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                                ,{' '}
+                                {new Date(session.expiresAt).toLocaleTimeString('en-US', {
+                                  hour: 'numeric',
+                                  minute: '2-digit',
+                                  hour12: true,
+                                })}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-2">
                               <div className="flex items-center space-x-2">
                                 <span className="text-gray-500 font-mono text-xs uppercase">
                                   Created:{' '}

@@ -3666,7 +3666,9 @@ export function createRoutes(
 
       const createdInvitation = await adapter.create({
         model: 'invitation',
-        data: invitationData,
+        data: {
+          ...invitationData,
+        },
       });
 
       if (!createdInvitation) {
