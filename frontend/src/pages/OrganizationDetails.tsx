@@ -117,6 +117,9 @@ export default function OrganizationDetails() {
     }>
   >([]);
   const [isSeeding, setIsSeeding] = useState(false);
+  const [cancellingInvitations, setCancellingInvitations] = useState<Record<string, boolean>>({});
+  const [resendingInvitations, setResendingInvitations] = useState<Record<string, boolean>>({});
+  const [removingMembers, setRemovingMembers] = useState<Record<string, boolean>>({});
   const [teamSeedingLogs, setTeamSeedingLogs] = useState<
     Array<{
       id: string;
@@ -565,6 +568,7 @@ export default function OrganizationDetails() {
   };
 
   const handleCancelInvitation = async (invitationId: string) => {
+    setCancellingInvitations((prev) => ({ ...prev, [invitationId]: true }));
     const toastId = toast.loading('Cancelling invitation...');
 
     try {
@@ -586,10 +590,16 @@ export default function OrganizationDetails() {
     } catch (error) {
       console.error('Error cancelling invitation:', error);
       toast.error('Error cancelling invitation', { id: toastId });
+    } finally {
+      setCancellingInvitations((prev) => {
+        const { [invitationId]: _, ...rest } = prev;
+        return rest;
+      });
     }
   };
 
   const handleResendInvitation = async (invitationId: string, email: string) => {
+    setResendingInvitations((prev) => ({ ...prev, [invitationId]: true }));
     const toastId = toast.loading('Resending invitation...');
 
     try {
@@ -611,10 +621,16 @@ export default function OrganizationDetails() {
     } catch (error) {
       console.error('Error resending invitation:', error);
       toast.error('Error resending invitation', { id: toastId });
+    } finally {
+      setResendingInvitations((prev) => {
+        const { [invitationId]: _, ...rest } = prev;
+        return rest;
+      });
     }
   };
 
   const handleRemoveMember = async (memberId: string, userName: string) => {
+    setRemovingMembers((prev) => ({ ...prev, [memberId]: true }));
     const toastId = toast.loading(`Removing ${userName}...`);
 
     try {
@@ -634,6 +650,11 @@ export default function OrganizationDetails() {
     } catch (error) {
       console.error('Error removing member:', error);
       toast.error('Error removing member', { id: toastId });
+    } finally {
+      setRemovingMembers((prev) => {
+        const { [memberId]: _, ...rest } = prev;
+        return rest;
+      });
     }
   };
 
@@ -846,10 +867,11 @@ export default function OrganizationDetails() {
           <nav className="flex space-x-8 px-6">
             <button
               onClick={() => setActiveTab('details')}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'details'
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+                activeTab === 'details'
                   ? 'border-white text-white'
                   : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-                }`}
+              }`}
             >
               <Building2 className="w-4 h-4 text-white/90" />
               <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
@@ -867,10 +889,11 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab('members')}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'members'
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+                activeTab === 'members'
                   ? 'border-white text-white'
                   : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-                }`}
+              }`}
             >
               <Users className="w-4 h-4 text-white/90" />
               <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
@@ -888,10 +911,11 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab('invitations')}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'invitations'
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+                activeTab === 'invitations'
                   ? 'border-white text-white'
                   : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-                }`}
+              }`}
             >
               <Mail className="w-4 h-4 text-white/90" />
               <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
@@ -909,10 +933,11 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab('teams')}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'teams'
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+                activeTab === 'teams'
                   ? 'border-white text-white'
                   : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-                }`}
+              }`}
             >
               <Users className="w-4 h-4 text-white/90" />
               <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
@@ -1013,7 +1038,7 @@ export default function OrganizationDetails() {
                         <AnimatedNumber
                           value={Math.ceil(
                             (new Date().getTime() - new Date(organization.createdAt).getTime()) /
-                            (1000 * 60 * 60 * 24)
+                              (1000 * 60 * 60 * 24)
                           )}
                           format={{ notation: 'standard', maximumFractionDigits: 0 }}
                         />
@@ -1333,6 +1358,7 @@ export default function OrganizationDetails() {
                                   size="sm"
                                   className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
                                   onClick={() => handleRemoveMember(member.id, member.user.name)}
+                                  disabled={removingMembers[member.id]}
                                 >
                                   <Trash2 className="w-4 h-4 mr-1" />
                                   Remove
@@ -1436,7 +1462,7 @@ export default function OrganizationDetails() {
                                   <div className="text-white font-light">{invitation.email}</div>
                                   <div className="text-[11px] font-mono uppercase text-gray-400">
                                     Expires on{' '}
-                                    <span className='text-whtie'>
+                                    <span className="text-whtie">
                                       {new Date(invitation.expiresAt).toLocaleDateString('en-US', {
                                         month: 'short',
                                         year: 'numeric',
@@ -1478,15 +1504,16 @@ export default function OrganizationDetails() {
                             </td>
                             <td className="py-4 px-4">
                               <span
-                                className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${invitation.status === 'accepted'
+                                className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${
+                                  invitation.status === 'accepted'
                                     ? 'bg-green-900/50 text-green-400 border border-green-500/30'
                                     : invitation.status === 'rejected' ||
-                                      invitation.status === 'cancelled'
+                                        invitation.status === 'cancelled'
                                       ? 'bg-red-900/50 text-red-400 border border-red-500/30'
                                       : invitation.status === 'expired'
                                         ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-500/30'
                                         : 'bg-blue-900/50 text-blue-400 border border-blue-500/30'
-                                  }`}
+                                }`}
                               >
                                 {invitation.status}
                               </span>
@@ -1510,6 +1537,7 @@ export default function OrganizationDetails() {
                                   onClick={() =>
                                     handleResendInvitation(invitation.id, invitation.email)
                                   }
+                                  disabled={resendingInvitations[invitation.id]}
                                 >
                                   <Send className="w-4 h-4 mr-1" />
                                   Resend
@@ -1519,6 +1547,7 @@ export default function OrganizationDetails() {
                                   size="sm"
                                   className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
                                   onClick={() => handleCancelInvitation(invitation.id)}
+                                  disabled={cancellingInvitations[invitation.id]}
                                 >
                                   <Trash2 className="w-4 h-4 mr-1" />
                                   Cancel

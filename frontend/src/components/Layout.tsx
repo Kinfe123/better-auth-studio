@@ -575,7 +575,11 @@ export default function Layout({ children }: LayoutProps) {
         <div className="px-6">
           <nav className="flex overflow-y-hidden overflow-x-auto">
             {navigation.map((item, index) => {
-              const isActive = location.pathname === item.href;
+              const isActive =
+                item.href === '/'
+                  ? location.pathname === '/'
+                  : location.pathname === item.href ||
+                    location.pathname.startsWith(item.href + '/');
               return (
                 <div key={item.name} className="flex items-center">
                   {index === 0 && (

@@ -78,6 +78,7 @@ export default function TeamDetails() {
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [teamFormData, setTeamFormData] = useState({ name: '' });
+  const [removingMembers, setRemovingMembers] = useState<Record<string, boolean>>({});
 
   const fetchTeam = useCallback(async () => {
     if (!teamId) return;
@@ -196,6 +197,7 @@ export default function TeamDetails() {
   };
 
   const handleRemoveTeamMember = async (memberId: string, userName: string) => {
+    setRemovingMembers((prev) => ({ ...prev, [memberId]: true }));
     const toastId = toast.loading(`Removing ${userName}...`);
 
     try {
@@ -214,6 +216,11 @@ export default function TeamDetails() {
       }
     } catch (_error) {
       toast.error('Error removing team member', { id: toastId });
+    } finally {
+      setRemovingMembers((prev) => {
+        const { [memberId]: _, ...rest } = prev;
+        return rest;
+      });
     }
   };
 
@@ -552,6 +559,7 @@ export default function TeamDetails() {
                                   onClick={() =>
                                     handleRemoveTeamMember(member.id, member.user.name)
                                   }
+                                  disabled={removingMembers[member.id]}
                                 >
                                   <Trash2 className="w-4 h-4 mr-1" />
                                   Remove

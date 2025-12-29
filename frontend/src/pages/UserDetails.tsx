@@ -179,6 +179,11 @@ export default function UserDetails() {
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [sessionLocations, setSessionLocations] = useState<Record<string, LocationData>>({});
   const sessionLocationsRef = useRef<Record<string, LocationData>>({});
+  const [acceptingInvitations, setAcceptingInvitations] = useState<Record<string, boolean>>({});
+  const [rejectingInvitations, setRejectingInvitations] = useState<Record<string, boolean>>({});
+  const [cancellingInvitations, setCancellingInvitations] = useState<Record<string, boolean>>({});
+  const [unlinkingAccounts, setUnlinkingAccounts] = useState<Record<string, boolean>>({});
+  const [deletingSessions, setDeletingSessions] = useState<Record<string, boolean>>({});
 
   const checkAdminPlugin = useCallback(async () => {
     try {
@@ -317,7 +322,7 @@ export default function UserDetails() {
         setSessions(sessions);
         resolveSessionLocations(sessions);
       }
-    } catch (_error) { }
+    } catch (_error) {}
   }, [userId, resolveSessionLocations]);
 
   const fetchUserAccounts = useCallback(async () => {
@@ -327,7 +332,7 @@ export default function UserDetails() {
         const data = await response.json();
         setAccounts(data.accounts || []);
       }
-    } catch (_error) { }
+    } catch (_error) {}
   }, [userId]);
 
   const fetchUserInvitations = useCallback(async () => {
@@ -337,7 +342,7 @@ export default function UserDetails() {
         const data = await response.json();
         setInvitations(data.invitations || []);
       }
-    } catch (_error) { }
+    } catch (_error) {}
   }, [userId]);
 
   const handleEditUser = async () => {
@@ -551,6 +556,7 @@ export default function UserDetails() {
   };
 
   const handleDeleteSession = async (sessionId: string) => {
+    setDeletingSessions((prev) => ({ ...prev, [sessionId]: true }));
     const toastId = toast.loading('Deleting session...');
     try {
       const response = await fetch(`/api/sessions/${sessionId}`, {
@@ -567,11 +573,17 @@ export default function UserDetails() {
       }
     } catch (_error) {
       toast.error('Error deleting session', { id: toastId });
+    } finally {
+      setDeletingSessions((prev) => {
+        const { [sessionId]: _, ...rest } = prev;
+        return rest;
+      });
     }
   };
 
   const handleUnlinkAccount = async (accountId: string) => {
     if (!userId) return;
+    setUnlinkingAccounts((prev) => ({ ...prev, [accountId]: true }));
     const toastId = toast.loading('Unlinking account...');
     try {
       const response = await fetch(`/api/users/${userId}/accounts/${accountId}`, {
@@ -589,11 +601,17 @@ export default function UserDetails() {
       }
     } catch (error) {
       toast.error('Failed to unlink account', { id: toastId });
+    } finally {
+      setUnlinkingAccounts((prev) => {
+        const { [accountId]: _, ...rest } = prev;
+        return rest;
+      });
     }
   };
 
   const handleAcceptInvitation = async (invitationId: string) => {
     if (!userId) return;
+    setAcceptingInvitations((prev) => ({ ...prev, [invitationId]: true }));
     const toastId = toast.loading('Accepting invitation...');
     try {
       const response = await fetch(`/api/invitations/${invitationId}/accept`, {
@@ -611,10 +629,16 @@ export default function UserDetails() {
       }
     } catch (error) {
       toast.error('Failed to accept invitation', { id: toastId });
+    } finally {
+      setAcceptingInvitations((prev) => {
+        const { [invitationId]: _, ...rest } = prev;
+        return rest;
+      });
     }
   };
 
   const handleRejectInvitation = async (invitationId: string) => {
+    setRejectingInvitations((prev) => ({ ...prev, [invitationId]: true }));
     const toastId = toast.loading('Rejecting invitation...');
     try {
       const response = await fetch(`/api/invitations/${invitationId}/reject`, {
@@ -630,10 +654,16 @@ export default function UserDetails() {
       }
     } catch (error) {
       toast.error('Failed to reject invitation', { id: toastId });
+    } finally {
+      setRejectingInvitations((prev) => {
+        const { [invitationId]: _, ...rest } = prev;
+        return rest;
+      });
     }
   };
 
   const handleCancelInvitation = async (invitationId: string) => {
+    setCancellingInvitations((prev) => ({ ...prev, [invitationId]: true }));
     const toastId = toast.loading('Cancelling invitation...');
     try {
       const response = await fetch(`/api/invitations/${invitationId}`, {
@@ -648,6 +678,11 @@ export default function UserDetails() {
       }
     } catch (error) {
       toast.error('Failed to cancel invitation', { id: toastId });
+    } finally {
+      setCancellingInvitations((prev) => {
+        const { [invitationId]: _, ...rest } = prev;
+        return rest;
+      });
     }
   };
 
@@ -1017,10 +1052,11 @@ export default function UserDetails() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === tab.id
+                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+                    activeTab === tab.id
                       ? 'border-white text-white'
                       : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-                    }`}
+                  }`}
                 >
                   <tab.icon className="w-4 h-4 text-white/90" />
                   <span className="inline-flex items-start">
@@ -1299,7 +1335,7 @@ export default function UserDetails() {
                                   variant="subscript"
                                   nonSliced={
                                     membership.team.organizationSlug ||
-                                      membership.team.organizationName
+                                    membership.team.organizationName
                                       ? true
                                       : false
                                   }
@@ -1445,6 +1481,7 @@ export default function UserDetails() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleUnlinkAccount(account.id)}
+                            disabled={unlinkingAccounts[account.id]}
                             className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none"
                           >
                             <UserMinus className="w-4 h-4 mr-1" />
@@ -1549,24 +1586,24 @@ export default function UserDetails() {
                                 })}
                               </span>
                             </div>
-                              <div className="flex items-center space-x-2">
-                                <span className="text-gray-500 font-mono text-xs uppercase">
-                                  Created:{' '}
-                                </span>
-                                <span className="text-white font-mono text-xs">
-                                  {new Date(session.createdAt).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: 'numeric',
-                                  })}
-                                  ,{' '}
-                                  {new Date(session.createdAt).toLocaleTimeString('en-US', {
-                                    hour: 'numeric',
-                                    minute: '2-digit',
-                                    hour12: true,
-                                  })}
-                                </span>
-                              </div>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-gray-500 font-mono text-xs uppercase">
+                                Created:{' '}
+                              </span>
+                              <span className="text-white font-mono text-xs">
+                                {new Date(session.createdAt).toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                                ,{' '}
+                                {new Date(session.createdAt).toLocaleTimeString('en-US', {
+                                  hour: 'numeric',
+                                  minute: '2-digit',
+                                  hour12: true,
+                                })}
+                              </span>
+                            </div>
                           </div>
                         </div>
                         <div className="flex items-center justify-end">
@@ -1574,6 +1611,7 @@ export default function UserDetails() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleDeleteSession(session.id)}
+                            disabled={deletingSessions[session.id]}
                             className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none"
                           >
                             <Ban className="w-4 h-4 mr-1" />
@@ -1692,15 +1730,16 @@ export default function UserDetails() {
                             </td>
                             <td className="py-4 px-4">
                               <span
-                                className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${invitation.status === 'accepted'
+                                className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${
+                                  invitation.status === 'accepted'
                                     ? 'bg-green-900/50 text-green-400 border border-green-500/30'
                                     : invitation.status === 'rejected' ||
-                                      invitation.status === 'cancelled'
+                                        invitation.status === 'cancelled'
                                       ? 'bg-red-900/50 text-red-400 border border-red-500/30'
                                       : invitation.status === 'expired'
                                         ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-500/30'
                                         : 'bg-blue-900/50 text-blue-400 border border-blue-500/30'
-                                  }`}
+                                }`}
                               >
                                 {invitation.status}
                               </span>
@@ -1722,6 +1761,7 @@ export default function UserDetails() {
                                       variant="outline"
                                       size="sm"
                                       onClick={() => handleAcceptInvitation(invitation.id)}
+                                      disabled={acceptingInvitations[invitation.id]}
                                       className="border border-dashed border-green-400/20 text-white hover:bg-green-400/10 hover:text-green-400  rounded-none font-mono uppercase text-xs tracking-tight"
                                     >
                                       <Check className="w-3.5 h-3.5 mr-1" />
@@ -1731,6 +1771,7 @@ export default function UserDetails() {
                                       variant="outline"
                                       size="sm"
                                       onClick={() => handleRejectInvitation(invitation.id)}
+                                      disabled={rejectingInvitations[invitation.id]}
                                       className="border border-dashed border-red-400/20 text-red-400 hover:text-red-400 hover:bg-red-400/10 rounded-none font-mono uppercase text-xs tracking-tight"
                                     >
                                       <XCircle className="w-3.5 h-3.5 mr-1" />
@@ -1740,6 +1781,7 @@ export default function UserDetails() {
                                       variant="outline"
                                       size="sm"
                                       onClick={() => handleCancelInvitation(invitation.id)}
+                                      disabled={cancellingInvitations[invitation.id]}
                                       className="border border-dashed border-yellow-400/20 text-white hover:text-yellow-400 hover:bg-yellow-400/10 rounded-none font-mono uppercase text-xs tracking-tight"
                                     >
                                       <X className="w-3.5 h-3.5 mr-1" />
@@ -1751,10 +1793,10 @@ export default function UserDetails() {
                                   invitation.status === 'rejected' ||
                                   invitation.status === 'cancelled' ||
                                   invitation.status === 'expired') && (
-                                    <span className="text-gray-500 text-xs font-mono uppercase">
-                                      No actions available
-                                    </span>
-                                  )}
+                                  <span className="text-gray-500 text-xs font-mono uppercase">
+                                    No actions available
+                                  </span>
+                                )}
                               </div>
                             </td>
                           </tr>
