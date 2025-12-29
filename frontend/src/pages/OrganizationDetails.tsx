@@ -8,8 +8,6 @@ import {
   ArrowLeft,
   Building2,
   Calendar,
-  CheckCircle,
-  Clock,
   Database,
   Loader,
   Mail,
@@ -20,7 +18,6 @@ import {
   X,
 } from '../components/PixelIcons';
 import { Terminal } from '../components/Terminal';
-import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -55,7 +52,7 @@ interface Invitation {
   id: string;
   email: string;
   role: string;
-  status: 'pending' | 'accepted' | 'expired';
+  status: 'pending' | 'accepted' | 'expired' | 'rejected' | 'cancelled';
   organizationId: string;
   teamId?: string;
   inviterId: string;
@@ -851,11 +848,10 @@ export default function OrganizationDetails() {
           <nav className="flex space-x-8 px-6">
             <button
               onClick={() => setActiveTab('details')}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'details'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-              }`}
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'details'
+                ? 'border-white text-white'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                }`}
             >
               <Building2 className="w-4 h-4 text-white/90" />
               <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
@@ -873,11 +869,10 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab('members')}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'members'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-              }`}
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'members'
+                ? 'border-white text-white'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                }`}
             >
               <Users className="w-4 h-4 text-white/90" />
               <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
@@ -895,11 +890,10 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab('invitations')}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'invitations'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-              }`}
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'invitations'
+                ? 'border-white text-white'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                }`}
             >
               <Mail className="w-4 h-4 text-white/90" />
               <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
@@ -917,11 +911,10 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab('teams')}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'teams'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-              }`}
+              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === 'teams'
+                ? 'border-white text-white'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                }`}
             >
               <Users className="w-4 h-4 text-white/90" />
               <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
@@ -1022,7 +1015,7 @@ export default function OrganizationDetails() {
                         <AnimatedNumber
                           value={Math.ceil(
                             (new Date().getTime() - new Date(organization.createdAt).getTime()) /
-                              (1000 * 60 * 60 * 24)
+                            (1000 * 60 * 60 * 24)
                           )}
                           format={{ notation: 'standard', maximumFractionDigits: 0 }}
                         />
@@ -1158,10 +1151,10 @@ export default function OrganizationDetails() {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-dashed border-white/10">
-                          <th className="text-left py-4 px-4 text-white font-light">Team</th>
-                          <th className="text-left py-4 px-4 text-white font-light">Members</th>
-                          <th className="text-left py-4 px-4 text-white font-light">Created</th>
-                          <th className="text-right py-4 px-4 text-white font-light">Actions</th>
+                          <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">Team</th>
+                          <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">Members</th>
+                          <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">Created</th>
+                          <th className="text-right py-4 px-4 font-mono uppercase text-xs text-white">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1320,12 +1313,9 @@ export default function OrganizationDetails() {
                             </td>
                             <td className="py-4 px-4 text-white">{member.user.email}</td>
                             <td className="py-4 px-4">
-                              <Badge
-                                variant="secondary"
-                                className="text-xs bg-blue-900/10 border border-dashed rounded-none border-blue-500/30 text-blue-400/70 capitalize"
-                              >
+                              <span className="text-white/80 text-sm font-mono uppercase">
                                 {member.role}
-                              </Badge>
+                              </span>
                             </td>
                             <td className="py-4 px-4 text-sm text-gray-400">
                               {new Date(member.joinedAt).toLocaleDateString()}
@@ -1446,25 +1436,25 @@ export default function OrganizationDetails() {
                                 </div>
                               </div>
                             </td>
-                            <td className="py-4 px-4 text-white capitalize">{invitation.role}</td>
                             <td className="py-4 px-4">
-                              <Badge
-                                variant="secondary"
-                                className={`text-xs font-normal font-mono uppercase rounded-none border-dashed flex items-center gap-1 w-fit ${
-                                  invitation.status === 'pending'
-                                    ? 'bg-yellow-900/10 border border-yellow-500/30 text-yellow-400/70'
-                                    : invitation.status === 'accepted'
-                                      ? 'bg-green-900/10 border border-green-500/30 text-green-400/70'
-                                      : 'bg-red-900/10 border border-red-500/30 text-red-400/70'
-                                }`}
+                              <span className="text-white/80 text-sm font-mono uppercase">
+                                {invitation.role}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4">
+
+                              <span
+                                className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${invitation.status === 'accepted'
+                                  ? 'bg-green-900/50 text-green-400 border border-green-500/30'
+                                  : invitation.status === 'rejected' || invitation.status === 'cancelled'
+                                    ? 'bg-red-900/50 text-red-400 border border-red-500/30'
+                                    : invitation.status === 'expired'
+                                      ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-500/30'
+                                      : 'bg-blue-900/50 text-blue-400 border border-blue-500/30'
+                                  }`}
                               >
-                                {invitation.status === 'pending' && <Clock className="w-2 h-2" />}
-                                {invitation.status === 'accepted' && (
-                                  <CheckCircle className="w-3 h-3" />
-                                )}
-                                {invitation.status === 'expired' && <X className="w-2 h-2" />}
                                 {invitation.status}
-                              </Badge>
+                              </span>
                             </td>
                             <td className="py-4 px-4 text-sm text-gray-400">
                               {new Date(invitation.expiresAt).toLocaleDateString()}

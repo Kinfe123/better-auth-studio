@@ -129,7 +129,7 @@
   }
 }
 
-/* Custom checkbox and radio styling - white when checked */
+o/* Custom checkbox and radio styling - white when checked */
 input[type="checkbox"]:checked {
   background-color: white !important;
   border-color: white !important;

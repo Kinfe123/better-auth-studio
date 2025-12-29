@@ -15,7 +15,6 @@ import {
   Users,
   X,
 } from '../components/PixelIcons';
-import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -537,12 +536,9 @@ export default function TeamDetails() {
                             </td>
                             <td className="py-4 px-4 text-white">{member.user.email}</td>
                             <td className="py-4 px-4">
-                              <Badge
-                                variant="secondary"
-                                className="text-xs bg-blue-900/10 border border-dashed border-blue-500/30 text-blue-400/70 rounded-none capitalize"
-                              >
+                              <span className="text-white/80 text-sm font-mono uppercase">
                                 {member.role}
-                              </Badge>
+                              </span>
                             </td>
                             <td className="py-4 px-4 text-sm text-gray-400">
                               {new Date(member.joinedAt).toLocaleDateString()}

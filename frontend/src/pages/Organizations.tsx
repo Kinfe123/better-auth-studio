@@ -770,16 +770,10 @@ export default function Organizations() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-dashed border-white/10">
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
-                  Organization
-                </th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">Slug</th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
-                  Created
-                </th>
-                <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
-                  Actions
-                </th>
+                <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">Organization</th>
+                <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">Slug</th>
+                <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">Created</th>
+                <th className="text-right py-4 px-4 font-mono uppercase text-xs text-white">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -1033,7 +1027,6 @@ export default function Organizations() {
                   value={createFormData.name}
                   onChange={(e) => handleCreateNameChange(e.target.value)}
                   placeholder="e.g. Acme Corp"
-                  disabled={isCreating}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
@@ -1046,10 +1039,9 @@ export default function Organizations() {
                   value={createFormData.slug}
                   onChange={(e) => handleCreateSlugChange(e.target.value)}
                   placeholder="e.g. acme-corp"
-                  disabled={isCreating}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
-                <p className="text-xs text-gray-500 mt-1 font-mono">
+                <p className="text-xs text-gray-500 mt-1">
                   Auto-generated from name. You can edit it manually.
                 </p>
               </div>
@@ -1061,15 +1053,14 @@ export default function Organizations() {
                   setShowCreateModal(false);
                   setCreateFormData({ name: '', slug: '' });
                 }}
-                disabled={isCreating}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
+                className="border font-mono uppercase text-xs border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleCreateOrganization}
                 disabled={isCreating}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
+                className="bg-white font-mono uppercase text-xs hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
                 {isCreating ? 'Creating...' : 'Create'}
               </Button>
@@ -1106,7 +1097,6 @@ export default function Organizations() {
                   setSelectedOrganization(null);
                   setEditFormData({ name: '', slug: '' });
                 }}
-                disabled={isUpdating}
                 className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
@@ -1133,7 +1123,7 @@ export default function Organizations() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="edit-name" className="text-xs text-white/80 font-mono uppercase">
+                <Label htmlFor="edit-name" className="text-sm text-gray-400 font-light">
                   Name
                 </Label>
                 <Input
@@ -1141,12 +1131,11 @@ export default function Organizations() {
                   value={editFormData.name}
                   onChange={(e) => handleEditNameChange(e.target.value)}
                   placeholder="e.g. Acme Corp"
-                  disabled={isUpdating}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
               <div>
-                <Label htmlFor="edit-slug" className="text-xs text-white/80 font-mono uppercase">
+                <Label htmlFor="edit-slug" className="text-sm text-gray-400 font-light">
                   Slug
                 </Label>
                 <Input
@@ -1154,10 +1143,9 @@ export default function Organizations() {
                   value={editFormData.slug}
                   onChange={(e) => handleEditSlugChange(e.target.value)}
                   placeholder="e.g. acme-corp"
-                  disabled={isUpdating}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
-                <p className="text-xs text-gray-500 mt-1 font-mono">
+                <p className="text-xs text-gray-500 mt-1">
                   Auto-generated from name. You can edit it manually.
                 </p>
               </div>
@@ -1170,14 +1158,14 @@ export default function Organizations() {
                   setEditFormData({ name: '', slug: '' });
                 }}
                 disabled={isUpdating}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
+                className="border font-mono uppercase text-xs border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleUpdateOrganization}
                 disabled={isUpdating}
-                className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
+                className="bg-white font-mono uppercase text-xs hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
                 {isUpdating ? 'Updating...' : 'Update'}
               </Button>
@@ -1191,14 +1179,11 @@ export default function Organizations() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-xl shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">
-                Delete Organization
-              </h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">Delete Organization</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowDeleteModal(false)}
-                disabled={isDeleting}
                 className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
                 <X className="w-4 h-4" />
@@ -1213,12 +1198,12 @@ export default function Organizations() {
 
             <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
-                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
-                  <Building2 className="w-7 h-7 text-white" />
+                <div className="w-16 h-16 rounded-none border border-dashed border-white/20 bg-white/10 flex items-center justify-center">
+                  <Building2 className="w-8 h-8 text-white" />
                 </div>
-                <div className="space-y-1">
-                  <div className="text-white font-medium leading-tight flex items-center gap-2">
-                    <span>{selectedOrganization.name}</span>
+                <div>
+                  <div className="text-white inline-flex font-light">
+                    {selectedOrganization.name}
                     <CopyableId id={selectedOrganization.id} variant="subscript" nonSliced={true} />
                   </div>
                   <div className="text-sm text-gray-400">{selectedOrganization.slug}</div>
@@ -1232,15 +1217,14 @@ export default function Organizations() {
               <Button
                 variant="outline"
                 onClick={() => setShowDeleteModal(false)}
-                disabled={isDeleting}
-                className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
+                className="border font-mono uppercase text-xs border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
                 Cancel
               </Button>
               <Button
                 disabled={isDeleting}
                 onClick={handleDeleteOrganization}
-                className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
+                className="bg-red-600 font-mono uppercase text-xs hover:bg-red-700 text-white border border-red-600 rounded-none"
               >
                 {isDeleting ? 'Deleting...' : 'Delete'}
               </Button>
@@ -1290,21 +1274,21 @@ export default function Organizations() {
               </div>
 
               <div className="space-y-2 text-sm">
-                {[{ label: 'Created', value: formatDateTime(selectedOrganization.createdAt) }].map(
-                  (item) => (
-                    <div
-                      key={item.label}
-                      className="flex items-center justify-between border border-dashed border-white/15 bg-black/90 px-3 py-2 rounded-none"
-                    >
-                      <div className="text-[11px] font-mono font-light uppercase tracking-wide text-gray-400">
-                        {item.label}
-                      </div>
-                      <div className="text-[10px] font-mono uppercase text-white text-right break-words max-w-[60%]">
-                        {item.value}
-                      </div>
+                {[
+                  { label: 'Created', value: formatDateTime(selectedOrganization.createdAt) },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="flex items-center justify-between border border-dashed border-white/15 bg-black/90 px-3 py-2 rounded-none"
+                  >
+                    <div className="text-[11px] font-mono font-light uppercase tracking-wide text-gray-400">
+                      {item.label}
                     </div>
-                  )
-                )}
+                    <div className="text-[10px] font-mono uppercase text-white text-right break-words max-w-[60%]">
+                      {item.value}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 

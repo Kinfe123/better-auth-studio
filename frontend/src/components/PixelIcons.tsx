@@ -354,7 +354,7 @@ export const Edit: React.FC<IconProps> = ({ className = '', size = 24 }) => (
 );
 
 export const Clock: React.FC<IconProps> = ({ className = '', size = 24 }) => (
-  <Clock1 size={size} className={cn(className, 'w-4 h-4')} />
+  <Clock1 size={size} className={cn(className)} />
 );
 
 export const Database: React.FC<IconProps> = ({ className = '', size = 24 }) => (

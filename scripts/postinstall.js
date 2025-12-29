@@ -13,7 +13,6 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Find the package root
 const packageRoot = path.resolve(__dirname, '..');
 const distDir = path.join(packageRoot, 'dist');
 const publicInDist = path.join(distDir, 'public');
@@ -22,7 +21,6 @@ const publicInRoot = path.join(packageRoot, 'public');
 console.log('[better-auth-studio] Running postinstall...');
 console.log('[better-auth-studio] Package root:', packageRoot);
 
-// List what's actually in the package
 try {
   const packageContents = fs.readdirSync(packageRoot);
   console.log('[better-auth-studio] Package contents:', packageContents.join(', '));

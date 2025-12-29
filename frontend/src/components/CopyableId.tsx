@@ -33,13 +33,13 @@ export function CopyableId({
   if (variant === 'detail') {
     return (
       <div className={`flex justify-between items-center ${className}`}>
-        <span className="text-gray-400">{label}:</span>
+        <span className="text-gray-400 font-mono uppercase text-xs">{label}:</span>
         <button
           onClick={copyToClipboard}
           className="flex items-center gap-2 text-white text-sm hover:text-white/80 transition-colors group"
           title="Click to copy"
         >
-          <span className="font-mono">{id}</span>
+          <span className="font-mono uppercase text-xs">{id}</span>
           {copied ? (
             <Check className="w-3 h-3 text-green-500" />
           ) : (

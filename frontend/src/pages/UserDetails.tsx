@@ -1,4 +1,4 @@
-import { ArrowUpRight, Clock1, Edit, Link2, MoreVertical, Shield, Trash2 } from 'lucide-react';
+import { ArrowUpRight, Clock1, Edit, Link2, MoreVertical, Shield, Trash2, XCircle } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -8,6 +8,7 @@ import {
   Ban,
   Building2,
   Calendar,
+  Check,
   Database,
   Globe,
   HashIcon,
@@ -112,6 +113,20 @@ interface UserAccount {
   updatedAt?: string | null;
 }
 
+interface Invitation {
+  id: string;
+  email: string;
+  role: string;
+  status: 'pending' | 'accepted' | 'rejected' | 'cancelled' | 'expired';
+  organizationId: string;
+  organizationName: string;
+  teamId?: string;
+  teamName?: string;
+  inviterId: string;
+  expiresAt: string;
+  createdAt: string;
+}
+
 export default function UserDetails() {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
@@ -120,9 +135,10 @@ export default function UserDetails() {
   const [teams, setTeams] = useState<TeamMembership[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [accounts, setAccounts] = useState<UserAccount[]>([]);
+  const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<
-    'details' | 'organizations' | 'teams' | 'sessions' | 'accounts'
+    'details' | 'organizations' | 'teams' | 'sessions' | 'accounts' | 'invitations'
   >('details');
   const [showEditModal, setShowEditModal] = useState(false);
   const [showBanModal, setShowBanModal] = useState(false);
@@ -292,7 +308,7 @@ export default function UserDetails() {
         setSessions(sessions);
         resolveSessionLocations(sessions);
       }
-    } catch (_error) {}
+    } catch (_error) { }
   }, [userId, resolveSessionLocations]);
 
   const fetchUserAccounts = useCallback(async () => {
@@ -302,7 +318,17 @@ export default function UserDetails() {
         const data = await response.json();
         setAccounts(data.accounts || []);
       }
-    } catch (_error) {}
+    } catch (_error) { }
+  }, [userId]);
+
+  const fetchUserInvitations = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/users/${userId}/invitations`);
+      if (response.ok) {
+        const data = await response.json();
+        setInvitations(data.invitations || []);
+      }
+    } catch (_error) { }
   }, [userId]);
 
   const handleEditUser = async () => {
@@ -556,14 +582,75 @@ export default function UserDetails() {
       toast.error('Failed to unlink account', { id: toastId });
     }
   };
+
+  const handleAcceptInvitation = async (invitationId: string) => {
+    if (!userId) return;
+    const toastId = toast.loading('Accepting invitation...');
+    try {
+      const response = await fetch(`/api/invitations/${invitationId}/accept`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        await fetchUserInvitations();
+        await fetchUserMemberships(); // Refresh memberships
+        toast.success('Invitation accepted successfully', { id: toastId });
+      } else {
+        toast.error(data.error || 'Failed to accept invitation', { id: toastId });
+      }
+    } catch (error) {
+      toast.error('Failed to accept invitation', { id: toastId });
+    }
+  };
+
+  const handleRejectInvitation = async (invitationId: string) => {
+    const toastId = toast.loading('Rejecting invitation...');
+    try {
+      const response = await fetch(`/api/invitations/${invitationId}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        await fetchUserInvitations();
+        toast.success('Invitation rejected successfully', { id: toastId });
+      } else {
+        toast.error(data.error || 'Failed to reject invitation', { id: toastId });
+      }
+    } catch (error) {
+      toast.error('Failed to reject invitation', { id: toastId });
+    }
+  };
+
+  const handleCancelInvitation = async (invitationId: string) => {
+    const toastId = toast.loading('Cancelling invitation...');
+    try {
+      const response = await fetch(`/api/invitations/${invitationId}`, {
+        method: 'DELETE',
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        await fetchUserInvitations();
+        toast.success('Invitation cancelled successfully', { id: toastId });
+      } else {
+        toast.error(data.error || 'Failed to cancel invitation', { id: toastId });
+      }
+    } catch (error) {
+      toast.error('Failed to cancel invitation', { id: toastId });
+    }
+  };
+
   useEffect(() => {
     if (userId) {
       fetchUserDetails();
       fetchUserMemberships();
       fetchUserAccounts();
+      fetchUserInvitations();
       checkAdminPlugin();
     }
-  }, [userId, checkAdminPlugin, fetchUserDetails, fetchUserMemberships, fetchUserAccounts]);
+  }, [userId, checkAdminPlugin, fetchUserDetails, fetchUserMemberships, fetchUserAccounts, fetchUserInvitations]);
 
   const handleSeedSessions = async (count: number = 3) => {
     if (!userId) return;
@@ -909,15 +996,15 @@ export default function UserDetails() {
                 { id: 'teams', name: 'Teams', icon: Users, count: teams.length },
                 { id: 'accounts', name: 'Accounts', icon: Link2, count: accounts.length },
                 { id: 'sessions', name: 'Sessions', icon: Clock1, count: sessions.length },
+                { id: 'invitations', name: 'Invitations', icon: Mail, count: invitations.length },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                    activeTab === tab.id
+                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === tab.id
                       ? 'border-white text-white'
                       : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-                  }`}
+                    }`}
                 >
                   <tab.icon className="w-4 h-4 text-white/90" />
                   <span className="inline-flex items-start">
@@ -1196,7 +1283,7 @@ export default function UserDetails() {
                                   variant="subscript"
                                   nonSliced={
                                     membership.team.organizationSlug ||
-                                    membership.team.organizationName
+                                      membership.team.organizationName
                                       ? true
                                       : false
                                   }
@@ -1481,6 +1568,157 @@ export default function UserDetails() {
                         </div>
                       </div>
                     ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'invitations' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                      Invitations
+                      <sup className="text-xs text-gray-500 ml-1 mt-0">
+                        <span className="mr-1">[</span>
+                        <span className="text-white font-mono text-xs">{invitations.length}</span>
+                        <span className="ml-1">]</span>
+                      </sup>
+                    </h3>
+                    <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
+                      Manage user invitations
+                    </p>
+                  </div>
+                </div>
+
+                {invitations.length === 0 ? (
+                  <div className="text-center py-12 border border-dashed border-white/10 rounded-none">
+                    <Mail className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-400 font-mono text-xs uppercase">No invitations found</p>
+                  </div>
+                ) : (
+                  <div className="border border-white/10 rounded-none overflow-hidden">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-white/10 bg-black/50">
+                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                            Organization
+                          </th>
+                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                            Team
+                          </th>
+                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                            Role
+                          </th>
+                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                            Status
+                          </th>
+                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                            Expires
+                          </th>
+                          <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {invitations.map((invitation) => (
+                          <tr
+                            key={invitation.id}
+                            className="border-b border-white/10 hover:bg-white/5 transition-colors"
+                          >
+                            <td className="py-4 px-4">
+                              <div className="flex items-center space-x-2">
+                                <Building2 className="w-4 h-4 text-gray-400" />
+                                <span className="text-white text-sm">{invitation.organizationName}</span>
+                              </div>
+                            </td>
+                            <td className="py-4 px-4">
+                              {invitation.teamName ? (
+                                <div className="flex items-center space-x-2">
+                                  <Users className="w-4 h-4 text-gray-400" />
+                                  <span className="text-white text-sm">{invitation.teamName}</span>
+                                </div>
+                              ) : (
+                                <span className="text-gray-500 text-sm">—</span>
+                              )}
+                            </td>
+                            <td className="py-4 px-4">
+                              <span className="text-white/80 text-sm font-mono uppercase">
+                                {invitation.role}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4">
+                              <span
+                                className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${
+                                  invitation.status === 'accepted'
+                                    ? 'bg-green-900/50 text-green-400 border border-green-500/30'
+                                    : invitation.status === 'rejected' || invitation.status === 'cancelled'
+                                      ? 'bg-red-900/50 text-red-400 border border-red-500/30'
+                                      : invitation.status === 'expired'
+                                        ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-500/30'
+                                        : 'bg-blue-900/50 text-blue-400 border border-blue-500/30'
+                                }`}
+                              >
+                                {invitation.status}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4">
+                              <span className="text-gray-400 text-sm font-mono">
+                                {new Date(invitation.expiresAt).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                })}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4">
+                              <div className="flex items-center justify-end space-x-2">
+                                {invitation.status === 'pending' && (
+                                  <>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleAcceptInvitation(invitation.id)}
+                                      className="border border-dashed border-green-400/20 text-white hover:bg-green-400/10 hover:text-green-400  rounded-none font-mono uppercase text-xs tracking-tight"
+                                    >
+                                      <Check className="w-3.5 h-3.5 mr-1" />
+                                      Accept
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleRejectInvitation(invitation.id)}
+                                      className="border border-dashed border-red-400/20 text-red-400 hover:text-red-400 hover:bg-red-400/10 rounded-none font-mono uppercase text-xs tracking-tight"
+                                    >
+                                      <XCircle className="w-3.5 h-3.5 mr-1" />
+                                      Reject
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleCancelInvitation(invitation.id)}
+                                      className="border border-dashed border-yellow-400/20 text-white hover:text-yellow-400 hover:bg-yellow-400/10 rounded-none font-mono uppercase text-xs tracking-tight"
+                                    >
+                                      <X className="w-3.5 h-3.5 mr-1" />
+                                      Cancel
+                                    </Button>
+                                  </>
+                                )}
+                                {(invitation.status === 'accepted' ||
+                                  invitation.status === 'rejected' ||
+                                  invitation.status === 'cancelled' ||
+                                  invitation.status === 'expired') && (
+                                  <span className="text-gray-500 text-xs font-mono uppercase">
+                                    No actions available
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </div>

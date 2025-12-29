@@ -320,6 +320,9 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             // For self-hosted studio, wrap the preloaded adapter to match expected interface
             return {
                 ...preloadedAdapter,
+                findUnique: preloadedAdapter.findUnique?.bind(preloadedAdapter),
+                findOne: preloadedAdapter.findOne?.bind(preloadedAdapter) || preloadedAdapter.findUnique?.bind(preloadedAdapter),
+                findFirst: preloadedAdapter.findFirst?.bind(preloadedAdapter),
                 findMany: preloadedAdapter.findMany?.bind(preloadedAdapter),
                 create: preloadedAdapter.create?.bind(preloadedAdapter),
                 update: preloadedAdapter.update?.bind(preloadedAdapter),
@@ -2729,6 +2732,248 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         }
         catch (_error) {
             res.status(500).json({ error: 'Failed to resend invitation' });
+        }
+    });
+    router.get('/api/users/:userId/invitations', async (req, res) => {
+        try {
+            const { userId } = req.params;
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter) {
+                return res.status(500).json({ error: 'Auth adapter not available' });
+            }
+            // if (typeof adapter.findUnique !== 'function') {
+            //   return res.status(500).json({ error: 'Adapter findUnique method not available' });
+            // }
+            let user;
+            try {
+                user = await adapter.findOne({
+                    model: 'user',
+                    where: [{ field: 'id', value: userId }],
+                });
+            }
+            catch (error) {
+                console.error('Error fetching user:', error);
+                return res.status(500).json({
+                    error: 'Failed to fetch user',
+                    details: error?.message || String(error)
+                });
+            }
+            if (!user || !user.email) {
+                return res.json({ success: true, invitations: [] });
+            }
+            if (typeof adapter.findMany !== 'function') {
+                return res.json({ success: true, invitations: [] });
+            }
+            let invitations;
+            try {
+                invitations = await adapter.findMany({
+                    model: 'invitation',
+                    where: [{ field: 'email', value: user.email }],
+                });
+            }
+            catch (error) {
+                console.error('Error fetching invitations:', error);
+                // Return empty array if findMany fails (invitation model might not exist)
+                return res.json({ success: true, invitations: [] });
+            }
+            if (!invitations || invitations.length === 0) {
+                return res.json({ success: true, invitations: [] });
+            }
+            console.log({ invitations });
+            const transformedInvitations = await Promise.all(invitations.map(async (invitation) => {
+                let organizationName = 'Unknown';
+                let teamName;
+                try {
+                    if (invitation.organizationId && (typeof adapter.findOne === 'function' || typeof adapter.findUnique === 'function')) {
+                        try {
+                            const findMethod = adapter.findOne || adapter.findUnique;
+                            const org = await findMethod({
+                                model: 'organization',
+                                where: [{ field: 'id', value: invitation.organizationId }],
+                            });
+                            organizationName = org?.name || 'Unknown';
+                        }
+                        catch (_orgError) {
+                            // Ignore org fetch errors
+                        }
+                    }
+                    if (invitation.teamId && (typeof adapter.findOne === 'function' || typeof adapter.findUnique === 'function')) {
+                        try {
+                            const findMethod = adapter.findOne || adapter.findUnique;
+                            const team = await findMethod({
+                                model: 'team',
+                                where: [{ field: 'id', value: invitation.teamId }],
+                            });
+                            teamName = team?.name;
+                        }
+                        catch (_teamError) {
+                            // Ignore team fetch errors
+                        }
+                    }
+                }
+                catch (_error) {
+                    // Ignore errors fetching org/team details
+                }
+                return {
+                    id: invitation.id,
+                    email: invitation.email,
+                    role: invitation.role || 'member',
+                    status: invitation.status || 'pending',
+                    organizationId: invitation.organizationId,
+                    organizationName,
+                    teamId: invitation.teamId,
+                    teamName,
+                    inviterId: invitation.inviterId,
+                    expiresAt: invitation.expiresAt,
+                    createdAt: invitation.createdAt,
+                };
+            }));
+            res.json({ success: true, invitations: transformedInvitations });
+        }
+        catch (error) {
+            console.error('Error in /api/users/:userId/invitations:', error);
+            res.status(500).json({
+                error: 'Failed to fetch invitations',
+                details: error?.message || String(error)
+            });
+        }
+    });
+    router.post('/api/invitations/:id/accept', async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { userId } = req.body;
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter) {
+                return res.status(500).json({ error: 'Auth adapter not available' });
+            }
+            if (!userId) {
+                return res.status(400).json({ error: 'User ID is required' });
+            }
+            const invitation = await adapter.findOne({
+                model: 'invitation',
+                where: [{ field: 'id', value: id }],
+            });
+            if (!invitation) {
+                return res.status(404).json({ error: 'Invitation not found' });
+            }
+            if (invitation.status !== 'pending') {
+                return res.status(400).json({ error: 'Invitation is not pending' });
+            }
+            await adapter.update({
+                model: 'invitation',
+                where: [{ field: 'id', value: id }],
+                update: {
+                    status: 'accepted',
+                    updatedAt: new Date().toISOString(),
+                },
+            });
+            if (invitation.organizationId) {
+                try {
+                    // Check if member already exists
+                    let existingMember = null;
+                    if (typeof adapter.findFirst === 'function') {
+                        existingMember = await adapter.findFirst({
+                            model: 'member',
+                            where: [
+                                { field: 'organizationId', value: invitation.organizationId },
+                                { field: 'userId', value: userId },
+                            ],
+                        });
+                    }
+                    else if (typeof adapter.findMany === 'function') {
+                        // Fallback to findMany if findFirst is not available
+                        const members = await adapter.findMany({
+                            model: 'member',
+                            where: [
+                                { field: 'organizationId', value: invitation.organizationId },
+                                { field: 'userId', value: userId },
+                            ],
+                        });
+                        existingMember = members && members.length > 0 ? members[0] : null;
+                    }
+                    if (!existingMember) {
+                        await adapter.create({
+                            model: 'member',
+                            data: {
+                                organizationId: invitation.organizationId,
+                                userId: userId,
+                                role: invitation.role || 'member',
+                                createdAt: new Date().toISOString(),
+                            },
+                        });
+                    }
+                }
+                catch (error) {
+                    console.error('Error creating member:', error);
+                    // Ignore errors creating membership
+                }
+            }
+            if (invitation.teamId) {
+                try {
+                    // Check if team member already exists
+                    let existingMember = null;
+                    if (typeof adapter.findFirst === 'function') {
+                        existingMember = await adapter.findFirst({
+                            model: 'teamMember',
+                            where: [
+                                { field: 'teamId', value: invitation.teamId },
+                                { field: 'userId', value: userId },
+                            ],
+                        });
+                    }
+                    else if (typeof adapter.findMany === 'function') {
+                        // Fallback to findMany if findFirst is not available
+                        const members = await adapter.findMany({
+                            model: 'teamMember',
+                            where: [
+                                { field: 'teamId', value: invitation.teamId },
+                                { field: 'userId', value: userId },
+                            ],
+                        });
+                        existingMember = members && members.length > 0 ? members[0] : null;
+                    }
+                    if (!existingMember) {
+                        await adapter.create({
+                            model: 'teamMember',
+                            data: {
+                                teamId: invitation.teamId,
+                                userId: userId,
+                                createdAt: new Date().toISOString(),
+                            },
+                        });
+                    }
+                }
+                catch (error) {
+                    console.error('Error creating team member:', error);
+                    // Ignore errors creating team membership
+                }
+            }
+            res.json({ success: true });
+        }
+        catch (error) {
+            console.error('Failed to accept invitation:', error);
+            res.status(500).json({ error: 'Failed to accept invitation' });
+        }
+    });
+    router.post('/api/invitations/:id/reject', async (req, res) => {
+        try {
+            const { id } = req.params;
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter) {
+                return res.status(500).json({ error: 'Auth adapter not available' });
+            }
+            await adapter.update({
+                model: 'invitation',
+                where: [{ field: 'id', value: id }],
+                update: {
+                    status: 'rejected',
+                    updatedAt: new Date().toISOString(),
+                },
+            });
+            res.json({ success: true });
+        }
+        catch (_error) {
+            res.status(500).json({ error: 'Failed to reject invitation' });
         }
     });
     router.delete('/api/invitations/:id', async (req, res) => {
