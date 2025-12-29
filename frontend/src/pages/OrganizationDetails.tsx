@@ -1411,6 +1411,9 @@ export default function OrganizationDetails() {
                             Email
                           </th>
                           <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                            Team
+                          </th>
+                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
                             Role
                           </th>
                           <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
@@ -1428,7 +1431,7 @@ export default function OrganizationDetails() {
                         {invitations.map((invitation) => (
                           <tr
                             key={invitation.id}
-                            className="border-b border-dashed border-white/5 hover:bg-white/5"
+                            className="border-b border-dashed border-white/5 hover:bg-white/5 group"
                           >
                             <td className="py-4 px-4">
                               <div className="flex items-center space-x-3">
@@ -1447,6 +1450,28 @@ export default function OrganizationDetails() {
                                   </div>
                                 </div>
                               </div>
+                            </td>
+                            <td className="py-4 px-4">
+                              {invitation.teamId ? (
+                                <div className="flex items-center space-x-2">
+                                  <Users className="w-4 h-4 text-gray-400" />
+                                  <span className="text-white text-sm">
+                                    {teams.find((t) => t.id === invitation.teamId)?.name || 'Team'}
+                                  </span>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      navigate(`/organizations/${orgId}/teams/${invitation.teamId}`);
+                                    }}
+                                    className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
+                                    title="View team details"
+                                  >
+                                    <ArrowUpRight className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="text-gray-500 text-sm">—</span>
+                              )}
                             </td>
                             <td className="py-4 px-4">
                               <span className="text-white/80 text-sm font-mono uppercase">

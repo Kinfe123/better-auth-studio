@@ -321,7 +321,8 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             return {
                 ...preloadedAdapter,
                 findUnique: preloadedAdapter.findUnique?.bind(preloadedAdapter),
-                findOne: preloadedAdapter.findOne?.bind(preloadedAdapter) || preloadedAdapter.findUnique?.bind(preloadedAdapter),
+                findOne: preloadedAdapter.findOne?.bind(preloadedAdapter) ||
+                    preloadedAdapter.findUnique?.bind(preloadedAdapter),
                 findFirst: preloadedAdapter.findFirst?.bind(preloadedAdapter),
                 findMany: preloadedAdapter.findMany?.bind(preloadedAdapter),
                 create: preloadedAdapter.create?.bind(preloadedAdapter),
@@ -2741,9 +2742,6 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             if (!adapter) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
             }
-            // if (typeof adapter.findUnique !== 'function') {
-            //   return res.status(500).json({ error: 'Adapter findUnique method not available' });
-            // }
             let user;
             try {
                 user = await adapter.findOne({
@@ -2755,7 +2753,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 console.error('Error fetching user:', error);
                 return res.status(500).json({
                     error: 'Failed to fetch user',
-                    details: error?.message || String(error)
+                    details: error?.message || String(error),
                 });
             }
             if (!user || !user.email) {
@@ -2773,18 +2771,17 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             }
             catch (error) {
                 console.error('Error fetching invitations:', error);
-                // Return empty array if findMany fails (invitation model might not exist)
                 return res.json({ success: true, invitations: [] });
             }
             if (!invitations || invitations.length === 0) {
                 return res.json({ success: true, invitations: [] });
             }
-            console.log({ invitations });
             const transformedInvitations = await Promise.all(invitations.map(async (invitation) => {
                 let organizationName = 'Unknown';
                 let teamName;
                 try {
-                    if (invitation.organizationId && (typeof adapter.findOne === 'function' || typeof adapter.findUnique === 'function')) {
+                    if (invitation.organizationId &&
+                        (typeof adapter.findOne === 'function' || typeof adapter.findUnique === 'function')) {
                         try {
                             const findMethod = adapter.findOne || adapter.findUnique;
                             const org = await findMethod({
@@ -2797,7 +2794,8 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                             // Ignore org fetch errors
                         }
                     }
-                    if (invitation.teamId && (typeof adapter.findOne === 'function' || typeof adapter.findUnique === 'function')) {
+                    if (invitation.teamId &&
+                        (typeof adapter.findOne === 'function' || typeof adapter.findUnique === 'function')) {
                         try {
                             const findMethod = adapter.findOne || adapter.findUnique;
                             const team = await findMethod({
@@ -2806,14 +2804,10 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                             });
                             teamName = team?.name;
                         }
-                        catch (_teamError) {
-                            // Ignore team fetch errors
-                        }
+                        catch (_teamError) { }
                     }
                 }
-                catch (_error) {
-                    // Ignore errors fetching org/team details
-                }
+                catch (_error) { }
                 return {
                     id: invitation.id,
                     email: invitation.email,
@@ -2834,7 +2828,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             console.error('Error in /api/users/:userId/invitations:', error);
             res.status(500).json({
                 error: 'Failed to fetch invitations',
-                details: error?.message || String(error)
+                details: error?.message || String(error),
             });
         }
     });
@@ -2881,7 +2875,6 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                         });
                     }
                     else if (typeof adapter.findMany === 'function') {
-                        // Fallback to findMany if findFirst is not available
                         const members = await adapter.findMany({
                             model: 'member',
                             where: [
@@ -2910,7 +2903,6 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             }
             if (invitation.teamId) {
                 try {
-                    // Check if team member already exists
                     let existingMember = null;
                     if (typeof adapter.findFirst === 'function') {
                         existingMember = await adapter.findFirst({
@@ -2922,7 +2914,6 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                         });
                     }
                     else if (typeof adapter.findMany === 'function') {
-                        // Fallback to findMany if findFirst is not available
                         const members = await adapter.findMany({
                             model: 'teamMember',
                             where: [

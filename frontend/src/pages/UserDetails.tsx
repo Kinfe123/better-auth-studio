@@ -1647,18 +1647,42 @@ export default function UserDetails() {
                             className="border-b border-white/10 hover:bg-white/5 transition-colors"
                           >
                             <td className="py-4 px-4">
-                              <div className="flex items-center space-x-2">
+                              <div className="flex items-center space-x-2 group">
                                 <Building2 className="w-4 h-4 text-gray-400" />
                                 <span className="text-white text-sm">
                                   {invitation.organizationName}
                                 </span>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(`/organizations/${invitation.organizationId}`);
+                                  }}
+                                  className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
+                                  title="View organization details"
+                                >
+                                  <ArrowUpRight className="w-4 h-4" />
+                                </button>
                               </div>
                             </td>
                             <td className="py-4 px-4">
                               {invitation.teamName ? (
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2 group">
                                   <Users className="w-4 h-4 text-gray-400" />
                                   <span className="text-white text-sm">{invitation.teamName}</span>
+                                  {invitation.teamId && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(
+                                          `/organizations/${invitation.organizationId}/teams/${invitation.teamId}`
+                                        );
+                                      }}
+                                      className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
+                                      title="View team details"
+                                    >
+                                      <ArrowUpRight className="w-4 h-4" />
+                                    </button>
+                                  )}
                                 </div>
                               ) : (
                                 <span className="text-gray-500 text-sm">—</span>
