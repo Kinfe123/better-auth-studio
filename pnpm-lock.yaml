@@ -62,9 +62,6 @@ importers:
       open:
         specifier: ^10.0.2
         version: 10.2.0
-      preset-react:
-        specifier: link:@types/@babel/preset-react
-        version: link:@types/@babel/preset-react
       ws:
         specifier: ^8.14.2
         version: 8.18.3
@@ -122,7 +119,7 @@ importers:
         version: 1.5.0(@sveltejs/kit@2.49.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(next@15.5.9(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(svelte@5.45.4)
       better-auth:
         specifier: ^1.4.5
-        version: 1.4.7(@sveltejs/kit@2.49.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(better-sqlite3@12.4.1)(drizzle-orm@0.29.5(@types/better-sqlite3@7.6.13)(@types/react@19.2.6)(better-sqlite3@12.4.1)(kysely@0.28.8)(postgres@3.4.7)(react@19.2.0))(next@15.5.9(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(svelte@5.45.4)(vitest@1.6.1(@types/node@20.19.25)(lightningcss@1.30.2))
+        version: 1.4.7(@sveltejs/kit@2.49.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(better-sqlite3@12.4.1)(next@15.5.9(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(svelte@5.45.4)(vitest@1.6.1(@types/node@20.19.25)(lightningcss@1.30.2))
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -2072,9 +2069,6 @@ packages:
   '@types/babel__traverse@7.28.0':
     resolution: {integrity: sha512-8PvcXf70gTDZBgt9ptxJ8elBeBjcLOAcOtoO/mPJjtji1+CdGbHgm77om1GrsPxsiE+uXIpNSK64UYaIwQXd4Q==}
 
-  '@types/better-sqlite3@7.6.13':
-    resolution: {integrity: sha512-NMv9ASNARoKksWtsq/SHakpYAYnhBrQgGD8zkLYk/jaK8jUGn08CfEdTRgYhMypUQAfzSP8W6gNLe0q19/t4VA==}
-
   '@types/body-parser@1.19.6':
     resolution: {integrity: sha512-HLFeCYgz89uk22N5Qg3dvGvsv46B8GLvKKo1zKG4NybA8U2DiEO3w9lqGg29t/tfLRJpJ6iQxnVw4OnB7MoM9g==}
 
@@ -3168,77 +3162,6 @@ packages:
 
   draco3d@1.5.7:
     resolution: {integrity: sha512-m6WCKt/erDXcw+70IJXnG7M3awwQPAsZvJGX5zY7beBqpELw6RDGkYVU0W43AFxye4pDZ5i2Lbyc/NNGqwjUVQ==}
-
-  drizzle-orm@0.29.5:
-    resolution: {integrity: sha512-jS3+uyzTz4P0Y2CICx8FmRQ1eplURPaIMWDn/yq6k4ShRFj9V7vlJk67lSf2kyYPzQ60GkkNGXcJcwrxZ6QCRw==}
-    peerDependencies:
-      '@aws-sdk/client-rds-data': '>=3'
-      '@cloudflare/workers-types': '>=3'
-      '@libsql/client': '*'
-      '@neondatabase/serverless': '>=0.1'
-      '@opentelemetry/api': ^1.4.1
-      '@planetscale/database': '>=1'
-      '@types/better-sqlite3': '*'
-      '@types/pg': '*'
-      '@types/react': '>=18'
-      '@types/sql.js': '*'
-      '@vercel/postgres': '*'
-      better-sqlite3: '>=7'
-      bun-types: '*'
-      expo-sqlite: '>=13.2.0'
-      knex: '*'
-      kysely: '*'
-      mysql2: '>=2'
-      pg: '>=8'
-      postgres: '>=3'
-      react: '>=18'
-      sql.js: '>=1'
-      sqlite3: '>=5'
-    peerDependenciesMeta:
-      '@aws-sdk/client-rds-data':
-        optional: true
-      '@cloudflare/workers-types':
-        optional: true
-      '@libsql/client':
-        optional: true
-      '@neondatabase/serverless':
-        optional: true
-      '@opentelemetry/api':
-        optional: true
-      '@planetscale/database':
-        optional: true
-      '@types/better-sqlite3':
-        optional: true
-      '@types/pg':
-        optional: true
-      '@types/react':
-        optional: true
-      '@types/sql.js':
-        optional: true
-      '@vercel/postgres':
-        optional: true
-      better-sqlite3:
-        optional: true
-      bun-types:
-        optional: true
-      expo-sqlite:
-        optional: true
-      knex:
-        optional: true
-      kysely:
-        optional: true
-      mysql2:
-        optional: true
-      pg:
-        optional: true
-      postgres:
-        optional: true
-      react:
-        optional: true
-      sql.js:
-        optional: true
-      sqlite3:
-        optional: true
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -4590,10 +4513,6 @@ packages:
   postcss@8.5.6:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
     engines: {node: ^10 || ^12 || >=14}
-
-  postgres@3.4.7:
-    resolution: {integrity: sha512-Jtc2612XINuBjIl/QTWsV5UvE8UHuNblcO3vVADSrKsrc6RqGX6lOW1cEo3CM2v0XG4Nat8nI+YM7/f26VxXLw==}
-    engines: {node: '>=12'}
 
   postprocessing@6.38.0:
     resolution: {integrity: sha512-tisx8XN/PWTL3uXz2mt8bjlMS1wiOUSCK3ixi4zjwUCFmP8XW8hNhXwrxwd2zf2VmCyCQ3GUaLm7GLnkkBbDsQ==}
@@ -7131,11 +7050,6 @@ snapshots:
     dependencies:
       '@babel/types': 7.28.5
 
-  '@types/better-sqlite3@7.6.13':
-    dependencies:
-      '@types/node': 20.19.25
-    optional: true
-
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
@@ -7772,7 +7686,7 @@ snapshots:
       react-dom: 19.1.0(react@19.2.0)
       svelte: 5.45.4
 
-  better-auth@1.4.7(@sveltejs/kit@2.49.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(better-sqlite3@12.4.1)(drizzle-orm@0.29.5(@types/better-sqlite3@7.6.13)(@types/react@19.2.6)(better-sqlite3@12.4.1)(kysely@0.28.8)(postgres@3.4.7)(react@19.2.0))(next@15.5.9(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(svelte@5.45.4)(vitest@1.6.1(@types/node@20.19.25)(lightningcss@1.30.2)):
+  better-auth@1.4.7(@sveltejs/kit@2.49.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(better-sqlite3@12.4.1)(next@15.5.9(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(svelte@5.45.4)(vitest@1.6.1(@types/node@20.19.25)(lightningcss@1.30.2)):
     dependencies:
       '@better-auth/core': 1.4.7(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.5(zod@4.1.12))(jose@6.1.2)(kysely@0.28.8)(nanostores@1.1.0)
       '@better-auth/telemetry': 1.4.7(@better-auth/core@1.4.7(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.5(zod@4.1.12))(jose@6.1.2)(kysely@0.28.8)(nanostores@1.1.0))
@@ -7789,7 +7703,6 @@ snapshots:
     optionalDependencies:
       '@sveltejs/kit': 2.49.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2))
       better-sqlite3: 12.4.1
-      drizzle-orm: 0.29.5(@types/better-sqlite3@7.6.13)(@types/react@19.2.6)(better-sqlite3@12.4.1)(kysely@0.28.8)(postgres@3.4.7)(react@19.2.0)
       next: 15.5.9(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
@@ -8285,16 +8198,6 @@ snapshots:
   dotenv@17.2.3: {}
 
   draco3d@1.5.7: {}
-
-  drizzle-orm@0.29.5(@types/better-sqlite3@7.6.13)(@types/react@19.2.6)(better-sqlite3@12.4.1)(kysely@0.28.8)(postgres@3.4.7)(react@19.2.0):
-    optionalDependencies:
-      '@types/better-sqlite3': 7.6.13
-      '@types/react': 19.2.6
-      better-sqlite3: 12.4.1
-      kysely: 0.28.8
-      postgres: 3.4.7
-      react: 19.2.0
-    optional: true
 
   dunder-proto@1.0.1:
     dependencies:
@@ -9861,9 +9764,6 @@ snapshots:
       nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
-
-  postgres@3.4.7:
-    optional: true
 
   postprocessing@6.38.0(three@0.180.0):
     dependencies:
