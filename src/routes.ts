@@ -1308,7 +1308,6 @@ export function createRoutes(
         return res.status(500).json({ error: 'Failed to hash password' });
       }
 
-      // Update using the account's unique id to fix Prisma error
       const updatedAccount = await adapter.update({
         model: 'account',
         where: [{ field: 'id', value: credentialAccount.id }],
