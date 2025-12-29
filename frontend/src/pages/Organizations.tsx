@@ -770,10 +770,16 @@ export default function Organizations() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-dashed border-white/10">
-                <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">Organization</th>
+                <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">
+                  Organization
+                </th>
                 <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">Slug</th>
-                <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">Created</th>
-                <th className="text-right py-4 px-4 font-mono uppercase text-xs text-white">Actions</th>
+                <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">
+                  Created
+                </th>
+                <th className="text-right py-4 px-4 font-mono uppercase text-xs text-white">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -1179,7 +1185,9 @@ export default function Organizations() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-xl shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Delete Organization</h3>
+              <h3 className="text-lg text-white font-light uppercase font-mono">
+                Delete Organization
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1274,21 +1282,21 @@ export default function Organizations() {
               </div>
 
               <div className="space-y-2 text-sm">
-                {[
-                  { label: 'Created', value: formatDateTime(selectedOrganization.createdAt) },
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    className="flex items-center justify-between border border-dashed border-white/15 bg-black/90 px-3 py-2 rounded-none"
-                  >
-                    <div className="text-[11px] font-mono font-light uppercase tracking-wide text-gray-400">
-                      {item.label}
+                {[{ label: 'Created', value: formatDateTime(selectedOrganization.createdAt) }].map(
+                  (item) => (
+                    <div
+                      key={item.label}
+                      className="flex items-center justify-between border border-dashed border-white/15 bg-black/90 px-3 py-2 rounded-none"
+                    >
+                      <div className="text-[11px] font-mono font-light uppercase tracking-wide text-gray-400">
+                        {item.label}
+                      </div>
+                      <div className="text-[10px] font-mono uppercase text-white text-right break-words max-w-[60%]">
+                        {item.value}
+                      </div>
                     </div>
-                    <div className="text-[10px] font-mono uppercase text-white text-right break-words max-w-[60%]">
-                      {item.value}
-                    </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             </div>
 

@@ -400,7 +400,9 @@ export function createRoutes(
       return {
         ...preloadedAdapter,
         findUnique: preloadedAdapter.findUnique?.bind(preloadedAdapter),
-        findOne: preloadedAdapter.findOne?.bind(preloadedAdapter) || preloadedAdapter.findUnique?.bind(preloadedAdapter),
+        findOne:
+          preloadedAdapter.findOne?.bind(preloadedAdapter) ||
+          preloadedAdapter.findUnique?.bind(preloadedAdapter),
         findFirst: preloadedAdapter.findFirst?.bind(preloadedAdapter),
         findMany: preloadedAdapter.findMany?.bind(preloadedAdapter),
         create: preloadedAdapter.create?.bind(preloadedAdapter),
@@ -3280,9 +3282,9 @@ export function createRoutes(
         });
       } catch (error: any) {
         console.error('Error fetching user:', error);
-        return res.status(500).json({ 
-          error: 'Failed to fetch user', 
-          details: error?.message || String(error) 
+        return res.status(500).json({
+          error: 'Failed to fetch user',
+          details: error?.message || String(error),
         });
       }
 
@@ -3308,14 +3310,17 @@ export function createRoutes(
       if (!invitations || invitations.length === 0) {
         return res.json({ success: true, invitations: [] });
       }
-      console.log({invitations})
+      console.log({ invitations });
       const transformedInvitations = await Promise.all(
         invitations.map(async (invitation: any) => {
           let organizationName = 'Unknown';
           let teamName: string | undefined;
 
           try {
-            if (invitation.organizationId && (typeof adapter.findOne === 'function' || typeof adapter.findUnique === 'function')) {
+            if (
+              invitation.organizationId &&
+              (typeof adapter.findOne === 'function' || typeof adapter.findUnique === 'function')
+            ) {
               try {
                 const findMethod = adapter.findOne || adapter.findUnique;
                 const org = await findMethod({
@@ -3328,7 +3333,10 @@ export function createRoutes(
               }
             }
 
-            if (invitation.teamId && (typeof adapter.findOne === 'function' || typeof adapter.findUnique === 'function')) {
+            if (
+              invitation.teamId &&
+              (typeof adapter.findOne === 'function' || typeof adapter.findUnique === 'function')
+            ) {
               try {
                 const findMethod = adapter.findOne || adapter.findUnique;
                 const team = await findMethod({
@@ -3336,11 +3344,9 @@ export function createRoutes(
                   where: [{ field: 'id', value: invitation.teamId }],
                 });
                 teamName = team?.name;
-              } catch (_teamError) {
-              }
+              } catch (_teamError) {}
             }
-          } catch (_error) {
-          }
+          } catch (_error) {}
 
           return {
             id: invitation.id,
@@ -3361,9 +3367,9 @@ export function createRoutes(
       res.json({ success: true, invitations: transformedInvitations });
     } catch (error: any) {
       console.error('Error in /api/users/:userId/invitations:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Failed to fetch invitations',
-        details: error?.message || String(error)
+        details: error?.message || String(error),
       });
     }
   });

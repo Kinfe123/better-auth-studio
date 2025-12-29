@@ -1,4 +1,13 @@
-import { ArrowUpRight, Clock1, Edit, Link2, MoreVertical, Shield, Trash2, XCircle } from 'lucide-react';
+import {
+  ArrowUpRight,
+  Clock1,
+  Edit,
+  Link2,
+  MoreVertical,
+  Shield,
+  Trash2,
+  XCircle,
+} from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -308,7 +317,7 @@ export default function UserDetails() {
         setSessions(sessions);
         resolveSessionLocations(sessions);
       }
-    } catch (_error) { }
+    } catch (_error) {}
   }, [userId, resolveSessionLocations]);
 
   const fetchUserAccounts = useCallback(async () => {
@@ -318,7 +327,7 @@ export default function UserDetails() {
         const data = await response.json();
         setAccounts(data.accounts || []);
       }
-    } catch (_error) { }
+    } catch (_error) {}
   }, [userId]);
 
   const fetchUserInvitations = useCallback(async () => {
@@ -328,7 +337,7 @@ export default function UserDetails() {
         const data = await response.json();
         setInvitations(data.invitations || []);
       }
-    } catch (_error) { }
+    } catch (_error) {}
   }, [userId]);
 
   const handleEditUser = async () => {
@@ -650,7 +659,14 @@ export default function UserDetails() {
       fetchUserInvitations();
       checkAdminPlugin();
     }
-  }, [userId, checkAdminPlugin, fetchUserDetails, fetchUserMemberships, fetchUserAccounts, fetchUserInvitations]);
+  }, [
+    userId,
+    checkAdminPlugin,
+    fetchUserDetails,
+    fetchUserMemberships,
+    fetchUserAccounts,
+    fetchUserInvitations,
+  ]);
 
   const handleSeedSessions = async (count: number = 3) => {
     if (!userId) return;
@@ -1001,10 +1017,11 @@ export default function UserDetails() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${activeTab === tab.id
+                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+                    activeTab === tab.id
                       ? 'border-white text-white'
                       : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
-                    }`}
+                  }`}
                 >
                   <tab.icon className="w-4 h-4 text-white/90" />
                   <span className="inline-flex items-start">
@@ -1283,7 +1300,7 @@ export default function UserDetails() {
                                   variant="subscript"
                                   nonSliced={
                                     membership.team.organizationSlug ||
-                                      membership.team.organizationName
+                                    membership.team.organizationName
                                       ? true
                                       : false
                                   }
@@ -1594,7 +1611,9 @@ export default function UserDetails() {
                 {invitations.length === 0 ? (
                   <div className="text-center py-12 border border-dashed border-white/10 rounded-none">
                     <Mail className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-400 font-mono text-xs uppercase">No invitations found</p>
+                    <p className="text-gray-400 font-mono text-xs uppercase">
+                      No invitations found
+                    </p>
                   </div>
                 ) : (
                   <div className="border border-white/10 rounded-none overflow-hidden">
@@ -1630,7 +1649,9 @@ export default function UserDetails() {
                             <td className="py-4 px-4">
                               <div className="flex items-center space-x-2">
                                 <Building2 className="w-4 h-4 text-gray-400" />
-                                <span className="text-white text-sm">{invitation.organizationName}</span>
+                                <span className="text-white text-sm">
+                                  {invitation.organizationName}
+                                </span>
                               </div>
                             </td>
                             <td className="py-4 px-4">
@@ -1653,7 +1674,8 @@ export default function UserDetails() {
                                 className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${
                                   invitation.status === 'accepted'
                                     ? 'bg-green-900/50 text-green-400 border border-green-500/30'
-                                    : invitation.status === 'rejected' || invitation.status === 'cancelled'
+                                    : invitation.status === 'rejected' ||
+                                        invitation.status === 'cancelled'
                                       ? 'bg-red-900/50 text-red-400 border border-red-500/30'
                                       : invitation.status === 'expired'
                                         ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-500/30'
