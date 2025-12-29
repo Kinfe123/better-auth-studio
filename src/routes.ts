@@ -3284,7 +3284,7 @@ export function createRoutes(
     } catch (error) {
       console.error('Error resending invitation:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to resend invitation';
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Failed to resend invitation',
         details: isSelfHosted ? errorMessage : undefined,
       });
@@ -3617,8 +3617,7 @@ export function createRoutes(
               return res.status(404).json({ error: 'Organization not found' });
             }
           }
-        } catch (_fallbackError) {
-        }
+        } catch (_fallbackError) {}
       }
 
       try {
@@ -3646,10 +3645,11 @@ export function createRoutes(
         }
 
         if (existingInvitation) {
-          return res.status(400).json({ error: 'A pending invitation already exists for this email' });
+          return res
+            .status(400)
+            .json({ error: 'A pending invitation already exists for this email' });
         }
-      } catch (_duplicateCheckError) {
-      }
+      } catch (_duplicateCheckError) {}
 
       const invitationData: any = {
         email: email.toLowerCase(),
@@ -3657,7 +3657,6 @@ export function createRoutes(
         organizationId: orgId,
         status: 'pending',
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-        createdAt: new Date(),
         inviterId: inviterId,
       };
 
@@ -3678,7 +3677,7 @@ export function createRoutes(
     } catch (error) {
       console.error('Error creating invitation:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to create invitation';
-      res.status(500).json({ 
+      res.status(500).json({
         error: 'Failed to create invitation',
         details: isSelfHosted ? errorMessage : undefined,
       });

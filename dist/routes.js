@@ -3058,8 +3058,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                         }
                     }
                 }
-                catch (_fallbackError) {
-                }
+                catch (_fallbackError) { }
             }
             try {
                 let existingInvitation = null;
@@ -3086,11 +3085,12 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                     existingInvitation = invitations && invitations.length > 0 ? invitations[0] : null;
                 }
                 if (existingInvitation) {
-                    return res.status(400).json({ error: 'A pending invitation already exists for this email' });
+                    return res
+                        .status(400)
+                        .json({ error: 'A pending invitation already exists for this email' });
                 }
             }
-            catch (_duplicateCheckError) {
-            }
+            catch (_duplicateCheckError) { }
             const invitationData = {
                 email: email.toLowerCase(),
                 role,
