@@ -36,11 +36,11 @@ export async function handleStudioRequest(
 
     let path = request.url;
     const [pathname, queryString] = path.split('?');
-    
+
     if (isSelfHosted && basePath) {
       const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
       let normalizedPath = pathname;
-      
+
       if (normalizedPath === normalizedBasePath || normalizedPath === normalizedBasePath + '/') {
         normalizedPath = '/';
       } else if (normalizedPath.startsWith(normalizedBasePath + '/')) {
@@ -48,12 +48,12 @@ export async function handleStudioRequest(
       } else if (normalizedPath.startsWith(normalizedBasePath)) {
         normalizedPath = normalizedPath.slice(normalizedBasePath.length) || '/';
       }
-      
+
       path = normalizedPath + (queryString ? '?' + queryString : '');
     } else {
       path = pathname + (queryString ? '?' + queryString : '');
     }
-    
+
     if (path === '' || path === '/') {
       path = '/';
     }

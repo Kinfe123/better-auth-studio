@@ -21,21 +21,24 @@ export function betterAuthStudio(config: StudioConfig) {
 }
 
 async function convertElysiaToUniversal(context: Context): Promise<UniversalRequest> {
-  let body: any = undefined;
+  let body: any;
   const method = context.request.method;
 
   if (method !== 'GET' && method !== 'HEAD') {
     const elysiaBody = (context as any).body ?? (context as any).query ?? undefined;
-    
+
     if (elysiaBody !== undefined) {
       body = elysiaBody;
     } else {
       const contentType = context.request.headers.get('content-type') || '';
-      
+
       try {
         if (contentType.includes('application/json')) {
           body = await context.request.json();
-        } else if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
+        } else if (
+          contentType.includes('application/x-www-form-urlencoded') ||
+          contentType.includes('multipart/form-data')
+        ) {
           const formData = await context.request.formData();
           body = Object.fromEntries(formData.entries());
         } else {
@@ -48,8 +51,7 @@ async function convertElysiaToUniversal(context: Context): Promise<UniversalRequ
             }
           }
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     }
   }
 
@@ -102,4 +104,3 @@ function sendElysiaResponse(context: Context, universal: UniversalResponse): Res
     return String(universal.body);
   }
 }
-
