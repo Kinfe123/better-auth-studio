@@ -25,7 +25,6 @@ async function convertHonoToUniversal(c) {
                 body = await c.req.json();
             }
             catch {
-                // Body might not be JSON or might be empty
             }
         }
         else if (contentType.includes('application/x-www-form-urlencoded')) {
@@ -33,7 +32,6 @@ async function convertHonoToUniversal(c) {
                 body = await c.req.parseBody();
             }
             catch {
-                // Body might be empty
             }
         }
     }
@@ -41,7 +39,6 @@ async function convertHonoToUniversal(c) {
     c.req.raw.headers.forEach((value, key) => {
         headers[key] = value;
     });
-    // Get the full URL with query string
     const url = new URL(c.req.url);
     const pathWithQuery = url.pathname + url.search;
     return {
@@ -52,18 +49,14 @@ async function convertHonoToUniversal(c) {
     };
 }
 function sendHonoResponse(c, universal) {
-    // Set status
     c.status(universal.status);
-    // Set headers
     Object.entries(universal.headers).forEach(([key, value]) => {
         c.header(key, value);
     });
-    // Handle body
     if (Buffer.isBuffer(universal.body)) {
         return c.body(universal.body);
     }
     else if (typeof universal.body === 'string') {
-        // Check if it's HTML or JSON
         const contentType = universal.headers['content-type'] || universal.headers['Content-Type'] || '';
         if (contentType.includes('application/json')) {
             try {
