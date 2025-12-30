@@ -7,6 +7,7 @@ import {
   ServerIcon,
   NextJsIcon,
   ExpressIcon,
+  HonoIcon,
   ConfigIcon,
   WarningIcon,
   PrerequisitesIcon,
@@ -25,7 +26,7 @@ export default function SelfHosting() {
             <div className="absolute -top-10 left-0">
               <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
-                <span className="relative z-10 inline-flex gap-[2px] items-center">
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
                   <BetaIcon />
                   Beta Feature
                 </span>
@@ -44,7 +45,7 @@ export default function SelfHosting() {
             <div className="absolute -top-10 left-0">
               <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
-                <span className="relative z-10 inline-flex gap-[2px] items-center">
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
                   <ServerIcon />
                   Overview
                 </span>
@@ -84,7 +85,7 @@ export default function SelfHosting() {
             <div className="absolute -top-10 left-0">
               <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
-                <span className="relative z-10 inline-flex gap-[2px] items-center">
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
                   <PrerequisitesIcon />
                   Prerequisites
                 </span>
@@ -123,7 +124,7 @@ export default function SelfHosting() {
             <div className="absolute -top-10 left-0">
               <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
-                <span className="relative z-10 inline-flex gap-[2px] items-center">
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
                   <ConfigIcon />
                   Step 1: Initialize Studio Config
                 </span>
@@ -170,6 +171,48 @@ export default config;`}
               <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
                 <span className="relative z-10 inline-flex gap-[2px] items-center">
+                  <ConfigIcon />
+                  Framework Integration
+                </span>
+              </h3>
+            </div>
+            <div className="pt-4 space-y-4">
+              <p className="text-sm font-light tracking-tight text-white/70">
+                Choose your framework to see integration instructions:
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href="#nextjs"
+                  className="text-xs font-light tracking-tight text-white/70 hover:text-white/90 border border-white/20 bg-white/5 hover:bg-white/10 px-3 py-2 rounded-none transition-colors inline-flex items-center gap-2"
+                >
+                  <NextJsIcon />
+                  Next.js
+                </a>
+                <a
+                  href="#express"
+                  className="text-xs font-light tracking-tight text-white/70 hover:text-white/90 border border-white/20 bg-white/5 hover:bg-white/10 px-3 py-2 rounded-none transition-colors inline-flex items-center gap-2"
+                >
+                  <ExpressIcon />
+                  Express
+                </a>
+                <a
+                  href="#hono"
+                  className="text-xs font-light tracking-tight text-white/70 hover:text-white/90 border border-white/20 bg-white/5 hover:bg-white/10 px-3 py-2 rounded-none transition-colors inline-flex items-center gap-2"
+                >
+                  <HonoIcon />
+                  Hono
+                </a>
+              </div>
+            </div>
+          </PixelCard>
+        </section>
+
+        <section id="nextjs">
+          <PixelCard variant="highlight" className="relative">
+            <div className="absolute -top-10 left-0">
+              <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
+                <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
                   <NextJsIcon />
                   Next.js Setup
                 </span>
@@ -201,12 +244,12 @@ export {
           </PixelCard>
         </section>
 
-        <section>
+        <section id="express">
           <PixelCard variant="highlight" className="relative">
             <div className="absolute -top-10 left-0">
               <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
-                <span className="relative z-10 inline-flex gap-[2px] items-center">
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
                   <ExpressIcon />
                   Express Setup
                 </span>
@@ -241,12 +284,82 @@ app.listen(3000, () => {
           </PixelCard>
         </section>
 
+        <section id="hono">
+          <PixelCard variant="highlight" className="relative">
+            <div className="absolute -top-10 left-0">
+              <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
+                <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
+                  <HonoIcon />
+                  Hono Setup
+                </span>
+              </h3>
+            </div>
+            <div className="pt-4 space-y-4">
+              <p className="text-sm font-light tracking-tight text-white/70">
+                For Hono apps, add the studio handler to your server:
+              </p>
+              <CodeHighlighter
+                code={`import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { serve } from '@hono/node-server';
+import { auth } from './auth';
+import { betterAuthStudio } from 'better-auth-studio/hono';
+import studioConfig from './studio.config';
+
+const app = new Hono();
+
+// CORS configuration (optional)
+app.use(
+  '*',
+  cors({
+    origin: ['http://localhost:3000'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    allowMethods: ['POST', 'GET', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+  })
+);
+
+// Better Auth Studio routes
+app.on(['POST', 'GET', 'PUT', 'DELETE'], '/api/studio/*', betterAuthStudio(studioConfig));
+
+// Better Auth routes
+app.on(['POST', 'GET'], '/api/auth/*', (c) => {
+  return auth.handler(c.req.raw);
+});
+
+// Start server
+const PORT = parseInt(process.env.PORT || '3000', 10);
+serve({
+  fetch: app.fetch,
+  port: PORT,
+}, (info) => {
+  console.log(\`🚀 Server running on http://localhost:\${info.port}\`);
+});`}
+                language="typescript"
+              />
+              <p className="text-sm font-light tracking-tight text-white/70">
+                Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">http://localhost:3000/api/studio</code>
+              </p>
+              <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-none">
+                <p className="text-xs font-light tracking-tight text-white/60 mb-2">
+                  <strong className="font-bold text-white/80">Note:</strong> Make sure to install the required dependencies:
+                </p>
+                <CodeBlock
+                  code="pnpm add hono @hono/node-server better-auth-studio"
+                  className="flex-1 min-w-0"
+                />
+              </div>
+            </div>
+          </PixelCard>
+        </section>
+
         <section>
           <PixelCard variant="highlight" className="relative">
             <div className="absolute -top-10 left-0">
               <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
-                <span className="relative z-10 inline-flex gap-[2px] items-center">
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
                   <ConfigIcon />
                   Configuration Options
                 </span>
@@ -299,7 +412,7 @@ app.listen(3000, () => {
             <div className="absolute -top-10 left-0">
               <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
-                <span className="relative z-10 inline-flex gap-[2px] items-center">
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
                   <WarningIcon />
                   Security Notes
                 </span>
