@@ -24,15 +24,13 @@ async function convertHonoToUniversal(c) {
             try {
                 body = await c.req.json();
             }
-            catch {
-            }
+            catch { }
         }
         else if (contentType.includes('application/x-www-form-urlencoded')) {
             try {
                 body = await c.req.parseBody();
             }
-            catch {
-            }
+            catch { }
         }
     }
     const headers = {};
