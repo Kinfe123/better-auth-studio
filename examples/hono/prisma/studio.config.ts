@@ -8,6 +8,10 @@ const config: StudioConfig = {
     title: 'Better Auth Studio',
     theme: 'dark',
   },
+  access: {
+    roles: ['admin'],
+    allowEmails: ['kinfetare83@gmail.com'],
+  }
 };
 
 export default config;

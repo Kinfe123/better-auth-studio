@@ -2,6 +2,7 @@
 import type { Context } from 'hono';
 import { handleStudioRequest } from '../core/handler.js';
 import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
+import { StatusCode } from 'hono/utils/http-status.js';
 
 /**
  * Hono adapter for Better Auth Studio
@@ -31,13 +32,11 @@ async function convertHonoToUniversal(c: Context): Promise<UniversalRequest> {
       try {
         body = await c.req.json();
       } catch {
-        // Body might not be JSON or might be empty
       }
     } else if (contentType.includes('application/x-www-form-urlencoded')) {
       try {
         body = await c.req.parseBody();
       } catch {
-        // Body might be empty
       }
     }
   }
@@ -47,7 +46,6 @@ async function convertHonoToUniversal(c: Context): Promise<UniversalRequest> {
     headers[key] = value;
   });
 
-  // Get the full URL with query string
   const url = new URL(c.req.url);
   const pathWithQuery = url.pathname + url.search;
 
@@ -60,19 +58,15 @@ async function convertHonoToUniversal(c: Context): Promise<UniversalRequest> {
 }
 
 function sendHonoResponse(c: Context, universal: UniversalResponse): Response {
-  // Set status
-  c.status(universal.status);
+  c.status(universal.status as StatusCode);
 
-  // Set headers
   Object.entries(universal.headers).forEach(([key, value]) => {
     c.header(key, value);
   });
 
-  // Handle body
   if (Buffer.isBuffer(universal.body)) {
-    return c.body(universal.body);
+    return c.body(universal.body as any);
   } else if (typeof universal.body === 'string') {
-    // Check if it's HTML or JSON
     const contentType = universal.headers['content-type'] || universal.headers['Content-Type'] || '';
     if (contentType.includes('application/json')) {
       try {

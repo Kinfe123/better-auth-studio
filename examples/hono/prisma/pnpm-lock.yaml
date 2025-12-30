@@ -1705,6 +1705,7 @@ snapshots:
       cors: 2.8.5
       dotenv: 16.6.1
       express: 4.22.1
+      hono: 4.11.3
       jiti: 2.6.1
       maxmind: 5.0.1
       open: 10.2.0

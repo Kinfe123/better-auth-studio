@@ -12,7 +12,7 @@ const sendEmail = async ({ to, subject, text, html }: { to: string; subject: str
 };
 
 export const auth = betterAuth({
-  secret: process.env.AUTH_SECRET || 'better-auth-secret-123456789',
+  secret: "479471d5255aef92ca61e345ccf7dc4f29e5405c134d05ba94b03004b803cac6" as string ,
   database: prismaAdapter(prisma, { provider: 'postgresql' }),
   baseURL,
   basePath: '/api/auth',
