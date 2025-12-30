@@ -1,0 +1,59 @@
+# Source maps - not needed in production
+**/*.map
+
+# Source files
+src/
+frontend/
+docs/
+examples/
+tests/
+
+# Development files
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+vitest.config.ts
+
+# Build artifacts that shouldn't be published
+tsconfig.json
+tsconfig.*.json
+vite.config.ts
+biome.json
+
+# Development scripts
+start-studio.sh
+start-studio.bat
+
+# Git files
+.git/
+.gitignore
+
+# CI/CD
+.github/
+
+# Package manager files
+pnpm-lock.yaml
+pnpm-workspace.yaml
+package-lock.json
+yarn.lock
+
+# Environment files
+.env*
+!.env.example
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Data files that should be downloaded on demand
+data/GeoLite2-City.tar.gz
+data/GeoLite2-City.mmdb
+

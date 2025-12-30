@@ -16,7 +16,7 @@
   },
   "scripts": {
     "build": "tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public",
-    "copy:public": "cp -r public dist/",
+    "copy:public": "rm -rf dist/public && cp -r public dist/",
     "verify:public": "test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)",
     "postinstall": "node scripts/postinstall.js",
     "dev": "tsx src/cli.ts",
@@ -89,7 +89,7 @@
   "files": [
     "dist/",
     "public/",
-    "data/",
+    "data/default-geo.json",
     "scripts/",
     "README.md"
   ]
