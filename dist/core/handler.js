@@ -341,8 +341,8 @@ function handleStaticFile(path, config) {
         <h3>To fix this:</h3>
         <ol>
           <li><strong>For Next.js:</strong> Add to <code>next.config.js</code>:
-            <pre> 
-  outputFileTracingIncludes: {
+            <pre>serverExternalPackages: ["better-auth-studio"],
+outputFileTracingIncludes: {
     '/api/studio': ['./node_modules/better-auth-studio/dist/public/**/*', './node_modules/better-auth-studio/public/**/*'],
 }</pre>
           </li>
