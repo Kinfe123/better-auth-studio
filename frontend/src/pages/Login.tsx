@@ -1,4 +1,4 @@
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -131,7 +131,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full h-10 bg-white text-black text-xs font-mono uppercase tracking-wider hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
-              {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Sign In'}
+              {loading ? <Loader className="w-3 h-3 animate-spin" /> : 'Sign In'}
             </button>
           </form>
 

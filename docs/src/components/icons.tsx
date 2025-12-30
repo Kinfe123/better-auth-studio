@@ -214,6 +214,21 @@ export const HonoIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   </svg>
 );
 
+export const ElysiaIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
+  <svg
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    width="1.2em"
+    height="1.2em"
+    viewBox="0 0 24 24"
+  >
+    <path
+      fill="currentColor"
+      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+    />
+  </svg>
+);
+
 export const ConfigIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
     <path d="M3 3h18v2H3V3zm0 4h14v2H3V7zm0 4h18v2H3v-2zm0 4h14v2H3v-2zm0 4h18v2H3v-2z" fill="currentColor" />

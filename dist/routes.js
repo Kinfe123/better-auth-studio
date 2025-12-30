@@ -494,7 +494,9 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             if (!authInstance) {
                 return res.status(500).json({ success: false, message: 'Auth not configured' });
             }
-            const { email, password } = req.body;
+            // Safety check: ensure body is an object before destructuring
+            const body = req.body || {};
+            const { email, password } = body;
             if (!email || !password) {
                 return res.status(400).json({ success: false, message: 'Email and password required' });
             }
@@ -776,7 +778,8 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
     });
     router.post('/api/geo/resolve', (req, res) => {
         try {
-            const { ipAddress } = req.body;
+            const body = req.body || {};
+            const { ipAddress } = body;
             if (!ipAddress) {
                 return res.status(400).json({
                     success: false,
@@ -1070,7 +1073,8 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
     router.put('/api/users/:userId', async (req, res) => {
         try {
             const { userId } = req.params;
-            const { name, email, role, image } = req.body;
+            const body = req.body || {};
+            const { name, email, role, image } = body;
             const adapter = await getAuthAdapterWithConfig();
             if (!adapter || !adapter.update) {
                 return res.status(500).json({ error: 'Auth adapter not available' });
@@ -1096,7 +1100,8 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
     router.put('/api/users/:userId/password', async (req, res) => {
         try {
             const { userId } = req.params;
-            const { password } = req.body;
+            const body = req.body || {};
+            const { password } = body;
             if (!password) {
                 return res.status(400).json({ error: 'Password is required' });
             }

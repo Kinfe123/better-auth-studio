@@ -8,6 +8,7 @@ import {
   NextJsIcon,
   ExpressIcon,
   HonoIcon,
+  ElysiaIcon,
   ConfigIcon,
   WarningIcon,
   PrerequisitesIcon,
@@ -202,6 +203,13 @@ export default config;`}
                   <HonoIcon />
                   Hono
                 </a>
+                <a
+                  href="#elysia"
+                  className="text-xs font-light tracking-tight text-white/70 hover:text-white/90 border border-white/20 bg-white/5 hover:bg-white/10 px-3 py-2 rounded-none transition-colors inline-flex items-center gap-2"
+                >
+                  <ElysiaIcon />
+                  Elysia
+                </a>
               </div>
             </div>
           </PixelCard>
@@ -341,6 +349,69 @@ serve({
               <p className="text-sm font-light tracking-tight text-white/70">
                 Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">http://localhost:3000/api/studio</code>
               </p>
+            </div>
+          </PixelCard>
+        </section>
+
+        <section id="elysia">
+          <PixelCard variant="highlight" className="relative">
+            <div className="absolute -top-10 left-0">
+              <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
+                <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
+                  <ElysiaIcon />
+                  Elysia Setup
+                </span>
+              </h3>
+            </div>
+            <div className="pt-4 space-y-4">
+              <p className="text-sm font-light tracking-tight text-white/70">
+                For Elysia apps (optimized for Bun), add the studio handler to your server:
+              </p>
+              <CodeHighlighter
+                code={`import { Elysia } from 'elysia';
+import { cors } from '@elysiajs/cors';
+import { auth } from './auth';
+import { betterAuthStudio } from 'better-auth-studio/elysia';
+import studioConfig from './studio.config';
+
+const app = new Elysia()
+  // CORS configuration (optional)
+  .use(
+    cors({
+      origin: ['http://localhost:3000'],
+      allowHeaders: ['Content-Type', 'Authorization'],
+      allowMethods: ['POST', 'GET', 'PUT', 'DELETE', 'OPTIONS'],
+      credentials: true,
+    })
+  )
+  // Better Auth Studio routes - use .all() for wildcard to handle all methods
+  .all('/api/studio/*', betterAuthStudio(studioConfig))
+  // Better Auth routes - use .all() to handle all methods
+  .all('/api/auth/*', async (context) => {
+    const response = await auth.handler(context.request);
+    return response;
+  });
+
+// Start server
+const PORT = parseInt(process.env.PORT || '3000', 10);
+app.listen(PORT, () => {
+  console.log(\`🚀 Server running on http://localhost:\${PORT}\`);
+});`}
+                language="typescript"
+              />
+              <p className="text-sm font-light tracking-tight text-white/70">
+                Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">http://localhost:3000/api/studio</code>
+              </p>
+              <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded">
+                <p className="text-xs font-light tracking-tight text-white/60 mb-2">
+                  <strong className="font-bold text-white/80">Note:</strong> Elysia is optimized for Bun runtime. Make sure to install the required dependencies:
+                </p>
+                <CodeBlock
+                  code="bun add elysia @elysiajs/cors better-auth-studio"
+                  className="flex-1 min-w-0"
+                />
+              </div>
             </div>
           </PixelCard>
         </section>

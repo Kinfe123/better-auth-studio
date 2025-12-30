@@ -23,8 +23,28 @@ export async function handleStudioRequest(request, config) {
         const isSelfHosted = !!config.basePath;
         const basePath = config.basePath || '';
         let path = request.url;
+        // Extract just the pathname (remove query string for processing)
+        const [pathname, queryString] = path.split('?');
         if (isSelfHosted && basePath) {
-            path = path.replace(basePath, '') || '/';
+            // Remove basePath from the beginning of the path
+            // Handle both with and without trailing slash
+            const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+            let normalizedPath = pathname;
+            // Normalize the path - ensure it starts with the basePath
+            if (normalizedPath === normalizedBasePath || normalizedPath === normalizedBasePath + '/') {
+                normalizedPath = '/';
+            }
+            else if (normalizedPath.startsWith(normalizedBasePath + '/')) {
+                normalizedPath = normalizedPath.slice(normalizedBasePath.length);
+            }
+            else if (normalizedPath.startsWith(normalizedBasePath)) {
+                normalizedPath = normalizedPath.slice(normalizedBasePath.length) || '/';
+            }
+            // Reconstruct path with query string
+            path = normalizedPath + (queryString ? '?' + queryString : '');
+        }
+        else {
+            path = pathname + (queryString ? '?' + queryString : '');
         }
         if (path === '' || path === '/') {
             path = '/';
