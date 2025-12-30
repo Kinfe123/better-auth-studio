@@ -370,24 +370,21 @@ serve({
               </p>
               <CodeHighlighter
                 code={`import { Elysia } from 'elysia';
-import { cors } from '@elysiajs/cors';
 import { auth } from './auth';
 import { betterAuthStudio } from 'better-auth-studio/elysia';
 import studioConfig from './studio.config';
 
 const app = new Elysia()
-  // CORS configuration (optional)
-  .use(
-    cors({
-      origin: ['http://localhost:3000'],
-      allowHeaders: ['Content-Type', 'Authorization'],
-      allowMethods: ['POST', 'GET', 'PUT', 'DELETE', 'OPTIONS'],
-      credentials: true,
-    })
-  )
-  // Better Auth Studio routes - use .all() for wildcard to handle all methods
+  
+  // Better Auth Studio routes
+  // Note: We need both routes because Elysia's wildcard /* doesn't match exact paths
+  .all('/api/studio', betterAuthStudio(studioConfig))
   .all('/api/studio/*', betterAuthStudio(studioConfig))
-  // Better Auth routes - use .all() to handle all methods
+  // Better Auth routes
+  .all('/api/auth', async (context) => {
+    const response = await auth.handler(context.request);
+    return response;
+  })
   .all('/api/auth/*', async (context) => {
     const response = await auth.handler(context.request);
     return response;
@@ -407,10 +404,9 @@ app.listen(PORT, () => {
                 <p className="text-xs font-light tracking-tight text-white/60 mb-2">
                   <strong className="font-bold text-white/80">Note:</strong> Elysia is optimized for Bun runtime. Make sure to install the required dependencies:
                 </p>
-                <CodeBlock
-                  code="bun add elysia @elysiajs/cors better-auth-studio"
-                  className="flex-1 min-w-0"
-                />
+                <p className="text-xs font-light tracking-tight text-white/50 mt-2">
+                  <strong className="font-bold text-white/70">Why two routes?</strong> Elysia's wildcard route <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio/*</code> matches sub-paths but not the exact path. We include both <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio</code> and <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio/*</code> to handle all cases.
+                </p>
               </div>
             </div>
           </PixelCard>
