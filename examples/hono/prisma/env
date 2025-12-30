@@ -1,0 +1,18 @@
+# Database Configuration
+DATABASE_URL=postgresql://neondb_owner:npg_cZoEvtmJO24M@ep-silent-queen-ah57nekp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+BETTER_AUTH_URL=http://localhost:3000
+AUTH_SECRET=479471d5255aef92ca61e345ccf7dc4f29e5405c134d05ba94b03004b803cac6
+# Email Configuration (Optional)
+RESEND_API_KEY=
+
+# Social Providers (Optional)
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+DISCORD_CLIENT_ID=
+DISCORD_CLIENT_SECRET=
+
+# Server Port
+PORT=3000
+

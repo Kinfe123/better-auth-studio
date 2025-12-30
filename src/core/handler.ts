@@ -70,9 +70,7 @@ export async function handleStudioRequest(
       return await handleApiRoute(request, path, config);
     }
 
-    // Self-hosted mode: determine if this is an API route or SPA navigation
     if (isSelfHosted) {
-      // Check Accept header to distinguish API calls from browser navigation
       const acceptHeader = request.headers['accept'] || request.headers['Accept'] || '';
       const wantsJson =
         acceptHeader.includes('application/json') ||

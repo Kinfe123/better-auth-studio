@@ -11,6 +11,7 @@
     ".": "./dist/index.js",
     "./express": "./dist/adapters/express.js",
     "./nextjs": "./dist/adapters/nextjs.js",
+    "./hono": "./dist/adapters/hono.js",
     "./config": "./dist/types/handler.js"
   },
   "scripts": {

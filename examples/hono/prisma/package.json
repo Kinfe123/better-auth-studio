@@ -1,0 +1,36 @@
+{
+  "name": "better-auth-hono-prisma-example",
+  "version": "1.0.0",
+  "description": "Better Auth Studio example with Hono and Prisma",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && prisma generate",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "studio": "pnpm exec better-auth-studio start",
+    "studio:dev": "pnpm exec better-auth-studio start --port 3002 --config ./src/auth.ts",
+    "studio:init": "pnpm exec better-auth-studio init",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.12.0",
+    "@prisma/client": "^6.15.0",
+    "better-auth": "^1.3.34",
+    "better-auth-studio": "file:../../..",
+    "dotenv": "^17.2.3",
+    "hono": "^4.6.0",
+    "prisma": "^6.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
