@@ -341,15 +341,6 @@ serve({
               <p className="text-sm font-light tracking-tight text-white/70">
                 Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">http://localhost:3000/api/studio</code>
               </p>
-              <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-none">
-                <p className="text-xs font-light tracking-tight text-white/60 mb-2">
-                  <strong className="font-bold text-white/80">Note:</strong> Make sure to install the required dependencies:
-                </p>
-                <CodeBlock
-                  code="pnpm add hono @hono/node-server better-auth-studio"
-                  className="flex-1 min-w-0"
-                />
-              </div>
             </div>
           </PixelCard>
         </section>
