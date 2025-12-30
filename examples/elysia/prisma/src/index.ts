@@ -46,7 +46,7 @@ const app = new Elysia()
             };
         }
     })
-    .all("/api/auth", async (context) => { 
+    .all("/api/auth", async (context) => {
         return auth.handler(context.request);
     })
     .all('/api/auth/*', async (context) => {

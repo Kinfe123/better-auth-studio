@@ -4,5 +4,4 @@ dist
 *.log
 .DS_Store
 prisma/migrations
-/src/generated/
-
+/src/generated
