@@ -1,4 +1,3 @@
-// @ts-expect-error - Hono types may not be available in the main package
 import type { Context } from 'hono';
 import type { StatusCode } from 'hono/utils/http-status.js';
 import { handleStudioRequest } from '../core/handler.js';
