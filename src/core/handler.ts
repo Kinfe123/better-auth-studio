@@ -226,7 +226,7 @@ function findPublicDir(): string | null {
   if (__dirname) {
     const directPublic = resolve(__dirname, '../public');
     candidates.unshift(directPublic);
-    
+
     if (debug && !existsSync(directPublic)) {
       console.log('[Studio] Direct path not found:', directPublic);
     }
