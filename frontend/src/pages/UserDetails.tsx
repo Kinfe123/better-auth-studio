@@ -1096,7 +1096,7 @@ export default function UserDetails() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <button
-                      className="w-full px-4 py-2 text-left text-[11px] text-white/70 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
+                      className="w-full px-4 py-2 text-left border-b border-dashed border-white/20 text-[11px] text-white/70 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                       onClick={(e) => {
                         e.stopPropagation();
                         setActionMenuOpen(false);
@@ -1111,7 +1111,7 @@ export default function UserDetails() {
                     </button>
                     {accounts.some((acc) => acc.providerId === 'credential') ? (
                       <button
-                        className="w-full px-4 py-2 text-left text-[11px] text-white/70 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
+                        className="w-full px-4 py-2 text-left border-b border-dashed border-white/20 text-[11px] text-white/70 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                         onClick={(e) => {
                           e.stopPropagation();
                           setActionMenuOpen(false);
@@ -1123,7 +1123,7 @@ export default function UserDetails() {
                       </button>
                     ) : (
                       <button
-                        className="w-full px-4 py-2 text-left text-[11px] text-white/30 cursor-not-allowed flex items-center justify-between font-mono uppercase tracking-tight opacity-50"
+                        className="w-full px-4 py-2 text-left border-b border-dashed border-white/20 text-[11px] text-white/30 cursor-not-allowed flex items-center justify-between font-mono uppercase tracking-tight opacity-50"
                         disabled
                         title="Password update is only available for users with credential accounts"
                       >
@@ -1134,7 +1134,7 @@ export default function UserDetails() {
                     {adminPluginEnabled &&
                       (user.banned ? (
                         <button
-                          className="w-full px-4 py-2 text-left text-[11px] text-green-400 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
+                          className="w-full px-4 py-2 text-left border-b border-dashed border-white/20 text-[11px] text-green-400 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                           onClick={(e) => {
                             e.stopPropagation();
                             setActionMenuOpen(false);
@@ -1146,7 +1146,7 @@ export default function UserDetails() {
                         </button>
                       ) : (
                         <button
-                          className="w-full px-4 py-2 text-left text-[11px] text-yellow-400 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
+                          className="w-full px-4 py-2 text-left border-b border-dashed border-white/20 text-[11px] text-yellow-400 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                           onClick={(e) => {
                             e.stopPropagation();
                             setActionMenuOpen(false);
