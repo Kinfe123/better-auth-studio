@@ -288,11 +288,17 @@ function findPublicDir(): string | null {
       const modulePath = fileURLToPath(moduleUrl);
       const moduleDir = dirname(modulePath);
       candidates.push(resolve(moduleDir, '../public'));
-      
+
       // Also walk up from module location to find node_modules
       let moduleSearchDir = moduleDir;
       for (let i = 0; i < 10; i++) {
-        const nmPath = join(moduleSearchDir, 'node_modules', 'better-auth-studio', 'dist', 'public');
+        const nmPath = join(
+          moduleSearchDir,
+          'node_modules',
+          'better-auth-studio',
+          'dist',
+          'public'
+        );
         if (existsSync(nmPath)) {
           candidates.push(nmPath);
           break;
