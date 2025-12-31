@@ -259,7 +259,7 @@ function findPublicDir(): string | null {
           return moduleDir;
         }
       })();
-      
+
       candidates.unshift(
         resolve(realModuleDir, '../public'),
         resolve(realModuleDir, '../../public'),
@@ -301,7 +301,7 @@ function findPublicDir(): string | null {
         join(svelteKitOutput, 'node_modules', 'better-auth-studio', 'public')
       );
     }
-    
+
     const buildOutput = join(process.cwd(), 'build');
     if (existsSync(buildOutput)) {
       candidates.unshift(
@@ -309,7 +309,7 @@ function findPublicDir(): string | null {
         join(buildOutput, 'node_modules', 'better-auth-studio', 'public')
       );
     }
-    
+
     const staticDir = join(process.cwd(), 'static', 'studio-assets');
     if (existsSync(staticDir)) {
       candidates.unshift(staticDir);
@@ -357,7 +357,7 @@ function findPublicDir(): string | null {
   console.error('[Studio] Current working directory:', process.cwd());
   console.error('[Studio] __dirname:', __dirname);
   console.error('[Studio] __realdir:', __realdir);
-  
+
   try {
     if (typeof import.meta !== 'undefined' && import.meta.url) {
       console.error('[Studio] import.meta.url:', import.meta.url);
