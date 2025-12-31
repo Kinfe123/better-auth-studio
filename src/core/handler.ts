@@ -310,7 +310,7 @@ function findPublicDir(): string | null {
       );
     }
 
-    const staticDir = join(process.cwd(), 'static', 'studio-assets');
+    const staticDir = join(process.cwd(), 'static', 'studio');
     if (existsSync(staticDir)) {
       candidates.unshift(staticDir);
     }
