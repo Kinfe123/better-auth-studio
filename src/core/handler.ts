@@ -242,9 +242,9 @@ function findPublicDir(): string | null {
             );
           }
         }
-      } catch (err) {}
+      } catch (err) { }
     }
-  } catch (err) {}
+  } catch (err) { }
 
   // Try to resolve from import.meta.url for better ESM support (SvelteKit)
   try {
@@ -269,7 +269,7 @@ function findPublicDir(): string | null {
         resolve(realModuleDir, '../dist/public')
       );
     }
-  } catch (err) {}
+  } catch (err) { }
 
   const baseDirs = [__dirname, __realdir];
   for (const baseDir of baseDirs) {
@@ -314,7 +314,7 @@ function findPublicDir(): string | null {
     if (existsSync(staticDir)) {
       candidates.unshift(staticDir);
     }
-  } catch (err) {}
+  } catch (err) { }
 
   try {
     let searchDir = __dirname;
@@ -329,7 +329,7 @@ function findPublicDir(): string | null {
       }
       searchDir = resolve(searchDir, '..');
     }
-  } catch (err) {}
+  } catch (err) { }
 
   for (const candidate of candidates) {
     try {
@@ -342,7 +342,7 @@ function findPublicDir(): string | null {
           }
         }
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   for (const candidate of candidates) {
@@ -350,24 +350,8 @@ function findPublicDir(): string | null {
       if (existsSync(candidate) && statSync(candidate).isDirectory()) {
         return candidate;
       }
-    } catch (error) {}
+    } catch (error) { }
   }
-
-  console.error('[Studio] Could not find public directory');
-  console.error('[Studio] Current working directory:', process.cwd());
-  console.error('[Studio] __dirname:', __dirname);
-  console.error('[Studio] __realdir:', __realdir);
-
-  try {
-    if (typeof import.meta !== 'undefined' && import.meta.url) {
-      console.error('[Studio] import.meta.url:', import.meta.url);
-      const modulePath = fileURLToPath(import.meta.url);
-      console.error('[Studio] Resolved module path:', modulePath);
-    }
-  } catch (err) {
-    console.error('[Studio] Could not resolve import.meta.url');
-  }
-
   return null;
 }
 

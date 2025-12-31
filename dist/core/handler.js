@@ -278,20 +278,6 @@ function findPublicDir() {
         }
         catch (error) { }
     }
-    console.error('[Studio] Could not find public directory');
-    console.error('[Studio] Current working directory:', process.cwd());
-    console.error('[Studio] __dirname:', __dirname);
-    console.error('[Studio] __realdir:', __realdir);
-    try {
-        if (typeof import.meta !== 'undefined' && import.meta.url) {
-            console.error('[Studio] import.meta.url:', import.meta.url);
-            const modulePath = fileURLToPath(import.meta.url);
-            console.error('[Studio] Resolved module path:', modulePath);
-        }
-    }
-    catch (err) {
-        console.error('[Studio] Could not resolve import.meta.url');
-    }
     return null;
 }
 let cachedPublicDir = null;

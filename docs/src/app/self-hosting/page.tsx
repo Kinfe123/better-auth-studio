@@ -478,27 +478,6 @@ export async function handle({ event, resolve }) {
               <p className="text-sm font-light tracking-tight text-white/70">
                 Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">http://localhost:5173/api/studio</code>
               </p>
-              <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-none">
-                <p className="text-xs font-light tracking-tight text-white/60 mb-2">
-                  <strong className="font-bold text-white/80">Note:</strong> SvelteKit uses file-based routing. The catch-all route <code className="text-white/70 bg-white/10 px-1 py-0.5">[...path]</code> will match all paths under <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio</code>.
-                </p>
-                <p className="text-xs font-light tracking-tight text-white/50 mt-2">
-                  <strong className="font-bold text-white/70">Production Deployment (Vercel):</strong> For Vercel deployments, create a <code className="text-white/70 bg-white/10 px-1 py-0.5">vercel.json</code> file in your project root:
-                </p>
-                <CodeBlock
-                  code={`{
-  "functions": {
-    "src/routes/api/studio/**/*.ts": {
-      "includeFiles": "node_modules/better-auth-studio/dist/public/**"
-    }
-  }
-}`}
-                  className="mt-2"
-                />
-                <p className="text-xs font-light tracking-tight text-white/50 mt-2">
-                  This ensures Vercel includes the UI assets in your serverless functions. Also ensure <code className="text-white/70 bg-white/10 px-1 py-0.5">better-auth-studio</code> is in <code className="text-white/70 bg-white/10 px-1 py-0.5">dependencies</code> (not devDependencies).
-                </p>
-              </div>
             </div>
           </PixelCard>
         </section>
