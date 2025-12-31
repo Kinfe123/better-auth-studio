@@ -377,11 +377,11 @@ function handleStaticFile(path: string, config: StudioConfig): UniversalResponse
   <title>Better Auth Studio - Setup Required</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
-      font-family: 'Geist Mono', monospace; 
+      font-family: 'Geist', sans-serif; 
       background: #000000; 
       color: #e5e5e5; 
       max-width: 700px; 
@@ -454,7 +454,7 @@ function handleStaticFile(path: string, config: StudioConfig): UniversalResponse
 </head>
 <body>
   <h1>Studio UI Not Available</h1>
-  <p>The Better Auth Studio UI assets could not be located. This typically happens on serverless deployments with pnpm.</p>
+  <p>The Better Auth Studio UI assets could not be located. This typically happens on serverless deployments.</p>
   
       <div class="steps">
         <h3>To fix this:</h3>
@@ -464,7 +464,7 @@ function handleStaticFile(path: string, config: StudioConfig): UniversalResponse
     '/api/studio': ['./node_modules/better-auth-studio/dist/public/**/*', './node_modules/better-auth-studio/public/**/*'],
 }</pre>
           </li>
-          <li><strong>For SvelteKit:</strong> Ensure <code>better-auth-studio</code> is in <code>dependencies</code> (not devDependencies). For serverless deployments, you may need to configure your adapter to include the public directory. Check your <code>vite.config.ts</code> or adapter configuration.</li>
+          <li><strong>For SvelteKit:</strong> Ensure <code>better-auth-studio</code> is in <code>dependencies</code> (not devDependencies). For Vercel deployments, use <code>@sveltejs/adapter-vercel</code> in your <code>svelte.config.js</code></li>
           <li>Ensure <code>better-auth-studio</code> is in <code>dependencies</code> (not devDependencies)</li>
           <li>Clear your build cache and redeploy</li>
         </ol>
