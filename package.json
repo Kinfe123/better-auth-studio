@@ -13,6 +13,7 @@
     "./nextjs": "./dist/adapters/nextjs.js",
     "./hono": "./dist/adapters/hono.js",
     "./elysia": "./dist/adapters/elysia.js",
+    "./svelte-kit": "./dist/adapters/svelte-kit.js",
     "./config": "./dist/types/handler.js"
   },
   "scripts": {

@@ -9,6 +9,7 @@ import {
   ExpressIcon,
   HonoIcon,
   ElysiaIcon,
+  SvelteKitIcon,
   ConfigIcon,
   WarningIcon,
   PrerequisitesIcon,
@@ -210,6 +211,13 @@ export default config;`}
                   <ElysiaIcon />
                   Elysia
                 </a>
+                <a
+                  href="#sveltekit"
+                  className="text-xs font-light tracking-tight text-white/70 hover:text-white/90 border border-white/20 bg-white/5 hover:bg-white/10 px-3 py-2 rounded-none transition-colors inline-flex items-center gap-2"
+                >
+                  <SvelteKitIcon />
+                  SvelteKit
+                </a>
               </div>
             </div>
           </PixelCard>
@@ -404,6 +412,75 @@ app.listen(PORT, () => {
                 </p>
                 <p className="text-xs font-light tracking-tight text-white/50 mt-2">
                   <strong className="font-bold text-white/70">Why two routes?</strong> Elysia's wildcard route <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio/*</code> matches sub-paths but not the exact path. We include both <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio</code> and <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio/*</code> to handle all cases.
+                </p>
+              </div>
+            </div>
+          </PixelCard>
+        </section>
+
+        <section id="sveltekit">
+          <PixelCard variant="highlight" className="relative">
+            <div className="absolute -top-10 left-0">
+              <h3 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden">
+                <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
+                  <SvelteKitIcon />
+                  SvelteKit Setup
+                </span>
+              </h3>
+            </div>
+            <div className="pt-4 space-y-4">
+              <p className="text-sm font-light tracking-tight text-white/70">
+                For SvelteKit apps, create a catch-all route handler for the studio:
+              </p>
+              <CodeHighlighter
+                code={`// src/routes/api/studio/[...path]/+server.ts
+import { betterAuthStudio } from 'better-auth-studio/svelte-kit';
+import studioConfig from '../../../../../studio.config.js';
+
+const handler = betterAuthStudio(studioConfig);
+
+export async function GET(event) {
+  return handler(event);
+}
+
+export async function POST(event) {
+  return handler(event);
+}
+
+export async function PUT(event) {
+  return handler(event);
+}
+
+export async function DELETE(event) {
+  return handler(event);
+}
+
+export async function PATCH(event) {
+  return handler(event);
+}`}
+                language="typescript"
+              />
+              <p className="text-sm font-light tracking-tight text-white/70">
+                Make sure your <code className="text-white/90 bg-white/10 px-1 py-0.5">hooks.server.ts</code> includes the Better Auth handler:
+              </p>
+              <CodeHighlighter
+                code={`// src/hooks.server.ts
+import { auth } from "$lib/auth";
+import { svelteKitHandler } from "better-auth/svelte-kit";
+import { building } from "$app/environment";
+
+export async function handle({ event, resolve }) {
+  return svelteKitHandler({ event, resolve, auth, building });
+}`}
+                language="typescript"
+              />
+              <p className="text-sm font-light tracking-tight text-white/70">
+                Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">http://localhost:5173/api/studio</code>
+              </p>
+              <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-none">
+                <p className="text-xs font-light tracking-tight text-white/60 mb-2">
+                  <strong className="font-bold text-white/80">Note:</strong> SvelteKit uses file-based routing. The catch-all route <code className="text-white/70 bg-white/10 px-1 py-0.5">[...path]</code> will match all paths under <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio</code>.
                 </p>
               </div>
             </div>
