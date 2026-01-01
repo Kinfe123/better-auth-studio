@@ -1,0 +1,33 @@
+{
+  "name": "better-auth-nuxt-prisma-example",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "start": "node .output/server/index.mjs",
+    "lint": "eslint .",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "studio": "pnpm db:generate && pnpm exec better-auth-studio start",
+    "studio:dev": "pnpm db:generate && pnpm exec better-auth-studio start --port 3002 --config ./server/lib/auth.ts",
+    "studio:init": "pnpm exec better-auth-studio init"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.15.0",
+    "better-auth": "^1.4.5",
+    "better-auth-studio": "file:../../..",
+    "nuxt": "^3.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "prisma": "^6.15.0",
+    "typescript": "^5.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
