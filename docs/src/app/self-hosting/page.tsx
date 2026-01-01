@@ -500,9 +500,7 @@ const config = {
 export default config;`}
                   language="javascript"
                 />
-                <p className="text-xs font-light tracking-tight text-white/50 mt-2">
-                  The handler automatically resolves static assets in production. No additional configuration needed.
-                </p>
+                  
               </div>
             </div>
           </PixelCard>
