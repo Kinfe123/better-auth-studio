@@ -1,0 +1,45 @@
+{
+  "name": "better-auth-solid-start-prisma-example",
+  "scripts": {
+    "dev": "solid-start dev --host",
+    "build": "solid-start build && npm run postbuild",
+    "serve": "vite preview",
+    "start": "solid-start start",
+    "studio": "pnpm exec better-auth-studio start",
+    "studio:dev": "pnpm exec better-auth-studio start --port 3002 --config ./src/auth.ts",
+    "studio:init": "pnpm exec better-auth-studio init",
+    "push": "prisma db push",
+    "postinstall": "prisma generate",
+    "postbuild": "cp node_modules/.pnpm/**/@prisma/engines/*query* .vercel/output/functions/render.func/ && cp prisma/schema.prisma .vercel/output/functions/render.func/"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^18.11.17",
+    "autoprefixer": "^10.4.13",
+    "postcss": "^8.4.20",
+    "prettier": "^2.8.1",
+    "prisma": "^4.8.0",
+    "solid-start-node": "^0.2.8",
+    "tailwindcss": "^3.2.4",
+    "typescript": "^5.0.0",
+    "vite": "^4.0.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.8.0",
+    "@solidjs/router": "^0.8.0",
+    "@trpc/client": "^10.7.0",
+    "@trpc/server": "^10.7.0",
+    "better-auth": "^1.4.10",
+    "dotenv": "^16.0.3",
+    "solid-js": "^1.6.6",
+    "solid-start": "^0.2.8",
+    "solid-start-trpc": "^0.0.16",
+    "solid-start-vercel": "^0.2.8",
+    "undici": "^5.14.0",
+    "zod": "^3.20.2",
+    "better-auth-studio": "file:../../"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
