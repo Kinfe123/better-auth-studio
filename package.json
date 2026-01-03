@@ -14,6 +14,7 @@
     "./hono": "./dist/adapters/hono.js",
     "./elysia": "./dist/adapters/elysia.js",
     "./svelte-kit": "./dist/adapters/svelte-kit.js",
+    "./solid-start": "./dist/adapters/solid-start.js",
     "./config": "./dist/types/handler.js"
   },
   "scripts": {
