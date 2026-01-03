@@ -1,7 +1,6 @@
 import { handleStudioRequest } from '../core/handler.js';
 import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
 
-// SolidStart ApiEvent type - matches solid-start/api/types
 type ApiEvent = {
   request: Request;
   params: Record<string, string>;
