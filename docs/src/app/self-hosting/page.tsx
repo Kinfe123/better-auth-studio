@@ -32,7 +32,7 @@ const frameworks: Array<{
     { id: "hono", name: "Hono", icon: HonoIcon },
     { id: "elysia", name: "Elysia", icon: ElysiaIcon },
     { id: "sveltekit", name: "SvelteKit", icon: SvelteKitIcon },
-    { id: "solidstart", name: "SolidStart", icon: SolidStartIcon },
+    { id: "solidstart", name: "Solid Start", icon: SolidStartIcon },
     { id: "tanstackstart", name: "TanStack Start", icon: TanStackStartIcon },
   ];
 export default function SelfHosting() {
