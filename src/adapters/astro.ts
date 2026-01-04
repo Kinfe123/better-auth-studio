@@ -1,0 +1,103 @@
+import { handleStudioRequest } from '../core/handler.js';
+import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
+
+/**
+ * Astro adapter for Better Auth Studio
+ *
+ * Usage in a catch-all API route:
+ * ```ts
+ * // pages/api/studio/[...all].ts
+ * import { betterAuthStudio } from 'better-auth-studio/astro';
+ * import studioConfig from '../../../../studio.config';
+ * import type { APIRoute } from 'astro';
+ *
+ * const handler = betterAuthStudio(studioConfig);
+ *
+ * export const ALL: APIRoute = async (ctx) => {
+ *   return handler(ctx);
+ * };
+ * ```
+ */
+export function betterAuthStudio(config: StudioConfig) {
+  return async (ctx: { request: Request }): Promise<Response> => {
+    try {
+      const universalReq = await convertAstroToUniversal(ctx, config);
+      const universalRes = await handleStudioRequest(universalReq, config);
+      return universalToResponse(universalRes);
+    } catch (error) {
+      console.error('Studio handler error:', error);
+      return new Response(JSON.stringify({ error: 'Internal server error' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+  };
+}
+
+async function convertAstroToUniversal(
+  ctx: { request: Request },
+  config: StudioConfig
+): Promise<UniversalRequest> {
+  const request = ctx.request;
+  let body: any;
+  const method = request.method;
+
+  if (method !== 'GET' && method !== 'HEAD') {
+    const contentType = request.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      try {
+        body = await request.json();
+      } catch {}
+    } else if (
+      contentType.includes('application/x-www-form-urlencoded') ||
+      contentType.includes('multipart/form-data')
+    ) {
+      try {
+        const formData = await request.formData();
+        body = Object.fromEntries(formData.entries());
+      } catch {}
+    } else {
+      try {
+        const text = await request.text();
+        if (text && text.trim()) {
+          try {
+            body = JSON.parse(text);
+          } catch {
+            body = text;
+          }
+        }
+      } catch {}
+    }
+  }
+
+  const headers: Record<string, string> = {};
+  request.headers.forEach((value: string, key: string) => {
+    headers[key] = value;
+  });
+
+  const basePath = config.basePath || '/api/studio';
+  const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+
+  const url = new URL(request.url);
+  let path = url.pathname;
+
+  if (path.startsWith(normalizedBasePath)) {
+    path = path.slice(normalizedBasePath.length) || '/';
+  }
+
+  const pathWithQuery = path + url.search;
+
+  return {
+    url: pathWithQuery,
+    method: method,
+    headers,
+    body,
+  };
+}
+
+function universalToResponse(res: UniversalResponse): Response {
+  return new Response(res.body, {
+    status: res.status,
+    headers: res.headers,
+  });
+}

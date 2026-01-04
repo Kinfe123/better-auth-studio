@@ -34,10 +34,10 @@ importers:
         version: 1.4.5(@sveltejs/kit@2.49.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(svelte@5.45.4)(vite@5.4.21(@types/node@20.19.25)(lightningcss@1.30.2)))(next@15.5.9(@babel/core@7.28.5)(react-dom@19.1.0(react@19.2.0))(react@19.2.0))(react-dom@19.1.0(react@19.2.0))(react@19.2.0)(svelte@5.45.4)
       bumpp:
         specifier: ^10.2.3
-        version: 10.3.1
+        version: 10.3.1(magicast@0.3.5)
       c12:
         specifier: ^3.3.0
-        version: 3.3.2
+        version: 3.3.2(magicast@0.3.5)
       chalk:
         specifier: ^5.3.0
         version: 5.6.2
@@ -4035,6 +4035,9 @@ packages:
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
+  magicast@0.3.5:
+    resolution: {integrity: sha512-L0WhttDl+2BOsybvEOLK7fW3UA0OQ0IQ2d6Zl2x/a6vVRs3bAY0ECOSHHeL5jD+SbOpOCUEi0y1DgHEn9Qn1AQ==}
+
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
     engines: {node: '>= 0.4'}
@@ -7656,11 +7659,11 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
-  bumpp@10.3.1:
+  bumpp@10.3.1(magicast@0.3.5):
     dependencies:
       ansis: 4.2.0
       args-tokenizer: 0.3.0
-      c12: 3.3.2
+      c12: 3.3.2(magicast@0.3.5)
       cac: 6.7.14
       escalade: 3.2.0
       jsonc-parser: 3.3.1
@@ -7678,7 +7681,7 @@ snapshots:
 
   bytes@3.1.2: {}
 
-  c12@3.3.2:
+  c12@3.3.2(magicast@0.3.5):
     dependencies:
       chokidar: 4.0.3
       confbox: 0.2.2
@@ -7692,6 +7695,8 @@ snapshots:
       perfect-debounce: 2.0.0
       pkg-types: 2.3.0
       rc9: 2.1.2
+    optionalDependencies:
+      magicast: 0.3.5
 
   cac@6.7.14: {}
 
@@ -9228,6 +9233,13 @@ snapshots:
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  magicast@0.3.5:
+    dependencies:
+      '@babel/parser': 7.28.5
+      '@babel/types': 7.28.5
+      source-map-js: 1.2.1
+    optional: true
 
   math-intrinsics@1.1.0: {}
 

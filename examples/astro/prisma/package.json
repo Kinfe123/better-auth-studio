@@ -1,0 +1,32 @@
+{
+  "name": "better-auth-astro-example",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "studio": "pnpm exec better-auth-studio start",
+    "studio:dev": "pnpm exec better-auth-studio start --port 3002 --config ./src/lib/auth.ts",
+    "studio:init": "pnpm exec better-auth-studio init",
+    "push": "npx prisma db push",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@astrojs/node": "^8.0.0",
+    "@prisma/client": "^6.19.1",
+    "astro": "^4.0.0",
+    "better-auth": "^1.4.0",
+    "better-auth-studio": "file:../../.."
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "prisma": "^6.19.1",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
