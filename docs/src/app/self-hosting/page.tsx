@@ -16,12 +16,13 @@ import {
   SolidStartIcon,
   TanStackStartIcon,
   AstroIcon,
+  RemixIcon,
   ConfigIcon,
   WarningIcon,
   PrerequisitesIcon,
 } from "@/components/icons";
 
-type Framework = "nextjs" | "express" | "hono" | "elysia" | "sveltekit" | "solidstart" | "tanstackstart" | "astro";
+type Framework = "nextjs" | "express" | "hono" | "elysia" | "sveltekit" | "solidstart" | "tanstackstart" | "astro" | "remix";
 
 const frameworks: Array<{
   id: Framework;
@@ -36,6 +37,7 @@ const frameworks: Array<{
     { id: "solidstart", name: "Solid Start", icon: SolidStartIcon },
     { id: "tanstackstart", name: "TanStack Start", icon: TanStackStartIcon },
     { id: "astro", name: "Astro", icon: AstroIcon },
+    { id: "remix", name: "Remix", icon: RemixIcon },
   ];
 export default function SelfHosting() {
   const [activeFramework, setActiveFramework] = useState<Framework>("nextjs");
@@ -594,6 +596,53 @@ export const ALL: APIRoute = async (ctx) => {
   // ctx.request.headers.set("x-forwarded-for", ctx.clientAddress);
   return auth.handler(ctx.request);
 };`}
+                        language="typescript"
+                      />
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                      </p>
+                    </div>
+                  </PixelCard>
+                )}
+
+                {activeFramework === "remix" && (
+                  <PixelCard variant="highlight" className="relative">
+                    <div className="pt-4 space-y-4 relative">
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        For Remix apps, create a resource route handler for the studio:
+                      </p>
+                      <CodeHighlighter
+                        code={`// app/routes/api.studio.$.ts
+import { betterAuthStudio } from 'better-auth-studio/remix';
+import studioConfig from '~/studio.config';
+import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node';
+
+const handler = betterAuthStudio(studioConfig);
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  return handler({ request });
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  return handler({ request });
+}`}
+                        language="typescript"
+                      />
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        Make sure your Better Auth routes are set up. For example, in <code className="text-white/90 bg-white/10 px-1 py-0.5">app/routes/api.auth.$.ts</code>:
+                      </p>
+                      <CodeHighlighter
+                        code={`// app/routes/api.auth.$.ts
+import { auth } from '~/lib/auth.server';
+import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node';
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  return auth.handler(request);
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  return auth.handler(request);
+}`}
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">

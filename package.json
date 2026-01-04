@@ -17,6 +17,7 @@
     "./solid-start": "./dist/adapters/solid-start.js",
     "./tanstack-start": "./dist/adapters/tanstack-start.js",
     "./astro": "./dist/adapters/astro.js",
+    "./remix": "./dist/adapters/remix.js",
     "./config": "./dist/types/handler.js"
   },
   "scripts": {

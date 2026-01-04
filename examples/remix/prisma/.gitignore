@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Production build
+/build
+/.cache
+
+# Misc
+.DS_Store
+*.pem
+.env
+.env.local
+.env.production
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Prisma
+*.db
+*.db-journal
+prisma/dev.db*
+

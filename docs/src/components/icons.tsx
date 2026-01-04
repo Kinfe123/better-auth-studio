@@ -306,6 +306,20 @@ export const AstroIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   </svg>
 );
 
+export const RemixIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1.2em"
+    height="1.2em"
+    viewBox="0 0 256 256"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M256 128c0 70.692-57.308 128-128 128C57.308 256 0 198.692 0 128 0 57.308 57.308 0 128 0c70.692 0 128 57.308 128 128z" fill="#121212"/>
+    <path d="M180.8 128c0-29.2-23.6-52.8-52.8-52.8S75.2 98.8 75.2 128s23.6 52.8 52.8 52.8 52.8-23.6 52.8-52.8z" fill="#FFFFFF"/>
+  </svg>
+);
+
 export const TanStackStartIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
