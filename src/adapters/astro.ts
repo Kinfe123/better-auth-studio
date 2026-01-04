@@ -77,7 +77,7 @@ async function convertAstroToUniversal(
 
   const basePath = config.basePath || '/api/studio';
   const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
-  
+
   const url = new URL(request.url);
   let path = url.pathname;
 
@@ -101,4 +101,3 @@ function universalToResponse(res: UniversalResponse): Response {
     headers: res.headers,
   });
 }
-
