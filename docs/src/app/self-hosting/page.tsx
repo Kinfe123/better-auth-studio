@@ -15,12 +15,13 @@ import {
   SvelteKitIcon,
   SolidStartIcon,
   TanStackStartIcon,
+  AstroIcon,
   ConfigIcon,
   WarningIcon,
   PrerequisitesIcon,
 } from "@/components/icons";
 
-type Framework = "nextjs" | "express" | "hono" | "elysia" | "sveltekit" | "solidstart" | "tanstackstart";
+type Framework = "nextjs" | "express" | "hono" | "elysia" | "sveltekit" | "solidstart" | "tanstackstart" | "astro";
 
 const frameworks: Array<{
   id: Framework;
@@ -34,6 +35,7 @@ const frameworks: Array<{
     { id: "sveltekit", name: "Svelte Kit", icon: SvelteKitIcon },
     { id: "solidstart", name: "Solid Start", icon: SolidStartIcon },
     { id: "tanstackstart", name: "TanStack Start", icon: TanStackStartIcon },
+    { id: "astro", name: "Astro", icon: AstroIcon },
   ];
 export default function SelfHosting() {
   const [activeFramework, setActiveFramework] = useState<Framework>("nextjs");
@@ -551,6 +553,47 @@ export const Route = createFileRoute('/api/auth/$')({
     },
   },
 });`}
+                        language="typescript"
+                      />
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                      </p>
+                    </div>
+                  </PixelCard>
+                )}
+
+                {activeFramework === "astro" && (
+                  <PixelCard variant="highlight" className="relative">
+                    <div className="pt-4 space-y-4 relative">
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        For Astro apps, create a catch-all API route handler for the studio:
+                      </p>
+                      <CodeHighlighter
+                        code={`// pages/api/studio/[...all].ts
+import { betterAuthStudio } from 'better-auth-studio/astro';
+import studioConfig from '../../../../studio.config';
+import type { APIRoute } from 'astro';
+
+const handler = betterAuthStudio(studioConfig);
+
+export const ALL: APIRoute = async (ctx) => {
+  return handler(ctx);
+};`}
+                        language="typescript"
+                      />
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        Make sure your Better Auth routes are set up. For example, in <code className="text-white/90 bg-white/10 px-1 py-0.5">pages/api/auth/[...all].ts</code>:
+                      </p>
+                      <CodeHighlighter
+                        code={`// pages/api/auth/[...all].ts
+import { auth } from "~/auth";
+import type { APIRoute } from "astro";
+
+export const ALL: APIRoute = async (ctx) => {
+  // If you want to use rate limiting, make sure to set the 'x-forwarded-for' header
+  // ctx.request.headers.set("x-forwarded-for", ctx.clientAddress);
+  return auth.handler(ctx.request);
+};`}
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">

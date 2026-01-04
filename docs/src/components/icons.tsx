@@ -291,6 +291,20 @@ export const SolidStartIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps)
   </svg>
 );
 
+export const AstroIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
+  <svg
+    viewBox="0 0 256 366"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path
+      d="M182.033 0.221985L128 182.033L73.967 0.221985H0L128 365.445L256 0.221985H182.033Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
 export const TanStackStartIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
