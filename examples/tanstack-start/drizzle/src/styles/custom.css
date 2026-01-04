@@ -1,0 +1,36 @@
+@import "tailwindcss-safe-area";
+
+@import "@daveyplate/better-auth-ui/css";
+
+@layer base {
+    button:not(:disabled),
+    [role="button"]:not(:disabled) {
+        cursor: pointer;
+    }
+}
+
+[role="menuitem"]:not(:disabled) {
+    cursor: pointer;
+}
+
+:root {
+    --warning: hsl(38 92% 50%);
+    --warning-foreground: hsl(48 96% 89%);
+}
+
+.dark {
+    --warning: hsl(48 96% 89%);
+    --warning-foreground: hsl(38 92% 50%);
+}
+
+@theme inline {
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+}
+
+/** iOS Dynamic System Font Scaling */
+/* @supports (-webkit-touch-callout:none) {
+	html {
+		font: -apple-system-body;
+	}
+} */

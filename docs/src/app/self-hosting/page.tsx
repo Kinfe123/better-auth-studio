@@ -14,12 +14,13 @@ import {
   ElysiaIcon,
   SvelteKitIcon,
   SolidStartIcon,
+  TanStackStartIcon,
   ConfigIcon,
   WarningIcon,
   PrerequisitesIcon,
 } from "@/components/icons";
 
-type Framework = "nextjs" | "express" | "hono" | "elysia" | "sveltekit" | "solidstart";
+type Framework = "nextjs" | "express" | "hono" | "elysia" | "sveltekit" | "solidstart" | "tanstackstart";
 
 const frameworks: Array<{
   id: Framework;
@@ -32,6 +33,7 @@ const frameworks: Array<{
     { id: "elysia", name: "Elysia", icon: ElysiaIcon },
     { id: "sveltekit", name: "SvelteKit", icon: SvelteKitIcon },
     { id: "solidstart", name: "SolidStart", icon: SolidStartIcon },
+    { id: "tanstackstart", name: "TanStack Start", icon: TanStackStartIcon },
   ];
 export default function SelfHosting() {
   const [activeFramework, setActiveFramework] = useState<Framework>("nextjs");
@@ -498,6 +500,67 @@ export const { GET, POST } = toSolidStartHandler(auth);`}
                       <p className="text-sm font-light tracking-tight text-white/70">
                         Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">http://localhost:3000/api/studio</code>
                       </p>
+                    </div>
+                  </PixelCard>
+                )}
+
+                {activeFramework === "tanstackstart" && (
+                  <PixelCard variant="highlight" className="relative">
+                    <div className="pt-4 space-y-4 relative">
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        For TanStack Start apps, create a server route handler for the studio:
+                      </p>
+                      <CodeHighlighter
+                        code={`// src/routes/api/studio/$.ts
+import { createFileRoute } from '@tanstack/react-router';
+import { betterAuthStudio } from 'better-auth-studio/tanstack-start';
+import studioConfig from '../../../../studio.config';
+
+const handler = betterAuthStudio(studioConfig);
+
+export const Route = createFileRoute('/api/studio/$')({
+  server: {
+    handlers: {
+      GET: handler,
+      POST: handler,
+      PUT: handler,
+      DELETE: handler,
+      PATCH: handler,
+    },
+  },
+});`}
+                        language="typescript"
+                      />
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        Make sure your Better Auth routes are set up. For example, in <code className="text-white/90 bg-white/10 px-1 py-0.5">src/routes/api/auth/$.ts</code>:
+                      </p>
+                      <CodeHighlighter
+                        code={`// src/routes/api/auth/$.ts
+import { createFileRoute } from '@tanstack/react-router';
+import { auth } from '@/lib/auth';
+
+export const Route = createFileRoute('/api/auth/$')({
+  server: {
+    handlers: {
+      GET: ({ request }) => {
+        return auth.handler(request);
+      },
+      POST: ({ request }) => {
+        return auth.handler(request);
+      },
+    },
+  },
+});`}
+                        language="typescript"
+                      />
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">http://localhost:3000/api/studio</code>
+                      </p>
+                      <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-none">
+                        <p className="text-xs font-light tracking-tight text-white/60 mb-2">
+                          <strong className="font-bold text-white/80">Note:</strong> TanStack Start uses file-based routing with <code className="text-white/70 bg-white/10 px-1 py-0.5">createFileRoute</code>. The <code className="text-white/70 bg-white/10 px-1 py-0.5">$</code> in the route path acts as a catch-all parameter. Make sure to use the <code className="text-white/70 bg-white/10 px-1 py-0.5">tanstackStartCookies</code> plugin in your Better Auth config for proper cookie handling.
+                        </p>
+                      </div>
                     </div>
                   </PixelCard>
                 )}

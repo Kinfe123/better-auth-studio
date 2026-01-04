@@ -15,6 +15,7 @@
     "./elysia": "./dist/adapters/elysia.js",
     "./svelte-kit": "./dist/adapters/svelte-kit.js",
     "./solid-start": "./dist/adapters/solid-start.js",
+    "./tanstack-start": "./dist/adapters/tanstack-start.js",
     "./config": "./dist/types/handler.js"
   },
   "scripts": {
