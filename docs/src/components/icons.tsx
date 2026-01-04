@@ -296,6 +296,7 @@ export const TanStackStartIcon = ({ className = "w-3 h-3 inline-flex" }: IconPro
     xmlns="http://www.w3.org/2000/svg"
     width="1.2em"
     height="1.2em"
+    fill='currentColor'
     viewBox="0 0 100 100"
   >
     <mask
