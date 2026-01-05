@@ -52,8 +52,7 @@ async function convertNuxtToUniversal(
       if (contentType.includes('application/json')) {
         try {
           body = await request.json();
-        } catch (error) {
-        }
+        } catch (error) {}
       } else if (
         contentType.includes('application/x-www-form-urlencoded') ||
         contentType.includes('multipart/form-data')
@@ -61,8 +60,7 @@ async function convertNuxtToUniversal(
         try {
           const formData = await request.formData();
           body = Object.fromEntries(formData.entries());
-        } catch (error) {
-        }
+        } catch (error) {}
       } else {
         try {
           const text = await request.text();
@@ -73,11 +71,9 @@ async function convertNuxtToUniversal(
               body = text;
             }
           }
-        } catch (error) {
-        }
+        } catch (error) {}
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   const headers: Record<string, string> = {};
@@ -87,7 +83,7 @@ async function convertNuxtToUniversal(
 
   const basePath = config.basePath || '/api/studio';
   const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
-  
+
   if (!request.url) {
     throw new Error('Request URL is required');
   }
