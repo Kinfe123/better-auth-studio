@@ -1,0 +1,25 @@
+{
+  "name": "nuxt-prisma-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.1",
+    "better-auth": "^1.4.10",
+    "better-auth-studio": "file:../../..",
+    "nuxt": "^3.15.0"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "prisma": "^6.19.1",
+    "typescript": "^5.9.3"
+  }
+}
