@@ -38,7 +38,7 @@ async function convertNuxtToUniversal(
 ): Promise<UniversalRequest> {
   let body: any;
   const method = request.method;
-  console.log({request})
+  console.log({ request });
   if (method !== 'GET' && method !== 'HEAD') {
     const contentType = request.headers.get('content-type') || '';
     if (contentType.includes('application/json')) {
@@ -74,7 +74,7 @@ async function convertNuxtToUniversal(
 
   const basePath = config.basePath || '/api/studio';
   const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
-  if(!request.url) {
+  if (!request.url) {
     throw new Error('Request URL is required');
   }
   const url = new URL(request.url);
