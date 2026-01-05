@@ -47,8 +47,7 @@ async function convertNuxtToUniversal(request, config) {
                 try {
                     body = await request.json();
                 }
-                catch (error) {
-                }
+                catch (error) { }
             }
             else if (contentType.includes('application/x-www-form-urlencoded') ||
                 contentType.includes('multipart/form-data')) {
@@ -56,8 +55,7 @@ async function convertNuxtToUniversal(request, config) {
                     const formData = await request.formData();
                     body = Object.fromEntries(formData.entries());
                 }
-                catch (error) {
-                }
+                catch (error) { }
             }
             else {
                 try {
@@ -71,12 +69,10 @@ async function convertNuxtToUniversal(request, config) {
                         }
                     }
                 }
-                catch (error) {
-                }
+                catch (error) { }
             }
         }
-        catch (error) {
-        }
+        catch (error) { }
     }
     const headers = {};
     request.headers.forEach((value, key) => {
