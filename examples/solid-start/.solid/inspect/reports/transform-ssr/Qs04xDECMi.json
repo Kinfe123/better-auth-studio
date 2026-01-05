@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/server/trpc/utils.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { initTRPC, TRPCError } from '@trpc/server'\nimport type { Context } from './context'\n\nexport const t = initTRPC.context<Context>().create()\n\nexport const router = t.router\nexport const procedure = t.procedure\nexport const protectedProcedure = t.procedure.use(\n  t.middleware(async ({ ctx, next }) => {\n    if (!ctx.user) {\n      throw new TRPCError({\n        code: 'UNAUTHORIZED',\n        message: 'You are not authorized to access this resource',\n      })\n    }\n    return next({ ctx: { ...ctx, user: ctx.user } })\n  }),\n)\n",
+      "start": 1767441590409,
+      "end": 1767441590409
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590409,
+      "end": 1767441590410,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590410,
+      "end": 1767441590410,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590410,
+      "end": 1767441590410,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { initTRPC, TRPCError } from \"@trpc/server\";\nexport const t = initTRPC.context().create();\nexport const router = t.router;\nexport const procedure = t.procedure;\nexport const protectedProcedure = t.procedure.use(\n  t.middleware(async ({ ctx, next }) => {\n    if (!ctx.user) {\n      throw new TRPCError({\n        code: \"UNAUTHORIZED\",\n        message: \"You are not authorized to access this resource\"\n      });\n    }\n    return next({ ctx: { ...ctx, user: ctx.user } });\n  })\n);\n",
+      "start": 1767441590410,
+      "end": 1767441590509,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "utils.ts"
+        ],
+        "sourcesContent": [
+          "import { initTRPC, TRPCError } from '@trpc/server'\nimport type { Context } from './context'\n\nexport const t = initTRPC.context<Context>().create()\n\nexport const router = t.router\nexport const procedure = t.procedure\nexport const protectedProcedure = t.procedure.use(\n  t.middleware(async ({ ctx, next }) => {\n    if (!ctx.user) {\n      throw new TRPCError({\n        code: 'UNAUTHORIZED',\n        message: 'You are not authorized to access this resource',\n      })\n    }\n    return next({ ctx: { ...ctx, user: ctx.user } })\n  }),\n)\n"
+        ],
+        "mappings": "AAAA,SAAS,UAAU,iBAAiB;AAG7B,aAAM,IAAI,SAAS,QAAiB,EAAE,OAAO;AAE7C,aAAM,SAAS,EAAE;AACjB,aAAM,YAAY,EAAE;AACpB,aAAM,qBAAqB,EAAE,UAAU;AAAA,EAC5C,EAAE,WAAW,OAAO,EAAE,KAAK,KAAK,MAAM;AACpC,QAAI,CAAC,IAAI,MAAM;AACb,YAAM,IAAI,UAAU;AAAA,QAClB,MAAM;AAAA,QACN,SAAS;AAAA,MACX,CAAC;AAAA,IACH;AACA,WAAO,KAAK,EAAE,KAAK,EAAE,GAAG,KAAK,MAAM,IAAI,KAAK,EAAE,CAAC;AAAA,EACjD,CAAC;AACH;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { initTRPC, TRPCError } from \"@trpc/server\";\nexport const t = initTRPC.context().create();\nexport const router = t.router;\nexport const procedure = t.procedure;\nexport const protectedProcedure = t.procedure.use(\n  t.middleware(async ({ ctx, next }) => {\n    if (!ctx.user) {\n      throw new TRPCError({\n        code: \"UNAUTHORIZED\",\n        message: \"You are not authorized to access this resource\"\n      });\n    }\n    return next({ ctx: { ...ctx, user: ctx.user } });\n  })\n);\n",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { initTRPC, TRPCError } from \"@trpc/server\";\nexport const t = initTRPC.context().create();\nexport const router = t.router;\nexport const procedure = t.procedure;\nexport const protectedProcedure = t.procedure.use(\n  t.middleware(async ({ ctx, next }) => {\n    if (!ctx.user) {\n      throw new TRPCError({\n        code: \"UNAUTHORIZED\",\n        message: \"You are not authorized to access this resource\"\n      });\n    }\n    return next({ ctx: { ...ctx, user: ctx.user } });\n  })\n);\n",
+      "start": 1767441590510,
+      "end": 1767441590513,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

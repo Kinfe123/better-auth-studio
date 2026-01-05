@@ -1,0 +1,105 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/utils.js",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { createMemo, getOwner, runWithOwner } from \"solid-js\";\nconst hasSchemeRegex = /^(?:[a-z0-9]+:)?\\/\\//i;\nconst trimPathRegex = /^\\/+|(\\/)\\/+$/g;\nexport function normalizePath(path, omitSlash = false) {\n    const s = path.replace(trimPathRegex, \"$1\");\n    return s ? (omitSlash || /^[?#]/.test(s) ? s : \"/\" + s) : \"\";\n}\nexport function resolvePath(base, path, from) {\n    if (hasSchemeRegex.test(path)) {\n        return undefined;\n    }\n    const basePath = normalizePath(base);\n    const fromPath = from && normalizePath(from);\n    let result = \"\";\n    if (!fromPath || path.startsWith(\"/\")) {\n        result = basePath;\n    }\n    else if (fromPath.toLowerCase().indexOf(basePath.toLowerCase()) !== 0) {\n        result = basePath + fromPath;\n    }\n    else {\n        result = fromPath;\n    }\n    return (result || \"/\") + normalizePath(path, !result);\n}\nexport function invariant(value, message) {\n    if (value == null) {\n        throw new Error(message);\n    }\n    return value;\n}\nexport function joinPaths(from, to) {\n    return normalizePath(from).replace(/\\/*(\\*.*)?$/g, \"\") + normalizePath(to);\n}\nexport function extractSearchParams(url) {\n    const params = {};\n    url.searchParams.forEach((value, key) => {\n        params[key] = value;\n    });\n    return params;\n}\nexport function createMatcher(path, partial, matchFilters) {\n    const [pattern, splat] = path.split(\"/*\", 2);\n    const segments = pattern.split(\"/\").filter(Boolean);\n    const len = segments.length;\n    return (location) => {\n        const locSegments = location.split(\"/\").filter(Boolean);\n        const lenDiff = locSegments.length - len;\n        if (lenDiff < 0 || (lenDiff > 0 && splat === undefined && !partial)) {\n            return null;\n        }\n        const match = {\n            path: len ? \"\" : \"/\",\n            params: {}\n        };\n        const matchFilter = (s) => matchFilters === undefined ? undefined : matchFilters[s];\n        for (let i = 0; i < len; i++) {\n            const segment = segments[i];\n            const locSegment = locSegments[i];\n            const dynamic = segment[0] === \":\";\n            const key = dynamic ? segment.slice(1) : segment;\n            if (dynamic && matchSegment(locSegment, matchFilter(key))) {\n                match.params[key] = locSegment;\n            }\n            else if (dynamic || !matchSegment(locSegment, segment)) {\n                return null;\n            }\n            match.path += `/${locSegment}`;\n        }\n        if (splat) {\n            const remainder = lenDiff ? locSegments.slice(-lenDiff).join(\"/\") : \"\";\n            if (matchSegment(remainder, matchFilter(splat))) {\n                match.params[splat] = remainder;\n            }\n            else {\n                return null;\n            }\n        }\n        return match;\n    };\n}\nfunction matchSegment(input, filter) {\n    const isEqual = (s) => s.localeCompare(input, undefined, { sensitivity: \"base\" }) === 0;\n    if (filter === undefined) {\n        return true;\n    }\n    else if (typeof filter === \"string\") {\n        return isEqual(filter);\n    }\n    else if (typeof filter === \"function\") {\n        return filter(input);\n    }\n    else if (Array.isArray(filter)) {\n        return filter.some(isEqual);\n    }\n    else if (filter instanceof RegExp) {\n        return filter.test(input);\n    }\n    return false;\n}\nexport function scoreRoute(route) {\n    const [pattern, splat] = route.pattern.split(\"/*\", 2);\n    const segments = pattern.split(\"/\").filter(Boolean);\n    return segments.reduce((score, segment) => score + (segment.startsWith(\":\") ? 2 : 3), segments.length - (splat === undefined ? 0 : 1));\n}\nexport function createMemoObject(fn) {\n    const map = new Map();\n    const owner = getOwner();\n    return new Proxy({}, {\n        get(_, property) {\n            if (!map.has(property)) {\n                runWithOwner(owner, () => map.set(property, createMemo(() => fn()[property])));\n            }\n            return map.get(property)();\n        },\n        getOwnPropertyDescriptor() {\n            return {\n                enumerable: true,\n                configurable: true\n            };\n        },\n        ownKeys() {\n            return Reflect.ownKeys(fn());\n        }\n    });\n}\nexport function mergeSearchString(search, params) {\n    const merged = new URLSearchParams(search);\n    Object.entries(params).forEach(([key, value]) => {\n        if (value == null || value === \"\") {\n            merged.delete(key);\n        }\n        else {\n            merged.set(key, String(value));\n        }\n    });\n    const s = merged.toString();\n    return s ? `?${s}` : \"\";\n}\nexport function expandOptionals(pattern) {\n    let match = /(\\/?\\:[^\\/]+)\\?/.exec(pattern);\n    if (!match)\n        return [pattern];\n    let prefix = pattern.slice(0, match.index);\n    let suffix = pattern.slice(match.index + match[0].length);\n    const prefixes = [prefix, (prefix += match[1])];\n    // This section handles adjacent optional params. We don't actually want all permuations since\n    // that will lead to equivalent routes which have the same number of params. For example\n    // `/:a?/:b?/:c`? only has the unique expansion: `/`, `/:a`, `/:a/:b`, `/:a/:b/:c` and we can\n    // discard `/:b`, `/:c`, `/:b/:c` by building them up in order and not recursing. This also helps\n    // ensure predictability where earlier params have precidence.\n    while ((match = /^(\\/\\:[^\\/]+)\\?/.exec(suffix))) {\n        prefixes.push((prefix += match[1]));\n        suffix = suffix.slice(match[0].length);\n    }\n    return expandOptionals(suffix).reduce((results, expansion) => [...results, ...prefixes.map(p => p + expansion)], []);\n}\n",
+      "start": 1767441590074,
+      "end": 1767441590074
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { createMemo, getOwner, runWithOwner } from \"solid-js\";\nconst hasSchemeRegex = /^(?:[a-z0-9]+:)?\\/\\//i;\nconst trimPathRegex = /^\\/+|(\\/)\\/+$/g;\nexport function normalizePath(path, omitSlash = false) {\n    const s = path.replace(trimPathRegex, \"$1\");\n    return s ? (omitSlash || /^[?#]/.test(s) ? s : \"/\" + s) : \"\";\n}\nexport function resolvePath(base, path, from) {\n    if (hasSchemeRegex.test(path)) {\n        return undefined;\n    }\n    const basePath = normalizePath(base);\n    const fromPath = from && normalizePath(from);\n    let result = \"\";\n    if (!fromPath || path.startsWith(\"/\")) {\n        result = basePath;\n    }\n    else if (fromPath.toLowerCase().indexOf(basePath.toLowerCase()) !== 0) {\n        result = basePath + fromPath;\n    }\n    else {\n        result = fromPath;\n    }\n    return (result || \"/\") + normalizePath(path, !result);\n}\nexport function invariant(value, message) {\n    if (value == null) {\n        throw new Error(message);\n    }\n    return value;\n}\nexport function joinPaths(from, to) {\n    return normalizePath(from).replace(/\\/*(\\*.*)?$/g, \"\") + normalizePath(to);\n}\nexport function extractSearchParams(url) {\n    const params = {};\n    url.searchParams.forEach((value, key) => {\n        params[key] = value;\n    });\n    return params;\n}\nexport function createMatcher(path, partial, matchFilters) {\n    const [pattern, splat] = path.split(\"/*\", 2);\n    const segments = pattern.split(\"/\").filter(Boolean);\n    const len = segments.length;\n    return (location) => {\n        const locSegments = location.split(\"/\").filter(Boolean);\n        const lenDiff = locSegments.length - len;\n        if (lenDiff < 0 || (lenDiff > 0 && splat === undefined && !partial)) {\n            return null;\n        }\n        const match = {\n            path: len ? \"\" : \"/\",\n            params: {}\n        };\n        const matchFilter = (s) => matchFilters === undefined ? undefined : matchFilters[s];\n        for (let i = 0; i < len; i++) {\n            const segment = segments[i];\n            const locSegment = locSegments[i];\n            const dynamic = segment[0] === \":\";\n            const key = dynamic ? segment.slice(1) : segment;\n            if (dynamic && matchSegment(locSegment, matchFilter(key))) {\n                match.params[key] = locSegment;\n            }\n            else if (dynamic || !matchSegment(locSegment, segment)) {\n                return null;\n            }\n            match.path += `/${locSegment}`;\n        }\n        if (splat) {\n            const remainder = lenDiff ? locSegments.slice(-lenDiff).join(\"/\") : \"\";\n            if (matchSegment(remainder, matchFilter(splat))) {\n                match.params[splat] = remainder;\n            }\n            else {\n                return null;\n            }\n        }\n        return match;\n    };\n}\nfunction matchSegment(input, filter) {\n    const isEqual = (s) => s.localeCompare(input, undefined, { sensitivity: \"base\" }) === 0;\n    if (filter === undefined) {\n        return true;\n    }\n    else if (typeof filter === \"string\") {\n        return isEqual(filter);\n    }\n    else if (typeof filter === \"function\") {\n        return filter(input);\n    }\n    else if (Array.isArray(filter)) {\n        return filter.some(isEqual);\n    }\n    else if (filter instanceof RegExp) {\n        return filter.test(input);\n    }\n    return false;\n}\nexport function scoreRoute(route) {\n    const [pattern, splat] = route.pattern.split(\"/*\", 2);\n    const segments = pattern.split(\"/\").filter(Boolean);\n    return segments.reduce((score, segment) => score + (segment.startsWith(\":\") ? 2 : 3), segments.length - (splat === undefined ? 0 : 1));\n}\nexport function createMemoObject(fn) {\n    const map = new Map();\n    const owner = getOwner();\n    return new Proxy({}, {\n        get(_, property) {\n            if (!map.has(property)) {\n                runWithOwner(owner, () => map.set(property, createMemo(() => fn()[property])));\n            }\n            return map.get(property)();\n        },\n        getOwnPropertyDescriptor() {\n            return {\n                enumerable: true,\n                configurable: true\n            };\n        },\n        ownKeys() {\n            return Reflect.ownKeys(fn());\n        }\n    });\n}\nexport function mergeSearchString(search, params) {\n    const merged = new URLSearchParams(search);\n    Object.entries(params).forEach(([key, value]) => {\n        if (value == null || value === \"\") {\n            merged.delete(key);\n        }\n        else {\n            merged.set(key, String(value));\n        }\n    });\n    const s = merged.toString();\n    return s ? `?${s}` : \"\";\n}\nexport function expandOptionals(pattern) {\n    let match = /(\\/?\\:[^\\/]+)\\?/.exec(pattern);\n    if (!match)\n        return [pattern];\n    let prefix = pattern.slice(0, match.index);\n    let suffix = pattern.slice(match.index + match[0].length);\n    const prefixes = [prefix, (prefix += match[1])];\n    // This section handles adjacent optional params. We don't actually want all permuations since\n    // that will lead to equivalent routes which have the same number of params. For example\n    // `/:a?/:b?/:c`? only has the unique expansion: `/`, `/:a`, `/:a/:b`, `/:a/:b/:c` and we can\n    // discard `/:b`, `/:c`, `/:b/:c` by building them up in order and not recursing. This also helps\n    // ensure predictability where earlier params have precidence.\n    while ((match = /^(\\/\\:[^\\/]+)\\?/.exec(suffix))) {\n        prefixes.push((prefix += match[1]));\n        suffix = suffix.slice(match[0].length);\n    }\n    return expandOptionals(suffix).reduce((results, expansion) => [...results, ...prefixes.map(p => p + expansion)], []);\n}\n",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { createMemo, getOwner, runWithOwner } from \"solid-js\";\nconst hasSchemeRegex = /^(?:[a-z0-9]+:)?\\/\\//i;\nconst trimPathRegex = /^\\/+|(\\/)\\/+$/g;\nexport function normalizePath(path, omitSlash = false) {\n    const s = path.replace(trimPathRegex, \"$1\");\n    return s ? (omitSlash || /^[?#]/.test(s) ? s : \"/\" + s) : \"\";\n}\nexport function resolvePath(base, path, from) {\n    if (hasSchemeRegex.test(path)) {\n        return undefined;\n    }\n    const basePath = normalizePath(base);\n    const fromPath = from && normalizePath(from);\n    let result = \"\";\n    if (!fromPath || path.startsWith(\"/\")) {\n        result = basePath;\n    }\n    else if (fromPath.toLowerCase().indexOf(basePath.toLowerCase()) !== 0) {\n        result = basePath + fromPath;\n    }\n    else {\n        result = fromPath;\n    }\n    return (result || \"/\") + normalizePath(path, !result);\n}\nexport function invariant(value, message) {\n    if (value == null) {\n        throw new Error(message);\n    }\n    return value;\n}\nexport function joinPaths(from, to) {\n    return normalizePath(from).replace(/\\/*(\\*.*)?$/g, \"\") + normalizePath(to);\n}\nexport function extractSearchParams(url) {\n    const params = {};\n    url.searchParams.forEach((value, key) => {\n        params[key] = value;\n    });\n    return params;\n}\nexport function createMatcher(path, partial, matchFilters) {\n    const [pattern, splat] = path.split(\"/*\", 2);\n    const segments = pattern.split(\"/\").filter(Boolean);\n    const len = segments.length;\n    return (location) => {\n        const locSegments = location.split(\"/\").filter(Boolean);\n        const lenDiff = locSegments.length - len;\n        if (lenDiff < 0 || (lenDiff > 0 && splat === undefined && !partial)) {\n            return null;\n        }\n        const match = {\n            path: len ? \"\" : \"/\",\n            params: {}\n        };\n        const matchFilter = (s) => matchFilters === undefined ? undefined : matchFilters[s];\n        for (let i = 0; i < len; i++) {\n            const segment = segments[i];\n            const locSegment = locSegments[i];\n            const dynamic = segment[0] === \":\";\n            const key = dynamic ? segment.slice(1) : segment;\n            if (dynamic && matchSegment(locSegment, matchFilter(key))) {\n                match.params[key] = locSegment;\n            }\n            else if (dynamic || !matchSegment(locSegment, segment)) {\n                return null;\n            }\n            match.path += `/${locSegment}`;\n        }\n        if (splat) {\n            const remainder = lenDiff ? locSegments.slice(-lenDiff).join(\"/\") : \"\";\n            if (matchSegment(remainder, matchFilter(splat))) {\n                match.params[splat] = remainder;\n            }\n            else {\n                return null;\n            }\n        }\n        return match;\n    };\n}\nfunction matchSegment(input, filter) {\n    const isEqual = (s) => s.localeCompare(input, undefined, { sensitivity: \"base\" }) === 0;\n    if (filter === undefined) {\n        return true;\n    }\n    else if (typeof filter === \"string\") {\n        return isEqual(filter);\n    }\n    else if (typeof filter === \"function\") {\n        return filter(input);\n    }\n    else if (Array.isArray(filter)) {\n        return filter.some(isEqual);\n    }\n    else if (filter instanceof RegExp) {\n        return filter.test(input);\n    }\n    return false;\n}\nexport function scoreRoute(route) {\n    const [pattern, splat] = route.pattern.split(\"/*\", 2);\n    const segments = pattern.split(\"/\").filter(Boolean);\n    return segments.reduce((score, segment) => score + (segment.startsWith(\":\") ? 2 : 3), segments.length - (splat === undefined ? 0 : 1));\n}\nexport function createMemoObject(fn) {\n    const map = new Map();\n    const owner = getOwner();\n    return new Proxy({}, {\n        get(_, property) {\n            if (!map.has(property)) {\n                runWithOwner(owner, () => map.set(property, createMemo(() => fn()[property])));\n            }\n            return map.get(property)();\n        },\n        getOwnPropertyDescriptor() {\n            return {\n                enumerable: true,\n                configurable: true\n            };\n        },\n        ownKeys() {\n            return Reflect.ownKeys(fn());\n        }\n    });\n}\nexport function mergeSearchString(search, params) {\n    const merged = new URLSearchParams(search);\n    Object.entries(params).forEach(([key, value]) => {\n        if (value == null || value === \"\") {\n            merged.delete(key);\n        }\n        else {\n            merged.set(key, String(value));\n        }\n    });\n    const s = merged.toString();\n    return s ? `?${s}` : \"\";\n}\nexport function expandOptionals(pattern) {\n    let match = /(\\/?\\:[^\\/]+)\\?/.exec(pattern);\n    if (!match)\n        return [pattern];\n    let prefix = pattern.slice(0, match.index);\n    let suffix = pattern.slice(match.index + match[0].length);\n    const prefixes = [prefix, (prefix += match[1])];\n    // This section handles adjacent optional params. We don't actually want all permuations since\n    // that will lead to equivalent routes which have the same number of params. For example\n    // `/:a?/:b?/:c`? only has the unique expansion: `/`, `/:a`, `/:a/:b`, `/:a/:b/:c` and we can\n    // discard `/:b`, `/:c`, `/:b/:c` by building them up in order and not recursing. This also helps\n    // ensure predictability where earlier params have precidence.\n    while ((match = /^(\\/\\:[^\\/]+)\\?/.exec(suffix))) {\n        prefixes.push((prefix += match[1]));\n        suffix = suffix.slice(match[0].length);\n    }\n    return expandOptionals(suffix).reduce((results, expansion) => [...results, ...prefixes.map(p => p + expansion)], []);\n}\n",
+      "start": 1767441590074,
+      "end": 1767441590074,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/cookieStorage.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookieStorage.ts\n */\n\nimport type { CreateCookieFunction } from \"./cookies\";\nimport { isCookie } from \"./cookies\";\nimport type { SessionIdStorageStrategy, SessionStorage } from \"./sessions\";\nimport { createSession, warnOnceAboutSigningSessionCookie } from \"./sessions\";\n\ninterface CookieSessionStorageOptions {\n  /**\n   * The Cookie used to store the session data on the client, or options used\n   * to automatically create one.\n   */\n  cookie?: SessionIdStorageStrategy[\"cookie\"];\n}\n\nexport type CreateCookieSessionStorageFunction = (\n  options?: CookieSessionStorageOptions\n) => SessionStorage;\n\n/**\n * Creates and returns a SessionStorage object that stores all session data\n * directly in the session cookie itself.\n *\n * This has the advantage that no database or other backend services are\n * needed, and can help to simplify some load-balanced scenarios. However, it\n * also has the limitation that serialized session data may not exceed the\n * browser's maximum cookie size. Trade-offs!\n *\n * @see https://remix.run/api/remix#createcookiesessionstorage\n */\nexport const createCookieSessionStorageFactory =\n  (createCookie: CreateCookieFunction): CreateCookieSessionStorageFunction =>\n  ({ cookie: cookieArg } = {}) => {\n    let cookie = isCookie(cookieArg)\n      ? cookieArg\n      : createCookie(cookieArg?.name || \"__session\", cookieArg);\n\n    warnOnceAboutSigningSessionCookie(cookie);\n\n    return {\n      async getSession(cookieHeader, options) {\n        return createSession((cookieHeader && (await cookie.parse(cookieHeader, options))) || {});\n      },\n      async commitSession(session, options) {\n        return cookie.serialize(session.data, options);\n      },\n      async destroySession(_session, options) {\n        return cookie.serialize(\"\", {\n          ...options,\n          expires: new Date(0)\n        });\n      }\n    };\n  };\n",
+      "start": 1767441590520,
+      "end": 1767441590520
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590520,
+      "end": 1767441590520,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590520,
+      "end": 1767441590520,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590520,
+      "end": 1767441590520,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookieStorage.ts\n */\nimport { isCookie } from \"./cookies\";\nimport { createSession, warnOnceAboutSigningSessionCookie } from \"./sessions\";\nexport const createCookieSessionStorageFactory = (createCookie) => ({ cookie: cookieArg } = {}) => {\n  let cookie = isCookie(cookieArg) ? cookieArg : createCookie(cookieArg?.name || \"__session\", cookieArg);\n  warnOnceAboutSigningSessionCookie(cookie);\n  return {\n    async getSession(cookieHeader, options) {\n      return createSession(cookieHeader && await cookie.parse(cookieHeader, options) || {});\n    },\n    async commitSession(session, options) {\n      return cookie.serialize(session.data, options);\n    },\n    async destroySession(_session, options) {\n      return cookie.serialize(\"\", {\n        ...options,\n        expires: /* @__PURE__ */ new Date(0)\n      });\n    }\n  };\n};\n",
+      "start": 1767441590520,
+      "end": 1767441590609,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "cookieStorage.ts"
+        ],
+        "sourcesContent": [
+          "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookieStorage.ts\n */\n\nimport type { CreateCookieFunction } from \"./cookies\";\nimport { isCookie } from \"./cookies\";\nimport type { SessionIdStorageStrategy, SessionStorage } from \"./sessions\";\nimport { createSession, warnOnceAboutSigningSessionCookie } from \"./sessions\";\n\ninterface CookieSessionStorageOptions {\n  /**\n   * The Cookie used to store the session data on the client, or options used\n   * to automatically create one.\n   */\n  cookie?: SessionIdStorageStrategy[\"cookie\"];\n}\n\nexport type CreateCookieSessionStorageFunction = (\n  options?: CookieSessionStorageOptions\n) => SessionStorage;\n\n/**\n * Creates and returns a SessionStorage object that stores all session data\n * directly in the session cookie itself.\n *\n * This has the advantage that no database or other backend services are\n * needed, and can help to simplify some load-balanced scenarios. However, it\n * also has the limitation that serialized session data may not exceed the\n * browser's maximum cookie size. Trade-offs!\n *\n * @see https://remix.run/api/remix#createcookiesessionstorage\n */\nexport const createCookieSessionStorageFactory =\n  (createCookie: CreateCookieFunction): CreateCookieSessionStorageFunction =>\n  ({ cookie: cookieArg } = {}) => {\n    let cookie = isCookie(cookieArg)\n      ? cookieArg\n      : createCookie(cookieArg?.name || \"__session\", cookieArg);\n\n    warnOnceAboutSigningSessionCookie(cookie);\n\n    return {\n      async getSession(cookieHeader, options) {\n        return createSession((cookieHeader && (await cookie.parse(cookieHeader, options))) || {});\n      },\n      async commitSession(session, options) {\n        return cookie.serialize(session.data, options);\n      },\n      async destroySession(_session, options) {\n        return cookie.serialize(\"\", {\n          ...options,\n          expires: new Date(0)\n        });\n      }\n    };\n  };\n"
+        ],
+        "mappings": "AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AASA,SAAS,gBAAgB;AAEzB,SAAS,eAAe,yCAAyC;AAyB1D,aAAM,oCACX,CAAC,iBACD,CAAC,EAAE,QAAQ,UAAU,IAAI,CAAC,MAAM;AAC9B,MAAI,SAAS,SAAS,SAAS,IAC3B,YACA,aAAa,WAAW,QAAQ,aAAa,SAAS;AAE1D,oCAAkC,MAAM;AAExC,SAAO;AAAA,IACL,MAAM,WAAW,cAAc,SAAS;AACtC,aAAO,cAAe,gBAAiB,MAAM,OAAO,MAAM,cAAc,OAAO,KAAO,CAAC,CAAC;AAAA,IAC1F;AAAA,IACA,MAAM,cAAc,SAAS,SAAS;AACpC,aAAO,OAAO,UAAU,QAAQ,MAAM,OAAO;AAAA,IAC/C;AAAA,IACA,MAAM,eAAe,UAAU,SAAS;AACtC,aAAO,OAAO,UAAU,IAAI;AAAA,QAC1B,GAAG;AAAA,QACH,SAAS,oBAAI,KAAK,CAAC;AAAA,MACrB,CAAC;AAAA,IACH;AAAA,EACF;AACF;",
+        "names": [],
+        "x_google_ignoreList": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookieStorage.ts\n */\nimport { isCookie } from \"./cookies\";\nimport { createSession, warnOnceAboutSigningSessionCookie } from \"./sessions\";\nexport const createCookieSessionStorageFactory = (createCookie) => ({ cookie: cookieArg } = {}) => {\n  let cookie = isCookie(cookieArg) ? cookieArg : createCookie(cookieArg?.name || \"__session\", cookieArg);\n  warnOnceAboutSigningSessionCookie(cookie);\n  return {\n    async getSession(cookieHeader, options) {\n      return createSession(cookieHeader && await cookie.parse(cookieHeader, options) || {});\n    },\n    async commitSession(session, options) {\n      return cookie.serialize(session.data, options);\n    },\n    async destroySession(_session, options) {\n      return cookie.serialize(\"\", {\n        ...options,\n        expires: /* @__PURE__ */ new Date(0)\n      });\n    }\n  };\n};\n",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookieStorage.ts\n */\nimport { isCookie } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/cookies.ts\";\nimport { createSession, warnOnceAboutSigningSessionCookie } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/sessions.ts\";\nexport const createCookieSessionStorageFactory = (createCookie) => ({ cookie: cookieArg } = {}) => {\n  let cookie = isCookie(cookieArg) ? cookieArg : createCookie(cookieArg?.name || \"__session\", cookieArg);\n  warnOnceAboutSigningSessionCookie(cookie);\n  return {\n    async getSession(cookieHeader, options) {\n      return createSession(cookieHeader && await cookie.parse(cookieHeader, options) || {});\n    },\n    async commitSession(session, options) {\n      return cookie.serialize(session.data, options);\n    },\n    async destroySession(_session, options) {\n      return cookie.serialize(\"\", {\n        ...options,\n        expires: /* @__PURE__ */ new Date(0)\n      });\n    }\n  };\n};\n",
+      "start": 1767441590609,
+      "end": 1767441590610,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

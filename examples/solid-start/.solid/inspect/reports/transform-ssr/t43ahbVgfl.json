@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/server/trpc/router/example.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { z } from 'zod'\nimport { procedure, router, protectedProcedure } from '../utils'\n\nexport default router({\n  hello: procedure.input(z.object({ name: z.string() })).query(({ input }) => {\n    return `Hello ${input.name}`\n  }),\n  random: procedure\n    .input(z.object({ num: z.number() }))\n    .mutation(({ input }) => {\n      return Math.floor(Math.random() * 100) / input.num\n    }),\n  secret: protectedProcedure.query(({ ctx }) => {\n    return `This is top secret - ${ctx.user.displayName}`\n  }),\n})\n",
+      "start": 1767441590410,
+      "end": 1767441590410
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590410,
+      "end": 1767441590410,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590410,
+      "end": 1767441590410,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590410,
+      "end": 1767441590410,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { z } from \"zod\";\nimport { procedure, router, protectedProcedure } from \"../utils\";\nexport default router({\n  hello: procedure.input(z.object({ name: z.string() })).query(({ input }) => {\n    return `Hello ${input.name}`;\n  }),\n  random: procedure.input(z.object({ num: z.number() })).mutation(({ input }) => {\n    return Math.floor(Math.random() * 100) / input.num;\n  }),\n  secret: protectedProcedure.query(({ ctx }) => {\n    return `This is top secret - ${ctx.user.displayName}`;\n  })\n});\n",
+      "start": 1767441590410,
+      "end": 1767441590509,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "example.ts"
+        ],
+        "sourcesContent": [
+          "import { z } from 'zod'\nimport { procedure, router, protectedProcedure } from '../utils'\n\nexport default router({\n  hello: procedure.input(z.object({ name: z.string() })).query(({ input }) => {\n    return `Hello ${input.name}`\n  }),\n  random: procedure\n    .input(z.object({ num: z.number() }))\n    .mutation(({ input }) => {\n      return Math.floor(Math.random() * 100) / input.num\n    }),\n  secret: protectedProcedure.query(({ ctx }) => {\n    return `This is top secret - ${ctx.user.displayName}`\n  }),\n})\n"
+        ],
+        "mappings": "AAAA,SAAS,SAAS;AAClB,SAAS,WAAW,QAAQ,0BAA0B;AAEtD,eAAe,OAAO;AAAA,EACpB,OAAO,UAAU,MAAM,EAAE,OAAO,EAAE,MAAM,EAAE,OAAO,EAAE,CAAC,CAAC,EAAE,MAAM,CAAC,EAAE,MAAM,MAAM;AAC1E,WAAO,SAAS,MAAM,IAAI;AAAA,EAC5B,CAAC;AAAA,EACD,QAAQ,UACL,MAAM,EAAE,OAAO,EAAE,KAAK,EAAE,OAAO,EAAE,CAAC,CAAC,EACnC,SAAS,CAAC,EAAE,MAAM,MAAM;AACvB,WAAO,KAAK,MAAM,KAAK,OAAO,IAAI,GAAG,IAAI,MAAM;AAAA,EACjD,CAAC;AAAA,EACH,QAAQ,mBAAmB,MAAM,CAAC,EAAE,IAAI,MAAM;AAC5C,WAAO,wBAAwB,IAAI,KAAK,WAAW;AAAA,EACrD,CAAC;AACH,CAAC;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { z } from \"zod\";\nimport { procedure, router, protectedProcedure } from \"../utils\";\nexport default router({\n  hello: procedure.input(z.object({ name: z.string() })).query(({ input }) => {\n    return `Hello ${input.name}`;\n  }),\n  random: procedure.input(z.object({ num: z.number() })).mutation(({ input }) => {\n    return Math.floor(Math.random() * 100) / input.num;\n  }),\n  secret: protectedProcedure.query(({ ctx }) => {\n    return `This is top secret - ${ctx.user.displayName}`;\n  })\n});\n",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { z } from \"zod\";\nimport { procedure, router, protectedProcedure } from \"/src/server/trpc/utils.ts\";\nexport default router({\n  hello: procedure.input(z.object({ name: z.string() })).query(({ input }) => {\n    return `Hello ${input.name}`;\n  }),\n  random: procedure.input(z.object({ num: z.number() })).mutation(({ input }) => {\n    return Math.floor(Math.random() * 100) / input.num;\n  }),\n  secret: protectedProcedure.query(({ ctx }) => {\n    return `This is top secret - ${ctx.user.displayName}`;\n  })\n});\n",
+      "start": 1767441590509,
+      "end": 1767441590514,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

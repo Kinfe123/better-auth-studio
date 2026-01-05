@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/lib/auth.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { betterAuth } from 'better-auth'\nimport { prismaAdapter } from 'better-auth/adapters/prisma'\nimport { organization, admin } from 'better-auth/plugins'\nimport { prisma } from '~/server/db/client'\nimport { serverEnv } from '~/env/server'\n\nexport const auth = betterAuth({\n  secret: serverEnv.AUTH_SECRET,\n  database: prismaAdapter(prisma, { provider: 'postgresql' }),\n  baseURL: serverEnv.BETTER_AUTH_URL || serverEnv.START_BASE_URL,\n  basePath: '/api/auth',\n  socialProviders: {\n    github: {\n      clientId: serverEnv.GITHUB_CLIENT_ID,\n      clientSecret: serverEnv.GITHUB_CLIENT_SECRET,\n    },\n    google: {\n      clientId: serverEnv.GOOGLE_CLIENT_ID || '',\n      clientSecret: serverEnv.GOOGLE_CLIENT_SECRET || '',\n    },\n  },\n  emailAndPassword: {\n    enabled: true,\n    disableSignUp: false,\n    requireEmailVerification: true,\n    minPasswordLength: 8,\n    maxPasswordLength: 128,\n    autoSignIn: true,\n    sendResetPassword: async ({ user, url, token }) => {\n      console.log(`Reset password email for ${user.email}: ${url}`)\n    },\n    resetPasswordTokenExpiresIn: 3600,\n  },\n  plugins: [\n    organization({\n      teams: {\n        enabled: true,\n      },\n      sendInvitationEmail: async (data, request) => {\n        console.log('sendInvitationEmail', data, request)\n      },\n    }),\n    admin(),\n  ],\n  session: {\n    expiresIn: 60 * 60 * 24 * 7,\n    updateAge: 60 * 60 * 24,\n  },\n  rateLimit: {\n    enabled: true,\n    window: 10,\n    max: 100,\n  },\n  telemetry: {\n    enabled: false,\n  },\n  trustedOrigins: [serverEnv.START_BASE_URL, 'http://localhost:3000', 'http://localhost:3002'],\n})\n\n",
+      "start": 1767441590190,
+      "end": 1767441590190
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590190,
+      "end": 1767441590190,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590190,
+      "end": 1767441590190,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590190,
+      "end": 1767441590190,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { betterAuth } from \"better-auth\";\nimport { prismaAdapter } from \"better-auth/adapters/prisma\";\nimport { organization, admin } from \"better-auth/plugins\";\nimport { prisma } from \"~/server/db/client\";\nimport { serverEnv } from \"~/env/server\";\nexport const auth = betterAuth({\n  secret: serverEnv.AUTH_SECRET,\n  database: prismaAdapter(prisma, { provider: \"postgresql\" }),\n  baseURL: serverEnv.BETTER_AUTH_URL || serverEnv.START_BASE_URL,\n  basePath: \"/api/auth\",\n  socialProviders: {\n    github: {\n      clientId: serverEnv.GITHUB_CLIENT_ID,\n      clientSecret: serverEnv.GITHUB_CLIENT_SECRET\n    },\n    google: {\n      clientId: serverEnv.GOOGLE_CLIENT_ID || \"\",\n      clientSecret: serverEnv.GOOGLE_CLIENT_SECRET || \"\"\n    }\n  },\n  emailAndPassword: {\n    enabled: true,\n    disableSignUp: false,\n    requireEmailVerification: true,\n    minPasswordLength: 8,\n    maxPasswordLength: 128,\n    autoSignIn: true,\n    sendResetPassword: async ({ user, url, token }) => {\n      console.log(`Reset password email for ${user.email}: ${url}`);\n    },\n    resetPasswordTokenExpiresIn: 3600\n  },\n  plugins: [\n    organization({\n      teams: {\n        enabled: true\n      },\n      sendInvitationEmail: async (data, request) => {\n        console.log(\"sendInvitationEmail\", data, request);\n      }\n    }),\n    admin()\n  ],\n  session: {\n    expiresIn: 60 * 60 * 24 * 7,\n    updateAge: 60 * 60 * 24\n  },\n  rateLimit: {\n    enabled: true,\n    window: 10,\n    max: 100\n  },\n  telemetry: {\n    enabled: false\n  },\n  trustedOrigins: [serverEnv.START_BASE_URL, \"http://localhost:3000\", \"http://localhost:3002\"]\n});\n",
+      "start": 1767441590190,
+      "end": 1767441590313,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "auth.ts"
+        ],
+        "sourcesContent": [
+          "import { betterAuth } from 'better-auth'\nimport { prismaAdapter } from 'better-auth/adapters/prisma'\nimport { organization, admin } from 'better-auth/plugins'\nimport { prisma } from '~/server/db/client'\nimport { serverEnv } from '~/env/server'\n\nexport const auth = betterAuth({\n  secret: serverEnv.AUTH_SECRET,\n  database: prismaAdapter(prisma, { provider: 'postgresql' }),\n  baseURL: serverEnv.BETTER_AUTH_URL || serverEnv.START_BASE_URL,\n  basePath: '/api/auth',\n  socialProviders: {\n    github: {\n      clientId: serverEnv.GITHUB_CLIENT_ID,\n      clientSecret: serverEnv.GITHUB_CLIENT_SECRET,\n    },\n    google: {\n      clientId: serverEnv.GOOGLE_CLIENT_ID || '',\n      clientSecret: serverEnv.GOOGLE_CLIENT_SECRET || '',\n    },\n  },\n  emailAndPassword: {\n    enabled: true,\n    disableSignUp: false,\n    requireEmailVerification: true,\n    minPasswordLength: 8,\n    maxPasswordLength: 128,\n    autoSignIn: true,\n    sendResetPassword: async ({ user, url, token }) => {\n      console.log(`Reset password email for ${user.email}: ${url}`)\n    },\n    resetPasswordTokenExpiresIn: 3600,\n  },\n  plugins: [\n    organization({\n      teams: {\n        enabled: true,\n      },\n      sendInvitationEmail: async (data, request) => {\n        console.log('sendInvitationEmail', data, request)\n      },\n    }),\n    admin(),\n  ],\n  session: {\n    expiresIn: 60 * 60 * 24 * 7,\n    updateAge: 60 * 60 * 24,\n  },\n  rateLimit: {\n    enabled: true,\n    window: 10,\n    max: 100,\n  },\n  telemetry: {\n    enabled: false,\n  },\n  trustedOrigins: [serverEnv.START_BASE_URL, 'http://localhost:3000', 'http://localhost:3002'],\n})\n\n"
+        ],
+        "mappings": "AAAA,SAAS,kBAAkB;AAC3B,SAAS,qBAAqB;AAC9B,SAAS,cAAc,aAAa;AACpC,SAAS,cAAc;AACvB,SAAS,iBAAiB;AAEnB,aAAM,OAAO,WAAW;AAAA,EAC7B,QAAQ,UAAU;AAAA,EAClB,UAAU,cAAc,QAAQ,EAAE,UAAU,aAAa,CAAC;AAAA,EAC1D,SAAS,UAAU,mBAAmB,UAAU;AAAA,EAChD,UAAU;AAAA,EACV,iBAAiB;AAAA,IACf,QAAQ;AAAA,MACN,UAAU,UAAU;AAAA,MACpB,cAAc,UAAU;AAAA,IAC1B;AAAA,IACA,QAAQ;AAAA,MACN,UAAU,UAAU,oBAAoB;AAAA,MACxC,cAAc,UAAU,wBAAwB;AAAA,IAClD;AAAA,EACF;AAAA,EACA,kBAAkB;AAAA,IAChB,SAAS;AAAA,IACT,eAAe;AAAA,IACf,0BAA0B;AAAA,IAC1B,mBAAmB;AAAA,IACnB,mBAAmB;AAAA,IACnB,YAAY;AAAA,IACZ,mBAAmB,OAAO,EAAE,MAAM,KAAK,MAAM,MAAM;AACjD,cAAQ,IAAI,4BAA4B,KAAK,KAAK,KAAK,GAAG,EAAE;AAAA,IAC9D;AAAA,IACA,6BAA6B;AAAA,EAC/B;AAAA,EACA,SAAS;AAAA,IACP,aAAa;AAAA,MACX,OAAO;AAAA,QACL,SAAS;AAAA,MACX;AAAA,MACA,qBAAqB,OAAO,MAAM,YAAY;AAC5C,gBAAQ,IAAI,uBAAuB,MAAM,OAAO;AAAA,MAClD;AAAA,IACF,CAAC;AAAA,IACD,MAAM;AAAA,EACR;AAAA,EACA,SAAS;AAAA,IACP,WAAW,KAAK,KAAK,KAAK;AAAA,IAC1B,WAAW,KAAK,KAAK;AAAA,EACvB;AAAA,EACA,WAAW;AAAA,IACT,SAAS;AAAA,IACT,QAAQ;AAAA,IACR,KAAK;AAAA,EACP;AAAA,EACA,WAAW;AAAA,IACT,SAAS;AAAA,EACX;AAAA,EACA,gBAAgB,CAAC,UAAU,gBAAgB,yBAAyB,uBAAuB;AAC7F,CAAC;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590315,
+      "end": 1767441590315,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590315,
+      "end": 1767441590315,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590315,
+      "end": 1767441590315,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { betterAuth } from \"better-auth\";\nimport { prismaAdapter } from \"better-auth/adapters/prisma\";\nimport { organization, admin } from \"better-auth/plugins\";\nimport { prisma } from \"~/server/db/client\";\nimport { serverEnv } from \"~/env/server\";\nexport const auth = betterAuth({\n  secret: serverEnv.AUTH_SECRET,\n  database: prismaAdapter(prisma, { provider: \"postgresql\" }),\n  baseURL: serverEnv.BETTER_AUTH_URL || serverEnv.START_BASE_URL,\n  basePath: \"/api/auth\",\n  socialProviders: {\n    github: {\n      clientId: serverEnv.GITHUB_CLIENT_ID,\n      clientSecret: serverEnv.GITHUB_CLIENT_SECRET\n    },\n    google: {\n      clientId: serverEnv.GOOGLE_CLIENT_ID || \"\",\n      clientSecret: serverEnv.GOOGLE_CLIENT_SECRET || \"\"\n    }\n  },\n  emailAndPassword: {\n    enabled: true,\n    disableSignUp: false,\n    requireEmailVerification: true,\n    minPasswordLength: 8,\n    maxPasswordLength: 128,\n    autoSignIn: true,\n    sendResetPassword: async ({ user, url, token }) => {\n      console.log(`Reset password email for ${user.email}: ${url}`);\n    },\n    resetPasswordTokenExpiresIn: 3600\n  },\n  plugins: [\n    organization({\n      teams: {\n        enabled: true\n      },\n      sendInvitationEmail: async (data, request) => {\n        console.log(\"sendInvitationEmail\", data, request);\n      }\n    }),\n    admin()\n  ],\n  session: {\n    expiresIn: 60 * 60 * 24 * 7,\n    updateAge: 60 * 60 * 24\n  },\n  rateLimit: {\n    enabled: true,\n    window: 10,\n    max: 100\n  },\n  telemetry: {\n    enabled: false\n  },\n  trustedOrigins: [serverEnv.START_BASE_URL, \"http://localhost:3000\", \"http://localhost:3002\"]\n});\n",
+      "start": 1767441590315,
+      "end": 1767441590315,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590315,
+      "end": 1767441590315,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590315,
+      "end": 1767441590315,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590315,
+      "end": 1767441590315,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590315,
+      "end": 1767441590315,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590315,
+      "end": 1767441590315,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590315,
+      "end": 1767441590315,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { betterAuth } from \"better-auth\";\nimport { prismaAdapter } from \"better-auth/adapters/prisma\";\nimport { organization, admin } from \"better-auth/plugins\";\nimport { prisma } from \"/src/server/db/client.ts\";\nimport { serverEnv } from \"/src/env/server.ts\";\nexport const auth = betterAuth({\n  secret: serverEnv.AUTH_SECRET,\n  database: prismaAdapter(prisma, { provider: \"postgresql\" }),\n  baseURL: serverEnv.BETTER_AUTH_URL || serverEnv.START_BASE_URL,\n  basePath: \"/api/auth\",\n  socialProviders: {\n    github: {\n      clientId: serverEnv.GITHUB_CLIENT_ID,\n      clientSecret: serverEnv.GITHUB_CLIENT_SECRET\n    },\n    google: {\n      clientId: serverEnv.GOOGLE_CLIENT_ID || \"\",\n      clientSecret: serverEnv.GOOGLE_CLIENT_SECRET || \"\"\n    }\n  },\n  emailAndPassword: {\n    enabled: true,\n    disableSignUp: false,\n    requireEmailVerification: true,\n    minPasswordLength: 8,\n    maxPasswordLength: 128,\n    autoSignIn: true,\n    sendResetPassword: async ({ user, url, token }) => {\n      console.log(`Reset password email for ${user.email}: ${url}`);\n    },\n    resetPasswordTokenExpiresIn: 3600\n  },\n  plugins: [\n    organization({\n      teams: {\n        enabled: true\n      },\n      sendInvitationEmail: async (data, request) => {\n        console.log(\"sendInvitationEmail\", data, request);\n      }\n    }),\n    admin()\n  ],\n  session: {\n    expiresIn: 60 * 60 * 24 * 7,\n    updateAge: 60 * 60 * 24\n  },\n  rateLimit: {\n    enabled: true,\n    window: 10,\n    max: 100\n  },\n  telemetry: {\n    enabled: false\n  },\n  trustedOrigins: [serverEnv.START_BASE_URL, \"http://localhost:3000\", \"http://localhost:3002\"]\n});\n",
+      "start": 1767441590315,
+      "end": 1767441590352,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

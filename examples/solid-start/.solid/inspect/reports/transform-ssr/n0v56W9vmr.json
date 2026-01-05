@@ -1,0 +1,182 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/types.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "export type ManifestEntry = {\n  type: string;\n  href: string;\n};\n\nexport const FETCH_EVENT = \"$FETCH\";\n\nexport type ContextMatches = {\n  originalPath: string;\n  pattern: string;\n  path: string;\n  params: unknown;\n};\n\ntype TagDescription = {\n  tag: string;\n  props: Record<string, unknown>;\n};\n\ntype RouterContext = {\n  // router matches;\n  matches?: ContextMatches[][];\n  // redirected url\n  url?: string;\n\n  // server route fragments\n  replaceOutletId?: string;\n  newOutletId?: string;\n};\n\nexport type IslandManifest = {\n  script: ManifestEntry;\n  assets: ManifestEntry[];\n};\n\ndeclare global {\n  interface Env {\n    /**\n     * BE CAREFUL WHILE USING. AVAILABLE IN PRODUCTION ONLY.\n     */\n    manifest?: Record<string, ManifestEntry[] | IslandManifest>;\n    /**\n     * BE CAREFUL WHILE USING. AVAILABLE IN PRODUCTION ONLY.\n     */\n    getStaticHTML?(path: string): Promise<Response>;\n    /**\n     * BE CAREFUL WHILE USING. AVAILABLE IN PRODUCTION ONLY.\n     */\n    __dev?: {\n      /**\n       * @warning\n       */\n      collectStyles?: (matches: string[]) => Promise<Record<string, string>>;\n      manifest?: [{ path: string; componentPath: string; id: string }];\n    };\n  }\n}\n\nexport interface FetchEvent {\n  request: Request;\n  env: Env;\n  clientAddress: string;\n  locals: Record<string, unknown>;\n}\n\nexport interface ServerFunctionEvent extends FetchEvent {\n  fetch(url: string, init: RequestInit): Promise<Response>;\n  $type: typeof FETCH_EVENT;\n}\n\nexport interface PageEvent extends FetchEvent {\n  prevUrl: string;\n  responseHeaders: Headers;\n  routerContext?: RouterContext;\n  tags?: TagDescription[];\n  setStatusCode(code: number): void;\n  getStatusCode(): number;\n  fetch(url: string, init: RequestInit): Promise<Response>;\n  $type: typeof FETCH_EVENT;\n}\n",
+      "start": 1767441589904,
+      "end": 1767441589904
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441589904,
+      "end": 1767441589904,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "export type ManifestEntry = {\n  type: string;\n  href: string;\n};\nexport const FETCH_EVENT = \"$FETCH\";\nexport type ContextMatches = {\n  originalPath: string;\n  pattern: string;\n  path: string;\n  params: unknown;\n};\ntype TagDescription = {\n  tag: string;\n  props: Record<string, unknown>;\n};\ntype RouterContext = {\n  // router matches;\n  matches?: ContextMatches[][];\n  // redirected url\n  url?: string;\n\n  // server route fragments\n  replaceOutletId?: string;\n  newOutletId?: string;\n};\nexport type IslandManifest = {\n  script: ManifestEntry;\n  assets: ManifestEntry[];\n};\ndeclare global {\n  interface Env {\n    /**\n     * BE CAREFUL WHILE USING. AVAILABLE IN PRODUCTION ONLY.\n     */\n    manifest?: Record<string, ManifestEntry[] | IslandManifest>;\n    /**\n     * BE CAREFUL WHILE USING. AVAILABLE IN PRODUCTION ONLY.\n     */\n    getStaticHTML?(path: string): Promise<Response>;\n    /**\n     * BE CAREFUL WHILE USING. AVAILABLE IN PRODUCTION ONLY.\n     */\n    __dev?: {\n      /**\n       * @warning\n       */\n      collectStyles?: (matches: string[]) => Promise<Record<string, string>>;\n      manifest?: [{\n        path: string;\n        componentPath: string;\n        id: string;\n      }];\n    };\n  }\n}\nexport interface FetchEvent {\n  request: Request;\n  env: Env;\n  clientAddress: string;\n  locals: Record<string, unknown>;\n}\nexport interface ServerFunctionEvent extends FetchEvent {\n  fetch(url: string, init: RequestInit): Promise<Response>;\n  $type: typeof FETCH_EVENT;\n}\nexport interface PageEvent extends FetchEvent {\n  prevUrl: string;\n  responseHeaders: Headers;\n  routerContext?: RouterContext;\n  tags?: TagDescription[];\n  setStatusCode(code: number): void;\n  getStatusCode(): number;\n  fetch(url: string, init: RequestInit): Promise<Response>;\n  $type: typeof FETCH_EVENT;\n}",
+      "start": 1767441589904,
+      "end": 1767441589911,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "ManifestEntry",
+          "type",
+          "href",
+          "FETCH_EVENT",
+          "ContextMatches",
+          "originalPath",
+          "pattern",
+          "path",
+          "params",
+          "TagDescription",
+          "tag",
+          "props",
+          "Record",
+          "RouterContext",
+          "matches",
+          "url",
+          "replaceOutletId",
+          "newOutletId",
+          "IslandManifest",
+          "script",
+          "assets",
+          "global",
+          "Env",
+          "manifest",
+          "getStaticHTML",
+          "Promise",
+          "Response",
+          "__dev",
+          "collectStyles",
+          "componentPath",
+          "id",
+          "FetchEvent",
+          "request",
+          "Request",
+          "env",
+          "clientAddress",
+          "locals",
+          "ServerFunctionEvent",
+          "fetch",
+          "init",
+          "RequestInit",
+          "$type",
+          "PageEvent",
+          "prevUrl",
+          "responseHeaders",
+          "Headers",
+          "routerContext",
+          "tags",
+          "setStatusCode",
+          "code",
+          "getStatusCode"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/types.tsx"
+        ],
+        "sourcesContent": [
+          "export type ManifestEntry = {\n  type: string;\n  href: string;\n};\n\nexport const FETCH_EVENT = \"$FETCH\";\n\nexport type ContextMatches = {\n  originalPath: string;\n  pattern: string;\n  path: string;\n  params: unknown;\n};\n\ntype TagDescription = {\n  tag: string;\n  props: Record<string, unknown>;\n};\n\ntype RouterContext = {\n  // router matches;\n  matches?: ContextMatches[][];\n  // redirected url\n  url?: string;\n\n  // server route fragments\n  replaceOutletId?: string;\n  newOutletId?: string;\n};\n\nexport type IslandManifest = {\n  script: ManifestEntry;\n  assets: ManifestEntry[];\n};\n\ndeclare global {\n  interface Env {\n    /**\n     * BE CAREFUL WHILE USING. AVAILABLE IN PRODUCTION ONLY.\n     */\n    manifest?: Record<string, ManifestEntry[] | IslandManifest>;\n    /**\n     * BE CAREFUL WHILE USING. AVAILABLE IN PRODUCTION ONLY.\n     */\n    getStaticHTML?(path: string): Promise<Response>;\n    /**\n     * BE CAREFUL WHILE USING. AVAILABLE IN PRODUCTION ONLY.\n     */\n    __dev?: {\n      /**\n       * @warning\n       */\n      collectStyles?: (matches: string[]) => Promise<Record<string, string>>;\n      manifest?: [{ path: string; componentPath: string; id: string }];\n    };\n  }\n}\n\nexport interface FetchEvent {\n  request: Request;\n  env: Env;\n  clientAddress: string;\n  locals: Record<string, unknown>;\n}\n\nexport interface ServerFunctionEvent extends FetchEvent {\n  fetch(url: string, init: RequestInit): Promise<Response>;\n  $type: typeof FETCH_EVENT;\n}\n\nexport interface PageEvent extends FetchEvent {\n  prevUrl: string;\n  responseHeaders: Headers;\n  routerContext?: RouterContext;\n  tags?: TagDescription[];\n  setStatusCode(code: number): void;\n  getStatusCode(): number;\n  fetch(url: string, init: RequestInit): Promise<Response>;\n  $type: typeof FETCH_EVENT;\n}\n"
+        ],
+        "mappings": "AAAA,OAAO,KAAKA,aAAa,GAAG;EAC1BC,IAAI,EAAE,MAAM;EACZC,IAAI,EAAE,MAAM;AACd,CAAC;AAED,OAAO,MAAMC,WAAW,GAAG,QAAQ;AAEnC,OAAO,KAAKC,cAAc,GAAG;EAC3BC,YAAY,EAAE,MAAM;EACpBC,OAAO,EAAE,MAAM;EACfC,IAAI,EAAE,MAAM;EACZC,MAAM,EAAE,OAAO;AACjB,CAAC;AAED,KAAKC,cAAc,GAAG;EACpBC,GAAG,EAAE,MAAM;EACXC,KAAK,EAAEC,MAAM,CAAC,MAAM,EAAE,OAAO,CAAC;AAChC,CAAC;AAED,KAAKC,aAAa,GAAG;EACnB;EACAC,OAAO,CAAC,EAAEV,cAAc,EAAE,EAAE;EAC5B;EACAW,GAAG,CAAC,EAAE,MAAM;;EAEZ;EACAC,eAAe,CAAC,EAAE,MAAM;EACxBC,WAAW,CAAC,EAAE,MAAM;AACtB,CAAC;AAED,OAAO,KAAKC,cAAc,GAAG;EAC3BC,MAAM,EAAEnB,aAAa;EACrBoB,MAAM,EAAEpB,aAAa,EAAE;AACzB,CAAC;AAED,QAAQqB,MAAM,CAAC;EACb,UAAUC,GAAG,CAAC;IACZ;AACJ;AACA;IACIC,QAAQ,CAAC,EAAEX,MAAM,CAAC,MAAM,EAAEZ,aAAa,EAAE,GAAGkB,cAAc,CAAC;IAC3D;AACJ;AACA;IACIM,aAAa,EAAEjB,IAAI,EAAE,MAAM,CAAC,EAAEkB,OAAO,CAACC,QAAQ,CAAC;IAC/C;AACJ;AACA;IACIC,KAAK,CAAC,EAAE;MACN;AACN;AACA;MACMC,aAAa,CAAC,EAAE,CAACd,OAAO,EAAE,MAAM,EAAE,EAAE,GAAGW,OAAO,CAACb,MAAM,CAAC,MAAM,EAAE,MAAM,CAAC,CAAC;MACtEW,QAAQ,CAAC,EAAE,CAAC;QAAEhB,IAAI,EAAE,MAAM;QAAEsB,aAAa,EAAE,MAAM;QAAEC,EAAE,EAAE,MAAM;MAAC,CAAC,CAAC;IAClE,CAAC;EACH;AACF;AAEA,OAAO,UAAUC,UAAU,CAAC;EAC1BC,OAAO,EAAEC,OAAO;EAChBC,GAAG,EAAEZ,GAAG;EACRa,aAAa,EAAE,MAAM;EACrBC,MAAM,EAAExB,MAAM,CAAC,MAAM,EAAE,OAAO,CAAC;AACjC;AAEA,OAAO,UAAUyB,mBAAmB,SAASN,UAAU,CAAC;EACtDO,KAAK,CAACvB,GAAG,EAAE,MAAM,EAAEwB,IAAI,EAAEC,WAAW,CAAC,EAAEf,OAAO,CAACC,QAAQ,CAAC;EACxDe,KAAK,EAAE,OAAOtC,WAAW;AAC3B;AAEA,OAAO,UAAUuC,SAAS,SAASX,UAAU,CAAC;EAC5CY,OAAO,EAAE,MAAM;EACfC,eAAe,EAAEC,OAAO;EACxBC,aAAa,CAAC,EAAEjC,aAAa;EAC7BkC,IAAI,CAAC,EAAEtC,cAAc,EAAE;EACvBuC,aAAa,CAACC,IAAI,EAAE,MAAM,CAAC,EAAE,IAAI;EACjCC,aAAa,EAAE,EAAE,MAAM;EACvBZ,KAAK,CAACvB,GAAG,EAAE,MAAM,EAAEwB,IAAI,EAAEC,WAAW,CAAC,EAAEf,OAAO,CAACC,QAAQ,CAAC;EACxDe,KAAK,EAAE,OAAOtC,WAAW;AAC3B",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441589911,
+      "end": 1767441589911,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "export const FETCH_EVENT = \"$FETCH\";\n",
+      "start": 1767441589911,
+      "end": 1767441589917,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/types.tsx"
+        ],
+        "sourcesContent": [
+          "export type ManifestEntry = {\n  type: string;\n  href: string;\n};\nexport const FETCH_EVENT = \"$FETCH\";\nexport type ContextMatches = {\n  originalPath: string;\n  pattern: string;\n  path: string;\n  params: unknown;\n};\ntype TagDescription = {\n  tag: string;\n  props: Record<string, unknown>;\n};\ntype RouterContext = {\n  // router matches;\n  matches?: ContextMatches[][];\n  // redirected url\n  url?: string;\n\n  // server route fragments\n  replaceOutletId?: string;\n  newOutletId?: string;\n};\nexport type IslandManifest = {\n  script: ManifestEntry;\n  assets: ManifestEntry[];\n};\ndeclare global {\n  interface Env {\n    /**\n     * BE CAREFUL WHILE USING. AVAILABLE IN PRODUCTION ONLY.\n     */\n    manifest?: Record<string, ManifestEntry[] | IslandManifest>;\n    /**\n     * BE CAREFUL WHILE USING. AVAILABLE IN PRODUCTION ONLY.\n     */\n    getStaticHTML?(path: string): Promise<Response>;\n    /**\n     * BE CAREFUL WHILE USING. AVAILABLE IN PRODUCTION ONLY.\n     */\n    __dev?: {\n      /**\n       * @warning\n       */\n      collectStyles?: (matches: string[]) => Promise<Record<string, string>>;\n      manifest?: [{\n        path: string;\n        componentPath: string;\n        id: string;\n      }];\n    };\n  }\n}\nexport interface FetchEvent {\n  request: Request;\n  env: Env;\n  clientAddress: string;\n  locals: Record<string, unknown>;\n}\nexport interface ServerFunctionEvent extends FetchEvent {\n  fetch(url: string, init: RequestInit): Promise<Response>;\n  $type: typeof FETCH_EVENT;\n}\nexport interface PageEvent extends FetchEvent {\n  prevUrl: string;\n  responseHeaders: Headers;\n  routerContext?: RouterContext;\n  tags?: TagDescription[];\n  setStatusCode(code: number): void;\n  getStatusCode(): number;\n  fetch(url: string, init: RequestInit): Promise<Response>;\n  $type: typeof FETCH_EVENT;\n}"
+        ],
+        "mappings": "AAIO,aAAM,cAAc;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441589917,
+      "end": 1767441589917,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441589917,
+      "end": 1767441589917,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441589917,
+      "end": 1767441589917,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "export const FETCH_EVENT = \"$FETCH\";\n",
+      "start": 1767441589917,
+      "end": 1767441589917,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441589917,
+      "end": 1767441589917,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441589917,
+      "end": 1767441589917,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441589917,
+      "end": 1767441589917,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441589918,
+      "end": 1767441589918,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441589918,
+      "end": 1767441589918,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441589918,
+      "end": 1767441589918,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "export const FETCH_EVENT = \"$FETCH\";\n",
+      "start": 1767441589918,
+      "end": 1767441589918,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

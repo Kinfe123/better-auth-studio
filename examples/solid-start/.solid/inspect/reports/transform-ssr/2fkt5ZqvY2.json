@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/api/trpc/[...trpc].ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { createSolidAPIHandler } from 'solid-start-trpc'\nimport { createContext } from '~/server/trpc/context'\nimport { appRouter } from '~/server/trpc/router/_app'\n\nconst handler = createSolidAPIHandler({\n  router: appRouter,\n  createContext,\n})\n\nexport const GET = handler\nexport const POST = handler\n",
+      "start": 1767441590154,
+      "end": 1767441590154
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590154,
+      "end": 1767441590154,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590154,
+      "end": 1767441590154,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590154,
+      "end": 1767441590154,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { createSolidAPIHandler } from \"solid-start-trpc\";\nimport { createContext } from \"~/server/trpc/context\";\nimport { appRouter } from \"~/server/trpc/router/_app\";\nconst handler = createSolidAPIHandler({\n  router: appRouter,\n  createContext\n});\nexport const GET = handler;\nexport const POST = handler;\n",
+      "start": 1767441590154,
+      "end": 1767441590168,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "[...trpc].ts"
+        ],
+        "sourcesContent": [
+          "import { createSolidAPIHandler } from 'solid-start-trpc'\nimport { createContext } from '~/server/trpc/context'\nimport { appRouter } from '~/server/trpc/router/_app'\n\nconst handler = createSolidAPIHandler({\n  router: appRouter,\n  createContext,\n})\n\nexport const GET = handler\nexport const POST = handler\n"
+        ],
+        "mappings": "AAAA,SAAS,6BAA6B;AACtC,SAAS,qBAAqB;AAC9B,SAAS,iBAAiB;AAE1B,MAAM,UAAU,sBAAsB;AAAA,EACpC,QAAQ;AAAA,EACR;AACF,CAAC;AAEM,aAAM,MAAM;AACZ,aAAM,OAAO;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { createSolidAPIHandler } from \"solid-start-trpc\";\nimport { createContext } from \"~/server/trpc/context\";\nimport { appRouter } from \"~/server/trpc/router/_app\";\nconst handler = createSolidAPIHandler({\n  router: appRouter,\n  createContext\n});\nexport const GET = handler;\nexport const POST = handler;\n",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { createSolidAPIHandler } from \"/node_modules/.pnpm/solid-start-trpc@0.0.16_@trpc+client@10.45.4_@trpc+server@10.45.4__@trpc+server@10.45.4_7bf78154f947cd40397ab68b139a93cb/node_modules/solid-start-trpc/dist/index.js\";\nimport { createContext } from \"/src/server/trpc/context.ts\";\nimport { appRouter } from \"/src/server/trpc/router/_app.ts\";\nconst handler = createSolidAPIHandler({\n  router: appRouter,\n  createContext\n});\nexport const GET = handler;\nexport const POST = handler;\n",
+      "start": 1767441590168,
+      "end": 1767441590176,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

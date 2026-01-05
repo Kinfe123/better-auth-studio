@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/lib/auth-client.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { createAuthClient } from 'better-auth/solid'\nimport { clientEnv } from '~/env/client'\n\nexport const authClient = createAuthClient({\n  baseURL: clientEnv.START_BASE_URL,\n})\n\n",
+      "start": 1767441590140,
+      "end": 1767441590140
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590140,
+      "end": 1767441590140,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590140,
+      "end": 1767441590140,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590140,
+      "end": 1767441590140,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { createAuthClient } from \"better-auth/solid\";\nimport { clientEnv } from \"~/env/client\";\nexport const authClient = createAuthClient({\n  baseURL: clientEnv.START_BASE_URL\n});\n",
+      "start": 1767441590140,
+      "end": 1767441590168,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "auth-client.ts"
+        ],
+        "sourcesContent": [
+          "import { createAuthClient } from 'better-auth/solid'\nimport { clientEnv } from '~/env/client'\n\nexport const authClient = createAuthClient({\n  baseURL: clientEnv.START_BASE_URL,\n})\n\n"
+        ],
+        "mappings": "AAAA,SAAS,wBAAwB;AACjC,SAAS,iBAAiB;AAEnB,aAAM,aAAa,iBAAiB;AAAA,EACzC,SAAS,UAAU;AACrB,CAAC;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { createAuthClient } from \"better-auth/solid\";\nimport { clientEnv } from \"~/env/client\";\nexport const authClient = createAuthClient({\n  baseURL: clientEnv.START_BASE_URL\n});\n",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { createAuthClient } from \"better-auth/solid\";\nimport { clientEnv } from \"/src/env/client.ts\";\nexport const authClient = createAuthClient({\n  baseURL: clientEnv.START_BASE_URL\n});\n",
+      "start": 1767441590168,
+      "end": 1767441590175,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

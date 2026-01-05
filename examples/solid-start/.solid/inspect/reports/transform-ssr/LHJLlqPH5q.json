@@ -1,0 +1,143 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/index.jsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "export * from \"./components\";\nexport * from \"./integration\";\nexport * from \"./lifecycle\";\nexport { useRouteData, useHref, useIsRouting, useLocation, useMatch, useNavigate, useParams, useResolvedPath, useSearchParams, useBeforeLeave, } from \"./routing\";\nexport { mergeSearchString as _mergeSearchString } from \"./utils\";\n",
+      "start": 1767441589971,
+      "end": 1767441589971
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441589971,
+      "end": 1767441589971,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "export * from \"./components\";\nexport * from \"./integration\";\nexport * from \"./lifecycle\";\nexport { useRouteData, useHref, useIsRouting, useLocation, useMatch, useNavigate, useParams, useResolvedPath, useSearchParams, useBeforeLeave } from \"./routing\";\nexport { mergeSearchString as _mergeSearchString } from \"./utils\";",
+      "start": 1767441589971,
+      "end": 1767441589974,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "useRouteData",
+          "useHref",
+          "useIsRouting",
+          "useLocation",
+          "useMatch",
+          "useNavigate",
+          "useParams",
+          "useResolvedPath",
+          "useSearchParams",
+          "useBeforeLeave",
+          "mergeSearchString",
+          "_mergeSearchString"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/index.jsx"
+        ],
+        "sourcesContent": [
+          "export * from \"./components\";\nexport * from \"./integration\";\nexport * from \"./lifecycle\";\nexport { useRouteData, useHref, useIsRouting, useLocation, useMatch, useNavigate, useParams, useResolvedPath, useSearchParams, useBeforeLeave, } from \"./routing\";\nexport { mergeSearchString as _mergeSearchString } from \"./utils\";\n"
+        ],
+        "mappings": "AAAA,cAAc,cAAc;AAC5B,cAAc,eAAe;AAC7B,cAAc,aAAa;AAC3B,SAASA,YAAY,EAAEC,OAAO,EAAEC,YAAY,EAAEC,WAAW,EAAEC,QAAQ,EAAEC,WAAW,EAAEC,SAAS,EAAEC,eAAe,EAAEC,eAAe,EAAEC,cAAc,QAAS,WAAW;AACjK,SAASC,iBAAiB,IAAIC,kBAAkB,QAAQ,SAAS",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441589974,
+      "end": 1767441589974,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "export * from \"./components\";\nexport * from \"./integration\";\nexport * from \"./lifecycle\";\nexport { useRouteData, useHref, useIsRouting, useLocation, useMatch, useNavigate, useParams, useResolvedPath, useSearchParams, useBeforeLeave } from \"./routing\";\nexport { mergeSearchString as _mergeSearchString } from \"./utils\";\n",
+      "start": 1767441589974,
+      "end": 1767441590009,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/index.jsx"
+        ],
+        "sourcesContent": [
+          "export * from \"./components\";\nexport * from \"./integration\";\nexport * from \"./lifecycle\";\nexport { useRouteData, useHref, useIsRouting, useLocation, useMatch, useNavigate, useParams, useResolvedPath, useSearchParams, useBeforeLeave } from \"./routing\";\nexport { mergeSearchString as _mergeSearchString } from \"./utils\";"
+        ],
+        "mappings": "AAAA,cAAc;AACd,cAAc;AACd,cAAc;AACd,SAAS,cAAc,SAAS,cAAc,aAAa,UAAU,aAAa,WAAW,iBAAiB,iBAAiB,sBAAsB;AACrJ,SAAS,qBAAqB,0BAA0B;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590009,
+      "end": 1767441590009,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590009,
+      "end": 1767441590009,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590009,
+      "end": 1767441590009,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "export * from \"./components\";\nexport * from \"./integration\";\nexport * from \"./lifecycle\";\nexport { useRouteData, useHref, useIsRouting, useLocation, useMatch, useNavigate, useParams, useResolvedPath, useSearchParams, useBeforeLeave } from \"./routing\";\nexport { mergeSearchString as _mergeSearchString } from \"./utils\";\n",
+      "start": 1767441590009,
+      "end": 1767441590009,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590010,
+      "end": 1767441590010,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590010,
+      "end": 1767441590010,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590010,
+      "end": 1767441590010,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590010,
+      "end": 1767441590010,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590010,
+      "end": 1767441590010,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590010,
+      "end": 1767441590010,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "export * from \"/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/components.jsx\";\nexport * from \"/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/integration.js\";\nexport * from \"/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/lifecycle.js\";\nexport { useRouteData, useHref, useIsRouting, useLocation, useMatch, useNavigate, useParams, useResolvedPath, useSearchParams, useBeforeLeave } from \"/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/routing.js\";\nexport { mergeSearchString as _mergeSearchString } from \"/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/utils.js\";\n",
+      "start": 1767441590010,
+      "end": 1767441590012,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

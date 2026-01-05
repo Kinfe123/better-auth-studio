@@ -1,0 +1,158 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/islands/clientOnly.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import type { Component, ComponentProps, JSX } from \"solid-js\";\nimport { createMemo, createSignal, onMount, sharedConfig, splitProps, untrack } from \"solid-js\";\nimport { isServer } from \"solid-js/web\";\n\n// not using Suspense\nexport default function clientOnly<T extends Component<any>>(\n  fn: () => Promise<{\n    default: T;\n  }>\n) {\n  if (isServer) return (props: ComponentProps<T> & { fallback?: JSX.Element }) => props.fallback;\n\n  const [comp, setComp] = createSignal<T>();\n  fn().then(m => setComp(() => m.default));\n  return (props: ComponentProps<T>) => {\n    let Comp: T | undefined;\n    let m: boolean;\n    const [, rest] = splitProps(props, [\"fallback\"]);\n    if ((Comp = comp()) && !sharedConfig.context) return Comp(rest);\n    const [mounted, setMounted] = createSignal(!sharedConfig.context);\n    onMount(() => setMounted(true));\n    return createMemo(\n      () => (\n        (Comp = comp()), (m = mounted()), untrack(() => (Comp && m ? Comp(rest) : props.fallback))\n      )\n    );\n  };\n}\n",
+      "start": 1767441590552,
+      "end": 1767441590552
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590552,
+      "end": 1767441590552,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "import type { Component } from \"solid-js\";\nimport { createMemo, createSignal, onMount, sharedConfig, splitProps, untrack } from \"solid-js\";\nimport { isServer } from \"solid-js/web\";\n\n// not using Suspense\nexport default function clientOnly<T extends Component<any>>(fn: () => Promise<{\n  default: T;\n}>) {\n  if (isServer) return (props: ComponentProps<T> & {\n    fallback?: JSX.Element;\n  }) => props.fallback;\n  const [comp, setComp] = createSignal<T>();\n  fn().then(m => setComp(() => m.default));\n  return (props: ComponentProps<T>) => {\n    let Comp: T | undefined;\n    let m: boolean;\n    const [, rest] = splitProps(props, [\"fallback\"]);\n    if ((Comp = comp()) && !sharedConfig.context) return Comp(rest);\n    const [mounted, setMounted] = createSignal(!sharedConfig.context);\n    onMount(() => setMounted(true));\n    return createMemo(() => (Comp = comp(), m = mounted(), untrack(() => Comp && m ? Comp(rest) : props.fallback)));\n  };\n}",
+      "start": 1767441590552,
+      "end": 1767441590559,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "Component",
+          "createMemo",
+          "createSignal",
+          "onMount",
+          "sharedConfig",
+          "splitProps",
+          "untrack",
+          "isServer",
+          "clientOnly",
+          "fn",
+          "Promise",
+          "default",
+          "T",
+          "props",
+          "ComponentProps",
+          "fallback",
+          "JSX",
+          "Element",
+          "comp",
+          "setComp",
+          "then",
+          "m",
+          "Comp",
+          "rest",
+          "context",
+          "mounted",
+          "setMounted"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/islands/clientOnly.tsx"
+        ],
+        "sourcesContent": [
+          "import type { Component, ComponentProps, JSX } from \"solid-js\";\nimport { createMemo, createSignal, onMount, sharedConfig, splitProps, untrack } from \"solid-js\";\nimport { isServer } from \"solid-js/web\";\n\n// not using Suspense\nexport default function clientOnly<T extends Component<any>>(\n  fn: () => Promise<{\n    default: T;\n  }>\n) {\n  if (isServer) return (props: ComponentProps<T> & { fallback?: JSX.Element }) => props.fallback;\n\n  const [comp, setComp] = createSignal<T>();\n  fn().then(m => setComp(() => m.default));\n  return (props: ComponentProps<T>) => {\n    let Comp: T | undefined;\n    let m: boolean;\n    const [, rest] = splitProps(props, [\"fallback\"]);\n    if ((Comp = comp()) && !sharedConfig.context) return Comp(rest);\n    const [mounted, setMounted] = createSignal(!sharedConfig.context);\n    onMount(() => setMounted(true));\n    return createMemo(\n      () => (\n        (Comp = comp()), (m = mounted()), untrack(() => (Comp && m ? Comp(rest) : props.fallback))\n      )\n    );\n  };\n}\n"
+        ],
+        "mappings": "AAAA,cAAcA,SAAS,QAA6B,UAAU;AAC9D,SAASC,UAAU,EAAEC,YAAY,EAAEC,OAAO,EAAEC,YAAY,EAAEC,UAAU,EAAEC,OAAO,QAAQ,UAAU;AAC/F,SAASC,QAAQ,QAAQ,cAAc;;AAEvC;AACA,eAAe,SAASC,UAAU,CAAC,UAAUR,SAAS,CAAC,GAAG,CAAC,CAACQ,CAC1DC,EAAE,EAAE,GAAG,GAAGC,OAAO,CAAC;EAChBC,OAAO,EAAEC,CAAC;AACZ,CAAC,CAAC,EACF;EACA,IAAIL,QAAQ,EAAE,OAAO,CAACM,KAAK,EAAEC,cAAc,CAACF,CAAC,CAAC,GAAG;IAAEG,QAAQ,CAAC,EAAEC,GAAG,CAACC,OAAO;EAAC,CAAC,KAAKJ,KAAK,CAACE,QAAQ;EAE9F,MAAM,CAACG,IAAI,EAAEC,OAAO,CAAC,GAAGjB,YAAY,CAACU,CAAC,CAAC,CAAC,CAAC;EACzCH,EAAE,CAAC,CAAC,CAACW,IAAI,CAACC,CAAC,IAAIF,OAAO,CAAC,MAAME,CAAC,CAACV,OAAO,CAAC,CAAC;EACxC,OAAO,CAACE,KAAK,EAAEC,cAAc,CAACF,CAAC,CAAC,KAAK;IACnC,IAAIU,IAAI,EAAEV,CAAC,GAAG,SAAS;IACvB,IAAIS,CAAC,EAAE,OAAO;IACd,MAAM,GAAGE,IAAI,CAAC,GAAGlB,UAAU,CAACQ,KAAK,EAAE,CAAC,UAAU,CAAC,CAAC;IAChD,IAAI,CAACS,IAAI,GAAGJ,IAAI,CAAC,CAAC,KAAK,CAACd,YAAY,CAACoB,OAAO,EAAE,OAAOF,IAAI,CAACC,IAAI,CAAC;IAC/D,MAAM,CAACE,OAAO,EAAEC,UAAU,CAAC,GAAGxB,YAAY,CAAC,CAACE,YAAY,CAACoB,OAAO,CAAC;IACjErB,OAAO,CAAC,MAAMuB,UAAU,CAAC,IAAI,CAAC,CAAC;IAC/B,OAAOzB,UAAU,CACf,OACGqB,IAAI,GAAGJ,IAAI,CAAC,CAAC,EAAIG,CAAC,GAAGI,OAAO,CAAC,CAAC,EAAGnB,OAAO,CAAC,MAAOgB,IAAI,IAAID,CAAC,GAAGC,IAAI,CAACC,IAAI,CAAC,GAAGV,KAAK,CAACE,QAAS,CAAC,CAE9F,CAAC;EACH,CAAC;AACH",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590559,
+      "end": 1767441590559,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { createMemo, createSignal, onMount, sharedConfig, splitProps, untrack } from \"solid-js\";\nimport { isServer } from \"solid-js/web\";\nexport default function clientOnly(fn) {\n  if (isServer)\n    return (props) => props.fallback;\n  const [comp, setComp] = createSignal();\n  fn().then((m) => setComp(() => m.default));\n  return (props) => {\n    let Comp;\n    let m;\n    const [, rest] = splitProps(props, [\"fallback\"]);\n    if ((Comp = comp()) && !sharedConfig.context)\n      return Comp(rest);\n    const [mounted, setMounted] = createSignal(!sharedConfig.context);\n    onMount(() => setMounted(true));\n    return createMemo(() => (Comp = comp(), m = mounted(), untrack(() => Comp && m ? Comp(rest) : props.fallback)));\n  };\n}\n",
+      "start": 1767441590559,
+      "end": 1767441590671,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/islands/clientOnly.tsx"
+        ],
+        "sourcesContent": [
+          "import type { Component } from \"solid-js\";\nimport { createMemo, createSignal, onMount, sharedConfig, splitProps, untrack } from \"solid-js\";\nimport { isServer } from \"solid-js/web\";\n\n// not using Suspense\nexport default function clientOnly<T extends Component<any>>(fn: () => Promise<{\n  default: T;\n}>) {\n  if (isServer) return (props: ComponentProps<T> & {\n    fallback?: JSX.Element;\n  }) => props.fallback;\n  const [comp, setComp] = createSignal<T>();\n  fn().then(m => setComp(() => m.default));\n  return (props: ComponentProps<T>) => {\n    let Comp: T | undefined;\n    let m: boolean;\n    const [, rest] = splitProps(props, [\"fallback\"]);\n    if ((Comp = comp()) && !sharedConfig.context) return Comp(rest);\n    const [mounted, setMounted] = createSignal(!sharedConfig.context);\n    onMount(() => setMounted(true));\n    return createMemo(() => (Comp = comp(), m = mounted(), untrack(() => Comp && m ? Comp(rest) : props.fallback)));\n  };\n}"
+        ],
+        "mappings": "AACA,SAAS,YAAY,cAAc,SAAS,cAAc,YAAY,eAAe;AACrF,SAAS,gBAAgB;AAGzB,wBAAwB,WAAqC,IAEzD;AACF,MAAI;AAAU,WAAO,CAAC,UAEhB,MAAM;AACZ,QAAM,CAAC,MAAM,OAAO,IAAI,aAAgB;AACxC,KAAG,EAAE,KAAK,OAAK,QAAQ,MAAM,EAAE,OAAO,CAAC;AACvC,SAAO,CAAC,UAA6B;AACnC,QAAI;AACJ,QAAI;AACJ,UAAM,CAAC,EAAE,IAAI,IAAI,WAAW,OAAO,CAAC,UAAU,CAAC;AAC/C,SAAK,OAAO,KAAK,MAAM,CAAC,aAAa;AAAS,aAAO,KAAK,IAAI;AAC9D,UAAM,CAAC,SAAS,UAAU,IAAI,aAAa,CAAC,aAAa,OAAO;AAChE,YAAQ,MAAM,WAAW,IAAI,CAAC;AAC9B,WAAO,WAAW,OAAO,OAAO,KAAK,GAAG,IAAI,QAAQ,GAAG,QAAQ,MAAM,QAAQ,IAAI,KAAK,IAAI,IAAI,MAAM,QAAQ,EAAE;AAAA,EAChH;AACF;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590671,
+      "end": 1767441590671,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590671,
+      "end": 1767441590671,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590671,
+      "end": 1767441590671,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { createMemo, createSignal, onMount, sharedConfig, splitProps, untrack } from \"solid-js\";\nimport { isServer } from \"solid-js/web\";\nexport default function clientOnly(fn) {\n  if (isServer)\n    return (props) => props.fallback;\n  const [comp, setComp] = createSignal();\n  fn().then((m) => setComp(() => m.default));\n  return (props) => {\n    let Comp;\n    let m;\n    const [, rest] = splitProps(props, [\"fallback\"]);\n    if ((Comp = comp()) && !sharedConfig.context)\n      return Comp(rest);\n    const [mounted, setMounted] = createSignal(!sharedConfig.context);\n    onMount(() => setMounted(true));\n    return createMemo(() => (Comp = comp(), m = mounted(), untrack(() => Comp && m ? Comp(rest) : props.fallback)));\n  };\n}\n",
+      "start": 1767441590671,
+      "end": 1767441590671,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590671,
+      "end": 1767441590671,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590671,
+      "end": 1767441590671,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590671,
+      "end": 1767441590671,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590671,
+      "end": 1767441590672,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590672,
+      "end": 1767441590672,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590672,
+      "end": 1767441590672,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { createMemo, createSignal, onMount, sharedConfig, splitProps, untrack } from \"solid-js\";\nimport { isServer } from \"solid-js/web\";\nexport default function clientOnly(fn) {\n  if (isServer)\n    return (props) => props.fallback;\n  const [comp, setComp] = createSignal();\n  fn().then((m) => setComp(() => m.default));\n  return (props) => {\n    let Comp;\n    let m;\n    const [, rest] = splitProps(props, [\"fallback\"]);\n    if ((Comp = comp()) && !sharedConfig.context)\n      return Comp(rest);\n    const [mounted, setMounted] = createSignal(!sharedConfig.context);\n    onMount(() => setMounted(true));\n    return createMemo(() => (Comp = comp(), m = mounted(), untrack(() => Comp && m ? Comp(rest) : props.fallback)));\n  };\n}\n",
+      "start": 1767441590672,
+      "end": 1767441590672,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/index.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { A } from 'solid-start'\nimport Counter from '~/components/Counter'\nimport { session } from '~/utils/auth'\nimport { authClient } from '~/lib/auth-client'\n\nconst login = async () => {\n  await authClient.signIn.social({\n    provider: 'github',\n  })\n}\n\nexport default function Home() {\n  return (\n    <main class=\"text-center mx-auto text-gray-700 p-4\">\n      <h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">Hello world!</h1>\n      <Counter />\n      <p class=\"mt-8\">\n        Visit{' '}\n        <a href=\"https://solidjs.com\" target=\"_blank\" class=\"text-sky-600 hover:underline\">\n          solidjs.com\n        </a>{' '}\n        to learn how to build Solid apps.\n      </p>\n      <p class=\"my-4\">\n        <span>Home</span>\n        {' - '}\n        <A href=\"/about\" class=\"text-sky-600 hover:underline\">\n          About Page\n        </A>{' '}\n      </p>\n      <br />\n      <p>\n        <button onClick={login}>Login with Github</button>\n      </p>\n      <div class=\"flex flex-col gap-2 items-center\">\n        <pre>{JSON.stringify(session(), null, 2)}</pre>\n      </div>\n    </main>\n  )\n}\n",
+      "start": 1767441590026,
+      "end": 1767441590026,
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "A",
+          "Counter",
+          "session",
+          "authClient",
+          "login",
+          "signIn",
+          "social",
+          "provider",
+          "Home",
+          "_$ssr",
+          "_tmpl$",
+          "_$ssrHydrationKey",
+          "_$escape",
+          "_$createComponent",
+          "href",
+          "children",
+          "JSON",
+          "stringify"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/index.tsx"
+        ],
+        "sourcesContent": [
+          "import { A } from 'solid-start'\nimport Counter from '~/components/Counter'\nimport { session } from '~/utils/auth'\nimport { authClient } from '~/lib/auth-client'\n\nconst login = async () => {\n  await authClient.signIn.social({\n    provider: 'github',\n  })\n}\n\nexport default function Home() {\n  return (\n    <main class=\"text-center mx-auto text-gray-700 p-4\">\n      <h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">Hello world!</h1>\n      <Counter />\n      <p class=\"mt-8\">\n        Visit{' '}\n        <a href=\"https://solidjs.com\" target=\"_blank\" class=\"text-sky-600 hover:underline\">\n          solidjs.com\n        </a>{' '}\n        to learn how to build Solid apps.\n      </p>\n      <p class=\"my-4\">\n        <span>Home</span>\n        {' - '}\n        <A href=\"/about\" class=\"text-sky-600 hover:underline\">\n          About Page\n        </A>{' '}\n      </p>\n      <br />\n      <p>\n        <button onClick={login}>Login with Github</button>\n      </p>\n      <div class=\"flex flex-col gap-2 items-center\">\n        <pre>{JSON.stringify(session(), null, 2)}</pre>\n      </div>\n    </main>\n  )\n}\n"
+        ],
+        "mappings": ";;;;;AAAA,SAASA,CAAC,QAAQ,aAAa;AAC/B,OAAOC,OAAO,MAAM,sBAAsB;AAC1C,SAASC,OAAO,QAAQ,cAAc;AACtC,SAASC,UAAU,QAAQ,mBAAmB;AAE9C,MAAMC,KAAK,GAAG,MAAAA,CAAA,KAAY;EACxB,MAAMD,UAAU,CAACE,MAAM,CAACC,MAAM,CAAC;IAC7BC,QAAQ,EAAE;EACZ,CAAC,CAAC;AACJ,CAAC;AAED,eAAe,SAASC,IAAIA,CAAA,EAAG;EAC7B,OAAAC,KAAA,CAAAC,MAAA,EAAAC,iBAAA,IAAAC,QAAA,CAAAC,iBAAA,CAGKZ,OAAO,QAAAW,QAAA,CAAAC,iBAAA,CAWLb,CAAC;IAACc,IAAI;IAAA;IAAAC,QAAA;EAAA,KAAAH,QAAA,CASDI,IAAI,CAACC,SAAS,CAACf,OAAO,CAAC,CAAC,EAAE,IAAI,EAAE,CAAC,CAAC;AAIhD",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", \" class=\\\"text-center mx-auto text-gray-700 p-4\\\"><h1 class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">Hello world!</h1><!--$-->\", \"<!--/--><p class=\\\"mt-8\\\">Visit <a href=\\\"https://solidjs.com\\\" target=\\\"_blank\\\" class=\\\"text-sky-600 hover:underline\\\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\\\"my-4\\\"><span>Home</span> - <!--$-->\", \"<!--/--> </p><br><p><button>Login with Github</button></p><div class=\\\"flex flex-col gap-2 items-center\\\"><pre>\", \"</pre></div></main>\"];\nimport { A } from 'solid-start';\nimport Counter from '~/components/Counter';\nimport { session } from '~/utils/auth';\nimport { authClient } from '~/lib/auth-client';\nconst login = async () => {\n  await authClient.signIn.social({\n    provider: 'github'\n  });\n};\nexport default function Home() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(Counter, {})), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })), _$escape(JSON.stringify(session(), null, 2)));\n}",
+      "start": 1767441590026,
+      "end": 1767441590034,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "A",
+          "Counter",
+          "session",
+          "authClient",
+          "login",
+          "signIn",
+          "social",
+          "provider",
+          "Home",
+          "_$ssr",
+          "_tmpl$",
+          "_$ssrHydrationKey",
+          "_$escape",
+          "_$createComponent",
+          "href",
+          "children",
+          "JSON",
+          "stringify"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/index.tsx"
+        ],
+        "sourcesContent": [
+          "import { A } from 'solid-start'\nimport Counter from '~/components/Counter'\nimport { session } from '~/utils/auth'\nimport { authClient } from '~/lib/auth-client'\n\nconst login = async () => {\n  await authClient.signIn.social({\n    provider: 'github',\n  })\n}\n\nexport default function Home() {\n  return (\n    <main class=\"text-center mx-auto text-gray-700 p-4\">\n      <h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">Hello world!</h1>\n      <Counter />\n      <p class=\"mt-8\">\n        Visit{' '}\n        <a href=\"https://solidjs.com\" target=\"_blank\" class=\"text-sky-600 hover:underline\">\n          solidjs.com\n        </a>{' '}\n        to learn how to build Solid apps.\n      </p>\n      <p class=\"my-4\">\n        <span>Home</span>\n        {' - '}\n        <A href=\"/about\" class=\"text-sky-600 hover:underline\">\n          About Page\n        </A>{' '}\n      </p>\n      <br />\n      <p>\n        <button onClick={login}>Login with Github</button>\n      </p>\n      <div class=\"flex flex-col gap-2 items-center\">\n        <pre>{JSON.stringify(session(), null, 2)}</pre>\n      </div>\n    </main>\n  )\n}\n"
+        ],
+        "mappings": ";;;;;AAAA,SAASA,CAAC,QAAQ,aAAa;AAC/B,OAAOC,OAAO,MAAM,sBAAsB;AAC1C,SAASC,OAAO,QAAQ,cAAc;AACtC,SAASC,UAAU,QAAQ,mBAAmB;AAE9C,MAAMC,KAAK,GAAG,MAAAA,CAAA,KAAY;EACxB,MAAMD,UAAU,CAACE,MAAM,CAACC,MAAM,CAAC;IAC7BC,QAAQ,EAAE;EACZ,CAAC,CAAC;AACJ,CAAC;AAED,eAAe,SAASC,IAAIA,CAAA,EAAG;EAC7B,OAAAC,KAAA,CAAAC,MAAA,EAAAC,iBAAA,IAAAC,QAAA,CAAAC,iBAAA,CAGKZ,OAAO,QAAAW,QAAA,CAAAC,iBAAA,CAWLb,CAAC;IAACc,IAAI;IAAA;IAAAC,QAAA;EAAA,KAAAH,QAAA,CASDI,IAAI,CAACC,SAAS,CAACf,OAAO,CAAC,CAAC,EAAE,IAAI,EAAE,CAAC,CAAC;AAIhD",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "solid",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", \" class=\\\"text-center mx-auto text-gray-700 p-4\\\"><h1 class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">Hello world!</h1><!--$-->\", \"<!--/--><p class=\\\"mt-8\\\">Visit <a href=\\\"https://solidjs.com\\\" target=\\\"_blank\\\" class=\\\"text-sky-600 hover:underline\\\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\\\"my-4\\\"><span>Home</span> - <!--$-->\", \"<!--/--> </p><br><p><button>Login with Github</button></p><div class=\\\"flex flex-col gap-2 items-center\\\"><pre>\", \"</pre></div></main>\"];\nimport { A } from 'solid-start';\nimport Counter from '~/components/Counter';\nimport { session } from '~/utils/auth';\nimport { authClient } from '~/lib/auth-client';\nconst login = async () => {\n  await authClient.signIn.social({\n    provider: 'github'\n  });\n};\nexport default function Home() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(Counter, {})), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })), _$escape(JSON.stringify(session(), null, 2)));\n}",
+      "start": 1767441590034,
+      "end": 1767441590037,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "ssr",
+          "_$ssr",
+          "escape",
+          "_$escape",
+          "createComponent",
+          "_$createComponent",
+          "ssrHydrationKey",
+          "_$ssrHydrationKey",
+          "_tmpl$",
+          "A",
+          "Counter",
+          "session",
+          "authClient",
+          "login",
+          "signIn",
+          "social",
+          "provider",
+          "Home",
+          "href",
+          "children",
+          "JSON",
+          "stringify"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/index.tsx"
+        ],
+        "sourcesContent": [
+          "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", \" class=\\\"text-center mx-auto text-gray-700 p-4\\\"><h1 class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">Hello world!</h1><!--$-->\", \"<!--/--><p class=\\\"mt-8\\\">Visit <a href=\\\"https://solidjs.com\\\" target=\\\"_blank\\\" class=\\\"text-sky-600 hover:underline\\\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\\\"my-4\\\"><span>Home</span> - <!--$-->\", \"<!--/--> </p><br><p><button>Login with Github</button></p><div class=\\\"flex flex-col gap-2 items-center\\\"><pre>\", \"</pre></div></main>\"];\nimport { A } from 'solid-start';\nimport Counter from '~/components/Counter';\nimport { session } from '~/utils/auth';\nimport { authClient } from '~/lib/auth-client';\nconst login = async () => {\n  await authClient.signIn.social({\n    provider: 'github'\n  });\n};\nexport default function Home() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(Counter, {})), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })), _$escape(JSON.stringify(session(), null, 2)));\n}"
+        ],
+        "mappings": "AAAA,SAASA,GAAG,IAAIC,KAAK,QAAQ,cAAc;AAC3C,SAASC,MAAM,IAAIC,QAAQ,QAAQ,cAAc;AACjD,SAASC,eAAe,IAAIC,iBAAiB,QAAQ,cAAc;AACnE,SAASC,eAAe,IAAIC,iBAAiB,QAAQ,cAAc;AACnE,IAAIC,MAAM,GAAG,CAAC,OAAO,EAAE,mJAAmJ,EAAE,8NAA8N,EAAE,iHAAiH,EAAE,qBAAqB,CAAC;AACrhB,SAASC,CAAC,QAAQ,aAAa;AAC/B,OAAOC,OAAO,MAAM,sBAAsB;AAC1C,SAASC,OAAO,QAAQ,cAAc;AACtC,SAASC,UAAU,QAAQ,mBAAmB;AAC9C,MAAMC,KAAK,GAAG,MAAAA,CAAA,KAAY;EACxB,MAAMD,UAAU,CAACE,MAAM,CAACC,MAAM,CAAC;IAC7BC,QAAQ,EAAE;EACZ,CAAC,CAAC;AACJ,CAAC;AACD,eAAe,SAASC,IAAIA,CAAA,EAAG;EAC7B,OAAOhB,KAAK,CAACO,MAAM,EAAED,iBAAiB,CAAC,CAAC,EAAEJ,QAAQ,CAACE,iBAAiB,CAACK,OAAO,EAAE,CAAC,CAAC,CAAC,CAAC,EAAEP,QAAQ,CAACE,iBAAiB,CAACI,CAAC,EAAE;IAChHS,IAAI,EAAE,QAAQ;IACd,OAAO,EAAE,8BAA8B;IACvCC,QAAQ,EAAE;EACZ,CAAC,CAAC,CAAC,EAAEhB,QAAQ,CAACiB,IAAI,CAACC,SAAS,CAACV,OAAO,CAAC,CAAC,EAAE,IAAI,EAAE,CAAC,CAAC,CAAC,CAAC;AACpD",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590038,
+      "end": 1767441590038,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", ' class=\"text-center mx-auto text-gray-700 p-4\"><h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">Hello world!</h1><!--$-->', '<!--/--><p class=\"mt-8\">Visit <a href=\"https://solidjs.com\" target=\"_blank\" class=\"text-sky-600 hover:underline\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\"my-4\"><span>Home</span> - <!--$-->', '<!--/--> </p><br><p><button>Login with Github</button></p><div class=\"flex flex-col gap-2 items-center\"><pre>', \"</pre></div></main>\"];\nimport { A } from \"solid-start\";\nimport Counter from \"~/components/Counter\";\nimport { session } from \"~/utils/auth\";\nimport { authClient } from \"~/lib/auth-client\";\nconst login = async () => {\n  await authClient.signIn.social({\n    provider: \"github\"\n  });\n};\nexport default function Home() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(Counter, {})), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })), _$escape(JSON.stringify(session(), null, 2)));\n}\n",
+      "start": 1767441590038,
+      "end": 1767441590149,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/index.tsx"
+        ],
+        "sourcesContent": [
+          "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", \" class=\\\"text-center mx-auto text-gray-700 p-4\\\"><h1 class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">Hello world!</h1><!--$-->\", \"<!--/--><p class=\\\"mt-8\\\">Visit <a href=\\\"https://solidjs.com\\\" target=\\\"_blank\\\" class=\\\"text-sky-600 hover:underline\\\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\\\"my-4\\\"><span>Home</span> - <!--$-->\", \"<!--/--> </p><br><p><button>Login with Github</button></p><div class=\\\"flex flex-col gap-2 items-center\\\"><pre>\", \"</pre></div></main>\"];\nimport { A } from 'solid-start';\nimport Counter from '~/components/Counter';\nimport { session } from '~/utils/auth';\nimport { authClient } from '~/lib/auth-client';\nconst login = async () => {\n  await authClient.signIn.social({\n    provider: 'github'\n  });\n};\nexport default function Home() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(Counter, {})), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })), _$escape(JSON.stringify(session(), null, 2)));\n}"
+        ],
+        "mappings": "AAAA,SAAS,OAAO,aAAa;AAC7B,SAAS,UAAU,gBAAgB;AACnC,SAAS,mBAAmB,yBAAyB;AACrD,SAAS,mBAAmB,yBAAyB;AACrD,IAAI,SAAS,CAAC,SAAS,iJAAqJ,sNAAgO,iHAAmH,qBAAqB;AACphB,SAAS,SAAS;AAClB,OAAO,aAAa;AACpB,SAAS,eAAe;AACxB,SAAS,kBAAkB;AAC3B,MAAM,QAAQ,YAAY;AACxB,QAAM,WAAW,OAAO,OAAO;AAAA,IAC7B,UAAU;AAAA,EACZ,CAAC;AACH;AACA,wBAAwB,OAAO;AAC7B,SAAO,MAAM,QAAQ,kBAAkB,GAAG,SAAS,kBAAkB,SAAS,CAAC,CAAC,CAAC,GAAG,SAAS,kBAAkB,GAAG;AAAA,IAChH,MAAM;AAAA,IACN,SAAS;AAAA,IACT,UAAU;AAAA,EACZ,CAAC,CAAC,GAAG,SAAS,KAAK,UAAU,QAAQ,GAAG,MAAM,CAAC,CAAC,CAAC;AACnD;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590149,
+      "end": 1767441590149,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590149,
+      "end": 1767441590149,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590149,
+      "end": 1767441590149,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", ' class=\"text-center mx-auto text-gray-700 p-4\"><h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">Hello world!</h1><!--$-->', '<!--/--><p class=\"mt-8\">Visit <a href=\"https://solidjs.com\" target=\"_blank\" class=\"text-sky-600 hover:underline\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\"my-4\"><span>Home</span> - <!--$-->', '<!--/--> </p><br><p><button>Login with Github</button></p><div class=\"flex flex-col gap-2 items-center\"><pre>', \"</pre></div></main>\"];\nimport { A } from \"solid-start\";\nimport Counter from \"~/components/Counter\";\nimport { session } from \"~/utils/auth\";\nimport { authClient } from \"~/lib/auth-client\";\nconst login = async () => {\n  await authClient.signIn.social({\n    provider: \"github\"\n  });\n};\nexport default function Home() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(Counter, {})), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })), _$escape(JSON.stringify(session(), null, 2)));\n}\n",
+      "start": 1767441590149,
+      "end": 1767441590149,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590149,
+      "end": 1767441590149,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590149,
+      "end": 1767441590149,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590149,
+      "end": 1767441590149,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590149,
+      "end": 1767441590149,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590149,
+      "end": 1767441590149,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590149,
+      "end": 1767441590149,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", ' class=\"text-center mx-auto text-gray-700 p-4\"><h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">Hello world!</h1><!--$-->', '<!--/--><p class=\"mt-8\">Visit <a href=\"https://solidjs.com\" target=\"_blank\" class=\"text-sky-600 hover:underline\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\"my-4\"><span>Home</span> - <!--$-->', '<!--/--> </p><br><p><button>Login with Github</button></p><div class=\"flex flex-col gap-2 items-center\"><pre>', \"</pre></div></main>\"];\nimport { A } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/index.tsx\";\nimport Counter from \"/src/components/Counter.tsx\";\nimport { session } from \"/src/utils/auth.ts\";\nimport { authClient } from \"/src/lib/auth-client.ts\";\nconst login = async () => {\n  await authClient.signIn.social({\n    provider: \"github\"\n  });\n};\nexport default function Home() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(Counter, {})), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })), _$escape(JSON.stringify(session(), null, 2)));\n}\n",
+      "start": 1767441590149,
+      "end": 1767441590150,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

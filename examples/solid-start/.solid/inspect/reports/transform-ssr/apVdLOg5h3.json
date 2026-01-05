@@ -1,0 +1,139 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Meta.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { renderTags } from \"@solidjs/meta\";\nimport { useContext } from \"solid-js\";\nimport { ssr, useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\n\nexport default function Meta() {\n  const context = useContext(ServerContext);\n  // @ts-expect-error The ssr() types do not match the Assets child types\n  useAssets(() => ssr(renderTags(context.tags)));\n  return null;\n}\n",
+      "start": 1767441590545,
+      "end": 1767441590545
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590545,
+      "end": 1767441590545,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "import { renderTags } from \"@solidjs/meta\";\nimport { useContext } from \"solid-js\";\nimport { ssr, useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nexport default function Meta() {\n  const context = useContext(ServerContext);\n  // @ts-expect-error The ssr() types do not match the Assets child types\n  useAssets(() => ssr(renderTags(context.tags)));\n  return null;\n}",
+      "start": 1767441590545,
+      "end": 1767441590547,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "renderTags",
+          "useContext",
+          "ssr",
+          "useAssets",
+          "ServerContext",
+          "Meta",
+          "context",
+          "tags"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Meta.tsx"
+        ],
+        "sourcesContent": [
+          "import { renderTags } from \"@solidjs/meta\";\nimport { useContext } from \"solid-js\";\nimport { ssr, useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\n\nexport default function Meta() {\n  const context = useContext(ServerContext);\n  // @ts-expect-error The ssr() types do not match the Assets child types\n  useAssets(() => ssr(renderTags(context.tags)));\n  return null;\n}\n"
+        ],
+        "mappings": "AAAA,SAASA,UAAU,QAAQ,eAAe;AAC1C,SAASC,UAAU,QAAQ,UAAU;AACrC,SAASC,GAAG,EAAEC,SAAS,QAAQ,cAAc;AAC7C,SAASC,aAAa,QAAQ,yBAAyB;AAEvD,eAAe,SAASC,IAAIA,CAAA,EAAG;EAC7B,MAAMC,OAAO,GAAGL,UAAU,CAACG,aAAa,CAAC;EACzC;EACAD,SAAS,CAAC,MAAMD,GAAG,CAACF,UAAU,CAACM,OAAO,CAACC,IAAI,CAAC,CAAC,CAAC;EAC9C,OAAO,IAAI;AACb",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590547,
+      "end": 1767441590547,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { renderTags } from \"@solidjs/meta\";\nimport { useContext } from \"solid-js\";\nimport { ssr, useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nexport default function Meta() {\n  const context = useContext(ServerContext);\n  useAssets(() => ssr(renderTags(context.tags)));\n  return null;\n}\n",
+      "start": 1767441590547,
+      "end": 1767441590651,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Meta.tsx"
+        ],
+        "sourcesContent": [
+          "import { renderTags } from \"@solidjs/meta\";\nimport { useContext } from \"solid-js\";\nimport { ssr, useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nexport default function Meta() {\n  const context = useContext(ServerContext);\n  // @ts-expect-error The ssr() types do not match the Assets child types\n  useAssets(() => ssr(renderTags(context.tags)));\n  return null;\n}"
+        ],
+        "mappings": "AAAA,SAAS,kBAAkB;AAC3B,SAAS,kBAAkB;AAC3B,SAAS,KAAK,iBAAiB;AAC/B,SAAS,qBAAqB;AAC9B,wBAAwB,OAAO;AAC7B,QAAM,UAAU,WAAW,aAAa;AAExC,YAAU,MAAM,IAAI,WAAW,QAAQ,IAAI,CAAC,CAAC;AAC7C,SAAO;AACT;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590651,
+      "end": 1767441590651,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590651,
+      "end": 1767441590651,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590651,
+      "end": 1767441590651,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { renderTags } from \"@solidjs/meta\";\nimport { useContext } from \"solid-js\";\nimport { ssr, useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nexport default function Meta() {\n  const context = useContext(ServerContext);\n  useAssets(() => ssr(renderTags(context.tags)));\n  return null;\n}\n",
+      "start": 1767441590652,
+      "end": 1767441590652,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590652,
+      "end": 1767441590652,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590652,
+      "end": 1767441590652,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590652,
+      "end": 1767441590652,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590652,
+      "end": 1767441590652,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590652,
+      "end": 1767441590652,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590652,
+      "end": 1767441590652,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { renderTags } from \"/node_modules/.pnpm/@solidjs+meta@0.28.7_solid-js@1.9.10/node_modules/@solidjs/meta/dist/index.jsx\";\nimport { useContext } from \"solid-js\";\nimport { ssr, useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/ServerContext.tsx\";\nexport default function Meta() {\n  const context = useContext(ServerContext);\n  useAssets(() => ssr(renderTags(context.tags)));\n  return null;\n}\n",
+      "start": 1767441590652,
+      "end": 1767441590655,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

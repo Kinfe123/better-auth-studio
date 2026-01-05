@@ -1,0 +1,120 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/memoryStorage.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/memoryStorage.ts\n */\nimport type {\n  CreateSessionStorageFunction,\n  SessionData,\n  SessionIdStorageStrategy,\n  SessionStorage\n} from \"./sessions\";\n\ninterface MemorySessionStorageOptions {\n  /**\n   * The Cookie used to store the session id on the client, or options used\n   * to automatically create one.\n   */\n  cookie?: SessionIdStorageStrategy[\"cookie\"];\n}\n\nexport type CreateMemorySessionStorageFunction = (\n  options?: MemorySessionStorageOptions\n) => SessionStorage;\n\n/**\n * Creates and returns a simple in-memory SessionStorage object, mostly useful\n * for testing and as a reference implementation.\n *\n * Note: This storage does not scale beyond a single process, so it is not\n * suitable for most production scenarios.\n *\n * @see https://remix.run/api/remix#creatememorysessionstorage\n */\nexport const createMemorySessionStorageFactory =\n  (createSessionStorage: CreateSessionStorageFunction): CreateMemorySessionStorageFunction =>\n  ({ cookie } = {}) => {\n    let uniqueId = 0;\n    let map = new Map<string, { data: SessionData; expires?: Date }>();\n\n    return createSessionStorage({\n      cookie,\n      async createData(data, expires) {\n        let id = (++uniqueId).toString();\n        map.set(id, { data, expires });\n        return id;\n      },\n      async readData(id) {\n        if (map.has(id)) {\n          let { data, expires } = map.get(id)!;\n\n          if (!expires || expires > new Date()) {\n            return data;\n          }\n\n          // Remove expired session data.\n          if (expires) map.delete(id);\n        }\n\n        return null;\n      },\n      async updateData(id, data, expires) {\n        map.set(id, { data, expires });\n      },\n      async deleteData(id) {\n        map.delete(id);\n      }\n    });\n  };\n",
+      "start": 1767441590520,
+      "end": 1767441590520
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590520,
+      "end": 1767441590520,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590520,
+      "end": 1767441590520,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590520,
+      "end": 1767441590520,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/memoryStorage.ts\n */\nexport const createMemorySessionStorageFactory = (createSessionStorage) => ({ cookie } = {}) => {\n  let uniqueId = 0;\n  let map = /* @__PURE__ */ new Map();\n  return createSessionStorage({\n    cookie,\n    async createData(data, expires) {\n      let id = (++uniqueId).toString();\n      map.set(id, { data, expires });\n      return id;\n    },\n    async readData(id) {\n      if (map.has(id)) {\n        let { data, expires } = map.get(id);\n        if (!expires || expires > /* @__PURE__ */ new Date()) {\n          return data;\n        }\n        if (expires)\n          map.delete(id);\n      }\n      return null;\n    },\n    async updateData(id, data, expires) {\n      map.set(id, { data, expires });\n    },\n    async deleteData(id) {\n      map.delete(id);\n    }\n  });\n};\n",
+      "start": 1767441590520,
+      "end": 1767441590640,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "memoryStorage.ts"
+        ],
+        "sourcesContent": [
+          "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/memoryStorage.ts\n */\nimport type {\n  CreateSessionStorageFunction,\n  SessionData,\n  SessionIdStorageStrategy,\n  SessionStorage\n} from \"./sessions\";\n\ninterface MemorySessionStorageOptions {\n  /**\n   * The Cookie used to store the session id on the client, or options used\n   * to automatically create one.\n   */\n  cookie?: SessionIdStorageStrategy[\"cookie\"];\n}\n\nexport type CreateMemorySessionStorageFunction = (\n  options?: MemorySessionStorageOptions\n) => SessionStorage;\n\n/**\n * Creates and returns a simple in-memory SessionStorage object, mostly useful\n * for testing and as a reference implementation.\n *\n * Note: This storage does not scale beyond a single process, so it is not\n * suitable for most production scenarios.\n *\n * @see https://remix.run/api/remix#creatememorysessionstorage\n */\nexport const createMemorySessionStorageFactory =\n  (createSessionStorage: CreateSessionStorageFunction): CreateMemorySessionStorageFunction =>\n  ({ cookie } = {}) => {\n    let uniqueId = 0;\n    let map = new Map<string, { data: SessionData; expires?: Date }>();\n\n    return createSessionStorage({\n      cookie,\n      async createData(data, expires) {\n        let id = (++uniqueId).toString();\n        map.set(id, { data, expires });\n        return id;\n      },\n      async readData(id) {\n        if (map.has(id)) {\n          let { data, expires } = map.get(id)!;\n\n          if (!expires || expires > new Date()) {\n            return data;\n          }\n\n          // Remove expired session data.\n          if (expires) map.delete(id);\n        }\n\n        return null;\n      },\n      async updateData(id, data, expires) {\n        map.set(id, { data, expires });\n      },\n      async deleteData(id) {\n        map.delete(id);\n      }\n    });\n  };\n"
+        ],
+        "mappings": "AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAmCO,aAAM,oCACX,CAAC,yBACD,CAAC,EAAE,OAAO,IAAI,CAAC,MAAM;AACnB,MAAI,WAAW;AACf,MAAI,MAAM,oBAAI,IAAmD;AAEjE,SAAO,qBAAqB;AAAA,IAC1B;AAAA,IACA,MAAM,WAAW,MAAM,SAAS;AAC9B,UAAI,MAAM,EAAE,UAAU,SAAS;AAC/B,UAAI,IAAI,IAAI,EAAE,MAAM,QAAQ,CAAC;AAC7B,aAAO;AAAA,IACT;AAAA,IACA,MAAM,SAAS,IAAI;AACjB,UAAI,IAAI,IAAI,EAAE,GAAG;AACf,YAAI,EAAE,MAAM,QAAQ,IAAI,IAAI,IAAI,EAAE;AAElC,YAAI,CAAC,WAAW,UAAU,oBAAI,KAAK,GAAG;AACpC,iBAAO;AAAA,QACT;AAGA,YAAI;AAAS,cAAI,OAAO,EAAE;AAAA,MAC5B;AAEA,aAAO;AAAA,IACT;AAAA,IACA,MAAM,WAAW,IAAI,MAAM,SAAS;AAClC,UAAI,IAAI,IAAI,EAAE,MAAM,QAAQ,CAAC;AAAA,IAC/B;AAAA,IACA,MAAM,WAAW,IAAI;AACnB,UAAI,OAAO,EAAE;AAAA,IACf;AAAA,EACF,CAAC;AACH;",
+        "names": [],
+        "x_google_ignoreList": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590640,
+      "end": 1767441590640,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590640,
+      "end": 1767441590640,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590640,
+      "end": 1767441590640,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/memoryStorage.ts\n */\nexport const createMemorySessionStorageFactory = (createSessionStorage) => ({ cookie } = {}) => {\n  let uniqueId = 0;\n  let map = /* @__PURE__ */ new Map();\n  return createSessionStorage({\n    cookie,\n    async createData(data, expires) {\n      let id = (++uniqueId).toString();\n      map.set(id, { data, expires });\n      return id;\n    },\n    async readData(id) {\n      if (map.has(id)) {\n        let { data, expires } = map.get(id);\n        if (!expires || expires > /* @__PURE__ */ new Date()) {\n          return data;\n        }\n        if (expires)\n          map.delete(id);\n      }\n      return null;\n    },\n    async updateData(id, data, expires) {\n      map.set(id, { data, expires });\n    },\n    async deleteData(id) {\n      map.delete(id);\n    }\n  });\n};\n",
+      "start": 1767441590640,
+      "end": 1767441590640,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/memoryStorage.ts\n */\nexport const createMemorySessionStorageFactory = (createSessionStorage) => ({ cookie } = {}) => {\n  let uniqueId = 0;\n  let map = /* @__PURE__ */ new Map();\n  return createSessionStorage({\n    cookie,\n    async createData(data, expires) {\n      let id = (++uniqueId).toString();\n      map.set(id, { data, expires });\n      return id;\n    },\n    async readData(id) {\n      if (map.has(id)) {\n        let { data, expires } = map.get(id);\n        if (!expires || expires > /* @__PURE__ */ new Date()) {\n          return data;\n        }\n        if (expires)\n          map.delete(id);\n      }\n      return null;\n    },\n    async updateData(id, data, expires) {\n      map.set(id, { data, expires });\n    },\n    async deleteData(id) {\n      map.delete(id);\n    }\n  });\n};\n",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

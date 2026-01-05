@@ -1,0 +1,138 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/index.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "// isomorphic exports\n\nexport { Body, Head, Html } from \"./Document\";\nexport { default as Links } from \"./Links\";\nexport { default as Meta } from \"./Meta\";\nexport { default as Scripts } from \"./Scripts\";\n\n",
+      "start": 1767441590205,
+      "end": 1767441590205
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590205,
+      "end": 1767441590205,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "// isomorphic exports\n\nexport { Body, Head, Html } from \"./Document\";\nexport { default as Links } from \"./Links\";\nexport { default as Meta } from \"./Meta\";\nexport { default as Scripts } from \"./Scripts\";",
+      "start": 1767441590205,
+      "end": 1767441590207,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "Body",
+          "Head",
+          "Html",
+          "default",
+          "Links",
+          "Meta",
+          "Scripts"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/index.tsx"
+        ],
+        "sourcesContent": [
+          "// isomorphic exports\n\nexport { Body, Head, Html } from \"./Document\";\nexport { default as Links } from \"./Links\";\nexport { default as Meta } from \"./Meta\";\nexport { default as Scripts } from \"./Scripts\";\n\n"
+        ],
+        "mappings": "AAAA;;AAEA,SAASA,IAAI,EAAEC,IAAI,EAAEC,IAAI,QAAQ,YAAY;AAC7C,SAASC,OAAO,IAAIC,KAAK,QAAQ,SAAS;AAC1C,SAASD,OAAO,IAAIE,IAAI,QAAQ,QAAQ;AACxC,SAASF,OAAO,IAAIG,OAAO,QAAQ,WAAW",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590207,
+      "end": 1767441590207,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "export { Body, Head, Html } from \"./Document\";\nexport { default as Links } from \"./Links\";\nexport { default as Meta } from \"./Meta\";\nexport { default as Scripts } from \"./Scripts\";\n",
+      "start": 1767441590207,
+      "end": 1767441590386,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/index.tsx"
+        ],
+        "sourcesContent": [
+          "// isomorphic exports\n\nexport { Body, Head, Html } from \"./Document\";\nexport { default as Links } from \"./Links\";\nexport { default as Meta } from \"./Meta\";\nexport { default as Scripts } from \"./Scripts\";"
+        ],
+        "mappings": "AAEA,SAAS,MAAM,MAAM,YAAY;AACjC,SAAS,WAAW,aAAa;AACjC,SAAS,WAAW,YAAY;AAChC,SAAS,WAAW,eAAe;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "export { Body, Head, Html } from \"./Document\";\nexport { default as Links } from \"./Links\";\nexport { default as Meta } from \"./Meta\";\nexport { default as Scripts } from \"./Scripts\";\n",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "export { Body, Head, Html } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Document.tsx\";\nexport { default as Links } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Links.tsx\";\nexport { default as Meta } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Meta.tsx\";\nexport { default as Scripts } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Scripts.tsx\";\n",
+      "start": 1767441590386,
+      "end": 1767441590394,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

@@ -17,6 +17,7 @@ import {
   TanStackStartIcon,
   AstroIcon,
   RemixIcon,
+  NuxtIcon,
   ConfigIcon,
   WarningIcon,
   PrerequisitesIcon,
@@ -38,6 +39,7 @@ const frameworks: Array<{
     { id: "tanstackstart", name: "TanStack Start", icon: TanStackStartIcon },
     { id: "astro", name: "Astro", icon: AstroIcon },
     { id: "remix", name: "Remix", icon: RemixIcon },
+    { id: "nuxt", name: "Nuxt", icon: NuxtIcon },
   ];
 export default function SelfHosting() {
   const [activeFramework, setActiveFramework] = useState<Framework>("nextjs");
@@ -620,6 +622,42 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   return auth.handler(request);
 }`}
+                        language="typescript"
+                      />
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                      </p>
+                    </div>
+                  </PixelCard>
+                )}
+
+                {activeFramework === "nuxt" && (
+                  <PixelCard variant="highlight" className="relative">
+                    <div className="pt-4 space-y-4 relative">
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        For Nuxt apps, create a server API route handler for the studio:
+                      </p>
+                      <CodeHighlighter
+                        code={`// server/api/studio/[...all].ts
+import { betterAuthStudio } from 'better-auth-studio/nuxt';
+import studioConfig from '~/studio.config';
+
+export default defineEventHandler((event) => {
+  return betterAuthStudio(studioConfig)(event);
+});`}
+                        language="typescript"
+                      />
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        Make sure your Better Auth routes are set up. For example, in <code className="text-white/90 bg-white/10 px-1 py-0.5">server/api/auth/[...all].ts</code>:
+                      </p>
+                      <CodeHighlighter
+                        code={`// server/api/auth/[...all].ts
+import { auth } from "~/server/lib/auth";
+import { toNodeHandler } from "better-auth/node";
+
+export default defineEventHandler((event) => {
+  return toNodeHandler(auth)(event.node.req, event.node.res);
+});`}
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">

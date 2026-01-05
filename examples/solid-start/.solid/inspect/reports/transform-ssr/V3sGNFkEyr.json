@@ -1,0 +1,120 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/api/router.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { MatchRoute, Method } from \"./types\";\n\nexport function getRouteMatches(routes: MatchRoute[], path: string, method: Method) {\n  const segments = path.split(\"/\").filter(Boolean);\n\n  routeLoop: for (const route of routes) {\n    const matchSegments = route.matchSegments;\n\n    if (\n      segments.length < matchSegments.length ||\n      (!route.wildcard && segments.length > matchSegments.length)\n    ) {\n      continue;\n    }\n\n    for (let index = 0; index < matchSegments.length; index++) {\n      const match = matchSegments[index];\n      if (!match) {\n        continue;\n      }\n\n      if (segments[index] !== match) {\n        continue routeLoop;\n      }\n    }\n\n    const handler = route[method];\n    if (handler === \"skip\" || handler === undefined) {\n      return;\n    }\n\n    const params: Record<string, string> = {};\n    for (const { type, name, index } of route.params) {\n      if (type === \":\") {\n        params[name] = segments[index];\n      } else {\n        params[name] = segments.slice(index).join(\"/\");\n      }\n    }\n\n    return { handler, params };\n  }\n}\n",
+      "start": 1767441590006,
+      "end": 1767441590006
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590006,
+      "end": 1767441590006,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590006,
+      "end": 1767441590006,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590006,
+      "end": 1767441590006,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "export function getRouteMatches(routes, path, method) {\n  const segments = path.split(\"/\").filter(Boolean);\n  routeLoop:\n    for (const route of routes) {\n      const matchSegments = route.matchSegments;\n      if (segments.length < matchSegments.length || !route.wildcard && segments.length > matchSegments.length) {\n        continue;\n      }\n      for (let index = 0; index < matchSegments.length; index++) {\n        const match = matchSegments[index];\n        if (!match) {\n          continue;\n        }\n        if (segments[index] !== match) {\n          continue routeLoop;\n        }\n      }\n      const handler = route[method];\n      if (handler === \"skip\" || handler === void 0) {\n        return;\n      }\n      const params = {};\n      for (const { type, name, index } of route.params) {\n        if (type === \":\") {\n          params[name] = segments[index];\n        } else {\n          params[name] = segments.slice(index).join(\"/\");\n        }\n      }\n      return { handler, params };\n    }\n}\n",
+      "start": 1767441590006,
+      "end": 1767441590021,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "router.ts"
+        ],
+        "sourcesContent": [
+          "import { MatchRoute, Method } from \"./types\";\n\nexport function getRouteMatches(routes: MatchRoute[], path: string, method: Method) {\n  const segments = path.split(\"/\").filter(Boolean);\n\n  routeLoop: for (const route of routes) {\n    const matchSegments = route.matchSegments;\n\n    if (\n      segments.length < matchSegments.length ||\n      (!route.wildcard && segments.length > matchSegments.length)\n    ) {\n      continue;\n    }\n\n    for (let index = 0; index < matchSegments.length; index++) {\n      const match = matchSegments[index];\n      if (!match) {\n        continue;\n      }\n\n      if (segments[index] !== match) {\n        continue routeLoop;\n      }\n    }\n\n    const handler = route[method];\n    if (handler === \"skip\" || handler === undefined) {\n      return;\n    }\n\n    const params: Record<string, string> = {};\n    for (const { type, name, index } of route.params) {\n      if (type === \":\") {\n        params[name] = segments[index];\n      } else {\n        params[name] = segments.slice(index).join(\"/\");\n      }\n    }\n\n    return { handler, params };\n  }\n}\n"
+        ],
+        "mappings": "AAEO,gBAAS,gBAAgB,QAAsB,MAAc,QAAgB;AAClF,QAAM,WAAW,KAAK,MAAM,GAAG,EAAE,OAAO,OAAO;AAE/C;AAAW,eAAW,SAAS,QAAQ;AACrC,YAAM,gBAAgB,MAAM;AAE5B,UACE,SAAS,SAAS,cAAc,UAC/B,CAAC,MAAM,YAAY,SAAS,SAAS,cAAc,QACpD;AACA;AAAA,MACF;AAEA,eAAS,QAAQ,GAAG,QAAQ,cAAc,QAAQ,SAAS;AACzD,cAAM,QAAQ,cAAc,KAAK;AACjC,YAAI,CAAC,OAAO;AACV;AAAA,QACF;AAEA,YAAI,SAAS,KAAK,MAAM,OAAO;AAC7B,mBAAS;AAAA,QACX;AAAA,MACF;AAEA,YAAM,UAAU,MAAM,MAAM;AAC5B,UAAI,YAAY,UAAU,YAAY,QAAW;AAC/C;AAAA,MACF;AAEA,YAAM,SAAiC,CAAC;AACxC,iBAAW,EAAE,MAAM,MAAM,MAAM,KAAK,MAAM,QAAQ;AAChD,YAAI,SAAS,KAAK;AAChB,iBAAO,IAAI,IAAI,SAAS,KAAK;AAAA,QAC/B,OAAO;AACL,iBAAO,IAAI,IAAI,SAAS,MAAM,KAAK,EAAE,KAAK,GAAG;AAAA,QAC/C;AAAA,MACF;AAEA,aAAO,EAAE,SAAS,OAAO;AAAA,IAC3B;AACF;",
+        "names": [],
+        "x_google_ignoreList": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590021,
+      "end": 1767441590021,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590021,
+      "end": 1767441590021,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590021,
+      "end": 1767441590021,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "export function getRouteMatches(routes, path, method) {\n  const segments = path.split(\"/\").filter(Boolean);\n  routeLoop:\n    for (const route of routes) {\n      const matchSegments = route.matchSegments;\n      if (segments.length < matchSegments.length || !route.wildcard && segments.length > matchSegments.length) {\n        continue;\n      }\n      for (let index = 0; index < matchSegments.length; index++) {\n        const match = matchSegments[index];\n        if (!match) {\n          continue;\n        }\n        if (segments[index] !== match) {\n          continue routeLoop;\n        }\n      }\n      const handler = route[method];\n      if (handler === \"skip\" || handler === void 0) {\n        return;\n      }\n      const params = {};\n      for (const { type, name, index } of route.params) {\n        if (type === \":\") {\n          params[name] = segments[index];\n        } else {\n          params[name] = segments.slice(index).join(\"/\");\n        }\n      }\n      return { handler, params };\n    }\n}\n",
+      "start": 1767441590021,
+      "end": 1767441590021,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590021,
+      "end": 1767441590021,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590021,
+      "end": 1767441590021,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590021,
+      "end": 1767441590021,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590021,
+      "end": 1767441590021,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590021,
+      "end": 1767441590021,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590021,
+      "end": 1767441590021,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "export function getRouteMatches(routes, path, method) {\n  const segments = path.split(\"/\").filter(Boolean);\n  routeLoop:\n    for (const route of routes) {\n      const matchSegments = route.matchSegments;\n      if (segments.length < matchSegments.length || !route.wildcard && segments.length > matchSegments.length) {\n        continue;\n      }\n      for (let index = 0; index < matchSegments.length; index++) {\n        const match = matchSegments[index];\n        if (!match) {\n          continue;\n        }\n        if (segments[index] !== match) {\n          continue routeLoop;\n        }\n      }\n      const handler = route[method];\n      if (handler === \"skip\" || handler === void 0) {\n        return;\n      }\n      const params = {};\n      for (const { type, name, index } of route.params) {\n        if (type === \":\") {\n          params[name] = segments[index];\n        } else {\n          params[name] = segments.slice(index).join(\"/\");\n        }\n      }\n      return { handler, params };\n    }\n}\n",
+      "start": 1767441590021,
+      "end": 1767441590021,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

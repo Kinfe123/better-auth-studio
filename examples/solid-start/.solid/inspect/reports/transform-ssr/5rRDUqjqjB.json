@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/api/session.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { ApiHandler } from 'solid-start/api/types'\nimport { auth } from '~/lib/auth'\n\nexport const GET: ApiHandler = async (event) => {\n  const session = await auth.api.getSession({\n    headers: event.request.headers,\n  })\n  return new Response(JSON.stringify(session))\n}\n",
+      "start": 1767441590154,
+      "end": 1767441590154
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590154,
+      "end": 1767441590154,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590154,
+      "end": 1767441590154,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590154,
+      "end": 1767441590154,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { auth } from \"~/lib/auth\";\nexport const GET = async (event) => {\n  const session = await auth.api.getSession({\n    headers: event.request.headers\n  });\n  return new Response(JSON.stringify(session));\n};\n",
+      "start": 1767441590154,
+      "end": 1767441590168,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "session.ts"
+        ],
+        "sourcesContent": [
+          "import { ApiHandler } from 'solid-start/api/types'\nimport { auth } from '~/lib/auth'\n\nexport const GET: ApiHandler = async (event) => {\n  const session = await auth.api.getSession({\n    headers: event.request.headers,\n  })\n  return new Response(JSON.stringify(session))\n}\n"
+        ],
+        "mappings": "AACA,SAAS,YAAY;AAEd,aAAM,MAAkB,OAAO,UAAU;AAC9C,QAAM,UAAU,MAAM,KAAK,IAAI,WAAW;AAAA,IACxC,SAAS,MAAM,QAAQ;AAAA,EACzB,CAAC;AACD,SAAO,IAAI,SAAS,KAAK,UAAU,OAAO,CAAC;AAC7C;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { auth } from \"~/lib/auth\";\nexport const GET = async (event) => {\n  const session = await auth.api.getSession({\n    headers: event.request.headers\n  });\n  return new Response(JSON.stringify(session));\n};\n",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { auth } from \"/src/lib/auth.ts\";\nexport const GET = async (event) => {\n  const session = await auth.api.getSession({\n    headers: event.request.headers\n  });\n  return new Response(JSON.stringify(session));\n};\n",
+      "start": 1767441590168,
+      "end": 1767441590175,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

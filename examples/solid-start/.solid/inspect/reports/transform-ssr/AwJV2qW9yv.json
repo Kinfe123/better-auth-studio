@@ -1,0 +1,223 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/about.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { createResource, createSignal } from 'solid-js'\nimport { trpc, useQuery } from '~/utils/trpc-client'\n\nconst fetchUser = (name: string) => {\n  return trpc.hello.query({ name })\n}\n\nconst WelcomeComponent = () => {\n  const [name, setName] = createSignal('TEST')\n\n  const [welcome] = createResource(() => name(), fetchUser)\n  return (\n    <>\n      <h2 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">{welcome()}</h2>\n      <input\n        class=\"border-gray-600 border-2 rounded-md p-1 block\"\n        value={name()}\n        onChange={(event) => setName(event.currentTarget.value)}\n      />\n    </>\n  )\n}\n\nexport default function About() {\n  const [hello] = useQuery('hello', { name: 'Frank ' })\n  return (\n    <main class=\"text-center mx-auto text-gray-700 p-4\">\n      <h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">{hello()}</h1>\n      <WelcomeComponent />\n    </main>\n  )\n}\n",
+      "start": 1767441590038,
+      "end": 1767441590038,
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "createResource",
+          "createSignal",
+          "trpc",
+          "useQuery",
+          "fetchUser",
+          "name",
+          "hello",
+          "query",
+          "WelcomeComponent",
+          "setName",
+          "welcome",
+          "_$ssr",
+          "_tmpl$",
+          "_$ssrHydrationKey",
+          "_$escape",
+          "_tmpl$2",
+          "_$ssrAttribute",
+          "About",
+          "_tmpl$3",
+          "_$createComponent"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/about.tsx"
+        ],
+        "sourcesContent": [
+          "import { createResource, createSignal } from 'solid-js'\nimport { trpc, useQuery } from '~/utils/trpc-client'\n\nconst fetchUser = (name: string) => {\n  return trpc.hello.query({ name })\n}\n\nconst WelcomeComponent = () => {\n  const [name, setName] = createSignal('TEST')\n\n  const [welcome] = createResource(() => name(), fetchUser)\n  return (\n    <>\n      <h2 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">{welcome()}</h2>\n      <input\n        class=\"border-gray-600 border-2 rounded-md p-1 block\"\n        value={name()}\n        onChange={(event) => setName(event.currentTarget.value)}\n      />\n    </>\n  )\n}\n\nexport default function About() {\n  const [hello] = useQuery('hello', { name: 'Frank ' })\n  return (\n    <main class=\"text-center mx-auto text-gray-700 p-4\">\n      <h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">{hello()}</h1>\n      <WelcomeComponent />\n    </main>\n  )\n}\n"
+        ],
+        "mappings": ";;;;;;;;AAAA,SAASA,cAAc,EAAEC,YAAY,QAAQ,UAAU;AACvD,SAASC,IAAI,EAAEC,QAAQ,QAAQ,qBAAqB;AAEpD,MAAMC,SAAS,GAAGA,CAACC,IAAI,EAAE,MAAM,KAAK;EAClC,OAAOH,IAAI,CAACI,KAAK,CAACC,KAAK,CAAC;IAAEF;EAAK,CAAC,CAAC;AACnC,CAAC;AAED,MAAMG,gBAAgB,GAAGA,CAAA,KAAM;EAC7B,MAAM,CAACH,IAAI,EAAEI,OAAO,CAAC,GAAGR,YAAY,CAAC,MAAM,CAAC;EAE5C,MAAM,CAACS,OAAO,CAAC,GAAGV,cAAc,CAAC,MAAMK,IAAI,CAAC,CAAC,EAAED,SAAS,CAAC;EACzD,QAAAO,KAAA,CAAAC,MAAA,EAAAC,iBAAA,IAAAC,QAAA,CAE0EJ,OAAO,CAAC,CAAC,IAAAC,KAAA,CAAAI,OAAA,EAAAF,iBAAA,IAAAG,cAAA,UAAAF,QAAA,CAGtET,IAAI,CAAC,CAAC;AAKrB,CAAC;AAED,eAAe,SAASY,KAAKA,CAAA,EAAG;EAC9B,MAAM,CAACX,KAAK,CAAC,GAAGH,QAAQ,CAAC,OAAO,EAAE;IAAEE,IAAI,EAAE;EAAS,CAAC,CAAC;EACrD,OAAAM,KAAA,CAAAO,OAAA,EAAAL,iBAAA,IAAAC,QAAA,CAE0ER,KAAK,CAAC,CAAC,GAAAQ,QAAA,CAAAK,iBAAA,CAC5EX,gBAAgB;AAGvB",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<h2\", \" class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">\", \"</h2>\"],\n  _tmpl$2 = [\"<input\", \" class=\\\"border-gray-600 border-2 rounded-md p-1 block\\\"\", \">\"],\n  _tmpl$3 = [\"<main\", \" class=\\\"text-center mx-auto text-gray-700 p-4\\\"><h1 class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">\", \"</h1><!--$-->\", \"<!--/--></main>\"];\nimport { createResource, createSignal } from 'solid-js';\nimport { trpc, useQuery } from '~/utils/trpc-client';\nconst fetchUser = (name: string) => {\n  return trpc.hello.query({\n    name\n  });\n};\nconst WelcomeComponent = () => {\n  const [name, setName] = createSignal('TEST');\n  const [welcome] = createResource(() => name(), fetchUser);\n  return [_$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(welcome())), _$ssr(_tmpl$2, _$ssrHydrationKey(), _$ssrAttribute(\"value\", _$escape(name(), true), false))];\n};\nexport default function About() {\n  const [hello] = useQuery('hello', {\n    name: 'Frank '\n  });\n  return _$ssr(_tmpl$3, _$ssrHydrationKey(), _$escape(hello()), _$escape(_$createComponent(WelcomeComponent, {})));\n}",
+      "start": 1767441590038,
+      "end": 1767441590042,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "createResource",
+          "createSignal",
+          "trpc",
+          "useQuery",
+          "fetchUser",
+          "name",
+          "hello",
+          "query",
+          "WelcomeComponent",
+          "setName",
+          "welcome",
+          "_$ssr",
+          "_tmpl$",
+          "_$ssrHydrationKey",
+          "_$escape",
+          "_tmpl$2",
+          "_$ssrAttribute",
+          "About",
+          "_tmpl$3",
+          "_$createComponent"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/about.tsx"
+        ],
+        "sourcesContent": [
+          "import { createResource, createSignal } from 'solid-js'\nimport { trpc, useQuery } from '~/utils/trpc-client'\n\nconst fetchUser = (name: string) => {\n  return trpc.hello.query({ name })\n}\n\nconst WelcomeComponent = () => {\n  const [name, setName] = createSignal('TEST')\n\n  const [welcome] = createResource(() => name(), fetchUser)\n  return (\n    <>\n      <h2 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">{welcome()}</h2>\n      <input\n        class=\"border-gray-600 border-2 rounded-md p-1 block\"\n        value={name()}\n        onChange={(event) => setName(event.currentTarget.value)}\n      />\n    </>\n  )\n}\n\nexport default function About() {\n  const [hello] = useQuery('hello', { name: 'Frank ' })\n  return (\n    <main class=\"text-center mx-auto text-gray-700 p-4\">\n      <h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">{hello()}</h1>\n      <WelcomeComponent />\n    </main>\n  )\n}\n"
+        ],
+        "mappings": ";;;;;;;;AAAA,SAASA,cAAc,EAAEC,YAAY,QAAQ,UAAU;AACvD,SAASC,IAAI,EAAEC,QAAQ,QAAQ,qBAAqB;AAEpD,MAAMC,SAAS,GAAGA,CAACC,IAAI,EAAE,MAAM,KAAK;EAClC,OAAOH,IAAI,CAACI,KAAK,CAACC,KAAK,CAAC;IAAEF;EAAK,CAAC,CAAC;AACnC,CAAC;AAED,MAAMG,gBAAgB,GAAGA,CAAA,KAAM;EAC7B,MAAM,CAACH,IAAI,EAAEI,OAAO,CAAC,GAAGR,YAAY,CAAC,MAAM,CAAC;EAE5C,MAAM,CAACS,OAAO,CAAC,GAAGV,cAAc,CAAC,MAAMK,IAAI,CAAC,CAAC,EAAED,SAAS,CAAC;EACzD,QAAAO,KAAA,CAAAC,MAAA,EAAAC,iBAAA,IAAAC,QAAA,CAE0EJ,OAAO,CAAC,CAAC,IAAAC,KAAA,CAAAI,OAAA,EAAAF,iBAAA,IAAAG,cAAA,UAAAF,QAAA,CAGtET,IAAI,CAAC,CAAC;AAKrB,CAAC;AAED,eAAe,SAASY,KAAKA,CAAA,EAAG;EAC9B,MAAM,CAACX,KAAK,CAAC,GAAGH,QAAQ,CAAC,OAAO,EAAE;IAAEE,IAAI,EAAE;EAAS,CAAC,CAAC;EACrD,OAAAM,KAAA,CAAAO,OAAA,EAAAL,iBAAA,IAAAC,QAAA,CAE0ER,KAAK,CAAC,CAAC,GAAAQ,QAAA,CAAAK,iBAAA,CAC5EX,gBAAgB;AAGvB",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "solid",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<h2\", \" class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">\", \"</h2>\"],\n  _tmpl$2 = [\"<input\", \" class=\\\"border-gray-600 border-2 rounded-md p-1 block\\\"\", \">\"],\n  _tmpl$3 = [\"<main\", \" class=\\\"text-center mx-auto text-gray-700 p-4\\\"><h1 class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">\", \"</h1><!--$-->\", \"<!--/--></main>\"];\nimport { createResource, createSignal } from 'solid-js';\nimport { trpc, useQuery } from '~/utils/trpc-client';\nconst fetchUser = (name: string) => {\n  return trpc.hello.query({\n    name\n  });\n};\nconst WelcomeComponent = () => {\n  const [name, setName] = createSignal('TEST');\n  const [welcome] = createResource(() => name(), fetchUser);\n  return [_$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(welcome())), _$ssr(_tmpl$2, _$ssrHydrationKey(), _$ssrAttribute(\"value\", _$escape(name(), true), false))];\n};\nexport default function About() {\n  const [hello] = useQuery('hello', {\n    name: 'Frank '\n  });\n  return _$ssr(_tmpl$3, _$ssrHydrationKey(), _$escape(hello()), _$escape(_$createComponent(WelcomeComponent, {})));\n}",
+      "start": 1767441590043,
+      "end": 1767441590046,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "createComponent",
+          "_$createComponent",
+          "ssrAttribute",
+          "_$ssrAttribute",
+          "ssr",
+          "_$ssr",
+          "escape",
+          "_$escape",
+          "ssrHydrationKey",
+          "_$ssrHydrationKey",
+          "_tmpl$",
+          "_tmpl$2",
+          "_tmpl$3",
+          "createResource",
+          "createSignal",
+          "trpc",
+          "useQuery",
+          "fetchUser",
+          "name",
+          "hello",
+          "query",
+          "WelcomeComponent",
+          "setName",
+          "welcome",
+          "About"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/about.tsx"
+        ],
+        "sourcesContent": [
+          "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<h2\", \" class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">\", \"</h2>\"],\n  _tmpl$2 = [\"<input\", \" class=\\\"border-gray-600 border-2 rounded-md p-1 block\\\"\", \">\"],\n  _tmpl$3 = [\"<main\", \" class=\\\"text-center mx-auto text-gray-700 p-4\\\"><h1 class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">\", \"</h1><!--$-->\", \"<!--/--></main>\"];\nimport { createResource, createSignal } from 'solid-js';\nimport { trpc, useQuery } from '~/utils/trpc-client';\nconst fetchUser = (name: string) => {\n  return trpc.hello.query({\n    name\n  });\n};\nconst WelcomeComponent = () => {\n  const [name, setName] = createSignal('TEST');\n  const [welcome] = createResource(() => name(), fetchUser);\n  return [_$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(welcome())), _$ssr(_tmpl$2, _$ssrHydrationKey(), _$ssrAttribute(\"value\", _$escape(name(), true), false))];\n};\nexport default function About() {\n  const [hello] = useQuery('hello', {\n    name: 'Frank '\n  });\n  return _$ssr(_tmpl$3, _$ssrHydrationKey(), _$escape(hello()), _$escape(_$createComponent(WelcomeComponent, {})));\n}"
+        ],
+        "mappings": "AAAA,SAASA,eAAe,IAAIC,iBAAiB,QAAQ,cAAc;AACnE,SAASC,YAAY,IAAIC,cAAc,QAAQ,cAAc;AAC7D,SAASC,GAAG,IAAIC,KAAK,QAAQ,cAAc;AAC3C,SAASC,MAAM,IAAIC,QAAQ,QAAQ,cAAc;AACjD,SAASC,eAAe,IAAIC,iBAAiB,QAAQ,cAAc;AACnE,IAAIC,MAAM,GAAG,CAAC,KAAK,EAAE,sEAAsE,EAAE,OAAO,CAAC;EACnGC,OAAO,GAAG,CAAC,QAAQ,EAAE,0DAA0D,EAAE,GAAG,CAAC;EACrFC,OAAO,GAAG,CAAC,OAAO,EAAE,0HAA0H,EAAE,eAAe,EAAE,iBAAiB,CAAC;AACrL,SAASC,cAAc,EAAEC,YAAY,QAAQ,UAAU;AACvD,SAASC,IAAI,EAAEC,QAAQ,QAAQ,qBAAqB;AACpD,MAAMC,SAAS,GAAGA,CAACC,IAAI,EAAE,MAAM,KAAK;EAClC,OAAOH,IAAI,CAACI,KAAK,CAACC,KAAK,CAAC;IACtBF;EACF,CAAC,CAAC;AACJ,CAAC;AACD,MAAMG,gBAAgB,GAAGA,CAAA,KAAM;EAC7B,MAAM,CAACH,IAAI,EAAEI,OAAO,CAAC,GAAGR,YAAY,CAAC,MAAM,CAAC;EAC5C,MAAM,CAACS,OAAO,CAAC,GAAGV,cAAc,CAAC,MAAMK,IAAI,CAAC,CAAC,EAAED,SAAS,CAAC;EACzD,OAAO,CAACZ,KAAK,CAACK,MAAM,EAAED,iBAAiB,CAAC,CAAC,EAAEF,QAAQ,CAACgB,OAAO,CAAC,CAAC,CAAC,CAAC,EAAElB,KAAK,CAACM,OAAO,EAAEF,iBAAiB,CAAC,CAAC,EAAEN,cAAc,CAAC,OAAO,EAAEI,QAAQ,CAACW,IAAI,CAAC,CAAC,EAAE,IAAI,CAAC,EAAE,KAAK,CAAC,CAAC,CAAC;AAC/J,CAAC;AACD,eAAe,SAASM,KAAKA,CAAA,EAAG;EAC9B,MAAM,CAACL,KAAK,CAAC,GAAGH,QAAQ,CAAC,OAAO,EAAE;IAChCE,IAAI,EAAE;EACR,CAAC,CAAC;EACF,OAAOb,KAAK,CAACO,OAAO,EAAEH,iBAAiB,CAAC,CAAC,EAAEF,QAAQ,CAACY,KAAK,CAAC,CAAC,CAAC,EAAEZ,QAAQ,CAACN,iBAAiB,CAACoB,gBAAgB,EAAE,CAAC,CAAC,CAAC,CAAC,CAAC;AAClH",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590046,
+      "end": 1767441590046,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<h2\", ' class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">', \"</h2>\"], _tmpl$2 = [\"<input\", ' class=\"border-gray-600 border-2 rounded-md p-1 block\"', \">\"], _tmpl$3 = [\"<main\", ' class=\"text-center mx-auto text-gray-700 p-4\"><h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">', \"</h1><!--$-->\", \"<!--/--></main>\"];\nimport { createResource, createSignal } from \"solid-js\";\nimport { trpc, useQuery } from \"~/utils/trpc-client\";\nconst fetchUser = (name) => {\n  return trpc.hello.query({\n    name\n  });\n};\nconst WelcomeComponent = () => {\n  const [name, setName] = createSignal(\"TEST\");\n  const [welcome] = createResource(() => name(), fetchUser);\n  return [_$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(welcome())), _$ssr(_tmpl$2, _$ssrHydrationKey(), _$ssrAttribute(\"value\", _$escape(name(), true), false))];\n};\nexport default function About() {\n  const [hello] = useQuery(\"hello\", {\n    name: \"Frank \"\n  });\n  return _$ssr(_tmpl$3, _$ssrHydrationKey(), _$escape(hello()), _$escape(_$createComponent(WelcomeComponent, {})));\n}\n",
+      "start": 1767441590046,
+      "end": 1767441590145,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/about.tsx"
+        ],
+        "sourcesContent": [
+          "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<h2\", \" class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">\", \"</h2>\"],\n  _tmpl$2 = [\"<input\", \" class=\\\"border-gray-600 border-2 rounded-md p-1 block\\\"\", \">\"],\n  _tmpl$3 = [\"<main\", \" class=\\\"text-center mx-auto text-gray-700 p-4\\\"><h1 class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">\", \"</h1><!--$-->\", \"<!--/--></main>\"];\nimport { createResource, createSignal } from 'solid-js';\nimport { trpc, useQuery } from '~/utils/trpc-client';\nconst fetchUser = (name: string) => {\n  return trpc.hello.query({\n    name\n  });\n};\nconst WelcomeComponent = () => {\n  const [name, setName] = createSignal('TEST');\n  const [welcome] = createResource(() => name(), fetchUser);\n  return [_$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(welcome())), _$ssr(_tmpl$2, _$ssrHydrationKey(), _$ssrAttribute(\"value\", _$escape(name(), true), false))];\n};\nexport default function About() {\n  const [hello] = useQuery('hello', {\n    name: 'Frank '\n  });\n  return _$ssr(_tmpl$3, _$ssrHydrationKey(), _$escape(hello()), _$escape(_$createComponent(WelcomeComponent, {})));\n}"
+        ],
+        "mappings": "AAAA,SAAS,mBAAmB,yBAAyB;AACrD,SAAS,gBAAgB,sBAAsB;AAC/C,SAAS,OAAO,aAAa;AAC7B,SAAS,UAAU,gBAAgB;AACnC,SAAS,mBAAmB,yBAAyB;AACrD,IAAI,SAAS,CAAC,OAAO,sEAAwE,OAAO,GAClG,UAAU,CAAC,UAAU,0DAA4D,GAAG,GACpF,UAAU,CAAC,SAAS,wHAA4H,iBAAiB,iBAAiB;AACpL,SAAS,gBAAgB,oBAAoB;AAC7C,SAAS,MAAM,gBAAgB;AAC/B,MAAM,YAAY,CAAC,SAAiB;AAClC,SAAO,KAAK,MAAM,MAAM;AAAA,IACtB;AAAA,EACF,CAAC;AACH;AACA,MAAM,mBAAmB,MAAM;AAC7B,QAAM,CAAC,MAAM,OAAO,IAAI,aAAa,MAAM;AAC3C,QAAM,CAAC,OAAO,IAAI,eAAe,MAAM,KAAK,GAAG,SAAS;AACxD,SAAO,CAAC,MAAM,QAAQ,kBAAkB,GAAG,SAAS,QAAQ,CAAC,CAAC,GAAG,MAAM,SAAS,kBAAkB,GAAG,eAAe,SAAS,SAAS,KAAK,GAAG,IAAI,GAAG,KAAK,CAAC,CAAC;AAC9J;AACA,wBAAwB,QAAQ;AAC9B,QAAM,CAAC,KAAK,IAAI,SAAS,SAAS;AAAA,IAChC,MAAM;AAAA,EACR,CAAC;AACD,SAAO,MAAM,SAAS,kBAAkB,GAAG,SAAS,MAAM,CAAC,GAAG,SAAS,kBAAkB,kBAAkB,CAAC,CAAC,CAAC,CAAC;AACjH;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<h2\", ' class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">', \"</h2>\"], _tmpl$2 = [\"<input\", ' class=\"border-gray-600 border-2 rounded-md p-1 block\"', \">\"], _tmpl$3 = [\"<main\", ' class=\"text-center mx-auto text-gray-700 p-4\"><h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">', \"</h1><!--$-->\", \"<!--/--></main>\"];\nimport { createResource, createSignal } from \"solid-js\";\nimport { trpc, useQuery } from \"~/utils/trpc-client\";\nconst fetchUser = (name) => {\n  return trpc.hello.query({\n    name\n  });\n};\nconst WelcomeComponent = () => {\n  const [name, setName] = createSignal(\"TEST\");\n  const [welcome] = createResource(() => name(), fetchUser);\n  return [_$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(welcome())), _$ssr(_tmpl$2, _$ssrHydrationKey(), _$ssrAttribute(\"value\", _$escape(name(), true), false))];\n};\nexport default function About() {\n  const [hello] = useQuery(\"hello\", {\n    name: \"Frank \"\n  });\n  return _$ssr(_tmpl$3, _$ssrHydrationKey(), _$escape(hello()), _$escape(_$createComponent(WelcomeComponent, {})));\n}\n",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<h2\", ' class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">', \"</h2>\"], _tmpl$2 = [\"<input\", ' class=\"border-gray-600 border-2 rounded-md p-1 block\"', \">\"], _tmpl$3 = [\"<main\", ' class=\"text-center mx-auto text-gray-700 p-4\"><h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">', \"</h1><!--$-->\", \"<!--/--></main>\"];\nimport { createResource, createSignal } from \"solid-js\";\nimport { trpc, useQuery } from \"/src/utils/trpc-client.ts\";\nconst fetchUser = (name) => {\n  return trpc.hello.query({\n    name\n  });\n};\nconst WelcomeComponent = () => {\n  const [name, setName] = createSignal(\"TEST\");\n  const [welcome] = createResource(() => name(), fetchUser);\n  return [_$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(welcome())), _$ssr(_tmpl$2, _$ssrHydrationKey(), _$ssrAttribute(\"value\", _$escape(name(), true), false))];\n};\nexport default function About() {\n  const [hello] = useQuery(\"hello\", {\n    name: \"Frank \"\n  });\n  return _$ssr(_tmpl$3, _$ssrHydrationKey(), _$escape(hello()), _$escape(_$createComponent(WelcomeComponent, {})));\n}\n",
+      "start": 1767441590145,
+      "end": 1767441590147,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

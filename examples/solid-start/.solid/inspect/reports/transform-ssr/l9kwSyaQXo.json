@@ -1,0 +1,168 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Document.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import type { JSX } from \"solid-js\";\nimport { children, ComponentProps } from \"solid-js\";\nimport { escape, insert, NoHydration, spread, ssrElement } from \"solid-js/web\";\nimport Links from \"./Links\";\nimport Meta from \"./Meta\";\nimport Scripts from \"./Scripts\";\n\nexport function Html(props: ComponentProps<\"html\">) {\n  if (import.meta.env.START_ISLANDS) {\n    return NoHydration({\n      get children() {\n        return ssrElement(\"html\", props, undefined, false) as unknown as JSX.Element;\n      }\n    });\n  }\n  if (import.meta.env.SSR) {\n    return ssrElement(\"html\", props, undefined, false) as unknown as JSX.Element;\n  }\n  spread(document.documentElement, props, false, true);\n  return props.children;\n}\n\nexport function Head(props: ComponentProps<\"head\">) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\n      \"head\",\n      props,\n      () => (\n        <>\n          {escape(props.children as string)}\n          <Meta />\n          <Links />\n        </>\n      ),\n      false\n    ) as unknown as JSX.Element;\n  } else {\n    spread(document.head, props, false, true);\n    return props.children;\n  }\n}\n\nexport function Body(props: ComponentProps<\"body\">) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\n      \"body\",\n      props,\n      () => (import.meta.env.START_SSR ? escape(props.children as string) : <Scripts />),\n      false\n    ) as unknown as JSX.Element;\n  } else {\n    if (import.meta.env.START_SSR) {\n      let child = children(() => props.children);\n      spread(document.body, props, false, true);\n      insert(\n        document.body,\n        () => {\n          let childNodes = child();\n          if (childNodes) {\n            if (Array.isArray(childNodes)) {\n              let els = childNodes.filter(n => Boolean(n));\n\n              if (!els.length) {\n                return null;\n              }\n\n              return els;\n            }\n            return childNodes;\n          }\n          return null;\n        },\n        null,\n        [...document.body.childNodes]\n      );\n\n      return document.body;\n    } else {\n      spread(document.body, props, false, true);\n      return props.children;\n    }\n  }\n}\n",
+      "start": 1767441590521,
+      "end": 1767441590521
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590521,
+      "end": 1767441590521,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport type { JSX } from \"solid-js\";\nimport { children } from \"solid-js\";\nimport { escape, insert, NoHydration, spread, ssrElement } from \"solid-js/web\";\nimport Links from \"./Links\";\nimport Meta from \"./Meta\";\nimport Scripts from \"./Scripts\";\nexport function Html(props: ComponentProps<\"html\">) {\n  if (import.meta.env.START_ISLANDS) {\n    return NoHydration({\n      get children() {\n        return ssrElement(\"html\", props, undefined, false) as unknown as JSX.Element;\n      }\n    });\n  }\n  if (import.meta.env.SSR) {\n    return ssrElement(\"html\", props, undefined, false) as unknown as JSX.Element;\n  }\n  spread(document.documentElement, props, false, true);\n  return props.children;\n}\nexport function Head(props: ComponentProps<\"head\">) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\"head\", props, () => [escape(props.children as string), _$createComponent(Meta, {}), _$createComponent(Links, {})], false) as unknown as JSX.Element;\n  } else {\n    spread(document.head, props, false, true);\n    return props.children;\n  }\n}\nexport function Body(props: ComponentProps<\"body\">) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\"body\", props, () => import.meta.env.START_SSR ? escape(props.children as string) : _$createComponent(Scripts, {}), false) as unknown as JSX.Element;\n  } else {\n    if (import.meta.env.START_SSR) {\n      let child = children(() => props.children);\n      spread(document.body, props, false, true);\n      insert(document.body, () => {\n        let childNodes = child();\n        if (childNodes) {\n          if (Array.isArray(childNodes)) {\n            let els = childNodes.filter(n => Boolean(n));\n            if (!els.length) {\n              return null;\n            }\n            return els;\n          }\n          return childNodes;\n        }\n        return null;\n      }, null, [...document.body.childNodes]);\n      return document.body;\n    } else {\n      spread(document.body, props, false, true);\n      return props.children;\n    }\n  }\n}",
+      "start": 1767441590521,
+      "end": 1767441590532,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "JSX",
+          "children",
+          "escape",
+          "insert",
+          "NoHydration",
+          "spread",
+          "ssrElement",
+          "Links",
+          "Meta",
+          "Scripts",
+          "Html",
+          "props",
+          "ComponentProps",
+          "import",
+          "meta",
+          "env",
+          "START_ISLANDS",
+          "undefined",
+          "Element",
+          "SSR",
+          "document",
+          "documentElement",
+          "Head",
+          "_$createComponent",
+          "head",
+          "Body",
+          "START_SSR",
+          "child",
+          "body",
+          "childNodes",
+          "Array",
+          "isArray",
+          "els",
+          "filter",
+          "n",
+          "Boolean",
+          "length"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Document.tsx"
+        ],
+        "sourcesContent": [
+          "import type { JSX } from \"solid-js\";\nimport { children, ComponentProps } from \"solid-js\";\nimport { escape, insert, NoHydration, spread, ssrElement } from \"solid-js/web\";\nimport Links from \"./Links\";\nimport Meta from \"./Meta\";\nimport Scripts from \"./Scripts\";\n\nexport function Html(props: ComponentProps<\"html\">) {\n  if (import.meta.env.START_ISLANDS) {\n    return NoHydration({\n      get children() {\n        return ssrElement(\"html\", props, undefined, false) as unknown as JSX.Element;\n      }\n    });\n  }\n  if (import.meta.env.SSR) {\n    return ssrElement(\"html\", props, undefined, false) as unknown as JSX.Element;\n  }\n  spread(document.documentElement, props, false, true);\n  return props.children;\n}\n\nexport function Head(props: ComponentProps<\"head\">) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\n      \"head\",\n      props,\n      () => (\n        <>\n          {escape(props.children as string)}\n          <Meta />\n          <Links />\n        </>\n      ),\n      false\n    ) as unknown as JSX.Element;\n  } else {\n    spread(document.head, props, false, true);\n    return props.children;\n  }\n}\n\nexport function Body(props: ComponentProps<\"body\">) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\n      \"body\",\n      props,\n      () => (import.meta.env.START_SSR ? escape(props.children as string) : <Scripts />),\n      false\n    ) as unknown as JSX.Element;\n  } else {\n    if (import.meta.env.START_SSR) {\n      let child = children(() => props.children);\n      spread(document.body, props, false, true);\n      insert(\n        document.body,\n        () => {\n          let childNodes = child();\n          if (childNodes) {\n            if (Array.isArray(childNodes)) {\n              let els = childNodes.filter(n => Boolean(n));\n\n              if (!els.length) {\n                return null;\n              }\n\n              return els;\n            }\n            return childNodes;\n          }\n          return null;\n        },\n        null,\n        [...document.body.childNodes]\n      );\n\n      return document.body;\n    } else {\n      spread(document.body, props, false, true);\n      return props.children;\n    }\n  }\n}\n"
+        ],
+        "mappings": "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",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590532,
+      "end": 1767441590532,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { children } from \"solid-js\";\nimport { escape, insert, NoHydration, spread, ssrElement } from \"solid-js/web\";\nimport Links from \"./Links\";\nimport Meta from \"./Meta\";\nimport Scripts from \"./Scripts\";\nexport function Html(props) {\n  if (import.meta.env.START_ISLANDS) {\n    return NoHydration({\n      get children() {\n        return ssrElement(\"html\", props, void 0, false);\n      }\n    });\n  }\n  if (import.meta.env.SSR) {\n    return ssrElement(\"html\", props, void 0, false);\n  }\n  spread(document.documentElement, props, false, true);\n  return props.children;\n}\nexport function Head(props) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\"head\", props, () => [escape(props.children), _$createComponent(Meta, {}), _$createComponent(Links, {})], false);\n  } else {\n    spread(document.head, props, false, true);\n    return props.children;\n  }\n}\nexport function Body(props) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\"body\", props, () => import.meta.env.START_SSR ? escape(props.children) : _$createComponent(Scripts, {}), false);\n  } else {\n    if (import.meta.env.START_SSR) {\n      let child = children(() => props.children);\n      spread(document.body, props, false, true);\n      insert(document.body, () => {\n        let childNodes = child();\n        if (childNodes) {\n          if (Array.isArray(childNodes)) {\n            let els = childNodes.filter((n) => Boolean(n));\n            if (!els.length) {\n              return null;\n            }\n            return els;\n          }\n          return childNodes;\n        }\n        return null;\n      }, null, [...document.body.childNodes]);\n      return document.body;\n    } else {\n      spread(document.body, props, false, true);\n      return props.children;\n    }\n  }\n}\n",
+      "start": 1767441590532,
+      "end": 1767441590631,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Document.tsx"
+        ],
+        "sourcesContent": [
+          "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport type { JSX } from \"solid-js\";\nimport { children } from \"solid-js\";\nimport { escape, insert, NoHydration, spread, ssrElement } from \"solid-js/web\";\nimport Links from \"./Links\";\nimport Meta from \"./Meta\";\nimport Scripts from \"./Scripts\";\nexport function Html(props: ComponentProps<\"html\">) {\n  if (import.meta.env.START_ISLANDS) {\n    return NoHydration({\n      get children() {\n        return ssrElement(\"html\", props, undefined, false) as unknown as JSX.Element;\n      }\n    });\n  }\n  if (import.meta.env.SSR) {\n    return ssrElement(\"html\", props, undefined, false) as unknown as JSX.Element;\n  }\n  spread(document.documentElement, props, false, true);\n  return props.children;\n}\nexport function Head(props: ComponentProps<\"head\">) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\"head\", props, () => [escape(props.children as string), _$createComponent(Meta, {}), _$createComponent(Links, {})], false) as unknown as JSX.Element;\n  } else {\n    spread(document.head, props, false, true);\n    return props.children;\n  }\n}\nexport function Body(props: ComponentProps<\"body\">) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\"body\", props, () => import.meta.env.START_SSR ? escape(props.children as string) : _$createComponent(Scripts, {}), false) as unknown as JSX.Element;\n  } else {\n    if (import.meta.env.START_SSR) {\n      let child = children(() => props.children);\n      spread(document.body, props, false, true);\n      insert(document.body, () => {\n        let childNodes = child();\n        if (childNodes) {\n          if (Array.isArray(childNodes)) {\n            let els = childNodes.filter(n => Boolean(n));\n            if (!els.length) {\n              return null;\n            }\n            return els;\n          }\n          return childNodes;\n        }\n        return null;\n      }, null, [...document.body.childNodes]);\n      return document.body;\n    } else {\n      spread(document.body, props, false, true);\n      return props.children;\n    }\n  }\n}"
+        ],
+        "mappings": "AAAA,SAAS,mBAAmB,yBAAyB;AAErD,SAAS,gBAAgB;AACzB,SAAS,QAAQ,QAAQ,aAAa,QAAQ,kBAAkB;AAChE,OAAO,WAAW;AAClB,OAAO,UAAU;AACjB,OAAO,aAAa;AACb,gBAAS,KAAK,OAA+B;AAClD,MAAI,YAAY,IAAI,eAAe;AACjC,WAAO,YAAY;AAAA,MACjB,IAAI,WAAW;AACb,eAAO,WAAW,QAAQ,OAAO,QAAW,KAAK;AAAA,MACnD;AAAA,IACF,CAAC;AAAA,EACH;AACA,MAAI,YAAY,IAAI,KAAK;AACvB,WAAO,WAAW,QAAQ,OAAO,QAAW,KAAK;AAAA,EACnD;AACA,SAAO,SAAS,iBAAiB,OAAO,OAAO,IAAI;AACnD,SAAO,MAAM;AACf;AACO,gBAAS,KAAK,OAA+B;AAClD,MAAI,YAAY,IAAI,KAAK;AACvB,WAAO,WAAW,QAAQ,OAAO,MAAM,CAAC,OAAO,MAAM,QAAkB,GAAG,kBAAkB,MAAM,CAAC,CAAC,GAAG,kBAAkB,OAAO,CAAC,CAAC,CAAC,GAAG,KAAK;AAAA,EAC7I,OAAO;AACL,WAAO,SAAS,MAAM,OAAO,OAAO,IAAI;AACxC,WAAO,MAAM;AAAA,EACf;AACF;AACO,gBAAS,KAAK,OAA+B;AAClD,MAAI,YAAY,IAAI,KAAK;AACvB,WAAO,WAAW,QAAQ,OAAO,MAAM,YAAY,IAAI,YAAY,OAAO,MAAM,QAAkB,IAAI,kBAAkB,SAAS,CAAC,CAAC,GAAG,KAAK;AAAA,EAC7I,OAAO;AACL,QAAI,YAAY,IAAI,WAAW;AAC7B,UAAI,QAAQ,SAAS,MAAM,MAAM,QAAQ;AACzC,aAAO,SAAS,MAAM,OAAO,OAAO,IAAI;AACxC,aAAO,SAAS,MAAM,MAAM;AAC1B,YAAI,aAAa,MAAM;AACvB,YAAI,YAAY;AACd,cAAI,MAAM,QAAQ,UAAU,GAAG;AAC7B,gBAAI,MAAM,WAAW,OAAO,OAAK,QAAQ,CAAC,CAAC;AAC3C,gBAAI,CAAC,IAAI,QAAQ;AACf,qBAAO;AAAA,YACT;AACA,mBAAO;AAAA,UACT;AACA,iBAAO;AAAA,QACT;AACA,eAAO;AAAA,MACT,GAAG,MAAM,CAAC,GAAG,SAAS,KAAK,UAAU,CAAC;AACtC,aAAO,SAAS;AAAA,IAClB,OAAO;AACL,aAAO,SAAS,MAAM,OAAO,OAAO,IAAI;AACxC,aAAO,MAAM;AAAA,IACf;AAAA,EACF;AACF;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590631,
+      "end": 1767441590631,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590631,
+      "end": 1767441590631,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590631,
+      "end": 1767441590631,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { children } from \"solid-js\";\nimport { escape, insert, NoHydration, spread, ssrElement } from \"solid-js/web\";\nimport Links from \"./Links\";\nimport Meta from \"./Meta\";\nimport Scripts from \"./Scripts\";\nexport function Html(props) {\n  if (false) {\n    return NoHydration({\n      get children() {\n        return ssrElement(\"html\", props, void 0, false);\n      }\n    });\n  }\n  if (import.meta.env.SSR) {\n    return ssrElement(\"html\", props, void 0, false);\n  }\n  spread(document.documentElement, props, false, true);\n  return props.children;\n}\nexport function Head(props) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\"head\", props, () => [escape(props.children), _$createComponent(Meta, {}), _$createComponent(Links, {})], false);\n  } else {\n    spread(document.head, props, false, true);\n    return props.children;\n  }\n}\nexport function Body(props) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\"body\", props, () => true ? escape(props.children) : _$createComponent(Scripts, {}), false);\n  } else {\n    if (true) {\n      let child = children(() => props.children);\n      spread(document.body, props, false, true);\n      insert(document.body, () => {\n        let childNodes = child();\n        if (childNodes) {\n          if (Array.isArray(childNodes)) {\n            let els = childNodes.filter((n) => Boolean(n));\n            if (!els.length) {\n              return null;\n            }\n            return els;\n          }\n          return childNodes;\n        }\n        return null;\n      }, null, [...document.body.childNodes]);\n      return document.body;\n    } else {\n      spread(document.body, props, false, true);\n      return props.children;\n    }\n  }\n}\n",
+      "start": 1767441590631,
+      "end": 1767441590632,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590632,
+      "end": 1767441590632,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590632,
+      "end": 1767441590632,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590632,
+      "end": 1767441590632,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590632,
+      "end": 1767441590632,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590632,
+      "end": 1767441590632,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590632,
+      "end": 1767441590632,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import.meta.env = {\"VITE_USER_NODE_ENV\":\"development\",\"BASE_URL\":\"/\",\"MODE\":\"development\",\"DEV\":true,\"PROD\":false,\"SSR\":true};import.meta.env.START_SSR = true;import.meta.env.START_ISLANDS = false;import.meta.env.START_ENTRY_CLIENT = \"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-client.tsx\";import.meta.env.START_ENTRY_SERVER = \"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-server.tsx\";import.meta.env.START_INDEX_HTML = false;import.meta.env.START_ISLANDS_ROUTER = false;import.meta.env.START_ADAPTER = \"vercel\";import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { children } from \"solid-js\";\nimport { escape, insert, NoHydration, spread, ssrElement } from \"solid-js/web\";\nimport Links from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Links.tsx\";\nimport Meta from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Meta.tsx\";\nimport Scripts from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Scripts.tsx\";\nexport function Html(props) {\n  if (false) {\n    return NoHydration({\n      get children() {\n        return ssrElement(\"html\", props, void 0, false);\n      }\n    });\n  }\n  if (import.meta.env.SSR) {\n    return ssrElement(\"html\", props, void 0, false);\n  }\n  spread(document.documentElement, props, false, true);\n  return props.children;\n}\nexport function Head(props) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\"head\", props, () => [escape(props.children), _$createComponent(Meta, {}), _$createComponent(Links, {})], false);\n  } else {\n    spread(document.head, props, false, true);\n    return props.children;\n  }\n}\nexport function Body(props) {\n  if (import.meta.env.SSR) {\n    return ssrElement(\"body\", props, () => true ? escape(props.children) : _$createComponent(Scripts, {}), false);\n  } else {\n    if (true) {\n      let child = children(() => props.children);\n      spread(document.body, props, false, true);\n      insert(document.body, () => {\n        let childNodes = child();\n        if (childNodes) {\n          if (Array.isArray(childNodes)) {\n            let els = childNodes.filter((n) => Boolean(n));\n            if (!els.length) {\n              return null;\n            }\n            return els;\n          }\n          return childNodes;\n        }\n        return null;\n      }, null, [...document.body.childNodes]);\n      return document.body;\n    } else {\n      spread(document.body, props, false, true);\n      return props.children;\n    }\n  }\n}\n",
+      "start": 1767441590632,
+      "end": 1767441590633,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

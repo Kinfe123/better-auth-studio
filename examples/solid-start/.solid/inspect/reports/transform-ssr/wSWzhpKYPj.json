@@ -1,0 +1,198 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/InlineStyles.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { Style } from \"@solidjs/meta\";\nimport { createResource, Show, Suspense, useContext } from \"solid-js\";\nimport type { PageEvent } from \"../server\";\nimport { ServerContext } from \"../server/ServerContext\";\n\ndeclare global {\n  const $ROUTE_LAYOUTS: Record<string, { layouts: any[], id: string }>\n}\n\nvar routeLayouts = $ROUTE_LAYOUTS;\n\nexport { routeLayouts };\n\nconst style_pattern = /\\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/;\n\ntype NotUndefined<T> = T extends undefined ? never : T;\n\ntype RouterContext = NotUndefined<PageEvent[\"routerContext\"]>\n\nasync function getInlineStyles(env: PageEvent[\"env\"], routerContext: RouterContext) {\n  const match = routerContext.matches ? routerContext.matches.reduce((memo: string[], m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match) => previous + match.originalPath, \"\");\n      if (env.__dev!.manifest!.find(entry => entry.path === fullPath)) {\n        memo.push(env.__dev!.manifest!.find(entry => entry.path === fullPath)!.componentPath);\n      }\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(\n          ...route.layouts\n            .map((key: string) => env.__dev!.manifest!.find(entry => entry.path === key || entry.id === key))\n            .filter(entry => entry)\n            .map(entry => entry!.componentPath)\n        );\n      }\n    }\n    return memo;\n  }, []) : [];\n\n  match.push(import.meta.env.START_ENTRY_SERVER);\n  const styles = await env.__dev!.collectStyles!(match);\n  return styles;\n}\n\nexport function InlineStyles() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  if (!isDev || !import.meta.env.START_SSR) {\n    return null;\n  }\n\n  const [resource] = createResource(\n    async () => {\n      if (import.meta.env.SSR) {\n        return await getInlineStyles(context!.env, context!.routerContext!);\n      } else {\n        return {};\n      }\n    },\n    {\n      deferStream: true\n    }\n  );\n\n  // We need a space here to prevent the server from collapsing the space between the style tags\n  // and making it invalid\n  return (\n    <Suspense>\n      <Show when={resource()} keyed>\n        {resource => {\n          return (\n            <Style>\n              {Object.entries(resource)\n                .filter(([k]) => style_pattern.test(k))\n                .map(([k, v]) => {\n                  return `/* ${k} */\\n` + v;\n                })\n                .join(\"\\n\") + \" \"}\n            </Style>\n          );\n        }}\n      </Show>\n    </Suspense>\n  );\n}\n",
+      "start": 1767441590700,
+      "end": 1767441590700
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "result": "import { Style } from \"@solidjs/meta\";\nimport { createResource, Show, Suspense, useContext } from \"solid-js\";\nimport type { PageEvent } from \"../server\";\nimport { ServerContext } from \"../server/ServerContext\";\n\ndeclare global {\n  const $ROUTE_LAYOUTS: Record<string, { layouts: any[], id: string }>\n}\n\nconst routeLayouts = {\"/*404\":{\"id\":\"/*404\",\"layouts\":[]},\"/about\":{\"id\":\"/about\",\"layouts\":[]},\"/\":{\"id\":\"/\",\"layouts\":[]}};\n\nexport { routeLayouts };\n\nconst style_pattern = /\\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/;\n\ntype NotUndefined<T> = T extends undefined ? never : T;\n\ntype RouterContext = NotUndefined<PageEvent[\"routerContext\"]>\n\nasync function getInlineStyles(env: PageEvent[\"env\"], routerContext: RouterContext) {\n  const match = routerContext.matches ? routerContext.matches.reduce((memo: string[], m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match) => previous + match.originalPath, \"\");\n      if (env.__dev!.manifest!.find(entry => entry.path === fullPath)) {\n        memo.push(env.__dev!.manifest!.find(entry => entry.path === fullPath)!.componentPath);\n      }\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(\n          ...route.layouts\n            .map((key: string) => env.__dev!.manifest!.find(entry => entry.path === key || entry.id === key))\n            .filter(entry => entry)\n            .map(entry => entry!.componentPath)\n        );\n      }\n    }\n    return memo;\n  }, []) : [];\n\n  match.push(import.meta.env.START_ENTRY_SERVER);\n  const styles = await env.__dev!.collectStyles!(match);\n  return styles;\n}\n\nexport function InlineStyles() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  if (!isDev || !import.meta.env.START_SSR) {\n    return null;\n  }\n\n  const [resource] = createResource(\n    async () => {\n      if (import.meta.env.SSR) {\n        return await getInlineStyles(context!.env, context!.routerContext!);\n      } else {\n        return {};\n      }\n    },\n    {\n      deferStream: true\n    }\n  );\n\n  // We need a space here to prevent the server from collapsing the space between the style tags\n  // and making it invalid\n  return (\n    <Suspense>\n      <Show when={resource()} keyed>\n        {resource => {\n          return (\n            <Style>\n              {Object.entries(resource)\n                .filter(([k]) => style_pattern.test(k))\n                .map(([k, v]) => {\n                  return `/* ${k} */\\n` + v;\n                })\n                .join(\"\\n\") + \" \"}\n            </Style>\n          );\n        }}\n      </Show>\n    </Suspense>\n  );\n}\n",
+      "start": 1767441590700,
+      "end": 1767441590700,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { Style } from \"@solidjs/meta\";\nimport { createResource, Show, Suspense, useContext } from \"solid-js\";\nimport type { PageEvent } from \"../server\";\nimport { ServerContext } from \"../server/ServerContext\";\ndeclare global {\n  const $ROUTE_LAYOUTS: Record<string, {\n    layouts: any[];\n    id: string;\n  }>;\n}\nconst routeLayouts = {\n  \"/*404\": {\n    \"id\": \"/*404\",\n    \"layouts\": []\n  },\n  \"/about\": {\n    \"id\": \"/about\",\n    \"layouts\": []\n  },\n  \"/\": {\n    \"id\": \"/\",\n    \"layouts\": []\n  }\n};\nexport { routeLayouts };\nconst style_pattern = /\\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/;\ntype NotUndefined<T> = T extends undefined ? never : T;\ntype RouterContext = NotUndefined<PageEvent[\"routerContext\"]>;\nasync function getInlineStyles(env: PageEvent[\"env\"], routerContext: RouterContext) {\n  const match = routerContext.matches ? routerContext.matches.reduce((memo: string[], m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match) => previous + match.originalPath, \"\");\n      if (env.__dev!.manifest!.find(entry => entry.path === fullPath)) {\n        memo.push(env.__dev!.manifest!.find(entry => entry.path === fullPath)!.componentPath);\n      }\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(...route.layouts.map((key: string) => env.__dev!.manifest!.find(entry => entry.path === key || entry.id === key)).filter(entry => entry).map(entry => entry!.componentPath));\n      }\n    }\n    return memo;\n  }, []) : [];\n  match.push(import.meta.env.START_ENTRY_SERVER);\n  const styles = await env.__dev!.collectStyles!(match);\n  return styles;\n}\nexport function InlineStyles() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  if (!isDev || !import.meta.env.START_SSR) {\n    return null;\n  }\n  const [resource] = createResource(async () => {\n    if (import.meta.env.SSR) {\n      return await getInlineStyles(context!.env, context!.routerContext!);\n    } else {\n      return {};\n    }\n  }, {\n    deferStream: true\n  });\n\n  // We need a space here to prevent the server from collapsing the space between the style tags\n  // and making it invalid\n  return _$createComponent(Suspense, {\n    get children() {\n      return _$createComponent(Show, {\n        get when() {\n          return resource();\n        },\n        keyed: true,\n        children: resource => {\n          return _$createComponent(Style, {\n            get children() {\n              return Object.entries(resource).filter(([k]) => style_pattern.test(k)).map(([k, v]) => {\n                return `/* ${k} */\\n` + v;\n              }).join(\"\\n\") + \" \";\n            }\n          });\n        }\n      });\n    }\n  });\n}",
+      "start": 1767441590700,
+      "end": 1767441590714,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "Style",
+          "createResource",
+          "Show",
+          "Suspense",
+          "useContext",
+          "PageEvent",
+          "ServerContext",
+          "global",
+          "$ROUTE_LAYOUTS",
+          "Record",
+          "layouts",
+          "id",
+          "routeLayouts",
+          "style_pattern",
+          "NotUndefined",
+          "T",
+          "RouterContext",
+          "getInlineStyles",
+          "env",
+          "routerContext",
+          "match",
+          "matches",
+          "reduce",
+          "memo",
+          "m",
+          "length",
+          "fullPath",
+          "previous",
+          "originalPath",
+          "__dev",
+          "manifest",
+          "find",
+          "entry",
+          "path",
+          "push",
+          "componentPath",
+          "route",
+          "map",
+          "key",
+          "filter",
+          "import",
+          "meta",
+          "START_ENTRY_SERVER",
+          "styles",
+          "collectStyles",
+          "InlineStyles",
+          "isDev",
+          "MODE",
+          "context",
+          "START_SSR",
+          "resource",
+          "SSR",
+          "deferStream",
+          "_$createComponent",
+          "children",
+          "when",
+          "keyed",
+          "Object",
+          "entries",
+          "k",
+          "test",
+          "v",
+          "join"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/InlineStyles.tsx"
+        ],
+        "sourcesContent": [
+          "import { Style } from \"@solidjs/meta\";\nimport { createResource, Show, Suspense, useContext } from \"solid-js\";\nimport type { PageEvent } from \"../server\";\nimport { ServerContext } from \"../server/ServerContext\";\n\ndeclare global {\n  const $ROUTE_LAYOUTS: Record<string, { layouts: any[], id: string }>\n}\n\nconst routeLayouts = {\"/*404\":{\"id\":\"/*404\",\"layouts\":[]},\"/about\":{\"id\":\"/about\",\"layouts\":[]},\"/\":{\"id\":\"/\",\"layouts\":[]}};\n\nexport { routeLayouts };\n\nconst style_pattern = /\\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/;\n\ntype NotUndefined<T> = T extends undefined ? never : T;\n\ntype RouterContext = NotUndefined<PageEvent[\"routerContext\"]>\n\nasync function getInlineStyles(env: PageEvent[\"env\"], routerContext: RouterContext) {\n  const match = routerContext.matches ? routerContext.matches.reduce((memo: string[], m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match) => previous + match.originalPath, \"\");\n      if (env.__dev!.manifest!.find(entry => entry.path === fullPath)) {\n        memo.push(env.__dev!.manifest!.find(entry => entry.path === fullPath)!.componentPath);\n      }\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(\n          ...route.layouts\n            .map((key: string) => env.__dev!.manifest!.find(entry => entry.path === key || entry.id === key))\n            .filter(entry => entry)\n            .map(entry => entry!.componentPath)\n        );\n      }\n    }\n    return memo;\n  }, []) : [];\n\n  match.push(import.meta.env.START_ENTRY_SERVER);\n  const styles = await env.__dev!.collectStyles!(match);\n  return styles;\n}\n\nexport function InlineStyles() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  if (!isDev || !import.meta.env.START_SSR) {\n    return null;\n  }\n\n  const [resource] = createResource(\n    async () => {\n      if (import.meta.env.SSR) {\n        return await getInlineStyles(context!.env, context!.routerContext!);\n      } else {\n        return {};\n      }\n    },\n    {\n      deferStream: true\n    }\n  );\n\n  // We need a space here to prevent the server from collapsing the space between the style tags\n  // and making it invalid\n  return (\n    <Suspense>\n      <Show when={resource()} keyed>\n        {resource => {\n          return (\n            <Style>\n              {Object.entries(resource)\n                .filter(([k]) => style_pattern.test(k))\n                .map(([k, v]) => {\n                  return `/* ${k} */\\n` + v;\n                })\n                .join(\"\\n\") + \" \"}\n            </Style>\n          );\n        }}\n      </Show>\n    </Suspense>\n  );\n}\n"
+        ],
+        "mappings": "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",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590714,
+      "end": 1767441590714,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { Style } from \"@solidjs/meta\";\nimport { createResource, Show, Suspense, useContext } from \"solid-js\";\nimport { ServerContext } from \"../server/ServerContext\";\nconst routeLayouts = {\n  \"/*404\": {\n    \"id\": \"/*404\",\n    \"layouts\": []\n  },\n  \"/about\": {\n    \"id\": \"/about\",\n    \"layouts\": []\n  },\n  \"/\": {\n    \"id\": \"/\",\n    \"layouts\": []\n  }\n};\nexport { routeLayouts };\nconst style_pattern = /\\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/;\nasync function getInlineStyles(env, routerContext) {\n  const match = routerContext.matches ? routerContext.matches.reduce((memo, m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match2) => previous + match2.originalPath, \"\");\n      if (env.__dev.manifest.find((entry) => entry.path === fullPath)) {\n        memo.push(env.__dev.manifest.find((entry) => entry.path === fullPath).componentPath);\n      }\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(...route.layouts.map((key) => env.__dev.manifest.find((entry) => entry.path === key || entry.id === key)).filter((entry) => entry).map((entry) => entry.componentPath));\n      }\n    }\n    return memo;\n  }, []) : [];\n  match.push(import.meta.env.START_ENTRY_SERVER);\n  const styles = await env.__dev.collectStyles(match);\n  return styles;\n}\nexport function InlineStyles() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  if (!isDev || !import.meta.env.START_SSR) {\n    return null;\n  }\n  const [resource] = createResource(async () => {\n    if (import.meta.env.SSR) {\n      return await getInlineStyles(context.env, context.routerContext);\n    } else {\n      return {};\n    }\n  }, {\n    deferStream: true\n  });\n  return _$createComponent(Suspense, {\n    get children() {\n      return _$createComponent(Show, {\n        get when() {\n          return resource();\n        },\n        keyed: true,\n        children: (resource2) => {\n          return _$createComponent(Style, {\n            get children() {\n              return Object.entries(resource2).filter(([k]) => style_pattern.test(k)).map(([k, v]) => {\n                return `/* ${k} */\n` + v;\n              }).join(\"\\n\") + \" \";\n            }\n          });\n        }\n      });\n    }\n  });\n}\n",
+      "start": 1767441590714,
+      "end": 1767441590716,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/InlineStyles.tsx"
+        ],
+        "sourcesContent": [
+          "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { Style } from \"@solidjs/meta\";\nimport { createResource, Show, Suspense, useContext } from \"solid-js\";\nimport type { PageEvent } from \"../server\";\nimport { ServerContext } from \"../server/ServerContext\";\ndeclare global {\n  const $ROUTE_LAYOUTS: Record<string, {\n    layouts: any[];\n    id: string;\n  }>;\n}\nconst routeLayouts = {\n  \"/*404\": {\n    \"id\": \"/*404\",\n    \"layouts\": []\n  },\n  \"/about\": {\n    \"id\": \"/about\",\n    \"layouts\": []\n  },\n  \"/\": {\n    \"id\": \"/\",\n    \"layouts\": []\n  }\n};\nexport { routeLayouts };\nconst style_pattern = /\\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/;\ntype NotUndefined<T> = T extends undefined ? never : T;\ntype RouterContext = NotUndefined<PageEvent[\"routerContext\"]>;\nasync function getInlineStyles(env: PageEvent[\"env\"], routerContext: RouterContext) {\n  const match = routerContext.matches ? routerContext.matches.reduce((memo: string[], m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match) => previous + match.originalPath, \"\");\n      if (env.__dev!.manifest!.find(entry => entry.path === fullPath)) {\n        memo.push(env.__dev!.manifest!.find(entry => entry.path === fullPath)!.componentPath);\n      }\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(...route.layouts.map((key: string) => env.__dev!.manifest!.find(entry => entry.path === key || entry.id === key)).filter(entry => entry).map(entry => entry!.componentPath));\n      }\n    }\n    return memo;\n  }, []) : [];\n  match.push(import.meta.env.START_ENTRY_SERVER);\n  const styles = await env.__dev!.collectStyles!(match);\n  return styles;\n}\nexport function InlineStyles() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  if (!isDev || !import.meta.env.START_SSR) {\n    return null;\n  }\n  const [resource] = createResource(async () => {\n    if (import.meta.env.SSR) {\n      return await getInlineStyles(context!.env, context!.routerContext!);\n    } else {\n      return {};\n    }\n  }, {\n    deferStream: true\n  });\n\n  // We need a space here to prevent the server from collapsing the space between the style tags\n  // and making it invalid\n  return _$createComponent(Suspense, {\n    get children() {\n      return _$createComponent(Show, {\n        get when() {\n          return resource();\n        },\n        keyed: true,\n        children: resource => {\n          return _$createComponent(Style, {\n            get children() {\n              return Object.entries(resource).filter(([k]) => style_pattern.test(k)).map(([k, v]) => {\n                return `/* ${k} */\\n` + v;\n              }).join(\"\\n\") + \" \";\n            }\n          });\n        }\n      });\n    }\n  });\n}"
+        ],
+        "mappings": "AAAA,SAAS,mBAAmB,yBAAyB;AACrD,SAAS,aAAa;AACtB,SAAS,gBAAgB,MAAM,UAAU,kBAAkB;AAE3D,SAAS,qBAAqB;AAO9B,MAAM,eAAe;AAAA,EACnB,SAAS;AAAA,IACP,MAAM;AAAA,IACN,WAAW,CAAC;AAAA,EACd;AAAA,EACA,UAAU;AAAA,IACR,MAAM;AAAA,IACN,WAAW,CAAC;AAAA,EACd;AAAA,EACA,KAAK;AAAA,IACH,MAAM;AAAA,IACN,WAAW,CAAC;AAAA,EACd;AACF;AACA,SAAS;AACT,MAAM,gBAAgB;AAGtB,eAAe,gBAAgB,KAAuB,eAA8B;AAClF,QAAM,QAAQ,cAAc,UAAU,cAAc,QAAQ,OAAO,CAAC,MAAgB,MAAM;AACxF,QAAI,EAAE,QAAQ;AACZ,YAAM,WAAW,EAAE,OAAO,CAAC,UAAUA,WAAU,WAAWA,OAAM,cAAc,EAAE;AAChF,UAAI,IAAI,MAAO,SAAU,KAAK,WAAS,MAAM,SAAS,QAAQ,GAAG;AAC/D,aAAK,KAAK,IAAI,MAAO,SAAU,KAAK,WAAS,MAAM,SAAS,QAAQ,EAAG,aAAa;AAAA,MACtF;AACA,YAAM,QAAQ,aAAa,QAAQ;AACnC,UAAI,OAAO;AACT,aAAK,KAAK,GAAG,MAAM,QAAQ,IAAI,CAAC,QAAgB,IAAI,MAAO,SAAU,KAAK,WAAS,MAAM,SAAS,OAAO,MAAM,OAAO,GAAG,CAAC,EAAE,OAAO,WAAS,KAAK,EAAE,IAAI,WAAS,MAAO,aAAa,CAAC;AAAA,MACvL;AAAA,IACF;AACA,WAAO;AAAA,EACT,GAAG,CAAC,CAAC,IAAI,CAAC;AACV,QAAM,KAAK,YAAY,IAAI,kBAAkB;AAC7C,QAAM,SAAS,MAAM,IAAI,MAAO,cAAe,KAAK;AACpD,SAAO;AACT;AACO,gBAAS,eAAe;AAC7B,QAAM,QAAQ,YAAY,IAAI,SAAS;AACvC,QAAM,UAAU,WAAW,aAAa;AACxC,MAAI,CAAC,SAAS,CAAC,YAAY,IAAI,WAAW;AACxC,WAAO;AAAA,EACT;AACA,QAAM,CAAC,QAAQ,IAAI,eAAe,YAAY;AAC5C,QAAI,YAAY,IAAI,KAAK;AACvB,aAAO,MAAM,gBAAgB,QAAS,KAAK,QAAS,aAAc;AAAA,IACpE,OAAO;AACL,aAAO,CAAC;AAAA,IACV;AAAA,EACF,GAAG;AAAA,IACD,aAAa;AAAA,EACf,CAAC;AAID,SAAO,kBAAkB,UAAU;AAAA,IACjC,IAAI,WAAW;AACb,aAAO,kBAAkB,MAAM;AAAA,QAC7B,IAAI,OAAO;AACT,iBAAO,SAAS;AAAA,QAClB;AAAA,QACA,OAAO;AAAA,QACP,UAAU,CAAAC,cAAY;AACpB,iBAAO,kBAAkB,OAAO;AAAA,YAC9B,IAAI,WAAW;AACb,qBAAO,OAAO,QAAQA,SAAQ,EAAE,OAAO,CAAC,CAAC,CAAC,MAAM,cAAc,KAAK,CAAC,CAAC,EAAE,IAAI,CAAC,CAAC,GAAG,CAAC,MAAM;AACrF,uBAAO,MAAM,CAAC;AAAA,IAAU;AAAA,cAC1B,CAAC,EAAE,KAAK,IAAI,IAAI;AAAA,YAClB;AAAA,UACF,CAAC;AAAA,QACH;AAAA,MACF,CAAC;AAAA,IACH;AAAA,EACF,CAAC;AACH;",
+        "names": [
+          "match",
+          "resource"
+        ]
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590716,
+      "end": 1767441590716,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590716,
+      "end": 1767441590716,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590716,
+      "end": 1767441590716,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { Style } from \"@solidjs/meta\";\nimport { createResource, Show, Suspense, useContext } from \"solid-js\";\nimport { ServerContext } from \"../server/ServerContext\";\nconst routeLayouts = {\n  \"/*404\": {\n    \"id\": \"/*404\",\n    \"layouts\": []\n  },\n  \"/about\": {\n    \"id\": \"/about\",\n    \"layouts\": []\n  },\n  \"/\": {\n    \"id\": \"/\",\n    \"layouts\": []\n  }\n};\nexport { routeLayouts };\nconst style_pattern = /\\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/;\nasync function getInlineStyles(env, routerContext) {\n  const match = routerContext.matches ? routerContext.matches.reduce((memo, m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match2) => previous + match2.originalPath, \"\");\n      if (env.__dev.manifest.find((entry) => entry.path === fullPath)) {\n        memo.push(env.__dev.manifest.find((entry) => entry.path === fullPath).componentPath);\n      }\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(...route.layouts.map((key) => env.__dev.manifest.find((entry) => entry.path === key || entry.id === key)).filter((entry) => entry).map((entry) => entry.componentPath));\n      }\n    }\n    return memo;\n  }, []) : [];\n  match.push(\"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-server.tsx\");\n  const styles = await env.__dev.collectStyles(match);\n  return styles;\n}\nexport function InlineStyles() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  if (!isDev || !true) {\n    return null;\n  }\n  const [resource] = createResource(async () => {\n    if (import.meta.env.SSR) {\n      return await getInlineStyles(context.env, context.routerContext);\n    } else {\n      return {};\n    }\n  }, {\n    deferStream: true\n  });\n  return _$createComponent(Suspense, {\n    get children() {\n      return _$createComponent(Show, {\n        get when() {\n          return resource();\n        },\n        keyed: true,\n        children: (resource2) => {\n          return _$createComponent(Style, {\n            get children() {\n              return Object.entries(resource2).filter(([k]) => style_pattern.test(k)).map(([k, v]) => {\n                return `/* ${k} */\n` + v;\n              }).join(\"\\n\") + \" \";\n            }\n          });\n        }\n      });\n    }\n  });\n}\n",
+      "start": 1767441590716,
+      "end": 1767441590716,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590716,
+      "end": 1767441590716,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590716,
+      "end": 1767441590716,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590716,
+      "end": 1767441590716,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590716,
+      "end": 1767441590716,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590716,
+      "end": 1767441590716,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590716,
+      "end": 1767441590716,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import.meta.env = {\"VITE_USER_NODE_ENV\":\"development\",\"BASE_URL\":\"/\",\"MODE\":\"development\",\"DEV\":true,\"PROD\":false,\"SSR\":true};import.meta.env.START_SSR = true;import.meta.env.START_ISLANDS = false;import.meta.env.START_ENTRY_CLIENT = \"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-client.tsx\";import.meta.env.START_ENTRY_SERVER = \"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-server.tsx\";import.meta.env.START_INDEX_HTML = false;import.meta.env.START_ISLANDS_ROUTER = false;import.meta.env.START_ADAPTER = \"vercel\";import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { Style } from \"/node_modules/.pnpm/@solidjs+meta@0.28.7_solid-js@1.9.10/node_modules/@solidjs/meta/dist/index.jsx\";\nimport { createResource, Show, Suspense, useContext } from \"solid-js\";\nimport { ServerContext } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/ServerContext.tsx\";\nconst routeLayouts = {\n  \"/*404\": {\n    \"id\": \"/*404\",\n    \"layouts\": []\n  },\n  \"/about\": {\n    \"id\": \"/about\",\n    \"layouts\": []\n  },\n  \"/\": {\n    \"id\": \"/\",\n    \"layouts\": []\n  }\n};\nexport { routeLayouts };\nconst style_pattern = /\\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/;\nasync function getInlineStyles(env, routerContext) {\n  const match = routerContext.matches ? routerContext.matches.reduce((memo, m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match2) => previous + match2.originalPath, \"\");\n      if (env.__dev.manifest.find((entry) => entry.path === fullPath)) {\n        memo.push(env.__dev.manifest.find((entry) => entry.path === fullPath).componentPath);\n      }\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(...route.layouts.map((key) => env.__dev.manifest.find((entry) => entry.path === key || entry.id === key)).filter((entry) => entry).map((entry) => entry.componentPath));\n      }\n    }\n    return memo;\n  }, []) : [];\n  match.push(\"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-server.tsx\");\n  const styles = await env.__dev.collectStyles(match);\n  return styles;\n}\nexport function InlineStyles() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  if (!isDev || !true) {\n    return null;\n  }\n  const [resource] = createResource(async () => {\n    if (import.meta.env.SSR) {\n      return await getInlineStyles(context.env, context.routerContext);\n    } else {\n      return {};\n    }\n  }, {\n    deferStream: true\n  });\n  return _$createComponent(Suspense, {\n    get children() {\n      return _$createComponent(Show, {\n        get when() {\n          return resource();\n        },\n        keyed: true,\n        children: (resource2) => {\n          return _$createComponent(Style, {\n            get children() {\n              return Object.entries(resource2).filter(([k]) => style_pattern.test(k)).map(([k, v]) => {\n                return `/* ${k} */\n` + v;\n              }).join(\"\\n\") + \" \";\n            }\n          });\n        }\n      });\n    }\n  });\n}\n",
+      "start": 1767441590716,
+      "end": 1767441590717,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

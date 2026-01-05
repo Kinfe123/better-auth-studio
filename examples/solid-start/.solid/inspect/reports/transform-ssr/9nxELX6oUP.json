@@ -1,0 +1,190 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/index.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "export { Link, Meta, Style, Stylesheet, Title } from \"@solidjs/meta\";\nexport {\n  Navigate,\n  Route,\n  useHref,\n  useIsRouting,\n  useMatch,\n  useParams,\n  useResolvedPath,\n  useRouteData,\n  useRoutes,\n  useSearchParams,\n  type RouteDataFunc,\n  type RouteDataFuncArgs as RouteDataArgs\n} from \"@solidjs/router\";\nexport type { APIEvent as APIEvent } from \"./api\";\nexport {\n  createRouteAction,\n  createRouteData,\n  createRouteMultiAction,\n  FormError,\n  refetchRouteData,\n  ServerError\n} from \"./data\";\nexport type { FormAction, FormMethod, FormProps, SubmitOptions } from \"./data\";\nexport { default, ErrorBoundary, ErrorMessage } from \"./error-boundary\";\nexport { clientOnly as unstable_clientOnly, island as unstable_island } from \"./islands\";\nexport { Body, Head, Html, Scripts } from \"./root\";\nexport * from \"./router\";\nexport * from \"./server/responses\";\nexport { ServerContext, useRequest as useServerContext } from \"./server/ServerContext\";\nexport type { FetchEvent, PageEvent, ServerFunctionEvent } from \"./server/types\";\nexport {\n  createCookie,\n  createCookieSessionStorage,\n  createMemorySessionStorage,\n  createSessionStorage,\n  parseCookie,\n  serializeCookie,\n  type CookieParseOptions,\n  type CookieSerializeOptions,\n  type SessionIdStorageStrategy,\n  type SessionStorage\n} from \"./session\";\nexport * from \"./types\";\n\nimport { JSX } from \"solid-js\";\n\nexport declare function FileRoutes(): JSX.Element;\n",
+      "start": 1767441590128,
+      "end": 1767441590128
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590128,
+      "end": 1767441590128,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "export { Link, Meta, Style, Stylesheet, Title } from \"@solidjs/meta\";\nexport { Navigate, Route, useHref, useIsRouting, useMatch, useParams, useResolvedPath, useRouteData, useRoutes, useSearchParams, type RouteDataFunc, type RouteDataFuncArgs as RouteDataArgs } from \"@solidjs/router\";\nexport type { APIEvent } from \"./api\";\nexport { createRouteAction, createRouteData, createRouteMultiAction, FormError, refetchRouteData, ServerError } from \"./data\";\nexport type { FormAction, FormMethod, FormProps, SubmitOptions } from \"./data\";\nexport { default, ErrorBoundary, ErrorMessage } from \"./error-boundary\";\nexport { clientOnly as unstable_clientOnly, island as unstable_island } from \"./islands\";\nexport { Body, Head, Html, Scripts } from \"./root\";\nexport * from \"./router\";\nexport * from \"./server/responses\";\nexport { ServerContext, useRequest as useServerContext } from \"./server/ServerContext\";\nexport type { FetchEvent, PageEvent, ServerFunctionEvent } from \"./server/types\";\nexport { createCookie, createCookieSessionStorage, createMemorySessionStorage, createSessionStorage, parseCookie, serializeCookie, type CookieParseOptions, type CookieSerializeOptions, type SessionIdStorageStrategy, type SessionStorage } from \"./session\";\nexport * from \"./types\";\nimport \"solid-js\";\nexport declare function FileRoutes(): JSX.Element;",
+      "start": 1767441590128,
+      "end": 1767441590133,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "Link",
+          "Meta",
+          "Style",
+          "Stylesheet",
+          "Title",
+          "Navigate",
+          "Route",
+          "useHref",
+          "useIsRouting",
+          "useMatch",
+          "useParams",
+          "useResolvedPath",
+          "useRouteData",
+          "useRoutes",
+          "useSearchParams",
+          "RouteDataFunc",
+          "RouteDataFuncArgs",
+          "RouteDataArgs",
+          "APIEvent",
+          "createRouteAction",
+          "createRouteData",
+          "createRouteMultiAction",
+          "FormError",
+          "refetchRouteData",
+          "ServerError",
+          "FormAction",
+          "FormMethod",
+          "FormProps",
+          "SubmitOptions",
+          "default",
+          "ErrorBoundary",
+          "ErrorMessage",
+          "clientOnly",
+          "unstable_clientOnly",
+          "island",
+          "unstable_island",
+          "Body",
+          "Head",
+          "Html",
+          "Scripts",
+          "ServerContext",
+          "useRequest",
+          "useServerContext",
+          "FetchEvent",
+          "PageEvent",
+          "ServerFunctionEvent",
+          "createCookie",
+          "createCookieSessionStorage",
+          "createMemorySessionStorage",
+          "createSessionStorage",
+          "parseCookie",
+          "serializeCookie",
+          "CookieParseOptions",
+          "CookieSerializeOptions",
+          "SessionIdStorageStrategy",
+          "SessionStorage",
+          "FileRoutes",
+          "JSX",
+          "Element"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/index.tsx"
+        ],
+        "sourcesContent": [
+          "export { Link, Meta, Style, Stylesheet, Title } from \"@solidjs/meta\";\nexport {\n  Navigate,\n  Route,\n  useHref,\n  useIsRouting,\n  useMatch,\n  useParams,\n  useResolvedPath,\n  useRouteData,\n  useRoutes,\n  useSearchParams,\n  type RouteDataFunc,\n  type RouteDataFuncArgs as RouteDataArgs\n} from \"@solidjs/router\";\nexport type { APIEvent as APIEvent } from \"./api\";\nexport {\n  createRouteAction,\n  createRouteData,\n  createRouteMultiAction,\n  FormError,\n  refetchRouteData,\n  ServerError\n} from \"./data\";\nexport type { FormAction, FormMethod, FormProps, SubmitOptions } from \"./data\";\nexport { default, ErrorBoundary, ErrorMessage } from \"./error-boundary\";\nexport { clientOnly as unstable_clientOnly, island as unstable_island } from \"./islands\";\nexport { Body, Head, Html, Scripts } from \"./root\";\nexport * from \"./router\";\nexport * from \"./server/responses\";\nexport { ServerContext, useRequest as useServerContext } from \"./server/ServerContext\";\nexport type { FetchEvent, PageEvent, ServerFunctionEvent } from \"./server/types\";\nexport {\n  createCookie,\n  createCookieSessionStorage,\n  createMemorySessionStorage,\n  createSessionStorage,\n  parseCookie,\n  serializeCookie,\n  type CookieParseOptions,\n  type CookieSerializeOptions,\n  type SessionIdStorageStrategy,\n  type SessionStorage\n} from \"./session\";\nexport * from \"./types\";\n\nimport { JSX } from \"solid-js\";\n\nexport declare function FileRoutes(): JSX.Element;\n"
+        ],
+        "mappings": "AAAA,SAASA,IAAI,EAAEC,IAAI,EAAEC,KAAK,EAAEC,UAAU,EAAEC,KAAK,QAAQ,eAAe;AACpE,SACEC,QAAQ,EACRC,KAAK,EACLC,OAAO,EACPC,YAAY,EACZC,QAAQ,EACRC,SAAS,EACTC,eAAe,EACfC,YAAY,EACZC,SAAS,EACTC,eAAe,EACf,KAAKC,aAAa,EAClB,KAAKC,iBAAiB,IAAIC,aAAa,QAClC,iBAAiB;AACxB,cAAcC,QAAoB,QAAQ,OAAO;AACjD,SACEC,iBAAiB,EACjBC,eAAe,EACfC,sBAAsB,EACtBC,SAAS,EACTC,gBAAgB,EAChBC,WAAW,QACN,QAAQ;AACf,cAAcC,UAAU,EAAEC,UAAU,EAAEC,SAAS,EAAEC,aAAa,QAAQ,QAAQ;AAC9E,SAASC,OAAO,EAAEC,aAAa,EAAEC,YAAY,QAAQ,kBAAkB;AACvE,SAASC,UAAU,IAAIC,mBAAmB,EAAEC,MAAM,IAAIC,eAAe,QAAQ,WAAW;AACxF,SAASC,IAAI,EAAEC,IAAI,EAAEC,IAAI,EAAEC,OAAO,QAAQ,QAAQ;AAClD,cAAc,UAAU;AACxB,cAAc,oBAAoB;AAClC,SAASC,aAAa,EAAEC,UAAU,IAAIC,gBAAgB,QAAQ,wBAAwB;AACtF,cAAcC,UAAU,EAAEC,SAAS,EAAEC,mBAAmB,QAAQ,gBAAgB;AAChF,SACEC,YAAY,EACZC,0BAA0B,EAC1BC,0BAA0B,EAC1BC,oBAAoB,EACpBC,WAAW,EACXC,eAAe,EACf,KAAKC,kBAAkB,EACvB,KAAKC,sBAAsB,EAC3B,KAAKC,wBAAwB,EAC7B,KAAKC,cAAc,QACd,WAAW;AAClB,cAAc,SAAS;AAEvB,OAAoB,UAAU;AAE9B,OAAO,iBAAiBC,UAAUA,CAAA,CAAE,EAAEC,GAAG,CAACC,OAAO",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590133,
+      "end": 1767441590133,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "export { Link, Meta, Style, Stylesheet, Title } from \"@solidjs/meta\";\nexport { Navigate, Route, useHref, useIsRouting, useMatch, useParams, useResolvedPath, useRouteData, useRoutes, useSearchParams } from \"@solidjs/router\";\nexport { createRouteAction, createRouteData, createRouteMultiAction, FormError, refetchRouteData, ServerError } from \"./data\";\nexport { default, ErrorBoundary, ErrorMessage } from \"./error-boundary\";\nexport { clientOnly as unstable_clientOnly, island as unstable_island } from \"./islands\";\nexport { Body, Head, Html, Scripts } from \"./root\";\nexport * from \"./router\";\nexport * from \"./server/responses\";\nexport { ServerContext, useRequest as useServerContext } from \"./server/ServerContext\";\nexport { createCookie, createCookieSessionStorage, createMemorySessionStorage, createSessionStorage, parseCookie, serializeCookie } from \"./session\";\nexport * from \"./types\";\nimport \"solid-js\";\n",
+      "start": 1767441590133,
+      "end": 1767441590168,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/index.tsx"
+        ],
+        "sourcesContent": [
+          "export { Link, Meta, Style, Stylesheet, Title } from \"@solidjs/meta\";\nexport { Navigate, Route, useHref, useIsRouting, useMatch, useParams, useResolvedPath, useRouteData, useRoutes, useSearchParams, type RouteDataFunc, type RouteDataFuncArgs as RouteDataArgs } from \"@solidjs/router\";\nexport type { APIEvent } from \"./api\";\nexport { createRouteAction, createRouteData, createRouteMultiAction, FormError, refetchRouteData, ServerError } from \"./data\";\nexport type { FormAction, FormMethod, FormProps, SubmitOptions } from \"./data\";\nexport { default, ErrorBoundary, ErrorMessage } from \"./error-boundary\";\nexport { clientOnly as unstable_clientOnly, island as unstable_island } from \"./islands\";\nexport { Body, Head, Html, Scripts } from \"./root\";\nexport * from \"./router\";\nexport * from \"./server/responses\";\nexport { ServerContext, useRequest as useServerContext } from \"./server/ServerContext\";\nexport type { FetchEvent, PageEvent, ServerFunctionEvent } from \"./server/types\";\nexport { createCookie, createCookieSessionStorage, createMemorySessionStorage, createSessionStorage, parseCookie, serializeCookie, type CookieParseOptions, type CookieSerializeOptions, type SessionIdStorageStrategy, type SessionStorage } from \"./session\";\nexport * from \"./types\";\nimport \"solid-js\";\nexport declare function FileRoutes(): JSX.Element;"
+        ],
+        "mappings": "AAAA,SAAS,MAAM,MAAM,OAAO,YAAY,aAAa;AACrD,SAAS,UAAU,OAAO,SAAS,cAAc,UAAU,WAAW,iBAAiB,cAAc,WAAW,uBAAoF;AAEpM,SAAS,mBAAmB,iBAAiB,wBAAwB,WAAW,kBAAkB,mBAAmB;AAErH,SAAS,SAAS,eAAe,oBAAoB;AACrD,SAAS,cAAc,qBAAqB,UAAU,uBAAuB;AAC7E,SAAS,MAAM,MAAM,MAAM,eAAe;AAC1C,cAAc;AACd,cAAc;AACd,SAAS,eAAe,cAAc,wBAAwB;AAE9D,SAAS,cAAc,4BAA4B,4BAA4B,sBAAsB,aAAa,uBAAiI;AACnP,cAAc;AACd,OAAO;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "export { Link, Meta, Style, Stylesheet, Title } from \"@solidjs/meta\";\nexport { Navigate, Route, useHref, useIsRouting, useMatch, useParams, useResolvedPath, useRouteData, useRoutes, useSearchParams } from \"@solidjs/router\";\nexport { createRouteAction, createRouteData, createRouteMultiAction, FormError, refetchRouteData, ServerError } from \"./data\";\nexport { default, ErrorBoundary, ErrorMessage } from \"./error-boundary\";\nexport { clientOnly as unstable_clientOnly, island as unstable_island } from \"./islands\";\nexport { Body, Head, Html, Scripts } from \"./root\";\nexport * from \"./router\";\nexport * from \"./server/responses\";\nexport { ServerContext, useRequest as useServerContext } from \"./server/ServerContext\";\nexport { createCookie, createCookieSessionStorage, createMemorySessionStorage, createSessionStorage, parseCookie, serializeCookie } from \"./session\";\nexport * from \"./types\";\nimport \"solid-js\";\n",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "export { Link, Meta, Style, Stylesheet, Title } from \"/node_modules/.pnpm/@solidjs+meta@0.28.7_solid-js@1.9.10/node_modules/@solidjs/meta/dist/index.jsx\";\nexport { Navigate, Route, useHref, useIsRouting, useMatch, useParams, useResolvedPath, useRouteData, useRoutes, useSearchParams } from \"/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/index.jsx\";\nexport { createRouteAction, createRouteData, createRouteMultiAction, FormError, refetchRouteData, ServerError } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/data/index.ts\";\nexport { default, ErrorBoundary, ErrorMessage } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/error-boundary/index.tsx\";\nexport { clientOnly as unstable_clientOnly, island as unstable_island } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/islands/index.tsx\";\nexport { Body, Head, Html, Scripts } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/index.tsx\";\nexport * from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/router.tsx\";\nexport * from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/responses.ts\";\nexport { ServerContext, useRequest as useServerContext } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/ServerContext.tsx\";\nexport { createCookie, createCookieSessionStorage, createMemorySessionStorage, createSessionStorage, parseCookie, serializeCookie } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/index.ts\";\nexport * from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/types.ts\";\nimport \"solid-js\";\n",
+      "start": 1767441590168,
+      "end": 1767441590175,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

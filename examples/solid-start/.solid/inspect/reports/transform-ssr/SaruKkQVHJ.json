@@ -1,0 +1,186 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/router.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import {\n  A as BaseA,\n  Location,\n  NavigateOptions,\n  Navigator,\n  Outlet as BaseOutlet,\n  Routes as BaseRoutes,\n  useLocation as useBaseLocation,\n  useNavigate as useBaseNavigate\n} from \"@solidjs/router\";\nimport { Accessor, ComponentProps, splitProps } from \"solid-js\";\nimport { Outlet as IslandsOutlet } from \"./islands/server-router\";\n\nconst A = import.meta.env.START_ISLANDS_ROUTER\n  ? function IslandsA(props: ComponentProps<typeof BaseA>) {\n      const [, rest] = splitProps(props, [\"state\", \"activeClass\", \"inactiveClass\", \"end\"]);\n      const location = useLocation();\n      const isActive = () => {\n        return props.href.startsWith(\"#\")\n          ? location.hash === props.href\n          : location.pathname === props.href;\n      };\n\n      return (\n        <a\n          link\n          {...rest}\n          state={JSON.stringify(props.state)}\n          classList={{\n            [props.inactiveClass || \"inactive\"]: !isActive(),\n            [props.activeClass || \"active\"]: isActive(),\n            ...rest.classList\n          }}\n          aria-current={isActive() ? \"page\" : undefined}\n        />\n      );\n    }\n  : BaseA;\n\nconst Routes = import.meta.env.START_ISLANDS_ROUTER\n  ? function IslandsRoutes(props: ComponentProps<any>) {\n      return (\n        <IslandsOutlet>\n          <BaseRoutes>{props.children}</BaseRoutes>\n        </IslandsOutlet>\n      );\n    }\n  : BaseRoutes;\n\nconst Outlet = import.meta.env.START_ISLANDS_ROUTER\n  ? function HybridOutlet() {\n      return (\n        <IslandsOutlet>\n          <BaseOutlet />\n        </IslandsOutlet>\n      );\n    }\n  : BaseOutlet;\n\nconst useLocation =\n  import.meta.env.START_ISLANDS_ROUTER && !import.meta.env.SSR\n    ? function IslandsUseLocation() {\n        return {\n          get pathname() {\n            let location = window.LOCATION();\n            return location.pathname;\n          },\n          get hash() {\n            let location = window.LOCATION();\n            return location.hash;\n          }\n        } as Location;\n      }\n    : useBaseLocation;\n\nconst useNavigate =\n  import.meta.env.START_ISLANDS_ROUTER && !import.meta.env.SSR\n    ? function IslandsUseNavigate() {\n        return ((to: string, props?: Partial<NavigateOptions<unknown>>) => window.NAVIGATE(to, props)) as unknown as Navigator;\n      }\n    : useBaseNavigate;\n\ndeclare global {\n  interface Window {\n    LOCATION: Accessor<Location>;\n    NAVIGATE: Navigator;\n  }\n}\n\nexport { A, Outlet, Routes, useLocation, useNavigate };\n",
+      "start": 1767441590191,
+      "end": 1767441590191
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590191,
+      "end": 1767441590191,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrElement as _$ssrElement } from \"solid-js/web\";\nimport { mergeProps as _$mergeProps } from \"solid-js/web\";\nimport { A as BaseA, Location, Navigator, Outlet as BaseOutlet, Routes as BaseRoutes, useLocation as useBaseLocation, useNavigate as useBaseNavigate } from \"@solidjs/router\";\nimport { splitProps } from \"solid-js\";\nimport { Outlet as IslandsOutlet } from \"./islands/server-router\";\nconst A = import.meta.env.START_ISLANDS_ROUTER ? function IslandsA(props: ComponentProps<typeof BaseA>) {\n  const [, rest] = splitProps(props, [\"state\", \"activeClass\", \"inactiveClass\", \"end\"]);\n  const location = useLocation();\n  const isActive = () => {\n    return props.href.startsWith(\"#\") ? location.hash === props.href : location.pathname === props.href;\n  };\n  return _$ssrElement(\"a\", _$mergeProps({\n    link: true\n  }, rest, {\n    get state() {\n      return JSON.stringify(props.state);\n    },\n    get classList() {\n      return {\n        [props.inactiveClass || \"inactive\"]: !isActive(),\n        [props.activeClass || \"active\"]: isActive(),\n        ...rest.classList\n      };\n    },\n    get [\"aria-current\"]() {\n      return isActive() ? \"page\" : undefined;\n    }\n  }), undefined, true);\n} : BaseA;\nconst Routes = import.meta.env.START_ISLANDS_ROUTER ? function IslandsRoutes(props: ComponentProps<any>) {\n  return _$createComponent(IslandsOutlet, {\n    get children() {\n      return _$createComponent(BaseRoutes, {\n        get children() {\n          return props.children;\n        }\n      });\n    }\n  });\n} : BaseRoutes;\nconst Outlet = import.meta.env.START_ISLANDS_ROUTER ? function HybridOutlet() {\n  return _$createComponent(IslandsOutlet, {\n    get children() {\n      return _$createComponent(BaseOutlet, {});\n    }\n  });\n} : BaseOutlet;\nconst useLocation = import.meta.env.START_ISLANDS_ROUTER && !import.meta.env.SSR ? function IslandsUseLocation() {\n  return {\n    get pathname() {\n      let location = window.LOCATION();\n      return location.pathname;\n    },\n    get hash() {\n      let location = window.LOCATION();\n      return location.hash;\n    }\n  } as Location;\n} : useBaseLocation;\nconst useNavigate = import.meta.env.START_ISLANDS_ROUTER && !import.meta.env.SSR ? function IslandsUseNavigate() {\n  return ((to: string, props?: Partial<NavigateOptions<unknown>>) => window.NAVIGATE(to, props)) as unknown as Navigator;\n} : useBaseNavigate;\ndeclare global {\n  interface Window {\n    LOCATION: Accessor<Location>;\n    NAVIGATE: Navigator;\n  }\n}\nexport { A, Outlet, Routes, useLocation, useNavigate };",
+      "start": 1767441590191,
+      "end": 1767441590197,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "A",
+          "BaseA",
+          "Location",
+          "Navigator",
+          "Outlet",
+          "BaseOutlet",
+          "Routes",
+          "BaseRoutes",
+          "useLocation",
+          "useBaseLocation",
+          "useNavigate",
+          "useBaseNavigate",
+          "splitProps",
+          "IslandsOutlet",
+          "import",
+          "meta",
+          "env",
+          "START_ISLANDS_ROUTER",
+          "IslandsA",
+          "props",
+          "ComponentProps",
+          "rest",
+          "location",
+          "isActive",
+          "href",
+          "startsWith",
+          "hash",
+          "pathname",
+          "_$ssrElement",
+          "_$mergeProps",
+          "link",
+          "state",
+          "JSON",
+          "stringify",
+          "classList",
+          "inactiveClass",
+          "activeClass",
+          "aria-current",
+          "undefined",
+          "IslandsRoutes",
+          "_$createComponent",
+          "children",
+          "HybridOutlet",
+          "SSR",
+          "IslandsUseLocation",
+          "window",
+          "LOCATION",
+          "IslandsUseNavigate",
+          "to",
+          "Partial",
+          "NavigateOptions",
+          "NAVIGATE",
+          "global",
+          "Window",
+          "Accessor"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/router.tsx"
+        ],
+        "sourcesContent": [
+          "import {\n  A as BaseA,\n  Location,\n  NavigateOptions,\n  Navigator,\n  Outlet as BaseOutlet,\n  Routes as BaseRoutes,\n  useLocation as useBaseLocation,\n  useNavigate as useBaseNavigate\n} from \"@solidjs/router\";\nimport { Accessor, ComponentProps, splitProps } from \"solid-js\";\nimport { Outlet as IslandsOutlet } from \"./islands/server-router\";\n\nconst A = import.meta.env.START_ISLANDS_ROUTER\n  ? function IslandsA(props: ComponentProps<typeof BaseA>) {\n      const [, rest] = splitProps(props, [\"state\", \"activeClass\", \"inactiveClass\", \"end\"]);\n      const location = useLocation();\n      const isActive = () => {\n        return props.href.startsWith(\"#\")\n          ? location.hash === props.href\n          : location.pathname === props.href;\n      };\n\n      return (\n        <a\n          link\n          {...rest}\n          state={JSON.stringify(props.state)}\n          classList={{\n            [props.inactiveClass || \"inactive\"]: !isActive(),\n            [props.activeClass || \"active\"]: isActive(),\n            ...rest.classList\n          }}\n          aria-current={isActive() ? \"page\" : undefined}\n        />\n      );\n    }\n  : BaseA;\n\nconst Routes = import.meta.env.START_ISLANDS_ROUTER\n  ? function IslandsRoutes(props: ComponentProps<any>) {\n      return (\n        <IslandsOutlet>\n          <BaseRoutes>{props.children}</BaseRoutes>\n        </IslandsOutlet>\n      );\n    }\n  : BaseRoutes;\n\nconst Outlet = import.meta.env.START_ISLANDS_ROUTER\n  ? function HybridOutlet() {\n      return (\n        <IslandsOutlet>\n          <BaseOutlet />\n        </IslandsOutlet>\n      );\n    }\n  : BaseOutlet;\n\nconst useLocation =\n  import.meta.env.START_ISLANDS_ROUTER && !import.meta.env.SSR\n    ? function IslandsUseLocation() {\n        return {\n          get pathname() {\n            let location = window.LOCATION();\n            return location.pathname;\n          },\n          get hash() {\n            let location = window.LOCATION();\n            return location.hash;\n          }\n        } as Location;\n      }\n    : useBaseLocation;\n\nconst useNavigate =\n  import.meta.env.START_ISLANDS_ROUTER && !import.meta.env.SSR\n    ? function IslandsUseNavigate() {\n        return ((to: string, props?: Partial<NavigateOptions<unknown>>) => window.NAVIGATE(to, props)) as unknown as Navigator;\n      }\n    : useBaseNavigate;\n\ndeclare global {\n  interface Window {\n    LOCATION: Accessor<Location>;\n    NAVIGATE: Navigator;\n  }\n}\n\nexport { A, Outlet, Routes, useLocation, useNavigate };\n"
+        ],
+        "mappings": ";;;AAAA,SACEA,CAAC,IAAIC,KAAK,EACVC,QAAQ,EAERC,SAAS,EACTC,MAAM,IAAIC,UAAU,EACpBC,MAAM,IAAIC,UAAU,EACpBC,WAAW,IAAIC,eAAe,EAC9BC,WAAW,IAAIC,eAAe,QACzB,iBAAiB;AACxB,SAAmCC,UAAU,QAAQ,UAAU;AAC/D,SAASR,MAAM,IAAIS,aAAa,QAAQ,yBAAyB;AAEjE,MAAMb,CAAC,GAAGc,MAAM,CAACC,IAAI,CAACC,GAAG,CAACC,oBAAoB,GAC1C,SAASC,QAAQA,CAACC,KAAK,EAAEC,cAAc,CAAC,OAAOnB,KAAK,CAAC,EAAE;EACrD,MAAM,GAAGoB,IAAI,CAAC,GAAGT,UAAU,CAACO,KAAK,EAAE,CAAC,OAAO,EAAE,aAAa,EAAE,eAAe,EAAE,KAAK,CAAC,CAAC;EACpF,MAAMG,QAAQ,GAAGd,WAAW,CAAC,CAAC;EAC9B,MAAMe,QAAQ,GAAGA,CAAA,KAAM;IACrB,OAAOJ,KAAK,CAACK,IAAI,CAACC,UAAU,CAAC,GAAG,CAAC,GAC7BH,QAAQ,CAACI,IAAI,KAAKP,KAAK,CAACK,IAAI,GAC5BF,QAAQ,CAACK,QAAQ,KAAKR,KAAK,CAACK,IAAI;EACtC,CAAC;EAED,OAAAI,YAAA,MAAAC,YAAA;IAEIC,IAAI;EAAA,GACAT,IAAI;IAAA,IACRU,KAAKA,CAAA;MAAA,OAAEC,IAAI,CAACC,SAAS,CAACd,KAAK,CAACY,KAAK,CAAC;IAAA;IAAA,IAClCG,SAASA,CAAA;MAAA,OAAE;QACT,CAACf,KAAK,CAACgB,aAAa,IAAI,UAAU,GAAG,CAACZ,QAAQ,CAAC,CAAC;QAChD,CAACJ,KAAK,CAACiB,WAAW,IAAI,QAAQ,GAAGb,QAAQ,CAAC,CAAC;QAC3C,GAAGF,IAAI,CAACa;MACV,CAAC;IAAA;IAAA,oBAAAG,CAAA;MAAA,OACad,QAAQ,CAAC,CAAC,GAAG,MAAM,GAAGe,SAAS;IAAA;EAAA,IAAAA,SAAA;AAGnD,CAAC,GACDrC,KAAK;AAET,MAAMK,MAAM,GAAGQ,MAAM,CAACC,IAAI,CAACC,GAAG,CAACC,oBAAoB,GAC/C,SAASsB,aAAaA,CAACpB,KAAK,EAAEC,cAAc,CAAC,GAAG,CAAC,EAAE;EACjD,OAAAoB,iBAAA,CACG3B,aAAa;IAAA,IAAA4B,SAAA;MAAA,OAAAD,iBAAA,CACXjC,UAAU;QAAA,IAAAkC,SAAA;UAAA,OAAEtB,KAAK,CAACsB,QAAQ;QAAA;MAAA;IAAA;EAAA;AAGjC,CAAC,GACDlC,UAAU;AAEd,MAAMH,MAAM,GAAGU,MAAM,CAACC,IAAI,CAACC,GAAG,CAACC,oBAAoB,GAC/C,SAASyB,YAAYA,CAAA,EAAG;EACtB,OAAAF,iBAAA,CACG3B,aAAa;IAAA,IAAA4B,SAAA;MAAA,OAAAD,iBAAA,CACXnC,UAAU;IAAA;EAAA;AAGjB,CAAC,GACDA,UAAU;AAEd,MAAMG,WAAW,GACfM,MAAM,CAACC,IAAI,CAACC,GAAG,CAACC,oBAAoB,IAAI,CAACH,MAAM,CAACC,IAAI,CAACC,GAAG,CAAC2B,GAAG,GACxD,SAASC,kBAAkBA,CAAA,EAAG;EAC5B,OAAO;IACL,IAAIjB,QAAQA,CAAA,EAAG;MACb,IAAIL,QAAQ,GAAGuB,MAAM,CAACC,QAAQ,CAAC,CAAC;MAChC,OAAOxB,QAAQ,CAACK,QAAQ;IAC1B,CAAC;IACD,IAAID,IAAIA,CAAA,EAAG;MACT,IAAIJ,QAAQ,GAAGuB,MAAM,CAACC,QAAQ,CAAC,CAAC;MAChC,OAAOxB,QAAQ,CAACI,IAAI;IACtB;EACF,CAAC,IAAIxB,QAAQ;AACf,CAAC,GACDO,eAAe;AAErB,MAAMC,WAAW,GACfI,MAAM,CAACC,IAAI,CAACC,GAAG,CAACC,oBAAoB,IAAI,CAACH,MAAM,CAACC,IAAI,CAACC,GAAG,CAAC2B,GAAG,GACxD,SAASI,kBAAkBA,CAAA,EAAG;EAC5B,OAAO,CAAC,CAACC,EAAE,EAAE,MAAM,EAAE7B,KAAyC,CAAnC,EAAE8B,OAAO,CAACC,eAAe,CAAC,OAAO,CAAC,CAAC,KAAKL,MAAM,CAACM,QAAQ,CAACH,EAAE,EAAE7B,KAAK,CAAC,KAAK,OAAO,IAAIhB,SAAS;AACxH,CAAC,GACDQ,eAAe;AAErB,QAAQyC,MAAM,CAAC;EACb,UAAUC,MAAM,CAAC;IACfP,QAAQ,EAAEQ,QAAQ,CAACpD,QAAQ,CAAC;IAC5BiD,QAAQ,EAAEhD,SAAS;EACrB;AACF;AAEA,SAASH,CAAC,EAAEI,MAAM,EAAEE,MAAM,EAAEE,WAAW,EAAEE,WAAW",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590198,
+      "end": 1767441590198,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrElement as _$ssrElement } from \"solid-js/web\";\nimport { mergeProps as _$mergeProps } from \"solid-js/web\";\nimport { A as BaseA, Outlet as BaseOutlet, Routes as BaseRoutes, useLocation as useBaseLocation, useNavigate as useBaseNavigate } from \"@solidjs/router\";\nimport { splitProps } from \"solid-js\";\nimport { Outlet as IslandsOutlet } from \"./islands/server-router\";\nconst A = import.meta.env.START_ISLANDS_ROUTER ? function IslandsA(props) {\n  const [, rest] = splitProps(props, [\"state\", \"activeClass\", \"inactiveClass\", \"end\"]);\n  const location = useLocation();\n  const isActive = () => {\n    return props.href.startsWith(\"#\") ? location.hash === props.href : location.pathname === props.href;\n  };\n  return _$ssrElement(\"a\", _$mergeProps({\n    link: true\n  }, rest, {\n    get state() {\n      return JSON.stringify(props.state);\n    },\n    get classList() {\n      return {\n        [props.inactiveClass || \"inactive\"]: !isActive(),\n        [props.activeClass || \"active\"]: isActive(),\n        ...rest.classList\n      };\n    },\n    get [\"aria-current\"]() {\n      return isActive() ? \"page\" : void 0;\n    }\n  }), void 0, true);\n} : BaseA;\nconst Routes = import.meta.env.START_ISLANDS_ROUTER ? function IslandsRoutes(props) {\n  return _$createComponent(IslandsOutlet, {\n    get children() {\n      return _$createComponent(BaseRoutes, {\n        get children() {\n          return props.children;\n        }\n      });\n    }\n  });\n} : BaseRoutes;\nconst Outlet = import.meta.env.START_ISLANDS_ROUTER ? function HybridOutlet() {\n  return _$createComponent(IslandsOutlet, {\n    get children() {\n      return _$createComponent(BaseOutlet, {});\n    }\n  });\n} : BaseOutlet;\nconst useLocation = import.meta.env.START_ISLANDS_ROUTER && !import.meta.env.SSR ? function IslandsUseLocation() {\n  return {\n    get pathname() {\n      let location = window.LOCATION();\n      return location.pathname;\n    },\n    get hash() {\n      let location = window.LOCATION();\n      return location.hash;\n    }\n  };\n} : useBaseLocation;\nconst useNavigate = import.meta.env.START_ISLANDS_ROUTER && !import.meta.env.SSR ? function IslandsUseNavigate() {\n  return (to, props) => window.NAVIGATE(to, props);\n} : useBaseNavigate;\nexport { A, Outlet, Routes, useLocation, useNavigate };\n",
+      "start": 1767441590198,
+      "end": 1767441590373,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/router.tsx"
+        ],
+        "sourcesContent": [
+          "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrElement as _$ssrElement } from \"solid-js/web\";\nimport { mergeProps as _$mergeProps } from \"solid-js/web\";\nimport { A as BaseA, Location, Navigator, Outlet as BaseOutlet, Routes as BaseRoutes, useLocation as useBaseLocation, useNavigate as useBaseNavigate } from \"@solidjs/router\";\nimport { splitProps } from \"solid-js\";\nimport { Outlet as IslandsOutlet } from \"./islands/server-router\";\nconst A = import.meta.env.START_ISLANDS_ROUTER ? function IslandsA(props: ComponentProps<typeof BaseA>) {\n  const [, rest] = splitProps(props, [\"state\", \"activeClass\", \"inactiveClass\", \"end\"]);\n  const location = useLocation();\n  const isActive = () => {\n    return props.href.startsWith(\"#\") ? location.hash === props.href : location.pathname === props.href;\n  };\n  return _$ssrElement(\"a\", _$mergeProps({\n    link: true\n  }, rest, {\n    get state() {\n      return JSON.stringify(props.state);\n    },\n    get classList() {\n      return {\n        [props.inactiveClass || \"inactive\"]: !isActive(),\n        [props.activeClass || \"active\"]: isActive(),\n        ...rest.classList\n      };\n    },\n    get [\"aria-current\"]() {\n      return isActive() ? \"page\" : undefined;\n    }\n  }), undefined, true);\n} : BaseA;\nconst Routes = import.meta.env.START_ISLANDS_ROUTER ? function IslandsRoutes(props: ComponentProps<any>) {\n  return _$createComponent(IslandsOutlet, {\n    get children() {\n      return _$createComponent(BaseRoutes, {\n        get children() {\n          return props.children;\n        }\n      });\n    }\n  });\n} : BaseRoutes;\nconst Outlet = import.meta.env.START_ISLANDS_ROUTER ? function HybridOutlet() {\n  return _$createComponent(IslandsOutlet, {\n    get children() {\n      return _$createComponent(BaseOutlet, {});\n    }\n  });\n} : BaseOutlet;\nconst useLocation = import.meta.env.START_ISLANDS_ROUTER && !import.meta.env.SSR ? function IslandsUseLocation() {\n  return {\n    get pathname() {\n      let location = window.LOCATION();\n      return location.pathname;\n    },\n    get hash() {\n      let location = window.LOCATION();\n      return location.hash;\n    }\n  } as Location;\n} : useBaseLocation;\nconst useNavigate = import.meta.env.START_ISLANDS_ROUTER && !import.meta.env.SSR ? function IslandsUseNavigate() {\n  return ((to: string, props?: Partial<NavigateOptions<unknown>>) => window.NAVIGATE(to, props)) as unknown as Navigator;\n} : useBaseNavigate;\ndeclare global {\n  interface Window {\n    LOCATION: Accessor<Location>;\n    NAVIGATE: Navigator;\n  }\n}\nexport { A, Outlet, Routes, useLocation, useNavigate };"
+        ],
+        "mappings": "AAAA,SAAS,mBAAmB,yBAAyB;AACrD,SAAS,cAAc,oBAAoB;AAC3C,SAAS,cAAc,oBAAoB;AAC3C,SAAS,KAAK,OAA4B,UAAU,YAAY,UAAU,YAAY,eAAe,iBAAiB,eAAe,uBAAuB;AAC5J,SAAS,kBAAkB;AAC3B,SAAS,UAAU,qBAAqB;AACxC,MAAM,IAAI,YAAY,IAAI,uBAAuB,SAAS,SAAS,OAAqC;AACtG,QAAM,CAAC,EAAE,IAAI,IAAI,WAAW,OAAO,CAAC,SAAS,eAAe,iBAAiB,KAAK,CAAC;AACnF,QAAM,WAAW,YAAY;AAC7B,QAAM,WAAW,MAAM;AACrB,WAAO,MAAM,KAAK,WAAW,GAAG,IAAI,SAAS,SAAS,MAAM,OAAO,SAAS,aAAa,MAAM;AAAA,EACjG;AACA,SAAO,aAAa,KAAK,aAAa;AAAA,IACpC,MAAM;AAAA,EACR,GAAG,MAAM;AAAA,IACP,IAAI,QAAQ;AACV,aAAO,KAAK,UAAU,MAAM,KAAK;AAAA,IACnC;AAAA,IACA,IAAI,YAAY;AACd,aAAO;AAAA,QACL,CAAC,MAAM,iBAAiB,UAAU,GAAG,CAAC,SAAS;AAAA,QAC/C,CAAC,MAAM,eAAe,QAAQ,GAAG,SAAS;AAAA,QAC1C,GAAG,KAAK;AAAA,MACV;AAAA,IACF;AAAA,IACA,KAAK,cAAc,IAAI;AACrB,aAAO,SAAS,IAAI,SAAS;AAAA,IAC/B;AAAA,EACF,CAAC,GAAG,QAAW,IAAI;AACrB,IAAI;AACJ,MAAM,SAAS,YAAY,IAAI,uBAAuB,SAAS,cAAc,OAA4B;AACvG,SAAO,kBAAkB,eAAe;AAAA,IACtC,IAAI,WAAW;AACb,aAAO,kBAAkB,YAAY;AAAA,QACnC,IAAI,WAAW;AACb,iBAAO,MAAM;AAAA,QACf;AAAA,MACF,CAAC;AAAA,IACH;AAAA,EACF,CAAC;AACH,IAAI;AACJ,MAAM,SAAS,YAAY,IAAI,uBAAuB,SAAS,eAAe;AAC5E,SAAO,kBAAkB,eAAe;AAAA,IACtC,IAAI,WAAW;AACb,aAAO,kBAAkB,YAAY,CAAC,CAAC;AAAA,IACzC;AAAA,EACF,CAAC;AACH,IAAI;AACJ,MAAM,cAAc,YAAY,IAAI,wBAAwB,CAAC,YAAY,IAAI,MAAM,SAAS,qBAAqB;AAC/G,SAAO;AAAA,IACL,IAAI,WAAW;AACb,UAAI,WAAW,OAAO,SAAS;AAC/B,aAAO,SAAS;AAAA,IAClB;AAAA,IACA,IAAI,OAAO;AACT,UAAI,WAAW,OAAO,SAAS;AAC/B,aAAO,SAAS;AAAA,IAClB;AAAA,EACF;AACF,IAAI;AACJ,MAAM,cAAc,YAAY,IAAI,wBAAwB,CAAC,YAAY,IAAI,MAAM,SAAS,qBAAqB;AAC/G,SAAQ,CAAC,IAAY,UAA8C,OAAO,SAAS,IAAI,KAAK;AAC9F,IAAI;AAOJ,SAAS,GAAG,QAAQ,QAAQ,aAAa;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrElement as _$ssrElement } from \"solid-js/web\";\nimport { mergeProps as _$mergeProps } from \"solid-js/web\";\nimport { A as BaseA, Outlet as BaseOutlet, Routes as BaseRoutes, useLocation as useBaseLocation, useNavigate as useBaseNavigate } from \"@solidjs/router\";\nimport { splitProps } from \"solid-js\";\nimport { Outlet as IslandsOutlet } from \"./islands/server-router\";\nconst A = false ? function IslandsA(props) {\n  const [, rest] = splitProps(props, [\"state\", \"activeClass\", \"inactiveClass\", \"end\"]);\n  const location = useLocation();\n  const isActive = () => {\n    return props.href.startsWith(\"#\") ? location.hash === props.href : location.pathname === props.href;\n  };\n  return _$ssrElement(\"a\", _$mergeProps({\n    link: true\n  }, rest, {\n    get state() {\n      return JSON.stringify(props.state);\n    },\n    get classList() {\n      return {\n        [props.inactiveClass || \"inactive\"]: !isActive(),\n        [props.activeClass || \"active\"]: isActive(),\n        ...rest.classList\n      };\n    },\n    get [\"aria-current\"]() {\n      return isActive() ? \"page\" : void 0;\n    }\n  }), void 0, true);\n} : BaseA;\nconst Routes = false ? function IslandsRoutes(props) {\n  return _$createComponent(IslandsOutlet, {\n    get children() {\n      return _$createComponent(BaseRoutes, {\n        get children() {\n          return props.children;\n        }\n      });\n    }\n  });\n} : BaseRoutes;\nconst Outlet = false ? function HybridOutlet() {\n  return _$createComponent(IslandsOutlet, {\n    get children() {\n      return _$createComponent(BaseOutlet, {});\n    }\n  });\n} : BaseOutlet;\nconst useLocation = false && !import.meta.env.SSR ? function IslandsUseLocation() {\n  return {\n    get pathname() {\n      let location = window.LOCATION();\n      return location.pathname;\n    },\n    get hash() {\n      let location = window.LOCATION();\n      return location.hash;\n    }\n  };\n} : useBaseLocation;\nconst useNavigate = false && !import.meta.env.SSR ? function IslandsUseNavigate() {\n  return (to, props) => window.NAVIGATE(to, props);\n} : useBaseNavigate;\nexport { A, Outlet, Routes, useLocation, useNavigate };\n",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590373,
+      "end": 1767441590374,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590374,
+      "end": 1767441590374,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590374,
+      "end": 1767441590374,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import.meta.env = {\"VITE_USER_NODE_ENV\":\"development\",\"BASE_URL\":\"/\",\"MODE\":\"development\",\"DEV\":true,\"PROD\":false,\"SSR\":true};import.meta.env.START_SSR = true;import.meta.env.START_ISLANDS = false;import.meta.env.START_ENTRY_CLIENT = \"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-client.tsx\";import.meta.env.START_ENTRY_SERVER = \"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-server.tsx\";import.meta.env.START_INDEX_HTML = false;import.meta.env.START_ISLANDS_ROUTER = false;import.meta.env.START_ADAPTER = \"vercel\";import { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrElement as _$ssrElement } from \"solid-js/web\";\nimport { mergeProps as _$mergeProps } from \"solid-js/web\";\nimport { A as BaseA, Outlet as BaseOutlet, Routes as BaseRoutes, useLocation as useBaseLocation, useNavigate as useBaseNavigate } from \"/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/index.jsx\";\nimport { splitProps } from \"solid-js\";\nimport { Outlet as IslandsOutlet } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/islands/server-router.tsx\";\nconst A = false ? function IslandsA(props) {\n  const [, rest] = splitProps(props, [\"state\", \"activeClass\", \"inactiveClass\", \"end\"]);\n  const location = useLocation();\n  const isActive = () => {\n    return props.href.startsWith(\"#\") ? location.hash === props.href : location.pathname === props.href;\n  };\n  return _$ssrElement(\"a\", _$mergeProps({\n    link: true\n  }, rest, {\n    get state() {\n      return JSON.stringify(props.state);\n    },\n    get classList() {\n      return {\n        [props.inactiveClass || \"inactive\"]: !isActive(),\n        [props.activeClass || \"active\"]: isActive(),\n        ...rest.classList\n      };\n    },\n    get [\"aria-current\"]() {\n      return isActive() ? \"page\" : void 0;\n    }\n  }), void 0, true);\n} : BaseA;\nconst Routes = false ? function IslandsRoutes(props) {\n  return _$createComponent(IslandsOutlet, {\n    get children() {\n      return _$createComponent(BaseRoutes, {\n        get children() {\n          return props.children;\n        }\n      });\n    }\n  });\n} : BaseRoutes;\nconst Outlet = false ? function HybridOutlet() {\n  return _$createComponent(IslandsOutlet, {\n    get children() {\n      return _$createComponent(BaseOutlet, {});\n    }\n  });\n} : BaseOutlet;\nconst useLocation = false && !import.meta.env.SSR ? function IslandsUseLocation() {\n  return {\n    get pathname() {\n      let location = window.LOCATION();\n      return location.pathname;\n    },\n    get hash() {\n      let location = window.LOCATION();\n      return location.hash;\n    }\n  };\n} : useBaseLocation;\nconst useNavigate = false && !import.meta.env.SSR ? function IslandsUseNavigate() {\n  return (to, props) => window.NAVIGATE(to, props);\n} : useBaseNavigate;\nexport { A, Outlet, Routes, useLocation, useNavigate };\n",
+      "start": 1767441590374,
+      "end": 1767441590377,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/integration.js",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { createSignal, onCleanup } from \"solid-js\";\nfunction bindEvent(target, type, handler) {\n    target.addEventListener(type, handler);\n    return () => target.removeEventListener(type, handler);\n}\nfunction intercept([value, setValue], get, set) {\n    return [get ? () => get(value()) : value, set ? (v) => setValue(set(v)) : setValue];\n}\nfunction querySelector(selector) {\n    if (selector === \"#\") {\n        return null;\n    }\n    // Guard against selector being an invalid CSS selector\n    try {\n        return document.querySelector(selector);\n    }\n    catch (e) {\n        return null;\n    }\n}\nfunction scrollToHash(hash, fallbackTop) {\n    const el = querySelector(`#${hash}`);\n    if (el) {\n        el.scrollIntoView();\n    }\n    else if (fallbackTop) {\n        window.scrollTo(0, 0);\n    }\n}\nexport function createMemoryHistory() {\n    const entries = [\"/\"];\n    let index = 0;\n    const listeners = [];\n    const go = (n) => {\n        // https://github.com/remix-run/react-router/blob/682810ca929d0e3c64a76f8d6e465196b7a2ac58/packages/router/history.ts#L245\n        index = Math.max(0, Math.min(index + n, entries.length - 1));\n        const value = entries[index];\n        listeners.forEach(listener => listener(value));\n    };\n    return {\n        get: () => entries[index],\n        set: ({ value, scroll, replace }) => {\n            if (replace) {\n                entries[index] = value;\n            }\n            else {\n                entries.splice(index + 1, entries.length - index, value);\n                index++;\n            }\n            if (scroll) {\n                scrollToHash(value.split(\"#\")[1] || \"\", true);\n            }\n        },\n        back: () => {\n            go(-1);\n        },\n        forward: () => {\n            go(1);\n        },\n        go,\n        listen: (listener) => {\n            listeners.push(listener);\n            return () => {\n                const index = listeners.indexOf(listener);\n                listeners.splice(index, 1);\n            };\n        }\n    };\n}\nexport function createIntegration(get, set, init, utils) {\n    let ignore = false;\n    const wrap = (value) => (typeof value === \"string\" ? { value } : value);\n    const signal = intercept(createSignal(wrap(get()), { equals: (a, b) => a.value === b.value }), undefined, next => {\n        !ignore && set(next);\n        return next;\n    });\n    init &&\n        onCleanup(init((value = get()) => {\n            ignore = true;\n            signal[1](wrap(value));\n            ignore = false;\n        }));\n    return {\n        signal,\n        utils\n    };\n}\nexport function normalizeIntegration(integration) {\n    if (!integration) {\n        return {\n            signal: createSignal({ value: \"\" })\n        };\n    }\n    else if (Array.isArray(integration)) {\n        return {\n            signal: integration\n        };\n    }\n    return integration;\n}\nexport function staticIntegration(obj) {\n    return {\n        signal: [() => obj, next => Object.assign(obj, next)]\n    };\n}\nexport function pathIntegration() {\n    return createIntegration(() => ({\n        value: window.location.pathname + window.location.search + window.location.hash,\n        state: history.state\n    }), ({ value, replace, scroll, state }) => {\n        if (replace) {\n            window.history.replaceState(state, \"\", value);\n        }\n        else {\n            window.history.pushState(state, \"\", value);\n        }\n        scrollToHash(window.location.hash.slice(1), scroll);\n    }, notify => bindEvent(window, \"popstate\", () => notify()), {\n        go: delta => window.history.go(delta)\n    });\n}\nexport function hashIntegration() {\n    return createIntegration(() => window.location.hash.slice(1), ({ value, replace, scroll, state }) => {\n        if (replace) {\n            window.history.replaceState(state, \"\", \"#\" + value);\n        }\n        else {\n            window.location.hash = value;\n        }\n        const hashIndex = value.indexOf(\"#\");\n        const hash = hashIndex >= 0 ? value.slice(hashIndex + 1) : \"\";\n        scrollToHash(hash, scroll);\n    }, notify => bindEvent(window, \"hashchange\", () => notify()), {\n        go: delta => window.history.go(delta),\n        renderPath: path => `#${path}`,\n        parsePath: str => {\n            const to = str.replace(/^.*?#/, \"\");\n            // Hash-only hrefs like `#foo` from plain anchors will come in as `/#foo` whereas a link to\n            // `/foo` will be `/#/foo`. Check if the to starts with a `/` and if not append it as a hash\n            // to the current path so we can handle these in-page anchors correctly.\n            if (!to.startsWith(\"/\")) {\n                const [, path = \"/\"] = window.location.hash.split(\"#\", 2);\n                return `${path}#${to}`;\n            }\n            return to;\n        }\n    });\n}\nexport function memoryIntegration() {\n    const memoryHistory = createMemoryHistory();\n    return createIntegration(memoryHistory.get, memoryHistory.set, memoryHistory.listen, {\n        go: memoryHistory.go\n    });\n}\n",
+      "start": 1767441590090,
+      "end": 1767441590090
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { createSignal, onCleanup } from \"solid-js\";\nfunction bindEvent(target, type, handler) {\n    target.addEventListener(type, handler);\n    return () => target.removeEventListener(type, handler);\n}\nfunction intercept([value, setValue], get, set) {\n    return [get ? () => get(value()) : value, set ? (v) => setValue(set(v)) : setValue];\n}\nfunction querySelector(selector) {\n    if (selector === \"#\") {\n        return null;\n    }\n    // Guard against selector being an invalid CSS selector\n    try {\n        return document.querySelector(selector);\n    }\n    catch (e) {\n        return null;\n    }\n}\nfunction scrollToHash(hash, fallbackTop) {\n    const el = querySelector(`#${hash}`);\n    if (el) {\n        el.scrollIntoView();\n    }\n    else if (fallbackTop) {\n        window.scrollTo(0, 0);\n    }\n}\nexport function createMemoryHistory() {\n    const entries = [\"/\"];\n    let index = 0;\n    const listeners = [];\n    const go = (n) => {\n        // https://github.com/remix-run/react-router/blob/682810ca929d0e3c64a76f8d6e465196b7a2ac58/packages/router/history.ts#L245\n        index = Math.max(0, Math.min(index + n, entries.length - 1));\n        const value = entries[index];\n        listeners.forEach(listener => listener(value));\n    };\n    return {\n        get: () => entries[index],\n        set: ({ value, scroll, replace }) => {\n            if (replace) {\n                entries[index] = value;\n            }\n            else {\n                entries.splice(index + 1, entries.length - index, value);\n                index++;\n            }\n            if (scroll) {\n                scrollToHash(value.split(\"#\")[1] || \"\", true);\n            }\n        },\n        back: () => {\n            go(-1);\n        },\n        forward: () => {\n            go(1);\n        },\n        go,\n        listen: (listener) => {\n            listeners.push(listener);\n            return () => {\n                const index = listeners.indexOf(listener);\n                listeners.splice(index, 1);\n            };\n        }\n    };\n}\nexport function createIntegration(get, set, init, utils) {\n    let ignore = false;\n    const wrap = (value) => (typeof value === \"string\" ? { value } : value);\n    const signal = intercept(createSignal(wrap(get()), { equals: (a, b) => a.value === b.value }), undefined, next => {\n        !ignore && set(next);\n        return next;\n    });\n    init &&\n        onCleanup(init((value = get()) => {\n            ignore = true;\n            signal[1](wrap(value));\n            ignore = false;\n        }));\n    return {\n        signal,\n        utils\n    };\n}\nexport function normalizeIntegration(integration) {\n    if (!integration) {\n        return {\n            signal: createSignal({ value: \"\" })\n        };\n    }\n    else if (Array.isArray(integration)) {\n        return {\n            signal: integration\n        };\n    }\n    return integration;\n}\nexport function staticIntegration(obj) {\n    return {\n        signal: [() => obj, next => Object.assign(obj, next)]\n    };\n}\nexport function pathIntegration() {\n    return createIntegration(() => ({\n        value: window.location.pathname + window.location.search + window.location.hash,\n        state: history.state\n    }), ({ value, replace, scroll, state }) => {\n        if (replace) {\n            window.history.replaceState(state, \"\", value);\n        }\n        else {\n            window.history.pushState(state, \"\", value);\n        }\n        scrollToHash(window.location.hash.slice(1), scroll);\n    }, notify => bindEvent(window, \"popstate\", () => notify()), {\n        go: delta => window.history.go(delta)\n    });\n}\nexport function hashIntegration() {\n    return createIntegration(() => window.location.hash.slice(1), ({ value, replace, scroll, state }) => {\n        if (replace) {\n            window.history.replaceState(state, \"\", \"#\" + value);\n        }\n        else {\n            window.location.hash = value;\n        }\n        const hashIndex = value.indexOf(\"#\");\n        const hash = hashIndex >= 0 ? value.slice(hashIndex + 1) : \"\";\n        scrollToHash(hash, scroll);\n    }, notify => bindEvent(window, \"hashchange\", () => notify()), {\n        go: delta => window.history.go(delta),\n        renderPath: path => `#${path}`,\n        parsePath: str => {\n            const to = str.replace(/^.*?#/, \"\");\n            // Hash-only hrefs like `#foo` from plain anchors will come in as `/#foo` whereas a link to\n            // `/foo` will be `/#/foo`. Check if the to starts with a `/` and if not append it as a hash\n            // to the current path so we can handle these in-page anchors correctly.\n            if (!to.startsWith(\"/\")) {\n                const [, path = \"/\"] = window.location.hash.split(\"#\", 2);\n                return `${path}#${to}`;\n            }\n            return to;\n        }\n    });\n}\nexport function memoryIntegration() {\n    const memoryHistory = createMemoryHistory();\n    return createIntegration(memoryHistory.get, memoryHistory.set, memoryHistory.listen, {\n        go: memoryHistory.go\n    });\n}\n",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { createSignal, onCleanup } from \"solid-js\";\nfunction bindEvent(target, type, handler) {\n    target.addEventListener(type, handler);\n    return () => target.removeEventListener(type, handler);\n}\nfunction intercept([value, setValue], get, set) {\n    return [get ? () => get(value()) : value, set ? (v) => setValue(set(v)) : setValue];\n}\nfunction querySelector(selector) {\n    if (selector === \"#\") {\n        return null;\n    }\n    // Guard against selector being an invalid CSS selector\n    try {\n        return document.querySelector(selector);\n    }\n    catch (e) {\n        return null;\n    }\n}\nfunction scrollToHash(hash, fallbackTop) {\n    const el = querySelector(`#${hash}`);\n    if (el) {\n        el.scrollIntoView();\n    }\n    else if (fallbackTop) {\n        window.scrollTo(0, 0);\n    }\n}\nexport function createMemoryHistory() {\n    const entries = [\"/\"];\n    let index = 0;\n    const listeners = [];\n    const go = (n) => {\n        // https://github.com/remix-run/react-router/blob/682810ca929d0e3c64a76f8d6e465196b7a2ac58/packages/router/history.ts#L245\n        index = Math.max(0, Math.min(index + n, entries.length - 1));\n        const value = entries[index];\n        listeners.forEach(listener => listener(value));\n    };\n    return {\n        get: () => entries[index],\n        set: ({ value, scroll, replace }) => {\n            if (replace) {\n                entries[index] = value;\n            }\n            else {\n                entries.splice(index + 1, entries.length - index, value);\n                index++;\n            }\n            if (scroll) {\n                scrollToHash(value.split(\"#\")[1] || \"\", true);\n            }\n        },\n        back: () => {\n            go(-1);\n        },\n        forward: () => {\n            go(1);\n        },\n        go,\n        listen: (listener) => {\n            listeners.push(listener);\n            return () => {\n                const index = listeners.indexOf(listener);\n                listeners.splice(index, 1);\n            };\n        }\n    };\n}\nexport function createIntegration(get, set, init, utils) {\n    let ignore = false;\n    const wrap = (value) => (typeof value === \"string\" ? { value } : value);\n    const signal = intercept(createSignal(wrap(get()), { equals: (a, b) => a.value === b.value }), undefined, next => {\n        !ignore && set(next);\n        return next;\n    });\n    init &&\n        onCleanup(init((value = get()) => {\n            ignore = true;\n            signal[1](wrap(value));\n            ignore = false;\n        }));\n    return {\n        signal,\n        utils\n    };\n}\nexport function normalizeIntegration(integration) {\n    if (!integration) {\n        return {\n            signal: createSignal({ value: \"\" })\n        };\n    }\n    else if (Array.isArray(integration)) {\n        return {\n            signal: integration\n        };\n    }\n    return integration;\n}\nexport function staticIntegration(obj) {\n    return {\n        signal: [() => obj, next => Object.assign(obj, next)]\n    };\n}\nexport function pathIntegration() {\n    return createIntegration(() => ({\n        value: window.location.pathname + window.location.search + window.location.hash,\n        state: history.state\n    }), ({ value, replace, scroll, state }) => {\n        if (replace) {\n            window.history.replaceState(state, \"\", value);\n        }\n        else {\n            window.history.pushState(state, \"\", value);\n        }\n        scrollToHash(window.location.hash.slice(1), scroll);\n    }, notify => bindEvent(window, \"popstate\", () => notify()), {\n        go: delta => window.history.go(delta)\n    });\n}\nexport function hashIntegration() {\n    return createIntegration(() => window.location.hash.slice(1), ({ value, replace, scroll, state }) => {\n        if (replace) {\n            window.history.replaceState(state, \"\", \"#\" + value);\n        }\n        else {\n            window.location.hash = value;\n        }\n        const hashIndex = value.indexOf(\"#\");\n        const hash = hashIndex >= 0 ? value.slice(hashIndex + 1) : \"\";\n        scrollToHash(hash, scroll);\n    }, notify => bindEvent(window, \"hashchange\", () => notify()), {\n        go: delta => window.history.go(delta),\n        renderPath: path => `#${path}`,\n        parsePath: str => {\n            const to = str.replace(/^.*?#/, \"\");\n            // Hash-only hrefs like `#foo` from plain anchors will come in as `/#foo` whereas a link to\n            // `/foo` will be `/#/foo`. Check if the to starts with a `/` and if not append it as a hash\n            // to the current path so we can handle these in-page anchors correctly.\n            if (!to.startsWith(\"/\")) {\n                const [, path = \"/\"] = window.location.hash.split(\"#\", 2);\n                return `${path}#${to}`;\n            }\n            return to;\n        }\n    });\n}\nexport function memoryIntegration() {\n    const memoryHistory = createMemoryHistory();\n    return createIntegration(memoryHistory.get, memoryHistory.set, memoryHistory.listen, {\n        go: memoryHistory.go\n    });\n}\n",
+      "start": 1767441590090,
+      "end": 1767441590090,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

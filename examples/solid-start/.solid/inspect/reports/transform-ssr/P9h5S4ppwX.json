@@ -1,0 +1,120 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/cookieSigning.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookieSigning.ts\n */\n\nexport type InternalSignFunctionDoNotUseMe = (value: string, secret: string) => Promise<string>;\n\nexport type InternalUnsignFunctionDoNotUseMe = (\n  cookie: string,\n  secret: string\n) => Promise<string | false>;\n\nconst encoder = /*#__PURE__*/new TextEncoder();\n\nexport const sign: InternalSignFunctionDoNotUseMe = async (value, secret) => {\n  let key = await createKey(secret, [\"sign\"]);\n  let data = encoder.encode(value);\n  let signature = await crypto.subtle.sign(\"HMAC\", key, data);\n  let hash = btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/=+$/, \"\");\n\n  return value + \".\" + hash;\n};\n\nexport const unsign: InternalUnsignFunctionDoNotUseMe = async (signed, secret) => {\n  let index = signed.lastIndexOf(\".\");\n  let value = signed.slice(0, index);\n  let hash = signed.slice(index + 1);\n\n  let key = await createKey(secret, [\"verify\"]);\n  let data = encoder.encode(value);\n  let signature = byteStringToUint8Array(atob(hash));\n  let valid = await crypto.subtle.verify(\"HMAC\", key, signature, data);\n\n  return valid ? value : false;\n};\n\nasync function createKey(secret: string, usages: CryptoKey[\"usages\"]): Promise<CryptoKey> {\n  let key = await crypto.subtle.importKey(\n    \"raw\",\n    encoder.encode(secret),\n    { name: \"HMAC\", hash: \"SHA-256\" },\n    false,\n    usages\n  );\n\n  return key;\n}\n\nfunction byteStringToUint8Array(byteString: string): Uint8Array {\n  let array = new Uint8Array(byteString.length);\n\n  for (let i = 0; i < byteString.length; i++) {\n    array[i] = byteString.charCodeAt(i);\n  }\n\n  return array;\n}\n\n// export async function sign(value: string, secret: string): Promise<string> {\n//     const ec = new TextEncoder();\n//     const signature =\n//       await crypto.subtle.sign('RSASSA-PKCS1-v1_5', secret, ec.encode(value));\n//     return new TextDecoder().decode(signature);\n//   }\n\n//   async function verify(key, signature, data) {\n//     const ec = new TextEncoder();\n//     const verified =\n//       await subtle.verify(\n//         'RSASSA-PKCS1-v1_5',\n//         key,\n//         signature,\n//         ec.encode(data));\n//     return verified;\n//   }\n// }\n\n// export async function unsign(value: string, secret: string): Promise<string | false> {\n//   return cookie.unsign(value, secret);\n// }\n",
+      "start": 1767441590519,
+      "end": 1767441590519
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590519,
+      "end": 1767441590519,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590519,
+      "end": 1767441590519,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590519,
+      "end": 1767441590519,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookieSigning.ts\n */\nconst encoder = /* @__PURE__ */ new TextEncoder();\nexport const sign = async (value, secret) => {\n  let key = await createKey(secret, [\"sign\"]);\n  let data = encoder.encode(value);\n  let signature = await crypto.subtle.sign(\"HMAC\", key, data);\n  let hash = btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/=+$/, \"\");\n  return value + \".\" + hash;\n};\nexport const unsign = async (signed, secret) => {\n  let index = signed.lastIndexOf(\".\");\n  let value = signed.slice(0, index);\n  let hash = signed.slice(index + 1);\n  let key = await createKey(secret, [\"verify\"]);\n  let data = encoder.encode(value);\n  let signature = byteStringToUint8Array(atob(hash));\n  let valid = await crypto.subtle.verify(\"HMAC\", key, signature, data);\n  return valid ? value : false;\n};\nasync function createKey(secret, usages) {\n  let key = await crypto.subtle.importKey(\n    \"raw\",\n    encoder.encode(secret),\n    { name: \"HMAC\", hash: \"SHA-256\" },\n    false,\n    usages\n  );\n  return key;\n}\nfunction byteStringToUint8Array(byteString) {\n  let array = new Uint8Array(byteString.length);\n  for (let i = 0; i < byteString.length; i++) {\n    array[i] = byteString.charCodeAt(i);\n  }\n  return array;\n}\n",
+      "start": 1767441590519,
+      "end": 1767441590640,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "cookieSigning.ts"
+        ],
+        "sourcesContent": [
+          "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookieSigning.ts\n */\n\nexport type InternalSignFunctionDoNotUseMe = (value: string, secret: string) => Promise<string>;\n\nexport type InternalUnsignFunctionDoNotUseMe = (\n  cookie: string,\n  secret: string\n) => Promise<string | false>;\n\nconst encoder = /*#__PURE__*/new TextEncoder();\n\nexport const sign: InternalSignFunctionDoNotUseMe = async (value, secret) => {\n  let key = await createKey(secret, [\"sign\"]);\n  let data = encoder.encode(value);\n  let signature = await crypto.subtle.sign(\"HMAC\", key, data);\n  let hash = btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/=+$/, \"\");\n\n  return value + \".\" + hash;\n};\n\nexport const unsign: InternalUnsignFunctionDoNotUseMe = async (signed, secret) => {\n  let index = signed.lastIndexOf(\".\");\n  let value = signed.slice(0, index);\n  let hash = signed.slice(index + 1);\n\n  let key = await createKey(secret, [\"verify\"]);\n  let data = encoder.encode(value);\n  let signature = byteStringToUint8Array(atob(hash));\n  let valid = await crypto.subtle.verify(\"HMAC\", key, signature, data);\n\n  return valid ? value : false;\n};\n\nasync function createKey(secret: string, usages: CryptoKey[\"usages\"]): Promise<CryptoKey> {\n  let key = await crypto.subtle.importKey(\n    \"raw\",\n    encoder.encode(secret),\n    { name: \"HMAC\", hash: \"SHA-256\" },\n    false,\n    usages\n  );\n\n  return key;\n}\n\nfunction byteStringToUint8Array(byteString: string): Uint8Array {\n  let array = new Uint8Array(byteString.length);\n\n  for (let i = 0; i < byteString.length; i++) {\n    array[i] = byteString.charCodeAt(i);\n  }\n\n  return array;\n}\n\n// export async function sign(value: string, secret: string): Promise<string> {\n//     const ec = new TextEncoder();\n//     const signature =\n//       await crypto.subtle.sign('RSASSA-PKCS1-v1_5', secret, ec.encode(value));\n//     return new TextDecoder().decode(signature);\n//   }\n\n//   async function verify(key, signature, data) {\n//     const ec = new TextEncoder();\n//     const verified =\n//       await subtle.verify(\n//         'RSASSA-PKCS1-v1_5',\n//         key,\n//         signature,\n//         ec.encode(data));\n//     return verified;\n//   }\n// }\n\n// export async function unsign(value: string, secret: string): Promise<string | false> {\n//   return cookie.unsign(value, secret);\n// }\n"
+        ],
+        "mappings": "AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAeA,MAAM,UAAuB,oBAAI,YAAY;AAEtC,aAAM,OAAuC,OAAO,OAAO,WAAW;AAC3E,MAAI,MAAM,MAAM,UAAU,QAAQ,CAAC,MAAM,CAAC;AAC1C,MAAI,OAAO,QAAQ,OAAO,KAAK;AAC/B,MAAI,YAAY,MAAM,OAAO,OAAO,KAAK,QAAQ,KAAK,IAAI;AAC1D,MAAI,OAAO,KAAK,OAAO,aAAa,GAAG,IAAI,WAAW,SAAS,CAAC,CAAC,EAAE,QAAQ,OAAO,EAAE;AAEpF,SAAO,QAAQ,MAAM;AACvB;AAEO,aAAM,SAA2C,OAAO,QAAQ,WAAW;AAChF,MAAI,QAAQ,OAAO,YAAY,GAAG;AAClC,MAAI,QAAQ,OAAO,MAAM,GAAG,KAAK;AACjC,MAAI,OAAO,OAAO,MAAM,QAAQ,CAAC;AAEjC,MAAI,MAAM,MAAM,UAAU,QAAQ,CAAC,QAAQ,CAAC;AAC5C,MAAI,OAAO,QAAQ,OAAO,KAAK;AAC/B,MAAI,YAAY,uBAAuB,KAAK,IAAI,CAAC;AACjD,MAAI,QAAQ,MAAM,OAAO,OAAO,OAAO,QAAQ,KAAK,WAAW,IAAI;AAEnE,SAAO,QAAQ,QAAQ;AACzB;AAEA,eAAe,UAAU,QAAgB,QAAiD;AACxF,MAAI,MAAM,MAAM,OAAO,OAAO;AAAA,IAC5B;AAAA,IACA,QAAQ,OAAO,MAAM;AAAA,IACrB,EAAE,MAAM,QAAQ,MAAM,UAAU;AAAA,IAChC;AAAA,IACA;AAAA,EACF;AAEA,SAAO;AACT;AAEA,SAAS,uBAAuB,YAAgC;AAC9D,MAAI,QAAQ,IAAI,WAAW,WAAW,MAAM;AAE5C,WAAS,IAAI,GAAG,IAAI,WAAW,QAAQ,KAAK;AAC1C,UAAM,CAAC,IAAI,WAAW,WAAW,CAAC;AAAA,EACpC;AAEA,SAAO;AACT;",
+        "names": [],
+        "x_google_ignoreList": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590640,
+      "end": 1767441590640,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590640,
+      "end": 1767441590640,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590640,
+      "end": 1767441590640,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookieSigning.ts\n */\nconst encoder = /* @__PURE__ */ new TextEncoder();\nexport const sign = async (value, secret) => {\n  let key = await createKey(secret, [\"sign\"]);\n  let data = encoder.encode(value);\n  let signature = await crypto.subtle.sign(\"HMAC\", key, data);\n  let hash = btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/=+$/, \"\");\n  return value + \".\" + hash;\n};\nexport const unsign = async (signed, secret) => {\n  let index = signed.lastIndexOf(\".\");\n  let value = signed.slice(0, index);\n  let hash = signed.slice(index + 1);\n  let key = await createKey(secret, [\"verify\"]);\n  let data = encoder.encode(value);\n  let signature = byteStringToUint8Array(atob(hash));\n  let valid = await crypto.subtle.verify(\"HMAC\", key, signature, data);\n  return valid ? value : false;\n};\nasync function createKey(secret, usages) {\n  let key = await crypto.subtle.importKey(\n    \"raw\",\n    encoder.encode(secret),\n    { name: \"HMAC\", hash: \"SHA-256\" },\n    false,\n    usages\n  );\n  return key;\n}\nfunction byteStringToUint8Array(byteString) {\n  let array = new Uint8Array(byteString.length);\n  for (let i = 0; i < byteString.length; i++) {\n    array[i] = byteString.charCodeAt(i);\n  }\n  return array;\n}\n",
+      "start": 1767441590640,
+      "end": 1767441590640,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookieSigning.ts\n */\nconst encoder = /* @__PURE__ */ new TextEncoder();\nexport const sign = async (value, secret) => {\n  let key = await createKey(secret, [\"sign\"]);\n  let data = encoder.encode(value);\n  let signature = await crypto.subtle.sign(\"HMAC\", key, data);\n  let hash = btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/=+$/, \"\");\n  return value + \".\" + hash;\n};\nexport const unsign = async (signed, secret) => {\n  let index = signed.lastIndexOf(\".\");\n  let value = signed.slice(0, index);\n  let hash = signed.slice(index + 1);\n  let key = await createKey(secret, [\"verify\"]);\n  let data = encoder.encode(value);\n  let signature = byteStringToUint8Array(atob(hash));\n  let valid = await crypto.subtle.verify(\"HMAC\", key, signature, data);\n  return valid ? value : false;\n};\nasync function createKey(secret, usages) {\n  let key = await crypto.subtle.importKey(\n    \"raw\",\n    encoder.encode(secret),\n    { name: \"HMAC\", hash: \"SHA-256\" },\n    false,\n    usages\n  );\n  return key;\n}\nfunction byteStringToUint8Array(byteString) {\n  let array = new Uint8Array(byteString.length);\n  for (let i = 0; i < byteString.length; i++) {\n    array[i] = byteString.charCodeAt(i);\n  }\n  return array;\n}\n",
+      "start": 1767441590641,
+      "end": 1767441590641,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

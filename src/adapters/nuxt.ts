@@ -1,12 +1,29 @@
 import { handleStudioRequest } from '../core/handler.js';
 import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
-export function createStudioHandler(config: StudioConfig) {
-  return async (event: any): Promise<Response> => {
+
+/**
+ * Nuxt adapter for Better Auth Studio
+ *
+ * Usage in a server API route:
+ * ```ts
+ * // server/api/studio/[...all].ts
+ * import { betterAuthStudio } from 'better-auth-studio/nuxt';
+ * import studioConfig from '~/studio.config';
+ * import { toWebRequest } from 'better-auth/nuxt';
+ *
+ * export default defineEventHandler((event) => {
+ *   return betterAuthStudio(studioConfig)(toWebRequest(event));
+ * });
+ * ```
+ */
+export function betterAuthStudio(config: StudioConfig) {
+  return async (request: Request): Promise<Response> => {
     try {
-      const universalReq = await convertNuxtToUniversal(event, config);
+      const universalReq = await convertNuxtToUniversal(request, config);
       const universalRes = await handleStudioRequest(universalReq, config);
       return universalToResponse(universalRes);
     } catch (error) {
+      console.error('Studio handler error:', error);
       return new Response(JSON.stringify({ error: 'Internal server error' }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
@@ -16,64 +33,61 @@ export function createStudioHandler(config: StudioConfig) {
 }
 
 async function convertNuxtToUniversal(
-  event: any,
+  request: Request,
   config: StudioConfig
 ): Promise<UniversalRequest> {
-  let body: any = undefined;
-  const method = event.method || event.node?.req?.method || 'GET';
-
+  let body: any;
+  const method = request.method;
+  console.log({request})
   if (method !== 'GET' && method !== 'HEAD') {
-    const contentType = getContentType(event);
-    body = await readBody(event, contentType);
+    const contentType = request.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      try {
+        body = await request.json();
+      } catch {}
+    } else if (
+      contentType.includes('application/x-www-form-urlencoded') ||
+      contentType.includes('multipart/form-data')
+    ) {
+      try {
+        const formData = await request.formData();
+        body = Object.fromEntries(formData.entries());
+      } catch {}
+    } else {
+      try {
+        const text = await request.text();
+        if (text && text.trim()) {
+          try {
+            body = JSON.parse(text);
+          } catch {
+            body = text;
+          }
+        }
+      } catch {}
+    }
   }
 
   const headers: Record<string, string> = {};
-  if (event.headers) {
-    if (event.headers.forEach) {
-      event.headers.forEach((value: string, key: string) => {
-        headers[key] = value;
-      });
-    } else if (typeof event.headers.entries === 'function') {
-      for (const [key, value] of event.headers.entries()) {
-        headers[key] = String(value);
-      }
-    } else {
-      Object.entries(event.headers).forEach(([key, value]) => {
-        headers[key] = String(value);
-      });
-    }
-  }
+  request.headers.forEach((value: string, key: string) => {
+    headers[key] = value;
+  });
 
   const basePath = config.basePath || '/api/studio';
   const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
-  const fullPath = event.path || event.node?.req?.url?.split('?')[0] || '/';
-  
-  let path = '/';
-  const catchAllParam = event.context?.params?._ || event.context?.params?.['...'];
-  
-  if (catchAllParam !== undefined && catchAllParam !== null) {
-    const segments = Array.isArray(catchAllParam) ? catchAllParam : [catchAllParam];
-    const validSegments = segments.filter((s: any) => s !== '' && s !== null && s !== undefined);
-    if (validSegments.length > 0) {
-      path = '/' + validSegments.join('/');
-    }
-  } else {
-    if (fullPath.startsWith(normalizedBasePath)) {
-      path = fullPath.slice(normalizedBasePath.length) || '/';
-    }
+  if(!request.url) {
+    throw new Error('Request URL is required');
   }
-  
-  if (!path.startsWith('/')) {
-    path = '/' + path;
+  const url = new URL(request.url);
+  let path = url.pathname;
+
+  if (path.startsWith(normalizedBasePath)) {
+    path = path.slice(normalizedBasePath.length) || '/';
   }
 
-  const query = event.query || {};
-  const queryString = Object.keys(query).length > 0
-    ? '?' + new URLSearchParams(query as Record<string, string>).toString()
-    : '';
+  const pathWithQuery = path + url.search;
 
   return {
-    url: path + queryString,
+    url: pathWithQuery,
     method: method,
     headers,
     body,
@@ -81,98 +95,8 @@ async function convertNuxtToUniversal(
 }
 
 function universalToResponse(res: UniversalResponse): Response {
-  let body: any;
-  if (Buffer.isBuffer(res.body)) {
-    body = new Uint8Array(res.body);
-  } else if (res.body !== null && res.body !== undefined) {
-    body = res.body;
-  } else {
-    body = null;
-  }
-  
-  const headers = new Headers();
-  Object.entries(res.headers || {}).forEach(([key, value]) => {
-    if (value) {
-      headers.set(key, String(value));
-    }
-  });
-  
-  return new Response(body, {
-    status: res.status || 200,
-    headers: headers,
+  return new Response(res.body, {
+    status: res.status,
+    headers: res.headers,
   });
 }
-
-function getContentType(event: any): string {
-  if (event.headers) {
-    if (typeof event.headers.get === 'function') {
-      return event.headers.get('content-type') || '';
-    }
-    return event.headers['content-type'] || event.headers['Content-Type'] || '';
-  }
-  return '';
-}
-
-async function readBody(event: any, contentType: string = ''): Promise<any> {
-  try {
-    if (event._requestBody !== undefined && event._requestBody !== null) {
-      const body = event._requestBody;
-      if (typeof body === 'string' && contentType.includes('application/json')) {
-        try {
-          return JSON.parse(body);
-        } catch {
-          return body;
-        }
-      }
-      return body;
-    }
-    
-    if (event.body !== undefined && event.body !== null) {
-      const body = event.body;
-      if (typeof body === 'string' && contentType.includes('application/json')) {
-        try {
-          return JSON.parse(body);
-        } catch {
-          return body;
-        }
-      }
-      return body;
-    }
-    
-    if (typeof event.readBody === 'function') {
-      return await event.readBody();
-    }
-    
-    if (event.req && typeof event.req.text === 'function') {
-      const text = await event.req.text();
-      if (text) {
-        if (contentType.startsWith('application/x-www-form-urlencoded')) {
-          const params = new URLSearchParams(text);
-          return Object.fromEntries(params.entries());
-        } else {
-          try {
-            return JSON.parse(text);
-          } catch {
-            return text;
-          }
-        }
-      }
-    }
-    
-    return undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-async function readFormData(event: any): Promise<FormData> {
-  if (typeof event.readFormData === 'function') {
-    return await event.readFormData();
-  }
-  if (event.request && typeof event.request.formData === 'function') {
-    return await event.request.formData();
-  }
-  return new FormData();
-}
-
-

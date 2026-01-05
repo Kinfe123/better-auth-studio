@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/api/studio/*studio.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { betterAuthStudio } from \"better-auth-studio/solid-start\";\nimport studioConfig from \"../../../../studio.config\";\n\nconst handler = betterAuthStudio(studioConfig);\n\nexport const GET = handler;\nexport const POST = handler;\nexport const PUT = handler;\nexport const DELETE = handler;\nexport const PATCH = handler;\n",
+      "start": 1767441590154,
+      "end": 1767441590154
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590154,
+      "end": 1767441590154,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590154,
+      "end": 1767441590154,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590154,
+      "end": 1767441590154,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { betterAuthStudio } from \"better-auth-studio/solid-start\";\nimport studioConfig from \"../../../../studio.config\";\nconst handler = betterAuthStudio(studioConfig);\nexport const GET = handler;\nexport const POST = handler;\nexport const PUT = handler;\nexport const DELETE = handler;\nexport const PATCH = handler;\n",
+      "start": 1767441590154,
+      "end": 1767441590168,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "*studio.ts"
+        ],
+        "sourcesContent": [
+          "import { betterAuthStudio } from \"better-auth-studio/solid-start\";\nimport studioConfig from \"../../../../studio.config\";\n\nconst handler = betterAuthStudio(studioConfig);\n\nexport const GET = handler;\nexport const POST = handler;\nexport const PUT = handler;\nexport const DELETE = handler;\nexport const PATCH = handler;\n"
+        ],
+        "mappings": "AAAA,SAAS,wBAAwB;AACjC,OAAO,kBAAkB;AAEzB,MAAM,UAAU,iBAAiB,YAAY;AAEtC,aAAM,MAAM;AACZ,aAAM,OAAO;AACb,aAAM,MAAM;AACZ,aAAM,SAAS;AACf,aAAM,QAAQ;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { betterAuthStudio } from \"better-auth-studio/solid-start\";\nimport studioConfig from \"../../../../studio.config\";\nconst handler = betterAuthStudio(studioConfig);\nexport const GET = handler;\nexport const POST = handler;\nexport const PUT = handler;\nexport const DELETE = handler;\nexport const PATCH = handler;\n",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { betterAuthStudio } from \"better-auth-studio/solid-start\";\nimport studioConfig from \"/studio.config.ts\";\nconst handler = betterAuthStudio(studioConfig);\nexport const GET = handler;\nexport const POST = handler;\nexport const PUT = handler;\nexport const DELETE = handler;\nexport const PATCH = handler;\n",
+      "start": 1767441590168,
+      "end": 1767441590175,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

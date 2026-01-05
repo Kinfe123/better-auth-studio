@@ -1,0 +1,120 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/cookies.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookies.ts\n */\n\nimport type { CookieParseOptions, CookieSerializeOptions } from \"./cookie\";\nimport { parseCookie, serializeCookie } from \"./cookie\";\n\nexport type SignFunction = (value: string, secret: string) => Promise<string>;\n\nexport type UnsignFunction = (cookie: string, secret: string) => Promise<string | false>;\n\nexport type { CookieParseOptions, CookieSerializeOptions };\n\nexport interface CookieSignatureOptions {\n  /**\n   * An array of secrets that may be used to sign/unsign the value of a cookie.\n   *\n   * The array makes it easy to rotate secrets. New secrets should be added to\n   * the beginning of the array. `cookie.serialize()` will always use the first\n   * value in the array, but `cookie.parse()` may use any of them so that\n   * cookies that were signed with older secrets still work.\n   */\n  secrets?: string[];\n}\n\nexport type CookieOptions = CookieParseOptions & CookieSerializeOptions & CookieSignatureOptions;\n\n/**\n * A HTTP cookie.\n *\n * A Cookie is a logical container for metadata about a HTTP cookie; its name\n * and options. But it doesn't contain a value. Instead, it has `parse()` and\n * `serialize()` methods that allow a single instance to be reused for\n * parsing/encoding multiple different values.\n *\n * @see https://remix.run/api/remix#cookie-api\n */\nexport interface Cookie {\n  /**\n   * The name of the cookie, used in the `Cookie` and `Set-Cookie` headers.\n   */\n  readonly name: string;\n\n  /**\n   * True if this cookie uses one or more secrets for verification.\n   */\n  readonly isSigned: boolean;\n\n  /**\n   * The Date this cookie expires.\n   *\n   * Note: This is calculated at access time using `maxAge` when no `expires`\n   * option is provided to `createCookie()`.\n   */\n  readonly expires?: Date;\n\n  /**\n   * Parses a raw `Cookie` header and returns the value of this cookie or\n   * `null` if it's not present.\n   */\n  parse(cookieHeader: string | null, options?: CookieParseOptions): Promise<any>;\n\n  /**\n   * Serializes the given value to a string and returns the `Set-Cookie`\n   * header.\n   */\n  serialize(value: any, options?: CookieSerializeOptions): Promise<string>;\n}\n\nexport type CreateCookieFunction = (name: string, cookieOptions?: CookieOptions) => Cookie;\n\n/**\n * Creates a logical container for managing a browser cookie from the server.\n *\n * @see https://remix.run/api/remix#createcookie\n */\nexport const createCookieFactory =\n  ({ sign, unsign }: { sign: SignFunction; unsign: UnsignFunction }): CreateCookieFunction =>\n  (name, cookieOptions = {}) => {\n    let { secrets, ...options } = {\n      secrets: [],\n      path: \"/\",\n      ...cookieOptions\n    };\n\n    return {\n      get name() {\n        return name;\n      },\n      get isSigned() {\n        return secrets.length > 0;\n      },\n      get expires() {\n        // Max-Age takes precedence over Expires\n        return typeof options.maxAge !== \"undefined\"\n          ? new Date(Date.now() + options.maxAge * 1000)\n          : options.expires;\n      },\n      async parse(cookieHeader, parseOptions) {\n        if (!cookieHeader) return null;\n        let cookies = parseCookie(cookieHeader, { ...options, ...parseOptions });\n        return name in cookies\n          ? cookies[name] === \"\"\n            ? \"\"\n            : await decodeCookieValue(unsign, cookies[name], secrets)\n          : null;\n      },\n      async serialize(value, serializeOptions) {\n        return serializeCookie(\n          name,\n          value === \"\" ? \"\" : await encodeCookieValue(sign, value, secrets),\n          {\n            ...options,\n            ...serializeOptions\n          }\n        );\n      }\n    };\n  };\n\nexport type IsCookieFunction = (object: any) => object is Cookie;\n\n/**\n * Returns true if an object is a Remix cookie container.\n *\n * @see https://remix.run/api/remix#iscookie\n */\nexport const isCookie: IsCookieFunction = (object): object is Cookie => {\n  return (\n    object != null &&\n    typeof object.name === \"string\" &&\n    typeof object.isSigned === \"boolean\" &&\n    typeof object.parse === \"function\" &&\n    typeof object.serialize === \"function\"\n  );\n};\n\nasync function encodeCookieValue(\n  sign: SignFunction,\n  value: any,\n  secrets: string[]\n): Promise<string> {\n  let encoded = encodeData(value);\n\n  if (secrets.length > 0) {\n    encoded = await sign(encoded, secrets[0]);\n  }\n\n  return encoded;\n}\n\nasync function decodeCookieValue(\n  unsign: UnsignFunction,\n  value: string,\n  secrets: string[]\n): Promise<any> {\n  if (secrets.length > 0) {\n    for (let secret of secrets) {\n      let unsignedValue = await unsign(value, secret);\n      if (unsignedValue !== false) {\n        return decodeData(unsignedValue);\n      }\n    }\n\n    return null;\n  }\n\n  return decodeData(value);\n}\n\nfunction encodeData(value: any): string {\n  return btoa(JSON.stringify(value));\n}\n\nfunction decodeData(value: string): any {\n  try {\n    return JSON.parse(atob(value));\n  } catch (error) {\n    return {};\n  }\n}\n",
+      "start": 1767441590519,
+      "end": 1767441590519
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590519,
+      "end": 1767441590519,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590519,
+      "end": 1767441590519,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590519,
+      "end": 1767441590519,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookies.ts\n */\nimport { parseCookie, serializeCookie } from \"./cookie\";\nexport const createCookieFactory = ({ sign, unsign }) => (name, cookieOptions = {}) => {\n  let { secrets, ...options } = {\n    secrets: [],\n    path: \"/\",\n    ...cookieOptions\n  };\n  return {\n    get name() {\n      return name;\n    },\n    get isSigned() {\n      return secrets.length > 0;\n    },\n    get expires() {\n      return typeof options.maxAge !== \"undefined\" ? new Date(Date.now() + options.maxAge * 1e3) : options.expires;\n    },\n    async parse(cookieHeader, parseOptions) {\n      if (!cookieHeader)\n        return null;\n      let cookies = parseCookie(cookieHeader, { ...options, ...parseOptions });\n      return name in cookies ? cookies[name] === \"\" ? \"\" : await decodeCookieValue(unsign, cookies[name], secrets) : null;\n    },\n    async serialize(value, serializeOptions) {\n      return serializeCookie(\n        name,\n        value === \"\" ? \"\" : await encodeCookieValue(sign, value, secrets),\n        {\n          ...options,\n          ...serializeOptions\n        }\n      );\n    }\n  };\n};\nexport const isCookie = (object) => {\n  return object != null && typeof object.name === \"string\" && typeof object.isSigned === \"boolean\" && typeof object.parse === \"function\" && typeof object.serialize === \"function\";\n};\nasync function encodeCookieValue(sign, value, secrets) {\n  let encoded = encodeData(value);\n  if (secrets.length > 0) {\n    encoded = await sign(encoded, secrets[0]);\n  }\n  return encoded;\n}\nasync function decodeCookieValue(unsign, value, secrets) {\n  if (secrets.length > 0) {\n    for (let secret of secrets) {\n      let unsignedValue = await unsign(value, secret);\n      if (unsignedValue !== false) {\n        return decodeData(unsignedValue);\n      }\n    }\n    return null;\n  }\n  return decodeData(value);\n}\nfunction encodeData(value) {\n  return btoa(JSON.stringify(value));\n}\nfunction decodeData(value) {\n  try {\n    return JSON.parse(atob(value));\n  } catch (error) {\n    return {};\n  }\n}\n",
+      "start": 1767441590519,
+      "end": 1767441590609,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "cookies.ts"
+        ],
+        "sourcesContent": [
+          "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookies.ts\n */\n\nimport type { CookieParseOptions, CookieSerializeOptions } from \"./cookie\";\nimport { parseCookie, serializeCookie } from \"./cookie\";\n\nexport type SignFunction = (value: string, secret: string) => Promise<string>;\n\nexport type UnsignFunction = (cookie: string, secret: string) => Promise<string | false>;\n\nexport type { CookieParseOptions, CookieSerializeOptions };\n\nexport interface CookieSignatureOptions {\n  /**\n   * An array of secrets that may be used to sign/unsign the value of a cookie.\n   *\n   * The array makes it easy to rotate secrets. New secrets should be added to\n   * the beginning of the array. `cookie.serialize()` will always use the first\n   * value in the array, but `cookie.parse()` may use any of them so that\n   * cookies that were signed with older secrets still work.\n   */\n  secrets?: string[];\n}\n\nexport type CookieOptions = CookieParseOptions & CookieSerializeOptions & CookieSignatureOptions;\n\n/**\n * A HTTP cookie.\n *\n * A Cookie is a logical container for metadata about a HTTP cookie; its name\n * and options. But it doesn't contain a value. Instead, it has `parse()` and\n * `serialize()` methods that allow a single instance to be reused for\n * parsing/encoding multiple different values.\n *\n * @see https://remix.run/api/remix#cookie-api\n */\nexport interface Cookie {\n  /**\n   * The name of the cookie, used in the `Cookie` and `Set-Cookie` headers.\n   */\n  readonly name: string;\n\n  /**\n   * True if this cookie uses one or more secrets for verification.\n   */\n  readonly isSigned: boolean;\n\n  /**\n   * The Date this cookie expires.\n   *\n   * Note: This is calculated at access time using `maxAge` when no `expires`\n   * option is provided to `createCookie()`.\n   */\n  readonly expires?: Date;\n\n  /**\n   * Parses a raw `Cookie` header and returns the value of this cookie or\n   * `null` if it's not present.\n   */\n  parse(cookieHeader: string | null, options?: CookieParseOptions): Promise<any>;\n\n  /**\n   * Serializes the given value to a string and returns the `Set-Cookie`\n   * header.\n   */\n  serialize(value: any, options?: CookieSerializeOptions): Promise<string>;\n}\n\nexport type CreateCookieFunction = (name: string, cookieOptions?: CookieOptions) => Cookie;\n\n/**\n * Creates a logical container for managing a browser cookie from the server.\n *\n * @see https://remix.run/api/remix#createcookie\n */\nexport const createCookieFactory =\n  ({ sign, unsign }: { sign: SignFunction; unsign: UnsignFunction }): CreateCookieFunction =>\n  (name, cookieOptions = {}) => {\n    let { secrets, ...options } = {\n      secrets: [],\n      path: \"/\",\n      ...cookieOptions\n    };\n\n    return {\n      get name() {\n        return name;\n      },\n      get isSigned() {\n        return secrets.length > 0;\n      },\n      get expires() {\n        // Max-Age takes precedence over Expires\n        return typeof options.maxAge !== \"undefined\"\n          ? new Date(Date.now() + options.maxAge * 1000)\n          : options.expires;\n      },\n      async parse(cookieHeader, parseOptions) {\n        if (!cookieHeader) return null;\n        let cookies = parseCookie(cookieHeader, { ...options, ...parseOptions });\n        return name in cookies\n          ? cookies[name] === \"\"\n            ? \"\"\n            : await decodeCookieValue(unsign, cookies[name], secrets)\n          : null;\n      },\n      async serialize(value, serializeOptions) {\n        return serializeCookie(\n          name,\n          value === \"\" ? \"\" : await encodeCookieValue(sign, value, secrets),\n          {\n            ...options,\n            ...serializeOptions\n          }\n        );\n      }\n    };\n  };\n\nexport type IsCookieFunction = (object: any) => object is Cookie;\n\n/**\n * Returns true if an object is a Remix cookie container.\n *\n * @see https://remix.run/api/remix#iscookie\n */\nexport const isCookie: IsCookieFunction = (object): object is Cookie => {\n  return (\n    object != null &&\n    typeof object.name === \"string\" &&\n    typeof object.isSigned === \"boolean\" &&\n    typeof object.parse === \"function\" &&\n    typeof object.serialize === \"function\"\n  );\n};\n\nasync function encodeCookieValue(\n  sign: SignFunction,\n  value: any,\n  secrets: string[]\n): Promise<string> {\n  let encoded = encodeData(value);\n\n  if (secrets.length > 0) {\n    encoded = await sign(encoded, secrets[0]);\n  }\n\n  return encoded;\n}\n\nasync function decodeCookieValue(\n  unsign: UnsignFunction,\n  value: string,\n  secrets: string[]\n): Promise<any> {\n  if (secrets.length > 0) {\n    for (let secret of secrets) {\n      let unsignedValue = await unsign(value, secret);\n      if (unsignedValue !== false) {\n        return decodeData(unsignedValue);\n      }\n    }\n\n    return null;\n  }\n\n  return decodeData(value);\n}\n\nfunction encodeData(value: any): string {\n  return btoa(JSON.stringify(value));\n}\n\nfunction decodeData(value: string): any {\n  try {\n    return JSON.parse(atob(value));\n  } catch (error) {\n    return {};\n  }\n}\n"
+        ],
+        "mappings": "AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AASA,SAAS,aAAa,uBAAuB;AAuEtC,aAAM,sBACX,CAAC,EAAE,MAAM,OAAO,MAChB,CAAC,MAAM,gBAAgB,CAAC,MAAM;AAC5B,MAAI,EAAE,SAAS,GAAG,QAAQ,IAAI;AAAA,IAC5B,SAAS,CAAC;AAAA,IACV,MAAM;AAAA,IACN,GAAG;AAAA,EACL;AAEA,SAAO;AAAA,IACL,IAAI,OAAO;AACT,aAAO;AAAA,IACT;AAAA,IACA,IAAI,WAAW;AACb,aAAO,QAAQ,SAAS;AAAA,IAC1B;AAAA,IACA,IAAI,UAAU;AAEZ,aAAO,OAAO,QAAQ,WAAW,cAC7B,IAAI,KAAK,KAAK,IAAI,IAAI,QAAQ,SAAS,GAAI,IAC3C,QAAQ;AAAA,IACd;AAAA,IACA,MAAM,MAAM,cAAc,cAAc;AACtC,UAAI,CAAC;AAAc,eAAO;AAC1B,UAAI,UAAU,YAAY,cAAc,EAAE,GAAG,SAAS,GAAG,aAAa,CAAC;AACvE,aAAO,QAAQ,UACX,QAAQ,IAAI,MAAM,KAChB,KACA,MAAM,kBAAkB,QAAQ,QAAQ,IAAI,GAAG,OAAO,IACxD;AAAA,IACN;AAAA,IACA,MAAM,UAAU,OAAO,kBAAkB;AACvC,aAAO;AAAA,QACL;AAAA,QACA,UAAU,KAAK,KAAK,MAAM,kBAAkB,MAAM,OAAO,OAAO;AAAA,QAChE;AAAA,UACE,GAAG;AAAA,UACH,GAAG;AAAA,QACL;AAAA,MACF;AAAA,IACF;AAAA,EACF;AACF;AASK,aAAM,WAA6B,CAAC,WAA6B;AACtE,SACE,UAAU,QACV,OAAO,OAAO,SAAS,YACvB,OAAO,OAAO,aAAa,aAC3B,OAAO,OAAO,UAAU,cACxB,OAAO,OAAO,cAAc;AAEhC;AAEA,eAAe,kBACb,MACA,OACA,SACiB;AACjB,MAAI,UAAU,WAAW,KAAK;AAE9B,MAAI,QAAQ,SAAS,GAAG;AACtB,cAAU,MAAM,KAAK,SAAS,QAAQ,CAAC,CAAC;AAAA,EAC1C;AAEA,SAAO;AACT;AAEA,eAAe,kBACb,QACA,OACA,SACc;AACd,MAAI,QAAQ,SAAS,GAAG;AACtB,aAAS,UAAU,SAAS;AAC1B,UAAI,gBAAgB,MAAM,OAAO,OAAO,MAAM;AAC9C,UAAI,kBAAkB,OAAO;AAC3B,eAAO,WAAW,aAAa;AAAA,MACjC;AAAA,IACF;AAEA,WAAO;AAAA,EACT;AAEA,SAAO,WAAW,KAAK;AACzB;AAEA,SAAS,WAAW,OAAoB;AACtC,SAAO,KAAK,KAAK,UAAU,KAAK,CAAC;AACnC;AAEA,SAAS,WAAW,OAAoB;AACtC,MAAI;AACF,WAAO,KAAK,MAAM,KAAK,KAAK,CAAC;AAAA,EAC/B,SAAS,OAAO;AACd,WAAO,CAAC;AAAA,EACV;AACF;",
+        "names": [],
+        "x_google_ignoreList": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookies.ts\n */\nimport { parseCookie, serializeCookie } from \"./cookie\";\nexport const createCookieFactory = ({ sign, unsign }) => (name, cookieOptions = {}) => {\n  let { secrets, ...options } = {\n    secrets: [],\n    path: \"/\",\n    ...cookieOptions\n  };\n  return {\n    get name() {\n      return name;\n    },\n    get isSigned() {\n      return secrets.length > 0;\n    },\n    get expires() {\n      return typeof options.maxAge !== \"undefined\" ? new Date(Date.now() + options.maxAge * 1e3) : options.expires;\n    },\n    async parse(cookieHeader, parseOptions) {\n      if (!cookieHeader)\n        return null;\n      let cookies = parseCookie(cookieHeader, { ...options, ...parseOptions });\n      return name in cookies ? cookies[name] === \"\" ? \"\" : await decodeCookieValue(unsign, cookies[name], secrets) : null;\n    },\n    async serialize(value, serializeOptions) {\n      return serializeCookie(\n        name,\n        value === \"\" ? \"\" : await encodeCookieValue(sign, value, secrets),\n        {\n          ...options,\n          ...serializeOptions\n        }\n      );\n    }\n  };\n};\nexport const isCookie = (object) => {\n  return object != null && typeof object.name === \"string\" && typeof object.isSigned === \"boolean\" && typeof object.parse === \"function\" && typeof object.serialize === \"function\";\n};\nasync function encodeCookieValue(sign, value, secrets) {\n  let encoded = encodeData(value);\n  if (secrets.length > 0) {\n    encoded = await sign(encoded, secrets[0]);\n  }\n  return encoded;\n}\nasync function decodeCookieValue(unsign, value, secrets) {\n  if (secrets.length > 0) {\n    for (let secret of secrets) {\n      let unsignedValue = await unsign(value, secret);\n      if (unsignedValue !== false) {\n        return decodeData(unsignedValue);\n      }\n    }\n    return null;\n  }\n  return decodeData(value);\n}\nfunction encodeData(value) {\n  return btoa(JSON.stringify(value));\n}\nfunction decodeData(value) {\n  try {\n    return JSON.parse(atob(value));\n  } catch (error) {\n    return {};\n  }\n}\n",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590609,
+      "end": 1767441590609,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n * \n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime/cookies.ts\n */\nimport { parseCookie, serializeCookie } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/cookie.ts\";\nexport const createCookieFactory = ({ sign, unsign }) => (name, cookieOptions = {}) => {\n  let { secrets, ...options } = {\n    secrets: [],\n    path: \"/\",\n    ...cookieOptions\n  };\n  return {\n    get name() {\n      return name;\n    },\n    get isSigned() {\n      return secrets.length > 0;\n    },\n    get expires() {\n      return typeof options.maxAge !== \"undefined\" ? new Date(Date.now() + options.maxAge * 1e3) : options.expires;\n    },\n    async parse(cookieHeader, parseOptions) {\n      if (!cookieHeader)\n        return null;\n      let cookies = parseCookie(cookieHeader, { ...options, ...parseOptions });\n      return name in cookies ? cookies[name] === \"\" ? \"\" : await decodeCookieValue(unsign, cookies[name], secrets) : null;\n    },\n    async serialize(value, serializeOptions) {\n      return serializeCookie(\n        name,\n        value === \"\" ? \"\" : await encodeCookieValue(sign, value, secrets),\n        {\n          ...options,\n          ...serializeOptions\n        }\n      );\n    }\n  };\n};\nexport const isCookie = (object) => {\n  return object != null && typeof object.name === \"string\" && typeof object.isSigned === \"boolean\" && typeof object.parse === \"function\" && typeof object.serialize === \"function\";\n};\nasync function encodeCookieValue(sign, value, secrets) {\n  let encoded = encodeData(value);\n  if (secrets.length > 0) {\n    encoded = await sign(encoded, secrets[0]);\n  }\n  return encoded;\n}\nasync function decodeCookieValue(unsign, value, secrets) {\n  if (secrets.length > 0) {\n    for (let secret of secrets) {\n      let unsignedValue = await unsign(value, secret);\n      if (unsignedValue !== false) {\n        return decodeData(unsignedValue);\n      }\n    }\n    return null;\n  }\n  return decodeData(value);\n}\nfunction encodeData(value) {\n  return btoa(JSON.stringify(value));\n}\nfunction decodeData(value) {\n  try {\n    return JSON.parse(atob(value));\n  } catch (error) {\n    return {};\n  }\n}\n",
+      "start": 1767441590609,
+      "end": 1767441590610,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

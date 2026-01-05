@@ -276,7 +276,19 @@ export const SvelteKitIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) 
     ></path>
   </svg>
 );
-
+export const NuxtIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1.2em"
+    height="1.2em"
+    viewBox="0 0 256 256"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M128 0L0 128l128 128 128-128L128 0zm0 240L16 128 128 16l112 112-112 112z" fill="#00DC82"/>
+    <path d="M128 32L32 128l96 96 96-96-96-96zm0 176L48 128l80-80 80 80-80 80z" fill="#00DC82"/>
+  </svg>
+);
 export const SolidStartIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

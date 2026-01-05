@@ -1,0 +1,192 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Links.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { JSXElement, useContext } from \"solid-js\";\nimport { useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport type { IslandManifest, ManifestEntry, PageEvent } from \"../server/types\";\nimport { routeLayouts } from \"./InlineStyles\";\n\ntype NotUndefined<T> = T extends undefined ? never : T;\n\ntype RouterContext = NotUndefined<PageEvent[\"routerContext\"]>\n\nfunction flattenIslands(match: ManifestEntry[], manifest: Record<string, ManifestEntry> | IslandManifest) {\n  let result = [...match];\n  match.forEach(m => {\n    if (m.type !== \"island\") return;\n    const islandManifest = manifest[m.href as keyof typeof manifest] as unknown as IslandManifest | undefined;\n    if (islandManifest) {\n      const res = flattenIslands((islandManifest as IslandManifest).assets, manifest);\n      result.push(...res);\n    }\n  });\n  return result;\n}\n\nfunction getAssetsFromManifest(\n  manifest: PageEvent[\"env\"][\"manifest\"],\n  routerContext: RouterContext\n) {\n  let match = routerContext.matches ? routerContext.matches.reduce<ManifestEntry[]>((memo, m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match) => previous + match.originalPath, \"\");\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(...((manifest![route.id] || []) as ManifestEntry[]));\n        const layoutsManifestEntries = route.layouts.flatMap(\n          manifestKey => (manifest![manifestKey as keyof typeof manifest] || []) as ManifestEntry[]\n        );\n        memo.push(...layoutsManifestEntries);\n      }\n    }\n    return memo;\n  }, []) : [];\n\n  match.push(...((manifest![\"entry-client\"] || []) as ManifestEntry[]));\n\n  match = manifest ? flattenIslands(match, manifest as any) : [];\n\n  const links = match.reduce((r, src) => {\n    r[src.href] =\n      src.type === \"style\" ? (\n        <link rel=\"stylesheet\" href={src.href} $ServerOnly />\n      ) : src.type === \"script\" ? (\n        <link rel=\"modulepreload\" href={src.href} $ServerOnly />\n      ) : undefined;\n    return r;\n  }, {} as Record<string, JSXElement>);\n\n  return Object.values(links);\n}\n\n/**\n * Links are used to load assets for the server rendered HTML\n * @returns {JSXElement}\n */\nexport default function Links() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  !isDev &&\n    import.meta.env.START_SSR &&\n    useAssets(() => getAssetsFromManifest(context!.env.manifest, context!.routerContext!));\n  return null;\n}\n",
+      "start": 1767441590533,
+      "end": 1767441590533
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590533,
+      "end": 1767441590533,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<link\", \" rel=\\\"stylesheet\\\"\", \">\"],\n  _tmpl$2 = [\"<link\", \" rel=\\\"modulepreload\\\"\", \">\"];\nimport { JSXElement, useContext } from \"solid-js\";\nimport { useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport type { IslandManifest, ManifestEntry, PageEvent } from \"../server/types\";\nimport { routeLayouts } from \"./InlineStyles\";\ntype NotUndefined<T> = T extends undefined ? never : T;\ntype RouterContext = NotUndefined<PageEvent[\"routerContext\"]>;\nfunction flattenIslands(match: ManifestEntry[], manifest: Record<string, ManifestEntry> | IslandManifest) {\n  let result = [...match];\n  match.forEach(m => {\n    if (m.type !== \"island\") return;\n    const islandManifest = manifest[m.href as keyof typeof manifest] as unknown as IslandManifest | undefined;\n    if (islandManifest) {\n      const res = flattenIslands((islandManifest as IslandManifest).assets, manifest);\n      result.push(...res);\n    }\n  });\n  return result;\n}\nfunction getAssetsFromManifest(manifest: PageEvent[\"env\"][\"manifest\"], routerContext: RouterContext) {\n  let match = routerContext.matches ? routerContext.matches.reduce<ManifestEntry[]>((memo, m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match) => previous + match.originalPath, \"\");\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(...((manifest![route.id] || []) as ManifestEntry[]));\n        const layoutsManifestEntries = route.layouts.flatMap(manifestKey => (manifest![manifestKey as keyof typeof manifest] || []) as ManifestEntry[]);\n        memo.push(...layoutsManifestEntries);\n      }\n    }\n    return memo;\n  }, []) : [];\n  match.push(...((manifest![\"entry-client\"] || []) as ManifestEntry[]));\n  match = manifest ? flattenIslands(match, manifest as any) : [];\n  const links = match.reduce((r, src) => {\n    r[src.href] = src.type === \"style\" ? _$ssr(_tmpl$, _$ssrHydrationKey(), _$ssrAttribute(\"href\", _$escape(src.href, true), false)) : src.type === \"script\" ? _$ssr(_tmpl$2, _$ssrHydrationKey(), _$ssrAttribute(\"href\", _$escape(src.href, true), false)) : undefined;\n    return r;\n  }, {} as Record<string, JSXElement>);\n  return Object.values(links);\n}\n\n/**\n * Links are used to load assets for the server rendered HTML\n * @returns {JSXElement}\n */\nexport default function Links() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  !isDev && import.meta.env.START_SSR && useAssets(() => getAssetsFromManifest(context!.env.manifest, context!.routerContext!));\n  return null;\n}",
+      "start": 1767441590533,
+      "end": 1767441590544,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "JSXElement",
+          "useContext",
+          "useAssets",
+          "ServerContext",
+          "IslandManifest",
+          "ManifestEntry",
+          "PageEvent",
+          "routeLayouts",
+          "NotUndefined",
+          "T",
+          "RouterContext",
+          "flattenIslands",
+          "match",
+          "manifest",
+          "Record",
+          "result",
+          "forEach",
+          "m",
+          "type",
+          "islandManifest",
+          "href",
+          "res",
+          "assets",
+          "push",
+          "getAssetsFromManifest",
+          "routerContext",
+          "matches",
+          "reduce",
+          "memo",
+          "length",
+          "fullPath",
+          "previous",
+          "originalPath",
+          "route",
+          "id",
+          "layoutsManifestEntries",
+          "layouts",
+          "flatMap",
+          "manifestKey",
+          "links",
+          "r",
+          "src",
+          "_$ssr",
+          "_tmpl$",
+          "_$ssrHydrationKey",
+          "_$ssrAttribute",
+          "_$escape",
+          "_tmpl$2",
+          "undefined",
+          "Object",
+          "values",
+          "Links",
+          "isDev",
+          "import",
+          "meta",
+          "env",
+          "MODE",
+          "context",
+          "START_SSR"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Links.tsx"
+        ],
+        "sourcesContent": [
+          "import { JSXElement, useContext } from \"solid-js\";\nimport { useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport type { IslandManifest, ManifestEntry, PageEvent } from \"../server/types\";\nimport { routeLayouts } from \"./InlineStyles\";\n\ntype NotUndefined<T> = T extends undefined ? never : T;\n\ntype RouterContext = NotUndefined<PageEvent[\"routerContext\"]>\n\nfunction flattenIslands(match: ManifestEntry[], manifest: Record<string, ManifestEntry> | IslandManifest) {\n  let result = [...match];\n  match.forEach(m => {\n    if (m.type !== \"island\") return;\n    const islandManifest = manifest[m.href as keyof typeof manifest] as unknown as IslandManifest | undefined;\n    if (islandManifest) {\n      const res = flattenIslands((islandManifest as IslandManifest).assets, manifest);\n      result.push(...res);\n    }\n  });\n  return result;\n}\n\nfunction getAssetsFromManifest(\n  manifest: PageEvent[\"env\"][\"manifest\"],\n  routerContext: RouterContext\n) {\n  let match = routerContext.matches ? routerContext.matches.reduce<ManifestEntry[]>((memo, m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match) => previous + match.originalPath, \"\");\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(...((manifest![route.id] || []) as ManifestEntry[]));\n        const layoutsManifestEntries = route.layouts.flatMap(\n          manifestKey => (manifest![manifestKey as keyof typeof manifest] || []) as ManifestEntry[]\n        );\n        memo.push(...layoutsManifestEntries);\n      }\n    }\n    return memo;\n  }, []) : [];\n\n  match.push(...((manifest![\"entry-client\"] || []) as ManifestEntry[]));\n\n  match = manifest ? flattenIslands(match, manifest as any) : [];\n\n  const links = match.reduce((r, src) => {\n    r[src.href] =\n      src.type === \"style\" ? (\n        <link rel=\"stylesheet\" href={src.href} $ServerOnly />\n      ) : src.type === \"script\" ? (\n        <link rel=\"modulepreload\" href={src.href} $ServerOnly />\n      ) : undefined;\n    return r;\n  }, {} as Record<string, JSXElement>);\n\n  return Object.values(links);\n}\n\n/**\n * Links are used to load assets for the server rendered HTML\n * @returns {JSXElement}\n */\nexport default function Links() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  !isDev &&\n    import.meta.env.START_SSR &&\n    useAssets(() => getAssetsFromManifest(context!.env.manifest, context!.routerContext!));\n  return null;\n}\n"
+        ],
+        "mappings": "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",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590544,
+      "end": 1767441590544,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<link\", ' rel=\"stylesheet\"', \">\"], _tmpl$2 = [\"<link\", ' rel=\"modulepreload\"', \">\"];\nimport { useContext } from \"solid-js\";\nimport { useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport { routeLayouts } from \"./InlineStyles\";\nfunction flattenIslands(match, manifest) {\n  let result = [...match];\n  match.forEach((m) => {\n    if (m.type !== \"island\")\n      return;\n    const islandManifest = manifest[m.href];\n    if (islandManifest) {\n      const res = flattenIslands(islandManifest.assets, manifest);\n      result.push(...res);\n    }\n  });\n  return result;\n}\nfunction getAssetsFromManifest(manifest, routerContext) {\n  let match = routerContext.matches ? routerContext.matches.reduce((memo, m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match2) => previous + match2.originalPath, \"\");\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(...manifest[route.id] || []);\n        const layoutsManifestEntries = route.layouts.flatMap((manifestKey) => manifest[manifestKey] || []);\n        memo.push(...layoutsManifestEntries);\n      }\n    }\n    return memo;\n  }, []) : [];\n  match.push(...manifest[\"entry-client\"] || []);\n  match = manifest ? flattenIslands(match, manifest) : [];\n  const links = match.reduce((r, src) => {\n    r[src.href] = src.type === \"style\" ? _$ssr(_tmpl$, _$ssrHydrationKey(), _$ssrAttribute(\"href\", _$escape(src.href, true), false)) : src.type === \"script\" ? _$ssr(_tmpl$2, _$ssrHydrationKey(), _$ssrAttribute(\"href\", _$escape(src.href, true), false)) : void 0;\n    return r;\n  }, {});\n  return Object.values(links);\n}\nexport default function Links() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  !isDev && import.meta.env.START_SSR && useAssets(() => getAssetsFromManifest(context.env.manifest, context.routerContext));\n  return null;\n}\n",
+      "start": 1767441590544,
+      "end": 1767441590655,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Links.tsx"
+        ],
+        "sourcesContent": [
+          "import { ssr as _$ssr } from \"solid-js/web\";\nimport { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<link\", \" rel=\\\"stylesheet\\\"\", \">\"],\n  _tmpl$2 = [\"<link\", \" rel=\\\"modulepreload\\\"\", \">\"];\nimport { JSXElement, useContext } from \"solid-js\";\nimport { useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport type { IslandManifest, ManifestEntry, PageEvent } from \"../server/types\";\nimport { routeLayouts } from \"./InlineStyles\";\ntype NotUndefined<T> = T extends undefined ? never : T;\ntype RouterContext = NotUndefined<PageEvent[\"routerContext\"]>;\nfunction flattenIslands(match: ManifestEntry[], manifest: Record<string, ManifestEntry> | IslandManifest) {\n  let result = [...match];\n  match.forEach(m => {\n    if (m.type !== \"island\") return;\n    const islandManifest = manifest[m.href as keyof typeof manifest] as unknown as IslandManifest | undefined;\n    if (islandManifest) {\n      const res = flattenIslands((islandManifest as IslandManifest).assets, manifest);\n      result.push(...res);\n    }\n  });\n  return result;\n}\nfunction getAssetsFromManifest(manifest: PageEvent[\"env\"][\"manifest\"], routerContext: RouterContext) {\n  let match = routerContext.matches ? routerContext.matches.reduce<ManifestEntry[]>((memo, m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match) => previous + match.originalPath, \"\");\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(...((manifest![route.id] || []) as ManifestEntry[]));\n        const layoutsManifestEntries = route.layouts.flatMap(manifestKey => (manifest![manifestKey as keyof typeof manifest] || []) as ManifestEntry[]);\n        memo.push(...layoutsManifestEntries);\n      }\n    }\n    return memo;\n  }, []) : [];\n  match.push(...((manifest![\"entry-client\"] || []) as ManifestEntry[]));\n  match = manifest ? flattenIslands(match, manifest as any) : [];\n  const links = match.reduce((r, src) => {\n    r[src.href] = src.type === \"style\" ? _$ssr(_tmpl$, _$ssrHydrationKey(), _$ssrAttribute(\"href\", _$escape(src.href, true), false)) : src.type === \"script\" ? _$ssr(_tmpl$2, _$ssrHydrationKey(), _$ssrAttribute(\"href\", _$escape(src.href, true), false)) : undefined;\n    return r;\n  }, {} as Record<string, JSXElement>);\n  return Object.values(links);\n}\n\n/**\n * Links are used to load assets for the server rendered HTML\n * @returns {JSXElement}\n */\nexport default function Links() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  !isDev && import.meta.env.START_SSR && useAssets(() => getAssetsFromManifest(context!.env.manifest, context!.routerContext!));\n  return null;\n}"
+        ],
+        "mappings": "AAAA,SAAS,OAAO,aAAa;AAC7B,SAAS,gBAAgB,sBAAsB;AAC/C,SAAS,UAAU,gBAAgB;AACnC,SAAS,mBAAmB,yBAAyB;AACrD,IAAI,SAAS,CAAC,SAAS,qBAAuB,GAAG,GAC/C,UAAU,CAAC,SAAS,wBAA0B,GAAG;AACnD,SAAqB,kBAAkB;AACvC,SAAS,iBAAiB;AAC1B,SAAS,qBAAqB;AAE9B,SAAS,oBAAoB;AAG7B,SAAS,eAAe,OAAwB,UAA0D;AACxG,MAAI,SAAS,CAAC,GAAG,KAAK;AACtB,QAAM,QAAQ,OAAK;AACjB,QAAI,EAAE,SAAS;AAAU;AACzB,UAAM,iBAAiB,SAAS,EAAE,IAA6B;AAC/D,QAAI,gBAAgB;AAClB,YAAM,MAAM,eAAgB,eAAkC,QAAQ,QAAQ;AAC9E,aAAO,KAAK,GAAG,GAAG;AAAA,IACpB;AAAA,EACF,CAAC;AACD,SAAO;AACT;AACA,SAAS,sBAAsB,UAAwC,eAA8B;AACnG,MAAI,QAAQ,cAAc,UAAU,cAAc,QAAQ,OAAwB,CAAC,MAAM,MAAM;AAC7F,QAAI,EAAE,QAAQ;AACZ,YAAM,WAAW,EAAE,OAAO,CAAC,UAAUA,WAAU,WAAWA,OAAM,cAAc,EAAE;AAChF,YAAM,QAAQ,aAAa,QAAQ;AACnC,UAAI,OAAO;AACT,aAAK,KAAK,GAAK,SAAU,MAAM,EAAE,KAAK,CAAC,CAAsB;AAC7D,cAAM,yBAAyB,MAAM,QAAQ,QAAQ,iBAAgB,SAAU,WAAoC,KAAK,CAAC,CAAqB;AAC9I,aAAK,KAAK,GAAG,sBAAsB;AAAA,MACrC;AAAA,IACF;AACA,WAAO;AAAA,EACT,GAAG,CAAC,CAAC,IAAI,CAAC;AACV,QAAM,KAAK,GAAK,SAAU,cAAc,KAAK,CAAC,CAAsB;AACpE,UAAQ,WAAW,eAAe,OAAO,QAAe,IAAI,CAAC;AAC7D,QAAM,QAAQ,MAAM,OAAO,CAAC,GAAG,QAAQ;AACrC,MAAE,IAAI,IAAI,IAAI,IAAI,SAAS,UAAU,MAAM,QAAQ,kBAAkB,GAAG,eAAe,QAAQ,SAAS,IAAI,MAAM,IAAI,GAAG,KAAK,CAAC,IAAI,IAAI,SAAS,WAAW,MAAM,SAAS,kBAAkB,GAAG,eAAe,QAAQ,SAAS,IAAI,MAAM,IAAI,GAAG,KAAK,CAAC,IAAI;AAC1P,WAAO;AAAA,EACT,GAAG,CAAC,CAA+B;AACnC,SAAO,OAAO,OAAO,KAAK;AAC5B;AAMA,wBAAwB,QAAQ;AAC9B,QAAM,QAAQ,YAAY,IAAI,SAAS;AACvC,QAAM,UAAU,WAAW,aAAa;AACxC,GAAC,SAAS,YAAY,IAAI,aAAa,UAAU,MAAM,sBAAsB,QAAS,IAAI,UAAU,QAAS,aAAc,CAAC;AAC5H,SAAO;AACT;",
+        "names": [
+          "match"
+        ]
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590655,
+      "end": 1767441590655,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590655,
+      "end": 1767441590655,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590655,
+      "end": 1767441590655,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<link\", ' rel=\"stylesheet\"', \">\"], _tmpl$2 = [\"<link\", ' rel=\"modulepreload\"', \">\"];\nimport { useContext } from \"solid-js\";\nimport { useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport { routeLayouts } from \"./InlineStyles\";\nfunction flattenIslands(match, manifest) {\n  let result = [...match];\n  match.forEach((m) => {\n    if (m.type !== \"island\")\n      return;\n    const islandManifest = manifest[m.href];\n    if (islandManifest) {\n      const res = flattenIslands(islandManifest.assets, manifest);\n      result.push(...res);\n    }\n  });\n  return result;\n}\nfunction getAssetsFromManifest(manifest, routerContext) {\n  let match = routerContext.matches ? routerContext.matches.reduce((memo, m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match2) => previous + match2.originalPath, \"\");\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(...manifest[route.id] || []);\n        const layoutsManifestEntries = route.layouts.flatMap((manifestKey) => manifest[manifestKey] || []);\n        memo.push(...layoutsManifestEntries);\n      }\n    }\n    return memo;\n  }, []) : [];\n  match.push(...manifest[\"entry-client\"] || []);\n  match = manifest ? flattenIslands(match, manifest) : [];\n  const links = match.reduce((r, src) => {\n    r[src.href] = src.type === \"style\" ? _$ssr(_tmpl$, _$ssrHydrationKey(), _$ssrAttribute(\"href\", _$escape(src.href, true), false)) : src.type === \"script\" ? _$ssr(_tmpl$2, _$ssrHydrationKey(), _$ssrAttribute(\"href\", _$escape(src.href, true), false)) : void 0;\n    return r;\n  }, {});\n  return Object.values(links);\n}\nexport default function Links() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  !isDev && true && useAssets(() => getAssetsFromManifest(context.env.manifest, context.routerContext));\n  return null;\n}\n",
+      "start": 1767441590655,
+      "end": 1767441590656,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import.meta.env = {\"VITE_USER_NODE_ENV\":\"development\",\"BASE_URL\":\"/\",\"MODE\":\"development\",\"DEV\":true,\"PROD\":false,\"SSR\":true};import.meta.env.START_SSR = true;import.meta.env.START_ISLANDS = false;import.meta.env.START_ENTRY_CLIENT = \"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-client.tsx\";import.meta.env.START_ENTRY_SERVER = \"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-server.tsx\";import.meta.env.START_INDEX_HTML = false;import.meta.env.START_ISLANDS_ROUTER = false;import.meta.env.START_ADAPTER = \"vercel\";import { ssr as _$ssr } from \"solid-js/web\";\nimport { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<link\", ' rel=\"stylesheet\"', \">\"], _tmpl$2 = [\"<link\", ' rel=\"modulepreload\"', \">\"];\nimport { useContext } from \"solid-js\";\nimport { useAssets } from \"solid-js/web\";\nimport { ServerContext } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/ServerContext.tsx\";\nimport { routeLayouts } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/InlineStyles.tsx\";\nfunction flattenIslands(match, manifest) {\n  let result = [...match];\n  match.forEach((m) => {\n    if (m.type !== \"island\")\n      return;\n    const islandManifest = manifest[m.href];\n    if (islandManifest) {\n      const res = flattenIslands(islandManifest.assets, manifest);\n      result.push(...res);\n    }\n  });\n  return result;\n}\nfunction getAssetsFromManifest(manifest, routerContext) {\n  let match = routerContext.matches ? routerContext.matches.reduce((memo, m) => {\n    if (m.length) {\n      const fullPath = m.reduce((previous, match2) => previous + match2.originalPath, \"\");\n      const route = routeLayouts[fullPath];\n      if (route) {\n        memo.push(...manifest[route.id] || []);\n        const layoutsManifestEntries = route.layouts.flatMap((manifestKey) => manifest[manifestKey] || []);\n        memo.push(...layoutsManifestEntries);\n      }\n    }\n    return memo;\n  }, []) : [];\n  match.push(...manifest[\"entry-client\"] || []);\n  match = manifest ? flattenIslands(match, manifest) : [];\n  const links = match.reduce((r, src) => {\n    r[src.href] = src.type === \"style\" ? _$ssr(_tmpl$, _$ssrHydrationKey(), _$ssrAttribute(\"href\", _$escape(src.href, true), false)) : src.type === \"script\" ? _$ssr(_tmpl$2, _$ssrHydrationKey(), _$ssrAttribute(\"href\", _$escape(src.href, true), false)) : void 0;\n    return r;\n  }, {});\n  return Object.values(links);\n}\nexport default function Links() {\n  const isDev = import.meta.env.MODE === \"development\";\n  const context = useContext(ServerContext);\n  !isDev && true && useAssets(() => getAssetsFromManifest(context.env.manifest, context.routerContext));\n  return null;\n}\n",
+      "start": 1767441590656,
+      "end": 1767441590657,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

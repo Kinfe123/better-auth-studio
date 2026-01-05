@@ -1,12 +1,35 @@
 import { handleStudioRequest } from '../core/handler.js';
-export function createStudioHandler(config) {
-    return async (event) => {
+/**
+ * Nuxt adapter for Better Auth Studio
+ *
+ * Usage in a server API route:
+ * ```ts
+ * // server/api/studio/[...all].ts
+ * import { betterAuthStudio } from 'better-auth-studio/nuxt';
+ * import studioConfig from '~/studio.config';
+ * import { toWebRequest } from 'better-auth/nuxt';
+ *
+ * export default defineEventHandler(async (event) => {
+ *   // Read body first to avoid stream conflicts
+ *   if (event.method !== 'GET' && event.method !== 'HEAD' && !(event as any).body) {
+ *     try {
+ *       (event as any).body = await readBody(event);
+ *     } catch {}
+ *   }
+ *   const request = toWebRequest(event);
+ *   return betterAuthStudio(studioConfig)(request);
+ * });
+ * ```
+ */
+export function betterAuthStudio(config) {
+    return async (request) => {
         try {
-            const universalReq = await convertNuxtToUniversal(event, config);
+            const universalReq = await convertNuxtToUniversal(request, config);
             const universalRes = await handleStudioRequest(universalReq, config);
             return universalToResponse(universalRes);
         }
         catch (error) {
+            console.error('Studio handler error:', error);
             return new Response(JSON.stringify({ error: 'Internal server error' }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' },
@@ -14,152 +37,93 @@ export function createStudioHandler(config) {
         }
     };
 }
-async function convertNuxtToUniversal(event, config) {
-    let body = undefined;
-    const method = event.method || event.node?.req?.method || 'GET';
+async function convertNuxtToUniversal(request, config) {
+    let body;
+    const method = request.method;
+    // IMPORTANT: Only read body if it hasn't been consumed
+    // If toWebRequest already consumed it, request.bodyUsed will be true
+    // If body was read before toWebRequest, the Request might not have a readable body
     if (method !== 'GET' && method !== 'HEAD') {
-        const contentType = getContentType(event);
-        body = await readBody(event, contentType);
-    }
-    const headers = {};
-    if (event.headers) {
-        if (event.headers.forEach) {
-            event.headers.forEach((value, key) => {
-                headers[key] = value;
-            });
-        }
-        else if (typeof event.headers.entries === 'function') {
-            for (const [key, value] of event.headers.entries()) {
-                headers[key] = String(value);
-            }
+        // Check if body is already consumed
+        if (request.bodyUsed) {
+            // Body was already consumed, we can't read it again
+            // This means toWebRequest consumed it, but we need the body
+            // In this case, the body should have been passed via event.body before toWebRequest
+            // So we leave it undefined - the handler will work without it for some operations
+            body = undefined;
         }
         else {
-            Object.entries(event.headers).forEach(([key, value]) => {
-                headers[key] = String(value);
-            });
+            // Try to read body, but handle errors gracefully
+            const contentType = request.headers.get('content-type') || '';
+            try {
+                if (contentType.includes('application/json')) {
+                    try {
+                        body = await request.json();
+                    }
+                    catch (error) {
+                        // Stream might be closed or consumed
+                        // This is okay - body might not be available
+                    }
+                }
+                else if (contentType.includes('application/x-www-form-urlencoded') ||
+                    contentType.includes('multipart/form-data')) {
+                    try {
+                        const formData = await request.formData();
+                        body = Object.fromEntries(formData.entries());
+                    }
+                    catch (error) {
+                        // Stream read failed
+                    }
+                }
+                else {
+                    try {
+                        const text = await request.text();
+                        if (text && text.trim()) {
+                            try {
+                                body = JSON.parse(text);
+                            }
+                            catch {
+                                body = text;
+                            }
+                        }
+                    }
+                    catch (error) {
+                        // Stream read failed
+                    }
+                }
+            }
+            catch (error) {
+                // Overall body read failed - this is okay, continue without body
+                // This prevents ECONNRESET from crashing the handler
+            }
         }
     }
+    const headers = {};
+    request.headers.forEach((value, key) => {
+        headers[key] = value;
+    });
     const basePath = config.basePath || '/api/studio';
     const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
-    const fullPath = event.path || event.node?.req?.url?.split('?')[0] || '/';
-    let path = '/';
-    const catchAllParam = event.context?.params?._ || event.context?.params?.['...'];
-    if (catchAllParam !== undefined && catchAllParam !== null) {
-        const segments = Array.isArray(catchAllParam) ? catchAllParam : [catchAllParam];
-        const validSegments = segments.filter((s) => s !== '' && s !== null && s !== undefined);
-        if (validSegments.length > 0) {
-            path = '/' + validSegments.join('/');
-        }
+    if (!request.url) {
+        throw new Error('Request URL is required');
     }
-    else {
-        if (fullPath.startsWith(normalizedBasePath)) {
-            path = fullPath.slice(normalizedBasePath.length) || '/';
-        }
+    const url = new URL(request.url);
+    let path = url.pathname;
+    if (path.startsWith(normalizedBasePath)) {
+        path = path.slice(normalizedBasePath.length) || '/';
     }
-    if (!path.startsWith('/')) {
-        path = '/' + path;
-    }
-    const query = event.query || {};
-    const queryString = Object.keys(query).length > 0
-        ? '?' + new URLSearchParams(query).toString()
-        : '';
+    const pathWithQuery = path + url.search;
     return {
-        url: path + queryString,
+        url: pathWithQuery,
         method: method,
         headers,
         body,
     };
 }
 function universalToResponse(res) {
-    let body;
-    if (Buffer.isBuffer(res.body)) {
-        body = new Uint8Array(res.body);
-    }
-    else if (res.body !== null && res.body !== undefined) {
-        body = res.body;
-    }
-    else {
-        body = null;
-    }
-    const headers = new Headers();
-    Object.entries(res.headers || {}).forEach(([key, value]) => {
-        if (value) {
-            headers.set(key, String(value));
-        }
+    return new Response(res.body, {
+        status: res.status,
+        headers: res.headers,
     });
-    return new Response(body, {
-        status: res.status || 200,
-        headers: headers,
-    });
-}
-function getContentType(event) {
-    if (event.headers) {
-        if (typeof event.headers.get === 'function') {
-            return event.headers.get('content-type') || '';
-        }
-        return event.headers['content-type'] || event.headers['Content-Type'] || '';
-    }
-    return '';
-}
-async function readBody(event, contentType = '') {
-    try {
-        if (event._requestBody !== undefined && event._requestBody !== null) {
-            const body = event._requestBody;
-            if (typeof body === 'string' && contentType.includes('application/json')) {
-                try {
-                    return JSON.parse(body);
-                }
-                catch {
-                    return body;
-                }
-            }
-            return body;
-        }
-        if (event.body !== undefined && event.body !== null) {
-            const body = event.body;
-            if (typeof body === 'string' && contentType.includes('application/json')) {
-                try {
-                    return JSON.parse(body);
-                }
-                catch {
-                    return body;
-                }
-            }
-            return body;
-        }
-        if (typeof event.readBody === 'function') {
-            return await event.readBody();
-        }
-        if (event.req && typeof event.req.text === 'function') {
-            const text = await event.req.text();
-            if (text) {
-                if (contentType.startsWith('application/x-www-form-urlencoded')) {
-                    const params = new URLSearchParams(text);
-                    return Object.fromEntries(params.entries());
-                }
-                else {
-                    try {
-                        return JSON.parse(text);
-                    }
-                    catch {
-                        return text;
-                    }
-                }
-            }
-        }
-        return undefined;
-    }
-    catch {
-        return undefined;
-    }
-}
-async function readFormData(event) {
-    if (typeof event.readFormData === 'function') {
-        return await event.readFormData();
-    }
-    if (event.request && typeof event.request.formData === 'function') {
-        return await event.request.formData();
-    }
-    return new FormData();
 }
 //# sourceMappingURL=nuxt.js.map

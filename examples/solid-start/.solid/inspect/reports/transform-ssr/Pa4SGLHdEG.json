@@ -1,0 +1,105 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/lifecycle.js",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "export function createBeforeLeave() {\n    let listeners = new Set();\n    function subscribe(listener) {\n        listeners.add(listener);\n        return () => listeners.delete(listener);\n    }\n    let ignore = false;\n    function confirm(to, options) {\n        if (ignore)\n            return !(ignore = false);\n        const e = {\n            to,\n            options,\n            defaultPrevented: false,\n            preventDefault: () => (e.defaultPrevented = true)\n        };\n        for (const l of listeners)\n            l.listener({\n                ...e,\n                from: l.location,\n                retry: (force) => {\n                    force && (ignore = true);\n                    l.navigate(to, options);\n                }\n            });\n        return !e.defaultPrevented;\n    }\n    return {\n        subscribe,\n        confirm\n    };\n}\n",
+      "start": 1767441590068,
+      "end": 1767441590068
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal"
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "export function createBeforeLeave() {\n    let listeners = new Set();\n    function subscribe(listener) {\n        listeners.add(listener);\n        return () => listeners.delete(listener);\n    }\n    let ignore = false;\n    function confirm(to, options) {\n        if (ignore)\n            return !(ignore = false);\n        const e = {\n            to,\n            options,\n            defaultPrevented: false,\n            preventDefault: () => (e.defaultPrevented = true)\n        };\n        for (const l of listeners)\n            l.listener({\n                ...e,\n                from: l.location,\n                retry: (force) => {\n                    force && (ignore = true);\n                    l.navigate(to, options);\n                }\n            });\n        return !e.defaultPrevented;\n    }\n    return {\n        subscribe,\n        confirm\n    };\n}\n",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "export function createBeforeLeave() {\n    let listeners = new Set();\n    function subscribe(listener) {\n        listeners.add(listener);\n        return () => listeners.delete(listener);\n    }\n    let ignore = false;\n    function confirm(to, options) {\n        if (ignore)\n            return !(ignore = false);\n        const e = {\n            to,\n            options,\n            defaultPrevented: false,\n            preventDefault: () => (e.defaultPrevented = true)\n        };\n        for (const l of listeners)\n            l.listener({\n                ...e,\n                from: l.location,\n                retry: (force) => {\n                    force && (ignore = true);\n                    l.navigate(to, options);\n                }\n            });\n        return !e.defaultPrevented;\n    }\n    return {\n        subscribe,\n        confirm\n    };\n}\n",
+      "start": 1767441590068,
+      "end": 1767441590068,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

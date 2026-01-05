@@ -1,0 +1,189 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/[...404].tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { A } from 'solid-start'\n\nexport default function NotFound() {\n  return (\n    <main class=\"text-center mx-auto text-gray-700 p-4\">\n      <h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">Not Found</h1>\n      <p class=\"mt-8\">\n        Visit{' '}\n        <a href=\"https://solidjs.com\" target=\"_blank\" class=\"text-sky-600 hover:underline\">\n          solidjs.com\n        </a>{' '}\n        to learn how to build Solid apps.\n      </p>\n      <p class=\"my-4\">\n        <A href=\"/\" class=\"text-sky-600 hover:underline\">\n          Home\n        </A>\n        {' - '}\n        <A href=\"/about\" class=\"text-sky-600 hover:underline\">\n          About Page\n        </A>\n      </p>\n    </main>\n  )\n}\n",
+      "start": 1767441590021,
+      "end": 1767441590021,
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "A",
+          "NotFound",
+          "_$ssr",
+          "_tmpl$",
+          "_$ssrHydrationKey",
+          "_$escape",
+          "_$createComponent",
+          "href",
+          "children"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/[...404].tsx"
+        ],
+        "sourcesContent": [
+          "import { A } from 'solid-start'\n\nexport default function NotFound() {\n  return (\n    <main class=\"text-center mx-auto text-gray-700 p-4\">\n      <h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">Not Found</h1>\n      <p class=\"mt-8\">\n        Visit{' '}\n        <a href=\"https://solidjs.com\" target=\"_blank\" class=\"text-sky-600 hover:underline\">\n          solidjs.com\n        </a>{' '}\n        to learn how to build Solid apps.\n      </p>\n      <p class=\"my-4\">\n        <A href=\"/\" class=\"text-sky-600 hover:underline\">\n          Home\n        </A>\n        {' - '}\n        <A href=\"/about\" class=\"text-sky-600 hover:underline\">\n          About Page\n        </A>\n      </p>\n    </main>\n  )\n}\n"
+        ],
+        "mappings": ";;;;;AAAA,SAASA,CAAC,QAAQ,aAAa;AAE/B,eAAe,SAASC,QAAQA,CAAA,EAAG;EACjC,OAAAC,KAAA,CAAAC,MAAA,EAAAC,iBAAA,IAAAC,QAAA,CAAAC,iBAAA,CAWON,CAAC;IAACO,IAAI;IAAA;IAAAC,QAAA;EAAA,KAAAH,QAAA,CAAAC,iBAAA,CAINN,CAAC;IAACO,IAAI;IAAA;IAAAC,QAAA;EAAA;AAMf",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", \" class=\\\"text-center mx-auto text-gray-700 p-4\\\"><h1 class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">Not Found</h1><p class=\\\"mt-8\\\">Visit <a href=\\\"https://solidjs.com\\\" target=\\\"_blank\\\" class=\\\"text-sky-600 hover:underline\\\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\\\"my-4\\\"><!--$-->\", \"<!--/--> - <!--$-->\", \"<!--/--></p></main>\"];\nimport { A } from 'solid-start';\nexport default function NotFound() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(A, {\n    href: \"/\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"Home\"\n  })), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })));\n}",
+      "start": 1767441590021,
+      "end": 1767441590024,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "A",
+          "NotFound",
+          "_$ssr",
+          "_tmpl$",
+          "_$ssrHydrationKey",
+          "_$escape",
+          "_$createComponent",
+          "href",
+          "children"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/[...404].tsx"
+        ],
+        "sourcesContent": [
+          "import { A } from 'solid-start'\n\nexport default function NotFound() {\n  return (\n    <main class=\"text-center mx-auto text-gray-700 p-4\">\n      <h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">Not Found</h1>\n      <p class=\"mt-8\">\n        Visit{' '}\n        <a href=\"https://solidjs.com\" target=\"_blank\" class=\"text-sky-600 hover:underline\">\n          solidjs.com\n        </a>{' '}\n        to learn how to build Solid apps.\n      </p>\n      <p class=\"my-4\">\n        <A href=\"/\" class=\"text-sky-600 hover:underline\">\n          Home\n        </A>\n        {' - '}\n        <A href=\"/about\" class=\"text-sky-600 hover:underline\">\n          About Page\n        </A>\n      </p>\n    </main>\n  )\n}\n"
+        ],
+        "mappings": ";;;;;AAAA,SAASA,CAAC,QAAQ,aAAa;AAE/B,eAAe,SAASC,QAAQA,CAAA,EAAG;EACjC,OAAAC,KAAA,CAAAC,MAAA,EAAAC,iBAAA,IAAAC,QAAA,CAAAC,iBAAA,CAWON,CAAC;IAACO,IAAI;IAAA;IAAAC,QAAA;EAAA,KAAAH,QAAA,CAAAC,iBAAA,CAINN,CAAC;IAACO,IAAI;IAAA;IAAAC,QAAA;EAAA;AAMf",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "solid",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", \" class=\\\"text-center mx-auto text-gray-700 p-4\\\"><h1 class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">Not Found</h1><p class=\\\"mt-8\\\">Visit <a href=\\\"https://solidjs.com\\\" target=\\\"_blank\\\" class=\\\"text-sky-600 hover:underline\\\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\\\"my-4\\\"><!--$-->\", \"<!--/--> - <!--$-->\", \"<!--/--></p></main>\"];\nimport { A } from 'solid-start';\nexport default function NotFound() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(A, {\n    href: \"/\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"Home\"\n  })), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })));\n}",
+      "start": 1767441590024,
+      "end": 1767441590026,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "ssr",
+          "_$ssr",
+          "escape",
+          "_$escape",
+          "createComponent",
+          "_$createComponent",
+          "ssrHydrationKey",
+          "_$ssrHydrationKey",
+          "_tmpl$",
+          "A",
+          "NotFound",
+          "href",
+          "children"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/[...404].tsx"
+        ],
+        "sourcesContent": [
+          "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", \" class=\\\"text-center mx-auto text-gray-700 p-4\\\"><h1 class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">Not Found</h1><p class=\\\"mt-8\\\">Visit <a href=\\\"https://solidjs.com\\\" target=\\\"_blank\\\" class=\\\"text-sky-600 hover:underline\\\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\\\"my-4\\\"><!--$-->\", \"<!--/--> - <!--$-->\", \"<!--/--></p></main>\"];\nimport { A } from 'solid-start';\nexport default function NotFound() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(A, {\n    href: \"/\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"Home\"\n  })), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })));\n}"
+        ],
+        "mappings": "AAAA,SAASA,GAAG,IAAIC,KAAK,QAAQ,cAAc;AAC3C,SAASC,MAAM,IAAIC,QAAQ,QAAQ,cAAc;AACjD,SAASC,eAAe,IAAIC,iBAAiB,QAAQ,cAAc;AACnE,SAASC,eAAe,IAAIC,iBAAiB,QAAQ,cAAc;AACnE,IAAIC,MAAM,GAAG,CAAC,OAAO,EAAE,wUAAwU,EAAE,qBAAqB,EAAE,qBAAqB,CAAC;AAC9Y,SAASC,CAAC,QAAQ,aAAa;AAC/B,eAAe,SAASC,QAAQA,CAAA,EAAG;EACjC,OAAOT,KAAK,CAACO,MAAM,EAAED,iBAAiB,CAAC,CAAC,EAAEJ,QAAQ,CAACE,iBAAiB,CAACI,CAAC,EAAE;IACtEE,IAAI,EAAE,GAAG;IACT,OAAO,EAAE,8BAA8B;IACvCC,QAAQ,EAAE;EACZ,CAAC,CAAC,CAAC,EAAET,QAAQ,CAACE,iBAAiB,CAACI,CAAC,EAAE;IACjCE,IAAI,EAAE,QAAQ;IACd,OAAO,EAAE,8BAA8B;IACvCC,QAAQ,EAAE;EACZ,CAAC,CAAC,CAAC,CAAC;AACN",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590026,
+      "end": 1767441590026,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", ' class=\"text-center mx-auto text-gray-700 p-4\"><h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">Not Found</h1><p class=\"mt-8\">Visit <a href=\"https://solidjs.com\" target=\"_blank\" class=\"text-sky-600 hover:underline\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\"my-4\"><!--$-->', \"<!--/--> - <!--$-->\", \"<!--/--></p></main>\"];\nimport { A } from \"solid-start\";\nexport default function NotFound() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(A, {\n    href: \"/\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"Home\"\n  })), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })));\n}\n",
+      "start": 1767441590026,
+      "end": 1767441590145,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/[...404].tsx"
+        ],
+        "sourcesContent": [
+          "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", \" class=\\\"text-center mx-auto text-gray-700 p-4\\\"><h1 class=\\\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\\\">Not Found</h1><p class=\\\"mt-8\\\">Visit <a href=\\\"https://solidjs.com\\\" target=\\\"_blank\\\" class=\\\"text-sky-600 hover:underline\\\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\\\"my-4\\\"><!--$-->\", \"<!--/--> - <!--$-->\", \"<!--/--></p></main>\"];\nimport { A } from 'solid-start';\nexport default function NotFound() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(A, {\n    href: \"/\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"Home\"\n  })), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })));\n}"
+        ],
+        "mappings": "AAAA,SAAS,OAAO,aAAa;AAC7B,SAAS,UAAU,gBAAgB;AACnC,SAAS,mBAAmB,yBAAyB;AACrD,SAAS,mBAAmB,yBAAyB;AACrD,IAAI,SAAS,CAAC,SAAS,4TAA0U,uBAAuB,qBAAqB;AAC7Y,SAAS,SAAS;AAClB,wBAAwB,WAAW;AACjC,SAAO,MAAM,QAAQ,kBAAkB,GAAG,SAAS,kBAAkB,GAAG;AAAA,IACtE,MAAM;AAAA,IACN,SAAS;AAAA,IACT,UAAU;AAAA,EACZ,CAAC,CAAC,GAAG,SAAS,kBAAkB,GAAG;AAAA,IACjC,MAAM;AAAA,IACN,SAAS;AAAA,IACT,UAAU;AAAA,EACZ,CAAC,CAAC,CAAC;AACL;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", ' class=\"text-center mx-auto text-gray-700 p-4\"><h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">Not Found</h1><p class=\"mt-8\">Visit <a href=\"https://solidjs.com\" target=\"_blank\" class=\"text-sky-600 hover:underline\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\"my-4\"><!--$-->', \"<!--/--> - <!--$-->\", \"<!--/--></p></main>\"];\nimport { A } from \"solid-start\";\nexport default function NotFound() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(A, {\n    href: \"/\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"Home\"\n  })), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })));\n}\n",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590145,
+      "end": 1767441590145,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<main\", ' class=\"text-center mx-auto text-gray-700 p-4\"><h1 class=\"max-6-xs text-6xl text-sky-700 font-thin uppercase my-16\">Not Found</h1><p class=\"mt-8\">Visit <a href=\"https://solidjs.com\" target=\"_blank\" class=\"text-sky-600 hover:underline\">solidjs.com</a> to learn how to build Solid apps.</p><p class=\"my-4\"><!--$-->', \"<!--/--> - <!--$-->\", \"<!--/--></p></main>\"];\nimport { A } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/index.tsx\";\nexport default function NotFound() {\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(A, {\n    href: \"/\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"Home\"\n  })), _$escape(_$createComponent(A, {\n    href: \"/about\",\n    \"class\": \"text-sky-600 hover:underline\",\n    children: \"About Page\"\n  })));\n}\n",
+      "start": 1767441590145,
+      "end": 1767441590146,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

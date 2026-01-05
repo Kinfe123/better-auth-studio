@@ -1,0 +1,156 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/error-boundary/ErrorBoundary.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import {\n  createEffect,\n  ErrorBoundary as ErrorBoundaryBase,\n  JSX,\n  ParentProps,\n  resetErrorBoundaries,\n  Show\n} from \"solid-js\";\n\nexport function ErrorBoundary(props: ParentProps<{ fallback?: (e: any, reset: () => void) => JSX.Element }>) {\n  return (\n    <ErrorBoundaryBase\n      fallback={(e, reset) => {\n        return (\n          <Show when={!props.fallback} fallback={props.fallback && props.fallback(e, reset)}>\n            <ErrorMessage error={e} />\n          </Show>\n        );\n      }}\n    >\n      {props.children}\n    </ErrorBoundaryBase>\n  );\n}\n\nexport function ErrorMessage(props: { error: any }) {\n  createEffect(() => console.error(props.error));\n\n  return (\n    <div style={{ padding: \"16px\" }}>\n      <div\n        style={{\n          \"background-color\": \"rgba(252, 165, 165)\",\n          color: \"rgb(153, 27, 27)\",\n          \"border-radius\": \"5px\",\n          overflow: \"scroll\",\n          padding: \"16px\",\n          \"margin-bottom\": \"8px\"\n        }}\n      >\n        <p style={{ \"font-weight\": \"bold\" }} id=\"error-message\">\n          {props.error.message}\n        </p>\n        <button\n          id=\"reset-errors\"\n          onClick={resetErrorBoundaries}\n          style={{\n            color: \"rgba(252, 165, 165)\",\n            \"background-color\": \"rgb(153, 27, 27)\",\n            \"border-radius\": \"5px\",\n            padding: \"4px 8px\"\n          }}\n        >\n          Clear errors and retry\n        </button>\n        <pre style={{ \"margin-top\": \"8px\", width: \"100%\" }}>{props.error.stack}</pre>\n      </div>\n    </div>\n  );\n}\n",
+      "start": 1767441590499,
+      "end": 1767441590499
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590499,
+      "end": 1767441590499,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrStyleProperty as _$ssrStyleProperty } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nvar _tmpl$ = [\"<div\", \" style=\\\"\", \"\\\"><div style=\\\"\", \"\\\"><p style=\\\"\", \"\\\" id=\\\"error-message\\\">\", \"</p><button id=\\\"reset-errors\\\" style=\\\"\", \"\\\">Clear errors and retry</button><pre style=\\\"\", \"\\\">\", \"</pre></div></div>\"];\nimport { createEffect, ErrorBoundary as ErrorBoundaryBase, resetErrorBoundaries, Show } from \"solid-js\";\nexport function ErrorBoundary(props: ParentProps<{\n  fallback?: (e: any, reset: () => void) => JSX.Element;\n}>) {\n  return _$createComponent(ErrorBoundaryBase, {\n    fallback: (e, reset) => {\n      return _$createComponent(Show, {\n        get when() {\n          return !props.fallback;\n        },\n        get fallback() {\n          return props.fallback && props.fallback(e, reset);\n        },\n        get children() {\n          return _$createComponent(ErrorMessage, {\n            error: e\n          });\n        }\n      });\n    },\n    get children() {\n      return props.children;\n    }\n  });\n}\nexport function ErrorMessage(props: {\n  error: any;\n}) {\n  createEffect(() => console.error(props.error));\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$ssrStyleProperty(\"padding:\", \"16px\"), _$ssrStyleProperty(\"background-color:\", \"rgba(252, 165, 165)\") + _$ssrStyleProperty(\";color:\", \"rgb(153, 27, 27)\") + _$ssrStyleProperty(\";border-radius:\", \"5px\") + _$ssrStyleProperty(\";overflow:\", \"scroll\") + _$ssrStyleProperty(\";padding:\", \"16px\") + _$ssrStyleProperty(\";margin-bottom:\", \"8px\"), _$ssrStyleProperty(\"font-weight:\", \"bold\"), _$escape(props.error.message), _$ssrStyleProperty(\"color:\", \"rgba(252, 165, 165)\") + _$ssrStyleProperty(\";background-color:\", \"rgb(153, 27, 27)\") + _$ssrStyleProperty(\";border-radius:\", \"5px\") + _$ssrStyleProperty(\";padding:\", \"4px 8px\"), _$ssrStyleProperty(\"margin-top:\", \"8px\") + _$ssrStyleProperty(\";width:\", \"100%\"), _$escape(props.error.stack));\n}",
+      "start": 1767441590499,
+      "end": 1767441590508,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "createEffect",
+          "ErrorBoundary",
+          "ErrorBoundaryBase",
+          "resetErrorBoundaries",
+          "Show",
+          "props",
+          "ParentProps",
+          "fallback",
+          "e",
+          "reset",
+          "JSX",
+          "Element",
+          "_$createComponent",
+          "when",
+          "children",
+          "ErrorMessage",
+          "error",
+          "console",
+          "_$ssr",
+          "_tmpl$",
+          "_$ssrHydrationKey",
+          "_$ssrStyleProperty",
+          "_$escape",
+          "message",
+          "stack"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/error-boundary/ErrorBoundary.tsx"
+        ],
+        "sourcesContent": [
+          "import {\n  createEffect,\n  ErrorBoundary as ErrorBoundaryBase,\n  JSX,\n  ParentProps,\n  resetErrorBoundaries,\n  Show\n} from \"solid-js\";\n\nexport function ErrorBoundary(props: ParentProps<{ fallback?: (e: any, reset: () => void) => JSX.Element }>) {\n  return (\n    <ErrorBoundaryBase\n      fallback={(e, reset) => {\n        return (\n          <Show when={!props.fallback} fallback={props.fallback && props.fallback(e, reset)}>\n            <ErrorMessage error={e} />\n          </Show>\n        );\n      }}\n    >\n      {props.children}\n    </ErrorBoundaryBase>\n  );\n}\n\nexport function ErrorMessage(props: { error: any }) {\n  createEffect(() => console.error(props.error));\n\n  return (\n    <div style={{ padding: \"16px\" }}>\n      <div\n        style={{\n          \"background-color\": \"rgba(252, 165, 165)\",\n          color: \"rgb(153, 27, 27)\",\n          \"border-radius\": \"5px\",\n          overflow: \"scroll\",\n          padding: \"16px\",\n          \"margin-bottom\": \"8px\"\n        }}\n      >\n        <p style={{ \"font-weight\": \"bold\" }} id=\"error-message\">\n          {props.error.message}\n        </p>\n        <button\n          id=\"reset-errors\"\n          onClick={resetErrorBoundaries}\n          style={{\n            color: \"rgba(252, 165, 165)\",\n            \"background-color\": \"rgb(153, 27, 27)\",\n            \"border-radius\": \"5px\",\n            padding: \"4px 8px\"\n          }}\n        >\n          Clear errors and retry\n        </button>\n        <pre style={{ \"margin-top\": \"8px\", width: \"100%\" }}>{props.error.stack}</pre>\n      </div>\n    </div>\n  );\n}\n"
+        ],
+        "mappings": ";;;;;;AAAA,SACEA,YAAY,EACZC,aAAa,IAAIC,iBAAiB,EAGlCC,oBAAoB,EACpBC,IAAI,QACC,UAAU;AAEjB,OAAO,SAASH,aAAaA,CAACI,KAAK,EAAEC,WAAW,CAAC;EAAEC,QAAQ,CAAC,EAAE,CAACC,CAAC,EAAE,GAAG,EAAEC,KAAK,EAAE,GAAG,GAAG,IAAI,EAAE,GAAGC,GAAG,CAACC,OAAO;AAAC,CAAC,CAAC,EAAE;EAC3G,OAAAC,iBAAA,CACGV,iBAAiB;IAChBK,QAAQ,EAAEA,CAACC,CAAC,EAAEC,KAAK,KAAK;MACtB,OAAAG,iBAAA,CACGR,IAAI;QAAA,IAACS,IAAIA,CAAA;UAAA,OAAE,CAACR,KAAK,CAACE,QAAQ;QAAA;QAAA,IAAEA,QAAQA,CAAA;UAAA,OAAEF,KAAK,CAACE,QAAQ,IAAIF,KAAK,CAACE,QAAQ,CAACC,CAAC,EAAEC,KAAK,CAAC;QAAA;QAAA,IAAAK,SAAA;UAAA,OAAAF,iBAAA,CAC9EG,YAAY;YAACC,KAAK,EAAER;UAAC;QAAA;MAAA;IAG5B,CAAC;IAAA,IAAAM,SAAA;MAAA,OAEAT,KAAK,CAACS,QAAQ;IAAA;EAAA;AAGrB;AAEA,OAAO,SAASC,YAAYA,CAACV,KAAK,EAAE;EAAEW,KAAK,EAAE,GAAG;AAAC,CAAC,EAAE;EAClDhB,YAAY,CAAC,MAAMiB,OAAO,CAACD,KAAK,CAACX,KAAK,CAACW,KAAK,CAAC,CAAC;EAE9C,OAAAE,KAAA,CAAAC,MAAA,EAAAC,iBAAA,IAAAC,kBAAA,sBAAAA,kBAAA,+CAAAA,kBAAA,kCAAAA,kBAAA,6BAAAA,kBAAA,2BAAAA,kBAAA,wBAAAA,kBAAA,4BAAAA,kBAAA,0BAAAC,QAAA,CAaSjB,KAAK,CAACW,KAAK,CAACO,OAAO,GAAAF,kBAAA,oCAAAA,kBAAA,6CAAAA,kBAAA,6BAAAA,kBAAA,0BAAAA,kBAAA,yBAAAA,kBAAA,qBAAAC,QAAA,CAc+BjB,KAAK,CAACW,KAAK,CAACQ,KAAK;AAI9E",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590508,
+      "end": 1767441590508,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrStyleProperty as _$ssrStyleProperty } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nvar _tmpl$ = [\"<div\", ' style=\"', '\"><div style=\"', '\"><p style=\"', '\" id=\"error-message\">', '</p><button id=\"reset-errors\" style=\"', '\">Clear errors and retry</button><pre style=\"', '\">', \"</pre></div></div>\"];\nimport { createEffect, ErrorBoundary as ErrorBoundaryBase, Show } from \"solid-js\";\nexport function ErrorBoundary(props) {\n  return _$createComponent(ErrorBoundaryBase, {\n    fallback: (e, reset) => {\n      return _$createComponent(Show, {\n        get when() {\n          return !props.fallback;\n        },\n        get fallback() {\n          return props.fallback && props.fallback(e, reset);\n        },\n        get children() {\n          return _$createComponent(ErrorMessage, {\n            error: e\n          });\n        }\n      });\n    },\n    get children() {\n      return props.children;\n    }\n  });\n}\nexport function ErrorMessage(props) {\n  createEffect(() => console.error(props.error));\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$ssrStyleProperty(\"padding:\", \"16px\"), _$ssrStyleProperty(\"background-color:\", \"rgba(252, 165, 165)\") + _$ssrStyleProperty(\";color:\", \"rgb(153, 27, 27)\") + _$ssrStyleProperty(\";border-radius:\", \"5px\") + _$ssrStyleProperty(\";overflow:\", \"scroll\") + _$ssrStyleProperty(\";padding:\", \"16px\") + _$ssrStyleProperty(\";margin-bottom:\", \"8px\"), _$ssrStyleProperty(\"font-weight:\", \"bold\"), _$escape(props.error.message), _$ssrStyleProperty(\"color:\", \"rgba(252, 165, 165)\") + _$ssrStyleProperty(\";background-color:\", \"rgb(153, 27, 27)\") + _$ssrStyleProperty(\";border-radius:\", \"5px\") + _$ssrStyleProperty(\";padding:\", \"4px 8px\"), _$ssrStyleProperty(\"margin-top:\", \"8px\") + _$ssrStyleProperty(\";width:\", \"100%\"), _$escape(props.error.stack));\n}\n",
+      "start": 1767441590508,
+      "end": 1767441590572,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/error-boundary/ErrorBoundary.tsx"
+        ],
+        "sourcesContent": [
+          "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrStyleProperty as _$ssrStyleProperty } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nvar _tmpl$ = [\"<div\", \" style=\\\"\", \"\\\"><div style=\\\"\", \"\\\"><p style=\\\"\", \"\\\" id=\\\"error-message\\\">\", \"</p><button id=\\\"reset-errors\\\" style=\\\"\", \"\\\">Clear errors and retry</button><pre style=\\\"\", \"\\\">\", \"</pre></div></div>\"];\nimport { createEffect, ErrorBoundary as ErrorBoundaryBase, resetErrorBoundaries, Show } from \"solid-js\";\nexport function ErrorBoundary(props: ParentProps<{\n  fallback?: (e: any, reset: () => void) => JSX.Element;\n}>) {\n  return _$createComponent(ErrorBoundaryBase, {\n    fallback: (e, reset) => {\n      return _$createComponent(Show, {\n        get when() {\n          return !props.fallback;\n        },\n        get fallback() {\n          return props.fallback && props.fallback(e, reset);\n        },\n        get children() {\n          return _$createComponent(ErrorMessage, {\n            error: e\n          });\n        }\n      });\n    },\n    get children() {\n      return props.children;\n    }\n  });\n}\nexport function ErrorMessage(props: {\n  error: any;\n}) {\n  createEffect(() => console.error(props.error));\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$ssrStyleProperty(\"padding:\", \"16px\"), _$ssrStyleProperty(\"background-color:\", \"rgba(252, 165, 165)\") + _$ssrStyleProperty(\";color:\", \"rgb(153, 27, 27)\") + _$ssrStyleProperty(\";border-radius:\", \"5px\") + _$ssrStyleProperty(\";overflow:\", \"scroll\") + _$ssrStyleProperty(\";padding:\", \"16px\") + _$ssrStyleProperty(\";margin-bottom:\", \"8px\"), _$ssrStyleProperty(\"font-weight:\", \"bold\"), _$escape(props.error.message), _$ssrStyleProperty(\"color:\", \"rgba(252, 165, 165)\") + _$ssrStyleProperty(\";background-color:\", \"rgb(153, 27, 27)\") + _$ssrStyleProperty(\";border-radius:\", \"5px\") + _$ssrStyleProperty(\";padding:\", \"4px 8px\"), _$ssrStyleProperty(\"margin-top:\", \"8px\") + _$ssrStyleProperty(\";width:\", \"100%\"), _$escape(props.error.stack));\n}"
+        ],
+        "mappings": "AAAA,SAAS,OAAO,aAAa;AAC7B,SAAS,UAAU,gBAAgB;AACnC,SAAS,oBAAoB,0BAA0B;AACvD,SAAS,mBAAmB,yBAAyB;AACrD,SAAS,mBAAmB,yBAAyB;AACrD,IAAI,SAAS,CAAC,QAAQ,YAAa,kBAAoB,gBAAkB,yBAA4B,yCAA4C,iDAAmD,MAAO,oBAAoB;AAC/N,SAAS,cAAc,iBAAiB,mBAAyC,YAAY;AACtF,gBAAS,cAAc,OAE1B;AACF,SAAO,kBAAkB,mBAAmB;AAAA,IAC1C,UAAU,CAAC,GAAG,UAAU;AACtB,aAAO,kBAAkB,MAAM;AAAA,QAC7B,IAAI,OAAO;AACT,iBAAO,CAAC,MAAM;AAAA,QAChB;AAAA,QACA,IAAI,WAAW;AACb,iBAAO,MAAM,YAAY,MAAM,SAAS,GAAG,KAAK;AAAA,QAClD;AAAA,QACA,IAAI,WAAW;AACb,iBAAO,kBAAkB,cAAc;AAAA,YACrC,OAAO;AAAA,UACT,CAAC;AAAA,QACH;AAAA,MACF,CAAC;AAAA,IACH;AAAA,IACA,IAAI,WAAW;AACb,aAAO,MAAM;AAAA,IACf;AAAA,EACF,CAAC;AACH;AACO,gBAAS,aAAa,OAE1B;AACD,eAAa,MAAM,QAAQ,MAAM,MAAM,KAAK,CAAC;AAC7C,SAAO,MAAM,QAAQ,kBAAkB,GAAG,mBAAmB,YAAY,MAAM,GAAG,mBAAmB,qBAAqB,qBAAqB,IAAI,mBAAmB,WAAW,kBAAkB,IAAI,mBAAmB,mBAAmB,KAAK,IAAI,mBAAmB,cAAc,QAAQ,IAAI,mBAAmB,aAAa,MAAM,IAAI,mBAAmB,mBAAmB,KAAK,GAAG,mBAAmB,gBAAgB,MAAM,GAAG,SAAS,MAAM,MAAM,OAAO,GAAG,mBAAmB,UAAU,qBAAqB,IAAI,mBAAmB,sBAAsB,kBAAkB,IAAI,mBAAmB,mBAAmB,KAAK,IAAI,mBAAmB,aAAa,SAAS,GAAG,mBAAmB,eAAe,KAAK,IAAI,mBAAmB,WAAW,MAAM,GAAG,SAAS,MAAM,MAAM,KAAK,CAAC;AACrwB;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrStyleProperty as _$ssrStyleProperty } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nvar _tmpl$ = [\"<div\", ' style=\"', '\"><div style=\"', '\"><p style=\"', '\" id=\"error-message\">', '</p><button id=\"reset-errors\" style=\"', '\">Clear errors and retry</button><pre style=\"', '\">', \"</pre></div></div>\"];\nimport { createEffect, ErrorBoundary as ErrorBoundaryBase, Show } from \"solid-js\";\nexport function ErrorBoundary(props) {\n  return _$createComponent(ErrorBoundaryBase, {\n    fallback: (e, reset) => {\n      return _$createComponent(Show, {\n        get when() {\n          return !props.fallback;\n        },\n        get fallback() {\n          return props.fallback && props.fallback(e, reset);\n        },\n        get children() {\n          return _$createComponent(ErrorMessage, {\n            error: e\n          });\n        }\n      });\n    },\n    get children() {\n      return props.children;\n    }\n  });\n}\nexport function ErrorMessage(props) {\n  createEffect(() => console.error(props.error));\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$ssrStyleProperty(\"padding:\", \"16px\"), _$ssrStyleProperty(\"background-color:\", \"rgba(252, 165, 165)\") + _$ssrStyleProperty(\";color:\", \"rgb(153, 27, 27)\") + _$ssrStyleProperty(\";border-radius:\", \"5px\") + _$ssrStyleProperty(\";overflow:\", \"scroll\") + _$ssrStyleProperty(\";padding:\", \"16px\") + _$ssrStyleProperty(\";margin-bottom:\", \"8px\"), _$ssrStyleProperty(\"font-weight:\", \"bold\"), _$escape(props.error.message), _$ssrStyleProperty(\"color:\", \"rgba(252, 165, 165)\") + _$ssrStyleProperty(\";background-color:\", \"rgb(153, 27, 27)\") + _$ssrStyleProperty(\";border-radius:\", \"5px\") + _$ssrStyleProperty(\";padding:\", \"4px 8px\"), _$ssrStyleProperty(\"margin-top:\", \"8px\") + _$ssrStyleProperty(\";width:\", \"100%\"), _$escape(props.error.stack));\n}\n",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrStyleProperty as _$ssrStyleProperty } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nvar _tmpl$ = [\"<div\", ' style=\"', '\"><div style=\"', '\"><p style=\"', '\" id=\"error-message\">', '</p><button id=\"reset-errors\" style=\"', '\">Clear errors and retry</button><pre style=\"', '\">', \"</pre></div></div>\"];\nimport { createEffect, ErrorBoundary as ErrorBoundaryBase, Show } from \"solid-js\";\nexport function ErrorBoundary(props) {\n  return _$createComponent(ErrorBoundaryBase, {\n    fallback: (e, reset) => {\n      return _$createComponent(Show, {\n        get when() {\n          return !props.fallback;\n        },\n        get fallback() {\n          return props.fallback && props.fallback(e, reset);\n        },\n        get children() {\n          return _$createComponent(ErrorMessage, {\n            error: e\n          });\n        }\n      });\n    },\n    get children() {\n      return props.children;\n    }\n  });\n}\nexport function ErrorMessage(props) {\n  createEffect(() => console.error(props.error));\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$ssrStyleProperty(\"padding:\", \"16px\"), _$ssrStyleProperty(\"background-color:\", \"rgba(252, 165, 165)\") + _$ssrStyleProperty(\";color:\", \"rgb(153, 27, 27)\") + _$ssrStyleProperty(\";border-radius:\", \"5px\") + _$ssrStyleProperty(\";overflow:\", \"scroll\") + _$ssrStyleProperty(\";padding:\", \"16px\") + _$ssrStyleProperty(\";margin-bottom:\", \"8px\"), _$ssrStyleProperty(\"font-weight:\", \"bold\"), _$escape(props.error.message), _$ssrStyleProperty(\"color:\", \"rgba(252, 165, 165)\") + _$ssrStyleProperty(\";background-color:\", \"rgb(153, 27, 27)\") + _$ssrStyleProperty(\";border-radius:\", \"5px\") + _$ssrStyleProperty(\";padding:\", \"4px 8px\"), _$ssrStyleProperty(\"margin-top:\", \"8px\") + _$ssrStyleProperty(\";width:\", \"100%\"), _$escape(props.error.stack));\n}\n",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

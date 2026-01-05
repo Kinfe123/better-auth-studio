@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/server/trpc/context.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import type { inferAsyncReturnType } from '@trpc/server'\nimport type { createSolidAPIHandlerContext } from 'solid-start-trpc'\nimport { prisma } from '~/server/db/client'\n\nexport const createContextInner = async (opts: createSolidAPIHandlerContext) => {\n  // const user = await authenticator.isAuthenticated(opts.req)\n  return {\n    ...opts,\n    prisma,\n    // user,\n  }\n}\n\nexport const createContext = async (opts: createSolidAPIHandlerContext) => {\n  return await createContextInner(opts)\n}\n\nexport type Context = inferAsyncReturnType<typeof createContext>\n",
+      "start": 1767441590190,
+      "end": 1767441590190
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590190,
+      "end": 1767441590190,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590190,
+      "end": 1767441590190,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590190,
+      "end": 1767441590190,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { prisma } from \"~/server/db/client\";\nexport const createContextInner = async (opts) => {\n  return {\n    ...opts,\n    prisma\n    // user,\n  };\n};\nexport const createContext = async (opts) => {\n  return await createContextInner(opts);\n};\n",
+      "start": 1767441590190,
+      "end": 1767441590221,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "context.ts"
+        ],
+        "sourcesContent": [
+          "import type { inferAsyncReturnType } from '@trpc/server'\nimport type { createSolidAPIHandlerContext } from 'solid-start-trpc'\nimport { prisma } from '~/server/db/client'\n\nexport const createContextInner = async (opts: createSolidAPIHandlerContext) => {\n  // const user = await authenticator.isAuthenticated(opts.req)\n  return {\n    ...opts,\n    prisma,\n    // user,\n  }\n}\n\nexport const createContext = async (opts: createSolidAPIHandlerContext) => {\n  return await createContextInner(opts)\n}\n\nexport type Context = inferAsyncReturnType<typeof createContext>\n"
+        ],
+        "mappings": "AAEA,SAAS,cAAc;AAEhB,aAAM,qBAAqB,OAAO,SAAuC;AAE9E,SAAO;AAAA,IACL,GAAG;AAAA,IACH;AAAA;AAAA,EAEF;AACF;AAEO,aAAM,gBAAgB,OAAO,SAAuC;AACzE,SAAO,MAAM,mBAAmB,IAAI;AACtC;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590221,
+      "end": 1767441590221,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590221,
+      "end": 1767441590221,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590222,
+      "end": 1767441590222,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { prisma } from \"~/server/db/client\";\nexport const createContextInner = async (opts) => {\n  return {\n    ...opts,\n    prisma\n    // user,\n  };\n};\nexport const createContext = async (opts) => {\n  return await createContextInner(opts);\n};\n",
+      "start": 1767441590236,
+      "end": 1767441590236,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590236,
+      "end": 1767441590236,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590236,
+      "end": 1767441590236,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590236,
+      "end": 1767441590236,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590242,
+      "end": 1767441590242,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590242,
+      "end": 1767441590242,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590242,
+      "end": 1767441590242,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { prisma } from \"/src/server/db/client.ts\";\nexport const createContextInner = async (opts) => {\n  return {\n    ...opts,\n    prisma\n    // user,\n  };\n};\nexport const createContext = async (opts) => {\n  return await createContextInner(opts);\n};\n",
+      "start": 1767441590242,
+      "end": 1767441590260,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

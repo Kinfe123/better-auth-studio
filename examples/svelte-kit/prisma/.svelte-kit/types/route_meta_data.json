@@ -1,0 +1,7 @@
+{
+	"/": [],
+	"/api/studio/[...path]": [
+		"src/routes/api/studio/[...path]/+server.ts"
+	],
+	"/auth": []
+}

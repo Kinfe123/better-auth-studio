@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/routes/api/auth/*auth.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { auth } from '~/lib/auth'\nimport { toSolidStartHandler } from 'better-auth/solid-start'\n\nexport const { GET, POST } = toSolidStartHandler(auth)\n",
+      "start": 1767441590154,
+      "end": 1767441590154
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590154,
+      "end": 1767441590154,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590154,
+      "end": 1767441590154,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590154,
+      "end": 1767441590154,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { auth } from \"~/lib/auth\";\nimport { toSolidStartHandler } from \"better-auth/solid-start\";\nexport const { GET, POST } = toSolidStartHandler(auth);\n",
+      "start": 1767441590154,
+      "end": 1767441590182,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "*auth.ts"
+        ],
+        "sourcesContent": [
+          "import { auth } from '~/lib/auth'\nimport { toSolidStartHandler } from 'better-auth/solid-start'\n\nexport const { GET, POST } = toSolidStartHandler(auth)\n"
+        ],
+        "mappings": "AAAA,SAAS,YAAY;AACrB,SAAS,2BAA2B;AAE7B,aAAM,EAAE,KAAK,KAAK,IAAI,oBAAoB,IAAI;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { auth } from \"~/lib/auth\";\nimport { toSolidStartHandler } from \"better-auth/solid-start\";\nexport const { GET, POST } = toSolidStartHandler(auth);\n",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { auth } from \"/src/lib/auth.ts\";\nimport { toSolidStartHandler } from \"better-auth/solid-start\";\nexport const { GET, POST } = toSolidStartHandler(auth);\n",
+      "start": 1767441590182,
+      "end": 1767441590183,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

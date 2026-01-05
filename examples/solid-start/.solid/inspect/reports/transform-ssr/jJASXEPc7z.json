@@ -1,0 +1,161 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Scripts.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { useContext } from \"solid-js\";\nimport { HydrationScript, isServer, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport { InlineStyles } from \"./InlineStyles\";\n\nconst isDev = import.meta.env.MODE === \"development\";\nconst isSSR = import.meta.env.START_SSR;\nconst isIslands = import.meta.env.START_ISLANDS;\n\nexport default function Scripts() {\n  const context = useContext(ServerContext);\n  return (\n    <>\n      {isSSR && <HydrationScript />}\n      {isIslands && (\n        <script>{`\n        _$HY.islandMap = {};\n        _$HY.island = (u, c) => _$HY.islandMap[u] = c;\n      `}</script>\n      )}\n      <NoHydration>\n        {isServer &&\n          (isDev ? (\n            <>\n              <script type=\"module\" src=\"/@vite/client\" $ServerOnly></script>\n              <script\n                type=\"module\"\n                async\n                src={\"/@fs/\" + import.meta.env.START_ENTRY_CLIENT}\n                $ServerOnly\n              ></script>\n            </>\n          ) : isSSR ? (\n            // @ts-ignore\n            <script type=\"module\" async src={context!.env.manifest[\"entry-client\"][0].href} />\n          ) : import.meta.env.START_INDEX_HTML ? (\n            // used in the SPA build index.html mode to create a reference to index html\n            // which will be used by the client build\n            <script type=\"module\" async src={import.meta.env.START_ENTRY_CLIENT} $ServerOnly />\n          ) : (\n            // @ts-ignore\n            <script type=\"module\" async src={context!.env.manifest[\"index.html\"][0].href} />\n          ))}\n      </NoHydration>\n      {isDev && <InlineStyles />}\n    </>\n  );\n}\n",
+      "start": 1767441590548,
+      "end": 1767441590548
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590548,
+      "end": 1767441590548,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "import { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nvar _tmpl$ = [\"<script\", \">\\n        _$HY.islandMap = {};\\n        _$HY.island = (u, c) => _$HY.islandMap[u] = c;\\n      </script>\"],\n  _tmpl$2 = [\"<script\", \" type=\\\"module\\\" src=\\\"/@vite/client\\\"></script>\"],\n  _tmpl$3 = [\"<script\", \" type=\\\"module\\\" async\", \"></script>\"];\nimport { useContext } from \"solid-js\";\nimport { HydrationScript, isServer, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport { InlineStyles } from \"./InlineStyles\";\nconst isDev = import.meta.env.MODE === \"development\";\nconst isSSR = import.meta.env.START_SSR;\nconst isIslands = import.meta.env.START_ISLANDS;\nexport default function Scripts() {\n  const context = useContext(ServerContext);\n  return [isSSR && _$createComponent(HydrationScript, {}), isIslands && _$ssr(_tmpl$, _$ssrHydrationKey()), _$createComponent(NoHydration, {\n    get children() {\n      return isServer && (isDev ? [_$ssr(_tmpl$2, _$ssrHydrationKey()), _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", \"/@fs/\" + _$escape(import.meta.env.START_ENTRY_CLIENT, true), false))] : isSSR ? // @ts-ignore\n      _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(context!.env.manifest[\"entry-client\"][0].href, true), false)) : import.meta.env.START_INDEX_HTML ? // used in the SPA build index.html mode to create a reference to index html\n      // which will be used by the client build\n      _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(import.meta.env.START_ENTRY_CLIENT, true), false)) : // @ts-ignore\n      _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(context!.env.manifest[\"index.html\"][0].href, true), false)));\n    }\n  }), isDev && _$createComponent(InlineStyles, {})];\n}",
+      "start": 1767441590548,
+      "end": 1767441590552,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "useContext",
+          "HydrationScript",
+          "isServer",
+          "NoHydration",
+          "ServerContext",
+          "InlineStyles",
+          "isDev",
+          "import",
+          "meta",
+          "env",
+          "MODE",
+          "isSSR",
+          "START_SSR",
+          "isIslands",
+          "START_ISLANDS",
+          "Scripts",
+          "context",
+          "_$createComponent",
+          "_$ssr",
+          "_tmpl$",
+          "_$ssrHydrationKey",
+          "children",
+          "_tmpl$2",
+          "_tmpl$3",
+          "_$ssrAttribute",
+          "_$escape",
+          "START_ENTRY_CLIENT",
+          "manifest",
+          "href",
+          "START_INDEX_HTML"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Scripts.tsx"
+        ],
+        "sourcesContent": [
+          "import { useContext } from \"solid-js\";\nimport { HydrationScript, isServer, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport { InlineStyles } from \"./InlineStyles\";\n\nconst isDev = import.meta.env.MODE === \"development\";\nconst isSSR = import.meta.env.START_SSR;\nconst isIslands = import.meta.env.START_ISLANDS;\n\nexport default function Scripts() {\n  const context = useContext(ServerContext);\n  return (\n    <>\n      {isSSR && <HydrationScript />}\n      {isIslands && (\n        <script>{`\n        _$HY.islandMap = {};\n        _$HY.island = (u, c) => _$HY.islandMap[u] = c;\n      `}</script>\n      )}\n      <NoHydration>\n        {isServer &&\n          (isDev ? (\n            <>\n              <script type=\"module\" src=\"/@vite/client\" $ServerOnly></script>\n              <script\n                type=\"module\"\n                async\n                src={\"/@fs/\" + import.meta.env.START_ENTRY_CLIENT}\n                $ServerOnly\n              ></script>\n            </>\n          ) : isSSR ? (\n            // @ts-ignore\n            <script type=\"module\" async src={context!.env.manifest[\"entry-client\"][0].href} />\n          ) : import.meta.env.START_INDEX_HTML ? (\n            // used in the SPA build index.html mode to create a reference to index html\n            // which will be used by the client build\n            <script type=\"module\" async src={import.meta.env.START_ENTRY_CLIENT} $ServerOnly />\n          ) : (\n            // @ts-ignore\n            <script type=\"module\" async src={context!.env.manifest[\"index.html\"][0].href} />\n          ))}\n      </NoHydration>\n      {isDev && <InlineStyles />}\n    </>\n  );\n}\n"
+        ],
+        "mappings": ";;;;;;;;AAAA,SAASA,UAAU,QAAQ,UAAU;AACrC,SAASC,eAAe,EAAEC,QAAQ,EAAEC,WAAW,QAAQ,cAAc;AACrE,SAASC,aAAa,QAAQ,yBAAyB;AACvD,SAASC,YAAY,QAAQ,gBAAgB;AAE7C,MAAMC,KAAK,GAAGC,MAAM,CAACC,IAAI,CAACC,GAAG,CAACC,IAAI,KAAK,aAAa;AACpD,MAAMC,KAAK,GAAGJ,MAAM,CAACC,IAAI,CAACC,GAAG,CAACG,SAAS;AACvC,MAAMC,SAAS,GAAGN,MAAM,CAACC,IAAI,CAACC,GAAG,CAACK,aAAa;AAE/C,eAAe,SAASC,OAAOA,CAAA,EAAG;EAChC,MAAMC,OAAO,GAAGhB,UAAU,CAACI,aAAa,CAAC;EACzC,QAEKO,KAAK,IAAAM,iBAAA,CAAKhB,eAAe,KAAG,EAC5BY,SAAS,IAAAK,KAAA,CAAAC,MAAA,EAAAC,iBAAA,GAKT,EAAAH,iBAAA,CACAd,WAAW;IAAA,IAAAkB,SAAA;MAAA,OACTnB,QAAQ,KACNI,KAAK,IAAAY,KAAA,CAAAI,OAAA,EAAAF,iBAAA,KAAAF,KAAA,CAAAK,OAAA,EAAAH,iBAAA,IAAAI,cAAA,QAMK,OAAO,GAAAC,QAAA,CAAGlB,MAAM,CAACC,IAAI,CAACC,GAAG,CAACiB,kBAAkB,oBAInDf,KAAK,GACP;MAAAO,KAAA,CAAAK,OAAA,EAAAH,iBAAA,IAAAI,cAAA,QAAAC,QAAA,CACiCT,OAAO,CAAC,CAACP,GAAG,CAACkB,QAAQ,CAAC,cAAc,CAAC,CAAC,CAAC,CAAC,CAACC,IAAI,mBAC5ErB,MAAM,CAACC,IAAI,CAACC,GAAG,CAACoB,gBAAgB,GAClC;MACA;MAAAX,KAAA,CAAAK,OAAA,EAAAH,iBAAA,IAAAI,cAAA,QAAAC,QAAA,CACiClB,MAAM,CAACC,IAAI,CAACC,GAAG,CAACiB,kBAAkB,mBAEnE;MAAAR,KAAA,CAAAK,OAAA,EAAAH,iBAAA,IAAAI,cAAA,QAAAC,QAAA,CACiCT,OAAO,CAAC,CAACP,GAAG,CAACkB,QAAQ,CAAC,YAAY,CAAC,CAAC,CAAC,CAAC,CAACC,IAAI,gBAC7E,CAAC;IAAA;EAAA,IAELtB,KAAK,IAAAW,iBAAA,CAAKZ,YAAY,KAAG;AAGhC",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590552,
+      "end": 1767441590552,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nvar _tmpl$ = [\"<script\", \">\\n        _$HY.islandMap = {};\\n        _$HY.island = (u, c) => _$HY.islandMap[u] = c;\\n      <\\/script>\"], _tmpl$2 = [\"<script\", ' type=\"module\" src=\"/@vite/client\"><\\/script>'], _tmpl$3 = [\"<script\", ' type=\"module\" async', \"><\\/script>\"];\nimport { useContext } from \"solid-js\";\nimport { HydrationScript, isServer, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport { InlineStyles } from \"./InlineStyles\";\nconst isDev = import.meta.env.MODE === \"development\";\nconst isSSR = import.meta.env.START_SSR;\nconst isIslands = import.meta.env.START_ISLANDS;\nexport default function Scripts() {\n  const context = useContext(ServerContext);\n  return [isSSR && _$createComponent(HydrationScript, {}), isIslands && _$ssr(_tmpl$, _$ssrHydrationKey()), _$createComponent(NoHydration, {\n    get children() {\n      return isServer && (isDev ? [_$ssr(_tmpl$2, _$ssrHydrationKey()), _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", \"/@fs/\" + _$escape(import.meta.env.START_ENTRY_CLIENT, true), false))] : isSSR ? (\n        // @ts-ignore\n        _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(context.env.manifest[\"entry-client\"][0].href, true), false))\n      ) : import.meta.env.START_INDEX_HTML ? (\n        // used in the SPA build index.html mode to create a reference to index html\n        // which will be used by the client build\n        _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(import.meta.env.START_ENTRY_CLIENT, true), false))\n      ) : (\n        // @ts-ignore\n        _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(context.env.manifest[\"index.html\"][0].href, true), false))\n      ));\n    }\n  }), isDev && _$createComponent(InlineStyles, {})];\n}\n",
+      "start": 1767441590552,
+      "end": 1767441590655,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/Scripts.tsx"
+        ],
+        "sourcesContent": [
+          "import { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nvar _tmpl$ = [\"<script\", \">\\n        _$HY.islandMap = {};\\n        _$HY.island = (u, c) => _$HY.islandMap[u] = c;\\n      </script>\"],\n  _tmpl$2 = [\"<script\", \" type=\\\"module\\\" src=\\\"/@vite/client\\\"></script>\"],\n  _tmpl$3 = [\"<script\", \" type=\\\"module\\\" async\", \"></script>\"];\nimport { useContext } from \"solid-js\";\nimport { HydrationScript, isServer, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport { InlineStyles } from \"./InlineStyles\";\nconst isDev = import.meta.env.MODE === \"development\";\nconst isSSR = import.meta.env.START_SSR;\nconst isIslands = import.meta.env.START_ISLANDS;\nexport default function Scripts() {\n  const context = useContext(ServerContext);\n  return [isSSR && _$createComponent(HydrationScript, {}), isIslands && _$ssr(_tmpl$, _$ssrHydrationKey()), _$createComponent(NoHydration, {\n    get children() {\n      return isServer && (isDev ? [_$ssr(_tmpl$2, _$ssrHydrationKey()), _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", \"/@fs/\" + _$escape(import.meta.env.START_ENTRY_CLIENT, true), false))] : isSSR ? // @ts-ignore\n      _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(context!.env.manifest[\"entry-client\"][0].href, true), false)) : import.meta.env.START_INDEX_HTML ? // used in the SPA build index.html mode to create a reference to index html\n      // which will be used by the client build\n      _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(import.meta.env.START_ENTRY_CLIENT, true), false)) : // @ts-ignore\n      _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(context!.env.manifest[\"index.html\"][0].href, true), false)));\n    }\n  }), isDev && _$createComponent(InlineStyles, {})];\n}"
+        ],
+        "mappings": "AAAA,SAAS,gBAAgB,sBAAsB;AAC/C,SAAS,UAAU,gBAAgB;AACnC,SAAS,OAAO,aAAa;AAC7B,SAAS,mBAAmB,yBAAyB;AACrD,SAAS,mBAAmB,yBAAyB;AACrD,IAAI,SAAS,CAAC,WAAW,2GAA0G,GACjI,UAAU,CAAC,WAAW,+CAAkD,GACxE,UAAU,CAAC,WAAW,wBAA0B,aAAY;AAC9D,SAAS,kBAAkB;AAC3B,SAAS,iBAAiB,UAAU,mBAAmB;AACvD,SAAS,qBAAqB;AAC9B,SAAS,oBAAoB;AAC7B,MAAM,QAAQ,YAAY,IAAI,SAAS;AACvC,MAAM,QAAQ,YAAY,IAAI;AAC9B,MAAM,YAAY,YAAY,IAAI;AAClC,wBAAwB,UAAU;AAChC,QAAM,UAAU,WAAW,aAAa;AACxC,SAAO,CAAC,SAAS,kBAAkB,iBAAiB,CAAC,CAAC,GAAG,aAAa,MAAM,QAAQ,kBAAkB,CAAC,GAAG,kBAAkB,aAAa;AAAA,IACvI,IAAI,WAAW;AACb,aAAO,aAAa,QAAQ,CAAC,MAAM,SAAS,kBAAkB,CAAC,GAAG,MAAM,SAAS,kBAAkB,GAAG,eAAe,OAAO,UAAU,SAAS,YAAY,IAAI,oBAAoB,IAAI,GAAG,KAAK,CAAC,CAAC,IAAI;AAAA;AAAA,QACrM,MAAM,SAAS,kBAAkB,GAAG,eAAe,OAAO,SAAS,QAAS,IAAI,SAAS,cAAc,EAAE,CAAC,EAAE,MAAM,IAAI,GAAG,KAAK,CAAC;AAAA,UAAI,YAAY,IAAI;AAAA;AAAA;AAAA,QAEnJ,MAAM,SAAS,kBAAkB,GAAG,eAAe,OAAO,SAAS,YAAY,IAAI,oBAAoB,IAAI,GAAG,KAAK,CAAC;AAAA;AAAA;AAAA,QACpH,MAAM,SAAS,kBAAkB,GAAG,eAAe,OAAO,SAAS,QAAS,IAAI,SAAS,YAAY,EAAE,CAAC,EAAE,MAAM,IAAI,GAAG,KAAK,CAAC;AAAA;AAAA,IAC/H;AAAA,EACF,CAAC,GAAG,SAAS,kBAAkB,cAAc,CAAC,CAAC,CAAC;AAClD;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590655,
+      "end": 1767441590655,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590655,
+      "end": 1767441590655,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590655,
+      "end": 1767441590655,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nvar _tmpl$ = [\"<script\", \">\\n        _$HY.islandMap = {};\\n        _$HY.island = (u, c) => _$HY.islandMap[u] = c;\\n      <\\/script>\"], _tmpl$2 = [\"<script\", ' type=\"module\" src=\"/@vite/client\"><\\/script>'], _tmpl$3 = [\"<script\", ' type=\"module\" async', \"><\\/script>\"];\nimport { useContext } from \"solid-js\";\nimport { HydrationScript, isServer, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport { InlineStyles } from \"./InlineStyles\";\nconst isDev = import.meta.env.MODE === \"development\";\nconst isSSR = true;\nconst isIslands = false;\nexport default function Scripts() {\n  const context = useContext(ServerContext);\n  return [isSSR && _$createComponent(HydrationScript, {}), isIslands && _$ssr(_tmpl$, _$ssrHydrationKey()), _$createComponent(NoHydration, {\n    get children() {\n      return isServer && (isDev ? [_$ssr(_tmpl$2, _$ssrHydrationKey()), _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", \"/@fs/\" + _$escape(\"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-client.tsx\", true), false))] : isSSR ? (\n        // @ts-ignore\n        _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(context.env.manifest[\"entry-client\"][0].href, true), false))\n      ) : false ? (\n        // used in the SPA build index.html mode to create a reference to index html\n        // which will be used by the client build\n        _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(\"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-client.tsx\", true), false))\n      ) : (\n        // @ts-ignore\n        _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(context.env.manifest[\"index.html\"][0].href, true), false))\n      ));\n    }\n  }), isDev && _$createComponent(InlineStyles, {})];\n}\n",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590656,
+      "end": 1767441590656,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import.meta.env = {\"VITE_USER_NODE_ENV\":\"development\",\"BASE_URL\":\"/\",\"MODE\":\"development\",\"DEV\":true,\"PROD\":false,\"SSR\":true};import.meta.env.START_SSR = true;import.meta.env.START_ISLANDS = false;import.meta.env.START_ENTRY_CLIENT = \"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-client.tsx\";import.meta.env.START_ENTRY_SERVER = \"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-server.tsx\";import.meta.env.START_INDEX_HTML = false;import.meta.env.START_ISLANDS_ROUTER = false;import.meta.env.START_ADAPTER = \"vercel\";import { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nvar _tmpl$ = [\"<script\", \">\\n        _$HY.islandMap = {};\\n        _$HY.island = (u, c) => _$HY.islandMap[u] = c;\\n      <\\/script>\"], _tmpl$2 = [\"<script\", ' type=\"module\" src=\"/@vite/client\"><\\/script>'], _tmpl$3 = [\"<script\", ' type=\"module\" async', \"><\\/script>\"];\nimport { useContext } from \"solid-js\";\nimport { HydrationScript, isServer, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/ServerContext.tsx\";\nimport { InlineStyles } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/InlineStyles.tsx\";\nconst isDev = import.meta.env.MODE === \"development\";\nconst isSSR = true;\nconst isIslands = false;\nexport default function Scripts() {\n  const context = useContext(ServerContext);\n  return [isSSR && _$createComponent(HydrationScript, {}), isIslands && _$ssr(_tmpl$, _$ssrHydrationKey()), _$createComponent(NoHydration, {\n    get children() {\n      return isServer && (isDev ? [_$ssr(_tmpl$2, _$ssrHydrationKey()), _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", \"/@fs/\" + _$escape(\"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-client.tsx\", true), false))] : isSSR ? (\n        // @ts-ignore\n        _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(context.env.manifest[\"entry-client\"][0].href, true), false))\n      ) : false ? (\n        // used in the SPA build index.html mode to create a reference to index html\n        // which will be used by the client build\n        _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(\"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-client.tsx\", true), false))\n      ) : (\n        // @ts-ignore\n        _$ssr(_tmpl$3, _$ssrHydrationKey(), _$ssrAttribute(\"src\", _$escape(context.env.manifest[\"index.html\"][0].href, true), false))\n      ));\n    }\n  }), isDev && _$createComponent(InlineStyles, {})];\n}\n",
+      "start": 1767441590656,
+      "end": 1767441590657,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/env/server.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { serverScheme } from './schema'\nimport type { ZodFormattedError } from 'zod'\n\nexport const formatErrors = (errors: ZodFormattedError<Map<string, string>, string>) =>\n  Object.entries(errors)\n    .map(([name, value]) => {\n      if (value && '_errors' in value) return `${name}: ${value._errors.join(', ')}\\n`\n    })\n    .filter(Boolean)\n\nconst env = serverScheme.safeParse(process.env)\n\nif (env.success === false) {\n  console.error('❌ Invalid environment variables:\\n', ...formatErrors(env.error.format()))\n  throw new Error('Invalid environment variables')\n}\n\nexport const serverEnv = env.data\n",
+      "start": 1767441590509,
+      "end": 1767441590509
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { serverScheme } from \"./schema\";\nexport const formatErrors = (errors) => Object.entries(errors).map(([name, value]) => {\n  if (value && \"_errors\" in value)\n    return `${name}: ${value._errors.join(\", \")}\n`;\n}).filter(Boolean);\nconst env = serverScheme.safeParse(process.env);\nif (env.success === false) {\n  console.error(\"❌ Invalid environment variables:\\n\", ...formatErrors(env.error.format()));\n  throw new Error(\"Invalid environment variables\");\n}\nexport const serverEnv = env.data;\n",
+      "start": 1767441590509,
+      "end": 1767441590572,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "server.ts"
+        ],
+        "sourcesContent": [
+          "import { serverScheme } from './schema'\nimport type { ZodFormattedError } from 'zod'\n\nexport const formatErrors = (errors: ZodFormattedError<Map<string, string>, string>) =>\n  Object.entries(errors)\n    .map(([name, value]) => {\n      if (value && '_errors' in value) return `${name}: ${value._errors.join(', ')}\\n`\n    })\n    .filter(Boolean)\n\nconst env = serverScheme.safeParse(process.env)\n\nif (env.success === false) {\n  console.error('❌ Invalid environment variables:\\n', ...formatErrors(env.error.format()))\n  throw new Error('Invalid environment variables')\n}\n\nexport const serverEnv = env.data\n"
+        ],
+        "mappings": "AAAA,SAAS,oBAAoB;AAGtB,aAAM,eAAe,CAAC,WAC3B,OAAO,QAAQ,MAAM,EAClB,IAAI,CAAC,CAAC,MAAM,KAAK,MAAM;AACtB,MAAI,SAAS,aAAa;AAAO,WAAO,GAAG,IAAI,KAAK,MAAM,QAAQ,KAAK,IAAI,CAAC;AAAA;AAC9E,CAAC,EACA,OAAO,OAAO;AAEnB,MAAM,MAAM,aAAa,UAAU,QAAQ,GAAG;AAE9C,IAAI,IAAI,YAAY,OAAO;AACzB,UAAQ,MAAM,sCAAsC,GAAG,aAAa,IAAI,MAAM,OAAO,CAAC,CAAC;AACvF,QAAM,IAAI,MAAM,+BAA+B;AACjD;AAEO,aAAM,YAAY,IAAI;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { serverScheme } from \"./schema\";\nexport const formatErrors = (errors) => Object.entries(errors).map(([name, value]) => {\n  if (value && \"_errors\" in value)\n    return `${name}: ${value._errors.join(\", \")}\n`;\n}).filter(Boolean);\nconst env = serverScheme.safeParse(process.env);\nif (env.success === false) {\n  console.error(\"❌ Invalid environment variables:\\n\", ...formatErrors(env.error.format()));\n  throw new Error(\"Invalid environment variables\");\n}\nexport const serverEnv = env.data;\n",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590572,
+      "end": 1767441590572,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { serverScheme } from \"/src/env/schema.ts\";\nexport const formatErrors = (errors) => Object.entries(errors).map(([name, value]) => {\n  if (value && \"_errors\" in value)\n    return `${name}: ${value._errors.join(\", \")}\n`;\n}).filter(Boolean);\nconst env = serverScheme.safeParse(process.env);\nif (env.success === false) {\n  console.error(\"❌ Invalid environment variables:\\n\", ...formatErrors(env.error.format()));\n  throw new Error(\"Invalid environment variables\");\n}\nexport const serverEnv = env.data;\n",
+      "start": 1767441590572,
+      "end": 1767441590573,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

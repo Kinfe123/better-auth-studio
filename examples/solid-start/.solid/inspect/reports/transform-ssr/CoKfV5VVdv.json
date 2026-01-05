@@ -1,0 +1,139 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/components/Counter.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { createSignal } from 'solid-js'\n\nexport default function Counter() {\n  const [count, setCount] = createSignal(0)\n  return (\n    <button\n      class=\"w-[200px] rounded-full bg-gray-100 border-2 border-gray-300 focus:border-gray-400 active:border-gray-400 px-[2rem] py-[1rem]\"\n      onClick={() => setCount(count() + 1)}\n    >\n      Clicks: {count()}\n    </button>\n  )\n}\n",
+      "start": 1767441590165,
+      "end": 1767441590165
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590165,
+      "end": 1767441590165,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<button\", \" class=\\\"w-[200px] rounded-full bg-gray-100 border-2 border-gray-300 focus:border-gray-400 active:border-gray-400 px-[2rem] py-[1rem]\\\">Clicks: <!--$-->\", \"<!--/--></button>\"];\nimport { createSignal } from 'solid-js';\nexport default function Counter() {\n  const [count, setCount] = createSignal(0);\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(count()));\n}",
+      "start": 1767441590165,
+      "end": 1767441590167,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "createSignal",
+          "Counter",
+          "count",
+          "setCount",
+          "_$ssr",
+          "_tmpl$",
+          "_$ssrHydrationKey",
+          "_$escape"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/components/Counter.tsx"
+        ],
+        "sourcesContent": [
+          "import { createSignal } from 'solid-js'\n\nexport default function Counter() {\n  const [count, setCount] = createSignal(0)\n  return (\n    <button\n      class=\"w-[200px] rounded-full bg-gray-100 border-2 border-gray-300 focus:border-gray-400 active:border-gray-400 px-[2rem] py-[1rem]\"\n      onClick={() => setCount(count() + 1)}\n    >\n      Clicks: {count()}\n    </button>\n  )\n}\n"
+        ],
+        "mappings": ";;;;AAAA,SAASA,YAAY,QAAQ,UAAU;AAEvC,eAAe,SAASC,OAAOA,CAAA,EAAG;EAChC,MAAM,CAACC,KAAK,EAAEC,QAAQ,CAAC,GAAGH,YAAY,CAAC,CAAC,CAAC;EACzC,OAAAI,KAAA,CAAAC,MAAA,EAAAC,iBAAA,IAAAC,QAAA,CAKaL,KAAK,CAAC,CAAC;AAGtB",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590167,
+      "end": 1767441590167,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<button\", ' class=\"w-[200px] rounded-full bg-gray-100 border-2 border-gray-300 focus:border-gray-400 active:border-gray-400 px-[2rem] py-[1rem]\">Clicks: <!--$-->', \"<!--/--></button>\"];\nimport { createSignal } from \"solid-js\";\nexport default function Counter() {\n  const [count, setCount] = createSignal(0);\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(count()));\n}\n",
+      "start": 1767441590167,
+      "end": 1767441590182,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/src/components/Counter.tsx"
+        ],
+        "sourcesContent": [
+          "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<button\", \" class=\\\"w-[200px] rounded-full bg-gray-100 border-2 border-gray-300 focus:border-gray-400 active:border-gray-400 px-[2rem] py-[1rem]\\\">Clicks: <!--$-->\", \"<!--/--></button>\"];\nimport { createSignal } from 'solid-js';\nexport default function Counter() {\n  const [count, setCount] = createSignal(0);\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(count()));\n}"
+        ],
+        "mappings": "AAAA,SAAS,OAAO,aAAa;AAC7B,SAAS,UAAU,gBAAgB;AACnC,SAAS,mBAAmB,yBAAyB;AACrD,IAAI,SAAS,CAAC,WAAW,0JAA4J,mBAAmB;AACxM,SAAS,oBAAoB;AAC7B,wBAAwB,UAAU;AAChC,QAAM,CAAC,OAAO,QAAQ,IAAI,aAAa,CAAC;AACxC,SAAO,MAAM,QAAQ,kBAAkB,GAAG,SAAS,MAAM,CAAC,CAAC;AAC7D;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<button\", ' class=\"w-[200px] rounded-full bg-gray-100 border-2 border-gray-300 focus:border-gray-400 active:border-gray-400 px-[2rem] py-[1rem]\">Clicks: <!--$-->', \"<!--/--></button>\"];\nimport { createSignal } from \"solid-js\";\nexport default function Counter() {\n  const [count, setCount] = createSignal(0);\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(count()));\n}\n",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<button\", ' class=\"w-[200px] rounded-full bg-gray-100 border-2 border-gray-300 focus:border-gray-400 active:border-gray-400 px-[2rem] py-[1rem]\">Clicks: <!--$-->', \"<!--/--></button>\"];\nimport { createSignal } from \"solid-js\";\nexport default function Counter() {\n  const [count, setCount] = createSignal(0);\n  return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(count()));\n}\n",
+      "start": 1767441590182,
+      "end": 1767441590183,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/env/schema.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { isServer } from 'solid-js/web'\nimport { z } from 'zod'\n\nexport const serverScheme = z.object({\n  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),\n  AUTH_SECRET: z.string(),\n  DATABASE_URL: z.string(),\n  START_BASE_URL: z.preprocess(\n    // This makes Vercel deployments not fail if you don't set START_BASE_URL\n    // Since NextAuth.js automatically uses the VERCEL_URL if present.\n    (str) => process.env.VERCEL_URL ?? str,\n    // VERCEL_URL doesn't include `https` so it cant be validated as a URL\n    process.env.VERCEL ? z.string() : z.string().url(),\n  ),\n  BETTER_AUTH_URL: z.string().url().optional(),\n  GITHUB_CLIENT_ID: z.string(),\n  GITHUB_CLIENT_SECRET: z.string(),\n  GOOGLE_CLIENT_ID: z.string().optional(),\n  GOOGLE_CLIENT_SECRET: z.string().optional(),\n})\n\nexport const clientScheme = z.object({\n  MODE: z.enum(['development', 'production', 'test']).default('development'),\n  START_BASE_URL: z.string().optional().default('http://127.0.0.1:3000'),\n})\n",
+      "start": 1767441590407,
+      "end": 1767441590407
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590407,
+      "end": 1767441590407,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590407,
+      "end": 1767441590407,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590407,
+      "end": 1767441590407,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { z } from \"zod\";\nexport const serverScheme = z.object({\n  NODE_ENV: z.enum([\"development\", \"production\", \"test\"]).default(\"development\"),\n  AUTH_SECRET: z.string(),\n  DATABASE_URL: z.string(),\n  START_BASE_URL: z.preprocess(\n    // This makes Vercel deployments not fail if you don't set START_BASE_URL\n    // Since NextAuth.js automatically uses the VERCEL_URL if present.\n    (str) => process.env.VERCEL_URL ?? str,\n    // VERCEL_URL doesn't include `https` so it cant be validated as a URL\n    process.env.VERCEL ? z.string() : z.string().url()\n  ),\n  BETTER_AUTH_URL: z.string().url().optional(),\n  GITHUB_CLIENT_ID: z.string(),\n  GITHUB_CLIENT_SECRET: z.string(),\n  GOOGLE_CLIENT_ID: z.string().optional(),\n  GOOGLE_CLIENT_SECRET: z.string().optional()\n});\nexport const clientScheme = z.object({\n  MODE: z.enum([\"development\", \"production\", \"test\"]).default(\"development\"),\n  START_BASE_URL: z.string().optional().default(\"http://127.0.0.1:3000\")\n});\n",
+      "start": 1767441590407,
+      "end": 1767441590509,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "schema.ts"
+        ],
+        "sourcesContent": [
+          "import { isServer } from 'solid-js/web'\nimport { z } from 'zod'\n\nexport const serverScheme = z.object({\n  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),\n  AUTH_SECRET: z.string(),\n  DATABASE_URL: z.string(),\n  START_BASE_URL: z.preprocess(\n    // This makes Vercel deployments not fail if you don't set START_BASE_URL\n    // Since NextAuth.js automatically uses the VERCEL_URL if present.\n    (str) => process.env.VERCEL_URL ?? str,\n    // VERCEL_URL doesn't include `https` so it cant be validated as a URL\n    process.env.VERCEL ? z.string() : z.string().url(),\n  ),\n  BETTER_AUTH_URL: z.string().url().optional(),\n  GITHUB_CLIENT_ID: z.string(),\n  GITHUB_CLIENT_SECRET: z.string(),\n  GOOGLE_CLIENT_ID: z.string().optional(),\n  GOOGLE_CLIENT_SECRET: z.string().optional(),\n})\n\nexport const clientScheme = z.object({\n  MODE: z.enum(['development', 'production', 'test']).default('development'),\n  START_BASE_URL: z.string().optional().default('http://127.0.0.1:3000'),\n})\n"
+        ],
+        "mappings": "AACA,SAAS,SAAS;AAEX,aAAM,eAAe,EAAE,OAAO;AAAA,EACnC,UAAU,EAAE,KAAK,CAAC,eAAe,cAAc,MAAM,CAAC,EAAE,QAAQ,aAAa;AAAA,EAC7E,aAAa,EAAE,OAAO;AAAA,EACtB,cAAc,EAAE,OAAO;AAAA,EACvB,gBAAgB,EAAE;AAAA;AAAA;AAAA,IAGhB,CAAC,QAAQ,QAAQ,IAAI,cAAc;AAAA;AAAA,IAEnC,QAAQ,IAAI,SAAS,EAAE,OAAO,IAAI,EAAE,OAAO,EAAE,IAAI;AAAA,EACnD;AAAA,EACA,iBAAiB,EAAE,OAAO,EAAE,IAAI,EAAE,SAAS;AAAA,EAC3C,kBAAkB,EAAE,OAAO;AAAA,EAC3B,sBAAsB,EAAE,OAAO;AAAA,EAC/B,kBAAkB,EAAE,OAAO,EAAE,SAAS;AAAA,EACtC,sBAAsB,EAAE,OAAO,EAAE,SAAS;AAC5C,CAAC;AAEM,aAAM,eAAe,EAAE,OAAO;AAAA,EACnC,MAAM,EAAE,KAAK,CAAC,eAAe,cAAc,MAAM,CAAC,EAAE,QAAQ,aAAa;AAAA,EACzE,gBAAgB,EAAE,OAAO,EAAE,SAAS,EAAE,QAAQ,uBAAuB;AACvE,CAAC;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { z } from \"zod\";\nexport const serverScheme = z.object({\n  NODE_ENV: z.enum([\"development\", \"production\", \"test\"]).default(\"development\"),\n  AUTH_SECRET: z.string(),\n  DATABASE_URL: z.string(),\n  START_BASE_URL: z.preprocess(\n    // This makes Vercel deployments not fail if you don't set START_BASE_URL\n    // Since NextAuth.js automatically uses the VERCEL_URL if present.\n    (str) => process.env.VERCEL_URL ?? str,\n    // VERCEL_URL doesn't include `https` so it cant be validated as a URL\n    process.env.VERCEL ? z.string() : z.string().url()\n  ),\n  BETTER_AUTH_URL: z.string().url().optional(),\n  GITHUB_CLIENT_ID: z.string(),\n  GITHUB_CLIENT_SECRET: z.string(),\n  GOOGLE_CLIENT_ID: z.string().optional(),\n  GOOGLE_CLIENT_SECRET: z.string().optional()\n});\nexport const clientScheme = z.object({\n  MODE: z.enum([\"development\", \"production\", \"test\"]).default(\"development\"),\n  START_BASE_URL: z.string().optional().default(\"http://127.0.0.1:3000\")\n});\n",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { z } from \"zod\";\nexport const serverScheme = z.object({\n  NODE_ENV: z.enum([\"development\", \"production\", \"test\"]).default(\"development\"),\n  AUTH_SECRET: z.string(),\n  DATABASE_URL: z.string(),\n  START_BASE_URL: z.preprocess(\n    // This makes Vercel deployments not fail if you don't set START_BASE_URL\n    // Since NextAuth.js automatically uses the VERCEL_URL if present.\n    (str) => process.env.VERCEL_URL ?? str,\n    // VERCEL_URL doesn't include `https` so it cant be validated as a URL\n    process.env.VERCEL ? z.string() : z.string().url()\n  ),\n  BETTER_AUTH_URL: z.string().url().optional(),\n  GITHUB_CLIENT_ID: z.string(),\n  GITHUB_CLIENT_SECRET: z.string(),\n  GOOGLE_CLIENT_ID: z.string().optional(),\n  GOOGLE_CLIENT_SECRET: z.string().optional()\n});\nexport const clientScheme = z.object({\n  MODE: z.enum([\"development\", \"production\", \"test\"]).default(\"development\"),\n  START_BASE_URL: z.string().optional().default(\"http://127.0.0.1:3000\")\n});\n",
+      "start": 1767441590510,
+      "end": 1767441590513,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

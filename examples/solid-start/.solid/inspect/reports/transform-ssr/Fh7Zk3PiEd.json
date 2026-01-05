@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/utils/trpc-client.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { createTRPCProxyClient, httpLink } from '@trpc/client'\nimport { createResource } from 'solid-js'\n\nimport type { AnyProcedure, AnyRouter, ProcedureArgs, ProcedureType } from '@trpc/server'\nimport type { AppRouter } from '~/server/trpc/router/_app'\nimport { inferTransformedProcedureOutput } from '@trpc/server/shared'\nimport { clientEnv } from '~/env/client'\n\nexport const trpc = createTRPCProxyClient<AppRouter>({\n  links: [\n    httpLink({\n      url: `${clientEnv.START_BASE_URL}/api/trpc`,\n    }),\n  ],\n})\n\ntype InferProcedureTypeKey<TProcedureType extends ProcedureType, TRouter extends AnyRouter> = {\n  [Key in keyof TRouter['_def']['procedures']]: TRouter['_def']['procedures'][Key]['_type'] extends TProcedureType\n    ? Key\n    : never\n}[keyof TRouter['_def']['procedures']]\n\ntype InferProcedureType<TProcedureType extends ProcedureType, TRouter extends AnyRouter> = {\n  [Key in InferProcedureTypeKey<TProcedureType, TRouter>]: TRouter['_def']['procedures'][Key]\n}\n\ntype Queries = InferProcedureType<'query', AppRouter>\n// type Mutations = InferProcedureType<'mutation', AppRouter>\n// type Subscriptions = InferProcedureType<'subscription', AppRouter>\n\nconst queries: Queries = null as any\n// const mutations: Mutations = null as any\n// const subscriptions: Subscriptions = null as any\n\ntype QueryKeys = keyof Queries & string\n// type MutationKeys = keyof Mutations & string\n// type SubscriptionKeys = keyof Subscriptions & string\n\ntype Resolver<TProcedure extends AnyProcedure> = (\n  ...args: ProcedureArgs<TProcedure['_def']>\n) => Promise<inferTransformedProcedureOutput<TProcedure>>\n\nexport const useQuery = <TPath extends QueryKeys>(path: TPath, ...params: ProcedureArgs<Queries[TPath]['_def']>) => {\n  // extract query and define the correct type\n  const query = trpc[path].query as Resolver<Queries[TPath]>\n  const fetchData = async () => query(...params)\n  return createResource(fetchData)\n}\n",
+      "start": 1767441590158,
+      "end": 1767441590158
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590158,
+      "end": 1767441590158,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590158,
+      "end": 1767441590158,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590158,
+      "end": 1767441590158,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { createTRPCProxyClient, httpLink } from \"@trpc/client\";\nimport { createResource } from \"solid-js\";\nimport { clientEnv } from \"~/env/client\";\nexport const trpc = createTRPCProxyClient({\n  links: [\n    httpLink({\n      url: `${clientEnv.START_BASE_URL}/api/trpc`\n    })\n  ]\n});\nconst queries = null;\nexport const useQuery = (path, ...params) => {\n  const query = trpc[path].query;\n  const fetchData = async () => query(...params);\n  return createResource(fetchData);\n};\n",
+      "start": 1767441590158,
+      "end": 1767441590182,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "trpc-client.ts"
+        ],
+        "sourcesContent": [
+          "import { createTRPCProxyClient, httpLink } from '@trpc/client'\nimport { createResource } from 'solid-js'\n\nimport type { AnyProcedure, AnyRouter, ProcedureArgs, ProcedureType } from '@trpc/server'\nimport type { AppRouter } from '~/server/trpc/router/_app'\nimport { inferTransformedProcedureOutput } from '@trpc/server/shared'\nimport { clientEnv } from '~/env/client'\n\nexport const trpc = createTRPCProxyClient<AppRouter>({\n  links: [\n    httpLink({\n      url: `${clientEnv.START_BASE_URL}/api/trpc`,\n    }),\n  ],\n})\n\ntype InferProcedureTypeKey<TProcedureType extends ProcedureType, TRouter extends AnyRouter> = {\n  [Key in keyof TRouter['_def']['procedures']]: TRouter['_def']['procedures'][Key]['_type'] extends TProcedureType\n    ? Key\n    : never\n}[keyof TRouter['_def']['procedures']]\n\ntype InferProcedureType<TProcedureType extends ProcedureType, TRouter extends AnyRouter> = {\n  [Key in InferProcedureTypeKey<TProcedureType, TRouter>]: TRouter['_def']['procedures'][Key]\n}\n\ntype Queries = InferProcedureType<'query', AppRouter>\n// type Mutations = InferProcedureType<'mutation', AppRouter>\n// type Subscriptions = InferProcedureType<'subscription', AppRouter>\n\nconst queries: Queries = null as any\n// const mutations: Mutations = null as any\n// const subscriptions: Subscriptions = null as any\n\ntype QueryKeys = keyof Queries & string\n// type MutationKeys = keyof Mutations & string\n// type SubscriptionKeys = keyof Subscriptions & string\n\ntype Resolver<TProcedure extends AnyProcedure> = (\n  ...args: ProcedureArgs<TProcedure['_def']>\n) => Promise<inferTransformedProcedureOutput<TProcedure>>\n\nexport const useQuery = <TPath extends QueryKeys>(path: TPath, ...params: ProcedureArgs<Queries[TPath]['_def']>) => {\n  // extract query and define the correct type\n  const query = trpc[path].query as Resolver<Queries[TPath]>\n  const fetchData = async () => query(...params)\n  return createResource(fetchData)\n}\n"
+        ],
+        "mappings": "AAAA,SAAS,uBAAuB,gBAAgB;AAChD,SAAS,sBAAsB;AAK/B,SAAS,iBAAiB;AAEnB,aAAM,OAAO,sBAAiC;AAAA,EACnD,OAAO;AAAA,IACL,SAAS;AAAA,MACP,KAAK,GAAG,UAAU,cAAc;AAAA,IAClC,CAAC;AAAA,EACH;AACF,CAAC;AAgBD,MAAM,UAAmB;AAYlB,aAAM,WAAW,CAA0B,SAAgB,WAAkD;AAElH,QAAM,QAAQ,KAAK,IAAI,EAAE;AACzB,QAAM,YAAY,YAAY,MAAM,GAAG,MAAM;AAC7C,SAAO,eAAe,SAAS;AACjC;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { createTRPCProxyClient, httpLink } from \"@trpc/client\";\nimport { createResource } from \"solid-js\";\nimport { clientEnv } from \"~/env/client\";\nexport const trpc = createTRPCProxyClient({\n  links: [\n    httpLink({\n      url: `${clientEnv.START_BASE_URL}/api/trpc`\n    })\n  ]\n});\nconst queries = null;\nexport const useQuery = (path, ...params) => {\n  const query = trpc[path].query;\n  const fetchData = async () => query(...params);\n  return createResource(fetchData);\n};\n",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590182,
+      "end": 1767441590182,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { createTRPCProxyClient, httpLink } from \"@trpc/client\";\nimport { createResource } from \"solid-js\";\nimport { clientEnv } from \"/src/env/client.ts\";\nexport const trpc = createTRPCProxyClient({\n  links: [\n    httpLink({\n      url: `${clientEnv.START_BASE_URL}/api/trpc`\n    })\n  ]\n});\nconst queries = null;\nexport const useQuery = (path, ...params) => {\n  const query = trpc[path].query;\n  const fetchData = async () => query(...params);\n  return createResource(fetchData);\n};\n",
+      "start": 1767441590182,
+      "end": 1767441590183,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

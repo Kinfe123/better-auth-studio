@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/server/db/client.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { PrismaClient } from '@prisma/client'\nimport { serverEnv } from '~/env/server'\n\nexport const prisma = new PrismaClient({\n  log: serverEnv.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],\n})\n",
+      "start": 1767441590410,
+      "end": 1767441590410
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590410,
+      "end": 1767441590410,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590410,
+      "end": 1767441590410,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590410,
+      "end": 1767441590410,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { PrismaClient } from \"@prisma/client\";\nimport { serverEnv } from \"~/env/server\";\nexport const prisma = new PrismaClient({\n  log: serverEnv.NODE_ENV === \"development\" ? [\"query\", \"error\", \"warn\"] : [\"error\"]\n});\n",
+      "start": 1767441590410,
+      "end": 1767441590509,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "client.ts"
+        ],
+        "sourcesContent": [
+          "import { PrismaClient } from '@prisma/client'\nimport { serverEnv } from '~/env/server'\n\nexport const prisma = new PrismaClient({\n  log: serverEnv.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],\n})\n"
+        ],
+        "mappings": "AAAA,SAAS,oBAAoB;AAC7B,SAAS,iBAAiB;AAEnB,aAAM,SAAS,IAAI,aAAa;AAAA,EACrC,KAAK,UAAU,aAAa,gBAAgB,CAAC,SAAS,SAAS,MAAM,IAAI,CAAC,OAAO;AACnF,CAAC;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { PrismaClient } from \"@prisma/client\";\nimport { serverEnv } from \"~/env/server\";\nexport const prisma = new PrismaClient({\n  log: serverEnv.NODE_ENV === \"development\" ? [\"query\", \"error\", \"warn\"] : [\"error\"]\n});\n",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590509,
+      "end": 1767441590509,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { PrismaClient } from \"@prisma/client\";\nimport { serverEnv } from \"/src/env/server.ts\";\nexport const prisma = new PrismaClient({\n  log: serverEnv.NODE_ENV === \"development\" ? [\"query\", \"error\", \"warn\"] : [\"error\"]\n});\n",
+      "start": 1767441590510,
+      "end": 1767441590514,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

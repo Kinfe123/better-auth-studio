@@ -1,0 +1,120 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/index.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n *\n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime\n */\n\nimport { createCookieFactory } from \"./cookies\";\nimport \"./cookieSigning\";\nimport { sign, unsign } from \"./cookieSigning\";\nimport { createCookieSessionStorageFactory } from \"./cookieStorage\";\nimport { createMemorySessionStorageFactory } from \"./memoryStorage\";\nimport { createSessionStorageFactory } from \"./sessions\";\n\nexport * from \"./cookie\";\nexport type { SessionIdStorageStrategy, SessionStorage } from \"./sessions\";\nexport const createCookie = createCookieFactory({ sign: sign, unsign: unsign });\nexport const createCookieSessionStorage = createCookieSessionStorageFactory(createCookie);\nexport const createSessionStorage = createSessionStorageFactory(createCookie);\nexport const createMemorySessionStorage = createMemorySessionStorageFactory(createSessionStorage);\n",
+      "start": 1767441590205,
+      "end": 1767441590205
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590205,
+      "end": 1767441590205,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590205,
+      "end": 1767441590205,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590205,
+      "end": 1767441590205,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n *\n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime\n */\nimport { createCookieFactory } from \"./cookies\";\nimport \"./cookieSigning\";\nimport { sign, unsign } from \"./cookieSigning\";\nimport { createCookieSessionStorageFactory } from \"./cookieStorage\";\nimport { createMemorySessionStorageFactory } from \"./memoryStorage\";\nimport { createSessionStorageFactory } from \"./sessions\";\nexport * from \"./cookie\";\nexport const createCookie = createCookieFactory({ sign, unsign });\nexport const createCookieSessionStorage = createCookieSessionStorageFactory(createCookie);\nexport const createSessionStorage = createSessionStorageFactory(createCookie);\nexport const createMemorySessionStorage = createMemorySessionStorageFactory(createSessionStorage);\n",
+      "start": 1767441590205,
+      "end": 1767441590386,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "index.ts"
+        ],
+        "sourcesContent": [
+          "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n *\n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime\n */\n\nimport { createCookieFactory } from \"./cookies\";\nimport \"./cookieSigning\";\nimport { sign, unsign } from \"./cookieSigning\";\nimport { createCookieSessionStorageFactory } from \"./cookieStorage\";\nimport { createMemorySessionStorageFactory } from \"./memoryStorage\";\nimport { createSessionStorageFactory } from \"./sessions\";\n\nexport * from \"./cookie\";\nexport type { SessionIdStorageStrategy, SessionStorage } from \"./sessions\";\nexport const createCookie = createCookieFactory({ sign: sign, unsign: unsign });\nexport const createCookieSessionStorage = createCookieSessionStorageFactory(createCookie);\nexport const createSessionStorage = createSessionStorageFactory(createCookie);\nexport const createMemorySessionStorage = createMemorySessionStorageFactory(createSessionStorage);\n"
+        ],
+        "mappings": "AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAQA,SAAS,2BAA2B;AACpC,OAAO;AACP,SAAS,MAAM,cAAc;AAC7B,SAAS,yCAAyC;AAClD,SAAS,yCAAyC;AAClD,SAAS,mCAAmC;AAE5C,cAAc;AAEP,aAAM,eAAe,oBAAoB,EAAE,MAAY,OAAe,CAAC;AACvE,aAAM,6BAA6B,kCAAkC,YAAY;AACjF,aAAM,uBAAuB,4BAA4B,YAAY;AACrE,aAAM,6BAA6B,kCAAkC,oBAAoB;",
+        "names": [],
+        "x_google_ignoreList": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n *\n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime\n */\nimport { createCookieFactory } from \"./cookies\";\nimport \"./cookieSigning\";\nimport { sign, unsign } from \"./cookieSigning\";\nimport { createCookieSessionStorageFactory } from \"./cookieStorage\";\nimport { createMemorySessionStorageFactory } from \"./memoryStorage\";\nimport { createSessionStorageFactory } from \"./sessions\";\nexport * from \"./cookie\";\nexport const createCookie = createCookieFactory({ sign, unsign });\nexport const createCookieSessionStorage = createCookieSessionStorageFactory(createCookie);\nexport const createSessionStorage = createSessionStorageFactory(createCookie);\nexport const createMemorySessionStorage = createMemorySessionStorageFactory(createSessionStorage);\n",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "/*!\n * Original code by Remix Sofware Inc\n * MIT Licensed, Copyright(c) 2021 Remix software Inc, see LICENSE.remix.md for details\n *\n * Credits to the Remix team:\n * https://github.com/remix-run/remix/blob/main/packages/remix-server-runtime\n */\nimport { createCookieFactory } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/cookies.ts\";\nimport \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/cookieSigning.ts\";\nimport { sign, unsign } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/cookieSigning.ts\";\nimport { createCookieSessionStorageFactory } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/cookieStorage.ts\";\nimport { createMemorySessionStorageFactory } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/memoryStorage.ts\";\nimport { createSessionStorageFactory } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/sessions.ts\";\nexport * from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/session/cookie.ts\";\nexport const createCookie = createCookieFactory({ sign, unsign });\nexport const createCookieSessionStorage = createCookieSessionStorageFactory(createCookie);\nexport const createSessionStorage = createSessionStorageFactory(createCookie);\nexport const createMemorySessionStorage = createMemorySessionStorageFactory(createSessionStorage);\n",
+      "start": 1767441590386,
+      "end": 1767441590394,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

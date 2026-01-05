@@ -1,0 +1,113 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/types.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import type { Debugger } from \"debug\";\nimport type { Component } from \"solid-js\";\n\ndeclare global {\n  interface Window {\n    _$DEBUG: Debugger;\n    _$HY: {\n      island(path: string, comp: Component): void;\n      islandMap: { [path: string]: Component };\n      hydrateIslands(): void;\n      fe(id: string): void;\n    };\n  }\n\n  interface RequestInit {\n    duplex?: \"half\";\n  }\n}\n\nexport type Adapter = {\n  start(): void;\n  build(): void;\n  dev?(): void;\n};\n\nexport type StartOptions = {\n  adapter: string | Adapter;\n  appRoot: string;\n  routesDir: string;\n  ssr: boolean;\n  islands: boolean;\n  islandsRouter: boolean;\n  lazy: boolean;\n  prerenderRoutes: string[];\n  inspect: boolean;\n  pageExtensions: string[];\n  root: string;\n  clientEntry: string;\n  serverEntry: string;\n  appRootFile: string;\n};\n",
+      "start": 1767441590205,
+      "end": 1767441590205
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590205,
+      "end": 1767441590205,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590205,
+      "end": 1767441590205,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590205,
+      "end": 1767441590205,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "",
+      "start": 1767441590205,
+      "end": 1767441590373,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [],
+        "sourcesContent": [],
+        "mappings": "",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590374,
+      "end": 1767441590374,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590374,
+      "end": 1767441590374,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590374,
+      "end": 1767441590374,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "",
+      "start": 1767441590374,
+      "end": 1767441590375,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/middleware.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { internalFetch } from \"../api/internalFetch\";\nimport { Middleware as ServerMiddleware } from \"../entry-server/StartServer\";\nimport { ContentTypeHeader, XSolidStartContentTypeHeader, XSolidStartOrigin } from \"./responses\";\nimport { handleServerRequest, server$ } from \"./server-functions/server\";\nimport { FetchEvent, FETCH_EVENT } from \"./types\";\n\nexport const inlineServerFunctions: ServerMiddleware = ({ forward }) => {\n  return async (event: FetchEvent) => {\n    const url = new URL(event.request.url);\n\n    if (server$.hasHandler(url.pathname)) {\n      let contentType = event.request.headers.get(ContentTypeHeader);\n      let origin = event.request.headers.get(XSolidStartOrigin);\n\n      let formRequestBody;\n      if (\n        contentType != null &&\n        contentType.includes(\"form\") &&\n        !(origin != null && origin.includes(\"client\"))\n      ) {\n        let [read1, read2] = event.request.body!.tee();\n        formRequestBody = new Request(event.request.url, {\n          body: read2,\n          headers: event.request.headers,\n          method: event.request.method,\n          duplex: \"half\"\n        });\n        event.request = new Request(event.request.url, {\n          body: read1,\n          headers: event.request.headers,\n          method: event.request.method,\n          duplex: \"half\"\n        });\n      }\n\n      let serverFunctionEvent = Object.freeze({\n        request: event.request,\n        clientAddress: event.clientAddress,\n        locals: event.locals,\n        fetch: internalFetch,\n        $type: FETCH_EVENT,\n        env: event.env\n      });\n\n      const serverResponse = await handleServerRequest(serverFunctionEvent);\n\n      let responseContentType = serverResponse!.headers.get(XSolidStartContentTypeHeader);\n\n      // when a form POST action is made and there is an error throw,\n      // and its a non-javascript request potentially,\n      // we redirect to the referrer with the form state and error serialized\n      // in the url params for the redicted location\n      if (\n        formRequestBody &&\n        responseContentType !== null &&\n        responseContentType.includes(\"error\")\n      ) {\n        const formData = await formRequestBody.formData();\n        let entries = [...formData.entries()];\n        return new Response(null, {\n          status: 302,\n          headers: {\n            Location:\n              new URL(event.request.headers.get(\"referer\") || \"\").pathname +\n              \"?form=\" +\n              encodeURIComponent(\n                JSON.stringify({\n                  url: url.pathname,\n                  entries: entries,\n                  ...(await serverResponse!.json())\n                })\n              )\n          }\n        });\n      }\n      return serverResponse as Response;\n    }\n\n    const response = await forward(event);\n\n    return response;\n  };\n};\n",
+      "start": 1767441589911,
+      "end": 1767441589911
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441589911,
+      "end": 1767441589911,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441589911,
+      "end": 1767441589911,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441589911,
+      "end": 1767441589912,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { internalFetch } from \"../api/internalFetch\";\nimport { ContentTypeHeader, XSolidStartContentTypeHeader, XSolidStartOrigin } from \"./responses\";\nimport { handleServerRequest, server$ } from \"./server-functions/server\";\nimport { FETCH_EVENT } from \"./types\";\nexport const inlineServerFunctions = ({ forward }) => {\n  return async (event) => {\n    const url = new URL(event.request.url);\n    if (server$.hasHandler(url.pathname)) {\n      let contentType = event.request.headers.get(ContentTypeHeader);\n      let origin = event.request.headers.get(XSolidStartOrigin);\n      let formRequestBody;\n      if (contentType != null && contentType.includes(\"form\") && !(origin != null && origin.includes(\"client\"))) {\n        let [read1, read2] = event.request.body.tee();\n        formRequestBody = new Request(event.request.url, {\n          body: read2,\n          headers: event.request.headers,\n          method: event.request.method,\n          duplex: \"half\"\n        });\n        event.request = new Request(event.request.url, {\n          body: read1,\n          headers: event.request.headers,\n          method: event.request.method,\n          duplex: \"half\"\n        });\n      }\n      let serverFunctionEvent = Object.freeze({\n        request: event.request,\n        clientAddress: event.clientAddress,\n        locals: event.locals,\n        fetch: internalFetch,\n        $type: FETCH_EVENT,\n        env: event.env\n      });\n      const serverResponse = await handleServerRequest(serverFunctionEvent);\n      let responseContentType = serverResponse.headers.get(XSolidStartContentTypeHeader);\n      if (formRequestBody && responseContentType !== null && responseContentType.includes(\"error\")) {\n        const formData = await formRequestBody.formData();\n        let entries = [...formData.entries()];\n        return new Response(null, {\n          status: 302,\n          headers: {\n            Location: new URL(event.request.headers.get(\"referer\") || \"\").pathname + \"?form=\" + encodeURIComponent(\n              JSON.stringify({\n                url: url.pathname,\n                entries,\n                ...await serverResponse.json()\n              })\n            )\n          }\n        });\n      }\n      return serverResponse;\n    }\n    const response = await forward(event);\n    return response;\n  };\n};\n",
+      "start": 1767441589912,
+      "end": 1767441589924,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "middleware.ts"
+        ],
+        "sourcesContent": [
+          "import { internalFetch } from \"../api/internalFetch\";\nimport { Middleware as ServerMiddleware } from \"../entry-server/StartServer\";\nimport { ContentTypeHeader, XSolidStartContentTypeHeader, XSolidStartOrigin } from \"./responses\";\nimport { handleServerRequest, server$ } from \"./server-functions/server\";\nimport { FetchEvent, FETCH_EVENT } from \"./types\";\n\nexport const inlineServerFunctions: ServerMiddleware = ({ forward }) => {\n  return async (event: FetchEvent) => {\n    const url = new URL(event.request.url);\n\n    if (server$.hasHandler(url.pathname)) {\n      let contentType = event.request.headers.get(ContentTypeHeader);\n      let origin = event.request.headers.get(XSolidStartOrigin);\n\n      let formRequestBody;\n      if (\n        contentType != null &&\n        contentType.includes(\"form\") &&\n        !(origin != null && origin.includes(\"client\"))\n      ) {\n        let [read1, read2] = event.request.body!.tee();\n        formRequestBody = new Request(event.request.url, {\n          body: read2,\n          headers: event.request.headers,\n          method: event.request.method,\n          duplex: \"half\"\n        });\n        event.request = new Request(event.request.url, {\n          body: read1,\n          headers: event.request.headers,\n          method: event.request.method,\n          duplex: \"half\"\n        });\n      }\n\n      let serverFunctionEvent = Object.freeze({\n        request: event.request,\n        clientAddress: event.clientAddress,\n        locals: event.locals,\n        fetch: internalFetch,\n        $type: FETCH_EVENT,\n        env: event.env\n      });\n\n      const serverResponse = await handleServerRequest(serverFunctionEvent);\n\n      let responseContentType = serverResponse!.headers.get(XSolidStartContentTypeHeader);\n\n      // when a form POST action is made and there is an error throw,\n      // and its a non-javascript request potentially,\n      // we redirect to the referrer with the form state and error serialized\n      // in the url params for the redicted location\n      if (\n        formRequestBody &&\n        responseContentType !== null &&\n        responseContentType.includes(\"error\")\n      ) {\n        const formData = await formRequestBody.formData();\n        let entries = [...formData.entries()];\n        return new Response(null, {\n          status: 302,\n          headers: {\n            Location:\n              new URL(event.request.headers.get(\"referer\") || \"\").pathname +\n              \"?form=\" +\n              encodeURIComponent(\n                JSON.stringify({\n                  url: url.pathname,\n                  entries: entries,\n                  ...(await serverResponse!.json())\n                })\n              )\n          }\n        });\n      }\n      return serverResponse as Response;\n    }\n\n    const response = await forward(event);\n\n    return response;\n  };\n};\n"
+        ],
+        "mappings": "AAAA,SAAS,qBAAqB;AAE9B,SAAS,mBAAmB,8BAA8B,yBAAyB;AACnF,SAAS,qBAAqB,eAAe;AAC7C,SAAqB,mBAAmB;AAEjC,aAAM,wBAA0C,CAAC,EAAE,QAAQ,MAAM;AACtE,SAAO,OAAO,UAAsB;AAClC,UAAM,MAAM,IAAI,IAAI,MAAM,QAAQ,GAAG;AAErC,QAAI,QAAQ,WAAW,IAAI,QAAQ,GAAG;AACpC,UAAI,cAAc,MAAM,QAAQ,QAAQ,IAAI,iBAAiB;AAC7D,UAAI,SAAS,MAAM,QAAQ,QAAQ,IAAI,iBAAiB;AAExD,UAAI;AACJ,UACE,eAAe,QACf,YAAY,SAAS,MAAM,KAC3B,EAAE,UAAU,QAAQ,OAAO,SAAS,QAAQ,IAC5C;AACA,YAAI,CAAC,OAAO,KAAK,IAAI,MAAM,QAAQ,KAAM,IAAI;AAC7C,0BAAkB,IAAI,QAAQ,MAAM,QAAQ,KAAK;AAAA,UAC/C,MAAM;AAAA,UACN,SAAS,MAAM,QAAQ;AAAA,UACvB,QAAQ,MAAM,QAAQ;AAAA,UACtB,QAAQ;AAAA,QACV,CAAC;AACD,cAAM,UAAU,IAAI,QAAQ,MAAM,QAAQ,KAAK;AAAA,UAC7C,MAAM;AAAA,UACN,SAAS,MAAM,QAAQ;AAAA,UACvB,QAAQ,MAAM,QAAQ;AAAA,UACtB,QAAQ;AAAA,QACV,CAAC;AAAA,MACH;AAEA,UAAI,sBAAsB,OAAO,OAAO;AAAA,QACtC,SAAS,MAAM;AAAA,QACf,eAAe,MAAM;AAAA,QACrB,QAAQ,MAAM;AAAA,QACd,OAAO;AAAA,QACP,OAAO;AAAA,QACP,KAAK,MAAM;AAAA,MACb,CAAC;AAED,YAAM,iBAAiB,MAAM,oBAAoB,mBAAmB;AAEpE,UAAI,sBAAsB,eAAgB,QAAQ,IAAI,4BAA4B;AAMlF,UACE,mBACA,wBAAwB,QACxB,oBAAoB,SAAS,OAAO,GACpC;AACA,cAAM,WAAW,MAAM,gBAAgB,SAAS;AAChD,YAAI,UAAU,CAAC,GAAG,SAAS,QAAQ,CAAC;AACpC,eAAO,IAAI,SAAS,MAAM;AAAA,UACxB,QAAQ;AAAA,UACR,SAAS;AAAA,YACP,UACE,IAAI,IAAI,MAAM,QAAQ,QAAQ,IAAI,SAAS,KAAK,EAAE,EAAE,WACpD,WACA;AAAA,cACE,KAAK,UAAU;AAAA,gBACb,KAAK,IAAI;AAAA,gBACT;AAAA,gBACA,GAAI,MAAM,eAAgB,KAAK;AAAA,cACjC,CAAC;AAAA,YACH;AAAA,UACJ;AAAA,QACF,CAAC;AAAA,MACH;AACA,aAAO;AAAA,IACT;AAEA,UAAM,WAAW,MAAM,QAAQ,KAAK;AAEpC,WAAO;AAAA,EACT;AACF;",
+        "names": [],
+        "x_google_ignoreList": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441589924,
+      "end": 1767441589924,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441589924,
+      "end": 1767441589924,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441589924,
+      "end": 1767441589924,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { internalFetch } from \"../api/internalFetch\";\nimport { ContentTypeHeader, XSolidStartContentTypeHeader, XSolidStartOrigin } from \"./responses\";\nimport { handleServerRequest, server$ } from \"./server-functions/server\";\nimport { FETCH_EVENT } from \"./types\";\nexport const inlineServerFunctions = ({ forward }) => {\n  return async (event) => {\n    const url = new URL(event.request.url);\n    if (server$.hasHandler(url.pathname)) {\n      let contentType = event.request.headers.get(ContentTypeHeader);\n      let origin = event.request.headers.get(XSolidStartOrigin);\n      let formRequestBody;\n      if (contentType != null && contentType.includes(\"form\") && !(origin != null && origin.includes(\"client\"))) {\n        let [read1, read2] = event.request.body.tee();\n        formRequestBody = new Request(event.request.url, {\n          body: read2,\n          headers: event.request.headers,\n          method: event.request.method,\n          duplex: \"half\"\n        });\n        event.request = new Request(event.request.url, {\n          body: read1,\n          headers: event.request.headers,\n          method: event.request.method,\n          duplex: \"half\"\n        });\n      }\n      let serverFunctionEvent = Object.freeze({\n        request: event.request,\n        clientAddress: event.clientAddress,\n        locals: event.locals,\n        fetch: internalFetch,\n        $type: FETCH_EVENT,\n        env: event.env\n      });\n      const serverResponse = await handleServerRequest(serverFunctionEvent);\n      let responseContentType = serverResponse.headers.get(XSolidStartContentTypeHeader);\n      if (formRequestBody && responseContentType !== null && responseContentType.includes(\"error\")) {\n        const formData = await formRequestBody.formData();\n        let entries = [...formData.entries()];\n        return new Response(null, {\n          status: 302,\n          headers: {\n            Location: new URL(event.request.headers.get(\"referer\") || \"\").pathname + \"?form=\" + encodeURIComponent(\n              JSON.stringify({\n                url: url.pathname,\n                entries,\n                ...await serverResponse.json()\n              })\n            )\n          }\n        });\n      }\n      return serverResponse;\n    }\n    const response = await forward(event);\n    return response;\n  };\n};\n",
+      "start": 1767441589924,
+      "end": 1767441589924,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441589924,
+      "end": 1767441589924,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441589924,
+      "end": 1767441589924,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441589924,
+      "end": 1767441589924,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441589924,
+      "end": 1767441589924,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441589924,
+      "end": 1767441589924,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441589924,
+      "end": 1767441589924,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { internalFetch } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/api/internalFetch.ts\";\nimport { ContentTypeHeader, XSolidStartContentTypeHeader, XSolidStartOrigin } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/responses.ts\";\nimport { handleServerRequest, server$ } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/server-functions/server.ts\";\nimport { FETCH_EVENT } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/types.tsx\";\nexport const inlineServerFunctions = ({ forward }) => {\n  return async (event) => {\n    const url = new URL(event.request.url);\n    if (server$.hasHandler(url.pathname)) {\n      let contentType = event.request.headers.get(ContentTypeHeader);\n      let origin = event.request.headers.get(XSolidStartOrigin);\n      let formRequestBody;\n      if (contentType != null && contentType.includes(\"form\") && !(origin != null && origin.includes(\"client\"))) {\n        let [read1, read2] = event.request.body.tee();\n        formRequestBody = new Request(event.request.url, {\n          body: read2,\n          headers: event.request.headers,\n          method: event.request.method,\n          duplex: \"half\"\n        });\n        event.request = new Request(event.request.url, {\n          body: read1,\n          headers: event.request.headers,\n          method: event.request.method,\n          duplex: \"half\"\n        });\n      }\n      let serverFunctionEvent = Object.freeze({\n        request: event.request,\n        clientAddress: event.clientAddress,\n        locals: event.locals,\n        fetch: internalFetch,\n        $type: FETCH_EVENT,\n        env: event.env\n      });\n      const serverResponse = await handleServerRequest(serverFunctionEvent);\n      let responseContentType = serverResponse.headers.get(XSolidStartContentTypeHeader);\n      if (formRequestBody && responseContentType !== null && responseContentType.includes(\"error\")) {\n        const formData = await formRequestBody.formData();\n        let entries = [...formData.entries()];\n        return new Response(null, {\n          status: 302,\n          headers: {\n            Location: new URL(event.request.headers.get(\"referer\") || \"\").pathname + \"?form=\" + encodeURIComponent(\n              JSON.stringify({\n                url: url.pathname,\n                entries,\n                ...await serverResponse.json()\n              })\n            )\n          }\n        });\n      }\n      return serverResponse;\n    }\n    const response = await forward(event);\n    return response;\n  };\n};\n",
+      "start": 1767441589924,
+      "end": 1767441589925,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

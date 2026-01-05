@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/studio.config.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import type { StudioConfig } from 'better-auth-studio';\nimport { auth } from './src/lib/auth';\nconst config: StudioConfig = {\n  auth,\n  basePath: '/api/studio',\n  metadata: {\n    title: 'Better Auth Studio',\n    theme: 'dark',\n  },\n  access: {\n    roles: ['admin'],\n    allowEmails: ['kinfetare83@gmail.com'],\n  }\n};\n\nexport default config;\n\n",
+      "start": 1767441590205,
+      "end": 1767441590205
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590205,
+      "end": 1767441590205,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590205,
+      "end": 1767441590205,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590205,
+      "end": 1767441590205,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { auth } from \"./src/lib/auth\";\nconst config = {\n  auth,\n  basePath: \"/api/studio\",\n  metadata: {\n    title: \"Better Auth Studio\",\n    theme: \"dark\"\n  },\n  access: {\n    roles: [\"admin\"],\n    allowEmails: [\"kinfetare83@gmail.com\"]\n  }\n};\nexport default config;\n",
+      "start": 1767441590205,
+      "end": 1767441590373,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "studio.config.ts"
+        ],
+        "sourcesContent": [
+          "import type { StudioConfig } from 'better-auth-studio';\nimport { auth } from './src/lib/auth';\nconst config: StudioConfig = {\n  auth,\n  basePath: '/api/studio',\n  metadata: {\n    title: 'Better Auth Studio',\n    theme: 'dark',\n  },\n  access: {\n    roles: ['admin'],\n    allowEmails: ['kinfetare83@gmail.com'],\n  }\n};\n\nexport default config;\n\n"
+        ],
+        "mappings": "AACA,SAAS,YAAY;AACrB,MAAM,SAAuB;AAAA,EAC3B;AAAA,EACA,UAAU;AAAA,EACV,UAAU;AAAA,IACR,OAAO;AAAA,IACP,OAAO;AAAA,EACT;AAAA,EACA,QAAQ;AAAA,IACN,OAAO,CAAC,OAAO;AAAA,IACf,aAAa,CAAC,uBAAuB;AAAA,EACvC;AACF;AAEA,eAAe;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { auth } from \"./src/lib/auth\";\nconst config = {\n  auth,\n  basePath: \"/api/studio\",\n  metadata: {\n    title: \"Better Auth Studio\",\n    theme: \"dark\"\n  },\n  access: {\n    roles: [\"admin\"],\n    allowEmails: [\"kinfetare83@gmail.com\"]\n  }\n};\nexport default config;\n",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590373,
+      "end": 1767441590373,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590374,
+      "end": 1767441590374,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590374,
+      "end": 1767441590374,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590374,
+      "end": 1767441590374,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { auth } from \"/src/lib/auth.ts\";\nconst config = {\n  auth,\n  basePath: \"/api/studio\",\n  metadata: {\n    title: \"Better Auth Studio\",\n    theme: \"dark\"\n  },\n  access: {\n    roles: [\"admin\"],\n    allowEmails: [\"kinfetare83@gmail.com\"]\n  }\n};\nexport default config;\n",
+      "start": 1767441590374,
+      "end": 1767441590377,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/data/index.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "export { useRouteData } from \"@solidjs/router\";\nexport { createRouteAction, createRouteMultiAction } from \"./createRouteAction\";\nexport { createRouteData, refetchRouteData } from \"./createRouteData\";\nexport type { FormAction, FormMethod, FormProps, SubmitOptions } from \"./Form\";\nexport { FormError, ServerError } from \"./FormError\";\n\n",
+      "start": 1767441590189,
+      "end": 1767441590189
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590189,
+      "end": 1767441590189,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590189,
+      "end": 1767441590189,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590189,
+      "end": 1767441590189,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "export { useRouteData } from \"@solidjs/router\";\nexport { createRouteAction, createRouteMultiAction } from \"./createRouteAction\";\nexport { createRouteData, refetchRouteData } from \"./createRouteData\";\nexport { FormError, ServerError } from \"./FormError\";\n",
+      "start": 1767441590189,
+      "end": 1767441590221,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "index.ts"
+        ],
+        "sourcesContent": [
+          "export { useRouteData } from \"@solidjs/router\";\nexport { createRouteAction, createRouteMultiAction } from \"./createRouteAction\";\nexport { createRouteData, refetchRouteData } from \"./createRouteData\";\nexport type { FormAction, FormMethod, FormProps, SubmitOptions } from \"./Form\";\nexport { FormError, ServerError } from \"./FormError\";\n\n"
+        ],
+        "mappings": "AAAA,SAAS,oBAAoB;AAC7B,SAAS,mBAAmB,8BAA8B;AAC1D,SAAS,iBAAiB,wBAAwB;AAElD,SAAS,WAAW,mBAAmB;",
+        "names": [],
+        "x_google_ignoreList": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590221,
+      "end": 1767441590221,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590221,
+      "end": 1767441590221,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590221,
+      "end": 1767441590222,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "export { useRouteData } from \"@solidjs/router\";\nexport { createRouteAction, createRouteMultiAction } from \"./createRouteAction\";\nexport { createRouteData, refetchRouteData } from \"./createRouteData\";\nexport { FormError, ServerError } from \"./FormError\";\n",
+      "start": 1767441590224,
+      "end": 1767441590236,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590236,
+      "end": 1767441590236,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590236,
+      "end": 1767441590236,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590236,
+      "end": 1767441590236,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590236,
+      "end": 1767441590242,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590242,
+      "end": 1767441590242,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590242,
+      "end": 1767441590242,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "export { useRouteData } from \"/node_modules/.pnpm/@solidjs+router@0.8.4_solid-js@1.9.10/node_modules/@solidjs/router/dist/index.jsx\";\nexport { createRouteAction, createRouteMultiAction } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/data/createRouteAction.tsx\";\nexport { createRouteData, refetchRouteData } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/data/createRouteData.tsx\";\nexport { FormError, ServerError } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/data/FormError.tsx\";\n",
+      "start": 1767441590242,
+      "end": 1767441590277,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

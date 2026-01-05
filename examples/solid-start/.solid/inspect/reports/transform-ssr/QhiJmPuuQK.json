@@ -1,0 +1,117 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/src/utils/auth.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { authClient } from '~/lib/auth-client'\n\nexport const useSession = () => authClient.useSession()\n\nexport const session = () => {\n  const sessionData = useSession()\n  return sessionData()?.data ?? null\n}\n",
+      "start": 1767441590139,
+      "end": 1767441590139
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590139,
+      "end": 1767441590139,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441590139,
+      "end": 1767441590139,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590139,
+      "end": 1767441590139,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { authClient } from \"~/lib/auth-client\";\nexport const useSession = () => authClient.useSession();\nexport const session = () => {\n  const sessionData = useSession();\n  return sessionData()?.data ?? null;\n};\n",
+      "start": 1767441590139,
+      "end": 1767441590168,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "auth.ts"
+        ],
+        "sourcesContent": [
+          "import { authClient } from '~/lib/auth-client'\n\nexport const useSession = () => authClient.useSession()\n\nexport const session = () => {\n  const sessionData = useSession()\n  return sessionData()?.data ?? null\n}\n"
+        ],
+        "mappings": "AAAA,SAAS,kBAAkB;AAEpB,aAAM,aAAa,MAAM,WAAW,WAAW;AAE/C,aAAM,UAAU,MAAM;AAC3B,QAAM,cAAc,WAAW;AAC/B,SAAO,YAAY,GAAG,QAAQ;AAChC;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { authClient } from \"~/lib/auth-client\";\nexport const useSession = () => authClient.useSession();\nexport const session = () => {\n  const sessionData = useSession();\n  return sessionData()?.data ?? null;\n};\n",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590168,
+      "end": 1767441590168,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { authClient } from \"/src/lib/auth-client.ts\";\nexport const useSession = () => authClient.useSession();\nexport const session = () => {\n  const sessionData = useSession();\n  return sessionData()?.data ?? null;\n};\n",
+      "start": 1767441590168,
+      "end": 1767441590175,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

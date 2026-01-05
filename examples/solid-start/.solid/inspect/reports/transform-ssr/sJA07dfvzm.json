@@ -1,0 +1,139 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/FileRoutes.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "/// <reference path=\"../server/types.tsx\" />\n\n// @ts-expect-error\nvar fileRoutes = $FILE_ROUTES;\n\n/**\n * Routes are the file system based routes, used by Solid App Router to show the current page according to the URL.\n */\n\nconst FileRoutes = () => {\n  return fileRoutes;\n};\n\nexport default FileRoutes;\nexport { fileRoutes };\n",
+      "start": 1767441589931,
+      "end": 1767441589931
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "result": "/// <reference path=\"../server/types.tsx\" />\n\n// @ts-expect-error\n\n  \n  import routeData0  from '/Users/mac/oss/better-auth-studio/examples/solid/src/routes/[...404].tsx';\nimport routeData1  from '/Users/mac/oss/better-auth-studio/examples/solid/src/routes/about.tsx';\nimport routeData2  from '/Users/mac/oss/better-auth-studio/examples/solid/src/routes/index.tsx';\n  const fileRoutes = /*#__PURE__*/ [\n{\ncomponent: routeData0,\n path: \"/*404\" \n},\n{\ncomponent: routeData1,\n path: \"/about\" \n},\n{\ncomponent: routeData2,\n path: \"/\" \n}\n];\n\n/**\n * Routes are the file system based routes, used by Solid App Router to show the current page according to the URL.\n */\n\nconst FileRoutes = () => {\n  return fileRoutes;\n};\n\nexport default FileRoutes;\nexport { fileRoutes };\n",
+      "start": 1767441589931,
+      "end": 1767441589931,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "/// <reference path=\"../server/types.tsx\" />\n\n// @ts-expect-error\n\nimport routeData0 from '/Users/mac/oss/better-auth-studio/examples/solid/src/routes/[...404].tsx';\nimport routeData1 from '/Users/mac/oss/better-auth-studio/examples/solid/src/routes/about.tsx';\nimport routeData2 from '/Users/mac/oss/better-auth-studio/examples/solid/src/routes/index.tsx';\nconst fileRoutes = /*#__PURE__*/[{\n  component: routeData0,\n  path: \"/*404\"\n}, {\n  component: routeData1,\n  path: \"/about\"\n}, {\n  component: routeData2,\n  path: \"/\"\n}];\n\n/**\n * Routes are the file system based routes, used by Solid App Router to show the current page according to the URL.\n */\n\nconst FileRoutes = () => {\n  return fileRoutes;\n};\nexport default FileRoutes;\nexport { fileRoutes };",
+      "start": 1767441589931,
+      "end": 1767441589933,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "routeData0",
+          "routeData1",
+          "routeData2",
+          "fileRoutes",
+          "component",
+          "path",
+          "FileRoutes"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/FileRoutes.tsx"
+        ],
+        "sourcesContent": [
+          "/// <reference path=\"../server/types.tsx\" />\n\n// @ts-expect-error\n\n  \n  import routeData0  from '/Users/mac/oss/better-auth-studio/examples/solid/src/routes/[...404].tsx';\nimport routeData1  from '/Users/mac/oss/better-auth-studio/examples/solid/src/routes/about.tsx';\nimport routeData2  from '/Users/mac/oss/better-auth-studio/examples/solid/src/routes/index.tsx';\n  const fileRoutes = /*#__PURE__*/ [\n{\ncomponent: routeData0,\n path: \"/*404\" \n},\n{\ncomponent: routeData1,\n path: \"/about\" \n},\n{\ncomponent: routeData2,\n path: \"/\" \n}\n];\n\n/**\n * Routes are the file system based routes, used by Solid App Router to show the current page according to the URL.\n */\n\nconst FileRoutes = () => {\n  return fileRoutes;\n};\n\nexport default FileRoutes;\nexport { fileRoutes };\n"
+        ],
+        "mappings": "AAAA;;AAEA;;AAGE,OAAOA,UAAU,MAAO,0EAA0E;AACpG,OAAOC,UAAU,MAAO,uEAAuE;AAC/F,OAAOC,UAAU,MAAO,uEAAuE;AAC7F,MAAMC,UAAU,GAAG,aAAc,CACnC;EACAC,SAAS,EAAEJ,UAAU;EACpBK,IAAI,EAAE;AACP,CAAC,EACD;EACAD,SAAS,EAAEH,UAAU;EACpBI,IAAI,EAAE;AACP,CAAC,EACD;EACAD,SAAS,EAAEF,UAAU;EACpBG,IAAI,EAAE;AACP,CAAC,CACA;;AAED;AACA;AACA;;AAEA,MAAMC,UAAU,GAAGA,CAAA,KAAM;EACvB,OAAOH,UAAU;AACnB,CAAC;AAED,eAAeG,UAAU;AACzB,SAASH,UAAU",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441589933,
+      "end": 1767441589933,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import routeData0 from \"/Users/mac/oss/better-auth-studio/examples/solid/src/routes/[...404].tsx\";\nimport routeData1 from \"/Users/mac/oss/better-auth-studio/examples/solid/src/routes/about.tsx\";\nimport routeData2 from \"/Users/mac/oss/better-auth-studio/examples/solid/src/routes/index.tsx\";\nconst fileRoutes = [{\n  component: routeData0,\n  path: \"/*404\"\n}, {\n  component: routeData1,\n  path: \"/about\"\n}, {\n  component: routeData2,\n  path: \"/\"\n}];\nconst FileRoutes = () => {\n  return fileRoutes;\n};\nexport default FileRoutes;\nexport { fileRoutes };\n",
+      "start": 1767441589933,
+      "end": 1767441590004,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/root/FileRoutes.tsx"
+        ],
+        "sourcesContent": [
+          "/// <reference path=\"../server/types.tsx\" />\n\n// @ts-expect-error\n\nimport routeData0 from '/Users/mac/oss/better-auth-studio/examples/solid/src/routes/[...404].tsx';\nimport routeData1 from '/Users/mac/oss/better-auth-studio/examples/solid/src/routes/about.tsx';\nimport routeData2 from '/Users/mac/oss/better-auth-studio/examples/solid/src/routes/index.tsx';\nconst fileRoutes = /*#__PURE__*/[{\n  component: routeData0,\n  path: \"/*404\"\n}, {\n  component: routeData1,\n  path: \"/about\"\n}, {\n  component: routeData2,\n  path: \"/\"\n}];\n\n/**\n * Routes are the file system based routes, used by Solid App Router to show the current page according to the URL.\n */\n\nconst FileRoutes = () => {\n  return fileRoutes;\n};\nexport default FileRoutes;\nexport { fileRoutes };"
+        ],
+        "mappings": "AAIA,OAAO,gBAAgB;AACvB,OAAO,gBAAgB;AACvB,OAAO,gBAAgB;AACvB,MAAM,aAA0B,CAAC;AAAA,EAC/B,WAAW;AAAA,EACX,MAAM;AACR,GAAG;AAAA,EACD,WAAW;AAAA,EACX,MAAM;AACR,GAAG;AAAA,EACD,WAAW;AAAA,EACX,MAAM;AACR,CAAC;AAMD,MAAM,aAAa,MAAM;AACvB,SAAO;AACT;AACA,eAAe;AACf,SAAS;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590004,
+      "end": 1767441590004,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590004,
+      "end": 1767441590004,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590004,
+      "end": 1767441590004,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import routeData0 from \"/Users/mac/oss/better-auth-studio/examples/solid/src/routes/[...404].tsx\";\nimport routeData1 from \"/Users/mac/oss/better-auth-studio/examples/solid/src/routes/about.tsx\";\nimport routeData2 from \"/Users/mac/oss/better-auth-studio/examples/solid/src/routes/index.tsx\";\nconst fileRoutes = [{\n  component: routeData0,\n  path: \"/*404\"\n}, {\n  component: routeData1,\n  path: \"/about\"\n}, {\n  component: routeData2,\n  path: \"/\"\n}];\nconst FileRoutes = () => {\n  return fileRoutes;\n};\nexport default FileRoutes;\nexport { fileRoutes };\n",
+      "start": 1767441590004,
+      "end": 1767441590004,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590004,
+      "end": 1767441590004,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590004,
+      "end": 1767441590004,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590004,
+      "end": 1767441590004,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590004,
+      "end": 1767441590004,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590004,
+      "end": 1767441590004,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590004,
+      "end": 1767441590004,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import routeData0 from \"/src/routes/[...404].tsx\";\nimport routeData1 from \"/src/routes/about.tsx\";\nimport routeData2 from \"/src/routes/index.tsx\";\nconst fileRoutes = [{\n  component: routeData0,\n  path: \"/*404\"\n}, {\n  component: routeData1,\n  path: \"/about\"\n}, {\n  component: routeData2,\n  path: \"/\"\n}];\nconst FileRoutes = () => {\n  return fileRoutes;\n};\nexport default FileRoutes;\nexport { fileRoutes };\n",
+      "start": 1767441590004,
+      "end": 1767441590005,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

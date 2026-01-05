@@ -1,0 +1,175 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/islands/index.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { Component, ComponentProps, lazy, splitProps, useContext } from \"solid-js\";\nimport { Hydration, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport { IslandManifest } from \"../server/types\";\nexport { default as clientOnly } from \"./clientOnly\";\n\ndeclare module \"solid-js\" {\n  namespace JSX {\n    interface IntrinsicElements {\n      \"solid-island\": {\n        \"data-props\": string;\n        \"data-component\": string;\n        \"data-island\": string;\n        \"data-when\": \"idle\" | \"load\";\n        children: JSX.Element;\n      };\n      \"solid-children\": {\n        children: JSX.Element;\n      };\n    }\n  }\n}\n\nexport function island<T extends Component<any>>(\n  Comp:\n    | T\n    | (() => Promise<{\n        default: T;\n      }>),\n  path?: string\n): T {\n  let Component = Comp as T;\n\n  if (!import.meta.env.START_ISLANDS) {\n    // TODO: have some sane semantics for islands used in non-island mode\n    return lazy(Comp as () => Promise<{ default: T }>);\n  }\n\n  function IslandComponent(props: ComponentProps<any>) {\n    return (\n      <Component {...props}>\n        <solid-children>\n          <NoHydration>{props.children}</NoHydration>\n        </solid-children>\n      </Component>\n    );\n  }\n\n  return ((compProps: ComponentProps<T>) => {\n    if (import.meta.env.SSR) {\n      const context = useContext(ServerContext);\n      const [, props] = splitProps(compProps, [\"children\"]);\n\n      let fpath;\n\n      if (import.meta.env.PROD && context && context.env.manifest && path && path in context.env.manifest) {\n        fpath = (context.env.manifest[path] as IslandManifest).script.href;\n      } else {\n        fpath = `/` + path;\n      }\n\n      return (\n        <Hydration>\n          <solid-island\n            data-props={JSON.stringify(props)}\n            data-component={fpath}\n            data-island={`/` + path}\n            data-when={props[\"client:idle\"] ? \"idle\" : \"load\"}\n          >\n            <IslandComponent {...compProps} />\n          </solid-island>\n        </Hydration>\n      );\n    } else {\n      return <IslandComponent />;\n    }\n  }) as T;\n}\n",
+      "start": 1767441590198,
+      "end": 1767441590198
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590198,
+      "end": 1767441590198,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "import { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { mergeProps as _$mergeProps } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<solid-children\", \">\", \"</solid-children>\"],\n  _tmpl$2 = [\"<solid-island\", \">\", \"</solid-island>\"];\nimport { lazy, splitProps, useContext } from \"solid-js\";\nimport { Hydration, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport { IslandManifest } from \"../server/types\";\nexport { default as clientOnly } from \"./clientOnly\";\ndeclare module \"solid-js\" {\n  namespace JSX {\n    interface IntrinsicElements {\n      \"solid-island\": {\n        \"data-props\": string;\n        \"data-component\": string;\n        \"data-island\": string;\n        \"data-when\": \"idle\" | \"load\";\n        children: JSX.Element;\n      };\n      \"solid-children\": {\n        children: JSX.Element;\n      };\n    }\n  }\n}\nexport function island<T extends Component<any>>(Comp: T | (() => Promise<{\n  default: T;\n}>), path?: string): T {\n  let Component = Comp as T;\n  if (!import.meta.env.START_ISLANDS) {\n    // TODO: have some sane semantics for islands used in non-island mode\n    return lazy(Comp as () => Promise<{\n      default: T;\n    }>);\n  }\n  function IslandComponent(props: ComponentProps<any>) {\n    return _$createComponent(Component, _$mergeProps(props, {\n      get children() {\n        return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(NoHydration, {\n          get children() {\n            return props.children;\n          }\n        })));\n      }\n    }));\n  }\n  return ((compProps: ComponentProps<T>) => {\n    if (import.meta.env.SSR) {\n      const context = useContext(ServerContext);\n      const [, props] = splitProps(compProps, [\"children\"]);\n      let fpath;\n      if (import.meta.env.PROD && context && context.env.manifest && path && path in context.env.manifest) {\n        fpath = (context.env.manifest[path] as IslandManifest).script.href;\n      } else {\n        fpath = `/` + path;\n      }\n      return _$createComponent(Hydration, {\n        get children() {\n          return _$ssr(_tmpl$2, _$ssrHydrationKey() + _$ssrAttribute(\"data-props\", _$escape(JSON.stringify(props), true), false) + _$ssrAttribute(\"data-component\", _$escape(fpath, true), false) + _$ssrAttribute(\"data-island\", `/` + _$escape(path, true), false) + _$ssrAttribute(\"data-when\", props[\"client:idle\"] ? \"idle\" : \"load\", false), _$escape(_$createComponent(IslandComponent, compProps)));\n        }\n      });\n    } else {\n      return _$createComponent(IslandComponent, {});\n    }\n  }) as T;\n}",
+      "start": 1767441590198,
+      "end": 1767441590204,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "lazy",
+          "splitProps",
+          "useContext",
+          "Hydration",
+          "NoHydration",
+          "ServerContext",
+          "IslandManifest",
+          "default",
+          "clientOnly",
+          "JSX",
+          "IntrinsicElements",
+          "children",
+          "Element",
+          "island",
+          "Component",
+          "Comp",
+          "T",
+          "Promise",
+          "path",
+          "import",
+          "meta",
+          "env",
+          "START_ISLANDS",
+          "IslandComponent",
+          "props",
+          "ComponentProps",
+          "_$createComponent",
+          "_$mergeProps",
+          "_$ssr",
+          "_tmpl$",
+          "_$ssrHydrationKey",
+          "_$escape",
+          "compProps",
+          "SSR",
+          "context",
+          "fpath",
+          "PROD",
+          "manifest",
+          "script",
+          "href",
+          "_tmpl$2",
+          "_$ssrAttribute",
+          "JSON",
+          "stringify"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/islands/index.tsx"
+        ],
+        "sourcesContent": [
+          "import { Component, ComponentProps, lazy, splitProps, useContext } from \"solid-js\";\nimport { Hydration, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport { IslandManifest } from \"../server/types\";\nexport { default as clientOnly } from \"./clientOnly\";\n\ndeclare module \"solid-js\" {\n  namespace JSX {\n    interface IntrinsicElements {\n      \"solid-island\": {\n        \"data-props\": string;\n        \"data-component\": string;\n        \"data-island\": string;\n        \"data-when\": \"idle\" | \"load\";\n        children: JSX.Element;\n      };\n      \"solid-children\": {\n        children: JSX.Element;\n      };\n    }\n  }\n}\n\nexport function island<T extends Component<any>>(\n  Comp:\n    | T\n    | (() => Promise<{\n        default: T;\n      }>),\n  path?: string\n): T {\n  let Component = Comp as T;\n\n  if (!import.meta.env.START_ISLANDS) {\n    // TODO: have some sane semantics for islands used in non-island mode\n    return lazy(Comp as () => Promise<{ default: T }>);\n  }\n\n  function IslandComponent(props: ComponentProps<any>) {\n    return (\n      <Component {...props}>\n        <solid-children>\n          <NoHydration>{props.children}</NoHydration>\n        </solid-children>\n      </Component>\n    );\n  }\n\n  return ((compProps: ComponentProps<T>) => {\n    if (import.meta.env.SSR) {\n      const context = useContext(ServerContext);\n      const [, props] = splitProps(compProps, [\"children\"]);\n\n      let fpath;\n\n      if (import.meta.env.PROD && context && context.env.manifest && path && path in context.env.manifest) {\n        fpath = (context.env.manifest[path] as IslandManifest).script.href;\n      } else {\n        fpath = `/` + path;\n      }\n\n      return (\n        <Hydration>\n          <solid-island\n            data-props={JSON.stringify(props)}\n            data-component={fpath}\n            data-island={`/` + path}\n            data-when={props[\"client:idle\"] ? \"idle\" : \"load\"}\n          >\n            <IslandComponent {...compProps} />\n          </solid-island>\n        </Hydration>\n      );\n    } else {\n      return <IslandComponent />;\n    }\n  }) as T;\n}\n"
+        ],
+        "mappings": "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",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590204,
+      "end": 1767441590204,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { mergeProps as _$mergeProps } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<solid-children\", \">\", \"</solid-children>\"], _tmpl$2 = [\"<solid-island\", \">\", \"</solid-island>\"];\nimport { lazy, splitProps, useContext } from \"solid-js\";\nimport { Hydration, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nexport { default as clientOnly } from \"./clientOnly\";\nexport function island(Comp, path) {\n  let Component = Comp;\n  if (!import.meta.env.START_ISLANDS) {\n    return lazy(Comp);\n  }\n  function IslandComponent(props) {\n    return _$createComponent(Component, _$mergeProps(props, {\n      get children() {\n        return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(NoHydration, {\n          get children() {\n            return props.children;\n          }\n        })));\n      }\n    }));\n  }\n  return (compProps) => {\n    if (import.meta.env.SSR) {\n      const context = useContext(ServerContext);\n      const [, props] = splitProps(compProps, [\"children\"]);\n      let fpath;\n      if (import.meta.env.PROD && context && context.env.manifest && path && path in context.env.manifest) {\n        fpath = context.env.manifest[path].script.href;\n      } else {\n        fpath = `/` + path;\n      }\n      return _$createComponent(Hydration, {\n        get children() {\n          return _$ssr(_tmpl$2, _$ssrHydrationKey() + _$ssrAttribute(\"data-props\", _$escape(JSON.stringify(props), true), false) + _$ssrAttribute(\"data-component\", _$escape(fpath, true), false) + _$ssrAttribute(\"data-island\", `/` + _$escape(path, true), false) + _$ssrAttribute(\"data-when\", props[\"client:idle\"] ? \"idle\" : \"load\", false), _$escape(_$createComponent(IslandComponent, compProps)));\n        }\n      });\n    } else {\n      return _$createComponent(IslandComponent, {});\n    }\n  };\n}\n",
+      "start": 1767441590204,
+      "end": 1767441590386,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/islands/index.tsx"
+        ],
+        "sourcesContent": [
+          "import { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { mergeProps as _$mergeProps } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<solid-children\", \">\", \"</solid-children>\"],\n  _tmpl$2 = [\"<solid-island\", \">\", \"</solid-island>\"];\nimport { lazy, splitProps, useContext } from \"solid-js\";\nimport { Hydration, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nimport { IslandManifest } from \"../server/types\";\nexport { default as clientOnly } from \"./clientOnly\";\ndeclare module \"solid-js\" {\n  namespace JSX {\n    interface IntrinsicElements {\n      \"solid-island\": {\n        \"data-props\": string;\n        \"data-component\": string;\n        \"data-island\": string;\n        \"data-when\": \"idle\" | \"load\";\n        children: JSX.Element;\n      };\n      \"solid-children\": {\n        children: JSX.Element;\n      };\n    }\n  }\n}\nexport function island<T extends Component<any>>(Comp: T | (() => Promise<{\n  default: T;\n}>), path?: string): T {\n  let Component = Comp as T;\n  if (!import.meta.env.START_ISLANDS) {\n    // TODO: have some sane semantics for islands used in non-island mode\n    return lazy(Comp as () => Promise<{\n      default: T;\n    }>);\n  }\n  function IslandComponent(props: ComponentProps<any>) {\n    return _$createComponent(Component, _$mergeProps(props, {\n      get children() {\n        return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(NoHydration, {\n          get children() {\n            return props.children;\n          }\n        })));\n      }\n    }));\n  }\n  return ((compProps: ComponentProps<T>) => {\n    if (import.meta.env.SSR) {\n      const context = useContext(ServerContext);\n      const [, props] = splitProps(compProps, [\"children\"]);\n      let fpath;\n      if (import.meta.env.PROD && context && context.env.manifest && path && path in context.env.manifest) {\n        fpath = (context.env.manifest[path] as IslandManifest).script.href;\n      } else {\n        fpath = `/` + path;\n      }\n      return _$createComponent(Hydration, {\n        get children() {\n          return _$ssr(_tmpl$2, _$ssrHydrationKey() + _$ssrAttribute(\"data-props\", _$escape(JSON.stringify(props), true), false) + _$ssrAttribute(\"data-component\", _$escape(fpath, true), false) + _$ssrAttribute(\"data-island\", `/` + _$escape(path, true), false) + _$ssrAttribute(\"data-when\", props[\"client:idle\"] ? \"idle\" : \"load\", false), _$escape(_$createComponent(IslandComponent, compProps)));\n        }\n      });\n    } else {\n      return _$createComponent(IslandComponent, {});\n    }\n  }) as T;\n}"
+        ],
+        "mappings": "AAAA,SAAS,gBAAgB,sBAAsB;AAC/C,SAAS,cAAc,oBAAoB;AAC3C,SAAS,OAAO,aAAa;AAC7B,SAAS,UAAU,gBAAgB;AACnC,SAAS,mBAAmB,yBAAyB;AACrD,SAAS,mBAAmB,yBAAyB;AACrD,IAAI,SAAS,CAAC,mBAAmB,KAAK,mBAAmB,GACvD,UAAU,CAAC,iBAAiB,KAAK,iBAAiB;AACpD,SAAS,MAAM,YAAY,kBAAkB;AAC7C,SAAS,WAAW,mBAAmB;AACvC,SAAS,qBAAqB;AAE9B,SAAS,WAAW,kBAAkB;AAiB/B,gBAAS,OAAiC,MAE5C,MAAkB;AACrB,MAAI,YAAY;AAChB,MAAI,CAAC,YAAY,IAAI,eAAe;AAElC,WAAO,KAAK,IAEV;AAAA,EACJ;AACA,WAAS,gBAAgB,OAA4B;AACnD,WAAO,kBAAkB,WAAW,aAAa,OAAO;AAAA,MACtD,IAAI,WAAW;AACb,eAAO,MAAM,QAAQ,kBAAkB,GAAG,SAAS,kBAAkB,aAAa;AAAA,UAChF,IAAI,WAAW;AACb,mBAAO,MAAM;AAAA,UACf;AAAA,QACF,CAAC,CAAC,CAAC;AAAA,MACL;AAAA,IACF,CAAC,CAAC;AAAA,EACJ;AACA,SAAQ,CAAC,cAAiC;AACxC,QAAI,YAAY,IAAI,KAAK;AACvB,YAAM,UAAU,WAAW,aAAa;AACxC,YAAM,CAAC,EAAE,KAAK,IAAI,WAAW,WAAW,CAAC,UAAU,CAAC;AACpD,UAAI;AACJ,UAAI,YAAY,IAAI,QAAQ,WAAW,QAAQ,IAAI,YAAY,QAAQ,QAAQ,QAAQ,IAAI,UAAU;AACnG,gBAAS,QAAQ,IAAI,SAAS,IAAI,EAAqB,OAAO;AAAA,MAChE,OAAO;AACL,gBAAQ,MAAM;AAAA,MAChB;AACA,aAAO,kBAAkB,WAAW;AAAA,QAClC,IAAI,WAAW;AACb,iBAAO,MAAM,SAAS,kBAAkB,IAAI,eAAe,cAAc,SAAS,KAAK,UAAU,KAAK,GAAG,IAAI,GAAG,KAAK,IAAI,eAAe,kBAAkB,SAAS,OAAO,IAAI,GAAG,KAAK,IAAI,eAAe,eAAe,MAAM,SAAS,MAAM,IAAI,GAAG,KAAK,IAAI,eAAe,aAAa,MAAM,aAAa,IAAI,SAAS,QAAQ,KAAK,GAAG,SAAS,kBAAkB,iBAAiB,SAAS,CAAC,CAAC;AAAA,QAClY;AAAA,MACF,CAAC;AAAA,IACH,OAAO;AACL,aAAO,kBAAkB,iBAAiB,CAAC,CAAC;AAAA,IAC9C;AAAA,EACF;AACF;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { mergeProps as _$mergeProps } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<solid-children\", \">\", \"</solid-children>\"], _tmpl$2 = [\"<solid-island\", \">\", \"</solid-island>\"];\nimport { lazy, splitProps, useContext } from \"solid-js\";\nimport { Hydration, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"../server/ServerContext\";\nexport { default as clientOnly } from \"./clientOnly\";\nexport function island(Comp, path) {\n  let Component = Comp;\n  if (!false) {\n    return lazy(Comp);\n  }\n  function IslandComponent(props) {\n    return _$createComponent(Component, _$mergeProps(props, {\n      get children() {\n        return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(NoHydration, {\n          get children() {\n            return props.children;\n          }\n        })));\n      }\n    }));\n  }\n  return (compProps) => {\n    if (import.meta.env.SSR) {\n      const context = useContext(ServerContext);\n      const [, props] = splitProps(compProps, [\"children\"]);\n      let fpath;\n      if (import.meta.env.PROD && context && context.env.manifest && path && path in context.env.manifest) {\n        fpath = context.env.manifest[path].script.href;\n      } else {\n        fpath = `/` + path;\n      }\n      return _$createComponent(Hydration, {\n        get children() {\n          return _$ssr(_tmpl$2, _$ssrHydrationKey() + _$ssrAttribute(\"data-props\", _$escape(JSON.stringify(props), true), false) + _$ssrAttribute(\"data-component\", _$escape(fpath, true), false) + _$ssrAttribute(\"data-island\", `/` + _$escape(path, true), false) + _$ssrAttribute(\"data-when\", props[\"client:idle\"] ? \"idle\" : \"load\", false), _$escape(_$createComponent(IslandComponent, compProps)));\n        }\n      });\n    } else {\n      return _$createComponent(IslandComponent, {});\n    }\n  };\n}\n",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590386,
+      "end": 1767441590386,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import.meta.env = {\"VITE_USER_NODE_ENV\":\"development\",\"BASE_URL\":\"/\",\"MODE\":\"development\",\"DEV\":true,\"PROD\":false,\"SSR\":true};import.meta.env.START_SSR = true;import.meta.env.START_ISLANDS = false;import.meta.env.START_ENTRY_CLIENT = \"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-client.tsx\";import.meta.env.START_ENTRY_SERVER = \"/Users/mac/oss/better-auth-studio/examples/solid/src/entry-server.tsx\";import.meta.env.START_INDEX_HTML = false;import.meta.env.START_ISLANDS_ROUTER = false;import.meta.env.START_ADAPTER = \"vercel\";import { ssrAttribute as _$ssrAttribute } from \"solid-js/web\";\nimport { mergeProps as _$mergeProps } from \"solid-js/web\";\nimport { ssr as _$ssr } from \"solid-js/web\";\nimport { escape as _$escape } from \"solid-js/web\";\nimport { createComponent as _$createComponent } from \"solid-js/web\";\nimport { ssrHydrationKey as _$ssrHydrationKey } from \"solid-js/web\";\nvar _tmpl$ = [\"<solid-children\", \">\", \"</solid-children>\"], _tmpl$2 = [\"<solid-island\", \">\", \"</solid-island>\"];\nimport { lazy, splitProps, useContext } from \"solid-js\";\nimport { Hydration, NoHydration } from \"solid-js/web\";\nimport { ServerContext } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/ServerContext.tsx\";\nexport { default as clientOnly } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/islands/clientOnly.tsx\";\nexport function island(Comp, path) {\n  let Component = Comp;\n  if (!false) {\n    return lazy(Comp);\n  }\n  function IslandComponent(props) {\n    return _$createComponent(Component, _$mergeProps(props, {\n      get children() {\n        return _$ssr(_tmpl$, _$ssrHydrationKey(), _$escape(_$createComponent(NoHydration, {\n          get children() {\n            return props.children;\n          }\n        })));\n      }\n    }));\n  }\n  return (compProps) => {\n    if (import.meta.env.SSR) {\n      const context = useContext(ServerContext);\n      const [, props] = splitProps(compProps, [\"children\"]);\n      let fpath;\n      if (import.meta.env.PROD && context && context.env.manifest && path && path in context.env.manifest) {\n        fpath = context.env.manifest[path].script.href;\n      } else {\n        fpath = `/` + path;\n      }\n      return _$createComponent(Hydration, {\n        get children() {\n          return _$ssr(_tmpl$2, _$ssrHydrationKey() + _$ssrAttribute(\"data-props\", _$escape(JSON.stringify(props), true), false) + _$ssrAttribute(\"data-component\", _$escape(fpath, true), false) + _$ssrAttribute(\"data-island\", `/` + _$escape(path, true), false) + _$ssrAttribute(\"data-when\", props[\"client:idle\"] ? \"idle\" : \"load\", false), _$escape(_$createComponent(IslandComponent, compProps)));\n        }\n      });\n    } else {\n      return _$createComponent(IslandComponent, {});\n    }\n  };\n}\n",
+      "start": 1767441590386,
+      "end": 1767441590394,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

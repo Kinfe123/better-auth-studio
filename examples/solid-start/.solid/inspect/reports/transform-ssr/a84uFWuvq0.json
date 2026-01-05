@@ -1,0 +1,120 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/api/internalFetch.ts",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { FETCH_EVENT } from \"../server/types\";\nimport { getRouteMatches } from \"./router\";\nimport type { APIEvent, MatchRoute, Method } from \"./types\";\n\nlet apiRoutes: MatchRoute[];\n\nexport const registerApiRoutes = (routes: MatchRoute[]) => {\n  apiRoutes = routes;\n};\n\nexport async function internalFetch(route: string, init: RequestInit, env: Env = {}, locals: Record<string, unknown> = {}) {\n  if (route.startsWith(\"http\")) {\n    return await fetch(route, init);\n  }\n\n  let url = new URL(route, \"http://internal\");\n  const request = new Request(url.href, init);\n  const handler = getRouteMatches(apiRoutes, url.pathname, request.method.toUpperCase() as Method);\n\n  if (!handler) {\n    throw new Error(`No handler found for ${request.method} ${request.url}`);\n  }\n\n  let apiEvent: APIEvent = Object.freeze({\n    request,\n    params: handler.params,\n    clientAddress: \"127.0.0.1\",\n    env,\n    locals,\n    $type: FETCH_EVENT,\n    fetch: internalFetch\n  });\n\n  const response = await handler.handler(apiEvent);\n  return response;\n}\n",
+      "start": 1767441589896,
+      "end": 1767441589896
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441589896,
+      "end": 1767441589896,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "start": 1767441589897,
+      "end": 1767441589897,
+      "order": "pre"
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441589897,
+      "end": 1767441589897,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { FETCH_EVENT } from \"../server/types\";\nimport { getRouteMatches } from \"./router\";\nlet apiRoutes;\nexport const registerApiRoutes = (routes) => {\n  apiRoutes = routes;\n};\nexport async function internalFetch(route, init, env = {}, locals = {}) {\n  if (route.startsWith(\"http\")) {\n    return await fetch(route, init);\n  }\n  let url = new URL(route, \"http://internal\");\n  const request = new Request(url.href, init);\n  const handler = getRouteMatches(apiRoutes, url.pathname, request.method.toUpperCase());\n  if (!handler) {\n    throw new Error(`No handler found for ${request.method} ${request.url}`);\n  }\n  let apiEvent = Object.freeze({\n    request,\n    params: handler.params,\n    clientAddress: \"127.0.0.1\",\n    env,\n    locals,\n    $type: FETCH_EVENT,\n    fetch: internalFetch\n  });\n  const response = await handler.handler(apiEvent);\n  return response;\n}\n",
+      "start": 1767441589897,
+      "end": 1767441589912,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "internalFetch.ts"
+        ],
+        "sourcesContent": [
+          "import { FETCH_EVENT } from \"../server/types\";\nimport { getRouteMatches } from \"./router\";\nimport type { APIEvent, MatchRoute, Method } from \"./types\";\n\nlet apiRoutes: MatchRoute[];\n\nexport const registerApiRoutes = (routes: MatchRoute[]) => {\n  apiRoutes = routes;\n};\n\nexport async function internalFetch(route: string, init: RequestInit, env: Env = {}, locals: Record<string, unknown> = {}) {\n  if (route.startsWith(\"http\")) {\n    return await fetch(route, init);\n  }\n\n  let url = new URL(route, \"http://internal\");\n  const request = new Request(url.href, init);\n  const handler = getRouteMatches(apiRoutes, url.pathname, request.method.toUpperCase() as Method);\n\n  if (!handler) {\n    throw new Error(`No handler found for ${request.method} ${request.url}`);\n  }\n\n  let apiEvent: APIEvent = Object.freeze({\n    request,\n    params: handler.params,\n    clientAddress: \"127.0.0.1\",\n    env,\n    locals,\n    $type: FETCH_EVENT,\n    fetch: internalFetch\n  });\n\n  const response = await handler.handler(apiEvent);\n  return response;\n}\n"
+        ],
+        "mappings": "AAAA,SAAS,mBAAmB;AAC5B,SAAS,uBAAuB;AAGhC,IAAI;AAEG,aAAM,oBAAoB,CAAC,WAAyB;AACzD,cAAY;AACd;AAEA,sBAAsB,cAAc,OAAe,MAAmB,MAAW,CAAC,GAAG,SAAkC,CAAC,GAAG;AACzH,MAAI,MAAM,WAAW,MAAM,GAAG;AAC5B,WAAO,MAAM,MAAM,OAAO,IAAI;AAAA,EAChC;AAEA,MAAI,MAAM,IAAI,IAAI,OAAO,iBAAiB;AAC1C,QAAM,UAAU,IAAI,QAAQ,IAAI,MAAM,IAAI;AAC1C,QAAM,UAAU,gBAAgB,WAAW,IAAI,UAAU,QAAQ,OAAO,YAAY,CAAW;AAE/F,MAAI,CAAC,SAAS;AACZ,UAAM,IAAI,MAAM,wBAAwB,QAAQ,MAAM,IAAI,QAAQ,GAAG,EAAE;AAAA,EACzE;AAEA,MAAI,WAAqB,OAAO,OAAO;AAAA,IACrC;AAAA,IACA,QAAQ,QAAQ;AAAA,IAChB,eAAe;AAAA,IACf;AAAA,IACA;AAAA,IACA,OAAO;AAAA,IACP,OAAO;AAAA,EACT,CAAC;AAED,QAAM,WAAW,MAAM,QAAQ,QAAQ,QAAQ;AAC/C,SAAO;AACT;",
+        "names": [],
+        "x_google_ignoreList": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441589912,
+      "end": 1767441589912,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441589912,
+      "end": 1767441589912,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441589912,
+      "end": 1767441589912,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { FETCH_EVENT } from \"../server/types\";\nimport { getRouteMatches } from \"./router\";\nlet apiRoutes;\nexport const registerApiRoutes = (routes) => {\n  apiRoutes = routes;\n};\nexport async function internalFetch(route, init, env = {}, locals = {}) {\n  if (route.startsWith(\"http\")) {\n    return await fetch(route, init);\n  }\n  let url = new URL(route, \"http://internal\");\n  const request = new Request(url.href, init);\n  const handler = getRouteMatches(apiRoutes, url.pathname, request.method.toUpperCase());\n  if (!handler) {\n    throw new Error(`No handler found for ${request.method} ${request.url}`);\n  }\n  let apiEvent = Object.freeze({\n    request,\n    params: handler.params,\n    clientAddress: \"127.0.0.1\",\n    env,\n    locals,\n    $type: FETCH_EVENT,\n    fetch: internalFetch\n  });\n  const response = await handler.handler(apiEvent);\n  return response;\n}\n",
+      "start": 1767441589912,
+      "end": 1767441589912,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441589912,
+      "end": 1767441589912,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441589912,
+      "end": 1767441589912,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441589912,
+      "end": 1767441589912,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441589912,
+      "end": 1767441589912,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441589912,
+      "end": 1767441589912,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441589912,
+      "end": 1767441589912,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { FETCH_EVENT } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/server/types.tsx\";\nimport { getRouteMatches } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/api/router.ts\";\nlet apiRoutes;\nexport const registerApiRoutes = (routes) => {\n  apiRoutes = routes;\n};\nexport async function internalFetch(route, init, env = {}, locals = {}) {\n  if (route.startsWith(\"http\")) {\n    return await fetch(route, init);\n  }\n  let url = new URL(route, \"http://internal\");\n  const request = new Request(url.href, init);\n  const handler = getRouteMatches(apiRoutes, url.pathname, request.method.toUpperCase());\n  if (!handler) {\n    throw new Error(`No handler found for ${request.method} ${request.url}`);\n  }\n  let apiEvent = Object.freeze({\n    request,\n    params: handler.params,\n    clientAddress: \"127.0.0.1\",\n    env,\n    locals,\n    $type: FETCH_EVENT,\n    fetch: internalFetch\n  });\n  const response = await handler.handler(apiEvent);\n  return response;\n}\n",
+      "start": 1767441589912,
+      "end": 1767441589913,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}

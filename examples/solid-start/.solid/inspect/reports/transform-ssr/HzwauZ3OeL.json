@@ -1,0 +1,133 @@
+{
+  "resolvedId": "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/error-boundary/index.tsx",
+  "transforms": [
+    {
+      "name": "__load__",
+      "result": "import { ErrorBoundary } from \"./ErrorBoundary\";\nexport { ErrorMessage } from \"./ErrorBoundary\";\nexport { ErrorBoundary };\nexport default ErrorBoundary;\n",
+      "start": 1767441590190,
+      "end": 1767441590190
+    },
+    {
+      "name": "solid-start-file-system-router",
+      "start": 1767441590190,
+      "end": 1767441590190,
+      "order": "pre"
+    },
+    {
+      "name": "solid",
+      "result": "import { ErrorBoundary } from \"./ErrorBoundary\";\nexport { ErrorMessage } from \"./ErrorBoundary\";\nexport { ErrorBoundary };\nexport default ErrorBoundary;",
+      "start": 1767441590190,
+      "end": 1767441590191,
+      "order": "pre",
+      "sourcemaps": {
+        "version": 3,
+        "names": [
+          "ErrorBoundary",
+          "ErrorMessage"
+        ],
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/error-boundary/index.tsx"
+        ],
+        "sourcesContent": [
+          "import { ErrorBoundary } from \"./ErrorBoundary\";\nexport { ErrorMessage } from \"./ErrorBoundary\";\nexport { ErrorBoundary };\nexport default ErrorBoundary;\n"
+        ],
+        "mappings": "AAAA,SAASA,aAAa,QAAQ,iBAAiB;AAC/C,SAASC,YAAY,QAAQ,iBAAiB;AAC9C,SAASD,aAAa;AACtB,eAAeA,aAAa",
+        "ignoreList": []
+      }
+    },
+    {
+      "name": "vite:css",
+      "start": 1767441590191,
+      "end": 1767441590191,
+      "order": "normal"
+    },
+    {
+      "name": "vite:esbuild",
+      "result": "import { ErrorBoundary } from \"./ErrorBoundary\";\nexport { ErrorMessage } from \"./ErrorBoundary\";\nexport { ErrorBoundary };\nexport default ErrorBoundary;\n",
+      "start": 1767441590191,
+      "end": 1767441590221,
+      "order": "normal",
+      "sourcemaps": {
+        "version": 3,
+        "sources": [
+          "/Users/mac/oss/better-auth-studio/examples/solid/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/error-boundary/index.tsx"
+        ],
+        "sourcesContent": [
+          "import { ErrorBoundary } from \"./ErrorBoundary\";\nexport { ErrorMessage } from \"./ErrorBoundary\";\nexport { ErrorBoundary };\nexport default ErrorBoundary;"
+        ],
+        "mappings": "AAAA,SAAS,qBAAqB;AAC9B,SAAS,oBAAoB;AAC7B,SAAS;AACT,eAAe;",
+        "names": []
+      }
+    },
+    {
+      "name": "vite:json",
+      "start": 1767441590221,
+      "end": 1767441590221,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker",
+      "start": 1767441590221,
+      "end": 1767441590221,
+      "order": "normal"
+    },
+    {
+      "name": "solid-start-server",
+      "start": 1767441590222,
+      "end": 1767441590223,
+      "order": "normal"
+    },
+    {
+      "name": "vite:define",
+      "result": "import { ErrorBoundary } from \"./ErrorBoundary\";\nexport { ErrorMessage } from \"./ErrorBoundary\";\nexport { ErrorBoundary };\nexport default ErrorBoundary;\n",
+      "start": 1767441590236,
+      "end": 1767441590236,
+      "order": "normal",
+      "sourcemaps": null
+    },
+    {
+      "name": "vite:css-post",
+      "start": 1767441590236,
+      "end": 1767441590236,
+      "order": "normal"
+    },
+    {
+      "name": "vite:worker-import-meta-url",
+      "start": 1767441590236,
+      "end": 1767441590236,
+      "order": "normal"
+    },
+    {
+      "name": "vite:asset-import-meta-url",
+      "start": 1767441590236,
+      "end": 1767441590236,
+      "order": "normal"
+    },
+    {
+      "name": "vite:dynamic-import-vars",
+      "start": 1767441590242,
+      "end": 1767441590242,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-glob",
+      "start": 1767441590242,
+      "end": 1767441590242,
+      "order": "normal"
+    },
+    {
+      "name": "vite:client-inject",
+      "start": 1767441590242,
+      "end": 1767441590242,
+      "order": "normal"
+    },
+    {
+      "name": "vite:import-analysis",
+      "result": "import { ErrorBoundary } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/error-boundary/ErrorBoundary.tsx\";\nexport { ErrorMessage } from \"/node_modules/.pnpm/solid-start@0.2.32_@solidjs+meta@0.28.7_solid-js@1.9.10__@solidjs+router@0.8.4_solid-js_982dedeb285275853abac446d7a4179e/node_modules/solid-start/error-boundary/ErrorBoundary.tsx\";\nexport { ErrorBoundary };\nexport default ErrorBoundary;\n",
+      "start": 1767441590242,
+      "end": 1767441590277,
+      "order": "normal",
+      "sourcemaps": null
+    }
+  ]
+}
