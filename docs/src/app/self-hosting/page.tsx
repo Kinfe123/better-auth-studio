@@ -45,20 +45,12 @@ export default function SelfHosting() {
   const [activeFramework, setActiveFramework] = useState<Framework>("nextjs");
   
   useEffect(() => {
-    const hash = window.location.hash.slice(1); 
-    if (hash && frameworks.some(f => f.id === hash)) {
-      setActiveFramework(hash as Framework);
-    }
-    
-    const handleHashChange = () => {
-      const newHash = window.location.hash.slice(1);
-      if (newHash && frameworks.some(f => f.id === newHash)) {
-        setActiveFramework(newHash as Framework);
+    if (window.location.hash === '#frameworks') {
+      const element = document.getElementById('frameworks');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    };
-    
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    }
   }, []);
   return (
     <PixelLayout
@@ -211,21 +203,16 @@ export default config;`}
           </PixelCard>
         </section>
 
-        <section>
+        <section id="frameworks">
           <PixelCard variant="highlight" className="relative">
             <div className="absolute -top-10 left-0 flex gap-2 flex-wrap z-99">
               {frameworks.map((framework) => {
                 const Icon = framework.icon;
                 const isActive = activeFramework === framework.id;
                 return (
-                  <a
+                  <button
                     key={framework.id}
-                    href={`#${framework.id}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setActiveFramework(framework.id);
-                      window.history.pushState(null, '', `#${framework.id}`);
-                    }}
+                    onClick={() => setActiveFramework(framework.id)}
                     className={`
                       relative text-[12px] font-light z-10 uppercase tracking-tight 
                       text-white/90 border bg-[#0a0a0a] 
@@ -251,7 +238,7 @@ export default config;`}
                       <Icon />
                       {framework.name}
                     </span>
-                  </a>
+                  </button>
                 );
               })}
             </div>
