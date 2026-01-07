@@ -232,7 +232,6 @@ export default config;`}
                 <div className="absolute -z-1 inset-0 bg-black pointer-events-none" />
                 <div className="absolute z-0 inset-0 bg-white/5 pointer-events-none" />
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[4%] pointer-events-none" />
-                {/* <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_8px)] opacity-[4%] pointer-events-none" /> */}
               </div>
             </div>
 
