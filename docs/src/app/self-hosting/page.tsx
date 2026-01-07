@@ -43,7 +43,7 @@ const frameworks: Array<{
   ];
 export default function SelfHosting() {
   const [activeFramework, setActiveFramework] = useState<Framework>("nextjs");
-  
+
   useEffect(() => {
     if (window.location.hash === '#frameworks') {
       const element = document.getElementById('frameworks');
@@ -205,7 +205,38 @@ export default config;`}
 
         <section id="frameworks">
           <PixelCard variant="highlight" className="relative">
-            <div className="absolute -top-10 left-0 flex gap-2 flex-wrap z-99">
+            <div className="absolute -top-10 left-0 z-99 md:hidden">
+              <div className="relative">
+                <select
+                  value={activeFramework}
+                  onChange={(e) => setActiveFramework(e.target.value as Framework)}
+                  className="relative z-10 text-[12px] font-light uppercase tracking-tight 
+                    text-white/90 border border-white/40 bg-white/10 
+                    px-2 py-[6px] pr-8 overflow-hidden transition-all duration-200
+                    appearance-none cursor-pointer w-full
+                    focus:border-white/40 focus:bg-white/10 focus:outline-none
+                    shadow-[0_0_0_1px_rgba(255,255,255,0.15)]"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 8px center',
+                    backgroundSize: '12px',
+                  }}
+                >
+                  {frameworks.map((framework) => (
+                    <option key={framework.id} value={framework.id}>
+                      {framework.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute -z-1 inset-0 bg-black pointer-events-none" />
+                <div className="absolute z-0 inset-0 bg-white/5 pointer-events-none" />
+                <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[4%] pointer-events-none" />
+                {/* <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_8px)] opacity-[4%] pointer-events-none" /> */}
+              </div>
+            </div>
+
+            <div className="absolute -top-10 left-0 hidden md:flex gap-2 flex-wrap z-99">
               {frameworks.map((framework) => {
                 const Icon = framework.icon;
                 const isActive = activeFramework === framework.id;
