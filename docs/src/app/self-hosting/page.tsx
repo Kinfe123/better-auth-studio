@@ -655,6 +655,40 @@ export default defineEventHandler(async (event) => {
                   <p className="text-sm font-light tracking-tight text-white/50 mt-1">
                     Array of email addresses allowed to access the studio
                   </p>
+                  <div className="mt-3 p-3 bg-white/5 border border-white/10 rounded-none">
+                    <p className="text-xs font-light tracking-tight text-white/60 mb-2">
+                      <strong className="font-bold text-white/80">💡 Best Practice:</strong> Use environment variables for admin emails to keep sensitive data out of your codebase:
+                    </p>
+                    <CodeHighlighter
+                      code={`// studio.config.ts
+import type { StudioConfig } from "better-auth-studio";
+import { auth } from "./lib/auth";
+
+const config: StudioConfig = {
+  auth,
+  basePath: "/api/studio",
+  access: {
+    allowEmails: [
+      process.env.ADMIN_EMAIL_1,
+      process.env.ADMIN_EMAIL_2,
+      process.env.ADMIN_EMAIL_3,
+    ].filter(Boolean) as string[],
+  },
+};
+
+export default config;`}
+                      language="typescript"
+                    />
+                    <p className="text-xs font-light tracking-tight text-white/50 mt-2">
+                      Add to your <code className="text-white/70 bg-white/10 px-1 py-0.5">.env</code> file:
+                    </p>
+                    <CodeBlock
+                      code={`ADMIN_EMAIL_1=admin@example.com
+ADMIN_EMAIL_2=admin2@example.com
+ADMIN_EMAIL_3=admin3@example.com`}
+                      className="flex-1 min-w-0 mt-2"
+                    />
+                  </div>
                 </div>
                 <div className="border-b border-white/10 pb-3">
                   <code className="text-white/90 text-sm">access.roles</code>
