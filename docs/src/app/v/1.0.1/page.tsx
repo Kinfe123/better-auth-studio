@@ -175,6 +175,7 @@ export default function Version101Page() {
           <div className="shrink-0 relative z-10">
             <div className="px-6 lg:px-10 py-3 border-t border-white/15">
               <p className="text-sm lg:text-base font-medium leading-tight max-w-xs font-mono uppercase tracking-tight text-white">
+               <span className="text-white/50">{"> "}</span> 
                 Framework Support
               </p>
             </div>
