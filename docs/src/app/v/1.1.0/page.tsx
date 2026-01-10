@@ -72,7 +72,7 @@ export default function Version101Page() {
                   <div className="relative z-20 h-2 w-full bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-7" />
                   <hr className="w-full border-white/10 h-px" />
                 </div>
-                <p className="text-xs sm:text-sm lg:text-xs font-light text-white/90 leading-relaxed font-mono uppercase mb-3 sm:mb-4">
+                <p className="text-[11px] sm:text-sm lg:text-xs font-light text-white/90 leading-relaxed font-mono uppercase mb-3 sm:mb-4">
                   <span>{"// "}</span>  Better Auth Studio now supports 10 major web frameworks with seamless integration for production deployments along with bunch of configuration options and features.
                 </p>
 
