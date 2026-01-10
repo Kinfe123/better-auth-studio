@@ -7,6 +7,12 @@ const config: StudioConfig = {
   metadata: {
     title: 'Acme Admin Dashboard',
     theme: 'dark',
+    logo: 'https://better-auth.com/logo.png',
+    favicon: 'https://better-auth.com/favicon.png',
+    company: {
+      name: 'Better-Auth',
+      website: 'https://better-auth.com',
+    },
   },
   access: {
     roles: ['admin'],

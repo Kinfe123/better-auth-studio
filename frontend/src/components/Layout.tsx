@@ -402,48 +402,107 @@ export default function Layout({ children }: LayoutProps) {
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
+  const config = getStudioConfig();
+  const metadata = config?.metadata || {};
+  const logoUrl = metadata.logo 
+    ? (metadata.logo.startsWith('http://') || metadata.logo.startsWith('https://'))
+      ? metadata.logo
+      : assetPath(metadata.logo)
+    : assetPath('/logo.png');
+  const companyName = metadata.company?.name || 'Better-Auth Studio.';
+  const companyWebsite = metadata.company?.website;
+
   return (
     <div className="min-h-screen bg-black">
       <div className="bg-black/70 border-b border-white/15">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center space-x-4">
             <div className="flex items-center justify-end space-x-2">
-              <img src={assetPath('/logo.png')} alt="Logo" className="w-10 h-10 object-contain" />
-              <div className="mb-0 cursor-pointer" onClick={() => navigate('/')}>
-                <h1 className="text-md inline-flex mb-0 items-start font-light font-mono uppercase text-white gap-2">
-                  Better-Auth Studio.
-                  <sup className="text-xs text-gray-400 ml-1 mt-0 flex items-center space-x-2">
-                    <span className="inline-flex items-center">
-                      <span className="mr-1">[</span>
-                      <span className="text-white/80 lowercase font-mono text-xs">
-                        {studioVersion}
+              <img src={logoUrl} alt="Logo" className="w-10 h-10 object-contain" />
+              {companyWebsite ? (
+                <a
+                  href={companyWebsite}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mb-0 cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <h1 className="text-md inline-flex mb-0 items-start font-light font-mono uppercase text-white gap-2">
+                    {companyName}
+                    <sup className="text-xs text-gray-400 ml-1 mt-0 flex items-center space-x-2">
+                      <span className="inline-flex items-center">
+                        <span className="mr-1">[</span>
+                        <span className="text-white/80 lowercase font-mono text-xs">
+                          {studioVersion}
+                        </span>
+                        <span className="ml-1">]</span>
                       </span>
-                      <span className="ml-1">]</span>
-                    </span>
-                    <span className="inline-flex items-center">
-                      <span className="mr-1">[</span>
-                      <span className="text-white/80 font-mono text-xs">PUBLIC BETA</span>
-                      <span className="ml-1">]</span>
-                    </span>
-                    <span
-                      className={`inline-flex items-center rounded border px-1.5 py-0.5 font-normal uppercase tracking-wide text-[9px] ${statusMeta.textClass} ${statusMeta.animate ?? ''}`}
-                    >
+                      <span className="inline-flex items-center">
+                        <span className="mr-1">[</span>
+                        <span className="text-white/80 font-mono text-xs">PUBLIC BETA</span>
+                        <span className="ml-1">]</span>
+                      </span>
                       <span
-                        className={`mr-1 h-1.5 w-1.5 rounded-full ${statusMeta.dotClass}`}
-                      ></span>
-                      {statusMeta.label}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleHardRefresh}
-                      aria-label="Hard refresh studio"
-                      className="ml-1 inline-flex items-center rounded border border-dashed border-white/20 p-0.5 text-white/70 transition hover:text-white hover:border-white/50"
-                    >
-                      <RefreshCw className="h-3.5 w-3.5" />
-                    </button>
-                  </sup>
-                </h1>
-              </div>
+                        className={`inline-flex items-center rounded border px-1.5 py-0.5 font-normal uppercase tracking-wide text-[9px] ${statusMeta.textClass} ${statusMeta.animate ?? ''}`}
+                      >
+                        <span
+                          className={`mr-1 h-1.5 w-1.5 rounded-full ${statusMeta.dotClass}`}
+                        ></span>
+                        {statusMeta.label}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleHardRefresh();
+                        }}
+                        aria-label="Hard refresh studio"
+                        className="ml-1 inline-flex items-center rounded border border-dashed border-white/20 p-0.5 text-white/70 transition hover:text-white hover:border-white/50"
+                      >
+                        <RefreshCw className="h-3.5 w-3.5" />
+                      </button>
+                    </sup>
+                  </h1>
+                </a>
+              ) : (
+                <div className="mb-0 cursor-pointer" onClick={() => navigate('/')}>
+                  <h1 className="text-md inline-flex mb-0 items-start font-light font-mono uppercase text-white gap-2">
+                    {companyName}
+                    <sup className="text-xs text-gray-400 ml-1 mt-0 flex items-center space-x-2">
+                      <span className="inline-flex items-center">
+                        <span className="mr-1">[</span>
+                        <span className="text-white/80 lowercase font-mono text-xs">
+                          {studioVersion}
+                        </span>
+                        <span className="ml-1">]</span>
+                      </span>
+                      <span className="inline-flex items-center">
+                        <span className="mr-1">[</span>
+                        <span className="text-white/80 font-mono text-xs">PUBLIC BETA</span>
+                        <span className="ml-1">]</span>
+                      </span>
+                      <span
+                        className={`inline-flex items-center rounded border px-1.5 py-0.5 font-normal uppercase tracking-wide text-[9px] ${statusMeta.textClass} ${statusMeta.animate ?? ''}`}
+                      >
+                        <span
+                          className={`mr-1 h-1.5 w-1.5 rounded-full ${statusMeta.dotClass}`}
+                        ></span>
+                        {statusMeta.label}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleHardRefresh}
+                        aria-label="Hard refresh studio"
+                        className="ml-1 inline-flex items-center rounded border border-dashed border-white/20 p-0.5 text-white/70 transition hover:text-white hover:border-white/50"
+                      >
+                        <RefreshCw className="h-3.5 w-3.5" />
+                      </button>
+                    </sup>
+                  </h1>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center space-x-4">

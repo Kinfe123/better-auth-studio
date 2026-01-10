@@ -56,7 +56,39 @@ function injectConfig(html, config) {
     </script>
   `;
     let modifiedHtml = html;
+    // Replace title tag
     modifiedHtml = modifiedHtml.replace(/<title>.*?<\/title>/i, `<title>${escapedTitle}</title>`);
+    // Replace favicon if provided
+    if (config.metadata.favicon) {
+        const escapedFavicon = config.metadata.favicon
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+        // Determine MIME type from file extension
+        const faviconLower = config.metadata.favicon.toLowerCase();
+        let mimeType = 'image/png'; // default
+        if (faviconLower.endsWith('.ico')) {
+            mimeType = 'image/x-icon';
+        }
+        else if (faviconLower.endsWith('.svg')) {
+            mimeType = 'image/svg+xml';
+        }
+        else if (faviconLower.endsWith('.jpg') || faviconLower.endsWith('.jpeg')) {
+            mimeType = 'image/jpeg';
+        }
+        else if (faviconLower.endsWith('.webp')) {
+            mimeType = 'image/webp';
+        }
+        const faviconTag = `<link rel="icon" type="${mimeType}" href="${escapedFavicon}" />`;
+        // Replace existing favicon/link rel="icon" tags
+        modifiedHtml = modifiedHtml.replace(/<link[^>]*rel=["'](icon|shortcut icon)["'][^>]*>/gi, faviconTag);
+        // If no existing favicon tag, add one before </head>
+        if (!modifiedHtml.includes('rel="icon"') && !modifiedHtml.includes("rel='icon'")) {
+            modifiedHtml = modifiedHtml.replace('</head>', `  ${faviconTag}\n</head>`);
+        }
+    }
     if (config.basePath) {
         const basePath = config.basePath;
         modifiedHtml = modifiedHtml
@@ -67,7 +99,6 @@ function injectConfig(html, config) {
             .replace(/href="\/logo\.png"/g, `href="${basePath}/logo.png"`)
             .replace(/src="\/logo\.png"/g, `src="${basePath}/logo.png"`);
     }
-    // Inject the script before </head>
     return modifiedHtml.replace('</head>', `${script}</head>`);
 }
 //# sourceMappingURL=html-injector.js.map
