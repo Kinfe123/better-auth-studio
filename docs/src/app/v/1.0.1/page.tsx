@@ -54,7 +54,7 @@ export default function Version101Page() {
       <main className="grid grid-cols-1 lg:grid-cols-2 h-screen overflow-hidden overflow-x-hidden">
         <section className="overflow-x-hidden flex flex-col justify-start md:justify-between p-4 sm:p-6 lg:p-10 border-r-0 lg:border-r border-white/20 overflow-y-auto relative bg-black/50 backdrop-blur-sm">
           <div
-            className="absolute inset-0 pointer-events-none opacity-100 mix-blend-overlay"
+            className="absolute inset-0 pointer-events-none opacity-70 md:opacity-100 mix-blend-overlay"
             style={{
               backgroundImage: 'url(/shades.png)',
               backgroundRepeat: 'repeat',
@@ -68,10 +68,10 @@ export default function Version101Page() {
                   Release <br /> <span className="bg-white text-black px-1 py-0 rounded-none">Version 1.0.1</span>
                 </h1>
                 <div className="-mx-4 sm:-mx-6 lg:-mx-10 w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+5rem)] mb-3 sm:mb-4 lg:mb-4">
-                <hr className="w-full border-white/10 h-px" />
-                <div className="relative z-20 h-2 w-full bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-7" />
-                <hr className="w-full border-white/10 h-px" />
-              </div>
+                  <hr className="w-full border-white/10 h-px" />
+                  <div className="relative z-20 h-2 w-full bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-7" />
+                  <hr className="w-full border-white/10 h-px" />
+                </div>
                 <p className="text-xs sm:text-sm lg:text-xs font-light text-white/90 leading-relaxed font-mono uppercase mb-3 sm:mb-4">
                   <span>{"// "}</span>  Better Auth Studio now supports 10 major web frameworks with seamless integration for production deployments along with bunch of configuration options and features.
                 </p>

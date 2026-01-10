@@ -48,7 +48,7 @@ export default function CodeBlock({
           {showCopy && (
             <button
               onClick={copyToClipboard}
-              className="shrink-0 p-1.5 rounded-none border border-white/15 bg-black/50 hover:bg-white/10 transition-colors duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100"
+              className="shrink-0 p-1.5 rounded-none border border-white/20 bg-black/50 hover:bg-white/10 transition-colors duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100"
               title={copied ? 'Copied!' : 'Copy code'}
             >
               {copied ? (
