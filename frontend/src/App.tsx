@@ -89,6 +89,13 @@ function MainRoutes() {
 }
 
 function App() {
+  useEffect(() => {
+    const title = config?.metadata?.title;
+    if (title) {
+      document.title = title;
+    }
+  }, []);
+
   return (
     <Router basename={basePath}>
       {isSelfHosted ? (

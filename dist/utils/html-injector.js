@@ -38,13 +38,25 @@ function injectConfig(html, config) {
         .replace(/</g, '\\u003c')
         .replace(/>/g, '\\u003e')
         .replace(/&/g, '\\u0026');
+    // Escape title for HTML insertion
+    const escapedTitle = config.metadata.title
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     const script = `
     <script>
       window.__STUDIO_CONFIG__ = ${safeJson};
       Object.freeze(window.__STUDIO_CONFIG__);
+      // Update document title from config
+      if (window.__STUDIO_CONFIG__?.metadata?.title) {
+        document.title = window.__STUDIO_CONFIG__.metadata.title;
+      }
     </script>
   `;
     let modifiedHtml = html;
+    modifiedHtml = modifiedHtml.replace(/<title>.*?<\/title>/i, `<title>${escapedTitle}</title>`);
     if (config.basePath) {
         const basePath = config.basePath;
         modifiedHtml = modifiedHtml

@@ -5,7 +5,7 @@ const config: StudioConfig = {
   auth,
   basePath: '/dashboard',
   metadata: {
-    title: 'Admin Dashboard',
+    title: 'Acme Admin Dashboard',
     theme: 'dark',
   },
   access: {
