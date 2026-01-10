@@ -164,7 +164,7 @@ export default function Version101Page() {
           </div>
         </section>
 
-        <section className="flex flex-col justify-between relative bg-black overflow-hidden h-full">
+        <section className="flex flex-col justify-between relative bg-[#0A0A0A] overflow-hidden h-full">
 
           <div className="grow flex items-center justify-center shrink-0 relative z-10" style={{ height: '60%' }}>
             <div className="relative w-full h-full">
