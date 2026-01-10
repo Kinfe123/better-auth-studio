@@ -136,7 +136,7 @@ function Environment() {
   );
 }
 
-function Scene() {
+export function Scene() {
   return (
     <Canvas
       className="w-full h-full"
@@ -152,6 +152,41 @@ function Scene() {
         enablePan={false}
         minDistance={3}
         maxDistance={15}
+        makeDefault
+      />
+      <EffectComposer multisampling={0}>
+        <N8AO halfRes color="black" aoRadius={2} intensity={1} aoSamples={6} denoiseSamples={4} />
+        <Bloom
+          kernelSize={3}
+          luminanceThreshold={0}
+          luminanceSmoothing={0.4}
+          intensity={0.8}
+        />
+        <Bloom
+          kernelSize={KernelSize.HUGE}
+          luminanceThreshold={0}
+          luminanceSmoothing={0}
+          intensity={0.7}
+        />
+        <SMAA />
+      </EffectComposer>
+    </Canvas>
+  );
+}
+
+export function ZoomedScene() {
+  return (
+    <Canvas
+      className="w-full bg-black h-full"
+      camera={{ position: [2.0, 2.0, 2.0], fov: 60 }}
+    >
+      <Environment />
+      <Shape />
+      <OrbitControls
+        enableDamping={false}
+        enableZoom={false}
+        enableRotate={false}
+        enablePan={false}
         makeDefault
       />
       <EffectComposer multisampling={0}>

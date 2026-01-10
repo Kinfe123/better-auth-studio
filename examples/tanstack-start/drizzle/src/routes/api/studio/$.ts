@@ -3,7 +3,6 @@ import { betterAuthStudio } from 'better-auth-studio/tanstack-start';
 import studioConfig from '../../../../studio.config';
 
 const handler = betterAuthStudio(studioConfig);
-console.log({handler})
 export const Route = createFileRoute('/api/studio/$')({
 	server: {
 		handlers: {

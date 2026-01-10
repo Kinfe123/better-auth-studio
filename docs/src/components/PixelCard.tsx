@@ -11,7 +11,7 @@ export default function PixelCard({ children, className = '', variant = 'default
   
   const variantClasses = {
     default: "p-6 rounded-none",
-    code: "px-4 py-2.5 rounded-none bg-black border-white/30 overflow-hidden",
+    code: "px-4 py-2.5 rounded-none bg-black border-white/15 overflow-hidden",
     highlight: "p-6 rounded-none border-white/20 bg-white/[2%] backdrop-blur-md"
   };
 
