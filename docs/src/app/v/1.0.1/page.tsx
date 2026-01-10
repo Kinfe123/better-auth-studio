@@ -47,7 +47,7 @@ export default function Version101Page() {
   return (
     <div className="bg-[#0a0a0a] text-white h-screen overflow-hidden font-sans selection:bg-white selection:text-black relative">
 
-      <header className="fixed top-0 right-0 p-8 z-50">
+      <header className="fixed -top-4 right-0 p-8 z-50">
         <span className="font-mono text-[11px] tracking-widest uppercase text-white/50">Better Auth Studio v1.0.1</span>
       </header>
 
