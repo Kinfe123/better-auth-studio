@@ -195,13 +195,13 @@ export function ZoomedScene() {
           kernelSize={3}
           luminanceThreshold={0}
           luminanceSmoothing={0.4}
-          intensity={0.3}
+          intensity={0.2}
         />
         <Bloom
           kernelSize={KernelSize.HUGE}
           luminanceThreshold={0}
           luminanceSmoothing={0}
-          intensity={0.2}
+          intensity={0.15}
         />
         <SMAA />
       </EffectComposer>
