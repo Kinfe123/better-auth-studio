@@ -177,7 +177,7 @@ export function Scene() {
 export function ZoomedScene() {
   return (
     <Canvas
-      className="w-full bg-black h-full"
+      className="w-full h-full"
       camera={{ position: [2.0, 2.0, 2.0], fov: 60 }}
     >
       <Environment />
