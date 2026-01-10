@@ -61,23 +61,12 @@ export default function Version101Page() {
               backgroundSize: 'auto'
             }}
           />
-          {/* <div
-            className="absolute top-40 mt-14 -left-6 lg:-left-10 right-0 w-[calc(100%+1.5rem)] lg:w-[calc(100%+2.5rem)] pointer-events-none z-20"
-            style={{
-              top: 'calc(1.5rem + 1.25rem + 0.75rem)'
-            }}
-          >
-            <hr className="w-full border-white/10 h-px" />
-            <div className="relative z-20 h-2 w-full bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-7" />
-            <hr className="w-full border-white/10 h-px" />
-          </div> */}
           <div className="relative z-10 flex flex-col justify-start md:justify-between h-full scrollbar-hide">
             <div className="space-y-6 sm:space-y-8">
               <div>
                 <h1 className="text-base sm:text-lg lg:text-xl font-light tracking-tighter uppercase font-mono mb-2 sm:mb-3">
                   Release <br /> <span className="bg-white text-black px-1 py-0 rounded-none">Version 1.0.1</span>
                 </h1>
-                {/* <div className="h-[3px] mb-3 sm:mb-4 mt-4 sm:mt-8" /> */}
                 <div className="-mx-4 sm:-mx-6 lg:-mx-10 w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+5rem)] mb-3 sm:mb-4 lg:mb-4">
                 <hr className="w-full border-white/10 h-px" />
                 <div className="relative z-20 h-2 w-full bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-7" />
