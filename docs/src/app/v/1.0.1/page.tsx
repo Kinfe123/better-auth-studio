@@ -165,7 +165,7 @@ export default function Version101Page() {
                     );
                   })}
                 </div>
-                <div className="mt-4 sm:mt-6 px-4 sm:px-6 pb-4">
+                <div className="mt-4 mb-4 sm:mt-6 px-4 sm:px-6 pb-4">
                   <p className="text-[10px] sm:text-xs font-semibold leading-snug font-mono uppercase text-white">
                     Start using Better Auth <span className="bg-white text-black px-1 py-0 rounded-none">Studio</span> today. <br className="hidden sm:block" />
                     <div className='h-1'></div>
