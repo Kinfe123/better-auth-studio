@@ -1,5 +1,6 @@
 import PixelLayout from "@/components/PixelLayout";
 import PixelCard from "@/components/PixelCard";
+import Link from "next/link";
 
 
 const ZapIcon = () => (
@@ -137,13 +138,30 @@ export default function Changelog() {
                       fill="currentColor"
                     />
                   </svg>
-                  v1.0.79-beta.66 <span className="text-white/50 ml-2">/ 2025-01-XX</span>
+                  v1.0.1 <span className="text-white/50 ml-2">/ Latest Release</span>
                 </span>
               </h3>
             </div>
             <p className="text-sm font-light tracking-tight text-white/70 mb-4 pt-4">
               Comprehensive framework support for self-hosting. Better Auth Studio now supports 10 major web frameworks, providing seamless integration for production deployments across the entire JavaScript ecosystem.
             </p>
+            <Link
+              href="/v/1.1.0"
+              className="inline-flex mb-2 items-center text-xs font-light tracking-tight text-white/70 hover:text-white border border-white/20 hover:border-white/30 bg-black/50 hover:bg-white/5 px-3 py-2 transition-all duration-300"
+            >
+              View Full Release Notes
+              <svg
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                className="w-3 h-3 ml-2 inline-flex"
+              >
+                <path
+                  d="M11 20h2V8h2V6h-2V4h-2v2H9v2h2v12zM7 10V8h2v2H7zm0 0v2H5v-2h2zm10 0V8h-2v2h2zm0 0v2h2v-2h-2z"
+                  fill="currentColor"
+                />
+              </svg>
+            </Link>
             <div className="space-y-3">
               <h4 className="font-light tracking-tight text-white flex items-center"><RocketIcon />Complete Framework Support</h4>
               <ul className="list-none space-y-2 text-sm font-light tracking-tight text-white/70 ml-4">

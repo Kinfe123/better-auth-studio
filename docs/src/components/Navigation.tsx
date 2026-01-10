@@ -29,6 +29,7 @@ export default function Navigation({ currentPage }: NavigationProps) {
     { name: 'INSTALLATION', href: '/installation' },
     { name: 'SELF-HOSTING', href: '/self-hosting' },
     { name: 'CHANGELOG', href: '/changelog' },
+    { name: 'RELEASE', href: '/v/1.0.1' },
     { name: 'GITHUB', href: 'https://github.com/Kinfe123/better-auth-studio' }
   ];
 

@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { Mesh } from "three";
 import { KernelSize } from "postprocessing";
 import { LineShadowText } from "../LineShadow";
+import Link from "next/link";
 function Shape() {
   const meshRef = useRef<Mesh>(null);
   const innerSphereRef = useRef<Mesh>(null);
@@ -426,11 +427,11 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
               Studio
             </LineShadowText>
             {version && (
-              <div className="inline-flex group gap-x-1 text-[10px] md:text-[13px] ml-2 font-mono">
+              <Link href="/v/1.0.1" className="inline-flex group gap-x-1 text-[10px] md:text-[13px] ml-2 font-mono hover:opacity-100 transition-opacity cursor-pointer">
                 <span className="text-white/50 group-hover:text-white transition-colors">[</span>
-                <span className="text-white/70 text-[11px] md:text-[14px] lowercase">v {version}</span>
+                <span className="text-white/70 group-hover:text-white text-[11px] md:text-[14px] lowercase">v {version}</span>
                 <span className="text-white/50 group-hover:text-white transition-colors">]</span>
-              </div>
+              </Link>
             )}
             <div className="inline-flex group gap-x-1 text-[10px] md:text-[13px] ml-2 font-mono">
               <span className="text-white/50 group-hover:text-white transition-colors">[</span>

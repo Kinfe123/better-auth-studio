@@ -65,7 +65,7 @@ export default function Version101Page() {
             <div className="space-y-6 sm:space-y-8">
               <div>
                 <h1 className="text-base sm:text-lg lg:text-xl font-light tracking-tighter uppercase font-mono mb-2 sm:mb-3">
-                  Release <br /> <span className="bg-white text-black px-1 py-0 rounded-none">Version 1.0.1</span>
+                  Release <br /> <span className="bg-white text-black px-1 py-0 rounded-none">Version 1.1.0</span>
                 </h1>
                 <div className="-mx-4 sm:-mx-6 lg:-mx-10 w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+5rem)] mb-3 sm:mb-4 lg:mb-4">
                   <hr className="w-full border-white/10 h-px" />
