@@ -1,6 +1,13 @@
 import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from 'fs';
 import { dirname, extname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
+import {
+  createClickHouseProvider,
+  createHttpProvider,
+  createPostgresProvider,
+  createStorageProvider,
+} from '../providers/events/helpers.js';
+import type { EventIngestionProvider } from '../types/events.js';
 import type {
   StudioConfig,
   StudioMetadata,
@@ -8,20 +15,10 @@ import type {
   UniversalResponse,
   WindowStudioConfig,
 } from '../types/handler.js';
+import { initializeEventIngestion, isEventIngestionInitialized } from '../utils/event-ingestion.js';
+import { injectEventHooks } from '../utils/hook-injector.js';
 import { serveIndexHtml as getIndexHtml } from '../utils/html-injector.js';
 import { decryptSession, isSessionValid, STUDIO_COOKIE_NAME } from '../utils/session.js';
-import { 
-  initializeEventIngestion, 
-  isEventIngestionInitialized 
-} from '../utils/event-ingestion.js';
-import { injectEventHooks } from '../utils/hook-injector.js';
-import type { EventIngestionProvider } from '../types/events.js';
-import {
-  createPostgresProvider,
-  createClickHouseProvider,
-  createHttpProvider,
-  createStorageProvider,
-} from '../providers/events/helpers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -46,7 +43,11 @@ export async function handleStudioRequest(
     let provider: EventIngestionProvider | undefined;
 
     // Check if provider is already a provider object (has ingest method)
-    if (config.events.provider && typeof config.events.provider === 'object' && typeof config.events.provider.ingest === 'function') {
+    if (
+      config.events.provider &&
+      typeof config.events.provider === 'object' &&
+      typeof config.events.provider.ingest === 'function'
+    ) {
       provider = config.events.provider;
     } else if (config.events.client && config.events.clientType) {
       // Create provider based on clientType
@@ -87,7 +88,7 @@ export async function handleStudioRequest(
         hasQuery: typeof provider.query === 'function',
         clientType: config.events.clientType,
       });
-      
+
       initializeEventIngestion({
         ...config.events,
         provider,
@@ -195,7 +196,7 @@ async function getAuthAdapter(auth: any): Promise<any> {
     if (auth?.adapter) {
       return auth.adapter;
     }
-    
+
     if (auth?.$context) {
       const context = await auth.$context;
       if (context?.adapter) {
