@@ -64,15 +64,15 @@ export const EVENT_TEMPLATES = {
         return `${name} was deleted`;
     },
     'organization.created': (event) => {
-        const orgName = event.metadata?.name || 'Organization';
+        const orgName = event.metadata?.organizationName || 'Organization';
         if (event.status === 'failed') {
             const reason = event.metadata?.reason || 'invalid credentials';
             return `Failed to create organization "${orgName}"`;
         }
-        return `New organization "${orgName}" created`;
+        return `New organization "${orgName}" created by ${event.metadata?.name.split(' ')[0]}`;
     },
     'organization.deleted': (event) => {
-        const orgName = event.metadata?.name || 'Organization';
+        const orgName = event.metadata?.organizationName || 'Organization';
         if (event.status === 'failed') {
             const reason = event.metadata?.reason || 'invalid credentials';
             return `Failed to delete organization "${orgName}"`;
@@ -80,7 +80,7 @@ export const EVENT_TEMPLATES = {
         return `Organization "${orgName}" deleted`;
     },
     'organization.updated': (event) => {
-        const orgName = event.metadata?.name || 'Organization';
+        const orgName = event.metadata?.organizationName || 'Organization';
         if (event.status === 'failed') {
             const reason = event.metadata?.reason || 'invalid credentials';
             return `Failed to update organization "${orgName}"`;
@@ -89,7 +89,7 @@ export const EVENT_TEMPLATES = {
     },
     'member.added': (event) => {
         const memberName = event.metadata?.memberName || event.metadata?.email || 'Member';
-        const orgName = event.metadata?.orgName || 'organization';
+        const orgName = event.metadata?.organizationName || 'organization';
         if (event.status === 'failed') {
             const reason = event.metadata?.reason || 'invalid credentials';
             return `Failed to add member "${memberName}" to "${orgName}"`;
@@ -98,7 +98,7 @@ export const EVENT_TEMPLATES = {
     },
     'member.removed': (event) => {
         const memberName = event.metadata?.memberName || event.metadata?.email || 'Member';
-        const orgName = event.metadata?.orgName || 'organization';
+        const orgName = event.metadata?.organizationName || 'organization';
         if (event.status === 'failed') {
             const reason = event.metadata?.reason || 'invalid credentials';
             return `Failed to remove member "${memberName}" from "${orgName}"`;
@@ -164,7 +164,9 @@ export const EVENT_TEMPLATES = {
     },
 };
 export function getEventSeverity(event, status) {
+    // Use the status parameter if provided, otherwise use event.status
     const eventStatus = status || (typeof event === 'object' && 'status' in event ? event.status : undefined);
+    // If status is 'failed', return 'failed' severity
     if (eventStatus === 'failed') {
         return 'failed';
     }

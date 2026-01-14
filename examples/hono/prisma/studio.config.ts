@@ -2,9 +2,9 @@ import type { StudioConfig } from 'better-auth-studio';
 import { auth } from './src/auth';
 import { createClient } from '@clickhouse/client';
 const clickhouseClient = createClient({
-  host: process.env.CLICKHOUSE_URL as string | "clickhouse-cloud.com:8443",
-  username: process.env.CLICKHOUSE_USERNAME || 'default',
-  password: process.env.CLICKHOUSE_PASSWORD || "somepassword"
+  host: "https://flchqfzuyp.eu-central-1.aws.clickhouse.cloud:8443",
+  username: 'default',
+  password: "WqGn~kVQRi0L7"
 });
 const config: StudioConfig = {
   auth,

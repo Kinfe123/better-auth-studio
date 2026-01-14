@@ -1091,6 +1091,14 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 where: [{ field: 'id', value: userId }],
                 update: updateData,
             });
+            // Emit event
+            const { emitEvent } = await import('./utils/event-ingestion.js');
+            await emitEvent('user.updated', {
+                status: 'success',
+                userId,
+                metadata: updateData,
+                request: { headers: req.headers, ip: req.ip },
+            }).catch(() => { });
             res.json({ success: true, user });
         }
         catch (_error) {
@@ -1498,6 +1506,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             res.status(500).json({ error: 'Failed to fetch organization' });
         }
     });
+    // Events API endpoint with cursor-based pagination
     router.get('/api/events', async (req, res) => {
         try {
             const limit = parseInt(req.query.limit, 10) || 20;
@@ -2359,6 +2368,17 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 where: [{ field: 'id', value: req.body.userId }],
                 update: { banned: false, banReason: null, banExpires: null },
             });
+            // Emit event
+            const { emitEvent } = await import('./utils/event-ingestion.js');
+            await emitEvent('user.unbanned', {
+                status: 'success',
+                userId: req.body.userId,
+                metadata: {
+                    name: unbannedUser?.name,
+                    email: unbannedUser?.email,
+                },
+                request: { headers: req.headers, ip: req.ip },
+            }).catch(() => { });
             res.json({ success: true, user: unbannedUser });
         }
         catch (error) {

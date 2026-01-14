@@ -84,21 +84,22 @@ export async function emitEvent(type, data, eventsConfig) {
     }
     else {
         try {
+            console.log(`[Event Ingestion] Emitting event: ${type}`, {
+                userId: event.userId,
+                message: event.display?.message,
+            });
             await provider?.ingest(event);
+            console.log(`[Event Ingestion] ✅ Successfully ingested event: ${type}`);
         }
         catch (error) {
+            console.error(`[Event Ingestion] ❌ Failed to ingest event ${type}:`, error);
             if (useConfig.retryOnError) {
                 eventQueue.push(event);
+                console.log(`[Event Ingestion] Queued event for retry: ${type}`);
             }
         }
     }
 }
-/**
- * Flush queued events
- * Why needed? When batching is enabled, events are queued.
- * Flush sends all queued events in a single batch operation.
- * This is more efficient than sending events one-by-one.
- */
 async function flushEvents() {
     if (eventQueue.length === 0 || !provider || isShuttingDown) {
         return;
@@ -107,14 +108,17 @@ async function flushEvents() {
     eventQueue = [];
     try {
         if (provider.ingestBatch) {
+            // Send all events in one batch (more efficient)
             await provider.ingestBatch(eventsToSend);
         }
         else {
+            // Fallback: send individually if batch not supported
             await Promise.all(eventsToSend.map(event => provider.ingest(event)));
         }
     }
     catch (error) {
         console.error('Batch event ingestion error:', error);
+        // Re-queue failed events if retry is enabled
         if (config?.retryOnError) {
             eventQueue.unshift(...eventsToSend);
         }
@@ -130,7 +134,6 @@ export async function shutdownEventIngestion() {
     if (provider?.shutdown) {
         await provider.shutdown();
     }
-    // Reset state
     provider = null;
     config = null;
     eventQueue = [];

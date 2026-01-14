@@ -116,11 +116,11 @@ const versionHistory = [
 export default function Changelog() {
   return (
     <PixelLayout
-        currentPage="changelog"
-        title="CHANGLOG"
-        description="Track the Better Auth Studio development with detailed release updates."
-      >
-        <div className="space-y-8">
+      currentPage="changelog"
+      title="CHANGLOG"
+      description="Track the Better Auth Studio development with detailed release updates."
+    >
+      <div className="space-y-8">
         <section>
           <PixelCard variant="highlight" className="relative">
             <div className="absolute -top-10 left-0">

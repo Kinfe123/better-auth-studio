@@ -1,12 +1,13 @@
 import { handleStudioRequest } from '../core/handler.js';
+import { injectEventHooks } from '../utils/hook-injector.js';
 /**
  * Hono adapter for Better Auth Studio
  */
 export function betterAuthStudio(config) {
     // Inject event hooks immediately when adapter is initialized
-    // if (config.events?.enabled && config.auth) {
-    //   injectEventHooks(config.auth, config.events);
-    // }
+    if (config.events?.enabled && config.auth) {
+        injectEventHooks(config.auth, config.events);
+    }
     return async (c) => {
         try {
             const universalReq = await convertHonoToUniversal(c);

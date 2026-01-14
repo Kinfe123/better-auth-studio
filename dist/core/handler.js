@@ -21,8 +21,10 @@ const __realdir = (() => {
  *
  */
 export async function handleStudioRequest(request, config) {
+    // Initialize event ingestion if enabled
     if (config.events?.enabled && !isEventIngestionInitialized()) {
         let provider;
+        // Check if provider is already a provider object (has ingest method)
         if (config.events.provider && typeof config.events.provider === 'object' && typeof config.events.provider.ingest === 'function') {
             provider = config.events.provider;
         }
@@ -50,6 +52,7 @@ export async function handleStudioRequest(request, config) {
             }
         }
         else {
+            // Fallback to storage provider using auth adapter
             const authAdapter = await getAuthAdapter(config.auth);
             if (authAdapter) {
                 provider = createStorageProvider({
@@ -68,6 +71,7 @@ export async function handleStudioRequest(request, config) {
                 ...config.events,
                 provider,
             });
+            // Inject hooks into Better Auth
             if (config.auth) {
                 injectEventHooks(config.auth, config.events);
             }

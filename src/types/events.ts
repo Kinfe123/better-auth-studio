@@ -15,6 +15,8 @@ export type AuthEventType =
   | 'member.removed'
   | 'member.role_changed'
   | 'session.created'
+  | 'session.ended'
+  | 'login.failed'
   | 'password.reset_requested'
   | 'password.reset_completed'
   | 'oauth.linked'
@@ -126,15 +128,15 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
     return `${name} was deleted`;
   },
   'organization.created': (event) => {
-    const orgName = event.metadata?.name || 'Organization';
+    const orgName = event.metadata?.organizationName || 'Organization';
     if (event.status === 'failed') {
       const reason = event.metadata?.reason || 'invalid credentials';
       return `Failed to create organization "${orgName}"`;
     }
-    return `New organization "${orgName}" created`;
+    return `New organization "${orgName}" created by ${event.metadata?.name.split(' ')[0]}`;
   },
   'organization.deleted': (event) => {
-    const orgName = event.metadata?.name || 'Organization';
+    const orgName = event.metadata?.organizationName || 'Organization';
     if (event.status === 'failed') {
       const reason = event.metadata?.reason || 'invalid credentials';
       return `Failed to delete organization "${orgName}"`;
@@ -142,7 +144,7 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
     return `Organization "${orgName}" deleted`;
   },
   'organization.updated': (event) => {
-    const orgName = event.metadata?.name || 'Organization';
+    const orgName = event.metadata?.organizationName || 'Organization';
     if (event.status === 'failed') {
       const reason = event.metadata?.reason || 'invalid credentials';
       return `Failed to update organization "${orgName}"`;
@@ -151,7 +153,7 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
   },
   'member.added': (event) => {
     const memberName = event.metadata?.memberName || event.metadata?.email || 'Member';
-    const orgName = event.metadata?.orgName || 'organization';
+    const orgName = event.metadata?.organizationName || 'organization';
     if (event.status === 'failed') {
       const reason = event.metadata?.reason || 'invalid credentials';
       return `Failed to add member "${memberName}" to "${orgName}"`;
@@ -160,7 +162,7 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
   },
   'member.removed': (event) => {
     const memberName = event.metadata?.memberName || event.metadata?.email || 'Member';
-    const orgName = event.metadata?.orgName || 'organization';
+    const orgName = event.metadata?.organizationName || 'organization';
     if (event.status === 'failed') {
       const reason = event.metadata?.reason || 'invalid credentials';
       return `Failed to remove member "${memberName}" from "${orgName}"`;
@@ -184,6 +186,13 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
       return `Failed to create session for "${name}"`;
     }
     return `New session created for ${name}`;
+  },
+  'session.ended': (event) => {
+    return 'Session ended';
+  },
+  'login.failed': (event) => {
+    const email = event.metadata?.email || 'User';
+    return `Failed login attempt for ${email}`;
   },
   'password.reset_requested': (event) => {
     const email = event.metadata?.email || 'User';
@@ -219,27 +228,26 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
   },
 };
 
-export function getEventSeverity(
-  event: AuthEvent | { type: AuthEventType; status?: 'success' | 'failed' },
-  status?: 'success' | 'failed'
-): 'info' | 'success' | 'warning' | 'failed' {
-  const eventStatus =
-    status || (typeof event === 'object' && 'status' in event ? event.status : undefined);
-
-  if (eventStatus === 'failed') {
-    return 'failed';
-  }
-
-  const type = typeof event === 'object' && 'type' in event ? event.type : '';
-
-  if (type.includes('joined') || type.includes('created') || type.includes('verified')) {
-    return 'success';
-  }
-  if (type.includes('failed') || type.includes('banned') || type.includes('deleted')) {
-    return 'failed';
-  }
-  if (type.includes('warning') || type.includes('reset')) {
-    return 'warning';
-  }
-  return 'info';
+export function getEventSeverity(event: AuthEvent | { type: AuthEventType; status?: 'success' | 'failed' }, status?: 'success' | 'failed'): 'info' | 'success' | 'warning' | 'failed' {
+    // Use the status parameter if provided, otherwise use event.status
+    const eventStatus = status || (typeof event === 'object' && 'status' in event ? event.status : undefined);
+    
+    // If status is 'failed', return 'failed' severity
+    if (eventStatus === 'failed') {
+        return 'failed';
+    }
+    
+    const type = typeof event === 'object' && 'type' in event ? event.type : '';
+    
+    if (type.includes('joined') || type.includes('created') || type.includes('verified')) {
+        return 'success';
+    }
+    if (type.includes('failed') || type.includes('banned') || type.includes('deleted')) {
+        return 'failed';
+    }
+    if (type.includes('warning') || type.includes('reset')) {
+        return 'warning';
+    }
+    return 'info';
 }
+

@@ -677,7 +677,9 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </div>
 
-      {location.pathname === '/' && <LiveEventMarquee maxEvents={50} pollInterval={2000} />}
+      {location.pathname === '/' && (
+        <LiveEventMarquee maxEvents={50} pollInterval={2000} />
+      )}
 
       <div className="flex-1">{children}</div>
 
