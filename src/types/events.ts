@@ -15,8 +15,6 @@ export type AuthEventType =
   | 'member.removed'
   | 'member.role_changed'
   | 'session.created'
-  | 'session.ended'
-  | 'login.failed'
   | 'password.reset_requested'
   | 'password.reset_completed'
   | 'oauth.linked'
@@ -186,13 +184,6 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
       return `Failed to create session for "${name}"`;
     }
     return `New session created for ${name}`;
-  },
-  'session.ended': (event) => {
-    return 'Session ended';
-  },
-  'login.failed': (event) => {
-    const email = event.metadata?.email || 'User';
-    return `Failed login attempt for ${email}`;
   },
   'password.reset_requested': (event) => {
     const email = event.metadata?.email || 'User';
