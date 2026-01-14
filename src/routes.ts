@@ -27,6 +27,7 @@ import type { AuthConfig } from './config.js';
 import { possiblePaths } from './config.js';
 import { getAuthData } from './data.js';
 import { initializeGeoService, resolveIPLocation, setGeoDbPath } from './geo-service.js';
+import type { AuthEvent, AuthEventType } from './types/events.js';
 import { detectDatabaseWithDialect } from './utils/database-detection.js';
 import type { StudioAccessConfig } from './utils/html-injector.js';
 import {
@@ -37,7 +38,6 @@ import {
   STUDIO_COOKIE_NAME,
   type StudioSession,
 } from './utils/session.js';
-import { AuthEventType, type AuthEvent } from './types/events.js';
 
 const config = {
   N: 16384,
@@ -1713,7 +1713,7 @@ export function createRoutes(
 
       const { getEventIngestionProvider } = await import('./utils/event-ingestion.js');
       const eventProvider = getEventIngestionProvider();
-      
+
       if (eventProvider && eventProvider.query) {
         try {
           const result = await eventProvider.query({
@@ -1723,33 +1723,33 @@ export function createRoutes(
             type,
             userId,
           });
-        // Import event utilities for template fallback
-        const eventTypes = await import('./types/events.js');
-        const EVENT_TEMPLATES = eventTypes.EVENT_TEMPLATES;
-        const getEventSeverity = eventTypes.getEventSeverity;
-        const transformedEvents = result.events.map((event: AuthEvent) => {
-          if (!event.display?.message || event.display.message === event.type) {
-            const tempEvent = {
-              id: event.id,
-              type: event.type,
-              timestamp: event.timestamp,
-              status: (event as any).status || 'success',
-              userId: event.userId,
-              sessionId: event.sessionId,
-              organizationId: event.organizationId,
-              metadata: event.metadata || {},
-              source: event.source,
-            };
-            const templateMessage = EVENT_TEMPLATES[event.type as AuthEventType]?.(tempEvent);
-            if (templateMessage) {
-              event.display = {
-                message: templateMessage,
-                severity: event.display?.severity || getEventSeverity(event),
+          // Import event utilities for template fallback
+          const eventTypes = await import('./types/events.js');
+          const EVENT_TEMPLATES = eventTypes.EVENT_TEMPLATES;
+          const getEventSeverity = eventTypes.getEventSeverity;
+          const transformedEvents = result.events.map((event: AuthEvent) => {
+            if (!event.display?.message || event.display.message === event.type) {
+              const tempEvent = {
+                id: event.id,
+                type: event.type,
+                timestamp: event.timestamp,
+                status: (event as any).status || 'success',
+                userId: event.userId,
+                sessionId: event.sessionId,
+                organizationId: event.organizationId,
+                metadata: event.metadata || {},
+                source: event.source,
               };
+              const templateMessage = EVENT_TEMPLATES[event.type as AuthEventType]?.(tempEvent);
+              if (templateMessage) {
+                event.display = {
+                  message: templateMessage,
+                  severity: event.display?.severity || getEventSeverity(event),
+                };
+              }
             }
-          }
-          return event;
-        });
+            return event;
+          });
 
           return res.json({
             events: transformedEvents,
@@ -1759,10 +1759,10 @@ export function createRoutes(
         } catch (providerError: any) {
           console.error('Event provider query failed:', providerError);
           // If provider query fails, don't fall back to adapter - return error
-          return res.status(500).json({ 
-            error: 'Failed to query events from provider', 
+          return res.status(500).json({
+            error: 'Failed to query events from provider',
             details: providerError?.message || String(providerError),
-            provider: 'event-ingestion'
+            provider: 'event-ingestion',
           });
         }
       }
@@ -1774,7 +1774,7 @@ export function createRoutes(
       }
 
       const where: any[] = [];
-      
+
       // Cursor-based pagination
       if (after) {
         if (sort === 'desc') {
@@ -1783,7 +1783,7 @@ export function createRoutes(
           where.push({ field: 'id', operator: '>', value: after });
         }
       }
-      
+
       if (type) {
         where.push({ field: 'type', value: type });
       }
@@ -1811,9 +1811,8 @@ export function createRoutes(
 
       const transformedEvents = paginatedEvents.map((event: any) => {
         // Parse metadata
-        const metadata = typeof event.metadata === 'string' 
-          ? JSON.parse(event.metadata) 
-          : event.metadata || {};
+        const metadata =
+          typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {};
 
         // Create a temporary event object for template function
         const tempEvent = {
@@ -1841,10 +1840,15 @@ export function createRoutes(
           userAgent: event.userAgent || event.user_agent,
           source: event.source || 'app',
           display: {
-            message: event.displayMessage || event.display_message || 
-                    EVENT_TEMPLATES[event.type as AuthEventType]?.(tempEvent) || event.type,
-            severity: event.displaySeverity || event.display_severity || 
-                     getEventSeverity(tempEvent , (event as any).status || 'success'),
+            message:
+              event.displayMessage ||
+              event.display_message ||
+              EVENT_TEMPLATES[event.type as AuthEventType]?.(tempEvent) ||
+              event.type,
+            severity:
+              event.displaySeverity ||
+              event.display_severity ||
+              getEventSeverity(tempEvent, (event as any).status || 'success'),
           },
         };
       });
@@ -1856,7 +1860,12 @@ export function createRoutes(
       });
     } catch (error) {
       console.error('Failed to fetch events:', error);
-      res.status(500).json({ error: 'Failed to fetch events', details: error instanceof Error ? error.message : String(error) });
+      res
+        .status(500)
+        .json({
+          error: 'Failed to fetch events',
+          details: error instanceof Error ? error.message : String(error),
+        });
     }
   });
 

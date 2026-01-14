@@ -228,24 +228,27 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
   },
 };
 
-export function getEventSeverity(event: AuthEvent | { type: AuthEventType; status?: 'success' | 'failed' }, status?: 'success' | 'failed'): 'info' | 'success' | 'warning' | 'failed' {
-    const eventStatus = status || (typeof event === 'object' && 'status' in event ? event.status : undefined);
-    
-    if (eventStatus === 'failed') {
-        return 'failed';
-    }
-    
-    const type = typeof event === 'object' && 'type' in event ? event.type : '';
-    
-    if (type.includes('joined') || type.includes('created') || type.includes('verified')) {
-        return 'success';
-    }
-    if (type.includes('failed') || type.includes('banned') || type.includes('deleted')) {
-        return 'failed';
-    }
-    if (type.includes('warning') || type.includes('reset')) {
-        return 'warning';
-    }
-    return 'info';
-}
+export function getEventSeverity(
+  event: AuthEvent | { type: AuthEventType; status?: 'success' | 'failed' },
+  status?: 'success' | 'failed'
+): 'info' | 'success' | 'warning' | 'failed' {
+  const eventStatus =
+    status || (typeof event === 'object' && 'status' in event ? event.status : undefined);
 
+  if (eventStatus === 'failed') {
+    return 'failed';
+  }
+
+  const type = typeof event === 'object' && 'type' in event ? event.type : '';
+
+  if (type.includes('joined') || type.includes('created') || type.includes('verified')) {
+    return 'success';
+  }
+  if (type.includes('failed') || type.includes('banned') || type.includes('deleted')) {
+    return 'failed';
+  }
+  if (type.includes('warning') || type.includes('reset')) {
+    return 'warning';
+  }
+  return 'info';
+}

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { buildApiUrl } from '../utils/api';
 
 interface AuthEvent {
@@ -18,10 +18,7 @@ interface LiveEventMarqueeProps {
   pollInterval?: number;
 }
 
-export function LiveEventMarquee({ 
-  maxEvents = 50,
-  pollInterval = 2000 
-}: LiveEventMarqueeProps) {
+export function LiveEventMarquee({ maxEvents = 50, pollInterval = 2000 }: LiveEventMarqueeProps) {
   const [events, setEvents] = useState<AuthEvent[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [lastEventId, setLastEventId] = useState<string | null>(null);
@@ -43,16 +40,16 @@ export function LiveEventMarquee({
         limit: '10',
         sort: 'desc',
       });
-      
+
       if (lastEventId) {
         params.append('after', lastEventId);
       }
 
       // Use the API utility to get the correct path
       const apiPath = buildApiUrl('/api/events');
-      
+
       const response = await fetch(`${apiPath}?${params.toString()}`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -70,7 +67,7 @@ export function LiveEventMarquee({
         if (newEvents.length > 0) {
           setEvents((prev) => {
             // Merge and deduplicate
-            const existingIds = new Set(prev.map(e => e.id));
+            const existingIds = new Set(prev.map((e) => e.id));
             const uniqueNew = newEvents.filter((e: AuthEvent) => !existingIds.has(e.id));
             const updated = [...uniqueNew, ...prev].slice(0, maxEvents);
             return updated;
@@ -96,7 +93,7 @@ export function LiveEventMarquee({
       if (pollTimeoutRef.current) {
         clearInterval(pollTimeoutRef.current);
       }
-      
+
       pollTimeoutRef.current = setInterval(() => {
         pollEvents();
       }, pollInterval);
@@ -176,14 +173,13 @@ export function LiveEventMarquee({
       }
 
       container.style.transform = `translate3d(${positionRef.current}px, 0, 0)`;
-      
+
       animationRef.current = requestAnimationFrame(animate);
     };
 
     animationRef.current = requestAnimationFrame(animate);
 
-    return () => {
-    };
+    return () => {};
   }, [events.length]);
 
   useEffect(() => {
@@ -200,7 +196,7 @@ export function LiveEventMarquee({
     if (status === 'failed' || severity === 'failed') {
       return 'text-red-400';
     }
-    
+
     switch (severity) {
       case 'success':
         return 'text-green-400';
@@ -232,15 +228,13 @@ export function LiveEventMarquee({
         <div
           ref={containerRef}
           className="flex items-center gap-8 whitespace-nowrap"
-          style={{ 
+          style={{
             willChange: 'transform',
-            transform: 'translate3d(0px, 0, 0)' // Initial transform to prevent layout shift, use translate3d for GPU acceleration
+            transform: 'translate3d(0px, 0, 0)', // Initial transform to prevent layout shift, use translate3d for GPU acceleration
           }}
         >
           {events.length === 0 ? (
-            <span className="text-xs ml-4 font-mono text-white/50">
-              Waiting for events...
-            </span>
+            <span className="text-xs ml-4 font-mono text-white/50">Waiting for events...</span>
           ) : (
             [...events, ...events, ...events].map((event, index) => {
               const setIndex = Math.floor(index / events.length);
@@ -253,7 +247,9 @@ export function LiveEventMarquee({
                   <span className="text-xs font-mono text-white/30">
                     {new Date(event.timestamp).toLocaleTimeString()}
                   </span>
-                  <span className={`text-xs font-mono ${getSeverityColor(event.display?.severity, event.status)}`}>
+                  <span
+                    className={`text-xs font-mono ${getSeverityColor(event.display?.severity, event.status)}`}
+                  >
                     {event.display?.message || event.type}
                   </span>
                   <span className="text-white/20">•</span>
@@ -266,4 +262,3 @@ export function LiveEventMarquee({
     </div>
   );
 }
-

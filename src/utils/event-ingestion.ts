@@ -1,4 +1,10 @@
-import type { AuthEvent, AuthEventType, EventIngestionProvider, EventQueryOptions, EventQueryResult } from '../types/events.js';
+import type {
+  AuthEvent,
+  AuthEventType,
+  EventIngestionProvider,
+  EventQueryOptions,
+  EventQueryResult,
+} from '../types/events.js';
 import { EVENT_TEMPLATES, getEventSeverity } from '../types/events.js';
 import type { StudioConfig } from '../types/handler.js';
 
@@ -13,108 +19,107 @@ let isInitialized = false;
  * Initialize event ingestion
  */
 export function initializeEventIngestion(eventsConfig: StudioConfig['events']): void {
-    if (!eventsConfig?.enabled) {
-        return;
-    }
+  if (!eventsConfig?.enabled) {
+    return;
+  }
 
-    config = eventsConfig;
-    provider = eventsConfig.provider || null;
+  config = eventsConfig;
+  provider = eventsConfig.provider || null;
 
-    if (!provider) {
-        console.warn('Event ingestion is enabled but no provider provided');
-        return;
-    }
+  if (!provider) {
+    console.warn('Event ingestion is enabled but no provider provided');
+    return;
+  }
 
-    isInitialized = true;
+  isInitialized = true;
 
-    if (config.batchSize && config.batchSize > 1) {
-        const flushInterval = config.flushInterval || 5000;
-        flushTimer = setInterval(() => {
-            flushEvents().catch(console.error);
-        }, flushInterval);
-    }
+  if (config.batchSize && config.batchSize > 1) {
+    const flushInterval = config.flushInterval || 5000;
+    flushTimer = setInterval(() => {
+      flushEvents().catch(console.error);
+    }, flushInterval);
+  }
 }
 
 /**
  * Emit an event
  */
 export async function emitEvent(
-    type: AuthEventType,
-    data: {
-        status: 'success' | 'failed';
-        userId?: string;
-        sessionId?: string;
-        organizationId?: string;
-        metadata?: Record<string, any>;
-        request?: { headers: Record<string, string>; ip?: string };
-    },
-    eventsConfig?: StudioConfig['events']
+  type: AuthEventType,
+  data: {
+    status: 'success' | 'failed';
+    userId?: string;
+    sessionId?: string;
+    organizationId?: string;
+    metadata?: Record<string, any>;
+    request?: { headers: Record<string, string>; ip?: string };
+  },
+  eventsConfig?: StudioConfig['events']
 ): Promise<void> {
-    const activeConfig = eventsConfig || config;
-    if (!activeConfig?.enabled) {
-        initializeEventIngestion(eventsConfig);
-    }
-    const useConfig = activeConfig || config;
-    if (!useConfig) {
-        return;
-    }
+  const activeConfig = eventsConfig || config;
+  if (!activeConfig?.enabled) {
+    initializeEventIngestion(eventsConfig);
+  }
+  const useConfig = activeConfig || config;
+  if (!useConfig) {
+    return;
+  }
 
-    if (useConfig.include && !useConfig.include.includes(type)) {
-        return;
+  if (useConfig.include && !useConfig.include.includes(type)) {
+    return;
+  }
+  if (useConfig.exclude && useConfig.exclude.includes(type)) {
+    return;
+  }
+
+  const template = EVENT_TEMPLATES[type];
+  const tempEvent: AuthEvent = {
+    id: '',
+    type,
+    timestamp: new Date(),
+    status: data.status,
+    userId: data.userId,
+    sessionId: data.sessionId,
+    organizationId: data.organizationId,
+    metadata: data.metadata || {},
+    source: 'app',
+  };
+  const displayMessage = template ? template(tempEvent) : type;
+  const event: AuthEvent = {
+    id: crypto.randomUUID(),
+    type,
+    timestamp: new Date(),
+    status: data.status,
+    userId: data.userId,
+    sessionId: data.sessionId,
+    organizationId: data.organizationId,
+    metadata: data.metadata || {},
+    ipAddress: data.request?.ip,
+    userAgent: data.request?.headers['user-agent'] || data.request?.headers['User-Agent'],
+    source: 'app',
+    display: {
+      message: displayMessage,
+      severity: getEventSeverity(tempEvent, data.status),
+    },
+  };
+  console.log({ event, provider });
+  const batchSize = useConfig.batchSize || 1;
+
+  if (batchSize > 1 && provider?.ingestBatch) {
+    eventQueue.push(event);
+
+    if (eventQueue.length >= batchSize) {
+      await flushEvents();
     }
-    if (useConfig.exclude && useConfig.exclude.includes(type)) {
-        return;
-    }
-
-    const template = EVENT_TEMPLATES[type];
-    const tempEvent: AuthEvent = {
-        id: '',
-        type,
-        timestamp: new Date(),
-        status: data.status,
-        userId: data.userId,
-        sessionId: data.sessionId,
-        organizationId: data.organizationId,
-        metadata: data.metadata || {},
-        source: 'app',
-    };
-    const displayMessage = template ? template(tempEvent) : type;
-    const event: AuthEvent = {
-        id: crypto.randomUUID(),
-        type,
-        timestamp: new Date(),
-        status: data.status,
-        userId: data.userId,
-        sessionId: data.sessionId,
-        organizationId: data.organizationId,
-        metadata: data.metadata || {},
-        ipAddress: data.request?.ip,
-        userAgent: data.request?.headers['user-agent'] || data.request?.headers['User-Agent'],
-        source: 'app',
-        display: {
-            message: displayMessage,
-            severity: getEventSeverity(tempEvent , data.status),
-        },
-    };
-    console.log({event , provider})
-    const batchSize = useConfig.batchSize || 1;
-
-
-    if (batchSize > 1 && provider?.ingestBatch) {
+  } else {
+    try {
+      await provider?.ingest(event);
+    } catch (error) {
+      if (useConfig.retryOnError) {
         eventQueue.push(event);
-
-        if (eventQueue.length >= batchSize) {
-            await flushEvents();
-        }
-    } else {
-        try {
-            await provider?.ingest(event);
-        } catch (error) {
-            if (useConfig.retryOnError) {
-                eventQueue.push(event);
-            }
-        }
+      }
     }
+  }
 }
 
 /**
@@ -124,83 +129,81 @@ export async function emitEvent(
  * This is more efficient than sending events one-by-one.
  */
 async function flushEvents(): Promise<void> {
-    if (eventQueue.length === 0 || !provider || isShuttingDown) {
-        return;
-    }
+  if (eventQueue.length === 0 || !provider || isShuttingDown) {
+    return;
+  }
 
-    const eventsToSend = [...eventQueue];
-    eventQueue = [];
+  const eventsToSend = [...eventQueue];
+  eventQueue = [];
 
-    try {
-        if (provider.ingestBatch) {
-            await provider.ingestBatch(eventsToSend);
-        } else {
-            await Promise.all(eventsToSend.map(event => provider!.ingest(event)));
-        }
-    } catch (error) {
-        console.error('Batch event ingestion error:', error);
-        if (config?.retryOnError) {
-            eventQueue.unshift(...eventsToSend);
-        }
+  try {
+    if (provider.ingestBatch) {
+      await provider.ingestBatch(eventsToSend);
+    } else {
+      await Promise.all(eventsToSend.map((event) => provider!.ingest(event)));
     }
+  } catch (error) {
+    console.error('Batch event ingestion error:', error);
+    if (config?.retryOnError) {
+      eventQueue.unshift(...eventsToSend);
+    }
+  }
 }
 
-
 export async function shutdownEventIngestion(): Promise<void> {
-    isShuttingDown = true;
+  isShuttingDown = true;
 
-    if (flushTimer) {
-        clearInterval(flushTimer);
-        flushTimer = null;
-    }
+  if (flushTimer) {
+    clearInterval(flushTimer);
+    flushTimer = null;
+  }
 
-    await flushEvents();
+  await flushEvents();
 
-    if (provider?.shutdown) {
-        await provider.shutdown();
-    }
+  if (provider?.shutdown) {
+    await provider.shutdown();
+  }
 
-    // Reset state
-    provider = null;
-    config = null;
-    eventQueue = [];
-    isInitialized = false;
-    isShuttingDown = false;
+  // Reset state
+  provider = null;
+  config = null;
+  eventQueue = [];
+  isInitialized = false;
+  isShuttingDown = false;
 }
 
 /**
  * Health check
  */
 export async function checkEventIngestionHealth(): Promise<boolean> {
-    if (!provider) {
-        return false;
-    }
+  if (!provider) {
+    return false;
+  }
 
-    if (provider.healthCheck) {
-        return await provider.healthCheck();
-    }
+  if (provider.healthCheck) {
+    return await provider.healthCheck();
+  }
 
-    return true;
+  return true;
 }
 
 /**
  * Get initialization status
  */
 export function isEventIngestionInitialized(): boolean {
-    return isInitialized;
+  return isInitialized;
 }
 
 /**
  * Get current queue size (for monitoring)
  */
 export function getEventQueueSize(): number {
-    return eventQueue.length;
+  return eventQueue.length;
 }
 
 /**
  * Get the current event ingestion provider
  */
 export function getEventIngestionProvider(): EventIngestionProvider | null {
-    return provider;
+  return provider;
 }
-
