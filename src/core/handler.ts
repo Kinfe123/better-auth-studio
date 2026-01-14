@@ -10,6 +10,18 @@ import type {
 } from '../types/handler.js';
 import { serveIndexHtml as getIndexHtml } from '../utils/html-injector.js';
 import { decryptSession, isSessionValid, STUDIO_COOKIE_NAME } from '../utils/session.js';
+import { 
+  initializeEventIngestion, 
+  isEventIngestionInitialized 
+} from '../utils/event-ingestion.js';
+import { injectEventHooks } from '../utils/hook-injector.js';
+import type { EventIngestionProvider } from '../types/events.js';
+import {
+  createPostgresProvider,
+  createClickHouseProvider,
+  createHttpProvider,
+  createStorageProvider,
+} from '../providers/events/helpers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -29,6 +41,63 @@ export async function handleStudioRequest(
   request: UniversalRequest,
   config: StudioConfig
 ): Promise<UniversalResponse> {
+  if (config.events?.enabled && !isEventIngestionInitialized()) {
+    let provider: EventIngestionProvider | undefined;
+
+    if (config.events.provider && typeof config.events.provider === 'object' && typeof config.events.provider.ingest === 'function') {
+      provider = config.events.provider;
+    } else if (config.events.client && config.events.clientType) {
+      // Create provider based on clientType
+      switch (config.events.clientType) {
+        case 'postgres':
+          provider = createPostgresProvider({
+            client: config.events.client,
+            tableName: config.events.tableName,
+          });
+          break;
+        case 'clickhouse':
+          provider = createClickHouseProvider({
+            client: config.events.client,
+            table: config.events.tableName,
+          });
+          break;
+        case 'http':
+          provider = createHttpProvider({
+            url: config.events.client,
+            headers: (config.events as any).headers || {},
+          });
+          break;
+      }
+    } else {
+      const authAdapter = await getAuthAdapter(config.auth);
+      if (authAdapter) {
+        provider = createStorageProvider({
+          adapter: authAdapter,
+          tableName: config.events.tableName || 'auth_events',
+        });
+      }
+    }
+
+    if (provider) {
+      console.log('[Event Ingestion] Initializing with provider:', {
+        hasIngest: typeof provider.ingest === 'function',
+        hasQuery: typeof provider.query === 'function',
+        clientType: config.events.clientType,
+      });
+      
+      initializeEventIngestion({
+        ...config.events,
+        provider,
+      });
+
+      if (config.auth) {
+        injectEventHooks(config.auth, config.events);
+      }
+    } else {
+      console.warn('[Event Ingestion] No provider available - events will not be ingested');
+    }
+  }
+
   try {
     const isSelfHosted = !!config.basePath;
     const basePath = config.basePath || '';
@@ -114,6 +183,29 @@ export async function handleStudioRequest(
       error: 'Internal server error',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
+  }
+}
+
+async function getAuthAdapter(auth: any): Promise<any> {
+  try {
+    if (auth?.adapter) {
+      return auth.adapter;
+    }
+    
+    if (auth?.$context) {
+      const context = await auth.$context;
+      if (context?.adapter) {
+        return context.adapter;
+      }
+    }
+
+    if (auth?.options?.database) {
+      return auth.options.database;
+    }
+
+    return null;
+  } catch {
+    return null;
   }
 }
 

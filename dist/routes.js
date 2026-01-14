@@ -1307,6 +1307,18 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 id: userId,
                 data: { banned: true },
             });
+            // Emit event
+            const { emitEvent } = await import('./utils/event-ingestion.js');
+            await emitEvent('user.banned', {
+                status: 'success',
+                userId,
+                metadata: {
+                    name: user?.name,
+                    email: user?.email,
+                    reason: req.body?.reason,
+                },
+                request: { headers: req.headers, ip: req.ip },
+            }).catch(() => { });
             res.json({ success: true, user });
         }
         catch (_error) {
@@ -1484,6 +1496,151 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         }
         catch (_error) {
             res.status(500).json({ error: 'Failed to fetch organization' });
+        }
+    });
+    router.get('/api/events', async (req, res) => {
+        try {
+            const limit = parseInt(req.query.limit, 10) || 20;
+            const after = req.query.after; // Cursor
+            const sort = req.query.sort || 'desc';
+            const type = req.query.type;
+            const userId = req.query.userId;
+            const { getEventIngestionProvider } = await import('./utils/event-ingestion.js');
+            const eventProvider = getEventIngestionProvider();
+            if (eventProvider && eventProvider.query) {
+                try {
+                    const result = await eventProvider.query({
+                        limit,
+                        after,
+                        sort: sort,
+                        type,
+                        userId,
+                    });
+                    // Import event utilities for template fallback
+                    const eventTypes = await import('./types/events.js');
+                    const EVENT_TEMPLATES = eventTypes.EVENT_TEMPLATES;
+                    const getEventSeverity = eventTypes.getEventSeverity;
+                    const transformedEvents = result.events.map((event) => {
+                        if (!event.display?.message || event.display.message === event.type) {
+                            const tempEvent = {
+                                id: event.id,
+                                type: event.type,
+                                timestamp: event.timestamp,
+                                status: event.status || 'success',
+                                userId: event.userId,
+                                sessionId: event.sessionId,
+                                organizationId: event.organizationId,
+                                metadata: event.metadata || {},
+                                source: event.source,
+                            };
+                            const templateMessage = EVENT_TEMPLATES[event.type]?.(tempEvent);
+                            if (templateMessage) {
+                                event.display = {
+                                    message: templateMessage,
+                                    severity: event.display?.severity || getEventSeverity(event),
+                                };
+                            }
+                        }
+                        return event;
+                    });
+                    return res.json({
+                        events: transformedEvents,
+                        hasMore: result.hasMore,
+                        nextCursor: result.nextCursor,
+                    });
+                }
+                catch (providerError) {
+                    console.error('Event provider query failed:', providerError);
+                    // If provider query fails, don't fall back to adapter - return error
+                    return res.status(500).json({
+                        error: 'Failed to query events from provider',
+                        details: providerError?.message || String(providerError),
+                        provider: 'event-ingestion'
+                    });
+                }
+            }
+            // Fallback to adapter (for storage provider or when provider doesn't support query)
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter) {
+                return res.status(500).json({ error: 'Event provider or adapter not available' });
+            }
+            const where = [];
+            // Cursor-based pagination
+            if (after) {
+                if (sort === 'desc') {
+                    where.push({ field: 'id', operator: '<', value: after });
+                }
+                else {
+                    where.push({ field: 'id', operator: '>', value: after });
+                }
+            }
+            if (type) {
+                where.push({ field: 'type', value: type });
+            }
+            if (userId) {
+                where.push({ field: 'userId', value: userId });
+            }
+            let events = [];
+            if (adapter.findMany) {
+                events = await adapter.findMany({
+                    model: 'auth_events',
+                    where,
+                    orderBy: [{ field: 'timestamp', direction: sort === 'desc' ? 'desc' : 'asc' }],
+                    limit: limit + 1, // Get one extra to check hasMore
+                });
+            }
+            const hasMore = events.length > limit;
+            const paginatedEvents = events.slice(0, limit);
+            // Import event utilities
+            const eventTypes = await import('./types/events.js');
+            const EVENT_TEMPLATES = eventTypes.EVENT_TEMPLATES;
+            const getEventSeverity = eventTypes.getEventSeverity;
+            const transformedEvents = paginatedEvents.map((event) => {
+                // Parse metadata
+                const metadata = typeof event.metadata === 'string'
+                    ? JSON.parse(event.metadata)
+                    : event.metadata || {};
+                // Create a temporary event object for template function
+                const tempEvent = {
+                    id: event.id,
+                    type: event.type,
+                    timestamp: new Date(event.timestamp || event.createdAt),
+                    status: event.status || 'success',
+                    userId: event.userId || event.user_id,
+                    sessionId: event.sessionId || event.session_id,
+                    organizationId: event.organizationId || event.organization_id,
+                    metadata,
+                    source: event.source || 'app',
+                };
+                return {
+                    id: event.id,
+                    type: event.type,
+                    timestamp: event.timestamp || event.createdAt,
+                    status: event.status || 'success',
+                    userId: event.userId || event.user_id,
+                    sessionId: event.sessionId || event.session_id,
+                    organizationId: event.organizationId || event.organization_id,
+                    metadata,
+                    ipAddress: event.ipAddress || event.ip_address,
+                    userAgent: event.userAgent || event.user_agent,
+                    source: event.source || 'app',
+                    display: {
+                        message: event.displayMessage || event.display_message ||
+                            EVENT_TEMPLATES[event.type]?.(tempEvent) || event.type,
+                        severity: event.displaySeverity || event.display_severity ||
+                            getEventSeverity(tempEvent, event.status || 'success'),
+                    },
+                };
+            });
+            res.json({
+                events: transformedEvents,
+                hasMore,
+                nextCursor: hasMore ? transformedEvents[transformedEvents.length - 1].id : null,
+            });
+        }
+        catch (error) {
+            console.error('Failed to fetch events:', error);
+            res.status(500).json({ error: 'Failed to fetch events', details: error instanceof Error ? error.message : String(error) });
         }
     });
     router.get('/api/users', async (req, res) => {

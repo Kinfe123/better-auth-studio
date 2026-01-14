@@ -1043,7 +1043,7 @@ export default function Dashboard() {
     const maxActivityValue = Math.max(...activityBuckets, 1);
 
     return (
-      <div className="space-y-6 min-h-screen h-full mt-5 flex-1 overflow-y-hidden overflow-x-hidden px-0">
+      <div className="space-y-6 min-h-screen h-full mt-0 flex-1 overflow-y-hidden overflow-x-hidden px-0">
         {/* <div className="px-6 pt-8">
         <h1 className="text-3xl text-white font-light mb-2">Welcome Back</h1>
         <p className="text-gray-400 text-sm">

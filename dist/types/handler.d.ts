@@ -44,11 +44,24 @@ export type StudioAccessConfig = {
     sessionDuration?: number;
     secret?: string;
 };
+import type { EventIngestionProvider, AuthEventType } from './events.js';
 export type StudioConfig = {
     auth: any;
     basePath?: string;
     access?: StudioAccessConfig;
     metadata?: StudioMetadata;
+    events?: {
+        enabled?: boolean;
+        tableName?: string;
+        provider?: EventIngestionProvider;
+        client?: any;
+        clientType?: 'postgres' | 'clickhouse' | 'http' | 'custom';
+        include?: AuthEventType[];
+        exclude?: AuthEventType[];
+        batchSize?: number;
+        flushInterval?: number;
+        retryOnError?: boolean;
+    };
 };
 export type WindowStudioConfig = {
     basePath: string;

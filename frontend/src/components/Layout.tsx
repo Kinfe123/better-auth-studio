@@ -17,6 +17,7 @@ import { assetPath } from '@/lib/utils';
 import { useCounts } from '../contexts/CountsContext';
 import { useWebSocket } from '../hooks/useWebSocket';
 import CommandPalette from './CommandPalette';
+import { LiveEventMarquee } from './LiveEventMarquee';
 
 interface UserProfile {
   id: string;
@@ -676,7 +677,11 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </div>
 
-      <div className="flex-1 p-0">{children}</div>
+      {location.pathname === '/' && (
+        <LiveEventMarquee maxEvents={50} pollInterval={2000} />
+      )}
+
+      <div className="flex-1">{children}</div>
 
       <CommandPalette
         isOpen={isCommandPaletteOpen}

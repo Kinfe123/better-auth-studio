@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { organization, admin } from 'better-auth/plugins';
+import { organization, admin, createAuthMiddleware } from 'better-auth/plugins';
 import { prisma } from '@/lib/db';
 import { buttonConfig, apiConfig } from '@/components/Button';
 
@@ -18,6 +18,18 @@ export const auth = betterAuth({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
     },
+  },
+  hooks: {
+    before: createAuthMiddleware(async (ctx) => {
+      console.log("Before hook triggered", {ctx})
+      return ctx
+    }),
+    after: createAuthMiddleware(async (ctx) => {
+      if(ctx.path === "/sign-up/email"){
+        console.log("After hook triggered", {ctx})
+      }
+      return ctx
+    }),
   },
   emailAndPassword: {
     enabled: true,

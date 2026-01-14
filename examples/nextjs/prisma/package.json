@@ -16,6 +16,7 @@
     "studio:init": "pnpm exec better-auth-studio init"
   },
   "dependencies": {
+    "@clickhouse/client": "^1.16.0",
     "@prisma/client": "^6.15.0",
     "better-auth": "^1.3.34",
     "better-auth-studio": "file:../../..",

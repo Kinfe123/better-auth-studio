@@ -1,6 +1,5 @@
 import fs, { existsSync } from 'node:fs';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
 // @ts-expect-error - No types available
 import babelPresetReact from '@babel/preset-react';
 // @ts-expect-error - No types available
@@ -8,7 +7,6 @@ import babelPresetTypeScript from '@babel/preset-typescript';
 import type { BetterAuthOptions } from 'better-auth';
 import { BetterAuthError, logger } from 'better-auth';
 import { loadConfig } from 'c12';
-import { createJiti } from 'jiti';
 import type { JitiOptions as JO } from 'jiti/native';
 import { addSvelteKitEnvModules } from './add-svelte-kit-env-modules.js';
 import { getTsconfigInfo } from './get-tsconfig-info.js';

@@ -1,6 +1,11 @@
 import type { StudioConfig } from 'better-auth-studio';
 import { auth } from './src/auth';
-
+import { createClient } from '@clickhouse/client';
+const clickhouseClient = createClient({
+  host: process.env.CLICKHOUSE_URL as string | "clickhouse-cloud.com:8443",
+  username: process.env.CLICKHOUSE_USERNAME || 'default',
+  password: process.env.CLICKHOUSE_PASSWORD || "somepassword"
+});
 const config: StudioConfig = {
   auth,
   basePath: '/api/studio',
@@ -11,8 +16,15 @@ const config: StudioConfig = {
   access: {
     roles: ['admin'],
     allowEmails: ['kinfetare83@gmail.com'],
+  },
+  events: {
+    enabled: true,
+    client: clickhouseClient,
+    clientType: 'clickhouse',
+    tableName: 'auth_events',
+    // batchSize: 10,
+    // flushInterval: 5000
   }
 };
 
 export default config;
-

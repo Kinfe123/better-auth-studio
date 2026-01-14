@@ -45,11 +45,25 @@ export type StudioAccessConfig = {
   secret?: string;
 };
 
+import type { EventIngestionProvider, AuthEventType } from './events.js';
+
 export type StudioConfig = {
   auth: any;
   basePath?: string;
   access?: StudioAccessConfig;
   metadata?: StudioMetadata;
+  events?: {
+    enabled?: boolean;
+    tableName?: string; // Auto-use Better Auth adapter if provided
+    provider?: EventIngestionProvider; // Custom provider
+    client?: any; // Client instance (Postgres pool, ClickHouse client, etc.)
+    clientType?: 'postgres' | 'clickhouse' | 'http' | 'custom';
+    include?: AuthEventType[];
+    exclude?: AuthEventType[];
+    batchSize?: number;
+    flushInterval?: number;
+    retryOnError?: boolean;
+  };
 };
 
 export type WindowStudioConfig = {
