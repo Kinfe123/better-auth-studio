@@ -1,5 +1,5 @@
-import { emitEvent } from './event-ingestion.js';
 import type { StudioConfig } from '../types/handler.js';
+import { emitEvent } from './event-ingestion.js';
 
 /**
  * Wraps organization hooks to automatically emit events
@@ -842,10 +842,7 @@ export function createOrganizationHooksWithEvents(
  * Automatically wraps organization plugin hooks to emit events
  * This should be called during Better Auth initialization
  */
-export function wrapOrganizationPluginHooks(
-  auth: any,
-  eventsConfig: StudioConfig['events']
-): void {
+export function wrapOrganizationPluginHooks(auth: any, eventsConfig: StudioConfig['events']): void {
   if (!auth || !eventsConfig?.enabled) {
     return;
   }
@@ -875,4 +872,3 @@ export function wrapOrganizationPluginHooks(
     console.error('[Organization Hooks] Failed to wrap hooks:', error);
   }
 }
-

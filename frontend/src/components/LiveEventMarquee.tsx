@@ -221,7 +221,7 @@ export function LiveEventMarquee({ maxEvents = 50, pollInterval = 2000 }: LiveEv
   const getEventColors = () => {
     const config = (window as any).__STUDIO_CONFIG__;
     const colors = config?.liveMarquee?.colors || {};
-    
+
     const defaults = {
       success: 'text-green-400', // #34d399
       info: 'text-amber-300', // #fcd34d
@@ -239,10 +239,13 @@ export function LiveEventMarquee({ maxEvents = 50, pollInterval = 2000 }: LiveEv
     };
   };
 
-  const getSeverityColor = (severity?: string, status?: 'success' | 'failed'): { className?: string; style?: React.CSSProperties } => {
+  const getSeverityColor = (
+    severity?: string,
+    status?: 'success' | 'failed'
+  ): { className?: string; style?: React.CSSProperties } => {
     const colors = getEventColors();
     let colorValue: string;
-    
+
     if (status === 'failed' || severity === 'failed') {
       colorValue = colors.failed;
     } else {

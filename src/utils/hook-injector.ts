@@ -40,12 +40,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             if (typeof ctx.headers.get === 'function') {
               try {
                 ip = ctx.headers.get('x-forwarded-for') || ctx.headers.get('x-real-ip') || null;
-              } catch (e) { }
+              } catch (e) {}
             } else {
               ip = ctx.headers['x-forwarded-for'] || ctx.headers['x-real-ip'] || null;
             }
           }
-        } catch (e) { }
+        } catch (e) {}
 
         if (path === '/sign-up' || path === '/sign-up/email') {
           const body = ctx.body || {};
@@ -67,7 +67,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           } else if (isError) {
             emitEvent(
               'user.joined',
@@ -89,7 +89,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -114,7 +114,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
 
             // Also emit session.created
             if (session) {
@@ -135,7 +135,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   },
                 },
                 capturedConfig
-              ).catch(() => { });
+              ).catch(() => {});
             }
           } else if (isError) {
             emitEvent(
@@ -155,7 +155,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -187,7 +187,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           } else if (isError) {
             emitEvent(
               'session.created',
@@ -208,7 +208,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -232,7 +232,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
 
             // Also emit session.ended
             emitEvent(
@@ -251,7 +251,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           } else if (isError) {
             emitEvent(
               'session.ended',
@@ -266,7 +266,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
         if (path === '/update-password' || path === '/change-password') {
@@ -291,7 +291,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           } else if (isError) {
             emitEvent(
               'user.password_changed',
@@ -311,7 +311,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -336,7 +336,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           } else if (isError) {
             emitEvent(
               'user.email_verified',
@@ -357,7 +357,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -378,7 +378,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -403,7 +403,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           } else if (isError) {
             emitEvent(
               'password.reset_completed',
@@ -424,7 +424,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -448,7 +448,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => { });
+                ).catch(() => {});
               } else if (isError) {
                 emitEvent(
                   'user.deleted',
@@ -466,10 +466,10 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => { });
+                ).catch(() => {});
               }
             })
-            .catch(() => { });
+            .catch(() => {});
         }
 
         // OAuth unlinked
@@ -501,7 +501,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           } else if (isError) {
             emitEvent(
               'oauth.unlinked',
@@ -520,7 +520,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -553,7 +553,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -587,7 +587,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => { });
+                ).catch(() => {});
               } else if (isError) {
                 const body = ctx.body || {};
                 emitEvent(
@@ -611,10 +611,10 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => { });
+                ).catch(() => {});
               }
             })
-            .catch(() => { });
+            .catch(() => {});
         }
 
         // Organization updated
@@ -649,7 +649,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => { });
+                ).catch(() => {});
               } else if (isError) {
                 emitEvent(
                   'organization.updated',
@@ -670,10 +670,10 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => { });
+                ).catch(() => {});
               }
             })
-            .catch(() => { });
+            .catch(() => {});
         }
 
         // Organization deleted
@@ -699,7 +699,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => { });
+                ).catch(() => {});
               } else if (isError) {
                 emitEvent(
                   'organization.deleted',
@@ -720,10 +720,10 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => { });
+                ).catch(() => {});
               }
             })
-            .catch(() => { });
+            .catch(() => {});
         }
 
         // Note: Member operations (add-member, remove-member, update-member-role) are handled

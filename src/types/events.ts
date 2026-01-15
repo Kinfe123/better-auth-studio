@@ -334,7 +334,13 @@ export function getEventSeverity(
 
   const type = typeof event === 'object' && 'type' in event ? event.type : '';
 
-  if (type.includes('joined') || type.includes('created') || type.includes('verified') || type.includes('accepted') || type.includes('added')) {
+  if (
+    type.includes('joined') ||
+    type.includes('created') ||
+    type.includes('verified') ||
+    type.includes('accepted') ||
+    type.includes('added')
+  ) {
     return 'success';
   }
   if (type.includes('failed') || type.includes('banned') || type.includes('deleted')) {

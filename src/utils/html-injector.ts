@@ -82,7 +82,7 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
 
   const eventsConfig = (config as any).events;
   const liveMarqueeConfig = eventsConfig?.liveMarquee;
-  
+
   const liveMarquee: LiveMarqueeConfig | undefined = eventsConfig?.enabled
     ? {
         enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false

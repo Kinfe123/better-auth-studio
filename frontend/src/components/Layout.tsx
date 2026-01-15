@@ -677,11 +677,14 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </div>
 
-      {location.pathname === '/' && (() => {
-        const config = getStudioConfig();
-        const liveMarqueeEnabled = config?.liveMarquee?.enabled !== false;
-        return liveMarqueeEnabled ? <LiveEventMarquee maxEvents={50} pollInterval={2000} /> : null;
-      })()}
+      {location.pathname === '/' &&
+        (() => {
+          const config = getStudioConfig();
+          const liveMarqueeEnabled = config?.liveMarquee?.enabled !== false;
+          return liveMarqueeEnabled ? (
+            <LiveEventMarquee maxEvents={50} pollInterval={2000} />
+          ) : null;
+        })()}
 
       <div className="flex-1">{children}</div>
 
