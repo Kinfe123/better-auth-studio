@@ -1,9 +1,9 @@
 import { getSessionFromCtx } from 'better-auth/api';
 import { createAuthMiddleware } from 'better-auth/plugins';
 import type { StudioConfig } from '../types/handler.js';
+import { wrapAuthCallbacks } from './auth-callbacks-injector.js';
 import { emitEvent } from './event-ingestion.js';
 import { wrapOrganizationPluginHooks } from './org-hooks-injector.js';
-import { wrapAuthCallbacks } from './auth-callbacks-injector.js';
 
 const INJECTED_HOOKS_MARKER = '__better_auth_studio_events_injected__';
 
@@ -462,7 +462,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             })
             .catch(() => {});
         }
-        if(path === "/admin/ban-user") {
+        if (path === '/admin/ban-user') {
           const body = ctx.body || {};
           const user = returned?.user || ctx.context?.returned?.user || ctx.context?.user;
           if (!isError && user) {
@@ -499,7 +499,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             ).catch(() => {});
           }
         }
-        if(path === "/admin/unban-user") {
+        if (path === '/admin/unban-user') {
           const body = ctx.body || {};
           const user = returned?.user || ctx.context?.returned?.user || ctx.context?.user;
           if (!isError && user) {
@@ -578,8 +578,8 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
               path.startsWith('/oauth2/callback') ||
               path === '/organization/create' ||
               path === '/organization/update' ||
-              path === '/organization/delete' || 
-              path.startsWith('/admin/')
+              path === '/organization/delete' ||
+              path.startsWith('/admin/');
             return shouldMatch;
           },
           handler: eventMiddleware,

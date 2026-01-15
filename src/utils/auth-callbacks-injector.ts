@@ -14,11 +14,13 @@ function getRequestInfo(request?: Request | any): { headers: Record<string, stri
         request.headers.forEach((value, key) => {
           headersObj[key] = value;
         });
-        ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
+        ip =
+          request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
       } else if (request.headers) {
         // Object with headers property
         if (typeof request.headers.get === 'function') {
-          ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
+          ip =
+            request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
           request.headers.forEach?.((value: string, key: string) => {
             headersObj[key] = value;
           });
@@ -41,10 +43,7 @@ function getRequestInfo(request?: Request | any): { headers: Record<string, stri
  * Wraps Better Auth callbacks to automatically emit events
  * This should be called during Better Auth initialization
  */
-export function wrapAuthCallbacks(
-  auth: any,
-  eventsConfig: StudioConfig['events']
-): void {
+export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events']): void {
   if (!auth || !eventsConfig?.enabled) {
     return;
   }
@@ -65,7 +64,7 @@ export function wrapAuthCallbacks(
 
         const data = eventData(args);
         const requestInfo = getRequestInfo(args[args.length - 1]);
-        
+
         emitEvent(
           eventType as any,
           {
@@ -81,29 +80,25 @@ export function wrapAuthCallbacks(
     const deleteUserConfig = auth.options?.user?.deleteUser || auth.user?.deleteUser;
     if (deleteUserConfig && !deleteUserConfig.__studio_wrapped) {
       const originalAfterDelete = deleteUserConfig.afterDelete;
-      
-      deleteUserConfig.afterDelete = wrapCallback(
-        originalAfterDelete,
-        'user.deleted',
-        (args) => {
-          const user = args[0] as any;
-          return {
-            userId: user?.id,
-            metadata: {
-              email: user?.email,
-              name: user?.name,
-            },
-          };
-        }
-      );
-      
+
+      deleteUserConfig.afterDelete = wrapCallback(originalAfterDelete, 'user.deleted', (args) => {
+        const user = args[0] as any;
+        return {
+          userId: user?.id,
+          metadata: {
+            email: user?.email,
+            name: user?.name,
+          },
+        };
+      });
+
       deleteUserConfig.__studio_wrapped = true;
     }
 
     const emailVerificationConfig = auth.options?.emailVerification || auth.emailVerification;
     if (emailVerificationConfig && !emailVerificationConfig.__studio_wrapped) {
       const originalOnEmailVerification = emailVerificationConfig.onEmailVerification;
-      
+
       emailVerificationConfig.onEmailVerification = wrapCallback(
         originalOnEmailVerification,
         'user.email_verified',
@@ -119,14 +114,14 @@ export function wrapAuthCallbacks(
           };
         }
       );
-      
+
       emailVerificationConfig.__studio_wrapped = true;
     }
 
     const emailAndPasswordConfig = auth.options?.emailAndPassword || auth.emailAndPassword;
     if (emailAndPasswordConfig && !emailAndPasswordConfig.__studio_wrapped) {
       const originalOnPasswordChange = emailAndPasswordConfig.onPasswordChange;
-      
+
       emailAndPasswordConfig.onPasswordChange = wrapCallback(
         originalOnPasswordChange,
         'user.password_changed',
@@ -143,11 +138,10 @@ export function wrapAuthCallbacks(
           };
         }
       );
-      
+
       emailAndPasswordConfig.__studio_wrapped = true;
     }
   } catch (error) {
     console.error('[Auth Callbacks] Failed to wrap callbacks:', error);
   }
 }
-
