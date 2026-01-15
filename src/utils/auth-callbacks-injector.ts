@@ -17,7 +17,6 @@ function getRequestInfo(request?: Request | any): { headers: Record<string, stri
         ip =
           request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
       } else if (request.headers) {
-        // Object with headers property
         if (typeof request.headers.get === 'function') {
           ip =
             request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
@@ -57,7 +56,6 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
       eventData: (args: Parameters<T>) => any
     ): T => {
       return (async (...args: Parameters<T>) => {
-        // Call original callback if it exists
         if (originalCallback) {
           await originalCallback(...args);
         }
