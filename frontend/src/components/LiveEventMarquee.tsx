@@ -214,23 +214,60 @@ export function LiveEventMarquee({ maxEvents = 50, pollInterval = 2000 }: LiveEv
     };
   }, []);
 
-  const getSeverityColor = (severity?: string, status?: 'success' | 'failed') => {
-    // If status is 'failed', always show red
+  const isHexColor = (color: string): boolean => {
+    return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+  };
+
+  const getEventColors = () => {
+    const config = (window as any).__STUDIO_CONFIG__;
+    const colors = config?.liveMarquee?.colors || {};
+    
+    const defaults = {
+      success: 'text-green-400', // #34d399
+      info: 'text-amber-300', // #fcd34d
+      warning: 'text-yellow-400', // #facc15
+      error: 'text-red-400', // #f87171
+      failed: 'text-red-400', // #f87171
+    };
+
+    return {
+      success: colors.success || defaults.success,
+      info: colors.info || defaults.info,
+      warning: colors.warning || defaults.warning,
+      error: colors.error || defaults.error,
+      failed: colors.failed || defaults.failed,
+    };
+  };
+
+  const getSeverityColor = (severity?: string, status?: 'success' | 'failed'): { className?: string; style?: React.CSSProperties } => {
+    const colors = getEventColors();
+    let colorValue: string;
+    
     if (status === 'failed' || severity === 'failed') {
-      return 'text-red-400';
+      colorValue = colors.failed;
+    } else {
+      switch (severity) {
+        case 'success':
+          colorValue = colors.success;
+          break;
+        case 'error':
+          colorValue = colors.error;
+          break;
+        case 'warning':
+          colorValue = colors.warning;
+          break;
+        case 'info':
+          colorValue = colors.info;
+          break;
+        default:
+          colorValue = colors.info;
+      }
     }
 
-    switch (severity) {
-      case 'success':
-        return 'text-green-400';
-      case 'error':
-        return 'text-red-400';
-      case 'warning':
-        return 'text-yellow-400';
-      case 'info':
-        return 'text-amber-300'; // Softer yellowish color for info events
-      default:
-        return 'text-amber-300'; // Default to info color (yellowish) instead of white
+    if (isHexColor(colorValue)) {
+      return { style: { color: colorValue } };
+    } else {
+      return { className: colorValue };
     }
   };
 
@@ -271,7 +308,8 @@ export function LiveEventMarquee({ maxEvents = 50, pollInterval = 2000 }: LiveEv
                     {new Date(event.timestamp).toLocaleTimeString()}
                   </span>
                   <span
-                    className={`text-xs font-mono ${getSeverityColor(event.display?.severity, event.status)}`}
+                    className={`text-xs font-mono ${getSeverityColor(event.display?.severity, event.status).className || ''}`}
+                    style={getSeverityColor(event.display?.severity, event.status).style}
                   >
                     {event.display?.message || event.type}
                   </span>

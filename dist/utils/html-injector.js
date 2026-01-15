@@ -27,9 +27,18 @@ function prepareFrontendConfig(config) {
             ...(config.metadata?.company || {}),
         },
     };
+    const eventsConfig = config.events;
+    const liveMarqueeConfig = eventsConfig?.liveMarquee;
+    const liveMarquee = eventsConfig?.enabled
+        ? {
+            enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false
+            colors: liveMarqueeConfig?.colors || undefined,
+        }
+        : undefined;
     return {
         basePath: config.basePath || '',
         metadata: mergedMetadata,
+        liveMarquee: liveMarquee,
     };
 }
 function injectConfig(html, config) {

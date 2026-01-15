@@ -61,11 +61,33 @@ export type StudioConfig = {
         batchSize?: number;
         flushInterval?: number;
         retryOnError?: boolean;
+        liveMarquee?: {
+            enabled?: boolean;
+            colors?: {
+                success?: string;
+                info?: string;
+                warning?: string;
+                error?: string;
+                failed?: string;
+            };
+        };
     };
+};
+export type EventColors = {
+    success?: string;
+    info?: string;
+    warning?: string;
+    error?: string;
+    failed?: string;
+};
+export type LiveMarqueeConfig = {
+    enabled?: boolean;
+    colors?: EventColors;
 };
 export type WindowStudioConfig = {
     basePath: string;
     metadata: Required<StudioMetadata>;
+    liveMarquee?: LiveMarqueeConfig;
 };
 export declare function defineStudioConfig(config: StudioConfig): StudioConfig;
 //# sourceMappingURL=handler.d.ts.map

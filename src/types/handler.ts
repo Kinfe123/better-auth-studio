@@ -63,12 +63,37 @@ export type StudioConfig = {
     batchSize?: number;
     flushInterval?: number;
     retryOnError?: boolean;
+    liveMarquee?: {
+      // default to true if not explicitly disabled
+      enabled?: boolean;
+      colors?: {
+        success?: string;
+        info?: string;
+        warning?: string;
+        error?: string;
+        failed?: string;
+      };
+    };
   };
+};
+
+export type EventColors = {
+  success?: string;
+  info?: string;
+  warning?: string;
+  error?: string;
+  failed?: string;
+};
+
+export type LiveMarqueeConfig = {
+  enabled?: boolean;
+  colors?: EventColors;
 };
 
 export type WindowStudioConfig = {
   basePath: string;
   metadata: Required<StudioMetadata>;
+  liveMarquee?: LiveMarqueeConfig;
 };
 
 export function defineStudioConfig(config: StudioConfig): StudioConfig {

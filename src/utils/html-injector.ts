@@ -28,9 +28,23 @@ export interface StudioConfig {
   [key: string]: any;
 }
 
+export interface EventColors {
+  success?: string;
+  info?: string;
+  warning?: string;
+  error?: string;
+  failed?: string;
+}
+
+export interface LiveMarqueeConfig {
+  enabled?: boolean;
+  colors?: EventColors;
+}
+
 export interface WindowStudioConfig {
   basePath: string;
   metadata: Required<StudioMetadata>;
+  liveMarquee?: LiveMarqueeConfig;
 }
 
 export function serveIndexHtml(publicDir: string, config: Partial<StudioConfig> = {}): string {
@@ -66,9 +80,20 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
     },
   };
 
+  const eventsConfig = (config as any).events;
+  const liveMarqueeConfig = eventsConfig?.liveMarquee;
+  
+  const liveMarquee: LiveMarqueeConfig | undefined = eventsConfig?.enabled
+    ? {
+        enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false
+        colors: liveMarqueeConfig?.colors || undefined,
+      }
+    : undefined;
+
   return {
     basePath: config.basePath || '',
     metadata: mergedMetadata,
+    liveMarquee: liveMarquee,
   };
 }
 

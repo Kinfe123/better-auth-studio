@@ -22,9 +22,21 @@ export interface StudioConfig {
     access?: StudioAccessConfig;
     [key: string]: any;
 }
+export interface EventColors {
+    success?: string;
+    info?: string;
+    warning?: string;
+    error?: string;
+    failed?: string;
+}
+export interface LiveMarqueeConfig {
+    enabled?: boolean;
+    colors?: EventColors;
+}
 export interface WindowStudioConfig {
     basePath: string;
     metadata: Required<StudioMetadata>;
+    liveMarquee?: LiveMarqueeConfig;
 }
 export declare function serveIndexHtml(publicDir: string, config?: Partial<StudioConfig>): string;
 //# sourceMappingURL=html-injector.d.ts.map

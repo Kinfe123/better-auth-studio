@@ -331,7 +331,6 @@ export function createPostgresProvider(options) {
 }
 export function createClickHouseProvider(options) {
     const { client, table = 'auth_events', database } = options;
-    console.log({ client, table, database });
     const ensureTable = async () => {
         if (!client)
             return;
@@ -359,7 +358,6 @@ export function createClickHouseProvider(options) {
       `;
             if (client.exec) {
                 const result = await client.exec({ query: createTableQuery });
-                console.log({ result });
                 console.log(`✅ Ensured ${tableFullName} table exists in ClickHouse`);
             }
             else if (client.query) {

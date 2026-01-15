@@ -377,7 +377,6 @@ export function createClickHouseProvider(options: {
   database?: string;
 }): EventIngestionProvider {
   const { client, table = 'auth_events', database } = options;
-  console.log({ client, table, database });
 
   const ensureTable = async () => {
     if (!client) return;
