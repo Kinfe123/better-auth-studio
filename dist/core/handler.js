@@ -1,11 +1,11 @@
 import { existsSync, readFileSync, realpathSync, statSync } from 'fs';
 import { dirname, extname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
-import { serveIndexHtml as getIndexHtml } from '../utils/html-injector.js';
-import { decryptSession, isSessionValid, STUDIO_COOKIE_NAME } from '../utils/session.js';
+import { createClickHouseProvider, createHttpProvider, createPostgresProvider, createStorageProvider, } from '../providers/events/helpers.js';
 import { initializeEventIngestion, isEventIngestionInitialized } from '../utils/event-ingestion.js';
 import { injectEventHooks } from '../utils/hook-injector.js';
-import { createPostgresProvider, createClickHouseProvider, createHttpProvider, createStorageProvider, } from '../providers/events/helpers.js';
+import { serveIndexHtml as getIndexHtml } from '../utils/html-injector.js';
+import { decryptSession, isSessionValid, STUDIO_COOKIE_NAME } from '../utils/session.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const __realdir = (() => {
@@ -25,7 +25,9 @@ export async function handleStudioRequest(request, config) {
     if (config.events?.enabled && !isEventIngestionInitialized()) {
         let provider;
         // Check if provider is already a provider object (has ingest method)
-        if (config.events.provider && typeof config.events.provider === 'object' && typeof config.events.provider.ingest === 'function') {
+        if (config.events.provider &&
+            typeof config.events.provider === 'object' &&
+            typeof config.events.provider.ingest === 'function') {
             provider = config.events.provider;
         }
         else if (config.events.client && config.events.clientType) {

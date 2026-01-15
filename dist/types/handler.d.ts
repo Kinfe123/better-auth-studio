@@ -44,7 +44,7 @@ export type StudioAccessConfig = {
     sessionDuration?: number;
     secret?: string;
 };
-import type { EventIngestionProvider, AuthEventType } from './events.js';
+import type { AuthEventType, EventIngestionProvider } from './events.js';
 export type StudioConfig = {
     auth: any;
     basePath?: string;

@@ -2,6 +2,7 @@ import { getSessionFromCtx } from 'better-auth/api';
 import { createAuthMiddleware } from 'better-auth/plugins';
 import type { StudioConfig } from '../types/handler.js';
 import { emitEvent } from './event-ingestion.js';
+import { wrapOrganizationPluginHooks } from './org-hooks-wrapper.js';
 
 const INJECTED_HOOKS_MARKER = '__better_auth_studio_events_injected__';
 
@@ -39,12 +40,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             if (typeof ctx.headers.get === 'function') {
               try {
                 ip = ctx.headers.get('x-forwarded-for') || ctx.headers.get('x-real-ip') || null;
-              } catch (e) {}
+              } catch (e) { }
             } else {
               ip = ctx.headers['x-forwarded-for'] || ctx.headers['x-real-ip'] || null;
             }
           }
-        } catch (e) {}
+        } catch (e) { }
 
         if (path === '/sign-up' || path === '/sign-up/email') {
           const body = ctx.body || {};
@@ -66,7 +67,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'user.joined',
@@ -88,7 +89,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -113,7 +114,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
 
             // Also emit session.created
             if (session) {
@@ -134,7 +135,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   },
                 },
                 capturedConfig
-              ).catch(() => {});
+              ).catch(() => { });
             }
           } else if (isError) {
             emitEvent(
@@ -154,7 +155,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -186,7 +187,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'session.created',
@@ -207,7 +208,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -231,7 +232,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
 
             // Also emit session.ended
             emitEvent(
@@ -250,7 +251,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'session.ended',
@@ -265,7 +266,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
         if (path === '/update-password' || path === '/change-password') {
@@ -290,7 +291,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'user.password_changed',
@@ -310,7 +311,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -335,7 +336,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'user.email_verified',
@@ -356,7 +357,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -377,7 +378,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -402,7 +403,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'password.reset_completed',
@@ -423,7 +424,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -447,7 +448,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => {});
+                ).catch(() => { });
               } else if (isError) {
                 emitEvent(
                   'user.deleted',
@@ -465,10 +466,10 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => {});
+                ).catch(() => { });
               }
             })
-            .catch(() => {});
+            .catch(() => { });
         }
 
         // OAuth unlinked
@@ -500,7 +501,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'oauth.unlinked',
@@ -519,7 +520,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -529,9 +530,6 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           const user = newSession?.user || returned?.user;
           const existingUser = ctx.context?.existingUser;
 
-          // Check if this is a link (user already exists) vs new sign-up
-          // This is tricky - we'll emit oauth.linked if we can detect it's a link
-          // Better Auth might set a flag or we can check if user existed before
           if (user && existingUser) {
             const provider = path.includes('/callback/')
               ? path.split('/callback/')[1]?.split('/')[0]
@@ -555,7 +553,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -589,7 +587,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => {});
+                ).catch(() => { });
               } else if (isError) {
                 const body = ctx.body || {};
                 emitEvent(
@@ -613,10 +611,10 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => {});
+                ).catch(() => { });
               }
             })
-            .catch(() => {});
+            .catch(() => { });
         }
 
         // Organization updated
@@ -651,7 +649,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => {});
+                ).catch(() => { });
               } else if (isError) {
                 emitEvent(
                   'organization.updated',
@@ -672,10 +670,10 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => {});
+                ).catch(() => { });
               }
             })
-            .catch(() => {});
+            .catch(() => { });
         }
 
         // Organization deleted
@@ -691,6 +689,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     organizationId: body.organizationId,
                     userId: session.user.id,
                     metadata: {
+                      organizationSlug: body.slug,
                       email: session.user.email,
                       name: session.user.name,
                     },
@@ -700,7 +699,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => {});
+                ).catch(() => { });
               } else if (isError) {
                 emitEvent(
                   'organization.deleted',
@@ -721,177 +720,14 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => {});
+                ).catch(() => { });
               }
             })
-            .catch(() => {});
+            .catch(() => { });
         }
 
-        // Member added
-        if (path === '/organization/add-member') {
-          const memberReturned = ctx.context?.returned || returned;
-          const session = ctx.context?.session;
-
-          if (
-            !isError &&
-            memberReturned &&
-            typeof memberReturned === 'object' &&
-            'id' in memberReturned &&
-            session
-          ) {
-            emitEvent(
-              'member.added',
-              {
-                status: 'success',
-                organizationId: memberReturned.organizationId,
-                userId: memberReturned.userId,
-                metadata: {
-                  memberId: memberReturned.id,
-                  role: memberReturned.role,
-                  addedByUserId: session.user.id,
-                  addedByEmail: session.user.email,
-                  addedByName: session.user.name,
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          } else if (isError) {
-            emitEvent(
-              'member.added',
-              {
-                status: 'failed',
-                metadata: {
-                  reason:
-                    returned.statusCode === 400
-                      ? 'validation_failed'
-                      : returned.statusCode === 409
-                        ? 'member_already_exists'
-                        : returned.body?.code || returned.body?.message || 'unknown',
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          }
-        }
-
-        // Member removed
-        if (path === '/organization/remove-member') {
-          const memberReturned = ctx.context?.returned || returned;
-          const session = ctx.context?.session;
-
-          if (
-            !isError &&
-            memberReturned &&
-            typeof memberReturned === 'object' &&
-            'member' in memberReturned &&
-            session
-          ) {
-            emitEvent(
-              'member.removed',
-              {
-                status: 'success',
-                organizationId: memberReturned.member.organizationId,
-                userId: memberReturned.member.userId,
-                metadata: {
-                  memberId: memberReturned.member.id,
-                  removedByUserId: session.user.id,
-                  removedByEmail: session.user.email,
-                  removedByName: session.user.name,
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          } else if (isError) {
-            emitEvent(
-              'member.removed',
-              {
-                status: 'failed',
-                metadata: {
-                  reason:
-                    returned.statusCode === 404
-                      ? 'member_not_found'
-                      : returned.statusCode === 403
-                        ? 'unauthorized'
-                        : returned.body?.code || returned.body?.message || 'unknown',
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          }
-        }
-
-        // Member role changed
-        if (path === '/organization/update-member-role') {
-          const memberReturned = ctx.context?.returned || returned;
-          const session = ctx.context?.session;
-          const body = ctx.body || {};
-
-          if (
-            !isError &&
-            memberReturned &&
-            typeof memberReturned === 'object' &&
-            'member' in memberReturned &&
-            session
-          ) {
-            emitEvent(
-              'member.role_changed',
-              {
-                status: 'success',
-                organizationId: memberReturned.member.organizationId,
-                userId: memberReturned.member.userId,
-                metadata: {
-                  memberId: memberReturned.member.id,
-                  oldRole: body.previousRole || body.oldRole,
-                  newRole: memberReturned.member.role,
-                  changedByUserId: session.user.id,
-                  changedByEmail: session.user.email,
-                  changedByName: session.user.name,
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          } else if (isError) {
-            emitEvent(
-              'member.role_changed',
-              {
-                status: 'failed',
-                metadata: {
-                  reason:
-                    returned.statusCode === 404
-                      ? 'member_not_found'
-                      : returned.statusCode === 403
-                        ? 'unauthorized'
-                        : returned.body?.code || returned.body?.message || 'unknown',
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          }
-        }
+        // Note: Member operations (add-member, remove-member, update-member-role) are handled
+        // via organizationHooks wrapper, not via path matching, since they are server-only functions
       } catch (error: any) {
         console.error('[Event Hook] Error:', error?.message || 'Unknown error');
       }
@@ -935,10 +771,9 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
               path.startsWith('/oauth2/callback') ||
               path === '/organization/create' ||
               path === '/organization/update' ||
-              path === '/organization/delete' ||
-              path === '/organization/add-member' ||
-              path === '/organization/remove-member' ||
-              path === '/organization/update-member-role';
+              path === '/organization/delete';
+            // Note: Member operations (add-member, remove-member, update-member-role) are handled
+            // via organizationHooks wrapper, not via path matching
             if (shouldMatch) {
               console.log('[Event Hook] Matcher matched path:', path);
             }
@@ -986,6 +821,9 @@ export function injectEventHooks(auth: any, eventsConfig: StudioConfig['events']
     }
 
     auth.options[INJECTED_HOOKS_MARKER] = true;
+
+    // Wrap organization plugin hooks to emit events for member operations
+    wrapOrganizationPluginHooks(auth, eventsConfig);
   } catch (error) {
     console.error('[Event Hooks] Failed to inject:', error);
   }

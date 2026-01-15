@@ -236,7 +236,7 @@ export function LiveEventMarquee({ maxEvents = 50, pollInterval = 2000 }: LiveEv
 
   return (
     <div className="relative w-full h-10 overflow-hidden bg-black/50 border-y border-white/10">
-      <div className="absolute -top-2 right-4 z-10 flex items-center gap-2 py-1">
+      <div className="absolute -top-1 right-4 z-10 flex items-center gap-1 py-1">
         <div
           className={`w-1 h-1 rounded-full ${
             isConnected ? 'bg-green-400 animate-pulse' : 'bg-red-400'

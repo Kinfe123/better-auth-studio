@@ -1,6 +1,7 @@
-import { emitEvent } from './event-ingestion.js';
+import { getSessionFromCtx } from 'better-auth/api';
 import { createAuthMiddleware } from 'better-auth/plugins';
-import { getSessionFromCtx } from "better-auth/api";
+import { emitEvent } from './event-ingestion.js';
+import { wrapOrganizationPluginHooks } from './org-hooks-wrapper.js';
 const INJECTED_HOOKS_MARKER = '__better_auth_studio_events_injected__';
 /**
  * Create a Better Auth plugin for event ingestion
@@ -26,33 +27,31 @@ function createEventIngestionPlugin(eventsConfig) {
                 const isError = returned.statusCode && returned.statusCode >= 400;
                 const isSuccess = !isError && returned.statusCode === 200;
                 let ip = null;
-                let headersObj = {};
+                const headersObj = {};
                 try {
                     if (ctx.headers && typeof ctx.headers === 'object') {
                         if (typeof ctx.headers.get === 'function') {
                             try {
                                 ip = ctx.headers.get('x-forwarded-for') || ctx.headers.get('x-real-ip') || null;
                             }
-                            catch (e) {
-                            }
+                            catch (e) { }
                         }
                         else {
                             ip = ctx.headers['x-forwarded-for'] || ctx.headers['x-real-ip'] || null;
                         }
                     }
                 }
-                catch (e) {
-                }
+                catch (e) { }
                 if (path === '/sign-up' || path === '/sign-up/email') {
                     const body = ctx.body || {};
                     if (!isError) {
                         emitEvent('user.joined', {
                             status: 'success',
-                            userId: "",
-                            sessionId: "",
+                            userId: '',
+                            sessionId: '',
                             metadata: {
-                                email: body.email || "",
-                                name: body.name || "",
+                                email: body.email || '',
+                                name: body.name || '',
                             },
                             request: {
                                 headers: headersObj,
@@ -66,9 +65,11 @@ function createEventIngestionPlugin(eventsConfig) {
                             metadata: {
                                 email: body.email,
                                 name: body.name,
-                                reason: returned.statusCode === 400 ? 'validation_failed' :
-                                    returned.statusCode === 409 ? 'user_already_exists' :
-                                        returned.body?.code || returned.body?.message || 'unknown',
+                                reason: returned.statusCode === 400
+                                    ? 'validation_failed'
+                                    : returned.statusCode === 409
+                                        ? 'user_already_exists'
+                                        : returned.body?.code || returned.body?.message || 'unknown',
                             },
                             request: {
                                 headers: headersObj,
@@ -118,7 +119,9 @@ function createEventIngestionPlugin(eventsConfig) {
                             status: 'failed',
                             metadata: {
                                 email: body.email,
-                                reason: returned.statusCode === 401 ? 'invalid_credentials' : returned.body?.code || 'unknown',
+                                reason: returned.statusCode === 401
+                                    ? 'invalid_credentials'
+                                    : returned.body?.code || 'unknown',
                             },
                             request: {
                                 headers: headersObj,
@@ -128,7 +131,9 @@ function createEventIngestionPlugin(eventsConfig) {
                     }
                 }
                 // Session created via social sign-in or OAuth callback
-                if (path.startsWith('/sign-in/social') || path.startsWith('/callback') || path.startsWith('/oauth2/callback')) {
+                if (path.startsWith('/sign-in/social') ||
+                    path.startsWith('/callback') ||
+                    path.startsWith('/oauth2/callback')) {
                     const newSession = ctx.context?.newSession || returned?.newSession;
                     const user = newSession?.user || returned?.user;
                     if (!isError && newSession && user) {
@@ -139,7 +144,9 @@ function createEventIngestionPlugin(eventsConfig) {
                             metadata: {
                                 name: user.name,
                                 email: user.email,
-                                provider: path.includes('/callback/') ? path.split('/callback/')[1]?.split('/')[0] : undefined,
+                                provider: path.includes('/callback/')
+                                    ? path.split('/callback/')[1]?.split('/')[0]
+                                    : undefined,
                             },
                             request: {
                                 headers: headersObj,
@@ -151,8 +158,12 @@ function createEventIngestionPlugin(eventsConfig) {
                         emitEvent('session.created', {
                             status: 'failed',
                             metadata: {
-                                reason: returned.statusCode === 401 ? 'authentication_failed' : returned.body?.code || 'unknown',
-                                provider: path.includes('/callback/') ? path.split('/callback/')[1]?.split('/')[0] : undefined,
+                                reason: returned.statusCode === 401
+                                    ? 'authentication_failed'
+                                    : returned.body?.code || 'unknown',
+                                provider: path.includes('/callback/')
+                                    ? path.split('/callback/')[1]?.split('/')[0]
+                                    : undefined,
                             },
                             request: {
                                 headers: headersObj,
@@ -229,9 +240,11 @@ function createEventIngestionPlugin(eventsConfig) {
                         emitEvent('user.password_changed', {
                             status: 'failed',
                             metadata: {
-                                reason: returned.statusCode === 401 ? 'invalid_credentials' :
-                                    returned.statusCode === 400 ? 'validation_failed' :
-                                        returned.body?.code || returned.body?.message || 'unknown',
+                                reason: returned.statusCode === 401
+                                    ? 'invalid_credentials'
+                                    : returned.statusCode === 400
+                                        ? 'validation_failed'
+                                        : returned.body?.code || returned.body?.message || 'unknown',
                             },
                             request: {
                                 headers: headersObj,
@@ -262,9 +275,11 @@ function createEventIngestionPlugin(eventsConfig) {
                         emitEvent('user.email_verified', {
                             status: 'failed',
                             metadata: {
-                                reason: returned.statusCode === 400 ? 'invalid_token' :
-                                    returned.statusCode === 404 ? 'token_not_found' :
-                                        returned.body?.code || returned.body?.message || 'unknown',
+                                reason: returned.statusCode === 400
+                                    ? 'invalid_token'
+                                    : returned.statusCode === 404
+                                        ? 'token_not_found'
+                                        : returned.body?.code || returned.body?.message || 'unknown',
                                 token: body.token || body.code,
                             },
                             request: {
@@ -311,9 +326,11 @@ function createEventIngestionPlugin(eventsConfig) {
                         emitEvent('password.reset_completed', {
                             status: 'failed',
                             metadata: {
-                                reason: returned.statusCode === 400 ? 'invalid_token' :
-                                    returned.statusCode === 404 ? 'token_not_found' :
-                                        returned.body?.code || returned.body?.message || 'unknown',
+                                reason: returned.statusCode === 400
+                                    ? 'invalid_token'
+                                    : returned.statusCode === 404
+                                        ? 'token_not_found'
+                                        : returned.body?.code || returned.body?.message || 'unknown',
                                 token: body.token || body.code,
                             },
                             request: {
@@ -325,7 +342,8 @@ function createEventIngestionPlugin(eventsConfig) {
                 }
                 // User deleted
                 if (path === '/delete-user') {
-                    getSessionFromCtx(ctx).then((session) => {
+                    getSessionFromCtx(ctx)
+                        .then((session) => {
                         if (!isError && session) {
                             emitEvent('user.deleted', {
                                 status: 'success',
@@ -344,8 +362,9 @@ function createEventIngestionPlugin(eventsConfig) {
                             emitEvent('user.deleted', {
                                 status: 'failed',
                                 metadata: {
-                                    reason: returned.statusCode === 401 ? 'unauthorized' :
-                                        returned.body?.code || returned.body?.message || 'unknown',
+                                    reason: returned.statusCode === 401
+                                        ? 'unauthorized'
+                                        : returned.body?.code || returned.body?.message || 'unknown',
                                 },
                                 request: {
                                     headers: headersObj,
@@ -353,14 +372,19 @@ function createEventIngestionPlugin(eventsConfig) {
                                 },
                             }, capturedConfig).catch(() => { });
                         }
-                    }).catch(() => { });
+                    })
+                        .catch(() => { });
                 }
                 // OAuth unlinked
                 if (path === '/unlink-account') {
                     const session = ctx.context?.session;
                     const unlinkReturned = ctx.context?.returned || returned;
                     const body = ctx.body || {};
-                    if (!isError && session && unlinkReturned && typeof unlinkReturned === 'object' && 'status' in unlinkReturned) {
+                    if (!isError &&
+                        session &&
+                        unlinkReturned &&
+                        typeof unlinkReturned === 'object' &&
+                        'status' in unlinkReturned) {
                         emitEvent('oauth.unlinked', {
                             status: 'success',
                             userId: session.user.id,
@@ -380,8 +404,9 @@ function createEventIngestionPlugin(eventsConfig) {
                             status: 'failed',
                             metadata: {
                                 provider: body.providerId || body.provider,
-                                reason: returned.statusCode === 400 ? 'invalid_request' :
-                                    returned.body?.code || returned.body?.message || 'unknown',
+                                reason: returned.statusCode === 400
+                                    ? 'invalid_request'
+                                    : returned.body?.code || returned.body?.message || 'unknown',
                             },
                             request: {
                                 headers: headersObj,
@@ -395,12 +420,12 @@ function createEventIngestionPlugin(eventsConfig) {
                     const newSession = ctx.context?.newSession || returned?.newSession;
                     const user = newSession?.user || returned?.user;
                     const existingUser = ctx.context?.existingUser;
-                    // Check if this is a link (user already exists) vs new sign-up
-                    // This is tricky - we'll emit oauth.linked if we can detect it's a link
-                    // Better Auth might set a flag or we can check if user existed before
                     if (user && existingUser) {
-                        const provider = path.includes('/callback/') ? path.split('/callback/')[1]?.split('/')[0] :
-                            path.includes('/oauth2/callback/') ? path.split('/oauth2/callback/')[1]?.split('/')[0] : undefined;
+                        const provider = path.includes('/callback/')
+                            ? path.split('/callback/')[1]?.split('/')[0]
+                            : path.includes('/oauth2/callback/')
+                                ? path.split('/oauth2/callback/')[1]?.split('/')[0]
+                                : undefined;
                         emitEvent('oauth.linked', {
                             status: 'success',
                             userId: user.id,
@@ -420,8 +445,12 @@ function createEventIngestionPlugin(eventsConfig) {
                 if (path === '/organization/create') {
                     const orgReturned = ctx.context?.returned || returned;
                     console.log({ orgReturned });
-                    getSessionFromCtx(ctx).then((session) => {
-                        if (!isError && orgReturned && typeof orgReturned === 'object' && 'id' in orgReturned) {
+                    getSessionFromCtx(ctx)
+                        .then((session) => {
+                        if (!isError &&
+                            orgReturned &&
+                            typeof orgReturned === 'object' &&
+                            'id' in orgReturned) {
                             emitEvent('organization.created', {
                                 status: 'success',
                                 organizationId: orgReturned.id,
@@ -446,9 +475,11 @@ function createEventIngestionPlugin(eventsConfig) {
                                 metadata: {
                                     organizationName: body?.name,
                                     organizationSlug: body?.slug,
-                                    reason: returned.statusCode === 400 ? 'validation_failed' :
-                                        returned.statusCode === 409 ? 'organization_exists' :
-                                            returned.body?.code || returned.body?.message || 'unknown',
+                                    reason: returned.statusCode === 400
+                                        ? 'validation_failed'
+                                        : returned.statusCode === 409
+                                            ? 'organization_exists'
+                                            : returned.body?.code || returned.body?.message || 'unknown',
                                 },
                                 request: {
                                     headers: headersObj,
@@ -456,14 +487,20 @@ function createEventIngestionPlugin(eventsConfig) {
                                 },
                             }, capturedConfig).catch(() => { });
                         }
-                    }).catch(() => { });
+                    })
+                        .catch(() => { });
                 }
                 // Organization updated
                 if (path === '/organization/update') {
                     const orgReturned = ctx.context?.returned || returned;
                     const body = ctx.body || {};
-                    getSessionFromCtx(ctx).then((session) => {
-                        if (!isError && orgReturned && typeof orgReturned === 'object' && 'id' in orgReturned && session) {
+                    getSessionFromCtx(ctx)
+                        .then((session) => {
+                        if (!isError &&
+                            orgReturned &&
+                            typeof orgReturned === 'object' &&
+                            'id' in orgReturned &&
+                            session) {
                             emitEvent('organization.updated', {
                                 status: 'success',
                                 organizationId: orgReturned.id,
@@ -486,9 +523,11 @@ function createEventIngestionPlugin(eventsConfig) {
                                 status: 'failed',
                                 metadata: {
                                     organizationId: body.organizationId || body.id,
-                                    reason: returned.statusCode === 400 ? 'validation_failed' :
-                                        returned.statusCode === 404 ? 'organization_not_found' :
-                                            returned.body?.code || returned.body?.message || 'unknown',
+                                    reason: returned.statusCode === 400
+                                        ? 'validation_failed'
+                                        : returned.statusCode === 404
+                                            ? 'organization_not_found'
+                                            : returned.body?.code || returned.body?.message || 'unknown',
                                 },
                                 request: {
                                     headers: headersObj,
@@ -496,18 +535,21 @@ function createEventIngestionPlugin(eventsConfig) {
                                 },
                             }, capturedConfig).catch(() => { });
                         }
-                    }).catch(() => { });
+                    })
+                        .catch(() => { });
                 }
                 // Organization deleted
                 if (path === '/organization/delete') {
                     const body = ctx.body || {};
-                    getSessionFromCtx(ctx).then((session) => {
+                    getSessionFromCtx(ctx)
+                        .then((session) => {
                         if (!isError && session) {
                             emitEvent('organization.deleted', {
                                 status: 'success',
                                 organizationId: body.organizationId,
                                 userId: session.user.id,
                                 metadata: {
+                                    organizationSlug: body.slug,
                                     email: session.user.email,
                                     name: session.user.name,
                                 },
@@ -522,9 +564,11 @@ function createEventIngestionPlugin(eventsConfig) {
                                 status: 'failed',
                                 metadata: {
                                     organizationId: body.organizationId,
-                                    reason: returned.statusCode === 404 ? 'organization_not_found' :
-                                        returned.statusCode === 403 ? 'unauthorized' :
-                                            returned.body?.code || returned.body?.message || 'unknown',
+                                    reason: returned.statusCode === 404
+                                        ? 'organization_not_found'
+                                        : returned.statusCode === 403
+                                            ? 'unauthorized'
+                                            : returned.body?.code || returned.body?.message || 'unknown',
                                 },
                                 request: {
                                     headers: headersObj,
@@ -532,120 +576,11 @@ function createEventIngestionPlugin(eventsConfig) {
                                 },
                             }, capturedConfig).catch(() => { });
                         }
-                    }).catch(() => { });
+                    })
+                        .catch(() => { });
                 }
-                // Member added
-                if (path === '/organization/add-member') {
-                    const memberReturned = ctx.context?.returned || returned;
-                    const session = ctx.context?.session;
-                    if (!isError && memberReturned && typeof memberReturned === 'object' && 'id' in memberReturned && session) {
-                        emitEvent('member.added', {
-                            status: 'success',
-                            organizationId: memberReturned.organizationId,
-                            userId: memberReturned.userId,
-                            metadata: {
-                                memberId: memberReturned.id,
-                                role: memberReturned.role,
-                                addedByUserId: session.user.id,
-                                addedByEmail: session.user.email,
-                                addedByName: session.user.name,
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                    else if (isError) {
-                        emitEvent('member.added', {
-                            status: 'failed',
-                            metadata: {
-                                reason: returned.statusCode === 400 ? 'validation_failed' :
-                                    returned.statusCode === 409 ? 'member_already_exists' :
-                                        returned.body?.code || returned.body?.message || 'unknown',
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                }
-                // Member removed
-                if (path === '/organization/remove-member') {
-                    const memberReturned = ctx.context?.returned || returned;
-                    const session = ctx.context?.session;
-                    if (!isError && memberReturned && typeof memberReturned === 'object' && 'member' in memberReturned && session) {
-                        emitEvent('member.removed', {
-                            status: 'success',
-                            organizationId: memberReturned.member.organizationId,
-                            userId: memberReturned.member.userId,
-                            metadata: {
-                                memberId: memberReturned.member.id,
-                                removedByUserId: session.user.id,
-                                removedByEmail: session.user.email,
-                                removedByName: session.user.name,
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                    else if (isError) {
-                        emitEvent('member.removed', {
-                            status: 'failed',
-                            metadata: {
-                                reason: returned.statusCode === 404 ? 'member_not_found' :
-                                    returned.statusCode === 403 ? 'unauthorized' :
-                                        returned.body?.code || returned.body?.message || 'unknown',
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                }
-                // Member role changed
-                if (path === '/organization/update-member-role') {
-                    const memberReturned = ctx.context?.returned || returned;
-                    const session = ctx.context?.session;
-                    const body = ctx.body || {};
-                    if (!isError && memberReturned && typeof memberReturned === 'object' && 'member' in memberReturned && session) {
-                        emitEvent('member.role_changed', {
-                            status: 'success',
-                            organizationId: memberReturned.member.organizationId,
-                            userId: memberReturned.member.userId,
-                            metadata: {
-                                memberId: memberReturned.member.id,
-                                oldRole: body.previousRole || body.oldRole,
-                                newRole: memberReturned.member.role,
-                                changedByUserId: session.user.id,
-                                changedByEmail: session.user.email,
-                                changedByName: session.user.name,
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                    else if (isError) {
-                        emitEvent('member.role_changed', {
-                            status: 'failed',
-                            metadata: {
-                                reason: returned.statusCode === 404 ? 'member_not_found' :
-                                    returned.statusCode === 403 ? 'unauthorized' :
-                                        returned.body?.code || returned.body?.message || 'unknown',
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                }
+                // Note: Member operations (add-member, remove-member, update-member-role) are handled
+                // via organizationHooks wrapper, not via path matching, since they are server-only functions
             }
             catch (error) {
                 console.error('[Event Hook] Error:', error?.message || 'Unknown error');
@@ -663,8 +598,8 @@ function createEventIngestionPlugin(eventsConfig) {
                     handler: async (context) => {
                         const body = context.body || {};
                         beforeSession = await context.context.internalAdapter.findSession(body.token);
-                    }
-                }
+                    },
+                },
             ],
             after: [
                 {
@@ -688,10 +623,9 @@ function createEventIngestionPlugin(eventsConfig) {
                             path.startsWith('/oauth2/callback') ||
                             path === '/organization/create' ||
                             path === '/organization/update' ||
-                            path === '/organization/delete' ||
-                            path === '/organization/add-member' ||
-                            path === '/organization/remove-member' ||
-                            path === '/organization/update-member-role';
+                            path === '/organization/delete';
+                        // Note: Member operations (add-member, remove-member, update-member-role) are handled
+                        // via organizationHooks wrapper, not via path matching
                         if (shouldMatch) {
                             console.log('[Event Hook] Matcher matched path:', path);
                         }
@@ -730,6 +664,8 @@ export function injectEventHooks(auth, eventsConfig) {
             auth.options.plugins.push(eventPlugin);
         }
         auth.options[INJECTED_HOOKS_MARKER] = true;
+        // Wrap organization plugin hooks to emit events for member operations
+        wrapOrganizationPluginHooks(auth, eventsConfig);
     }
     catch (error) {
         console.error('[Event Hooks] Failed to inject:', error);

@@ -152,7 +152,7 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
     return `Organization "${orgName}" updated`;
   },
   'member.added': (event) => {
-    const memberName = event.metadata?.memberName || event.metadata?.email || 'Member';
+    const memberName = event.metadata?.addedByName || event.metadata?.addedByEmail || 'Member';
     const orgName = event.metadata?.organizationName || 'organization';
     if (event.status === 'failed') {
       const reason = event.metadata?.reason || 'invalid credentials';
@@ -161,7 +161,7 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
     return `${memberName} added to ${orgName}`;
   },
   'member.removed': (event) => {
-    const memberName = event.metadata?.memberName || event.metadata?.email || 'Member';
+    const memberName = event.metadata?.removedByName || event.metadata?.removedByEmail || 'Member';
     const orgName = event.metadata?.organizationName || 'organization';
     if (event.status === 'failed') {
       const reason = event.metadata?.reason || 'invalid credentials';

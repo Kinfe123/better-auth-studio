@@ -1,4 +1,4 @@
-import type { EventIngestionProvider, AuthEvent } from '../../types/events.js';
+import type { AuthEvent, EventIngestionProvider } from '../../types/events.js';
 export declare function createPostgresProvider(options: {
     client: any;
     tableName?: string;

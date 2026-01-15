@@ -1564,7 +1564,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                     return res.status(500).json({
                         error: 'Failed to query events from provider',
                         details: providerError?.message || String(providerError),
-                        provider: 'event-ingestion'
+                        provider: 'event-ingestion',
                     });
                 }
             }
@@ -1606,9 +1606,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             const getEventSeverity = eventTypes.getEventSeverity;
             const transformedEvents = paginatedEvents.map((event) => {
                 // Parse metadata
-                const metadata = typeof event.metadata === 'string'
-                    ? JSON.parse(event.metadata)
-                    : event.metadata || {};
+                const metadata = typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {};
                 // Create a temporary event object for template function
                 const tempEvent = {
                     id: event.id,
@@ -1634,9 +1632,12 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                     userAgent: event.userAgent || event.user_agent,
                     source: event.source || 'app',
                     display: {
-                        message: event.displayMessage || event.display_message ||
-                            EVENT_TEMPLATES[event.type]?.(tempEvent) || event.type,
-                        severity: event.displaySeverity || event.display_severity ||
+                        message: event.displayMessage ||
+                            event.display_message ||
+                            EVENT_TEMPLATES[event.type]?.(tempEvent) ||
+                            event.type,
+                        severity: event.displaySeverity ||
+                            event.display_severity ||
                             getEventSeverity(tempEvent, event.status || 'success'),
                     },
                 };
@@ -1649,7 +1650,12 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         }
         catch (error) {
             console.error('Failed to fetch events:', error);
-            res.status(500).json({ error: 'Failed to fetch events', details: error instanceof Error ? error.message : String(error) });
+            res
+                .status(500)
+                .json({
+                error: 'Failed to fetch events',
+                details: error instanceof Error ? error.message : String(error),
+            });
         }
     });
     router.get('/api/users', async (req, res) => {

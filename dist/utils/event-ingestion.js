@@ -113,7 +113,7 @@ async function flushEvents() {
         }
         else {
             // Fallback: send individually if batch not supported
-            await Promise.all(eventsToSend.map(event => provider.ingest(event)));
+            await Promise.all(eventsToSend.map((event) => provider.ingest(event)));
         }
     }
     catch (error) {

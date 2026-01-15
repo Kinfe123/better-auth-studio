@@ -138,7 +138,9 @@ export function createPostgresProvider(options) {
             // Support Prisma client ($executeRaw) or standard pg client (query)
             if (client.$executeRaw) {
                 // Prisma client - use $executeRawUnsafe for batch inserts
-                const values = events.map(event => `('${event.id}', '${event.type}', '${event.timestamp.toISOString()}', '${event.status || 'success'}', ${event.userId ? `'${event.userId}'` : 'NULL'}, ${event.sessionId ? `'${event.sessionId}'` : 'NULL'}, ${event.organizationId ? `'${event.organizationId}'` : 'NULL'}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress}'` : 'NULL'}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : 'NULL'}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : 'NULL'}, ${event.display?.severity ? `'${event.display.severity}'` : 'NULL'})`).join(', ');
+                const values = events
+                    .map((event) => `('${event.id}', '${event.type}', '${event.timestamp.toISOString()}', '${event.status || 'success'}', ${event.userId ? `'${event.userId}'` : 'NULL'}, ${event.sessionId ? `'${event.sessionId}'` : 'NULL'}, ${event.organizationId ? `'${event.organizationId}'` : 'NULL'}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress}'` : 'NULL'}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : 'NULL'}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : 'NULL'}, ${event.display?.severity ? `'${event.display.severity}'` : 'NULL'})`)
+                    .join(', ');
                 const query = `
           INSERT INTO ${schema}.${tableName} 
           (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
@@ -148,16 +150,18 @@ export function createPostgresProvider(options) {
             }
             else if (client.query) {
                 // Standard pg client
-                const values = events.map((_, i) => {
+                const values = events
+                    .map((_, i) => {
                     const base = i * 13;
                     return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 4}, $${base + 5}, $${base + 6}, $${base + 7}, $${base + 8}, $${base + 9}, $${base + 10}, $${base + 11}, $${base + 12}, $${base + 13})`;
-                }).join(', ');
+                })
+                    .join(', ');
                 const query = `
           INSERT INTO ${schema}.${tableName} 
           (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
           VALUES ${values}
         `;
-                const params = events.flatMap(event => [
+                const params = events.flatMap((event) => [
                     event.id,
                     event.type,
                     event.timestamp,
@@ -189,10 +193,13 @@ export function createPostgresProvider(options) {
                         let processedQuery = query;
                         params.forEach((param, index) => {
                             const placeholder = `$${index + 1}`;
-                            const value = typeof param === 'string' ? `'${param.replace(/'/g, "''")}'` :
-                                param === null ? 'NULL' :
-                                    param instanceof Date ? `'${param.toISOString()}'` :
-                                        String(param);
+                            const value = typeof param === 'string'
+                                ? `'${param.replace(/'/g, "''")}'`
+                                : param === null
+                                    ? 'NULL'
+                                    : param instanceof Date
+                                        ? `'${param.toISOString()}'`
+                                        : String(param);
                             processedQuery = processedQuery.replace(new RegExp(`\\${placeholder}(?![0-9])`, 'g'), value);
                         });
                         return await client.$queryRawUnsafe(processedQuery);
@@ -223,7 +230,9 @@ export function createPostgresProvider(options) {
                 let checkResult;
                 if (client.$executeRaw) {
                     // Prisma client - replace $1, $2 with actual values
-                    const prismaQuery = checkTableQuery.replace('$1', `'${schema}'`).replace('$2', `'${tableName}'`);
+                    const prismaQuery = checkTableQuery
+                        .replace('$1', `'${schema}'`)
+                        .replace('$2', `'${tableName}'`);
                     checkResult = await client.$queryRawUnsafe(prismaQuery);
                 }
                 else {
@@ -231,8 +240,8 @@ export function createPostgresProvider(options) {
                     checkResult = await queryFn(checkTableQuery, [schema, tableName]);
                 }
                 const exists = Array.isArray(checkResult)
-                    ? (checkResult[0]?.exists || false)
-                    : (checkResult.rows?.[0]?.exists || checkResult?.[0]?.exists || false);
+                    ? checkResult[0]?.exists || false
+                    : checkResult.rows?.[0]?.exists || checkResult?.[0]?.exists || false;
                 if (!exists) {
                     // Table doesn't exist, return empty result
                     return {
@@ -246,8 +255,8 @@ export function createPostgresProvider(options) {
                 // If check fails, try to query anyway (table might exist but check failed)
                 console.warn(`Failed to check table existence:`, error);
             }
-            let whereClauses = [];
-            let params = [];
+            const whereClauses = [];
+            const params = [];
             let paramIndex = 1;
             // Cursor-based pagination
             if (after) {
@@ -268,9 +277,7 @@ export function createPostgresProvider(options) {
                 whereClauses.push(`user_id = $${paramIndex++}`);
                 params.push(userId);
             }
-            const whereClause = whereClauses.length > 0
-                ? `WHERE ${whereClauses.join(' AND ')}`
-                : '';
+            const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
             const orderDirection = sort === 'desc' ? 'DESC' : 'ASC';
             const query = `
         SELECT id, type, timestamp, status, user_id, session_id, organization_id, 
@@ -293,7 +300,7 @@ export function createPostgresProvider(options) {
                     userId: row.user_id,
                     sessionId: row.session_id,
                     organizationId: row.organization_id,
-                    metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : (row.metadata || {}),
+                    metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata || {},
                     ipAddress: row.ip_address,
                     userAgent: row.user_agent,
                     source: row.source || 'app',
@@ -398,7 +405,7 @@ export function createClickHouseProvider(options) {
             await ensureTableSync();
         }
         const tableFullName = database ? `${database}.${table}` : table;
-        const rows = events.map(event => ({
+        const rows = events.map((event) => ({
             id: event.id,
             type: event.type,
             timestamp: event.timestamp,
@@ -424,7 +431,9 @@ export function createClickHouseProvider(options) {
             }
             else {
                 // Fallback: use INSERT query
-                const values = rows.map(row => `('${row.id}', '${row.type}', '${new Date(row.timestamp).toISOString().replace('T', ' ').slice(0, 19)}', '${row.status || 'success'}', ${row.user_id ? `'${row.user_id.replace(/'/g, "''")}'` : 'NULL'}, ${row.session_id ? `'${row.session_id.replace(/'/g, "''")}'` : 'NULL'}, ${row.organization_id ? `'${row.organization_id.replace(/'/g, "''")}'` : 'NULL'}, '${row.metadata.replace(/'/g, "''")}', ${row.ip_address ? `'${row.ip_address.replace(/'/g, "''")}'` : 'NULL'}, ${row.user_agent ? `'${row.user_agent.replace(/'/g, "''")}'` : 'NULL'}, '${row.source}', ${row.display_message ? `'${row.display_message.replace(/'/g, "''")}'` : 'NULL'}, ${row.display_severity ? `'${row.display_severity}'` : 'NULL'})`).join(', ');
+                const values = rows
+                    .map((row) => `('${row.id}', '${row.type}', '${new Date(row.timestamp).toISOString().replace('T', ' ').slice(0, 19)}', '${row.status || 'success'}', ${row.user_id ? `'${row.user_id.replace(/'/g, "''")}'` : 'NULL'}, ${row.session_id ? `'${row.session_id.replace(/'/g, "''")}'` : 'NULL'}, ${row.organization_id ? `'${row.organization_id.replace(/'/g, "''")}'` : 'NULL'}, '${row.metadata.replace(/'/g, "''")}', ${row.ip_address ? `'${row.ip_address.replace(/'/g, "''")}'` : 'NULL'}, ${row.user_agent ? `'${row.user_agent.replace(/'/g, "''")}'` : 'NULL'}, '${row.source}', ${row.display_message ? `'${row.display_message.replace(/'/g, "''")}'` : 'NULL'}, ${row.display_severity ? `'${row.display_severity}'` : 'NULL'})`)
+                    .join(', ');
                 const insertQuery = `
             INSERT INTO ${tableFullName} 
             (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
@@ -463,9 +472,13 @@ export function createClickHouseProvider(options) {
                 let tableExists = false;
                 if (client.query) {
                     try {
-                        const checkResult = await client.query({ query: checkTableQuery, format: 'JSONEachRow' });
+                        const checkResult = await client.query({
+                            query: checkTableQuery,
+                            format: 'JSONEachRow',
+                        });
                         const rows = await checkResult.json();
-                        tableExists = rows && rows.length > 0 && (rows[0]?.result === 1 || rows[0]?.exists === 1);
+                        tableExists =
+                            rows && rows.length > 0 && (rows[0]?.result === 1 || rows[0]?.exists === 1);
                     }
                     catch {
                         tableExists = false;
@@ -522,7 +535,10 @@ export function createClickHouseProvider(options) {
                         let columnExists = false;
                         if (client.query) {
                             try {
-                                const columnResult = await client.query({ query: checkColumnQuery, format: 'JSONEachRow' });
+                                const columnResult = await client.query({
+                                    query: checkColumnQuery,
+                                    format: 'JSONEachRow',
+                                });
                                 const columnRows = await columnResult.json();
                                 columnExists = columnRows && columnRows.length > 0 && columnRows[0]?.exists > 0;
                             }
@@ -570,7 +586,7 @@ export function createClickHouseProvider(options) {
                 }
             }
             // Build query with proper escaping
-            let whereClauses = [];
+            const whereClauses = [];
             if (after) {
                 if (sort === 'desc') {
                     whereClauses.push(`id < '${String(after).replace(/'/g, "''")}'`);
@@ -585,9 +601,7 @@ export function createClickHouseProvider(options) {
             if (userId) {
                 whereClauses.push(`user_id = '${String(userId).replace(/'/g, "''")}'`);
             }
-            const whereClause = whereClauses.length > 0
-                ? `WHERE ${whereClauses.join(' AND ')}`
-                : '';
+            const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
             const orderDirection = sort === 'desc' ? 'DESC' : 'ASC';
             // Try to query with status column first, fallback if it doesn't exist
             let query = `
@@ -615,7 +629,8 @@ export function createClickHouseProvider(options) {
             }
             catch (error) {
                 // If error is about missing status column, retry without it
-                if (error?.message?.includes('Unknown expression identifier') && error?.message?.includes('status')) {
+                if (error?.message?.includes('Unknown expression identifier') &&
+                    error?.message?.includes('status')) {
                     console.warn(`Status column not found in ${tableFullName}, querying without it`);
                     hasStatusColumn = false;
                     // Retry query without status column
@@ -639,7 +654,7 @@ export function createClickHouseProvider(options) {
                     }
                     catch (retryError) {
                         // If table doesn't exist, return empty result
-                        if (retryError?.message?.includes('doesn\'t exist') || retryError?.code === 60) {
+                        if (retryError?.message?.includes("doesn't exist") || retryError?.code === 60) {
                             return {
                                 events: [],
                                 hasMore: false,
@@ -649,7 +664,7 @@ export function createClickHouseProvider(options) {
                         throw retryError;
                     }
                 }
-                else if (error?.message?.includes('doesn\'t exist') || error?.code === 60) {
+                else if (error?.message?.includes("doesn't exist") || error?.code === 60) {
                     // If table doesn't exist, return empty result
                     return {
                         events: [],
@@ -662,17 +677,17 @@ export function createClickHouseProvider(options) {
                 }
             }
             // Handle case where result might be an array or object
-            const rows = Array.isArray(result) ? result : (result?.data || []);
+            const rows = Array.isArray(result) ? result : result?.data || [];
             const hasMore = rows.length > limit;
             const events = rows.slice(0, limit).map((row) => ({
                 id: row.id,
                 type: row.type,
                 timestamp: new Date(row.timestamp),
-                status: hasStatusColumn ? (row.status || 'success') : 'success', // Default to 'success' if column doesn't exist
+                status: hasStatusColumn ? row.status || 'success' : 'success', // Default to 'success' if column doesn't exist
                 userId: row.user_id || undefined,
                 sessionId: row.session_id || undefined,
                 organizationId: row.organization_id || undefined,
-                metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : (row.metadata || {}),
+                metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata || {},
                 ipAddress: row.ip_address || undefined,
                 userAgent: row.user_agent || undefined,
                 source: row.source || 'app',
@@ -701,7 +716,7 @@ export function createHttpProvider(options) {
             });
         },
         async ingestBatch(events) {
-            const payload = events.map(event => transform ? transform(event) : event);
+            const payload = events.map((event) => (transform ? transform(event) : event));
             await client(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', ...headers },
@@ -805,7 +820,7 @@ CREATE INDEX IF NOT EXISTS idx_${tableName}_timestamp ON ${tableName}(timestamp 
             if (adapter.createMany) {
                 await adapter.createMany({
                     model: tableName,
-                    data: events.map(event => ({
+                    data: events.map((event) => ({
                         id: event.id,
                         type: event.type,
                         timestamp: event.timestamp,
@@ -823,7 +838,7 @@ CREATE INDEX IF NOT EXISTS idx_${tableName}_timestamp ON ${tableName}(timestamp 
                 });
             }
             else {
-                await Promise.all(events.map(event => this.ingest(event)));
+                await Promise.all(events.map((event) => this.ingest(event)));
             }
         },
         async query(options) {
