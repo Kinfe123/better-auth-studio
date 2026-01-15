@@ -79,23 +79,8 @@ app.get('/', async (c) => {
   }
 });
 app.get("/test", async (c) => {
-  const cookie = 'better-auth.session_token=31th4bLgnbNCu1T98DWSWAPQRXZReiR2.b%2BKz%2BUX9J2XBrMevDdZkpnhvw0QBoEw8Nwp0z%2BkdZWE%3D';
-  const r = await auth.api.cancelInvitation({
-    headers: {
-      Cookie: cookie,
-    },
-    body: {
-      invitationId: "Ee1MHxrcW8NgV7R5zDZiw1V11j0GYFle",
-      // Ee1MHxrcW8NgV7R5zDZiw1V11j0GYFle
-      // teamId: "L8SYYh3jdXX5gtzJU9IJOeATlFRmdAQk",
-      // organizationId: 'yLJvJmhBNq9hYbgfR8qOAyeiJfD1jCeS',
-      // email: "home@someone.com",
-      // role: "member",
-    },
-  })
-  console.log({ r });
-  return c.json({ message: 'Test', data: r });
-})
+
+  return c.json({ message: 'Test' });
 
 // Start server
 const PORT = parseInt(process.env.PORT || '3000', 10);
