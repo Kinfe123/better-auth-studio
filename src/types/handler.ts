@@ -64,8 +64,8 @@ export type StudioConfig = {
     flushInterval?: number;
     retryOnError?: boolean;
     liveMarquee?: {
-      // default to true if not explicitly disabled
       enabled?: boolean;
+      pollInterval?: number; // Polling interval in milliseconds (default: 2000)
       colors?: {
         success?: string;
         info?: string;
@@ -87,6 +87,7 @@ export type EventColors = {
 
 export type LiveMarqueeConfig = {
   enabled?: boolean;
+  pollInterval?: number; // Polling interval in milliseconds (default: 2000)
   colors?: EventColors;
 };
 

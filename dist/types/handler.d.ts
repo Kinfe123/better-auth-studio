@@ -63,6 +63,7 @@ export type StudioConfig = {
         retryOnError?: boolean;
         liveMarquee?: {
             enabled?: boolean;
+            pollInterval?: number;
             colors?: {
                 success?: string;
                 info?: string;
@@ -82,6 +83,7 @@ export type EventColors = {
 };
 export type LiveMarqueeConfig = {
     enabled?: boolean;
+    pollInterval?: number;
     colors?: EventColors;
 };
 export type WindowStudioConfig = {

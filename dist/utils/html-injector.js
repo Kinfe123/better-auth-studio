@@ -32,6 +32,7 @@ function prepareFrontendConfig(config) {
     const liveMarquee = eventsConfig?.enabled
         ? {
             enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false
+            pollInterval: liveMarqueeConfig?.pollInterval || 2000, // Default: 2000ms
             colors: liveMarqueeConfig?.colors || undefined,
         }
         : undefined;

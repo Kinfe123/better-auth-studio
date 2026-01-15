@@ -31,6 +31,7 @@ export interface EventColors {
 }
 export interface LiveMarqueeConfig {
     enabled?: boolean;
+    pollInterval?: number;
     colors?: EventColors;
 }
 export interface WindowStudioConfig {

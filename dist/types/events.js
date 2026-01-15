@@ -64,12 +64,12 @@ export const EVENT_TEMPLATES = {
         return `${name} was deleted`;
     },
     'user.delete_verification_requested': (event) => {
-        const email = event.metadata?.name || event.metadata?.email || 'User';
+        const name = event.metadata?.name || event.metadata?.email || 'User';
         if (event.status === 'failed') {
             const reason = event.metadata?.reason || 'unknown error';
-            return `Failed to send delete verification for "${email}"`;
+            return `Failed to send delete verification for "${name}"`;
         }
-        return `Delete verification requested for ${email}`;
+        return `Delete verification requested for ${name}`;
     },
     'organization.created': (event) => {
         const orgName = event.metadata?.organizationName || 'Organization';
@@ -268,7 +268,9 @@ export function getEventSeverity(event, status) {
         type.includes('added')) {
         return 'success';
     }
-    if (type.includes('failed') || type.includes('banned') || (type.includes('deleted') && !type.includes('verification'))) {
+    if (type.includes('failed') ||
+        type.includes('banned') ||
+        (type.includes('deleted') && !type.includes('verification'))) {
         return 'failed';
     }
     if (type.includes('warning') || type.includes('reset') || type.includes('verification')) {

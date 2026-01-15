@@ -38,6 +38,7 @@ export interface EventColors {
 
 export interface LiveMarqueeConfig {
   enabled?: boolean;
+  pollInterval?: number;
   colors?: EventColors;
 }
 
@@ -86,6 +87,7 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
   const liveMarquee: LiveMarqueeConfig | undefined = eventsConfig?.enabled
     ? {
         enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false
+        pollInterval: liveMarqueeConfig?.pollInterval || 2000, // Default: 2000ms
         colors: liveMarqueeConfig?.colors || undefined,
       }
     : undefined;
