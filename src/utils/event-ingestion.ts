@@ -102,7 +102,6 @@ export async function emitEvent(
       severity: getEventSeverity(tempEvent, data.status),
     },
   };
-  console.log({ event, provider });
   const batchSize = useConfig.batchSize || 1;
 
   if (batchSize > 1 && provider?.ingestBatch) {
@@ -139,15 +138,12 @@ async function flushEvents(): Promise<void> {
 
   try {
     if (provider.ingestBatch) {
-      // Send all events in one batch (more efficient)
       await provider.ingestBatch(eventsToSend);
     } else {
-      // Fallback: send individually if batch not supported
       await Promise.all(eventsToSend.map((event) => provider!.ingest(event)));
     }
   } catch (error) {
     console.error('Batch event ingestion error:', error);
-    // Re-queue failed events if retry is enabled
     if (config?.retryOnError) {
       eventQueue.unshift(...eventsToSend);
     }

@@ -1650,9 +1650,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         }
         catch (error) {
             console.error('Failed to fetch events:', error);
-            res
-                .status(500)
-                .json({
+            res.status(500).json({
                 error: 'Failed to fetch events',
                 details: error instanceof Error ? error.message : String(error),
             });

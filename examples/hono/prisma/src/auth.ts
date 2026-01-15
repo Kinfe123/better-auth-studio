@@ -50,11 +50,19 @@ export const auth = betterAuth({
             console.log(`Verification email for ${user.email}: ${url}`);
         },
     },
+    user: {
+        deleteUser: {
+            enabled: true,
+            sendDeleteAccountVerification: async ({ user, url, token }) => {
+                console.log(`Deleting user ${user.email}`);
+            },
+            afterDelete: async (user, request) => {
+                console.log(`After deleting user ${user.email}`);
+            },
+        }
+    },
     plugins: [
         organization({
-            organizationHooks: {
-                
-            },
             teams: {
                 enabled: true,
             },
@@ -62,7 +70,9 @@ export const auth = betterAuth({
                 console.log('sendInvitationEmail', data, request);
             },
         }),
-        admin({}),
+        admin({
+            adminUserIds: ['i66uyfRQar7veXs94jLZ48YKZO8ehxxK']
+        }),
     ],
     session: {
         expiresIn: 60 * 60 * 24 * 7, // 7 days

@@ -3,6 +3,7 @@ import { createAuthMiddleware } from 'better-auth/plugins';
 import type { StudioConfig } from '../types/handler.js';
 import { emitEvent } from './event-ingestion.js';
 import { wrapOrganizationPluginHooks } from './org-hooks-injector.js';
+import { wrapAuthCallbacks } from './auth-callbacks-injector.js';
 
 const INJECTED_HOOKS_MARKER = '__better_auth_studio_events_injected__';
 
@@ -269,118 +270,6 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             ).catch(() => {});
           }
         }
-        if (path === '/update-password' || path === '/change-password') {
-          const body = ctx.body || {};
-          const user = returned?.user || ctx.context?.user || ctx.context?.session?.user;
-          const session = ctx.context?.session;
-
-          if (!isError && user) {
-            emitEvent(
-              'user.password_changed',
-              {
-                status: 'success',
-                userId: user.id,
-                metadata: {
-                  email: user.email,
-                  name: user.name,
-                  revokeOtherSessions: body.revokeOtherSessions || false,
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          } else if (isError) {
-            emitEvent(
-              'user.password_changed',
-              {
-                status: 'failed',
-                metadata: {
-                  reason:
-                    returned.statusCode === 401
-                      ? 'invalid_credentials'
-                      : returned.statusCode === 400
-                        ? 'validation_failed'
-                        : returned.body?.code || returned.body?.message || 'unknown',
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          }
-        }
-
-        if (path === '/verify-email') {
-          const body = ctx.body || {};
-          const user = returned?.user || ctx.context?.returned?.user || ctx.context?.user;
-
-          if (!isError && user) {
-            emitEvent(
-              'user.email_verified',
-              {
-                status: 'success',
-                userId: user.id,
-                metadata: {
-                  email: user.email,
-                  name: user.name,
-                  token: body.token || body.code,
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          } else if (isError) {
-            emitEvent(
-              'user.email_verified',
-              {
-                status: 'failed',
-                metadata: {
-                  reason:
-                    returned.statusCode === 400
-                      ? 'invalid_token'
-                      : returned.statusCode === 404
-                        ? 'token_not_found'
-                        : returned.body?.code || returned.body?.message || 'unknown',
-                  token: body.token || body.code,
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          }
-        }
-
-        if (path === '/forget-password') {
-          const body = ctx.body || {};
-
-          if (isSuccess) {
-            emitEvent(
-              'password.reset_requested',
-              {
-                status: 'success',
-                metadata: {
-                  email: body.email,
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          }
-        }
 
         if (path === '/reset-password') {
           const body = ctx.body || {};
@@ -429,49 +318,6 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
         }
 
         // User deleted
-        if (path === '/delete-user') {
-          getSessionFromCtx(ctx)
-            .then((session) => {
-              if (!isError && session) {
-                emitEvent(
-                  'user.deleted',
-                  {
-                    status: 'success',
-                    userId: session.user.id,
-                    metadata: {
-                      email: session.user.email,
-                      name: session.user.name,
-                    },
-                    request: {
-                      headers: headersObj,
-                      ip: ip || undefined,
-                    },
-                  },
-                  capturedConfig
-                ).catch(() => {});
-              } else if (isError) {
-                emitEvent(
-                  'user.deleted',
-                  {
-                    status: 'failed',
-                    metadata: {
-                      reason:
-                        returned.statusCode === 401
-                          ? 'unauthorized'
-                          : returned.body?.code || returned.body?.message || 'unknown',
-                    },
-                    request: {
-                      headers: headersObj,
-                      ip: ip || undefined,
-                    },
-                  },
-                  capturedConfig
-                ).catch(() => {});
-              }
-            })
-            .catch(() => {});
-        }
-
         // OAuth unlinked
         if (path === '/unlink-account') {
           const session = ctx.context?.session;
@@ -616,118 +462,80 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             })
             .catch(() => {});
         }
-
-        // Organization updated
-        if (path === '/organization/update') {
-          const orgReturned = ctx.context?.returned || returned;
+        if(path === "/admin/ban-user") {
           const body = ctx.body || {};
-          getSessionFromCtx(ctx)
-            .then((session) => {
-              if (
-                !isError &&
-                orgReturned &&
-                typeof orgReturned === 'object' &&
-                'id' in orgReturned &&
-                session
-              ) {
-                emitEvent(
-                  'organization.updated',
-                  {
-                    status: 'success',
-                    organizationId: orgReturned.id,
-                    userId: session.user.id,
-                    metadata: {
-                      organizationName: orgReturned.name,
-                      organizationSlug: orgReturned.slug,
-                      updatedFields: body.data || {},
-                      email: session.user.email,
-                      name: session.user.name,
-                    },
-                    request: {
-                      headers: headersObj,
-                      ip: ip || undefined,
-                    },
-                  },
-                  capturedConfig
-                ).catch(() => {});
-              } else if (isError) {
-                emitEvent(
-                  'organization.updated',
-                  {
-                    status: 'failed',
-                    metadata: {
-                      organizationId: body.organizationId || body.id,
-                      reason:
-                        returned.statusCode === 400
-                          ? 'validation_failed'
-                          : returned.statusCode === 404
-                            ? 'organization_not_found'
-                            : returned.body?.code || returned.body?.message || 'unknown',
-                    },
-                    request: {
-                      headers: headersObj,
-                      ip: ip || undefined,
-                    },
-                  },
-                  capturedConfig
-                ).catch(() => {});
-              }
-            })
-            .catch(() => {});
+          const user = returned?.user || ctx.context?.returned?.user || ctx.context?.user;
+          if (!isError && user) {
+            emitEvent(
+              'user.banned',
+              {
+                status: 'success',
+                userId: user.id,
+                metadata: {
+                  email: user.email,
+                  name: user.name,
+                },
+                request: {
+                  headers: headersObj,
+                  ip: ip || undefined,
+                },
+              },
+              capturedConfig
+            ).catch(() => {});
+          } else if (isError) {
+            emitEvent(
+              'user.banned',
+              {
+                status: 'failed',
+                metadata: {
+                  reason: returned.body?.code || returned.body?.message || 'unknown',
+                },
+                request: {
+                  headers: headersObj,
+                  ip: ip || undefined,
+                },
+              },
+              capturedConfig
+            ).catch(() => {});
+          }
         }
-
-        // Organization deleted
-        if (path === '/organization/delete') {
+        if(path === "/admin/unban-user") {
           const body = ctx.body || {};
-          getSessionFromCtx(ctx)
-            .then((session) => {
-              if (!isError && session) {
-                emitEvent(
-                  'organization.deleted',
-                  {
-                    status: 'success',
-                    organizationId: body.organizationId,
-                    userId: session.user.id,
-                    metadata: {
-                      organizationSlug: body.slug,
-                      email: session.user.email,
-                      name: session.user.name,
-                    },
-                    request: {
-                      headers: headersObj,
-                      ip: ip || undefined,
-                    },
-                  },
-                  capturedConfig
-                ).catch(() => {});
-              } else if (isError) {
-                emitEvent(
-                  'organization.deleted',
-                  {
-                    status: 'failed',
-                    metadata: {
-                      organizationId: body.organizationId,
-                      reason:
-                        returned.statusCode === 404
-                          ? 'organization_not_found'
-                          : returned.statusCode === 403
-                            ? 'unauthorized'
-                            : returned.body?.code || returned.body?.message || 'unknown',
-                    },
-                    request: {
-                      headers: headersObj,
-                      ip: ip || undefined,
-                    },
-                  },
-                  capturedConfig
-                ).catch(() => {});
-              }
-            })
-            .catch(() => {});
+          const user = returned?.user || ctx.context?.returned?.user || ctx.context?.user;
+          if (!isError && user) {
+            emitEvent(
+              'user.unbanned',
+              {
+                status: 'success',
+                userId: user.id,
+                metadata: {
+                  email: user.email,
+                  name: user.name,
+                },
+                request: {
+                  headers: headersObj,
+                  ip: ip || undefined,
+                },
+              },
+              capturedConfig
+            ).catch(() => {});
+          } else if (isError) {
+            emitEvent(
+              'user.unbanned',
+              {
+                status: 'failed',
+                metadata: {
+                  reason: returned.body?.code || returned.body?.message || 'unknown',
+                },
+                request: {
+                  headers: headersObj,
+                  ip: ip || undefined,
+                },
+              },
+              capturedConfig
+            ).catch(() => {});
+          }
         }
-
-        // Note: Member operations (add-member, remove-member, update-member-role) are handled
-        // via organizationHooks wrapper, not via path matching, since they are server-only functions
       } catch (error: any) {
         console.error('[Event Hook] Error:', error?.message || 'Unknown error');
       }
@@ -751,7 +559,6 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
       after: [
         {
           matcher: (context: any) => {
-            // Only check path, don't serialize the entire context
             const path = context?.path || '';
             const shouldMatch =
               path === '/sign-up' ||
@@ -771,12 +578,8 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
               path.startsWith('/oauth2/callback') ||
               path === '/organization/create' ||
               path === '/organization/update' ||
-              path === '/organization/delete';
-            // Note: Member operations (add-member, remove-member, update-member-role) are handled
-            // via organizationHooks wrapper, not via path matching
-            if (shouldMatch) {
-              console.log('[Event Hook] Matcher matched path:', path);
-            }
+              path === '/organization/delete' || 
+              path.startsWith('/admin/')
             return shouldMatch;
           },
           handler: eventMiddleware,
@@ -824,6 +627,9 @@ export function injectEventHooks(auth: any, eventsConfig: StudioConfig['events']
 
     // Wrap organization plugin hooks to emit events for member operations
     wrapOrganizationPluginHooks(auth, eventsConfig);
+
+    // Wrap Better Auth callbacks to emit events
+    wrapAuthCallbacks(auth, eventsConfig);
   } catch (error) {
     console.error('[Event Hooks] Failed to inject:', error);
   }
