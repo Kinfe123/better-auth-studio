@@ -81,6 +81,7 @@ app.get('/', async (c) => {
 app.get("/test", async (c) => {
 
   return c.json({ message: 'Test' });
+});
 
 // Start server
 const PORT = parseInt(process.env.PORT || '3000', 10);
