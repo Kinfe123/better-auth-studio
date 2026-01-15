@@ -352,7 +352,11 @@ export function getEventSeverity(
   ) {
     return 'success';
   }
-  if (type.includes('failed') || type.includes('banned') || (type.includes('deleted') && !type.includes('verification'))) {
+  if (
+    type.includes('failed') ||
+    type.includes('banned') ||
+    (type.includes('deleted') && !type.includes('verification'))
+  ) {
     return 'failed';
   }
   if (type.includes('warning') || type.includes('reset') || type.includes('verification')) {

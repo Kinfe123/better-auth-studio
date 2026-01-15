@@ -78,7 +78,7 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
     const deleteUserConfig = auth.options?.user?.deleteUser || auth.user?.deleteUser;
     if (deleteUserConfig && !deleteUserConfig.__studio_wrapped) {
       const originalSendDeleteVerification = deleteUserConfig.sendDeleteAccountVerification;
-      
+
       deleteUserConfig.sendDeleteAccountVerification = wrapCallback(
         originalSendDeleteVerification,
         'user.delete_verification_requested',
