@@ -2,7 +2,7 @@ import { getSessionFromCtx } from 'better-auth/api';
 import { createAuthMiddleware } from 'better-auth/plugins';
 import type { StudioConfig } from '../types/handler.js';
 import { emitEvent } from './event-ingestion.js';
-import { wrapOrganizationPluginHooks } from './org-hooks-wrapper.js';
+import { wrapOrganizationPluginHooks } from './org-hooks-injector.js';
 
 const INJECTED_HOOKS_MARKER = '__better_auth_studio_events_injected__';
 
