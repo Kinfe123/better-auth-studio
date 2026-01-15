@@ -408,7 +408,6 @@ export function createClickHouseProvider(options: {
 
       if (client.exec) {
         const result = await client.exec({ query: createTableQuery });
-        console.log({ result });
         console.log(`✅ Ensured ${tableFullName} table exists in ClickHouse`);
       } else if (client.query) {
         await client.query({ query: createTableQuery });
