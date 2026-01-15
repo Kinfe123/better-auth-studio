@@ -162,7 +162,6 @@ export function createOrganizationHooksWithEvents(eventsConfig, userHooks) {
             }
             : async (data) => {
                 // Emit event even if no user hook
-                console.log({ data });
                 emitEvent('member.added', {
                     status: 'success',
                     organizationId: data.organization.id,
@@ -254,6 +253,396 @@ export function createOrganizationHooksWithEvents(eventsConfig, userHooks) {
                         changedByUserId: data.user.id,
                         changedByEmail: data.user.email,
                         changedByName: data.user.name,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            },
+        // Team hooks
+        beforeCreateTeam: userHooks?.beforeCreateTeam
+            ? async (data) => {
+                const result = await userHooks.beforeCreateTeam(data);
+                return result;
+            }
+            : undefined,
+        afterCreateTeam: userHooks?.afterCreateTeam
+            ? async (data) => {
+                await userHooks.afterCreateTeam?.(data);
+                // Emit event
+                emitEvent('team.created', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.user?.id,
+                    metadata: {
+                        teamId: data.team.id,
+                        teamName: data.team.name,
+                        organizationName: data.organization.name,
+                        organizationSlug: data.organization.slug,
+                        email: data.user?.email,
+                        name: data.user?.name,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            }
+            : async (data) => {
+                // Emit event even if no user hook
+                emitEvent('team.created', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.user?.id,
+                    metadata: {
+                        teamId: data.team.id,
+                        teamName: data.team.name,
+                        organizationName: data.organization.name,
+                        organizationSlug: data.organization.slug,
+                        email: data.user?.email,
+                        name: data.user?.name,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            },
+        beforeUpdateTeam: userHooks?.beforeUpdateTeam
+            ? async (data) => {
+                const result = await userHooks.beforeUpdateTeam(data);
+                return result;
+            }
+            : undefined,
+        afterUpdateTeam: userHooks?.afterUpdateTeam
+            ? async (data) => {
+                await userHooks.afterUpdateTeam?.(data);
+                // Emit event
+                if (data.team) {
+                    emitEvent('team.updated', {
+                        status: 'success',
+                        organizationId: data.organization.id,
+                        userId: data.user.id,
+                        metadata: {
+                            teamId: data.team.id,
+                            teamName: data.team.name,
+                            organizationName: data.organization.name,
+                            organizationSlug: data.organization.slug,
+                            email: data.user.email,
+                            name: data.user.name,
+                        },
+                        request: getRequestInfo(),
+                    }, capturedConfig).catch(() => { });
+                }
+            }
+            : async (data) => {
+                // Emit event even if no user hook
+                if (data.team) {
+                    emitEvent('team.updated', {
+                        status: 'success',
+                        organizationId: data.organization.id,
+                        userId: data.user.id,
+                        metadata: {
+                            teamId: data.team.id,
+                            teamName: data.team.name,
+                            organizationName: data.organization.name,
+                            organizationSlug: data.organization.slug,
+                            email: data.user.email,
+                            name: data.user.name,
+                        },
+                        request: getRequestInfo(),
+                    }, capturedConfig).catch(() => { });
+                }
+            },
+        beforeDeleteTeam: userHooks?.beforeDeleteTeam
+            ? async (data) => {
+                await userHooks.beforeDeleteTeam(data);
+            }
+            : undefined,
+        afterDeleteTeam: userHooks?.afterDeleteTeam
+            ? async (data) => {
+                await userHooks.afterDeleteTeam?.(data);
+                // Emit event
+                emitEvent('team.deleted', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.user?.id,
+                    metadata: {
+                        teamId: data.team.id,
+                        teamName: data.team.name,
+                        organizationName: data.organization.name,
+                        organizationSlug: data.organization.slug,
+                        email: data.user?.email,
+                        name: data.user?.name,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            }
+            : async (data) => {
+                // Emit event even if no user hook
+                emitEvent('team.deleted', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.user?.id,
+                    metadata: {
+                        teamId: data.team.id,
+                        teamName: data.team.name,
+                        organizationName: data.organization.name,
+                        organizationSlug: data.organization.slug,
+                        email: data.user?.email,
+                        name: data.user?.name,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            },
+        // Team member hooks
+        beforeAddTeamMember: userHooks?.beforeAddTeamMember
+            ? async (data) => {
+                const result = await userHooks.beforeAddTeamMember(data);
+                return result;
+            }
+            : undefined,
+        afterAddTeamMember: userHooks?.afterAddTeamMember
+            ? async (data) => {
+                await userHooks.afterAddTeamMember?.(data);
+                // Emit event
+                emitEvent('team.member.added', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.teamMember.userId,
+                    metadata: {
+                        teamMemberId: data.teamMember.id,
+                        teamId: data.team.id,
+                        teamName: data.team.name,
+                        organizationName: data.organization.name,
+                        memberEmail: data.user.email,
+                        memberName: data.user.name,
+                        addedByUserId: data.user.id,
+                        addedByEmail: data.user.email,
+                        addedByName: data.user.name,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            }
+            : async (data) => {
+                // Emit event even if no user hook
+                emitEvent('team.member.added', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.teamMember.userId,
+                    metadata: {
+                        teamMemberId: data.teamMember.id,
+                        teamId: data.team.id,
+                        teamName: data.team.name,
+                        organizationName: data.organization.name,
+                        memberEmail: data.user.email,
+                        memberName: data.user.name,
+                        addedUserId: data.user.id,
+                        addedEmail: data.user.email,
+                        addedName: data.user.name,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            },
+        beforeRemoveTeamMember: userHooks?.beforeRemoveTeamMember
+            ? async (data) => {
+                await userHooks.beforeRemoveTeamMember(data);
+            }
+            : undefined,
+        afterRemoveTeamMember: userHooks?.afterRemoveTeamMember
+            ? async (data) => {
+                await userHooks.afterRemoveTeamMember?.(data);
+                // Emit event
+                emitEvent('team.member.removed', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.teamMember.userId,
+                    metadata: {
+                        teamMemberId: data.teamMember.id,
+                        teamId: data.team.id,
+                        teamName: data.team.name,
+                        organizationName: data.organization.name,
+                        removedUserId: data.user.id,
+                        removedEmail: data.user.email,
+                        removedName: data.user.name,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            }
+            : async (data) => {
+                // Emit event even if no user hook
+                emitEvent('team.member.removed', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.teamMember.userId,
+                    metadata: {
+                        teamMemberId: data.teamMember.id,
+                        teamId: data.team.id,
+                        teamName: data.team.name,
+                        organizationName: data.organization.name,
+                        removedUserId: data.user.id,
+                        removedEmail: data.user.email,
+                        removedName: data.user.name,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            },
+        // Invitation hooks
+        beforeCreateInvitation: userHooks?.beforeCreateInvitation
+            ? async (data) => {
+                const result = await userHooks.beforeCreateInvitation(data);
+                return result;
+            }
+            : undefined,
+        afterCreateInvitation: userHooks?.afterCreateInvitation
+            ? async (data) => {
+                await userHooks.afterCreateInvitation?.(data);
+                // Emit event
+                emitEvent('invitation.created', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    metadata: {
+                        invitationId: data.invitation.id,
+                        email: data.invitation.email,
+                        role: data.invitation.role,
+                        organizationName: data.organization.name,
+                        organizationSlug: data.organization.slug,
+                        inviterEmail: data.inviter.email,
+                        inviterName: data.inviter.name,
+                        inviterId: data.inviter.id,
+                        teamId: data.invitation.teamId,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            }
+            : async (data) => {
+                // Emit event even if no user hook
+                emitEvent('invitation.created', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    metadata: {
+                        invitationId: data.invitation.id,
+                        email: data.invitation.email,
+                        role: data.invitation.role,
+                        organizationName: data.organization.name,
+                        organizationSlug: data.organization.slug,
+                        inviterEmail: data.inviter.email,
+                        inviterName: data.inviter.name,
+                        inviterId: data.inviter.id,
+                        teamId: data.invitation.teamId,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            },
+        beforeAcceptInvitation: userHooks?.beforeAcceptInvitation
+            ? async (data) => {
+                await userHooks.beforeAcceptInvitation(data);
+            }
+            : undefined,
+        afterAcceptInvitation: userHooks?.afterAcceptInvitation
+            ? async (data) => {
+                await userHooks.afterAcceptInvitation?.(data);
+                // Emit event
+                emitEvent('invitation.accepted', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.user.id,
+                    metadata: {
+                        invitationId: data.invitation.id,
+                        email: data.user.email,
+                        name: data.user.name,
+                        role: data.member.role,
+                        organizationName: data.organization.name,
+                        organizationSlug: data.organization.slug,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            }
+            : async (data) => {
+                // Emit event even if no user hook
+                emitEvent('invitation.accepted', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.user.id,
+                    metadata: {
+                        invitationId: data.invitation.id,
+                        email: data.user.email,
+                        name: data.user.name,
+                        role: data.member.role,
+                        organizationName: data.organization.name,
+                        organizationSlug: data.organization.slug,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            },
+        beforeRejectInvitation: userHooks?.beforeRejectInvitation
+            ? async (data) => {
+                await userHooks.beforeRejectInvitation(data);
+            }
+            : undefined,
+        afterRejectInvitation: userHooks?.afterRejectInvitation
+            ? async (data) => {
+                await userHooks.afterRejectInvitation?.(data);
+                // Emit event
+                emitEvent('invitation.rejected', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.user.id,
+                    metadata: {
+                        invitationId: data.invitation.id,
+                        email: data.user.email,
+                        name: data.user.name,
+                        organizationName: data.organization.name,
+                        organizationSlug: data.organization.slug,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            }
+            : async (data) => {
+                // Emit event even if no user hook
+                emitEvent('invitation.rejected', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.user.id,
+                    metadata: {
+                        invitationId: data.invitation.id,
+                        email: data.user.email,
+                        name: data.user.name,
+                        organizationName: data.organization.name,
+                        organizationSlug: data.organization.slug,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            },
+        beforeCancelInvitation: userHooks?.beforeCancelInvitation
+            ? async (data) => {
+                await userHooks.beforeCancelInvitation(data);
+            }
+            : undefined,
+        afterCancelInvitation: userHooks?.afterCancelInvitation
+            ? async (data) => {
+                await userHooks.afterCancelInvitation?.(data);
+                // Emit event
+                emitEvent('invitation.cancelled', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.cancelledBy.id,
+                    metadata: {
+                        invitationId: data.invitation.id,
+                        email: data.invitation.email,
+                        organizationName: data.organization.name,
+                        organizationSlug: data.organization.slug,
+                        cancelledByEmail: data.cancelledBy.email,
+                        cancelledByName: data.cancelledBy.name,
+                    },
+                    request: getRequestInfo(),
+                }, capturedConfig).catch(() => { });
+            }
+            : async (data) => {
+                // Emit event even if no user hook
+                emitEvent('invitation.cancelled', {
+                    status: 'success',
+                    organizationId: data.organization.id,
+                    userId: data.cancelledBy.id,
+                    metadata: {
+                        invitationId: data.invitation.id,
+                        email: data.invitation.email,
+                        organizationName: data.organization.name,
+                        organizationSlug: data.organization.slug,
+                        cancelledByEmail: data.cancelledBy.email,
+                        cancelledByName: data.cancelledBy.name,
                     },
                     request: getRequestInfo(),
                 }, capturedConfig).catch(() => { });

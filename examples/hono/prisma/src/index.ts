@@ -41,18 +41,7 @@ app.on(['POST', 'GET'], '/api/auth/*', (c) => {
 // Root endpoint
 app.get('/', async (c) => {
   try {
-    const cookie = 'better-auth.session_token=31th4bLgnbNCu1T98DWSWAPQRXZReiR2.b%2BKz%2BUX9J2XBrMevDdZkpnhvw0QBoEw8Nwp0z%2BkdZWE%3D';
-    const r = await auth.api.updateMemberRole({
-      headers: {
-        Cookie: cookie,
-      },
-      body: {
-        organizationId: 'yLJvJmhBNq9hYbgfR8qOAyeiJfD1jCeS',
-        memberId: 'dlNSF5g9rAGGzCejk76NwfU81a1hbBdI', 
-        role: 'admin',
-      },
-    })
-    console.log({ r });
+
     const sessionResponse = await auth.api.getSession({ headers: c.req.raw.headers });
     const recentAccounts = await (await auth.$context).adapter.findMany({
       model: 'account',
@@ -89,6 +78,21 @@ app.get('/', async (c) => {
     );
   }
 });
+app.get("/test", async (c) => {
+  const cookie = 'better-auth.session_token=31th4bLgnbNCu1T98DWSWAPQRXZReiR2.b%2BKz%2BUX9J2XBrMevDdZkpnhvw0QBoEw8Nwp0z%2BkdZWE%3D';
+  const r = await auth.api.removeTeamMember({
+    headers: {
+      Cookie: cookie,
+    },
+    body: {
+      teamId: "L8SYYh3jdXX5gtzJU9IJOeATlFRmdAQk",
+      // organizationId: 'yLJvJmhBNq9hYbgfR8qOAyeiJfD1jCeS',
+      userId: "FpO3FoAVOC9kML9ymR3RTQuMwqm7smmH",
+    },
+  })
+  console.log({ r });
+  return c.json({ message: 'Test', data: r });
+})
 
 // Start server
 const PORT = parseInt(process.env.PORT || '3000', 10);

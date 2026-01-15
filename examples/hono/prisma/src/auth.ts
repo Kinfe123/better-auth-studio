@@ -52,6 +52,9 @@ export const auth = betterAuth({
     },
     plugins: [
         organization({
+            organizationHooks: {
+                
+            },
             teams: {
                 enabled: true,
             },

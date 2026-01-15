@@ -20,7 +20,16 @@ export type AuthEventType =
   | 'password.reset_requested'
   | 'password.reset_completed'
   | 'oauth.linked'
-  | 'oauth.unlinked';
+  | 'oauth.unlinked'
+  | 'team.created'
+  | 'team.updated'
+  | 'team.deleted'
+  | 'team.member.added'
+  | 'team.member.removed'
+  | 'invitation.created'
+  | 'invitation.accepted'
+  | 'invitation.rejected'
+  | 'invitation.cancelled';
 
 export interface AuthEvent {
   id: string;
@@ -170,7 +179,7 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
     return `${memberName} removed from ${orgName}`;
   },
   'member.role_changed': (event) => {
-    const memberName = event.metadata?.memberName || event.metadata?.email || 'Member';
+    const memberName = event.metadata?.changedByName || event.metadata?.changedByEmail || 'Member';
     const oldRole = event.metadata?.oldRole || 'member';
     const newRole = event.metadata?.newRole || 'member';
     if (event.status === 'failed') {
@@ -226,6 +235,88 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
     }
     return `OAuth account unlinked: ${provider}`;
   },
+  'team.created': (event) => {
+    const teamName = event.metadata?.teamName || 'Team';
+    const orgName = event.metadata?.organizationName || 'organization';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'unknown error';
+      return `Failed to create team "${teamName}" in "${orgName}"`;
+    }
+    return `Team "${teamName}" created in ${orgName}`;
+  },
+  'team.updated': (event) => {
+    const teamName = event.metadata?.teamName || 'Team';
+    const orgName = event.metadata?.organizationName || 'organization';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'unknown error';
+      return `Failed to update team "${teamName}" in "${orgName}"`;
+    }
+    return `Team "${teamName}" updated in ${orgName}`;
+  },
+  'team.deleted': (event) => {
+    const teamName = event.metadata?.teamName || 'Team';
+    const orgName = event.metadata?.organizationName || 'organization';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'unknown error';
+      return `Failed to delete team "${teamName}" from "${orgName}"`;
+    }
+    return `Team "${teamName}" deleted from ${orgName}`;
+  },
+  'team.member.added': (event) => {
+    const memberName = event.metadata?.addedName || event.metadata?.addedEmail || 'Member';
+    const teamName = event.metadata?.teamName || 'team';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'unknown error';
+      return `Failed to add member "${memberName}" to team "${teamName}"`;
+    }
+    return `${memberName} added to team "${teamName}"`;
+  },
+  'team.member.removed': (event) => {
+    const memberName = event.metadata?.removedName || event.metadata?.removedEmail || 'Member';
+    const teamName = event.metadata?.teamName || 'team';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'unknown error';
+      return `Failed to remove member "${memberName}" from team "${teamName}"`;
+    }
+    return `${memberName} removed from team "${teamName}"`;
+  },
+  'invitation.created': (event) => {
+    const email = event.metadata?.email || 'user';
+    const orgName = event.metadata?.organizationName || 'organization';
+    const role = event.metadata?.role || 'member';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'unknown error';
+      return `Failed to create invitation for "${email}" to join "${orgName}"`;
+    }
+    return `Invitation sent to ${email} to join ${orgName} as ${role}`;
+  },
+  'invitation.accepted': (event) => {
+    const email = event.metadata?.email || 'user';
+    const orgName = event.metadata?.organizationName || 'organization';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'unknown error';
+      return `Failed to accept invitation for "${email}" to join "${orgName}"`;
+    }
+    return `${email} accepted invitation to join ${orgName}`;
+  },
+  'invitation.rejected': (event) => {
+    const email = event.metadata?.email || 'user';
+    const orgName = event.metadata?.organizationName || 'organization';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'unknown error';
+      return `Failed to reject invitation for "${email}" to join "${orgName}"`;
+    }
+    return `${email} rejected invitation to join ${orgName}`;
+  },
+  'invitation.cancelled': (event) => {
+    const email = event.metadata?.email || 'user';
+    const orgName = event.metadata?.organizationName || 'organization';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'unknown error';
+      return `Failed to cancel invitation for "${email}" to join "${orgName}"`;
+    }
+    return `Invitation cancelled for ${email} to join ${orgName}`;
+  },
 };
 
 export function getEventSeverity(
@@ -243,7 +334,7 @@ export function getEventSeverity(
 
   const type = typeof event === 'object' && 'type' in event ? event.type : '';
 
-  if (type.includes('joined') || type.includes('created') || type.includes('verified')) {
+  if (type.includes('joined') || type.includes('created') || type.includes('verified') || type.includes('accepted') || type.includes('added')) {
     return 'success';
   }
   if (type.includes('failed') || type.includes('banned') || type.includes('deleted')) {
@@ -252,5 +343,6 @@ export function getEventSeverity(
   if (type.includes('warning') || type.includes('reset')) {
     return 'warning';
   }
+  // rejected, cancelled, removed, updated are informational
   return 'info';
 }

@@ -16,6 +16,24 @@ export declare function createOrganizationHooksWithEvents(eventsConfig: StudioCo
     afterRemoveMember?: any;
     beforeUpdateMemberRole?: any;
     afterUpdateMemberRole?: any;
+    beforeCreateTeam?: any;
+    afterCreateTeam?: any;
+    beforeUpdateTeam?: any;
+    afterUpdateTeam?: any;
+    beforeDeleteTeam?: any;
+    afterDeleteTeam?: any;
+    beforeAddTeamMember?: any;
+    afterAddTeamMember?: any;
+    beforeRemoveTeamMember?: any;
+    afterRemoveTeamMember?: any;
+    beforeCreateInvitation?: any;
+    afterCreateInvitation?: any;
+    beforeAcceptInvitation?: any;
+    afterAcceptInvitation?: any;
+    beforeRejectInvitation?: any;
+    afterRejectInvitation?: any;
+    beforeCancelInvitation?: any;
+    afterCancelInvitation?: any;
 }): {
     beforeCreateOrganization?: any;
     afterCreateOrganization?: any;
@@ -29,6 +47,24 @@ export declare function createOrganizationHooksWithEvents(eventsConfig: StudioCo
     afterRemoveMember?: any;
     beforeUpdateMemberRole?: any;
     afterUpdateMemberRole?: any;
+    beforeCreateTeam?: any;
+    afterCreateTeam?: any;
+    beforeUpdateTeam?: any;
+    afterUpdateTeam?: any;
+    beforeDeleteTeam?: any;
+    afterDeleteTeam?: any;
+    beforeAddTeamMember?: any;
+    afterAddTeamMember?: any;
+    beforeRemoveTeamMember?: any;
+    afterRemoveTeamMember?: any;
+    beforeCreateInvitation?: any;
+    afterCreateInvitation?: any;
+    beforeAcceptInvitation?: any;
+    afterAcceptInvitation?: any;
+    beforeRejectInvitation?: any;
+    afterRejectInvitation?: any;
+    beforeCancelInvitation?: any;
+    afterCancelInvitation?: any;
 };
 /**
  * Automatically wraps organization plugin hooks to emit events
