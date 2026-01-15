@@ -851,32 +851,25 @@ export function wrapOrganizationPluginHooks(
   }
 
   try {
-    // Find the organization plugin
     const plugins = auth.options?.plugins || [];
     const orgPlugin = plugins.find((p: any) => p?.id === 'organization');
 
     if (!orgPlugin) {
-      return; // Organization plugin not found
+      return;
     }
 
-    // Get existing organization hooks from plugin options
-    // Better Auth may store hooks in different locations depending on version
     const existingHooks =
       orgPlugin.options?.organizationHooks ||
       orgPlugin.organizationHooks ||
       (orgPlugin.options && (orgPlugin.options as any).organizationHooks) ||
       {};
 
-    // Wrap the hooks
     const wrappedHooks = createOrganizationHooksWithEvents(eventsConfig, existingHooks);
 
-    // Update the plugin options in all possible locations
     if (!orgPlugin.options) {
       orgPlugin.options = {};
     }
     orgPlugin.options.organizationHooks = wrappedHooks;
-    
-    // Also set directly on plugin for compatibility
     orgPlugin.organizationHooks = wrappedHooks;
   } catch (error) {
     console.error('[Organization Hooks] Failed to wrap hooks:', error);
