@@ -430,6 +430,63 @@ function createEventIngestionPlugin(eventsConfig) {
                         }, capturedConfig).catch(() => { });
                     }
                 }
+                if (path === '/update-user') {
+                    const updateReturned = ctx.context?.returned || returned;
+                    const session = ctx.context?.session;
+                    const oldData = ctx.context?._oldUserData;
+                    const body = ctx.body || {};
+                    if (!isError && updateReturned && session) {
+                        const updatedFields = {};
+                        const oldValues = {};
+                        if (body.name !== undefined && body.name !== oldData?.name) {
+                            updatedFields.name = body.name;
+                            oldValues.name = oldData?.name;
+                        }
+                        if (body.image !== undefined && body.image !== oldData?.image) {
+                            updatedFields.image = body.image;
+                            oldValues.image = oldData?.image;
+                        }
+                        if (body.email !== undefined && body.email !== oldData?.email) {
+                            updatedFields.email = body.email;
+                            oldValues.email = oldData?.email;
+                        }
+                        if (Object.keys(updatedFields).length > 0) {
+                            emitEvent('user.updated', {
+                                status: 'success',
+                                userId: session.user.id,
+                                metadata: {
+                                    email: session.user.email,
+                                    name: session.user.name,
+                                    updatedFields: updatedFields,
+                                    oldValues: oldValues,
+                                    updatedAt: new Date().toISOString(),
+                                },
+                                request: {
+                                    headers: headersObj,
+                                    ip: ip || undefined,
+                                },
+                            }, capturedConfig).catch(() => { });
+                        }
+                    }
+                    else if (isError) {
+                        emitEvent('user.updated', {
+                            status: 'failed',
+                            metadata: {
+                                reason: returned.statusCode === 400
+                                    ? 'validation_failed'
+                                    : returned.statusCode === 401
+                                        ? 'unauthorized'
+                                        : returned.statusCode === 403
+                                            ? 'forbidden'
+                                            : returned.body?.code || returned.body?.message || 'unknown',
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
             }
             catch (error) {
                 console.error('[Event Hook] Error:', error?.message || 'Unknown error');
@@ -447,6 +504,25 @@ function createEventIngestionPlugin(eventsConfig) {
                     handler: async (context) => {
                         const body = context.body || {};
                         beforeSession = await context.context.internalAdapter.findSession(body.token);
+                    },
+                },
+                {
+                    matcher: (context) => {
+                        return context.path === '/update-user';
+                    },
+                    handler: async (context) => {
+                        // Store old user data in context for after hook
+                        const session = context.context?.session;
+                        if (session?.user) {
+                            // Store old values in a custom context property
+                            context.context._oldUserData = {
+                                name: session.user.name,
+                                image: session.user.image,
+                                email: session.user.email,
+                                // Add other fields you want to track
+                            };
+                        }
+                        return context;
                     },
                 },
             ],
@@ -472,6 +548,7 @@ function createEventIngestionPlugin(eventsConfig) {
                             path === '/organization/create' ||
                             path === '/organization/update' ||
                             path === '/organization/delete' ||
+                            path === '/update-user' ||
                             path.startsWith('/admin/');
                         return shouldMatch;
                     },

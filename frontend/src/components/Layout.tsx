@@ -468,41 +468,41 @@ export default function Layout({ children }: LayoutProps) {
                   </h1>
                 </a>
               ) : (
-                <div className="mb-0 cursor-pointer" onClick={() => navigate('/')}>
-                  <h1 className="text-md inline-flex mb-0 items-start font-light font-mono uppercase text-white gap-2">
+              <div className="mb-0 cursor-pointer" onClick={() => navigate('/')}>
+                <h1 className="text-md inline-flex mb-0 items-start font-light font-mono uppercase text-white gap-2">
                     {companyName}
-                    <sup className="text-xs text-gray-400 ml-1 mt-0 flex items-center space-x-2">
-                      <span className="inline-flex items-center">
-                        <span className="mr-1">[</span>
-                        <span className="text-white/80 lowercase font-mono text-xs">
-                          {studioVersion}
-                        </span>
-                        <span className="ml-1">]</span>
+                  <sup className="text-xs text-gray-400 ml-1 mt-0 flex items-center space-x-2">
+                    <span className="inline-flex items-center">
+                      <span className="mr-1">[</span>
+                      <span className="text-white/80 lowercase font-mono text-xs">
+                        {studioVersion}
                       </span>
-                      <span className="inline-flex items-center">
-                        <span className="mr-1">[</span>
-                        <span className="text-white/80 font-mono text-xs">PUBLIC BETA</span>
-                        <span className="ml-1">]</span>
-                      </span>
+                      <span className="ml-1">]</span>
+                    </span>
+                    <span className="inline-flex items-center">
+                      <span className="mr-1">[</span>
+                      <span className="text-white/80 font-mono text-xs">PUBLIC BETA</span>
+                      <span className="ml-1">]</span>
+                    </span>
+                    <span
+                      className={`inline-flex items-center rounded border px-1.5 py-0.5 font-normal uppercase tracking-wide text-[9px] ${statusMeta.textClass} ${statusMeta.animate ?? ''}`}
+                    >
                       <span
-                        className={`inline-flex items-center rounded border px-1.5 py-0.5 font-normal uppercase tracking-wide text-[9px] ${statusMeta.textClass} ${statusMeta.animate ?? ''}`}
-                      >
-                        <span
-                          className={`mr-1 h-1.5 w-1.5 rounded-full ${statusMeta.dotClass}`}
-                        ></span>
-                        {statusMeta.label}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={handleHardRefresh}
-                        aria-label="Hard refresh studio"
-                        className="ml-1 inline-flex items-center rounded border border-dashed border-white/20 p-0.5 text-white/70 transition hover:text-white hover:border-white/50"
-                      >
-                        <RefreshCw className="h-3.5 w-3.5" />
-                      </button>
-                    </sup>
-                  </h1>
-                </div>
+                        className={`mr-1 h-1.5 w-1.5 rounded-full ${statusMeta.dotClass}`}
+                      ></span>
+                      {statusMeta.label}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleHardRefresh}
+                      aria-label="Hard refresh studio"
+                      className="ml-1 inline-flex items-center rounded border border-dashed border-white/20 p-0.5 text-white/70 transition hover:text-white hover:border-white/50"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                    </button>
+                  </sup>
+                </h1>
+              </div>
               )}
             </div>
           </div>

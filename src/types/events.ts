@@ -83,7 +83,7 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
   },
   'user.updated': (event) => {
     const name = event.metadata?.name || event.metadata?.email || 'User';
-    return `${name} updated`;
+    return `${name} updated their profile`;
   },
   'user.logged_in': (event) => {
     const name = event.metadata?.name || event.metadata?.email || 'User';
