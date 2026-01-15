@@ -11,12 +11,13 @@ function getRequestInfo(request) {
                 request.headers.forEach((value, key) => {
                     headersObj[key] = value;
                 });
-                ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
+                ip =
+                    request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
             }
             else if (request.headers) {
-                // Object with headers property
                 if (typeof request.headers.get === 'function') {
-                    ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
+                    ip =
+                        request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
                     request.headers.forEach?.((value, key) => {
                         headersObj[key] = value;
                     });
@@ -47,7 +48,6 @@ export function wrapAuthCallbacks(auth, eventsConfig) {
         const capturedConfig = eventsConfig;
         const wrapCallback = (originalCallback, eventType, eventData) => {
             return (async (...args) => {
-                // Call original callback if it exists
                 if (originalCallback) {
                     await originalCallback(...args);
                 }
@@ -62,6 +62,20 @@ export function wrapAuthCallbacks(auth, eventsConfig) {
         };
         const deleteUserConfig = auth.options?.user?.deleteUser || auth.user?.deleteUser;
         if (deleteUserConfig && !deleteUserConfig.__studio_wrapped) {
+            const originalSendDeleteVerification = deleteUserConfig.sendDeleteAccountVerification;
+            deleteUserConfig.sendDeleteAccountVerification = wrapCallback(originalSendDeleteVerification, 'user.delete_verification_requested', (args) => {
+                const data = args[0];
+                const user = data?.user;
+                return {
+                    userId: user?.id,
+                    metadata: {
+                        email: user?.email,
+                        name: user?.name,
+                        token: data?.token,
+                    },
+                };
+            });
+            // Wrap afterDelete callback
             const originalAfterDelete = deleteUserConfig.afterDelete;
             deleteUserConfig.afterDelete = wrapCallback(originalAfterDelete, 'user.deleted', (args) => {
                 const user = args[0];

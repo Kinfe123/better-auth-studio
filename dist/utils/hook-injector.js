@@ -1,8 +1,8 @@
 import { getSessionFromCtx } from 'better-auth/api';
 import { createAuthMiddleware } from 'better-auth/plugins';
+import { wrapAuthCallbacks } from './auth-callbacks-injector.js';
 import { emitEvent } from './event-ingestion.js';
 import { wrapOrganizationPluginHooks } from './org-hooks-injector.js';
-import { wrapAuthCallbacks } from './auth-callbacks-injector.js';
 const INJECTED_HOOKS_MARKER = '__better_auth_studio_events_injected__';
 /**
  * Create a Better Auth plugin for event ingestion
@@ -370,7 +370,7 @@ function createEventIngestionPlugin(eventsConfig) {
                     })
                         .catch(() => { });
                 }
-                if (path === "/admin/ban-user") {
+                if (path === '/admin/ban-user') {
                     const body = ctx.body || {};
                     const user = returned?.user || ctx.context?.returned?.user || ctx.context?.user;
                     if (!isError && user) {
@@ -400,7 +400,7 @@ function createEventIngestionPlugin(eventsConfig) {
                         }, capturedConfig).catch(() => { });
                     }
                 }
-                if (path === "/admin/unban-user") {
+                if (path === '/admin/unban-user') {
                     const body = ctx.body || {};
                     const user = returned?.user || ctx.context?.returned?.user || ctx.context?.user;
                     if (!isError && user) {

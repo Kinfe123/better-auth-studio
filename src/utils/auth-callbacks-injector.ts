@@ -77,6 +77,26 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
 
     const deleteUserConfig = auth.options?.user?.deleteUser || auth.user?.deleteUser;
     if (deleteUserConfig && !deleteUserConfig.__studio_wrapped) {
+      const originalSendDeleteVerification = deleteUserConfig.sendDeleteAccountVerification;
+      
+      deleteUserConfig.sendDeleteAccountVerification = wrapCallback(
+        originalSendDeleteVerification,
+        'user.delete_verification_requested',
+        (args) => {
+          const data = args[0] as any;
+          const user = data?.user;
+          return {
+            userId: user?.id,
+            metadata: {
+              email: user?.email,
+              name: user?.name,
+              token: data?.token,
+            },
+          };
+        }
+      );
+
+      // Wrap afterDelete callback
       const originalAfterDelete = deleteUserConfig.afterDelete;
 
       deleteUserConfig.afterDelete = wrapCallback(originalAfterDelete, 'user.deleted', (args) => {

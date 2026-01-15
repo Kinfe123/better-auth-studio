@@ -8,6 +8,7 @@ export type AuthEventType =
   | 'user.banned'
   | 'user.unbanned'
   | 'user.deleted'
+  | 'user.delete_verification_requested'
   | 'organization.created'
   | 'organization.deleted'
   | 'organization.updated'
@@ -135,6 +136,14 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
   'user.deleted': (event) => {
     const name = event.metadata?.name || event.metadata?.email || 'User';
     return `${name} was deleted`;
+  },
+  'user.delete_verification_requested': (event) => {
+    const name = event.metadata?.name || event.metadata?.email || 'User';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'unknown error';
+      return `Failed to send delete verification for "${name}"`;
+    }
+    return `Delete verification requested for ${name}`;
   },
   'organization.created': (event) => {
     const orgName = event.metadata?.organizationName || 'Organization';
@@ -343,10 +352,10 @@ export function getEventSeverity(
   ) {
     return 'success';
   }
-  if (type.includes('failed') || type.includes('banned') || type.includes('deleted')) {
+  if (type.includes('failed') || type.includes('banned') || (type.includes('deleted') && !type.includes('verification'))) {
     return 'failed';
   }
-  if (type.includes('warning') || type.includes('reset')) {
+  if (type.includes('warning') || type.includes('reset') || type.includes('verification')) {
     return 'warning';
   }
   // rejected, cancelled, removed, updated are informational
