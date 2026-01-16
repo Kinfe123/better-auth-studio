@@ -18,8 +18,6 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
     if (!capturedConfig?.enabled) {
       return ctx;
     }
-    // Fire and forget event emission - don't await or block
-    // Use setTimeout to ensure this runs after the response is sent
     setTimeout(() => {
       try {
         const path = ctx?.path || '';
@@ -50,17 +48,17 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
 
         if (path === '/sign-up' || path === '/sign-up/email') {
           const body = ctx.body || {};
-
+          const user = returned || ctx.context.returned
           if (!isError) {
             emitEvent(
               'user.joined',
               {
                 status: 'success',
-                userId: '',
-                sessionId: '',
+                userId: returned.user.id,
+                sessionId: "",
                 metadata: {
-                  email: body.email || '',
-                  name: body.name || '',
+                  email: body.email || returned.user.email || "",
+                  name: body.name || returned.user.name || "",
                 },
                 request: {
                   headers: headersObj,

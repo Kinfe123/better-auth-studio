@@ -33,6 +33,15 @@ export const auth = betterAuth({
             redirectURI: `${baseURL}/api/auth/callback/discord`,
         },
     },
+    databaseHooks: {
+        account: {
+            create: {
+                after: async (account, context) => {
+                    console.log('create account', account, context);
+                }
+            } 
+        }
+    }, 
     emailAndPassword: {
         enabled: true,
         disableSignUp: false,
