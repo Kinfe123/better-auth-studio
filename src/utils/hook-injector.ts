@@ -39,12 +39,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             if (typeof ctx.headers.get === 'function') {
               try {
                 ip = ctx.headers.get('x-forwarded-for') || ctx.headers.get('x-real-ip') || null;
-              } catch (e) {}
+              } catch (e) { }
             } else {
               ip = ctx.headers['x-forwarded-for'] || ctx.headers['x-real-ip'] || null;
             }
           }
-        } catch (e) {}
+        } catch (e) { }
 
         if (path === '/sign-up' || path === '/sign-up/email') {
           const body = ctx.body || {};
@@ -66,7 +66,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'user.joined',
@@ -88,7 +88,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -113,7 +113,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
 
             // Also emit session.created
             if (session) {
@@ -134,7 +134,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   },
                 },
                 capturedConfig
-              ).catch(() => {});
+              ).catch(() => { });
             }
           } else if (isError) {
             emitEvent(
@@ -154,7 +154,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -186,7 +186,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'session.created',
@@ -207,7 +207,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -231,44 +231,9 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
-
-            // Also emit session.ended
-            emitEvent(
-              'session.ended',
-              {
-                status: 'success',
-                userId: user.id,
-                sessionId: sessionData?.id,
-                metadata: {
-                  email: user?.email,
-                  name: user?.name,
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          } else if (isError) {
-            emitEvent(
-              'session.ended',
-              {
-                status: 'failed',
-                metadata: {
-                  reason: returned.body?.code || returned.body?.message || 'unknown',
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
-
         if (path === '/reset-password') {
           const body = ctx.body || {};
           const user = returned?.user || ctx.context?.user;
@@ -290,7 +255,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'password.reset_completed',
@@ -311,7 +276,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -345,7 +310,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'oauth.unlinked',
@@ -364,7 +329,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -397,7 +362,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -431,7 +396,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => {});
+                ).catch(() => { });
               } else if (isError) {
                 const body = ctx.body || {};
                 emitEvent(
@@ -455,10 +420,10 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => {});
+                ).catch(() => { });
               }
             })
-            .catch(() => {});
+            .catch(() => { });
         }
         if (path === '/admin/ban-user') {
           const body = ctx.body || {};
@@ -479,7 +444,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'user.banned',
@@ -494,7 +459,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
         if (path === '/admin/unban-user') {
@@ -516,7 +481,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'user.unbanned',
@@ -531,7 +496,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -575,7 +540,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   },
                 },
                 capturedConfig
-              ).catch(() => {});
+              ).catch(() => { });
             }
           } else if (isError) {
             emitEvent(
@@ -598,7 +563,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
       } catch (error: any) {
