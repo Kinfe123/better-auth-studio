@@ -8,9 +8,6 @@ export function createOrganizationHooksWithEvents(eventsConfig, userHooks) {
         return userHooks || {};
     }
     const capturedConfig = eventsConfig;
-    // Helper to extract request info
-    // Note: Organization hooks don't receive request directly, so we return empty info
-    // The request info will be captured by the main hook injector for endpoint-based operations
     const getRequestInfo = () => {
         return { headers: {}, ip: undefined };
     };

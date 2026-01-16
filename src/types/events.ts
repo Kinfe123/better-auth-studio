@@ -21,6 +21,7 @@ export type AuthEventType =
   | 'password.reset_completed'
   | 'oauth.linked'
   | 'oauth.unlinked'
+  | 'oauth.sign_in'
   | 'team.created'
   | 'team.updated'
   | 'team.deleted'
@@ -240,6 +241,15 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
     }
     return `OAuth account unlinked: ${provider}`;
   },
+  'oauth.sign_in': (event) => {
+    const provider = event.metadata?.provider || event.metadata?.providerId || 'OAuth';
+    const name = event.metadata?.name || event.metadata?.userEmail || 'User';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'invalid credentials';
+      return `Failed to sign in via ${provider} for "${name}"`;
+    }
+    return `${name} signed in via ${provider}`;
+  },
   'team.created': (event) => {
     const teamName = event.metadata?.teamName || 'Team';
     const orgName = event.metadata?.organizationName || 'organization';
@@ -344,7 +354,9 @@ export function getEventSeverity(
     type.includes('created') ||
     type.includes('verified') ||
     type.includes('accepted') ||
-    type.includes('added')
+    type.includes('added') ||
+    type.includes('sign_in') ||
+    type.includes('logged_in')
   ) {
     return 'success';
   }

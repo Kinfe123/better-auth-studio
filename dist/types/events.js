@@ -131,9 +131,6 @@ export const EVENT_TEMPLATES = {
         }
         return `New session created for ${name}`;
     },
-    'session.ended': (event) => {
-        return 'Session ended';
-    },
     'login.failed': (event) => {
         const email = event.metadata?.email || 'User';
         return `Failed login attempt for ${email}`;
@@ -169,6 +166,15 @@ export const EVENT_TEMPLATES = {
             return `Failed to unlink OAuth account "${provider}"`;
         }
         return `OAuth account unlinked: ${provider}`;
+    },
+    'oauth.sign_in': (event) => {
+        const provider = event.metadata?.provider || event.metadata?.providerId || 'OAuth';
+        const name = event.metadata?.name || event.metadata?.userEmail || 'User';
+        if (event.status === 'failed') {
+            const reason = event.metadata?.reason || 'invalid credentials';
+            return `Failed to sign in via ${provider} for "${name}"`;
+        }
+        return `${name} signed in via ${provider}`;
     },
     'team.created': (event) => {
         const teamName = event.metadata?.teamName || 'Team';
@@ -265,7 +271,9 @@ export function getEventSeverity(event, status) {
         type.includes('created') ||
         type.includes('verified') ||
         type.includes('accepted') ||
-        type.includes('added')) {
+        type.includes('added') ||
+        type.includes('sign_in') ||
+        type.includes('logged_in')) {
         return 'success';
     }
     if (type.includes('failed') ||

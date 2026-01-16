@@ -1,12 +1,12 @@
 import type { StudioConfig } from 'better-auth-studio';
 import { auth } from './lib/auth';
 import { createClient } from '@clickhouse/client';
-const clickhouseClient = createClient({
-  host: "https://yzdf5janri.us-west-2.aws.clickhouse.cloud:8443",
-  username: 'default',
-  password: "1aJ1Yxy.VjVmw",
-});
 
+const clickhouseClient = createClient({
+  host: "https://flchqfzuyp.eu-central-1.aws.clickhouse.cloud:8443",
+  username: 'default',
+  password: "WqGn~kVQRi0L7"
+});
 const config: StudioConfig = {
   auth,
   basePath: '/api/studio',
@@ -24,8 +24,8 @@ const config: StudioConfig = {
     client: clickhouseClient,
     clientType: 'clickhouse',
     tableName: 'auth_events',
-    batchSize: 10,
-    flushInterval: 5000
+    // batchSize: 10,
+    // flushInterval: 5000
   }
 };
 

@@ -14,17 +14,26 @@ function createEventIngestionPlugin(eventsConfig) {
         if (!capturedConfig?.enabled) {
             return ctx;
         }
-        // Fire and forget event emission - don't await or block
-        // Use setTimeout to ensure this runs after the response is sent
         setTimeout(() => {
             try {
-                const path = ctx?.path || '';
+                const path = ctx?.path || ctx?.context?.path || '';
                 if (!path)
                     return;
-                console.log('[Event Hook] After hook triggered for path:', path);
                 const returned = ctx?.context?.returned;
                 if (!returned)
                     return;
+                // Guard against Better Auth internal errors
+                if (typeof returned === 'object' && returned !== null) {
+                    // Check if returned has problematic properties that might cause errors
+                    try {
+                        // Try to access common properties safely
+                        const _ = returned.statusCode;
+                    }
+                    catch (e) {
+                        // If accessing properties causes errors, skip processing
+                        return;
+                    }
+                }
                 const isError = returned.statusCode && returned.statusCode >= 400;
                 const isSuccess = !isError && returned.statusCode === 200;
                 let ip = null;
@@ -45,14 +54,15 @@ function createEventIngestionPlugin(eventsConfig) {
                 catch (e) { }
                 if (path === '/sign-up' || path === '/sign-up/email') {
                     const body = ctx.body || {};
+                    const user = returned || ctx.context.returned;
                     if (!isError) {
                         emitEvent('user.joined', {
                             status: 'success',
-                            userId: '',
-                            sessionId: '',
+                            userId: returned.user.id,
+                            sessionId: "",
                             metadata: {
-                                email: body.email || '',
-                                name: body.name || '',
+                                email: body.email || returned.user.email || "",
+                                name: body.name || returned.user.name || "",
                             },
                             request: {
                                 headers: headersObj,
@@ -131,48 +141,6 @@ function createEventIngestionPlugin(eventsConfig) {
                         }, capturedConfig).catch(() => { });
                     }
                 }
-                // Session created via social sign-in or OAuth callback
-                if (path.startsWith('/sign-in/social') ||
-                    path.startsWith('/callback') ||
-                    path.startsWith('/oauth2/callback')) {
-                    const newSession = ctx.context?.newSession || returned?.newSession;
-                    const user = newSession?.user || returned?.user;
-                    if (!isError && newSession && user) {
-                        emitEvent('session.created', {
-                            status: 'success',
-                            userId: user.id,
-                            sessionId: newSession.session?.id || newSession.id,
-                            metadata: {
-                                name: user.name,
-                                email: user.email,
-                                provider: path.includes('/callback/')
-                                    ? path.split('/callback/')[1]?.split('/')[0]
-                                    : undefined,
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                    else if (isError) {
-                        emitEvent('session.created', {
-                            status: 'failed',
-                            metadata: {
-                                reason: returned.statusCode === 401
-                                    ? 'authentication_failed'
-                                    : returned.body?.code || 'unknown',
-                                provider: path.includes('/callback/')
-                                    ? path.split('/callback/')[1]?.split('/')[0]
-                                    : undefined,
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                }
                 if (path === '/sign-out') {
                     const session = beforeSession;
                     const { user, session: sessionData } = session || {};
@@ -184,32 +152,6 @@ function createEventIngestionPlugin(eventsConfig) {
                             metadata: {
                                 email: user?.email,
                                 name: user?.name,
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
-                        // Also emit session.ended
-                        emitEvent('session.ended', {
-                            status: 'success',
-                            userId: user.id,
-                            sessionId: sessionData?.id,
-                            metadata: {
-                                email: user?.email,
-                                name: user?.name,
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                    else if (isError) {
-                        emitEvent('session.ended', {
-                            status: 'failed',
-                            metadata: {
-                                reason: returned.body?.code || returned.body?.message || 'unknown',
                             },
                             request: {
                                 headers: headersObj,
@@ -295,36 +237,113 @@ function createEventIngestionPlugin(eventsConfig) {
                         }, capturedConfig).catch(() => { });
                     }
                 }
-                // OAuth linked (via callback - account already exists)
-                if ((path.startsWith('/callback/') || path.startsWith('/oauth2/callback')) && !isError) {
-                    const newSession = ctx.context?.newSession || returned?.newSession;
-                    const user = newSession?.user || returned?.user;
-                    const existingUser = ctx.context?.existingUser;
-                    if (user && existingUser) {
-                        const provider = path.includes('/callback/')
-                            ? path.split('/callback/')[1]?.split('/')[0]
-                            : path.includes('/oauth2/callback/')
-                                ? path.split('/oauth2/callback/')[1]?.split('/')[0]
-                                : undefined;
-                        emitEvent('oauth.linked', {
-                            status: 'success',
-                            userId: user.id,
-                            metadata: {
-                                provider: provider,
-                                email: user.email,
-                                name: user.name,
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
+                const isCallbackPath = path.startsWith('/callback/') ||
+                    path.startsWith('/callback') ||
+                    path.startsWith('/oauth2/callback/') ||
+                    path.startsWith('/oauth2/callback');
+                if (isCallbackPath) {
+                    try {
+                        const newSession = ctx.context?.newSession || returned?.newSession;
+                        const user = newSession?.user ||
+                            returned?.user ||
+                            returned?.data?.user ||
+                            ctx.context?.user ||
+                            ctx.user ||
+                            (returned?.data && typeof returned.data === 'object' && 'user' in returned.data ? returned.data.user : null);
+                        const existingUser = ctx.context?.existingUser;
+                        const params = ctx.params;
+                        if (user) {
+                            const provider = path.includes('/callback/')
+                                ? path.split('/callback/')[1]?.split('/')[0]
+                                : path.includes('/oauth2/callback/')
+                                    ? path.split('/oauth2/callback/')[1]?.split('/')[0]
+                                    : path.includes('/callback')
+                                        ? path.split('/callback')[1]?.split('/')[1] || path.split('/callback')[1]?.split('?')[0]
+                                        : undefined;
+                            if (existingUser) {
+                                // Existing user linking a new OAuth account
+                                emitEvent('oauth.linked', {
+                                    status: 'success',
+                                    userId: user.id,
+                                    metadata: {
+                                        provider: params.id,
+                                        email: user.email,
+                                        name: user.name,
+                                    },
+                                    request: {
+                                        headers: headersObj,
+                                        ip: ip || undefined,
+                                    },
+                                }, capturedConfig).catch(() => { });
+                            }
+                            else {
+                                // New user signing in via OAuth
+                                emitEvent('oauth.sign_in', {
+                                    status: 'success',
+                                    userId: user.id,
+                                    sessionId: newSession?.session?.id || newSession?.id,
+                                    metadata: {
+                                        provider: params.id,
+                                        providerId: params.id,
+                                        userEmail: user.email,
+                                        email: user.email,
+                                        name: user.name,
+                                        emailVerified: user.emailVerified,
+                                    },
+                                    request: {
+                                        headers: headersObj,
+                                        ip: ip || undefined,
+                                    },
+                                }, capturedConfig).then(() => {
+                                    if (!isError && newSession && user) {
+                                        emitEvent('session.created', {
+                                            status: 'success',
+                                            userId: user.id,
+                                            sessionId: newSession.session?.id || newSession.id,
+                                            metadata: {
+                                                name: user.name,
+                                                email: user.email,
+                                                provider: params.id,
+                                            },
+                                            request: {
+                                                headers: headersObj,
+                                                ip: ip || undefined,
+                                            },
+                                        }, capturedConfig).catch(() => { });
+                                    }
+                                    else if (isError) {
+                                        emitEvent('session.created', {
+                                            status: 'failed',
+                                            metadata: {
+                                                reason: returned.statusCode === 401
+                                                    ? 'authentication_failed'
+                                                    : returned.body?.code || 'unknown',
+                                                provider: path.includes('/callback/')
+                                                    ? path.split('/callback/')[1]?.split('/')[0]
+                                                    : undefined,
+                                            },
+                                            request: {
+                                                headers: headersObj,
+                                                ip: ip || undefined,
+                                            },
+                                        }, capturedConfig).catch(() => { });
+                                    }
+                                }).catch(() => { });
+                            }
+                        }
+                    }
+                    catch (callbackError) {
+                        // Suppress Better Auth internal errors
+                        const errorMessage = callbackError?.message || String(callbackError || '');
+                        if (!errorMessage.includes('reloadNavigation') &&
+                            !errorMessage.includes('Cannot read properties of undefined')) {
+                            console.error('[OAuth Callback] Error:', errorMessage);
+                        }
                     }
                 }
                 // Organization created
                 if (path === '/organization/create') {
                     const orgReturned = ctx.context?.returned || returned;
-                    console.log({ orgReturned });
                     getSessionFromCtx(ctx)
                         .then((session) => {
                         if (!isError &&
@@ -489,10 +508,74 @@ function createEventIngestionPlugin(eventsConfig) {
                 }
             }
             catch (error) {
-                console.error('[Event Hook] Error:', error?.message || 'Unknown error');
+                // Suppress Better Auth internal errors (reloadNavigation, etc.)
+                const errorMessage = error?.message || String(error || '');
+                if (errorMessage.includes('reloadNavigation') ||
+                    errorMessage.includes('Cannot read properties of undefined')) {
+                    // These are Better Auth internal errors, not our issue
+                    return;
+                }
+                console.error('[Event Hook] Error:', errorMessage);
             }
         }, 0);
     });
+    const oauthAccountAfter = async (account, context) => {
+        if (!context || !context.internalAdapter) {
+            return;
+        }
+        if (!account || !account.userId || !account.providerId) {
+            return;
+        }
+        if (account.providerId !== 'credential') {
+            try {
+                if (typeof context.internalAdapter.findUserById !== 'function' ||
+                    typeof context.internalAdapter.findAccounts !== 'function') {
+                    return;
+                }
+                const user = await context.internalAdapter.findUserById(account.userId);
+                if (user) {
+                    const existingAccounts = await context.internalAdapter.findAccounts(account.userId);
+                    const isLinking = existingAccounts && existingAccounts.length > 1; // More than just this new account
+                    if (isLinking) {
+                        await emitEvent('oauth.linked', {
+                            status: 'success',
+                            userId: account.userId,
+                            metadata: {
+                                provider: account.providerId,
+                                providerId: account.providerId,
+                                userEmail: user.email,
+                                email: user.email,
+                                name: user.name,
+                                accountId: account.accountId,
+                                linkedAt: new Date().toISOString(),
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                    else {
+                        await emitEvent('oauth.sign_in', {
+                            status: 'success',
+                            userId: account.userId,
+                            metadata: {
+                                provider: account.providerId,
+                                providerId: account.providerId,
+                                userEmail: user.email,
+                                email: user.email,
+                                name: user.name,
+                                emailVerified: user.emailVerified,
+                                accountId: account.accountId,
+                                createdAt: user.createdAt
+                                    ? new Date(user.createdAt).toISOString()
+                                    : new Date().toISOString(),
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+            }
+            catch (error) {
+                console.error('[OAuth DB Hook] Error:', error);
+            }
+        }
+    };
     return {
         id: 'better-auth-studio-events',
         hooks: {
@@ -511,15 +594,12 @@ function createEventIngestionPlugin(eventsConfig) {
                         return context.path === '/update-user';
                     },
                     handler: async (context) => {
-                        // Store old user data in context for after hook
                         const session = context.context?.session;
                         if (session?.user) {
-                            // Store old values in a custom context property
                             context.context._oldUserData = {
                                 name: session.user.name,
                                 image: session.user.image,
                                 email: session.user.email,
-                                // Add other fields you want to track
                             };
                         }
                         return context;
@@ -529,7 +609,7 @@ function createEventIngestionPlugin(eventsConfig) {
             after: [
                 {
                     matcher: (context) => {
-                        const path = context?.path || '';
+                        const path = context?.path || context?.context?.path || '';
                         const shouldMatch = path === '/sign-up' ||
                             path === '/sign-up/email' ||
                             path === '/sign-in' ||
@@ -556,6 +636,14 @@ function createEventIngestionPlugin(eventsConfig) {
                 },
             ],
         },
+        // TODO: I cant be able to reach the database hook from this. this will be important for most of event ingestions
+        // databaseHooks: {
+        //   account: {
+        //     create: {
+        //       after: oauthAccountAfter,
+        //     },
+        //   },
+        // },
     };
 }
 /**
@@ -579,15 +667,12 @@ export function injectEventHooks(auth, eventsConfig) {
         if (!auth.options.plugins) {
             auth.options.plugins = [];
         }
-        // Check if plugin already exists
         const existingPlugin = auth.options.plugins.find((p) => p?.id === 'better-auth-studio-events');
         if (!existingPlugin) {
             auth.options.plugins.push(eventPlugin);
         }
         auth.options[INJECTED_HOOKS_MARKER] = true;
-        // Wrap organization plugin hooks to emit events for member operations
         wrapOrganizationPluginHooks(auth, eventsConfig);
-        // Wrap Better Auth callbacks to emit events
         wrapAuthCallbacks(auth, eventsConfig);
     }
     catch (error) {
