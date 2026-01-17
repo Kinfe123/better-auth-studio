@@ -31,7 +31,6 @@ function getRequestInfo(request?: Request | any): { headers: Record<string, stri
         }
       }
     } catch (e) {
-      // Ignore errors
     }
   }
 
@@ -42,15 +41,7 @@ function getRequestInfo(request?: Request | any): { headers: Record<string, stri
  * Wraps Better Auth callbacks to automatically emit events
  * This should be called during Better Auth initialization
  */
-// Map to track which password reset method was used (for completion event)
-// Key: email, Value: 'otp' | 'token'
 const passwordResetMethod = new Map<string, 'otp' | 'token'>();
-
-// Clean up old entries periodically (they should be cleared after use, but just in case)
-setInterval(() => {
-  // Clear all entries - they should be cleared after password reset completes anyway
-  passwordResetMethod.clear();
-}, 60 * 60 * 1000); // Every hour
 
 export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events']): void {
   if (!auth || !eventsConfig?.enabled) {
@@ -172,11 +163,13 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
       const originalSendResetPassword = emailAndPasswordConfig.sendResetPassword;
 
       if (originalSendResetPassword) {
-        emailAndPasswordConfig.sendResetPassword = async (...args: Parameters<typeof originalSendResetPassword>) => {
+        emailAndPasswordConfig.sendResetPassword = async (
+          ...args: Parameters<typeof originalSendResetPassword>
+        ) => {
           const data = args[0] as any;
           const request = args[1] as Request | undefined;
           const requestInfo = getRequestInfo(request);
-          
+
           // Mark this email as using token-based reset
           const email = data?.user?.email?.toLowerCase();
           if (email) {
@@ -206,7 +199,9 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
 
       const originalOnPasswordReset = emailAndPasswordConfig.onPasswordReset;
 
-      emailAndPasswordConfig.onPasswordReset = async (...args: Parameters<typeof originalOnPasswordReset>) => {
+      emailAndPasswordConfig.onPasswordReset = async (
+        ...args: Parameters<typeof originalOnPasswordReset>
+      ) => {
         if (originalOnPasswordReset) {
           await originalOnPasswordReset(...args);
         }
@@ -214,17 +209,17 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
         const data = args[0] as any;
         const request = args[1] as Request | undefined;
         const requestInfo = getRequestInfo(request);
-        
+
         const userEmail = data?.user?.email?.toLowerCase();
         const method = userEmail ? passwordResetMethod.get(userEmail) : undefined;
         const isOtpReset = method === 'otp';
-        
+
         if (userEmail) {
           passwordResetMethod.delete(userEmail);
         }
-        
+
         const eventType = isOtpReset ? 'password.reset_completed_otp' : 'password.reset_completed';
-        
+
         emitEvent(
           eventType as any,
           {
@@ -253,18 +248,22 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
 
       if (originalSendVerificationOTP) {
         const wrappedSendVerificationOTP = async (
-          data: { email: string; otp: string; type: 'sign-in' | 'email-verification' | 'forget-password' },
+          data: {
+            email: string;
+            otp: string;
+            type: 'sign-in' | 'email-verification' | 'forget-password';
+          },
           ctx?: any
         ) => {
           const requestInfo = getRequestInfo(ctx?.request || ctx);
-          
+
           if (data.type === 'forget-password') {
             const email = data.email.toLowerCase();
             passwordResetMethod.set(email, 'otp');
           }
 
           const originalPromise = originalSendVerificationOTP(data, ctx);
-          
+
           if (data.type === 'forget-password') {
             const eventPromise = emitEvent(
               'password.reset_requested_otp',
@@ -286,20 +285,16 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
             await originalPromise;
           }
         };
-        
-        // Wrap directly in options
+
         emailOtpPlugin.options.sendVerificationOTP = wrappedSendVerificationOTP;
-        
-        // Wrap the init function to ensure our wrapper is used during init
+
         const originalInit = emailOtpPlugin.init;
         if (originalInit && typeof originalInit === 'function') {
           emailOtpPlugin.init = async (authInstance: any) => {
-            // Ensure our wrapper is in place BEFORE calling original init
             emailOtpPlugin.options.sendVerificationOTP = wrappedSendVerificationOTP;
-            
-            // Call original init
+
             await originalInit(authInstance);
-            
+
             // Re-apply after init
             if (emailOtpPlugin.options) {
               emailOtpPlugin.options.sendVerificationOTP = wrappedSendVerificationOTP;
@@ -310,7 +305,6 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
 
       emailOtpPlugin.__studio_wrapped = true;
     }
-
   } catch (error) {
     // Silently fail - callback wrapping is optional
   }

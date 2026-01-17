@@ -82,8 +82,6 @@ export type EventColors = {
   failed?: string;
 };
 
-
-
 export type WindowStudioConfig = {
   basePath: string;
   metadata: Required<StudioMetadata>;

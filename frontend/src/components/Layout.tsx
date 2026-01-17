@@ -682,14 +682,14 @@ export default function Layout({ children }: LayoutProps) {
           const config = getStudioConfig();
           const liveMarqueeConfig = config?.liveMarquee;
           const liveMarqueeEnabled = liveMarqueeConfig?.enabled !== false;
-          
+
           const pollInterval = liveMarqueeConfig?.pollInterval ?? 2000;
           const speed = liveMarqueeConfig?.speed ?? 0.5;
           const pauseOnHover = liveMarqueeConfig?.pauseOnHover ?? true;
           const limit = liveMarqueeConfig?.limit ?? 50;
           const colors = liveMarqueeConfig?.colors;
           return liveMarqueeEnabled && isSelfHosted ? (
-            <LiveEventMarquee 
+            <LiveEventMarquee
               maxEvents={limit}
               pollInterval={pollInterval}
               speed={speed}

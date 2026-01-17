@@ -28,22 +28,22 @@ interface LiveEventMarqueeProps {
   };
 }
 
-export function LiveEventMarquee({ 
+export function LiveEventMarquee({
   maxEvents: propMaxEvents,
   pollInterval = 2000,
   speed: propSpeed,
   pauseOnHover: propPauseOnHover,
-  colors: propColors
+  colors: propColors,
 }: LiveEventMarqueeProps) {
   const maxEvents = propMaxEvents ?? 50;
   const speedRef = useRef(propSpeed ?? 0.5);
-  
+
   useEffect(() => {
     if (propSpeed !== undefined) {
       speedRef.current = propSpeed;
     }
   }, [propSpeed]);
-  
+
   const [events, setEvents] = useState<AuthEvent[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [lastEventId, setLastEventId] = useState<string | null>(null);
@@ -201,10 +201,14 @@ export function LiveEventMarquee({
       }
 
       const currentSpeed = speedRef.current;
-      
-      const validSpeed = typeof currentSpeed === 'number' && !isNaN(currentSpeed) && isFinite(currentSpeed) && currentSpeed > 0 
-        ? currentSpeed 
-        : 0.5;
+
+      const validSpeed =
+        typeof currentSpeed === 'number' &&
+        !isNaN(currentSpeed) &&
+        isFinite(currentSpeed) &&
+        currentSpeed > 0
+          ? currentSpeed
+          : 0.5;
 
       positionRef.current -= validSpeed;
 
@@ -221,8 +225,7 @@ export function LiveEventMarquee({
 
     animationRef.current = requestAnimationFrame(animate);
 
-    return () => {
-    };
+    return () => {};
   }, [events.length]);
 
   useEffect(() => {
@@ -320,12 +323,17 @@ export function LiveEventMarquee({
           // Get current speed from ref (updated reactively)
           const currentSpeed = speedRef.current;
           // Ensure speed is a valid positive number
-          const validSpeed = typeof currentSpeed === 'number' && !isNaN(currentSpeed) && isFinite(currentSpeed) && currentSpeed > 0 
-            ? currentSpeed 
-            : 0.5;
+          const validSpeed =
+            typeof currentSpeed === 'number' &&
+            !isNaN(currentSpeed) &&
+            isFinite(currentSpeed) &&
+            currentSpeed > 0
+              ? currentSpeed
+              : 0.5;
           positionRef.current -= validSpeed;
 
-          const currentSingleSetWidth = singleSetWidthRef.current || containerRef.current.scrollWidth / 3;
+          const currentSingleSetWidth =
+            singleSetWidthRef.current || containerRef.current.scrollWidth / 3;
           if (Math.abs(positionRef.current) >= currentSingleSetWidth) {
             positionRef.current = 0;
           }
@@ -339,7 +347,7 @@ export function LiveEventMarquee({
   };
 
   return (
-    <div 
+    <div
       className="relative w-full h-10 overflow-hidden bg-black/50 border-y border-white/10"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
