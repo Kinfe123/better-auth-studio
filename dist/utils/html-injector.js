@@ -33,6 +33,9 @@ function prepareFrontendConfig(config) {
         ? {
             enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false
             pollInterval: liveMarqueeConfig?.pollInterval || 2000, // Default: 2000ms
+            speed: liveMarqueeConfig?.speed ?? 0.5, // Default: 0.5 pixels per frame
+            pauseOnHover: liveMarqueeConfig?.pauseOnHover ?? true, // Default: true
+            limit: liveMarqueeConfig?.limit ?? 50, // Default: 50 events in marquee
             colors: liveMarqueeConfig?.colors || undefined,
         }
         : undefined;

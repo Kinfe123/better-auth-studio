@@ -32,6 +32,9 @@ export interface EventColors {
 export interface LiveMarqueeConfig {
     enabled?: boolean;
     pollInterval?: number;
+    speed?: number;
+    pauseOnHover?: boolean;
+    limit?: number;
     colors?: EventColors;
 }
 export interface WindowStudioConfig {

@@ -9,6 +9,14 @@ export type UniversalResponse = {
     headers: Record<string, string>;
     body: string | Buffer;
 };
+export type LiveMarqueeConfig = {
+    enabled?: boolean;
+    pollInterval?: number;
+    speed?: number;
+    pauseOnHover?: boolean;
+    limit?: number;
+    colors?: EventColors;
+};
 export type StudioMetadata = {
     title?: string;
     logo?: string;
@@ -61,17 +69,7 @@ export type StudioConfig = {
         batchSize?: number;
         flushInterval?: number;
         retryOnError?: boolean;
-        liveMarquee?: {
-            enabled?: boolean;
-            pollInterval?: number;
-            colors?: {
-                success?: string;
-                info?: string;
-                warning?: string;
-                error?: string;
-                failed?: string;
-            };
-        };
+        liveMarquee?: LiveMarqueeConfig;
     };
 };
 export type EventColors = {
@@ -80,11 +78,6 @@ export type EventColors = {
     warning?: string;
     error?: string;
     failed?: string;
-};
-export type LiveMarqueeConfig = {
-    enabled?: boolean;
-    pollInterval?: number;
-    colors?: EventColors;
 };
 export type WindowStudioConfig = {
     basePath: string;

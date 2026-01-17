@@ -16,9 +16,21 @@ interface AuthEvent {
 interface LiveEventMarqueeProps {
   maxEvents?: number;
   pollInterval?: number;
+  speed?: number;
+  pauseOnHover?: boolean;
+  limit?: number;
 }
 
-export function LiveEventMarquee({ maxEvents = 50, pollInterval = 2000 }: LiveEventMarqueeProps) {
+export function LiveEventMarquee({ 
+  maxEvents: propMaxEvents,
+  pollInterval = 2000,
+  speed: propSpeed,
+  pauseOnHover: propPauseOnHover
+}: LiveEventMarqueeProps) {
+  // Get config from window or use props/defaults
+  const marqueeConfig = (window as any).__STUDIO_CONFIG__?.liveMarquee;
+  const maxEvents = propMaxEvents ?? marqueeConfig?.limit ?? 50;
+  
   const [events, setEvents] = useState<AuthEvent[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [lastEventId, setLastEventId] = useState<string | null>(null);
@@ -30,6 +42,7 @@ export function LiveEventMarquee({ maxEvents = 50, pollInterval = 2000 }: LiveEv
   const positionRef = useRef(0);
   const singleSetWidthRef = useRef(0);
   const isAnimatingRef = useRef(false);
+  const isPausedRef = useRef(false);
 
   const pollEvents = useCallback(async () => {
     if (isPollingRef.current) return;
@@ -38,7 +51,7 @@ export function LiveEventMarquee({ maxEvents = 50, pollInterval = 2000 }: LiveEv
     try {
       const params = new URLSearchParams({
         limit: '10',
-        sort: 'desc',
+        sort: 'desc', // Newest events first (descending order by timestamp)
       });
 
       if (lastEventId) {
@@ -174,10 +187,17 @@ export function LiveEventMarquee({ maxEvents = 50, pollInterval = 2000 }: LiveEv
       return; // Don't restart animation
     }
 
-    const speed = 0.5;
+    // Get speed from config or props, default to 0.5
+    const speed = propSpeed ?? marqueeConfig?.speed ?? 0.5;
 
     const animate = () => {
-      if (!container || !isAnimatingRef.current) return;
+      if (!container || !isAnimatingRef.current || isPausedRef.current) {
+        // If paused, still request next frame but don't update position
+        if (isAnimatingRef.current && !isPausedRef.current) {
+          animationRef.current = requestAnimationFrame(animate);
+        }
+        return;
+      }
 
       // Update position
       positionRef.current -= speed;
@@ -219,8 +239,7 @@ export function LiveEventMarquee({ maxEvents = 50, pollInterval = 2000 }: LiveEv
   };
 
   const getEventColors = () => {
-    const config = (window as any).__STUDIO_CONFIG__;
-    const colors = config?.liveMarquee?.colors || {};
+    const colors = marqueeConfig?.colors || {};
 
     const defaults = {
       success: 'text-green-400', // #34d399
@@ -274,8 +293,50 @@ export function LiveEventMarquee({ maxEvents = 50, pollInterval = 2000 }: LiveEv
     }
   };
 
+  // Get pauseOnHover from config or props, default to true
+  const pauseOnHover = propPauseOnHover ?? marqueeConfig?.pauseOnHover ?? true;
+
+  const handleMouseEnter = () => {
+    if (pauseOnHover) {
+      isPausedRef.current = true;
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (pauseOnHover) {
+      isPausedRef.current = false;
+      // Resume animation if it was running
+      if (isAnimatingRef.current && containerRef.current) {
+        const animate = () => {
+          if (!containerRef.current || !isAnimatingRef.current || isPausedRef.current) {
+            if (isAnimatingRef.current && !isPausedRef.current) {
+              animationRef.current = requestAnimationFrame(animate);
+            }
+            return;
+          }
+
+          const currentSpeed = propSpeed ?? marqueeConfig?.speed ?? 0.5;
+          positionRef.current -= currentSpeed;
+
+          const currentSingleSetWidth = singleSetWidthRef.current || containerRef.current.scrollWidth / 3;
+          if (Math.abs(positionRef.current) >= currentSingleSetWidth) {
+            positionRef.current = 0;
+          }
+
+          containerRef.current.style.transform = `translate3d(${positionRef.current}px, 0, 0)`;
+          animationRef.current = requestAnimationFrame(animate);
+        };
+        animationRef.current = requestAnimationFrame(animate);
+      }
+    }
+  };
+
   return (
-    <div className="relative w-full h-10 overflow-hidden bg-black/50 border-y border-white/10">
+    <div 
+      className="relative w-full h-10 overflow-hidden bg-black/50 border-y border-white/10"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="absolute -top-1 right-4 z-10 flex items-center gap-1 py-1">
         <div
           className={`w-1 h-1 rounded-full ${

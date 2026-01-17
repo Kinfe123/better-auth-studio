@@ -10,7 +10,14 @@ export type UniversalResponse = {
   headers: Record<string, string>;
   body: string | Buffer;
 };
-
+export type LiveMarqueeConfig = {
+  enabled?: boolean;
+  pollInterval?: number; // Polling interval in milliseconds (default: 2000)
+  speed?: number; // Animation speed in pixels per frame (default: 0.5)
+  pauseOnHover?: boolean; // Pause animation when hovered (default: true)
+  limit?: number; // Maximum number of events to display in marquee (default: 50)
+  colors?: EventColors;
+};
 export type StudioMetadata = {
   title?: string;
   logo?: string;
@@ -63,17 +70,7 @@ export type StudioConfig = {
     batchSize?: number;
     flushInterval?: number;
     retryOnError?: boolean;
-    liveMarquee?: {
-      enabled?: boolean;
-      pollInterval?: number; // Polling interval in milliseconds (default: 2000)
-      colors?: {
-        success?: string;
-        info?: string;
-        warning?: string;
-        error?: string;
-        failed?: string;
-      };
-    };
+    liveMarquee?: LiveMarqueeConfig;
   };
 };
 
@@ -85,11 +82,7 @@ export type EventColors = {
   failed?: string;
 };
 
-export type LiveMarqueeConfig = {
-  enabled?: boolean;
-  pollInterval?: number; // Polling interval in milliseconds (default: 2000)
-  colors?: EventColors;
-};
+
 
 export type WindowStudioConfig = {
   basePath: string;

@@ -1511,7 +1511,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         try {
             const limit = parseInt(req.query.limit, 10) || 20;
             const after = req.query.after; // Cursor
-            const sort = req.query.sort || 'desc';
+            const sort = req.query.sort || 'desc'; // Default: 'desc' = newest first
             const type = req.query.type;
             const userId = req.query.userId;
             const { getEventIngestionProvider } = await import('./utils/event-ingestion.js');

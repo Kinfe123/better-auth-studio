@@ -213,16 +213,12 @@ export function createPostgresProvider(options: {
     async query(options: EventQueryOptions): Promise<EventQueryResult> {
       const { limit = 20, after, sort = 'desc', type, userId } = options;
 
-      // Support Prisma client ($executeRaw) or standard pg client (query/Pool)
       let queryFn: (query: string, params?: any[]) => Promise<any>;
 
       if (client.$executeRaw) {
         // Prisma client
         queryFn = async (query: string, params?: any[]) => {
-          // For Prisma, we need to use $queryRawUnsafe for SELECT queries with parameters
-          // But for simplicity, we'll use $executeRawUnsafe and handle params manually
           if (params && params.length > 0) {
-            // Replace $1, $2, etc. with actual values
             let processedQuery = query;
             params.forEach((param, index) => {
               const placeholder = `$${index + 1}`;
@@ -278,7 +274,6 @@ export function createPostgresProvider(options: {
           : checkResult.rows?.[0]?.exists || checkResult?.[0]?.exists || false;
 
         if (!exists) {
-          // Table doesn't exist, return empty result
           return {
             events: [],
             hasMore: false,
@@ -286,7 +281,6 @@ export function createPostgresProvider(options: {
           };
         }
       } catch (error: any) {
-        // If check fails, try to query anyway (table might exist but check failed)
         console.warn(`Failed to check table existence:`, error);
       }
 
@@ -422,7 +416,6 @@ export function createClickHouseProvider(options: {
     }
   };
 
-  // Track if table creation is in progress or completed
   let tableEnsured = false;
   let tableEnsuring = false;
 
@@ -445,7 +438,6 @@ export function createClickHouseProvider(options: {
   const ingestBatchFn = async (events: AuthEvent[]) => {
     if (events.length === 0) return;
 
-    // Ensure table exists before ingesting
     if (!tableEnsured) {
       await ensureTableSync();
     }
@@ -521,7 +513,6 @@ export function createClickHouseProvider(options: {
       const { limit = 20, after, sort = 'desc', type, userId } = options;
       const tableFullName = database ? `${database}.${table}` : table;
 
-      // First, ensure table exists
       try {
         const checkTableQuery = `EXISTS TABLE ${tableFullName}`;
         let tableExists = false;
@@ -607,7 +598,6 @@ export function createClickHouseProvider(options: {
               }
             }
 
-            // If status column doesn't exist, add it
             if (!columnExists) {
               const addColumnQuery = `ALTER TABLE ${tableFullName} ADD COLUMN IF NOT EXISTS status String DEFAULT 'success'`;
               try {
@@ -623,18 +613,15 @@ export function createClickHouseProvider(options: {
               }
             }
           } catch (checkError) {
-            // If column check fails, continue anyway
             console.warn(`Failed to check for status column:`, checkError);
           }
         }
       } catch (error: any) {
-        // If table creation fails, that's okay - might already exist
         if (!error?.message?.includes('already exists') && error?.code !== 57) {
           console.warn(`Failed to ensure ClickHouse table ${tableFullName}:`, error);
         }
       }
 
-      // Build query with proper escaping
       const whereClauses: string[] = [];
       if (after) {
         if (sort === 'desc') {
@@ -705,7 +692,6 @@ export function createClickHouseProvider(options: {
               result = typeof execResult === 'string' ? JSON.parse(execResult) : execResult;
             }
           } catch (retryError: any) {
-            // If table doesn't exist, return empty result
             if (retryError?.message?.includes("doesn't exist") || retryError?.code === 60) {
               return {
                 events: [],
@@ -716,7 +702,6 @@ export function createClickHouseProvider(options: {
             throw retryError;
           }
         } else if (error?.message?.includes("doesn't exist") || error?.code === 60) {
-          // If table doesn't exist, return empty result
           return {
             events: [],
             hasMore: false,
@@ -797,18 +782,14 @@ export function createStorageProvider(options: {
     if (!adapter) return;
 
     try {
-      // Try to query the table to check if it exists
       if (adapter.findMany) {
         await adapter.findMany({
           model: tableName,
           limit: 1,
         });
-        // If no error, table exists
         return;
       }
     } catch (error: any) {
-      // Table doesn't exist, try to create it
-      // This depends on the adapter type (Prisma, Drizzle, etc.)
       console.warn(
         `Table ${tableName} may not exist. Please create it manually or run migrations.`
       );
@@ -838,7 +819,6 @@ CREATE INDEX IF NOT EXISTS idx_${tableName}_timestamp ON ${tableName}(timestamp 
     }
   };
 
-  // Call ensureTable asynchronously
   ensureTable().catch(console.error);
 
   return {
@@ -918,7 +898,6 @@ CREATE INDEX IF NOT EXISTS idx_${tableName}_timestamp ON ${tableName}(timestamp 
 
       const where: any[] = [];
 
-      // Cursor-based pagination
       if (after) {
         if (sort === 'desc') {
           where.push({ field: 'id', operator: '<', value: after });

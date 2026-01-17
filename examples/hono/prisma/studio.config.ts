@@ -22,8 +22,12 @@ const config: StudioConfig = {
     client: clickhouseClient,
     clientType: 'clickhouse',
     tableName: 'auth_events',
-    // batchSize: 10,
-    // flushInterval: 5000
+    liveMarquee: {
+      enabled: true,
+      pollInterval: 2000,
+      speed: 100,
+      pauseOnHover: true,
+    },
   }
 };
 

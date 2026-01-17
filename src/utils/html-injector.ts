@@ -36,9 +36,13 @@ export interface EventColors {
   failed?: string;
 }
 
+// LiveMarqueeConfig is defined in types/handler.ts
 export interface LiveMarqueeConfig {
   enabled?: boolean;
   pollInterval?: number;
+  speed?: number; // Animation speed in pixels per frame (default: 0.5)
+  pauseOnHover?: boolean; // Pause animation when hovered (default: true)
+  limit?: number; // Maximum number of events to display in marquee (default: 50)
   colors?: EventColors;
 }
 
@@ -88,6 +92,9 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
     ? {
         enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false
         pollInterval: liveMarqueeConfig?.pollInterval || 2000, // Default: 2000ms
+        speed: liveMarqueeConfig?.speed ?? 0.5, // Default: 0.5 pixels per frame
+        pauseOnHover: liveMarqueeConfig?.pauseOnHover ?? true, // Default: true
+        limit: liveMarqueeConfig?.limit ?? 50, // Default: 50 events in marquee
         colors: liveMarqueeConfig?.colors || undefined,
       }
     : undefined;

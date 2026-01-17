@@ -53,13 +53,6 @@ export function wrapAuthCallbacks(auth, eventsConfig) {
         return;
     }
     try {
-        console.log('[Auth Callbacks] Starting wrapAuthCallbacks', {
-            hasAuth: !!auth,
-            hasOptions: !!auth.options,
-            hasPlugins: !!auth.options?.plugins,
-            pluginsCount: auth.options?.plugins?.length || 0,
-            pluginIds: auth.options?.plugins?.map((p) => p?.id) || [],
-        });
         const capturedConfig = eventsConfig;
         const wrapCallback = (originalCallback, eventType, eventData) => {
             return (async (...args) => {
@@ -121,13 +114,6 @@ export function wrapAuthCallbacks(auth, eventsConfig) {
             emailVerificationConfig.__studio_wrapped = true;
         }
         const emailAndPasswordConfig = auth.options?.emailAndPassword || auth.emailAndPassword;
-        console.log('[Auth Callbacks] emailAndPasswordConfig:', {
-            exists: !!emailAndPasswordConfig,
-            hasSendResetPassword: !!emailAndPasswordConfig?.sendResetPassword,
-            hasOnPasswordReset: !!emailAndPasswordConfig?.onPasswordReset,
-            alreadyWrapped: !!emailAndPasswordConfig?.__studio_wrapped,
-            configKeys: Object.keys(emailAndPasswordConfig || {}),
-        });
         if (emailAndPasswordConfig && !emailAndPasswordConfig.__studio_wrapped) {
             const originalOnPasswordChange = emailAndPasswordConfig.onPasswordChange;
             emailAndPasswordConfig.onPasswordChange = wrapCallback(originalOnPasswordChange, 'user.password_changed', (args) => {
@@ -144,13 +130,8 @@ export function wrapAuthCallbacks(auth, eventsConfig) {
             });
             // Wrap sendResetPassword to track password.reset_requested
             const originalSendResetPassword = emailAndPasswordConfig.sendResetPassword;
-            console.log('[Auth Callbacks] sendResetPassword:', {
-                exists: !!originalSendResetPassword,
-                type: typeof originalSendResetPassword,
-            });
             if (originalSendResetPassword) {
                 emailAndPasswordConfig.sendResetPassword = async (...args) => {
-                    console.log('[Auth Callbacks] sendResetPassword called!', { argsCount: args.length });
                     const data = args[0];
                     const request = args[1];
                     const requestInfo = getRequestInfo(request);
@@ -173,18 +154,9 @@ export function wrapAuthCallbacks(auth, eventsConfig) {
                     await originalPromise;
                     eventPromise.catch(() => { });
                 };
-                console.log('[Auth Callbacks] sendResetPassword wrapped successfully');
-            }
-            else {
-                console.warn('[Auth Callbacks] sendResetPassword not found in emailAndPasswordConfig');
             }
             const originalOnPasswordReset = emailAndPasswordConfig.onPasswordReset;
-            console.log('[Auth Callbacks] onPasswordReset:', {
-                exists: !!originalOnPasswordReset,
-                type: typeof originalOnPasswordReset,
-            });
             emailAndPasswordConfig.onPasswordReset = async (...args) => {
-                console.log('[Auth Callbacks] onPasswordReset called!', { argsCount: args.length });
                 if (originalOnPasswordReset) {
                     await originalOnPasswordReset(...args);
                 }
@@ -194,12 +166,6 @@ export function wrapAuthCallbacks(auth, eventsConfig) {
                 const userEmail = data?.user?.email?.toLowerCase();
                 const method = userEmail ? passwordResetMethod.get(userEmail) : undefined;
                 const isOtpReset = method === 'otp';
-                console.log('[Auth Callbacks] onPasswordReset details:', {
-                    userEmail,
-                    method,
-                    isOtpReset,
-                    hasUser: !!data?.user,
-                });
                 if (userEmail) {
                     passwordResetMethod.delete(userEmail);
                 }
@@ -216,35 +182,14 @@ export function wrapAuthCallbacks(auth, eventsConfig) {
                     request: requestInfo,
                 }, capturedConfig).catch(() => { });
             };
-            console.log('[Auth Callbacks] onPasswordReset wrapped successfully');
             emailAndPasswordConfig.__studio_wrapped = true;
         }
         const emailOtpPlugin = auth.options?.plugins?.find((p) => p?.id === 'email-otp');
-        console.log('[Auth Callbacks] emailOtpPlugin:', {
-            exists: !!emailOtpPlugin,
-            hasOptions: !!emailOtpPlugin?.options,
-            hasSendVerificationOTP: !!emailOtpPlugin?.options?.sendVerificationOTP,
-            alreadyWrapped: !!emailOtpPlugin?.__studio_wrapped,
-            pluginKeys: Object.keys(emailOtpPlugin || {}),
-            optionsKeys: Object.keys(emailOtpPlugin?.options || {}),
-            hasInit: !!emailOtpPlugin?.init,
-        });
+        // TODO: Fix email-otp sendVerificationOTP callback wrapping because of plugin closure
         if (emailOtpPlugin && !emailOtpPlugin.__studio_wrapped) {
             const originalSendVerificationOTP = emailOtpPlugin.options?.sendVerificationOTP;
-            console.log('[Auth Callbacks] sendVerificationOTP:', {
-                exists: !!originalSendVerificationOTP,
-                type: typeof originalSendVerificationOTP,
-                pluginHasSendVerificationOTP: !!emailOtpPlugin.sendVerificationOTP,
-                pluginKeys: Object.keys(emailOtpPlugin),
-            });
             if (originalSendVerificationOTP) {
-                console.log('[Auth Callbacks] Wrapping sendVerificationOTP...');
                 const wrappedSendVerificationOTP = async (data, ctx) => {
-                    console.log('[Auth Callbacks] sendVerificationOTP called!', {
-                        type: data.type,
-                        email: data.email,
-                        hasCtx: !!ctx,
-                    });
                     const requestInfo = getRequestInfo(ctx?.request || ctx);
                     if (data.type === 'forget-password') {
                         const email = data.email.toLowerCase();
@@ -274,7 +219,6 @@ export function wrapAuthCallbacks(auth, eventsConfig) {
                 const originalInit = emailOtpPlugin.init;
                 if (originalInit && typeof originalInit === 'function') {
                     emailOtpPlugin.init = async (authInstance) => {
-                        console.log('[Auth Callbacks] emailOtpPlugin init called');
                         // Ensure our wrapper is in place BEFORE calling original init
                         emailOtpPlugin.options.sendVerificationOTP = wrappedSendVerificationOTP;
                         // Call original init
@@ -282,26 +226,15 @@ export function wrapAuthCallbacks(auth, eventsConfig) {
                         // Re-apply after init
                         if (emailOtpPlugin.options) {
                             emailOtpPlugin.options.sendVerificationOTP = wrappedSendVerificationOTP;
-                            console.log('[Auth Callbacks] Re-applied sendVerificationOTP wrapper after init');
                         }
                     };
                 }
-                console.log('[Auth Callbacks] sendVerificationOTP wrapped successfully');
-            }
-            else {
-                console.warn('[Auth Callbacks] sendVerificationOTP not found in emailOtpPlugin.options');
             }
             emailOtpPlugin.__studio_wrapped = true;
         }
-        else if (emailOtpPlugin && emailOtpPlugin.__studio_wrapped) {
-            console.log('[Auth Callbacks] emailOtpPlugin already wrapped, skipping');
-        }
-        else {
-            console.warn('[Auth Callbacks] emailOtpPlugin not found in plugins');
-        }
     }
     catch (error) {
-        console.error('[Auth Callbacks] Failed to wrap callbacks:', error);
+        // Silently fail - callback wrapping is optional
     }
 }
 //# sourceMappingURL=auth-callbacks-injector.js.map

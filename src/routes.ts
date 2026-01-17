@@ -1717,7 +1717,7 @@ export function createRoutes(
     try {
       const limit = parseInt(req.query.limit as string, 10) || 20;
       const after = req.query.after as string; // Cursor
-      const sort = (req.query.sort as string) || 'desc';
+      const sort = (req.query.sort as string) || 'desc'; // Default: 'desc' = newest first
       const type = req.query.type as string;
       const userId = req.query.userId as string;
 

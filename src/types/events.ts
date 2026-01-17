@@ -55,7 +55,7 @@ export interface AuthEvent {
 export interface EventQueryOptions {
   limit?: number;
   after?: string; // Cursor for pagination
-  sort?: 'asc' | 'desc';
+  sort?: 'asc' | 'desc'; // 'desc' = newest first (default), 'asc' = oldest first
   type?: string;
   userId?: string;
 }
