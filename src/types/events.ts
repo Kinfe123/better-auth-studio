@@ -19,6 +19,8 @@ export type AuthEventType =
   | 'login.failed'
   | 'password.reset_requested'
   | 'password.reset_completed'
+  | 'password.reset_requested_otp'
+  | 'password.reset_completed_otp'
   | 'oauth.linked'
   | 'oauth.unlinked'
   | 'oauth.sign_in'
@@ -224,6 +226,22 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
       return `Failed to complete password reset for "${name}"`;
     }
     return `${name} reset their password`;
+  },
+  'password.reset_requested_otp': (event) => {
+    const email = event.metadata?.email || 'User';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'unknown error';
+      return `Failed to request password reset OTP for "${email}"`;
+    }
+    return `Password reset OTP requested for ${email}`;
+  },
+  'password.reset_completed_otp': (event) => {
+    const name = event.metadata?.name || event.metadata?.email || 'Someone';
+    if (event.status === 'failed') {
+      const reason = event.metadata?.reason || 'invalid credentials';
+      return `Failed to complete password reset via email OTP for "${name}"`;
+    }
+    return `${name} reset their password via email OTP`;
   },
   'oauth.linked': (event) => {
     const provider = event.metadata?.provider || 'OAuth';

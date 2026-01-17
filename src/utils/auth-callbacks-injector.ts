@@ -42,6 +42,16 @@ function getRequestInfo(request?: Request | any): { headers: Record<string, stri
  * Wraps Better Auth callbacks to automatically emit events
  * This should be called during Better Auth initialization
  */
+// Map to track which password reset method was used (for completion event)
+// Key: email, Value: 'otp' | 'token'
+const passwordResetMethod = new Map<string, 'otp' | 'token'>();
+
+// Clean up old entries periodically (they should be cleared after use, but just in case)
+setInterval(() => {
+  // Clear all entries - they should be cleared after password reset completes anyway
+  passwordResetMethod.clear();
+}, 60 * 60 * 1000); // Every hour
+
 export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events']): void {
   if (!auth || !eventsConfig?.enabled) {
     return;
@@ -137,6 +147,7 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
     }
 
     const emailAndPasswordConfig = auth.options?.emailAndPassword || auth.emailAndPassword;
+
     if (emailAndPasswordConfig && !emailAndPasswordConfig.__studio_wrapped) {
       const originalOnPasswordChange = emailAndPasswordConfig.onPasswordChange;
 
@@ -157,30 +168,150 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
         }
       );
 
-      const originalOnPasswordReset = emailAndPasswordConfig.onPasswordReset;
+      // Wrap sendResetPassword to track password.reset_requested
+      const originalSendResetPassword = emailAndPasswordConfig.sendResetPassword;
 
-      emailAndPasswordConfig.onPasswordReset = wrapCallback(
-        originalOnPasswordReset,
-        'password.reset_completed',
-        (args) => {
+      if (originalSendResetPassword) {
+        emailAndPasswordConfig.sendResetPassword = async (...args: Parameters<typeof originalSendResetPassword>) => {
           const data = args[0] as any;
           const request = args[1] as Request | undefined;
           const requestInfo = getRequestInfo(request);
-          return {
+          
+          // Mark this email as using token-based reset
+          const email = data?.user?.email?.toLowerCase();
+          if (email) {
+            passwordResetMethod.set(email, 'token');
+          }
+
+          const originalPromise = originalSendResetPassword(...args);
+          const eventPromise = emitEvent(
+            'password.reset_requested',
+            {
+              status: 'success',
+              userId: data?.user?.id,
+              metadata: {
+                email: data?.user?.email,
+                name: data?.user?.name || data?.user?.email || 'Someone',
+                requestedAt: new Date().toISOString(),
+              },
+              request: requestInfo,
+            },
+            capturedConfig
+          ).catch(() => {});
+
+          await originalPromise;
+          eventPromise.catch(() => {});
+        };
+      }
+
+      const originalOnPasswordReset = emailAndPasswordConfig.onPasswordReset;
+
+      emailAndPasswordConfig.onPasswordReset = async (...args: Parameters<typeof originalOnPasswordReset>) => {
+        if (originalOnPasswordReset) {
+          await originalOnPasswordReset(...args);
+        }
+
+        const data = args[0] as any;
+        const request = args[1] as Request | undefined;
+        const requestInfo = getRequestInfo(request);
+        
+        const userEmail = data?.user?.email?.toLowerCase();
+        const method = userEmail ? passwordResetMethod.get(userEmail) : undefined;
+        const isOtpReset = method === 'otp';
+        
+        if (userEmail) {
+          passwordResetMethod.delete(userEmail);
+        }
+        
+        const eventType = isOtpReset ? 'password.reset_completed_otp' : 'password.reset_completed';
+        
+        emitEvent(
+          eventType as any,
+          {
+            status: 'success',
             userId: data?.user?.id,
             metadata: {
               email: data?.user?.email,
               name: data?.user?.name || data?.user?.email || 'Someone',
               resetAt: new Date().toISOString(),
+              method: isOtpReset ? 'email_otp' : 'token',
             },
             request: requestInfo,
-          };
-        }
-      );
+          },
+          capturedConfig
+        ).catch(() => {});
+      };
 
       emailAndPasswordConfig.__studio_wrapped = true;
     }
+
+    const emailOtpPlugin = auth.options?.plugins?.find((p: any) => p?.id === 'email-otp');
+
+    // TODO: Fix email-otp sendVerificationOTP callback wrapping because of plugin closure
+    if (emailOtpPlugin && !emailOtpPlugin.__studio_wrapped) {
+      const originalSendVerificationOTP = emailOtpPlugin.options?.sendVerificationOTP;
+
+      if (originalSendVerificationOTP) {
+        const wrappedSendVerificationOTP = async (
+          data: { email: string; otp: string; type: 'sign-in' | 'email-verification' | 'forget-password' },
+          ctx?: any
+        ) => {
+          const requestInfo = getRequestInfo(ctx?.request || ctx);
+          
+          if (data.type === 'forget-password') {
+            const email = data.email.toLowerCase();
+            passwordResetMethod.set(email, 'otp');
+          }
+
+          const originalPromise = originalSendVerificationOTP(data, ctx);
+          
+          if (data.type === 'forget-password') {
+            const eventPromise = emitEvent(
+              'password.reset_requested_otp',
+              {
+                status: 'success',
+                metadata: {
+                  email: data.email,
+                  type: 'forget-password',
+                  requestedAt: new Date().toISOString(),
+                },
+                request: requestInfo,
+              },
+              capturedConfig
+            ).catch(() => {});
+
+            await originalPromise;
+            eventPromise.catch(() => {});
+          } else {
+            await originalPromise;
+          }
+        };
+        
+        // Wrap directly in options
+        emailOtpPlugin.options.sendVerificationOTP = wrappedSendVerificationOTP;
+        
+        // Wrap the init function to ensure our wrapper is used during init
+        const originalInit = emailOtpPlugin.init;
+        if (originalInit && typeof originalInit === 'function') {
+          emailOtpPlugin.init = async (authInstance: any) => {
+            // Ensure our wrapper is in place BEFORE calling original init
+            emailOtpPlugin.options.sendVerificationOTP = wrappedSendVerificationOTP;
+            
+            // Call original init
+            await originalInit(authInstance);
+            
+            // Re-apply after init
+            if (emailOtpPlugin.options) {
+              emailOtpPlugin.options.sendVerificationOTP = wrappedSendVerificationOTP;
+            }
+          };
+        }
+      }
+
+      emailOtpPlugin.__studio_wrapped = true;
+    }
+
   } catch (error) {
-    console.error('[Auth Callbacks] Failed to wrap callbacks:', error);
+    // Silently fail - callback wrapping is optional
   }
 }

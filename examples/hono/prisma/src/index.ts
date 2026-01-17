@@ -78,23 +78,37 @@ app.get('/', async (c) => {
   }
 });
 app.get("/test", async (c) => {
-  const {status} = await auth.api.requestPasswordReset({
+  const {success} = await auth.api.forgetPasswordEmailOTP({
     body: {
       email: "user@test.com",
-      redirectTo: "http://localhost:3000/test/reset"
     }
   }) 
-  return c.json({ message: 'Test', status });
+  // for normal password reset requeset   
+  // const result = await auth.api.requestPasswordReset({
+  //   body: {
+  //     email: "user@test.com",
+  //   }
+  // })
+  return c.json({ message: 'Test', success });
 });
 app.get("/test/reset", async (c) => { 
   const token = c.req.query("token");
-  const {status} = await auth.api.resetPassword({
+  const codeOtp = await prisma!.codeOtp.findMany();
+  const {success} = await auth.api.resetPasswordEmailOTP({
     body: {
-      token: token,
-      newPassword: "someonepassword"
+      email: "user@test.com",
+      otp: "912210",
+      password: "someonepassword"
     }
   })
-  return c.json({ message: 'Test', status });
+  // for normal password reset
+  // const result = await auth.api.resetPassword({
+  //   body: {
+  //     token: token,
+  //     newPassword: "someonepassword"
+  //   }
+  // })  
+  return c.json({ message: 'Test', success });
 }); 
 // Start server
 const PORT = parseInt(process.env.PORT || '3000', 10);

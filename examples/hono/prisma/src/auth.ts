@@ -94,6 +94,11 @@ export const auth = betterAuth({
         }),
         emailOTP({
             sendVerificationOTP: async ({ email, otp, type }) => {
+                // const result = await prisma.codeOtp.create({
+                //     data: {
+                //         code: otp,
+                //     }
+                // })
                 console.log(`Verification OTP email for ${email}: ${otp}`);
             },
         })
