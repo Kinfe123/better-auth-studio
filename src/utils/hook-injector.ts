@@ -191,51 +191,6 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             ).catch(() => {});
           }
         }
-        if (path === '/reset-password') {
-          const body = ctx.body || {};
-          const user = returned?.user || ctx.context?.user;
-
-          if (!isError && user) {
-            emitEvent(
-              'password.reset_completed',
-              {
-                status: 'success',
-                userId: user.id,
-                metadata: {
-                  email: user.email,
-                  name: user.name,
-                  token: body.token || body.code,
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          } else if (isError) {
-            emitEvent(
-              'password.reset_completed',
-              {
-                status: 'failed',
-                metadata: {
-                  reason:
-                    returned.statusCode === 400
-                      ? 'invalid_token'
-                      : returned.statusCode === 404
-                        ? 'token_not_found'
-                        : returned.body?.code || returned.body?.message || 'unknown',
-                  token: body.token || body.code,
-                },
-                request: {
-                  headers: headersObj,
-                  ip: ip || undefined,
-                },
-              },
-              capturedConfig
-            ).catch(() => {});
-          }
-        }
 
         // User deleted
         // OAuth unlinked
@@ -321,7 +276,6 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     : undefined;
 
               if (existingUser) {
-                // Existing user linking a new OAuth account
                 emitEvent(
                   'oauth.linked',
                   {
@@ -751,7 +705,6 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
               path === '/change-password' ||
               path === '/verify-email' ||
               path === '/forget-password' ||
-              path === '/reset-password' ||
               path === '/delete-user' ||
               path === '/unlink-account' ||
               path.startsWith('/callback') ||

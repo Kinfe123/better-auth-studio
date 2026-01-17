@@ -120,6 +120,22 @@ export function wrapAuthCallbacks(auth, eventsConfig) {
                     },
                 };
             });
+            const originalOnPasswordReset = emailAndPasswordConfig.onPasswordReset;
+            emailAndPasswordConfig.onPasswordReset = wrapCallback(originalOnPasswordReset, 'password.reset_completed', (args) => {
+                console.log({ args });
+                const data = args[0];
+                const request = args[1];
+                const requestInfo = getRequestInfo(request);
+                return {
+                    userId: data?.user?.id,
+                    metadata: {
+                        email: data?.user?.email,
+                        name: data?.user?.name || data?.user?.email || 'Someone',
+                        resetAt: new Date().toISOString(),
+                    },
+                    request: requestInfo,
+                };
+            });
             emailAndPasswordConfig.__studio_wrapped = true;
         }
     }

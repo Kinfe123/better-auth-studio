@@ -1,6 +1,6 @@
-import { betterAuth } from 'better-auth';
+import { betterAuth, url } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { organization, admin, createAuthMiddleware } from 'better-auth/plugins';
+import { organization, admin, createAuthMiddleware, emailOTP } from 'better-auth/plugins';
 import prisma from './prisma';
 
 const baseURL = process.env.BETTER_AUTH_URL || 'http://localhost:3000';
@@ -42,6 +42,16 @@ export const auth = betterAuth({
             } 
         }
     }, 
+    hooks: {
+        // before: createAuthMiddleware(async (ctx) => {
+        //     console.log("Before hook triggered", {ctx})
+        //     return ctx
+        // }),
+        // after: createAuthMiddleware(async (ctx) => {
+        //     console.log("After hook triggered", {ctx})
+        //     return ctx
+        // }),
+    },
     emailAndPassword: {
         enabled: true,
         disableSignUp: false,
@@ -52,7 +62,10 @@ export const auth = betterAuth({
         sendResetPassword: async ({ user, url, token }) => {
             console.log(`Reset password email for ${user.email}: ${url}`);
         },
-        resetPasswordTokenExpiresIn: 3600, // 1 hour
+        resetPasswordTokenExpiresIn: 3600, // 1 hour,
+        onPasswordReset: async ({user}) => {
+            console.log(`Password reset email for ${user.email}`);
+        },
     },
     emailVerification: {
         sendVerificationEmail: async ({ user, url, token }) => {
@@ -79,6 +92,11 @@ export const auth = betterAuth({
         admin({
             adminUserIds: ['i66uyfRQar7veXs94jLZ48YKZO8ehxxK']
         }),
+        emailOTP({
+            sendVerificationOTP: async ({ email, otp, type }) => {
+                console.log(`Verification OTP email for ${email}: ${otp}`);
+            },
+        })
     ],
     session: {
         expiresIn: 60 * 60 * 24 * 7, // 7 days
@@ -100,3 +118,4 @@ export const auth = betterAuth({
     trustedOrigins: ['http://localhost:3002', 'http://localhost:3000'],
 });
 
+auth.options.emailAndPassword.onPasswordReset

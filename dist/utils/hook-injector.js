@@ -59,10 +59,10 @@ function createEventIngestionPlugin(eventsConfig) {
                         emitEvent('user.joined', {
                             status: 'success',
                             userId: returned.user.id,
-                            sessionId: "",
+                            sessionId: '',
                             metadata: {
-                                email: body.email || returned.user.email || "",
-                                name: body.name || returned.user.name || "",
+                                email: body.email || returned.user.email || '',
+                                name: body.name || returned.user.name || '',
                             },
                             request: {
                                 headers: headersObj,
@@ -160,42 +160,6 @@ function createEventIngestionPlugin(eventsConfig) {
                         }, capturedConfig).catch(() => { });
                     }
                 }
-                if (path === '/reset-password') {
-                    const body = ctx.body || {};
-                    const user = returned?.user || ctx.context?.user;
-                    if (!isError && user) {
-                        emitEvent('password.reset_completed', {
-                            status: 'success',
-                            userId: user.id,
-                            metadata: {
-                                email: user.email,
-                                name: user.name,
-                                token: body.token || body.code,
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                    else if (isError) {
-                        emitEvent('password.reset_completed', {
-                            status: 'failed',
-                            metadata: {
-                                reason: returned.statusCode === 400
-                                    ? 'invalid_token'
-                                    : returned.statusCode === 404
-                                        ? 'token_not_found'
-                                        : returned.body?.code || returned.body?.message || 'unknown',
-                                token: body.token || body.code,
-                            },
-                            request: {
-                                headers: headersObj,
-                                ip: ip || undefined,
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                }
                 // User deleted
                 // OAuth unlinked
                 if (path === '/unlink-account') {
@@ -249,7 +213,9 @@ function createEventIngestionPlugin(eventsConfig) {
                             returned?.data?.user ||
                             ctx.context?.user ||
                             ctx.user ||
-                            (returned?.data && typeof returned.data === 'object' && 'user' in returned.data ? returned.data.user : null);
+                            (returned?.data && typeof returned.data === 'object' && 'user' in returned.data
+                                ? returned.data.user
+                                : null);
                         const existingUser = ctx.context?.existingUser;
                         const params = ctx.params;
                         if (user) {
@@ -258,10 +224,10 @@ function createEventIngestionPlugin(eventsConfig) {
                                 : path.includes('/oauth2/callback/')
                                     ? path.split('/oauth2/callback/')[1]?.split('/')[0]
                                     : path.includes('/callback')
-                                        ? path.split('/callback')[1]?.split('/')[1] || path.split('/callback')[1]?.split('?')[0]
+                                        ? path.split('/callback')[1]?.split('/')[1] ||
+                                            path.split('/callback')[1]?.split('?')[0]
                                         : undefined;
                             if (existingUser) {
-                                // Existing user linking a new OAuth account
                                 emitEvent('oauth.linked', {
                                     status: 'success',
                                     userId: user.id,
@@ -294,7 +260,8 @@ function createEventIngestionPlugin(eventsConfig) {
                                         headers: headersObj,
                                         ip: ip || undefined,
                                     },
-                                }, capturedConfig).then(() => {
+                                }, capturedConfig)
+                                    .then(() => {
                                     if (!isError && newSession && user) {
                                         emitEvent('session.created', {
                                             status: 'success',
@@ -328,7 +295,8 @@ function createEventIngestionPlugin(eventsConfig) {
                                             },
                                         }, capturedConfig).catch(() => { });
                                     }
-                                }).catch(() => { });
+                                })
+                                    .catch(() => { });
                             }
                         }
                     }
@@ -620,7 +588,6 @@ function createEventIngestionPlugin(eventsConfig) {
                             path === '/change-password' ||
                             path === '/verify-email' ||
                             path === '/forget-password' ||
-                            path === '/reset-password' ||
                             path === '/delete-user' ||
                             path === '/unlink-account' ||
                             path.startsWith('/callback') ||

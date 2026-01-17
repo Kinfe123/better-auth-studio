@@ -18,9 +18,8 @@ app.use(
     exposeHeaders: ['Content-Length'],
     maxAge: 600,
     credentials: true,
-  })
+  }),
 );
-
 // Health check
 app.get('/health', (c) => {
   return c.json({
@@ -79,10 +78,24 @@ app.get('/', async (c) => {
   }
 });
 app.get("/test", async (c) => {
-
-  return c.json({ message: 'Test' });
+  const {status} = await auth.api.requestPasswordReset({
+    body: {
+      email: "user@test.com",
+      redirectTo: "http://localhost:3000/test/reset"
+    }
+  }) 
+  return c.json({ message: 'Test', status });
 });
-
+app.get("/test/reset", async (c) => { 
+  const token = c.req.query("token");
+  const {status} = await auth.api.resetPassword({
+    body: {
+      token: token,
+      newPassword: "someonepassword"
+    }
+  })
+  return c.json({ message: 'Test', status });
+}); 
 // Start server
 const PORT = parseInt(process.env.PORT || '3000', 10);
 serve({

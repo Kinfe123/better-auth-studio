@@ -157,6 +157,27 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
         }
       );
 
+      const originalOnPasswordReset = emailAndPasswordConfig.onPasswordReset;
+
+      emailAndPasswordConfig.onPasswordReset = wrapCallback(
+        originalOnPasswordReset,
+        'password.reset_completed',
+        (args) => {
+          const data = args[0] as any;
+          const request = args[1] as Request | undefined;
+          const requestInfo = getRequestInfo(request);
+          return {
+            userId: data?.user?.id,
+            metadata: {
+              email: data?.user?.email,
+              name: data?.user?.name || data?.user?.email || 'Someone',
+              resetAt: new Date().toISOString(),
+            },
+            request: requestInfo,
+          };
+        }
+      );
+
       emailAndPasswordConfig.__studio_wrapped = true;
     }
   } catch (error) {

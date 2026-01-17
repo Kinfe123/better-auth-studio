@@ -144,12 +144,12 @@ export const EVENT_TEMPLATES = {
         return `Password reset requested for ${email}`;
     },
     'password.reset_completed': (event) => {
-        const name = event.metadata?.name || event.metadata?.email || 'User';
+        const name = event.metadata?.name || event.metadata?.email || 'Someone';
         if (event.status === 'failed') {
             const reason = event.metadata?.reason || 'invalid credentials';
             return `Failed to complete password reset for "${name}"`;
         }
-        return `${name} completed password reset`;
+        return `${name} reset their password`;
     },
     'oauth.linked': (event) => {
         const provider = event.metadata?.provider || 'OAuth';
