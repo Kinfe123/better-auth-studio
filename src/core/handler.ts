@@ -618,10 +618,7 @@ function handleStaticFileFromDir(
 }
 
 function serveIndexHtml(publicDir: string, config: StudioConfig): UniversalResponse {
-  const html = getIndexHtml(publicDir, {
-    basePath: config.basePath || '/api/studio',
-    metadata: config.metadata as any,
-  });
+  const html = getIndexHtml(publicDir, config as any);
 
   return {
     status: 200,

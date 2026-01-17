@@ -4,6 +4,10 @@ export function serveIndexHtml(publicDir, config = {}) {
     const indexPath = join(publicDir, 'index.html');
     let html = readFileSync(indexPath, 'utf-8');
     const frontendConfig = prepareFrontendConfig(config);
+    // Debug: Log the frontend config to verify liveMarquee is included
+    if (process.env.NODE_ENV !== 'production') {
+        console.log('[HTML Injector] Frontend config:', JSON.stringify(frontendConfig, null, 2));
+    }
     html = injectConfig(html, frontendConfig);
     return html;
 }
@@ -29,7 +33,10 @@ function prepareFrontendConfig(config) {
     };
     const eventsConfig = config.events;
     const liveMarqueeConfig = eventsConfig?.liveMarquee;
-    const liveMarquee = eventsConfig?.enabled
+    // Always include liveMarquee config if it exists OR if events are enabled
+    // This ensures the config is available in window.__STUDIO_CONFIG__
+    const shouldIncludeLiveMarquee = !!liveMarqueeConfig || !!eventsConfig?.enabled;
+    const liveMarquee = shouldIncludeLiveMarquee
         ? {
             enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false
             pollInterval: liveMarqueeConfig?.pollInterval || 2000, // Default: 2000ms
@@ -39,6 +46,16 @@ function prepareFrontendConfig(config) {
             colors: liveMarqueeConfig?.colors || undefined,
         }
         : undefined;
+    // Debug: Log what we're processing
+    if (process.env.NODE_ENV !== 'production') {
+        console.log('[HTML Injector] Config received:', {
+            hasEvents: !!config.events,
+            eventsEnabled: eventsConfig?.enabled,
+            hasLiveMarqueeConfig: !!liveMarqueeConfig,
+            shouldIncludeLiveMarquee,
+            liveMarquee,
+        });
+    }
     return {
         basePath: config.basePath || '',
         metadata: mergedMetadata,

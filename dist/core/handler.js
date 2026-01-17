@@ -534,10 +534,8 @@ function handleStaticFileFromDir(path, publicDir, config) {
     return serveIndexHtml(publicDir, config);
 }
 function serveIndexHtml(publicDir, config) {
-    const html = getIndexHtml(publicDir, {
-        basePath: config.basePath || '/api/studio',
-        metadata: config.metadata,
-    });
+    // Pass the full config to ensure events and liveMarquee are included
+    const html = getIndexHtml(publicDir, config);
     return {
         status: 200,
         headers: {

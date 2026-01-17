@@ -27,9 +27,14 @@ export function LiveEventMarquee({
   speed: propSpeed,
   pauseOnHover: propPauseOnHover
 }: LiveEventMarqueeProps) {
-  // Get config from window or use props/defaults
-  const marqueeConfig = (window as any).__STUDIO_CONFIG__?.liveMarquee;
-  const maxEvents = propMaxEvents ?? marqueeConfig?.limit ?? 50;
+  const maxEvents = propMaxEvents ?? 50;
+  const speedRef = useRef(propSpeed ?? 0.5);
+  
+  useEffect(() => {
+    if (propSpeed !== undefined) {
+      speedRef.current = propSpeed;
+    }
+  }, [propSpeed]);
   
   const [events, setEvents] = useState<AuthEvent[]>([]);
   const [isConnected, setIsConnected] = useState(false);
@@ -58,7 +63,6 @@ export function LiveEventMarquee({
         params.append('after', lastEventId);
       }
 
-      // Use the API utility to get the correct path
       const apiPath = buildApiUrl('/api/events');
 
       const response = await fetch(`${apiPath}?${params.toString()}`);
@@ -69,11 +73,9 @@ export function LiveEventMarquee({
 
       const data = await response.json();
 
-      // Set connected to true on successful response (even if no events)
       setIsConnected(true);
-      retryDelayRef.current = 2000; // Reset retry delay on success
+      retryDelayRef.current = 2000;
 
-      // Process events if they exist
       if (data.events && Array.isArray(data.events)) {
         const newEvents = data.events.filter(
           (event: AuthEvent) => !lastEventId || event.id !== lastEventId
@@ -150,11 +152,9 @@ export function LiveEventMarquee({
     }
   }, [isConnected, pollEvents, pollInterval]);
 
-  // Smooth continuous scroll animation - runs independently of events updates
   useEffect(() => {
     const container = containerRef.current;
     if (!container || events.length === 0) {
-      // Stop animation if no events
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
         animationRef.current = null;
@@ -164,15 +164,11 @@ export function LiveEventMarquee({
       return;
     }
 
-    // Initialize or update animation
     if (!isAnimatingRef.current) {
-      // Start animation for the first time
       isAnimatingRef.current = true;
       positionRef.current = 0;
       singleSetWidthRef.current = container.scrollWidth / 3;
     } else {
-      // Animation already running - just update the width reference
-      // Use requestAnimationFrame to ensure DOM has updated
       requestAnimationFrame(() => {
         if (container) {
           const newWidth = container.scrollWidth / 3;
@@ -187,9 +183,6 @@ export function LiveEventMarquee({
       return; // Don't restart animation
     }
 
-    // Get speed from config or props, default to 0.5
-    const speed = propSpeed ?? marqueeConfig?.speed ?? 0.5;
-
     const animate = () => {
       if (!container || !isAnimatingRef.current || isPausedRef.current) {
         // If paused, still request next frame but don't update position
@@ -199,18 +192,20 @@ export function LiveEventMarquee({
         return;
       }
 
-      // Update position
-      positionRef.current -= speed;
+      const currentSpeed = speedRef.current;
+      
+      const validSpeed = typeof currentSpeed === 'number' && !isNaN(currentSpeed) && isFinite(currentSpeed) && currentSpeed > 0 
+        ? currentSpeed 
+        : 0.5;
 
-      // Get current width (may have been updated by the effect above)
+      positionRef.current -= validSpeed;
+
       const currentSingleSetWidth = singleSetWidthRef.current || container.scrollWidth / 3;
 
-      // Reset position seamlessly when we've scrolled one full set width
       if (Math.abs(positionRef.current) >= currentSingleSetWidth) {
         positionRef.current = 0;
       }
 
-      // Apply transform using translate3d for better performance
       container.style.transform = `translate3d(${positionRef.current}px, 0, 0)`;
 
       animationRef.current = requestAnimationFrame(animate);
@@ -219,11 +214,9 @@ export function LiveEventMarquee({
     animationRef.current = requestAnimationFrame(animate);
 
     return () => {
-      // Don't cancel animation on events change - only on unmount
     };
-  }, [events.length]); // Only depend on length, not the events array itself
+  }, [events.length]);
 
-  // Cleanup animation on unmount
   useEffect(() => {
     return () => {
       if (animationRef.current) {
@@ -239,7 +232,7 @@ export function LiveEventMarquee({
   };
 
   const getEventColors = () => {
-    const colors = marqueeConfig?.colors || {};
+    const colors: Record<string, string> = {};
 
     const defaults = {
       success: 'text-green-400', // #34d399
@@ -293,8 +286,8 @@ export function LiveEventMarquee({
     }
   };
 
-  // Get pauseOnHover from config or props, default to true
-  const pauseOnHover = propPauseOnHover ?? marqueeConfig?.pauseOnHover ?? true;
+  // Get pauseOnHover from props, default to true
+  const pauseOnHover = propPauseOnHover ?? true;
 
   const handleMouseEnter = () => {
     if (pauseOnHover) {
@@ -315,8 +308,13 @@ export function LiveEventMarquee({
             return;
           }
 
-          const currentSpeed = propSpeed ?? marqueeConfig?.speed ?? 0.5;
-          positionRef.current -= currentSpeed;
+          // Get current speed from ref (updated reactively)
+          const currentSpeed = speedRef.current;
+          // Ensure speed is a valid positive number
+          const validSpeed = typeof currentSpeed === 'number' && !isNaN(currentSpeed) && isFinite(currentSpeed) && currentSpeed > 0 
+            ? currentSpeed 
+            : 0.5;
+          positionRef.current -= validSpeed;
 
           const currentSingleSetWidth = singleSetWidthRef.current || containerRef.current.scrollWidth / 3;
           if (Math.abs(positionRef.current) >= currentSingleSetWidth) {

@@ -25,7 +25,7 @@ const config: StudioConfig = {
     liveMarquee: {
       enabled: true,
       pollInterval: 2000,
-      speed: 100,
+      speed: 1,
       pauseOnHover: true,
     },
   }

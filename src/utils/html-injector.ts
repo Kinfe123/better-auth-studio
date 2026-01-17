@@ -88,7 +88,9 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
   const eventsConfig = (config as any).events;
   const liveMarqueeConfig = eventsConfig?.liveMarquee;
 
-  const liveMarquee: LiveMarqueeConfig | undefined = eventsConfig?.enabled
+  const shouldIncludeLiveMarquee = !!liveMarqueeConfig || !!eventsConfig?.enabled;
+  
+  const liveMarquee: LiveMarqueeConfig | undefined = shouldIncludeLiveMarquee
     ? {
         enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false
         pollInterval: liveMarqueeConfig?.pollInterval || 2000, // Default: 2000ms
@@ -98,6 +100,17 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
         colors: liveMarqueeConfig?.colors || undefined,
       }
     : undefined;
+
+  // Debug: Log what we're processing
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('[HTML Injector] Config received:', {
+      hasEvents: !!(config as any).events,
+      eventsEnabled: eventsConfig?.enabled,
+      hasLiveMarqueeConfig: !!liveMarqueeConfig,
+      shouldIncludeLiveMarquee,
+      liveMarquee,
+    });
+  }
 
   return {
     basePath: config.basePath || '',
