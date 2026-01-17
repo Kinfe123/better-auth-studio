@@ -687,13 +687,14 @@ export default function Layout({ children }: LayoutProps) {
           const speed = liveMarqueeConfig?.speed ?? 0.5;
           const pauseOnHover = liveMarqueeConfig?.pauseOnHover ?? true;
           const limit = liveMarqueeConfig?.limit ?? 50;
-          
+          const colors = liveMarqueeConfig?.colors;
           return liveMarqueeEnabled && isSelfHosted ? (
             <LiveEventMarquee 
               maxEvents={limit}
               pollInterval={pollInterval}
               speed={speed}
               pauseOnHover={pauseOnHover}
+              colors={colors}
             />
           ) : null;
         })()}

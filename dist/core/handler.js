@@ -534,7 +534,6 @@ function handleStaticFileFromDir(path, publicDir, config) {
     return serveIndexHtml(publicDir, config);
 }
 function serveIndexHtml(publicDir, config) {
-    // Pass the full config to ensure events and liveMarquee are included
     const html = getIndexHtml(publicDir, config);
     return {
         status: 200,

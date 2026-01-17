@@ -89,28 +89,17 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
   const liveMarqueeConfig = eventsConfig?.liveMarquee;
 
   const shouldIncludeLiveMarquee = !!liveMarqueeConfig || !!eventsConfig?.enabled;
-  
+
   const liveMarquee: LiveMarqueeConfig | undefined = shouldIncludeLiveMarquee
     ? {
-        enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false
-        pollInterval: liveMarqueeConfig?.pollInterval || 2000, // Default: 2000ms
-        speed: liveMarqueeConfig?.speed ?? 0.5, // Default: 0.5 pixels per frame
-        pauseOnHover: liveMarqueeConfig?.pauseOnHover ?? true, // Default: true
-        limit: liveMarqueeConfig?.limit ?? 50, // Default: 50 events in marquee
-        colors: liveMarqueeConfig?.colors || undefined,
-      }
+      enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false
+      pollInterval: liveMarqueeConfig?.pollInterval || 2000, // Default: 2000ms
+      speed: liveMarqueeConfig?.speed ?? 0.5, // Default: 0.5 pixels per frame
+      pauseOnHover: liveMarqueeConfig?.pauseOnHover ?? true, // Default: true
+      limit: liveMarqueeConfig?.limit ?? 50, // Default: 50 events in marquee
+      colors: liveMarqueeConfig?.colors || undefined,
+    }
     : undefined;
-
-  // Debug: Log what we're processing
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('[HTML Injector] Config received:', {
-      hasEvents: !!(config as any).events,
-      eventsEnabled: eventsConfig?.enabled,
-      hasLiveMarqueeConfig: !!liveMarqueeConfig,
-      shouldIncludeLiveMarquee,
-      liveMarquee,
-    });
-  }
 
   return {
     basePath: config.basePath || '',

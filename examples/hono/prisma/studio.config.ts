@@ -27,6 +27,13 @@ const config: StudioConfig = {
       pollInterval: 2000,
       speed: 1,
       pauseOnHover: true,
+      colors: {
+        success: '#34d399',
+        info: '#fcd34d',
+        warning: '#facc15',
+        error: '#f87171',
+        failed: '#f87171',
+      },
     },
   }
 };

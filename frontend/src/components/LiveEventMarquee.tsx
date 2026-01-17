@@ -19,13 +19,21 @@ interface LiveEventMarqueeProps {
   speed?: number;
   pauseOnHover?: boolean;
   limit?: number;
+  colors?: {
+    success?: string;
+    info?: string;
+    warning?: string;
+    error?: string;
+    failed?: string;
+  };
 }
 
 export function LiveEventMarquee({ 
   maxEvents: propMaxEvents,
   pollInterval = 2000,
   speed: propSpeed,
-  pauseOnHover: propPauseOnHover
+  pauseOnHover: propPauseOnHover,
+  colors: propColors
 }: LiveEventMarqueeProps) {
   const maxEvents = propMaxEvents ?? 50;
   const speedRef = useRef(propSpeed ?? 0.5);
@@ -232,7 +240,8 @@ export function LiveEventMarquee({
   };
 
   const getEventColors = () => {
-    const colors: Record<string, string> = {};
+    // Use colors from props if provided
+    const colors = propColors || {};
 
     const defaults = {
       success: 'text-green-400', // #34d399
