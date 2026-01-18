@@ -1,5 +1,13 @@
 export function createPostgresProvider(options) {
     const { client, tableName = 'auth_events', schema = 'public' } = options;
+    // Validate client is provided
+    if (!client) {
+        throw new Error('Postgres client is required. Provide a pg Pool, Client, or Prisma client instance.');
+    }
+    // Validate client has required methods (either query for pg or $executeRaw for Prisma)
+    if (!client.query && !client.$executeRaw) {
+        throw new Error('Invalid Postgres client. Client must have either a `query` method (pg Pool/Client) or `$executeRaw` method (Prisma client).');
+    }
     // Ensure table exists
     const ensureTable = async () => {
         if (!client)
@@ -77,21 +85,34 @@ export function createPostgresProvider(options) {
     };
     // Track if table creation is in progress or completed
     let tableEnsured = false;
-    let tableEnsuring = false;
+    let tableEnsuringPromise = null;
     const ensureTableSync = async () => {
-        if (tableEnsured || tableEnsuring)
+        // If already ensured, return immediately
+        if (tableEnsured) {
             return;
-        tableEnsuring = true;
-        try {
-            await ensureTable();
-            tableEnsured = true;
         }
-        catch (error) {
-            console.error('Failed to ensure table:', error);
+        // If table creation is in progress, wait for it
+        if (tableEnsuringPromise) {
+            return tableEnsuringPromise;
         }
-        finally {
-            tableEnsuring = false;
-        }
+        // Start table creation and store the promise
+        tableEnsuringPromise = (async () => {
+            try {
+                await ensureTable();
+                tableEnsured = true;
+            }
+            catch (error) {
+                console.error('Failed to ensure table:', error);
+                // Reset promise so we can retry
+                tableEnsuringPromise = null;
+                throw error;
+            }
+            finally {
+                // Clear the promise after completion (success or failure)
+                tableEnsuringPromise = null;
+            }
+        })();
+        return tableEnsuringPromise;
     };
     // Call ensureTable asynchronously (don't block initialization)
     ensureTableSync().catch(console.error);
@@ -109,74 +130,159 @@ export function createPostgresProvider(options) {
           (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
           VALUES ('${event.id}'::uuid, '${event.type}', '${event.timestamp.toISOString()}', '${event.status || 'success'}', ${event.userId ? `'${event.userId.replace(/'/g, "''")}'` : 'NULL'}, ${event.sessionId ? `'${event.sessionId.replace(/'/g, "''")}'` : 'NULL'}, ${event.organizationId ? `'${event.organizationId.replace(/'/g, "''")}'` : 'NULL'}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress.replace(/'/g, "''")}'` : 'NULL'}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : 'NULL'}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : 'NULL'}, ${event.display?.severity ? `'${event.display.severity}'` : 'NULL'})
         `;
-                await client.$executeRawUnsafe(query);
+                try {
+                    await client.$executeRawUnsafe(query);
+                }
+                catch (error) {
+                    console.error(`Failed to insert event (${event.type}) into ${schema}.${tableName}:`, error);
+                    throw error;
+                }
             }
             else if (client.query) {
                 // Standard pg client (Pool or Client) - use parameterized queries for safety
-                await client.query(`INSERT INTO ${schema}.${tableName} 
-           (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`, [
-                    event.id,
-                    event.type,
-                    event.timestamp,
-                    event.status || 'success',
-                    event.userId || null,
-                    event.sessionId || null,
-                    event.organizationId || null,
-                    JSON.stringify(event.metadata || {}),
-                    event.ipAddress || null,
-                    event.userAgent || null,
-                    event.source,
-                    event.display?.message || null,
-                    event.display?.severity || null,
-                ]);
+                try {
+                    await client.query(`INSERT INTO ${schema}.${tableName} 
+             (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`, [
+                        event.id,
+                        event.type,
+                        event.timestamp,
+                        event.status || 'success',
+                        event.userId || null,
+                        event.sessionId || null,
+                        event.organizationId || null,
+                        JSON.stringify(event.metadata || {}),
+                        event.ipAddress || null,
+                        event.userAgent || null,
+                        event.source,
+                        event.display?.message || null,
+                        event.display?.severity || null,
+                    ]);
+                }
+                catch (error) {
+                    console.error(`Failed to insert event (${event.type}) into ${schema}.${tableName}:`, error);
+                    if (error.code === '42P01') {
+                        await ensureTableSync();
+                        try {
+                            await client.query(`INSERT INTO ${schema}.${tableName} 
+                 (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`, [
+                                event.id,
+                                event.type,
+                                event.timestamp,
+                                event.status || 'success',
+                                event.userId || null,
+                                event.sessionId || null,
+                                event.organizationId || null,
+                                JSON.stringify(event.metadata || {}),
+                                event.ipAddress || null,
+                                event.userAgent || null,
+                                event.source,
+                                event.display?.message || null,
+                                event.display?.severity || null,
+                            ]);
+                            return; // Success after retry
+                        }
+                        catch (retryError) {
+                            console.error(`Retry after table creation also failed:`, retryError);
+                            throw retryError;
+                        }
+                    }
+                    // If it's a connection error and we have a pool, log helpful info
+                    if (error.code === 'ECONNREFUSED' ||
+                        error.code === 'ETIMEDOUT' ||
+                        error.message?.includes('Connection terminated')) {
+                        if (client.end) {
+                            console.warn(`⚠️  Connection error with pg Pool. The pool will retry automatically on next query.`);
+                        }
+                    }
+                    throw error;
+                }
+            }
+            else {
+                throw new Error('Postgres client does not support $executeRaw or query method. Make sure you are passing a valid pg Pool, Client, or Prisma client.');
             }
         },
         async ingestBatch(events) {
             if (events.length === 0)
                 return;
+            // Ensure table exists before ingesting (wait if creation is in progress)
+            await ensureTableSync();
             // Support Prisma client ($executeRaw) or standard pg client (query)
             if (client.$executeRaw) {
                 // Prisma client - use $executeRawUnsafe for batch inserts
-                const values = events
-                    .map((event) => `('${event.id}', '${event.type}', '${event.timestamp.toISOString()}', '${event.status || 'success'}', ${event.userId ? `'${event.userId}'` : 'NULL'}, ${event.sessionId ? `'${event.sessionId}'` : 'NULL'}, ${event.organizationId ? `'${event.organizationId}'` : 'NULL'}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress}'` : 'NULL'}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : 'NULL'}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : 'NULL'}, ${event.display?.severity ? `'${event.display.severity}'` : 'NULL'})`)
-                    .join(', ');
-                const query = `
-          INSERT INTO ${schema}.${tableName} 
-          (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
-          VALUES ${values}
-        `;
-                await client.$executeRawUnsafe(query);
+                const CHUNK_SIZE = 500; // Reasonable chunk size for string-based queries
+                for (let i = 0; i < events.length; i += CHUNK_SIZE) {
+                    const chunk = events.slice(i, i + CHUNK_SIZE);
+                    const values = chunk
+                        .map((event) => `('${event.id}', '${event.type}', '${event.timestamp.toISOString()}', '${event.status || 'success'}', ${event.userId ? `'${event.userId.replace(/'/g, "''")}'` : 'NULL'}, ${event.sessionId ? `'${event.sessionId.replace(/'/g, "''")}'` : 'NULL'}, ${event.organizationId ? `'${event.organizationId.replace(/'/g, "''")}'` : 'NULL'}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress.replace(/'/g, "''")}'` : 'NULL'}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : 'NULL'}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : 'NULL'}, ${event.display?.severity ? `'${event.display.severity}'` : 'NULL'})`)
+                        .join(', ');
+                    const query = `
+            INSERT INTO ${schema}.${tableName} 
+            (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
+            VALUES ${values}
+          `;
+                    try {
+                        await client.$executeRawUnsafe(query);
+                    }
+                    catch (error) {
+                        console.error(`Failed to insert batch chunk (${chunk.length} events):`, error);
+                        throw error;
+                    }
+                }
             }
             else if (client.query) {
-                // Standard pg client
-                const values = events
-                    .map((_, i) => {
-                    const base = i * 13;
-                    return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 4}, $${base + 5}, $${base + 6}, $${base + 7}, $${base + 8}, $${base + 9}, $${base + 10}, $${base + 11}, $${base + 12}, $${base + 13})`;
-                })
-                    .join(', ');
-                const query = `
-          INSERT INTO ${schema}.${tableName} 
-          (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
-          VALUES ${values}
-        `;
-                const params = events.flatMap((event) => [
-                    event.id,
-                    event.type,
-                    event.timestamp,
-                    event.status || 'success',
-                    event.userId || null,
-                    event.sessionId || null,
-                    event.organizationId || null,
-                    JSON.stringify(event.metadata || {}),
-                    event.ipAddress || null,
-                    event.userAgent || null,
-                    event.source,
-                    event.display?.message || null,
-                    event.display?.severity || null,
-                ]);
-                await client.query(query, params);
+                // Standard pg client (Pool or Client)
+                const PARAMS_PER_EVENT = 13;
+                const MAX_PARAMS = 65535;
+                const CHUNK_SIZE = Math.floor(MAX_PARAMS / PARAMS_PER_EVENT) - 1; // ~5000, but use 1000 for safety
+                for (let chunkStart = 0; chunkStart < events.length; chunkStart += CHUNK_SIZE) {
+                    const chunk = events.slice(chunkStart, chunkStart + CHUNK_SIZE);
+                    const values = chunk
+                        .map((_, i) => {
+                        const base = i * PARAMS_PER_EVENT;
+                        return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 4}, $${base + 5}, $${base + 6}, $${base + 7}, $${base + 8}, $${base + 9}, $${base + 10}, $${base + 11}, $${base + 12}, $${base + 13})`;
+                    })
+                        .join(', ');
+                    const query = `
+            INSERT INTO ${schema}.${tableName} 
+            (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
+            VALUES ${values}
+          `;
+                    const params = chunk.flatMap((event) => [
+                        event.id,
+                        event.type,
+                        event.timestamp,
+                        event.status || 'success',
+                        event.userId || null,
+                        event.sessionId || null,
+                        event.organizationId || null,
+                        JSON.stringify(event.metadata || {}),
+                        event.ipAddress || null,
+                        event.userAgent || null,
+                        event.source,
+                        event.display?.message || null,
+                        event.display?.severity || null,
+                    ]);
+                    try {
+                        await client.query(query, params);
+                    }
+                    catch (error) {
+                        // Provide more context in error messages
+                        console.error(`Failed to insert batch chunk (${chunk.length} events) into ${schema}.${tableName}:`, error);
+                        if (error.code === 'ECONNREFUSED' ||
+                            error.code === 'ETIMEDOUT' ||
+                            error.message?.includes('Connection terminated')) {
+                            if (client.end) {
+                                console.warn(`⚠️  Connection error with pg Pool. The pool will retry automatically on next query.`);
+                            }
+                        }
+                        throw error;
+                    }
+                }
+            }
+            else {
+                throw new Error('Postgres client does not support $executeRaw or query method. Make sure you are passing a valid pg Pool, Client, or Prisma client.');
             }
         },
         async query(options) {

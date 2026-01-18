@@ -19,7 +19,7 @@ importers:
         version: 6.19.1(prisma@6.19.1(typescript@5.9.3))(typescript@5.9.3)
       better-auth:
         specifier: ^1.3.34
-        version: 1.4.9(@prisma/client@6.19.1(prisma@6.19.1(typescript@5.9.3))(typescript@5.9.3))(prisma@6.19.1(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 1.4.9(@prisma/client@6.19.1(prisma@6.19.1(typescript@5.9.3))(typescript@5.9.3))(pg@8.17.1)(prisma@6.19.1(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       better-auth-studio:
         specifier: file:../../..
         version: file:../../..(@babel/core@7.28.5)(@sinclair/typebox@0.34.47)(exact-mirror@0.2.6(@sinclair/typebox@0.34.47))(file-type@21.3.0)(openapi-types@12.1.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
@@ -29,6 +29,9 @@ importers:
       hono:
         specifier: ^4.11.4
         version: 4.11.4
+      pg:
+        specifier: ^8.17.1
+        version: 8.17.1
       prisma:
         specifier: ^6.15.0
         version: 6.19.1(typescript@5.9.3)
@@ -36,6 +39,9 @@ importers:
       '@types/node':
         specifier: ^20.10.0
         version: 20.19.27
+      '@types/pg':
+        specifier: ^8.16.0
+        version: 8.16.0
       tsx:
         specifier: ^4.6.0
         version: 4.21.0
@@ -494,6 +500,9 @@ packages:
 
   '@types/node@20.19.27':
     resolution: {integrity: sha512-N2clP5pJhB2YnZJ3PIHFk5RkygRX5WO/5f0WC08tp0wd+sv0rsJk3MqWn3CbNmT2J505a5336jaQj4ph1AdMug==}
+
+  '@types/pg@8.16.0':
+    resolution: {integrity: sha512-RmhMd/wD+CF8Dfo+cVIy3RR5cl8CyfXQ0tGgW6XBL8L4LM/UTEbNXYRbLwU6w+CgrKBNbrQWt4FUtTfaU5jSYQ==}
 
   accepts@1.3.8:
     resolution: {integrity: sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==}
@@ -1116,6 +1125,40 @@ packages:
   perfect-debounce@2.0.0:
     resolution: {integrity: sha512-fkEH/OBiKrqqI/yIgjR92lMfs2K8105zt/VT6+7eTjNwisrsh47CeIED9z58zI7DfKdH3uHAn25ziRZn3kgAow==}
 
+  pg-cloudflare@1.3.0:
+    resolution: {integrity: sha512-6lswVVSztmHiRtD6I8hw4qP/nDm1EJbKMRhf3HCYaqud7frGysPv7FYJ5noZQdhQtN2xJnimfMtvQq21pdbzyQ==}
+
+  pg-connection-string@2.10.0:
+    resolution: {integrity: sha512-ur/eoPKzDx2IjPaYyXS6Y8NSblxM7X64deV2ObV57vhjsWiwLvUD6meukAzogiOsu60GO8m/3Cb6FdJsWNjwXg==}
+
+  pg-int8@1.0.1:
+    resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
+    engines: {node: '>=4.0.0'}
+
+  pg-pool@3.11.0:
+    resolution: {integrity: sha512-MJYfvHwtGp870aeusDh+hg9apvOe2zmpZJpyt+BMtzUWlVqbhFmMK6bOBXLBUPd7iRtIF9fZplDc7KrPN3PN7w==}
+    peerDependencies:
+      pg: '>=8.0'
+
+  pg-protocol@1.11.0:
+    resolution: {integrity: sha512-pfsxk2M9M3BuGgDOfuy37VNRRX3jmKgMjcvAcWqNDpZSf4cUmv8HSOl5ViRQFsfARFn0KuUQTgLxVMbNq5NW3g==}
+
+  pg-types@2.2.0:
+    resolution: {integrity: sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==}
+    engines: {node: '>=4'}
+
+  pg@8.17.1:
+    resolution: {integrity: sha512-EIR+jXdYNSMOrpRp7g6WgQr7SaZNZfS7IzZIO0oTNEeibq956JxeD15t3Jk3zZH0KH8DmOIx38qJfQenoE8bXQ==}
+    engines: {node: '>= 16.0.0'}
+    peerDependencies:
+      pg-native: '>=3.0.1'
+    peerDependenciesMeta:
+      pg-native:
+        optional: true
+
+  pgpass@1.0.5:
+    resolution: {integrity: sha512-FdW9r/jQZhSeohs1Z3sI1yxFQNFvMcnmfuj4WBMUTxOrAyLMaTcE1aAMBiTlbMNaXvBCQuVi0R7hd8udDSP7ug==}
+
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
@@ -1125,6 +1168,22 @@ packages:
 
   pkg-types@2.3.0:
     resolution: {integrity: sha512-SIqCzDRg0s9npO5XQ3tNZioRY1uK06lA41ynBC1YmFTmnY6FjUjVt6s4LoADmwoig1qqD0oK8h1p/8mlMx8Oig==}
+
+  postgres-array@2.0.0:
+    resolution: {integrity: sha512-VpZrUqU5A69eQyW2c5CA1jtLecCsN2U/bD6VilrFDWq5+5UIEVO7nazS3TEcHf1zuPYO/sqGvUvW62g86RXZuA==}
+    engines: {node: '>=4'}
+
+  postgres-bytea@1.0.1:
+    resolution: {integrity: sha512-5+5HqXnsZPE65IJZSMkZtURARZelel2oXUEO8rH83VS/hxH5vv1uHquPg5wZs8yMAfdv971IU+kcPUczi7NVBQ==}
+    engines: {node: '>=0.10.0'}
+
+  postgres-date@1.0.7:
+    resolution: {integrity: sha512-suDmjLVQg78nMK2UZ454hAG+OAW+HQPZ6n++TNDUX+L0+uUlLywnoxJKDou51Zm+zTCjrCl0Nq6J9C5hP9vK/Q==}
+    engines: {node: '>=0.10.0'}
+
+  postgres-interval@1.2.0:
+    resolution: {integrity: sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==}
+    engines: {node: '>=0.10.0'}
 
   prisma@6.19.1:
     resolution: {integrity: sha512-XRfmGzh6gtkc/Vq3LqZJcS2884dQQW3UhPo6jNRoiTW95FFQkXFg8vkYEy6og+Pyv0aY7zRQ7Wn1Cvr56XjhQQ==}
@@ -1233,6 +1292,10 @@ packages:
     resolution: {integrity: sha512-ZX99e6tRweoUXqR+VBrslhda51Nh5MTQwou5tnUDgbtyM0dBgmhEDtWGP/xbKn6hqfPRHujUNwz5fy/wbbhnpw==}
     engines: {node: '>= 0.4'}
 
+  split2@4.2.0:
+    resolution: {integrity: sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg==}
+    engines: {node: '>= 10.x'}
+
   statuses@2.0.2:
     resolution: {integrity: sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw==}
     engines: {node: '>= 0.8'}
@@ -1315,6 +1378,10 @@ packages:
   wsl-utils@0.1.0:
     resolution: {integrity: sha512-h3Fbisa2nKGPxCpm89Hk33lBLsnaGBvctQopaBSOW/uIs6FTe1ATyAnKFJrzVs9vpGdsTe73WF3V4lIsk4Gacw==}
     engines: {node: '>=18'}
+
+  xtend@4.0.2:
+    resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
+    engines: {node: '>=0.4'}
 
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
@@ -1772,6 +1839,12 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
+  '@types/pg@8.16.0':
+    dependencies:
+      '@types/node': 20.19.27
+      pg-protocol: 1.11.0
+      pg-types: 2.2.0
+
   accepts@1.3.8:
     dependencies:
       mime-types: 2.1.35
@@ -1849,7 +1922,7 @@ snapshots:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
-  better-auth@1.4.9(@prisma/client@6.19.1(prisma@6.19.1(typescript@5.9.3))(typescript@5.9.3))(prisma@6.19.1(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+  better-auth@1.4.9(@prisma/client@6.19.1(prisma@6.19.1(typescript@5.9.3))(typescript@5.9.3))(pg@8.17.1)(prisma@6.19.1(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.2.1))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
       '@better-auth/telemetry': 1.4.9(@better-auth/core@1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.2.1))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))
@@ -1865,6 +1938,7 @@ snapshots:
       zod: 4.2.1
     optionalDependencies:
       '@prisma/client': 6.19.1(prisma@6.19.1(typescript@5.9.3))(typescript@5.9.3)
+      pg: 8.17.1
       prisma: 6.19.1(typescript@5.9.3)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
@@ -2377,6 +2451,41 @@ snapshots:
 
   perfect-debounce@2.0.0: {}
 
+  pg-cloudflare@1.3.0:
+    optional: true
+
+  pg-connection-string@2.10.0: {}
+
+  pg-int8@1.0.1: {}
+
+  pg-pool@3.11.0(pg@8.17.1):
+    dependencies:
+      pg: 8.17.1
+
+  pg-protocol@1.11.0: {}
+
+  pg-types@2.2.0:
+    dependencies:
+      pg-int8: 1.0.1
+      postgres-array: 2.0.0
+      postgres-bytea: 1.0.1
+      postgres-date: 1.0.7
+      postgres-interval: 1.2.0
+
+  pg@8.17.1:
+    dependencies:
+      pg-connection-string: 2.10.0
+      pg-pool: 3.11.0(pg@8.17.1)
+      pg-protocol: 1.11.0
+      pg-types: 2.2.0
+      pgpass: 1.0.5
+    optionalDependencies:
+      pg-cloudflare: 1.3.0
+
+  pgpass@1.0.5:
+    dependencies:
+      split2: 4.2.0
+
   picocolors@1.1.1: {}
 
   picomatch@4.0.3: {}
@@ -2386,6 +2495,16 @@ snapshots:
       confbox: 0.2.2
       exsolve: 1.0.8
       pathe: 2.0.3
+
+  postgres-array@2.0.0: {}
+
+  postgres-bytea@1.0.1: {}
+
+  postgres-date@1.0.7: {}
+
+  postgres-interval@1.2.0:
+    dependencies:
+      xtend: 4.0.2
 
   prisma@6.19.1(typescript@5.9.3):
     dependencies:
@@ -2507,6 +2626,8 @@ snapshots:
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
 
+  split2@4.2.0: {}
+
   statuses@2.0.2: {}
 
   strtok3@10.3.4:
@@ -2565,6 +2686,8 @@ snapshots:
   wsl-utils@0.1.0:
     dependencies:
       is-wsl: 3.1.0
+
+  xtend@4.0.2: {}
 
   yallist@3.1.1: {}
 

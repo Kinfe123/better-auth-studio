@@ -1,11 +1,18 @@
 import type { StudioConfig } from 'better-auth-studio';
 import { auth } from './src/auth';
 import { createClient } from '@clickhouse/client';
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
 const clickhouseClient = createClient({
   host: process.env.CLICKHOUSE_HOST,
   username: process.env.CLICKHOUSE_USERNAME || 'default',
   password: process.env.CLICKHOUSE_PASSWORD || '',
 });
+
 const config: StudioConfig = {
   auth,
   basePath: '/api/studio',
@@ -19,8 +26,8 @@ const config: StudioConfig = {
   },
   events: {
     enabled: true,
-    client: clickhouseClient,
-    clientType: 'clickhouse',
+    client: pool,
+    clientType: 'postgres',
     tableName: 'auth_events',
     liveMarquee: {
       enabled: true,
