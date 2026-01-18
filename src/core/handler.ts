@@ -31,18 +31,12 @@ const __realdir = (() => {
 })();
 
 /**
- * Main handler - processes all studio requests (framework-agnostic)
- *
+ * Initialize event ingestion and inject hooks
  */
-export async function handleStudioRequest(
-  request: UniversalRequest,
-  config: StudioConfig
-): Promise<UniversalResponse> {
-  // Initialize event ingestion if enabled
+export async function initializeEventIngestionAndHooks(config: StudioConfig): Promise<void> {
   if (config.events?.enabled && !isEventIngestionInitialized()) {
     let provider: EventIngestionProvider | undefined;
 
-    // Check if provider is already a provider object (has ingest method)
     if (
       config.events.provider &&
       typeof config.events.provider === 'object' &&
@@ -50,16 +44,19 @@ export async function handleStudioRequest(
     ) {
       provider = config.events.provider;
     } else if (config.events.client && config.events.clientType) {
-      // Create provider based on clientType
       switch (config.events.clientType) {
         case 'postgres':
         case 'prisma':
         case 'drizzle':
-          provider = createPostgresProvider({
-            client: config.events.client,
-            tableName: config.events.tableName,
-            clientType: config.events.clientType,
-          });
+          try {
+            provider = createPostgresProvider({
+              client: config.events.client,
+              tableName: config.events.tableName,
+              clientType: config.events.clientType,
+            });
+          } catch (error) {
+            throw error;
+          }
           break;
         case 'clickhouse':
           provider = createClickHouseProvider({
@@ -75,7 +72,6 @@ export async function handleStudioRequest(
           break;
       }
     } else {
-      // Fallback to storage provider using auth adapter
       const authAdapter = await getAuthAdapter(config.auth);
       if (authAdapter) {
         provider = createStorageProvider({
@@ -86,25 +82,26 @@ export async function handleStudioRequest(
     }
 
     if (provider) {
-      console.log('[Event Ingestion] Initializing with provider:', {
-        hasIngest: typeof provider.ingest === 'function',
-        hasQuery: typeof provider.query === 'function',
-        clientType: config.events.clientType,
-      });
-
       initializeEventIngestion({
         ...config.events,
         provider,
       });
 
-      // Inject hooks into Better Auth
       if (config.auth) {
         injectEventHooks(config.auth, config.events);
       }
-    } else {
-      console.warn('[Event Ingestion] No provider available - events will not be ingested');
     }
   }
+}
+
+/**
+ * Main handler - processes all studio requests (framework-agnostic)
+ *
+ */
+export async function handleStudioRequest(
+  request: UniversalRequest,
+  config: StudioConfig
+): Promise<UniversalResponse> {
 
   try {
     const isSelfHosted = !!config.basePath;
@@ -194,7 +191,7 @@ export async function handleStudioRequest(
   }
 }
 
-async function getAuthAdapter(auth: any): Promise<any> {
+export async function getAuthAdapter(auth: any): Promise<any> {
   try {
     if (auth?.adapter) {
       return auth.adapter;
@@ -665,3 +662,4 @@ function getCacheControl(path: string): string {
   }
   return 'no-cache';
 }
+

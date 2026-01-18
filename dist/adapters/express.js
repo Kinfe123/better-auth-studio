@@ -1,9 +1,19 @@
 import { Router } from 'express';
 import { handleStudioRequest } from '../core/handler.js';
+import { injectEventHooks } from '../utils/hook-injector.js';
 /**
  * Express adapter for Better Auth Studio
  */
 export function betterAuthStudio(config) {
+    // // Initialize event ingestion and inject hooks on startup
+    // if (config.events?.enabled) {
+    //   initializeEventIngestionAndHooks(config).catch(() => {
+    //     // Silently fail - event ingestion will be retried on first /api/studio request
+    //   });
+    // }
+    if (config.events?.enabled && config.auth) {
+        injectEventHooks(config.auth, config.events);
+    }
     const router = Router();
     router.all('*', async (req, res, next) => {
         try {

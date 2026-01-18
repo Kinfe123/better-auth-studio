@@ -13,6 +13,9 @@ export function initializeEventIngestion(eventsConfig) {
     if (!eventsConfig?.enabled) {
         return;
     }
+    if (isInitialized) {
+        return;
+    }
     config = eventsConfig;
     if (eventsConfig.provider) {
         provider = eventsConfig.provider;
@@ -22,11 +25,16 @@ export function initializeEventIngestion(eventsConfig) {
             case 'postgres':
             case 'prisma':
             case 'drizzle':
-                provider = createPostgresProvider({
-                    client: eventsConfig.client,
-                    tableName: eventsConfig.tableName,
-                    clientType: eventsConfig.clientType,
-                });
+                try {
+                    provider = createPostgresProvider({
+                        client: eventsConfig.client,
+                        tableName: eventsConfig.tableName,
+                        clientType: eventsConfig.clientType,
+                    });
+                }
+                catch (error) {
+                    throw error;
+                }
                 break;
             case 'clickhouse':
                 provider = createClickHouseProvider({
@@ -43,25 +51,13 @@ export function initializeEventIngestion(eventsConfig) {
         }
     }
     if (!provider) {
-        console.warn('Event ingestion is enabled but no provider provided');
-        console.warn('Config details:', {
-            hasProvider: !!eventsConfig.provider,
-            hasClient: !!eventsConfig.client,
-            clientType: eventsConfig.clientType,
-        });
         return;
     }
-    console.log('[Event Ingestion] Provider initialized successfully:', {
-        hasIngest: typeof provider.ingest === 'function',
-        hasQuery: typeof provider.query === 'function',
-        hasIngestBatch: typeof provider.ingestBatch === 'function',
-        clientType: eventsConfig.clientType,
-    });
     isInitialized = true;
     if (config.batchSize && config.batchSize > 1) {
         const flushInterval = config.flushInterval || 5000;
         flushTimer = setInterval(() => {
-            flushEvents().catch(console.error);
+            flushEvents().catch(() => { });
         }, flushInterval);
     }
 }
@@ -81,7 +77,6 @@ export async function emitEvent(type, data, eventsConfig) {
         return;
     }
     if (!provider) {
-        console.warn(`[Event Ingestion] Provider not initialized. Skipping event: ${type}`);
         return;
     }
     if (useConfig.include && !useConfig.include.includes(type)) {
@@ -129,22 +124,14 @@ export async function emitEvent(type, data, eventsConfig) {
     }
     else {
         if (!provider) {
-            console.warn(`[Event Ingestion] Provider not available. Skipping event: ${type}`);
             return;
         }
         try {
-            console.log(`[Event Ingestion] Emitting event: ${type}`, {
-                userId: event.userId,
-                message: event.display?.message,
-            });
             await provider.ingest(event);
-            console.log(`[Event Ingestion] ✅ Successfully ingested event: ${type}`);
         }
         catch (error) {
-            console.error(`[Event Ingestion] ❌ Failed to ingest event ${type}:`, error);
             if (useConfig.retryOnError) {
                 eventQueue.push(event);
-                console.log(`[Event Ingestion] Queued event for retry: ${type}`);
             }
         }
     }
@@ -164,7 +151,6 @@ async function flushEvents() {
         }
     }
     catch (error) {
-        console.error('Batch event ingestion error:', error);
         if (config?.retryOnError) {
             eventQueue.unshift(...eventsToSend);
         }

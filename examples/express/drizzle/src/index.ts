@@ -3,8 +3,7 @@ import express from 'express';
 import { auth } from './auth.js';
 import { toNodeHandler } from 'better-auth/node';
 import { betterAuthStudio } from 'better-auth-studio/express';
-import studioConfig from '../studio.config';
-
+import studioConfig from '../studio.config.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 

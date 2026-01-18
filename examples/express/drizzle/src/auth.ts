@@ -3,9 +3,7 @@ import { organization, twoFactor, admin, apiKey } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../lib/db";
 import * as schema from "../auth-schema";
-
 const baseURL = process.env.BETTER_AUTH_URL || "http://localhost:3000";
-
 export const auth = betterAuth({
   secret: process.env.AUTH_SECRET || "better-auth-secret-123456789",
   database: drizzleAdapter(db, { provider: "pg", schema: schema, usePlural: false }),

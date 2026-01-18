@@ -1,12 +1,17 @@
 import type { Router as ExpressRouter, NextFunction, Request, Response } from 'express';
 import { Router } from 'express';
-import { handleStudioRequest } from '../core/handler.js';
+import { handleStudioRequest, initializeEventIngestionAndHooks } from '../core/handler.js';
 import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
+import { injectEventHooks } from '../utils/hook-injector.js';
 
 /**
  * Express adapter for Better Auth Studio
  */
 export function betterAuthStudio(config: StudioConfig): ExpressRouter {
+  if(config.events?.enabled && config.auth)  {
+    injectEventHooks(config.auth, config.events);
+  }
+
   const router = Router();
 
   router.all('*', async (req: Request, res: Response, next: NextFunction) => {
