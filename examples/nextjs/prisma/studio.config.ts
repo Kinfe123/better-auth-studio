@@ -18,7 +18,6 @@ const config: StudioConfig = {
     roles: ['admin'],
     allowEmails: ['kinfetare83@gmail.com'],
   },
-  // @ts-ignore
   events: {
     enabled: true,
     client: clickhouseClient,
