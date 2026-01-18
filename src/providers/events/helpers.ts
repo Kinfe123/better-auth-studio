@@ -157,7 +157,10 @@ export function createPostgresProvider(options: {
         try {
           await client.$executeRawUnsafe(query);
         } catch (error: any) {
-          console.error(`Failed to insert event (${event.type}) into ${schema}.${tableName}:`, error);
+          console.error(
+            `Failed to insert event (${event.type}) into ${schema}.${tableName}:`,
+            error
+          );
           throw error;
         }
       } else if (client.query) {
@@ -184,7 +187,10 @@ export function createPostgresProvider(options: {
             ]
           );
         } catch (error: any) {
-          console.error(`Failed to insert event (${event.type}) into ${schema}.${tableName}:`, error);
+          console.error(
+            `Failed to insert event (${event.type}) into ${schema}.${tableName}:`,
+            error
+          );
           if (error.code === '42P01') {
             await ensureTableSync();
             try {
@@ -306,7 +312,6 @@ export function createPostgresProvider(options: {
           try {
             await client.query(query, params);
           } catch (error: any) {
-            // Provide more context in error messages
             console.error(
               `Failed to insert batch chunk (${chunk.length} events) into ${schema}.${tableName}:`,
               error
@@ -473,7 +478,6 @@ export function createPostgresProvider(options: {
           nextCursor: hasMore ? events[events.length - 1].id : null,
         };
       } catch (error: any) {
-        // If table doesn't exist, return empty result instead of throwing
         if (error?.message?.includes('does not exist') || error?.code === '42P01') {
           return {
             events: [],
@@ -554,7 +558,6 @@ export function createClickHouseProvider(options: {
     }
   };
 
-  // Call ensureTable asynchronously (don't block initialization)
   ensureTableSync().catch(console.error);
 
   const ingestBatchFn = async (events: AuthEvent[]) => {
@@ -591,7 +594,6 @@ export function createClickHouseProvider(options: {
         });
         console.log(`✅ Inserted ${rows.length} event(s) into ClickHouse ${tableFullName}`);
       } else {
-        // Fallback: use INSERT query
         const values = rows
           .map(
             (row) =>
@@ -660,7 +662,6 @@ export function createClickHouseProvider(options: {
           }
         }
 
-        // If table doesn't exist, try to create it
         if (!tableExists) {
           const createTableQuery = `
             CREATE TABLE IF NOT EXISTS ${tableFullName} (
@@ -689,7 +690,6 @@ export function createClickHouseProvider(options: {
             await client.query({ query: createTableQuery });
           }
         } else {
-          // Table exists, check if status column exists
           try {
             const checkColumnQuery = `
               SELECT count() as exists 
@@ -731,7 +731,6 @@ export function createClickHouseProvider(options: {
                 console.log(`✅ Added status column to ${tableFullName}`);
               } catch (alterError: any) {
                 console.warn(`Failed to add status column to ${tableFullName}:`, alterError);
-                // Continue anyway - we'll handle missing column in query
               }
             }
           } catch (checkError) {
@@ -763,7 +762,6 @@ export function createClickHouseProvider(options: {
 
       const orderDirection = sort === 'desc' ? 'DESC' : 'ASC';
 
-      // Try to query with status column first, fallback if it doesn't exist
       let query = `
         SELECT id, type, timestamp, status, user_id, session_id, organization_id, 
                metadata, ip_address, user_agent, source, display_message, display_severity
@@ -787,7 +785,6 @@ export function createClickHouseProvider(options: {
           throw new Error('ClickHouse client does not support query or exec methods');
         }
       } catch (error: any) {
-        // If error is about missing status column, retry without it
         if (
           error?.message?.includes('Unknown expression identifier') &&
           error?.message?.includes('status')
@@ -795,7 +792,6 @@ export function createClickHouseProvider(options: {
           console.warn(`Status column not found in ${tableFullName}, querying without it`);
           hasStatusColumn = false;
 
-          // Retry query without status column
           query = `
             SELECT id, type, timestamp, user_id, session_id, organization_id, 
                    metadata, ip_address, user_agent, source, display_message, display_severity
@@ -834,14 +830,13 @@ export function createClickHouseProvider(options: {
         }
       }
 
-      // Handle case where result might be an array or object
       const rows = Array.isArray(result) ? result : result?.data || [];
       const hasMore = rows.length > limit;
       const events = rows.slice(0, limit).map((row: any) => ({
         id: row.id,
         type: row.type,
         timestamp: new Date(row.timestamp),
-        status: hasStatusColumn ? row.status || 'success' : 'success', // Default to 'success' if column doesn't exist
+        status: hasStatusColumn ? row.status || 'success' : 'success',
         userId: row.user_id || undefined,
         sessionId: row.session_id || undefined,
         organizationId: row.organization_id || undefined,
@@ -899,7 +894,6 @@ export function createStorageProvider(options: {
 }): EventIngestionProvider {
   const { adapter, tableName = 'auth_events' } = options;
 
-  // Ensure table exists (for Prisma/Drizzle adapters)
   const ensureTable = async () => {
     if (!adapter) return;
 

@@ -1,3 +1,8 @@
+import {
+  createClickHouseProvider,
+  createHttpProvider,
+  createPostgresProvider,
+} from '../providers/events/helpers.js';
 import type {
   AuthEvent,
   AuthEventType,
@@ -7,11 +12,6 @@ import type {
 } from '../types/events.js';
 import { EVENT_TEMPLATES, getEventSeverity } from '../types/events.js';
 import type { StudioConfig } from '../types/handler.js';
-import {
-  createPostgresProvider,
-  createClickHouseProvider,
-  createHttpProvider,
-} from '../providers/events/helpers.js';
 
 let provider: EventIngestionProvider | null = null;
 let config: StudioConfig['events'] | null = null;
