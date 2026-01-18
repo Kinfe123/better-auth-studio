@@ -64,7 +64,7 @@ export type StudioConfig = {
         tableName?: string;
         provider?: EventIngestionProvider;
         client?: any;
-        clientType?: 'postgres' | 'clickhouse' | 'http' | 'custom';
+        clientType?: 'postgres' | 'prisma' | 'drizzle' | 'clickhouse' | 'http' | 'custom';
         include?: AuthEventType[];
         exclude?: AuthEventType[];
         batchSize?: number;

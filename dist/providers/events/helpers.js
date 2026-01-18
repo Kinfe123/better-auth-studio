@@ -1,40 +1,89 @@
 export function createPostgresProvider(options) {
-    const { client, tableName = 'auth_events', schema = 'public' } = options;
+    const { client, tableName = 'auth_events', schema = 'public', clientType } = options;
     // Validate client is provided
     if (!client) {
         throw new Error('Postgres client is required. Provide a pg Pool, Client, or Prisma client instance.');
     }
-    // Validate client has required methods (either query for pg or $executeRaw for Prisma)
-    if (!client.query && !client.$executeRaw) {
-        throw new Error('Invalid Postgres client. Client must have either a `query` method (pg Pool/Client) or `$executeRaw` method (Prisma client).');
+    let actualClient = client;
+    if (clientType === 'drizzle') {
+        if (client.client && typeof client.client.query === 'function') {
+            actualClient = client.client;
+        }
+        else if (client.session?.client?.query) {
+            actualClient = client.session.client;
+        }
+        else if (typeof client.query === 'function') {
+            actualClient = client; // Drizzle might proxy query method
+        }
+    }
+    // Validate client has required methods
+    if (!actualClient.query && !client.$executeRaw && !client.execute) {
+        const errorMessage = clientType === 'prisma'
+            ? 'Invalid Prisma client. Client must have a `$executeRaw` method.'
+            : clientType === 'drizzle'
+                ? 'Invalid Drizzle client. Client must expose underlying database client with `query` method.'
+                : 'Invalid Postgres client. Client must have either a `query` method (pg Pool/Client) or `$executeRaw` method (Prisma client).';
+        throw new Error(errorMessage);
     }
     // Ensure table exists
     const ensureTable = async () => {
         if (!client)
             return;
         try {
-            // Support different Postgres client types (pg, postgres.js, etc.)
-            const queryFn = client.query || (typeof client === 'function' ? client : null);
-            if (!queryFn) {
-                console.warn(`⚠️  Postgres client doesn't support query method. Table ${schema}.${tableName} must be created manually.`);
-                return;
-            }
-            // Support Prisma client ($executeRaw) or standard pg client (query)
+            // Support Prisma client ($executeRaw), Drizzle instance (execute), or standard pg client (query)
             let executeQuery;
-            if (client.$executeRaw) {
+            let underlyingClient = null;
+            if (clientType === 'prisma' || client.$executeRaw) {
                 // Prisma client
                 executeQuery = async (query) => {
                     return await client.$executeRawUnsafe(query);
                 };
             }
+            else if (clientType === 'drizzle') {
+                // Drizzle instance - try to access underlying client or use execute method
+                if (actualClient && actualClient.query) {
+                    // Use the actualClient we determined earlier
+                    executeQuery = async (query) => {
+                        return await actualClient.query(query);
+                    };
+                }
+                else if (client.client && client.client.query) {
+                    // Drizzle might expose underlying client
+                    executeQuery = async (query) => {
+                        return await client.client.query(query);
+                    };
+                }
+                else if (client.execute) {
+                    // Drizzle execute method for raw SQL
+                    executeQuery = async (query) => {
+                        return await client.execute(query);
+                    };
+                }
+                else if (client.session?.client?.query) {
+                    // Try to access session client (some Drizzle setups)
+                    executeQuery = async (query) => {
+                        return await client.session.client.query(query);
+                    };
+                }
+                else {
+                    console.warn(`⚠️  Drizzle client doesn't expose underlying client or execute method. Table ${schema}.${tableName} must be created manually.`);
+                    return;
+                }
+            }
+            else if (actualClient && actualClient.query) {
+                // Standard pg client (Pool or Client) - use actualClient
+                executeQuery = async (query) => {
+                    return await actualClient.query(query);
+                };
+            }
             else if (client.query) {
-                // Standard pg client
+                // Fallback: use client.query directly
                 executeQuery = async (query) => {
                     return await client.query(query);
                 };
             }
             else {
-                console.warn(`⚠️  Postgres client doesn't support $executeRaw or query method. Table ${schema}.${tableName} must be created manually.`);
+                console.warn(`⚠️  Postgres client doesn't support $executeRaw, execute, or query method. Table ${schema}.${tableName} must be created manually.`);
                 return;
             }
             // Use CREATE TABLE IF NOT EXISTS (simpler and more reliable)
@@ -112,11 +161,10 @@ export function createPostgresProvider(options) {
     ensureTableSync().catch(console.error);
     return {
         async ingest(event) {
-            if (!tableEnsured) {
-                await ensureTableSync();
-            }
-            // Support Prisma client ($executeRaw) or standard pg client (query/Pool)
-            if (client.$executeRaw) {
+            // Always ensure table exists before ingesting (wait for completion)
+            await ensureTableSync();
+            // Support Prisma client ($executeRaw), Drizzle instance, or standard pg client (query/Pool)
+            if (clientType === 'prisma' || client.$executeRaw) {
                 // Prisma client - use $executeRawUnsafe for parameterized queries
                 const query = `
           INSERT INTO ${schema}.${tableName} 
@@ -128,13 +176,28 @@ export function createPostgresProvider(options) {
                 }
                 catch (error) {
                     console.error(`Failed to insert event (${event.type}) into ${schema}.${tableName}:`, error);
+                    // If table doesn't exist (Prisma error codes), try to create it and retry
+                    if (error.code === '42P01' || error.meta?.code === '42P01' || error.code === 'P2010') {
+                        // Reset tableEnsured and try again
+                        tableEnsured = false;
+                        await ensureTableSync();
+                        try {
+                            await client.$executeRawUnsafe(query);
+                            return;
+                        }
+                        catch (retryError) {
+                            console.error(`Retry after table creation also failed:`, retryError);
+                            throw retryError;
+                        }
+                    }
                     throw error;
                 }
             }
-            else if (client.query) {
-                // Standard pg client (Pool or Client) - use parameterized queries for safety
+            else if ((actualClient && actualClient.query) || client.query) {
+                // Standard pg client (Pool or Client) or Drizzle with underlying client - use parameterized queries for safety
+                const queryClient = actualClient || client;
                 try {
-                    await client.query(`INSERT INTO ${schema}.${tableName} 
+                    await queryClient.query(`INSERT INTO ${schema}.${tableName} 
              (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`, [
                         event.id,
@@ -157,7 +220,7 @@ export function createPostgresProvider(options) {
                     if (error.code === '42P01') {
                         await ensureTableSync();
                         try {
-                            await client.query(`INSERT INTO ${schema}.${tableName} 
+                            await queryClient.query(`INSERT INTO ${schema}.${tableName} 
                  (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`, [
                                 event.id,
@@ -199,8 +262,8 @@ export function createPostgresProvider(options) {
             if (events.length === 0)
                 return;
             await ensureTableSync();
-            // Support Prisma client ($executeRaw) or standard pg client (query)
-            if (client.$executeRaw) {
+            // Support Prisma client ($executeRaw), Drizzle instance, or standard pg client (query)
+            if (clientType === 'prisma' || client.$executeRaw) {
                 // Prisma client - use $executeRawUnsafe for batch inserts
                 const CHUNK_SIZE = 500; // Reasonable chunk size for string-based queries
                 for (let i = 0; i < events.length; i += CHUNK_SIZE) {
@@ -222,8 +285,9 @@ export function createPostgresProvider(options) {
                     }
                 }
             }
-            else if (client.query) {
-                // Standard pg client (Pool or Client)
+            else if ((actualClient && actualClient.query) || client.query) {
+                // Standard pg client (Pool or Client) or Drizzle with underlying client
+                const batchQueryClient = actualClient || client;
                 const PARAMS_PER_EVENT = 13;
                 const MAX_PARAMS = 65535;
                 const CHUNK_SIZE = Math.floor(MAX_PARAMS / PARAMS_PER_EVENT) - 1; // ~5000, but use 1000 for safety
@@ -256,7 +320,7 @@ export function createPostgresProvider(options) {
                         event.display?.severity || null,
                     ]);
                     try {
-                        await client.query(query, params);
+                        await batchQueryClient.query(query, params);
                     }
                     catch (error) {
                         console.error(`Failed to insert batch chunk (${chunk.length} events) into ${schema}.${tableName}:`, error);

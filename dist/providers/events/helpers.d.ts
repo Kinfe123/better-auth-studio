@@ -3,6 +3,7 @@ export declare function createPostgresProvider(options: {
     client: any;
     tableName?: string;
     schema?: string;
+    clientType?: 'postgres' | 'prisma' | 'drizzle';
 }): EventIngestionProvider;
 export declare function createClickHouseProvider(options: {
     client: any;

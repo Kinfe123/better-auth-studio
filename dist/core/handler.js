@@ -34,9 +34,12 @@ export async function handleStudioRequest(request, config) {
             // Create provider based on clientType
             switch (config.events.clientType) {
                 case 'postgres':
+                case 'prisma':
+                case 'drizzle':
                     provider = createPostgresProvider({
                         client: config.events.client,
                         tableName: config.events.tableName,
+                        clientType: config.events.clientType,
                     });
                     break;
                 case 'clickhouse':

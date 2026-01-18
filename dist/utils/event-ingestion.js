@@ -20,9 +20,12 @@ export function initializeEventIngestion(eventsConfig) {
     else if (eventsConfig.client && eventsConfig.clientType) {
         switch (eventsConfig.clientType) {
             case 'postgres':
+            case 'prisma':
+            case 'drizzle':
                 provider = createPostgresProvider({
                     client: eventsConfig.client,
                     tableName: eventsConfig.tableName,
+                    clientType: eventsConfig.clientType,
                 });
                 break;
             case 'clickhouse':

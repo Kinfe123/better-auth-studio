@@ -26,8 +26,8 @@ const config: StudioConfig = {
   },
   events: {
     enabled: true,
-    client: pool,
-    clientType: 'postgres',
+    client: prisma,
+    clientType: 'prisma',
     tableName: 'auth_events',
     liveMarquee: {
       enabled: true,
