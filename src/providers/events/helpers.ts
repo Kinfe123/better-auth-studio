@@ -49,7 +49,7 @@ export function createPostgresProvider(options: {
     try {
       // Support Prisma client ($executeRaw), Drizzle instance (execute), or standard pg client (query)
       let executeQuery: (query: string) => Promise<any>;
-      let underlyingClient: any = null;
+      const underlyingClient: any = null;
 
       if (clientType === 'prisma' || client.$executeRaw) {
         // Prisma client
@@ -57,7 +57,7 @@ export function createPostgresProvider(options: {
           return await client.$executeRawUnsafe(query);
         };
       } else if (clientType === 'drizzle') {
-        // Drizzle instance - try to access underlying client or use execute method
+        // drizzle client
         if (actualClient && actualClient.query) {
           // Use the actualClient we determined earlier
           executeQuery = async (query: string) => {
@@ -90,7 +90,6 @@ export function createPostgresProvider(options: {
           return await actualClient.query(query);
         };
       } else if (client.query) {
-        // Fallback: use client.query directly
         executeQuery = async (query: string) => {
           return await client.query(query);
         };
