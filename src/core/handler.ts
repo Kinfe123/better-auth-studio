@@ -102,7 +102,6 @@ export async function handleStudioRequest(
   request: UniversalRequest,
   config: StudioConfig
 ): Promise<UniversalResponse> {
-
   try {
     const isSelfHosted = !!config.basePath;
     const basePath = config.basePath || '';
@@ -662,4 +661,3 @@ function getCacheControl(path: string): string {
   }
   return 'no-cache';
 }
-

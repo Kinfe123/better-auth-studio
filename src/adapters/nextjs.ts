@@ -12,7 +12,7 @@ function getUrlFromRequest(req: Request): string {
 }
 
 export function betterAuthStudio(config: StudioConfig) {
-  if(config.events?.enabled && config.auth)  {
+  if (config.events?.enabled && config.auth) {
     injectEventHooks(config.auth, config.events);
   }
   return async (request: Request): Promise<Response> => {

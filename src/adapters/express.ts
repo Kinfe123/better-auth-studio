@@ -8,7 +8,7 @@ import { injectEventHooks } from '../utils/hook-injector.js';
  * Express adapter for Better Auth Studio
  */
 export function betterAuthStudio(config: StudioConfig): ExpressRouter {
-  if(config.events?.enabled && config.auth)  {
+  if (config.events?.enabled && config.auth) {
     injectEventHooks(config.auth, config.events);
   }
 

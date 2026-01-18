@@ -123,10 +123,8 @@ export function createPostgresProvider(options: {
       for (const indexQuery of indexQueries) {
         try {
           await executeQuery(indexQuery);
-        } catch (err) {
-        }
+        } catch (err) {}
       }
-
     } catch (error: any) {
       if (error?.message?.includes('already exists') || error?.code === '42P07') {
         return;
@@ -197,7 +195,8 @@ export function createPostgresProvider(options: {
         }
       } else if (
         (actualClient && (actualClient.query || actualClient.unsafe)) ||
-        (client.query || client.unsafe)
+        client.query ||
+        client.unsafe
       ) {
         // Standard pg client (Pool/Client with query) or postgres-js client (with unsafe) or Drizzle with underlying client
         const queryClient = actualClient || client;
@@ -342,7 +341,8 @@ export function createPostgresProvider(options: {
         }
       } else if (
         (actualClient && (actualClient.query || actualClient.unsafe)) ||
-        (client.query || client.unsafe)
+        client.query ||
+        client.unsafe
       ) {
         // Standard pg client (Pool/Client with query) or postgres-js client (with unsafe) or Drizzle with underlying client
         const batchQueryClient = actualClient || client;
