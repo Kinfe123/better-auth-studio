@@ -66,7 +66,7 @@ export function LiveEventMarquee({
     try {
       // Use sort from props, default to 'desc' (newest first)
       const sortOrder = propSort ?? 'desc';
-      
+
       const params = new URLSearchParams({
         limit: '10',
         sort: sortOrder, // Use configurable sort order

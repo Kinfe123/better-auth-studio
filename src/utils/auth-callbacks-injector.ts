@@ -30,8 +30,7 @@ function getRequestInfo(request?: Request | any): { headers: Record<string, stri
           });
         }
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   return { headers: headersObj, ip };
