@@ -26,6 +26,7 @@ const config: StudioConfig = {
       enabled: true,
       pollInterval: 2000,
       speed: 1,
+      sort: "desc",
       pauseOnHover: true,
       colors: {
         success: '#34d399',

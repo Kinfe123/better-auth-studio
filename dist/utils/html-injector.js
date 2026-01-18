@@ -37,6 +37,7 @@ function prepareFrontendConfig(config) {
             speed: liveMarqueeConfig?.speed ?? 0.5, // Default: 0.5 pixels per frame
             pauseOnHover: liveMarqueeConfig?.pauseOnHover ?? true, // Default: true
             limit: liveMarqueeConfig?.limit ?? 50, // Default: 50 events in marquee
+            sort: liveMarqueeConfig?.sort ?? 'desc', // Default: 'desc' (newest first)
             colors: liveMarqueeConfig?.colors || undefined,
         }
         : undefined;

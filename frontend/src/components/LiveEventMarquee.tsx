@@ -19,6 +19,7 @@ interface LiveEventMarqueeProps {
   speed?: number;
   pauseOnHover?: boolean;
   limit?: number;
+  sort?: 'asc' | 'desc'; // Sort order for events: 'desc' = newest first, 'asc' = oldest first
   colors?: {
     success?: string;
     info?: string;
@@ -34,6 +35,7 @@ export function LiveEventMarquee({
   speed: propSpeed,
   pauseOnHover: propPauseOnHover,
   colors: propColors,
+  sort: propSort,
 }: LiveEventMarqueeProps) {
   const maxEvents = propMaxEvents ?? 50;
   const speedRef = useRef(propSpeed ?? 0.5);
@@ -62,9 +64,12 @@ export function LiveEventMarquee({
     isPollingRef.current = true;
 
     try {
+      // Use sort from props, default to 'desc' (newest first)
+      const sortOrder = propSort ?? 'desc';
+      
       const params = new URLSearchParams({
         limit: '10',
-        sort: 'desc', // Newest events first (descending order by timestamp)
+        sort: sortOrder, // Use configurable sort order
       });
 
       if (lastEventId) {
@@ -110,7 +115,7 @@ export function LiveEventMarquee({
     } finally {
       isPollingRef.current = false;
     }
-  }, [lastEventId, maxEvents]);
+  }, [lastEventId, maxEvents, propSort]);
 
   useEffect(() => {
     // Initial poll

@@ -31,7 +31,6 @@ function getRequestInfo(request) {
             }
         }
         catch (e) {
-            // Ignore errors
         }
     }
     return { headers: headersObj, ip };
@@ -40,14 +39,7 @@ function getRequestInfo(request) {
  * Wraps Better Auth callbacks to automatically emit events
  * This should be called during Better Auth initialization
  */
-// Map to track which password reset method was used (for completion event)
-// Key: email, Value: 'otp' | 'token'
 const passwordResetMethod = new Map();
-// Clean up old entries periodically (they should be cleared after use, but just in case)
-setInterval(() => {
-    // Clear all entries - they should be cleared after password reset completes anyway
-    passwordResetMethod.clear();
-}, 60 * 60 * 1000); // Every hour
 export function wrapAuthCallbacks(auth, eventsConfig) {
     if (!auth || !eventsConfig?.enabled) {
         return;
@@ -213,15 +205,11 @@ export function wrapAuthCallbacks(auth, eventsConfig) {
                         await originalPromise;
                     }
                 };
-                // Wrap directly in options
                 emailOtpPlugin.options.sendVerificationOTP = wrappedSendVerificationOTP;
-                // Wrap the init function to ensure our wrapper is used during init
                 const originalInit = emailOtpPlugin.init;
                 if (originalInit && typeof originalInit === 'function') {
                     emailOtpPlugin.init = async (authInstance) => {
-                        // Ensure our wrapper is in place BEFORE calling original init
                         emailOtpPlugin.options.sendVerificationOTP = wrappedSendVerificationOTP;
-                        // Call original init
                         await originalInit(authInstance);
                         // Re-apply after init
                         if (emailOtpPlugin.options) {

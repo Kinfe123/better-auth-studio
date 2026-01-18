@@ -687,6 +687,7 @@ export default function Layout({ children }: LayoutProps) {
           const speed = liveMarqueeConfig?.speed ?? 0.5;
           const pauseOnHover = liveMarqueeConfig?.pauseOnHover ?? true;
           const limit = liveMarqueeConfig?.limit ?? 50;
+          const sort = liveMarqueeConfig?.sort ?? 'desc';
           const colors = liveMarqueeConfig?.colors;
           return liveMarqueeEnabled && isSelfHosted ? (
             <LiveEventMarquee
@@ -694,6 +695,7 @@ export default function Layout({ children }: LayoutProps) {
               pollInterval={pollInterval}
               speed={speed}
               pauseOnHover={pauseOnHover}
+              sort={sort}
               colors={colors}
             />
           ) : null;

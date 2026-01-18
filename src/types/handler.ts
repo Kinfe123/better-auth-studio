@@ -16,6 +16,7 @@ export type LiveMarqueeConfig = {
   speed?: number; // Animation speed in pixels per frame (default: 0.5)
   pauseOnHover?: boolean; // Pause animation when hovered (default: true)
   limit?: number; // Maximum number of events to display in marquee (default: 50)
+  sort?: 'asc' | 'desc'; // Sort order for events: 'desc' = newest first (default), 'asc' = oldest first
   colors?: EventColors;
 };
 export type StudioMetadata = {

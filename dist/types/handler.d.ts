@@ -15,6 +15,7 @@ export type LiveMarqueeConfig = {
     speed?: number;
     pauseOnHover?: boolean;
     limit?: number;
+    sort?: 'asc' | 'desc';
     colors?: EventColors;
 };
 export type StudioMetadata = {

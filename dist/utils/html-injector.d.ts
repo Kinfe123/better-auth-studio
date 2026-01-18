@@ -35,6 +35,7 @@ export interface LiveMarqueeConfig {
     speed?: number;
     pauseOnHover?: boolean;
     limit?: number;
+    sort?: 'asc' | 'desc';
     colors?: EventColors;
 }
 export interface WindowStudioConfig {
