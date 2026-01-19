@@ -5,6 +5,10 @@ export declare function createPostgresProvider(options: {
     schema?: string;
     clientType?: 'postgres' | 'prisma' | 'drizzle';
 }): EventIngestionProvider;
+export declare function createSqliteProvider(options: {
+    client: any;
+    tableName?: string;
+}): EventIngestionProvider;
 export declare function createClickHouseProvider(options: {
     client: any;
     table?: string;

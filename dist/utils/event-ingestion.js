@@ -1,4 +1,4 @@
-import { createClickHouseProvider, createHttpProvider, createPostgresProvider, } from '../providers/events/helpers.js';
+import { createClickHouseProvider, createHttpProvider, createPostgresProvider, createSqliteProvider, } from '../providers/events/helpers.js';
 import { EVENT_TEMPLATES, getEventSeverity } from '../types/events.js';
 let provider = null;
 let config = null;
@@ -30,6 +30,17 @@ export function initializeEventIngestion(eventsConfig) {
                         client: eventsConfig.client,
                         tableName: eventsConfig.tableName,
                         clientType: eventsConfig.clientType,
+                    });
+                }
+                catch (error) {
+                    throw error;
+                }
+                break;
+            case 'sqlite':
+                try {
+                    provider = createSqliteProvider({
+                        client: eventsConfig.client,
+                        tableName: eventsConfig.tableName,
                     });
                 }
                 catch (error) {

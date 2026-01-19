@@ -5,6 +5,7 @@ import {
   createClickHouseProvider,
   createHttpProvider,
   createPostgresProvider,
+  createSqliteProvider,
   createStorageProvider,
 } from '../providers/events/helpers.js';
 import type { EventIngestionProvider } from '../types/events.js';
@@ -53,6 +54,16 @@ export async function initializeEventIngestionAndHooks(config: StudioConfig): Pr
               client: config.events.client,
               tableName: config.events.tableName,
               clientType: config.events.clientType,
+            });
+          } catch (error) {
+            throw error;
+          }
+          break;
+        case 'sqlite':
+          try {
+            provider = createSqliteProvider({
+              client: config.events.client,
+              tableName: config.events.tableName,
             });
           } catch (error) {
             throw error;

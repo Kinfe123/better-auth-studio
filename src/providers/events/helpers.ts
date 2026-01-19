@@ -1,5 +1,6 @@
 import type {
   AuthEvent,
+  AuthEventType,
   EventIngestionProvider,
   EventQueryOptions,
   EventQueryResult,
@@ -588,6 +589,336 @@ export function createPostgresProvider(options: {
             nextCursor: null,
           };
         }
+        throw error;
+      }
+    },
+  };
+}
+
+export function createSqliteProvider(options: {
+  client: any;
+  tableName?: string;
+}): EventIngestionProvider {
+  const { client, tableName = 'auth_events' } = options;
+
+  // Validate client is provided
+  if (!client) {
+    throw new Error(
+      'SQLite client is required. Provide a better-sqlite3 Database instance.'
+    );
+  }
+
+  // Handle case where client might be a function (lazy initialization) or already initialized
+  let actualClient = typeof client === 'function' ? client() : client;
+
+  // If client initialization failed (native module not found), try to provide helpful error
+  if (!actualClient) {
+    throw new Error(
+      'SQLite client initialization failed. Make sure better-sqlite3 is properly installed and built. ' +
+      'Run: pnpm rebuild better-sqlite3 or npm rebuild better-sqlite3'
+    );
+  }
+
+  // Validate client has required methods (better-sqlite3 Database)
+  const hasExec = typeof actualClient.exec === 'function';
+  const hasPrepare = typeof actualClient.prepare === 'function';
+
+  if (!hasExec || !hasPrepare) {
+    // If methods don't exist, it might be an initialization error - provide helpful message
+    if (actualClient instanceof Error) {
+      throw new Error(
+        `SQLite client initialization error: ${actualClient.message}. ` +
+        'Make sure better-sqlite3 native module is built. Run: pnpm rebuild better-sqlite3'
+      );
+    }
+    throw new Error(
+      'Invalid SQLite client. Client must have `exec` and `prepare` methods (better-sqlite3 Database instance). ' +
+      'If using better-sqlite3, make sure the native module is built: pnpm rebuild better-sqlite3'
+    );
+  }
+
+  // Ensure table exists
+  const ensureTable = async () => {
+    if (!client) return;
+
+    try {
+      // Use CREATE TABLE IF NOT EXISTS (SQLite doesn't support schemas like Postgres)
+      const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS ${tableName} (
+          id TEXT PRIMARY KEY,
+          type TEXT NOT NULL,
+          timestamp TEXT NOT NULL DEFAULT (datetime('now')),
+          status TEXT NOT NULL DEFAULT 'success',
+          user_id TEXT,
+          session_id TEXT,
+          organization_id TEXT,
+          metadata TEXT DEFAULT '{}',
+          ip_address TEXT,
+          user_agent TEXT,
+          source TEXT DEFAULT 'app',
+          display_message TEXT,
+          display_severity TEXT,
+          created_at TEXT DEFAULT (datetime('now'))
+        );
+      `;
+
+      actualClient.exec(createTableQuery);
+
+      const indexQueries = [
+        `CREATE INDEX IF NOT EXISTS idx_${tableName}_user_id ON ${tableName}(user_id)`,
+        `CREATE INDEX IF NOT EXISTS idx_${tableName}_type ON ${tableName}(type)`,
+        `CREATE INDEX IF NOT EXISTS idx_${tableName}_timestamp ON ${tableName}(timestamp DESC)`,
+        `CREATE INDEX IF NOT EXISTS idx_${tableName}_id_timestamp ON ${tableName}(id, timestamp DESC)`,
+      ];
+
+      for (const indexQuery of indexQueries) {
+        try {
+          actualClient.exec(indexQuery);
+        } catch (err) {
+          // Index might already exist, ignore
+        }
+      }
+    } catch (error: any) {
+      if (error?.message?.includes('already exists')) {
+        return;
+      }
+      console.error(`Failed to ensure ${tableName} table:`, error);
+    }
+  };
+
+  let tableEnsured = false;
+  let tableEnsuringPromise: Promise<void> | null = null;
+
+  const ensureTableSync = async (): Promise<void> => {
+    if (tableEnsured) {
+      return;
+    }
+
+    if (tableEnsuringPromise) {
+      return tableEnsuringPromise;
+    }
+
+    tableEnsuringPromise = (async () => {
+      try {
+        await ensureTable();
+        tableEnsured = true;
+      } catch (error) {
+        tableEnsuringPromise = null;
+        throw error;
+      } finally {
+        tableEnsuringPromise = null;
+      }
+    })();
+    return tableEnsuringPromise;
+  };
+
+  ensureTableSync().catch(console.error);
+
+  return {
+    async ingest(event: AuthEvent) {
+      await ensureTableSync();
+
+      try {
+        const stmt = actualClient.prepare(`
+          INSERT INTO ${tableName} 
+          (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+
+        stmt.run(
+          event.id,
+          event.type,
+          event.timestamp.toISOString(),
+          event.status || 'success',
+          event.userId || null,
+          event.sessionId || null,
+          event.organizationId || null,
+          JSON.stringify(event.metadata || {}),
+          event.ipAddress || null,
+          event.userAgent || null,
+          event.source,
+          event.display?.message || null,
+          event.display?.severity || null
+        );
+      } catch (error: any) {
+        console.error(
+          `Failed to insert event (${event.type}) into ${tableName}:`,
+          error
+        );
+        // If table doesn't exist, try to create it and retry
+        if (error.message?.includes('no such table')) {
+          tableEnsured = false;
+          await ensureTableSync();
+          try {
+            const stmt = actualClient.prepare(`
+              INSERT INTO ${tableName} 
+              (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `);
+            stmt.run(
+              event.id,
+              event.type,
+              event.timestamp.toISOString(),
+              event.status || 'success',
+              event.userId || null,
+              event.sessionId || null,
+              event.organizationId || null,
+              JSON.stringify(event.metadata || {}),
+              event.ipAddress || null,
+              event.userAgent || null,
+              event.source,
+              event.display?.message || null,
+              event.display?.severity || null
+            );
+            return;
+          } catch (retryError: any) {
+            console.error(`Retry after table creation also failed:`, retryError);
+            throw retryError;
+          }
+        }
+        throw error;
+      }
+    },
+
+    async ingestBatch(events: AuthEvent[]) {
+      if (events.length === 0) return;
+
+      await ensureTableSync();
+
+          try {
+            const transaction = actualClient.transaction((events: AuthEvent[]) => {
+              const stmt = actualClient.prepare(`
+            INSERT INTO ${tableName} 
+            (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `);
+
+          for (const event of events) {
+            stmt.run(
+              event.id,
+              event.type,
+              event.timestamp.toISOString(),
+              event.status || 'success',
+              event.userId || null,
+              event.sessionId || null,
+              event.organizationId || null,
+              JSON.stringify(event.metadata || {}),
+              event.ipAddress || null,
+              event.userAgent || null,
+              event.source,
+              event.display?.message || null,
+              event.display?.severity || null
+            );
+          }
+        });
+
+        transaction(events);
+      } catch (error: any) {
+        console.error(`Failed to insert batch (${events.length} events):`, error);
+        if (error.message?.includes('no such table')) {
+          tableEnsured = false;
+          await ensureTableSync();
+          try {
+            const transaction = actualClient.transaction((events: AuthEvent[]) => {
+              const stmt = actualClient.prepare(`
+                INSERT INTO ${tableName} 
+                (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              `);
+
+              for (const event of events) {
+                stmt.run(
+                  event.id,
+                  event.type,
+                  event.timestamp.toISOString(),
+                  event.status || 'success',
+                  event.userId || null,
+                  event.sessionId || null,
+                  event.organizationId || null,
+                  JSON.stringify(event.metadata || {}),
+                  event.ipAddress || null,
+                  event.userAgent || null,
+                  event.source,
+                  event.display?.message || null,
+                  event.display?.severity || null
+                );
+              }
+            });
+
+            transaction(events);
+            return;
+          } catch (retryError: any) {
+            console.error(`Retry after table creation also failed:`, retryError);
+            throw retryError;
+          }
+        }
+        throw error;
+      }
+    },
+
+    async query(options: EventQueryOptions): Promise<EventQueryResult> {
+      const { limit = 20, after, sort = 'desc', type, userId } = options;
+
+      await ensureTableSync();
+
+      try {
+        let query = `SELECT * FROM ${tableName} WHERE 1=1`;
+        const params: any[] = [];
+
+        if (type) {
+          query += ` AND type = ?`;
+          params.push(type);
+        }
+
+        if (userId) {
+          query += ` AND user_id = ?`;
+          params.push(userId);
+        }
+
+        if (after) {
+          query += ` AND id > ?`;
+          params.push(after);
+        }
+
+        query += ` ORDER BY timestamp ${sort === 'desc' ? 'DESC' : 'ASC'}`;
+        query += ` LIMIT ?`;
+        params.push(limit + 1); // Fetch one extra to check if there are more
+
+        const stmt = actualClient.prepare(query);
+        const rows = stmt.all(...params) as any[];
+
+        const hasMore = rows.length > limit;
+        const events = (hasMore ? rows.slice(0, limit) : rows).map((row) => ({
+          id: row.id,
+          type: row.type as AuthEventType,
+          timestamp: new Date(row.timestamp),
+          status: row.status as 'success' | 'failed',
+          userId: row.user_id || undefined,
+          sessionId: row.session_id || undefined,
+          organizationId: row.organization_id || undefined,
+          metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata || {},
+          ipAddress: row.ip_address || undefined,
+          userAgent: row.user_agent || undefined,
+          source: row.source || 'app',
+          display: row.display_message || row.display_severity
+            ? {
+                message: row.display_message || undefined,
+                severity: row.display_severity || undefined,
+              }
+            : undefined,
+        }));
+
+        return {
+          events,
+          hasMore,
+          nextCursor: hasMore && events.length > 0 ? events[events.length - 1].id : null,
+        };
+      } catch (error: any) {
+        if (error.message?.includes('no such table')) {
+          await ensureTableSync();
+          return { events: [], hasMore: false, nextCursor: null };
+        }
+        console.error(`Failed to query events from ${tableName}:`, error);
         throw error;
       }
     },

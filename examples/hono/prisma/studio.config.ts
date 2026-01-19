@@ -1,12 +1,8 @@
 import type { StudioConfig } from 'better-auth-studio';
 import { auth } from './src/auth';
 import { createClient } from '@clickhouse/client';
-import { Pool } from 'pg';
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-
+import Database from 'better-sqlite3';
 const clickhouseClient = createClient({
   host: process.env.CLICKHOUSE_HOST,
   username: process.env.CLICKHOUSE_USERNAME || 'default',
@@ -26,8 +22,8 @@ const config: StudioConfig = {
   },
   events: {
     enabled: true,
-    client: prisma,
-    clientType: 'prisma',
+    client: new Database("./db.sqlite"),
+    clientType: 'sqlite',
     tableName: 'auth_events',
     liveMarquee: {
       enabled: true,

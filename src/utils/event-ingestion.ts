@@ -2,6 +2,7 @@ import {
   createClickHouseProvider,
   createHttpProvider,
   createPostgresProvider,
+  createSqliteProvider,
 } from '../providers/events/helpers.js';
 import type {
   AuthEvent,
@@ -46,6 +47,16 @@ export function initializeEventIngestion(eventsConfig: StudioConfig['events']): 
             client: eventsConfig.client,
             tableName: eventsConfig.tableName,
             clientType: eventsConfig.clientType,
+          });
+        } catch (error) {
+          throw error;
+        }
+        break;
+      case 'sqlite':
+        try {
+          provider = createSqliteProvider({
+            client: eventsConfig.client,
+            tableName: eventsConfig.tableName,
           });
         } catch (error) {
           throw error;

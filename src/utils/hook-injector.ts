@@ -4,6 +4,7 @@ import {
   createClickHouseProvider,
   createHttpProvider,
   createPostgresProvider,
+  createSqliteProvider,
 } from '../providers/events/helpers.js';
 import type { StudioConfig } from '../types/handler.js';
 import { wrapAuthCallbacks } from './auth-callbacks-injector.js';
@@ -621,6 +622,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   client: capturedConfig.client,
                   tableName: capturedConfig.tableName,
                   clientType: capturedConfig.clientType,
+                });
+                break;
+              case 'sqlite':
+                provider = createSqliteProvider({
+                  client: capturedConfig.client,
+                  tableName: capturedConfig.tableName,
                 });
                 break;
               case 'clickhouse':
