@@ -184,8 +184,8 @@ export function Component({
                     zIndex: 10
                 }}
             >
-                <h1 className="md:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-white to-white/90 font-mono uppercase text-left text-6xl lg:text-8xl font-normal relative z-20">
-                   Auth
+                <h1 className="md:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-white to-white/90 font-mono uppercase text-left text-6xl lg:text-8xl font-light relative z-20">
+                   Auth <br />
                     <LineShadowText shadowColor="white" className="text-white">
                         Events
                     </LineShadowText>
@@ -193,7 +193,6 @@ export function Component({
                 <p className="ml-2 mt-4 text-left text-lg md:text-xl text-white/70 font-mono uppercase tracking-wider">
                     {"// "} Real-time
                     <span className='bg-white text-black mx-1 px-1 py-0 rounded-none'>
-
                         Ingestion
                     </span>
                 </p>
