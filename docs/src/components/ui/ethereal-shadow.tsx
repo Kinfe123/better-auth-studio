@@ -185,9 +185,9 @@ export function Component({
                 }}
             >
                 <h1 className="md:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-white to-white/90 font-mono uppercase text-left text-6xl lg:text-8xl font-light relative z-20">
-                   Auth <br />
+                   Auth_ <br />
                     <LineShadowText shadowColor="white" className="text-white">
-                        Events
+                        Events.
                     </LineShadowText>
                 </h1>
                 <p className="ml-2 mt-4 text-left text-lg md:text-xl text-white/70 font-mono uppercase tracking-wider">

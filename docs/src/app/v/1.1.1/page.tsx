@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Component as EtheralShadow } from '@/components/ui/ethereal-shadow';
 import { EventMarquee } from '@/components/ui/EventMarquee';
+import EventIngestionFlow from '@/components/ui/event-ingestion-flow';
 import PixelCard from '@/components/PixelCard';
 import CodeBlock from '@/components/CodeBlock';
 import CodeHighlighter from '@/components/SyntaxHighlighter';
@@ -247,28 +248,36 @@ export default studioConfig;`,
                             );
                           })}
                         </div>
-                        {/* Mobile tabs - inside the card */}
+                        {/* Mobile select dropdown */}
                         <div className="md:hidden pt-3 sm:pt-4">
+                          <div className="relative mb-2">
+                            <select
+                              value={activeTab}
+                              onChange={(e) => setActiveTab(e.target.value)}
+                              className="relative z-10 text-[11px] sm:text-[12px] font-light uppercase tracking-tight 
+                                text-white/90 border border-white/40 bg-white/10 
+                                px-2 py-[6px] pr-8 overflow-hidden transition-all duration-200
+                                appearance-none cursor-pointer w-full
+                                focus:border-white/40 focus:bg-white/10 focus:outline-none
+                                shadow-[0_0_0_1px_rgba(255,255,255,0.15)] font-mono"
+                              style={{
+                                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                                backgroundRepeat: 'no-repeat',
+                                backgroundPosition: 'right 8px center',
+                                backgroundSize: '12px',
+                              }}
+                            >
+                              {tabs.map((tab) => (
+                                <option key={tab.id} value={tab.id}>
+                                  {tab.name}
+                                </option>
+                              ))}
+                            </select>
+                            <div className="absolute -z-1 inset-0 bg-black pointer-events-none" />
+                            <div className="absolute z-0 inset-0 bg-white/5 pointer-events-none" />
+                            <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[4%] pointer-events-none" />
+                          </div>
                           <PixelCard variant="code" className="border-white/15 p-0 overflow-hidden">
-                            <div className="flex flex-wrap gap-1 border-b border-white/10 pb-1 mb-0 px-3 pt-2">
-                              {tabs.map((tab) => {
-                                const Icon = tab.icon;
-                                return (
-                                  <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-1.5 px-2 py-1 text-[10px] sm:text-[11px] font-mono uppercase tracking-tight transition-colors ${
-                                      activeTab === tab.id
-                                        ? 'bg-white/10 text-white border-b-2 border-white'
-                                        : 'text-white/50 hover:text-white/70'
-                                    }`}
-                                  >
-                                    <Icon className="w-3 h-3" />
-                                    <span>{tab.name}</span>
-                                  </button>
-                                );
-                              })}
-                            </div>
                             <div className="relative px-3 pb-2 max-h-[300px] overflow-y-auto overflow-x-hidden thin-scrollbar">
                               <CodeHighlighter
                                 code={codeExamples[activeTab as keyof typeof codeExamples]}
@@ -310,7 +319,7 @@ export default studioConfig;`,
                     Database Support
                   </p>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 border-b border-white/15 divide-x divide-y divide-white/15">
+                <div className="grid grid-cols-5 sm:grid-cols-5 border-b border-white/15 divide-x divide-y divide-white/15">
                   {databases.map((database) => {
                     const Icon = database.icon;
                     return (
@@ -373,14 +382,34 @@ export default studioConfig;`,
           </div>
         </section>
         <section className="hidden lg:flex flex-col justify-between relative bg-[#0A0A0A] overflow-hidden h-full">
-          <div className="grow hidden md:flex items-center justify-center shrink-0 relative z-10" style={{ height: '60%' }}>
-            <div className="relative w-full h-full">
+          <div className="grow hidden md:flex items-start justify-center shrink-0 relative z-10" style={{ height: '60%' }}>
+            <div className="relative w-full h-full flex">
               <EtheralShadow
                 color="rgba(128, 128, 128, 1)"
                 animation={{ scale: 100, speed: 90 }}
                 noise={{ opacity: 1, scale: 1.2 }}
                 sizing="fill"
               />
+              <div className="absolute top-6 left-0 right-0 flex items-start justify-center z-20 pointer-events-none">
+                <div className="pointer-events-auto w-full">
+                  <EventIngestionFlow
+                    className="w-full"
+                    circleText="Auth"
+                    badgeTexts={{
+                      first: "user.joined",
+                      second: "session.created",
+                      third: "organization.created",
+                      fourth: "member.added",
+                    }}
+                    buttonTexts={{
+                      first: "Better Auth",
+                      second: "Events",
+                    }}
+                    title="Event Ingestion Flow"
+                    lightColor="#ffffff"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -412,5 +441,4 @@ export default studioConfig;`,
       </main>
     </div>
   );
-}
-
+}  

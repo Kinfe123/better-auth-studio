@@ -61,7 +61,7 @@ export function CodeBlock({
           onClick={handleCopy}
           className="text-gray-400 hover:text-white rounded-none p-1.5 h-auto hover:bg-white/5 transition-colors"
         >
-          {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+          {copied ? <Check className="w-4 h-4 text-white/70" /> : <Copy className="w-4 h-4" />}
         </Button>
       </div>
 
