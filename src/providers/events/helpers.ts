@@ -603,19 +603,17 @@ export function createSqliteProvider(options: {
 
   // Validate client is provided
   if (!client) {
-    throw new Error(
-      'SQLite client is required. Provide a better-sqlite3 Database instance.'
-    );
+    throw new Error('SQLite client is required. Provide a better-sqlite3 Database instance.');
   }
 
   // Handle case where client might be a function (lazy initialization) or already initialized
-  let actualClient = typeof client === 'function' ? client() : client;
+  const actualClient = typeof client === 'function' ? client() : client;
 
   // If client initialization failed (native module not found), try to provide helpful error
   if (!actualClient) {
     throw new Error(
       'SQLite client initialization failed. Make sure better-sqlite3 is properly installed and built. ' +
-      'Run: pnpm rebuild better-sqlite3 or npm rebuild better-sqlite3'
+        'Run: pnpm rebuild better-sqlite3 or npm rebuild better-sqlite3'
     );
   }
 
@@ -628,12 +626,12 @@ export function createSqliteProvider(options: {
     if (actualClient instanceof Error) {
       throw new Error(
         `SQLite client initialization error: ${actualClient.message}. ` +
-        'Make sure better-sqlite3 native module is built. Run: pnpm rebuild better-sqlite3'
+          'Make sure better-sqlite3 native module is built. Run: pnpm rebuild better-sqlite3'
       );
     }
     throw new Error(
       'Invalid SQLite client. Client must have `exec` and `prepare` methods (better-sqlite3 Database instance). ' +
-      'If using better-sqlite3, make sure the native module is built: pnpm rebuild better-sqlite3'
+        'If using better-sqlite3, make sure the native module is built: pnpm rebuild better-sqlite3'
     );
   }
 
@@ -741,10 +739,7 @@ export function createSqliteProvider(options: {
           event.display?.severity || null
         );
       } catch (error: any) {
-        console.error(
-          `Failed to insert event (${event.type}) into ${tableName}:`,
-          error
-        );
+        console.error(`Failed to insert event (${event.type}) into ${tableName}:`, error);
         // If table doesn't exist, try to create it and retry
         if (error.message?.includes('no such table')) {
           tableEnsured = false;
@@ -785,9 +780,9 @@ export function createSqliteProvider(options: {
 
       await ensureTableSync();
 
-          try {
-            const transaction = actualClient.transaction((events: AuthEvent[]) => {
-              const stmt = actualClient.prepare(`
+      try {
+        const transaction = actualClient.transaction((events: AuthEvent[]) => {
+          const stmt = actualClient.prepare(`
             INSERT INTO ${tableName} 
             (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -896,16 +891,18 @@ export function createSqliteProvider(options: {
           userId: row.user_id || undefined,
           sessionId: row.session_id || undefined,
           organizationId: row.organization_id || undefined,
-          metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata || {},
+          metadata:
+            typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata || {},
           ipAddress: row.ip_address || undefined,
           userAgent: row.user_agent || undefined,
           source: row.source || 'app',
-          display: row.display_message || row.display_severity
-            ? {
-                message: row.display_message || undefined,
-                severity: row.display_severity || undefined,
-              }
-            : undefined,
+          display:
+            row.display_message || row.display_severity
+              ? {
+                  message: row.display_message || undefined,
+                  severity: row.display_severity || undefined,
+                }
+              : undefined,
         }));
 
         return {
