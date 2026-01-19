@@ -524,11 +524,24 @@ export function createSqliteProvider(options) {
     if (!client) {
         throw new Error('SQLite client is required. Provide a better-sqlite3 Database instance.');
     }
+    // Handle case where client might be a function (lazy initialization) or already initialized
+    const actualClient = typeof client === 'function' ? client() : client;
+    // If client initialization failed (native module not found), try to provide helpful error
+    if (!actualClient) {
+        throw new Error('SQLite client initialization failed. Make sure better-sqlite3 is properly installed and built. ' +
+            'Run: pnpm rebuild better-sqlite3 or npm rebuild better-sqlite3');
+    }
     // Validate client has required methods (better-sqlite3 Database)
-    const hasExec = typeof client.exec === 'function';
-    const hasPrepare = typeof client.prepare === 'function';
+    const hasExec = typeof actualClient.exec === 'function';
+    const hasPrepare = typeof actualClient.prepare === 'function';
     if (!hasExec || !hasPrepare) {
-        throw new Error('Invalid SQLite client. Client must have `exec` and `prepare` methods (better-sqlite3 Database instance).');
+        // If methods don't exist, it might be an initialization error - provide helpful message
+        if (actualClient instanceof Error) {
+            throw new Error(`SQLite client initialization error: ${actualClient.message}. ` +
+                'Make sure better-sqlite3 native module is built. Run: pnpm rebuild better-sqlite3');
+        }
+        throw new Error('Invalid SQLite client. Client must have `exec` and `prepare` methods (better-sqlite3 Database instance). ' +
+            'If using better-sqlite3, make sure the native module is built: pnpm rebuild better-sqlite3');
     }
     // Ensure table exists
     const ensureTable = async () => {
@@ -554,7 +567,7 @@ export function createSqliteProvider(options) {
           created_at TEXT DEFAULT (datetime('now'))
         );
       `;
-            client.exec(createTableQuery);
+            actualClient.exec(createTableQuery);
             const indexQueries = [
                 `CREATE INDEX IF NOT EXISTS idx_${tableName}_user_id ON ${tableName}(user_id)`,
                 `CREATE INDEX IF NOT EXISTS idx_${tableName}_type ON ${tableName}(type)`,
@@ -563,7 +576,7 @@ export function createSqliteProvider(options) {
             ];
             for (const indexQuery of indexQueries) {
                 try {
-                    client.exec(indexQuery);
+                    actualClient.exec(indexQuery);
                 }
                 catch (err) {
                     // Index might already exist, ignore
@@ -606,7 +619,7 @@ export function createSqliteProvider(options) {
         async ingest(event) {
             await ensureTableSync();
             try {
-                const stmt = client.prepare(`
+                const stmt = actualClient.prepare(`
           INSERT INTO ${tableName} 
           (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -620,7 +633,7 @@ export function createSqliteProvider(options) {
                     tableEnsured = false;
                     await ensureTableSync();
                     try {
-                        const stmt = client.prepare(`
+                        const stmt = actualClient.prepare(`
               INSERT INTO ${tableName} 
               (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -641,8 +654,8 @@ export function createSqliteProvider(options) {
                 return;
             await ensureTableSync();
             try {
-                const transaction = client.transaction((events) => {
-                    const stmt = client.prepare(`
+                const transaction = actualClient.transaction((events) => {
+                    const stmt = actualClient.prepare(`
             INSERT INTO ${tableName} 
             (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -659,8 +672,8 @@ export function createSqliteProvider(options) {
                     tableEnsured = false;
                     await ensureTableSync();
                     try {
-                        const transaction = client.transaction((events) => {
-                            const stmt = client.prepare(`
+                        const transaction = actualClient.transaction((events) => {
+                            const stmt = actualClient.prepare(`
                 INSERT INTO ${tableName} 
                 (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -701,7 +714,7 @@ export function createSqliteProvider(options) {
                 query += ` ORDER BY timestamp ${sort === 'desc' ? 'DESC' : 'ASC'}`;
                 query += ` LIMIT ?`;
                 params.push(limit + 1); // Fetch one extra to check if there are more
-                const stmt = client.prepare(query);
+                const stmt = actualClient.prepare(query);
                 const rows = stmt.all(...params);
                 const hasMore = rows.length > limit;
                 const events = (hasMore ? rows.slice(0, limit) : rows).map((row) => ({

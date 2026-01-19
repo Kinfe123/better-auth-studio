@@ -31,7 +31,7 @@ export default function CodeHighlighter({
   };
 
   return (
-    <div className={`relative group ${className}`}>
+    <div className={`relative group w-full ${className}`}>
       <SyntaxHighlighter
         language={language}
         style={oneDark}
@@ -42,20 +42,28 @@ export default function CodeHighlighter({
           fontSize: '0.875rem',
           fontFamily: 'var(--font-geist-mono)',
           lineHeight: '1.5',
+          maxHeight: '100%',
+          overflow: 'visible',
         }}
         codeTagProps={{
           style: {
             fontFamily: 'var(--font-geist-mono)',
             color: 'rgba(255, 255, 255, 0.9)',
+            display: 'block',
           }
         }}
+        PreTag={({ children, ...props }) => (
+          <pre {...props} style={{ margin: 0, padding: 0, background: 'transparent' }}>
+            {children}
+          </pre>
+        )}
       >
         {code}
       </SyntaxHighlighter>
       {showCopy && (
         <button
           onClick={copyToClipboard}
-          className="absolute top-2 right-2 p-1.5 rounded-none border border-white/20 bg-black/50 hover:bg-white/10 transition-colors duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100"
+          className="absolute top-2 right-2 p-1.5 rounded-none border border-white/20 bg-black/50 hover:bg-white/10 transition-colors duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100 z-10"
           title={copied ? 'Copied!' : 'Copy code'}
         >
           {copied ? (
