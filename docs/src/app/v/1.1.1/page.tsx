@@ -277,7 +277,7 @@ export default studioConfig;`,
                             <div className="absolute z-0 inset-0 bg-white/5 pointer-events-none" />
                             <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[4%] pointer-events-none" />
                           </div>
-                          <PixelCard variant="code" className="border-white/15 p-0 overflow-hidden">
+                          <PixelCard variant="highlight" className="border-white/15 p-0 overflow-hidden">
                             <div className="relative px-3 pb-2 max-h-[300px] overflow-y-auto overflow-x-hidden thin-scrollbar">
                               <CodeHighlighter
                                 code={codeExamples[activeTab as keyof typeof codeExamples]}
@@ -290,8 +290,8 @@ export default studioConfig;`,
                       </div>
                       {/* Desktop code block */}
                       <div className="pt-3 sm:pt-4 hidden md:block">
-                        <PixelCard variant="highlight" className="border-white/15 p-0 overflow-hidden">
-                          <div className="relative px-3 pb-2 pt-2 max-h-[350px] overflow-y-auto overflow-x-hidden thin-scrollbar">
+                        <PixelCard variant="highlight" className="border-white/15 pb0 overflow-hidden">
+                          <div className="relative px-3 pt-2 max-h-[250px] overflow-y-auto overflow-x-hidden thin-scrollbar">
                             <CodeHighlighter
                               code={codeExamples[activeTab as keyof typeof codeExamples]}
                               language="typescript"
@@ -305,7 +305,7 @@ export default studioConfig;`,
                   <div className="w-full mb-3 sm:mb-4 lg:hidden">
                     <hr className="w-full border-white/15 h-px" />
                   </div>
-                  <div className="hidden lg:block -mx-10 w-[calc(100%+5rem)] mb-4">
+                  <div className="hidden lg:block mt-10 -mx-10 w-[calc(100%+5rem)] mb-4">
                     <hr className="w-full border-white/15 h-px" />
                   </div>
                 </div>
