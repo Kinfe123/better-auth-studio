@@ -1,6 +1,6 @@
 import type { Router as ExpressRouter, NextFunction, Request, Response } from 'express';
 import { Router } from 'express';
-import { handleStudioRequest, initializeEventIngestionAndHooks } from '../core/handler.js';
+import { handleStudioRequest } from '../core/handler.js';
 import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
 import { injectEventHooks } from '../utils/hook-injector.js';
 

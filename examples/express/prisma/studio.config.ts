@@ -35,4 +35,4 @@ const studioConfig: StudioConfig = {
   }
 };
 
-export default config;
+export default studioConfig;

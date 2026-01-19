@@ -2,8 +2,13 @@ import { getSessionFromCtx } from 'better-auth/api';
 import { createAuthMiddleware } from 'better-auth/plugins';
 import type { StudioConfig } from '../types/handler.js';
 import { wrapAuthCallbacks } from './auth-callbacks-injector.js';
-import { emitEvent } from './event-ingestion.js';
+import { emitEvent, initializeEventIngestion, isEventIngestionInitialized } from './event-ingestion.js';
 import { wrapOrganizationPluginHooks } from './org-hooks-injector.js';
+import {
+  createClickHouseProvider,
+  createHttpProvider,
+  createPostgresProvider,
+} from '../providers/events/helpers.js';
 
 const INJECTED_HOOKS_MARKER = '__better_auth_studio_events_injected__';
 
@@ -45,12 +50,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             if (typeof ctx.headers.get === 'function') {
               try {
                 ip = ctx.headers.get('x-forwarded-for') || ctx.headers.get('x-real-ip') || null;
-              } catch (e) {}
+              } catch (e) { }
             } else {
               ip = ctx.headers['x-forwarded-for'] || ctx.headers['x-real-ip'] || null;
             }
           }
-        } catch (e) {}
+        } catch (e) { }
 
         if (path === '/sign-up' || path === '/sign-up/email') {
           const body = ctx.body || {};
@@ -72,7 +77,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'user.joined',
@@ -94,7 +99,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -119,7 +124,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
 
             // Also emit session.created
             if (session) {
@@ -140,7 +145,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   },
                 },
                 capturedConfig
-              ).catch(() => {});
+              ).catch(() => { });
             }
           } else if (isError) {
             emitEvent(
@@ -160,7 +165,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -184,7 +189,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -217,7 +222,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'oauth.unlinked',
@@ -236,7 +241,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -267,7 +272,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ? path.split('/oauth2/callback/')[1]?.split('/')[0]
                   : path.includes('/callback')
                     ? path.split('/callback')[1]?.split('/')[1] ||
-                      path.split('/callback')[1]?.split('?')[0]
+                    path.split('/callback')[1]?.split('?')[0]
                     : undefined;
 
               if (existingUser) {
@@ -287,7 +292,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     },
                   },
                   capturedConfig
-                ).catch(() => {});
+                ).catch(() => { });
               } else {
                 // New user signing in via OAuth
                 emitEvent(
@@ -330,7 +335,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                           },
                         },
                         capturedConfig
-                      ).catch(() => {});
+                      ).catch(() => { });
                     } else if (isError) {
                       emitEvent(
                         'session.created',
@@ -351,10 +356,10 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                           },
                         },
                         capturedConfig
-                      ).catch(() => {});
+                      ).catch(() => { });
                     }
                   })
-                  .catch(() => {});
+                  .catch(() => { });
               }
             }
           } catch (callbackError: any) {
@@ -386,7 +391,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'user.banned',
@@ -401,7 +406,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
         if (path === '/admin/unban-user') {
@@ -423,7 +428,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else if (isError) {
             emitEvent(
               'user.unbanned',
@@ -438,7 +443,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
 
@@ -482,7 +487,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   },
                 },
                 capturedConfig
-              ).catch(() => {});
+              ).catch(() => { });
             }
           } else if (isError) {
             emitEvent(
@@ -505,7 +510,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
       } catch (error: any) {
@@ -562,7 +567,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           } else {
             await emitEvent(
               'oauth.sign_in',
@@ -583,7 +588,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 },
               },
               capturedConfig
-            ).catch(() => {});
+            ).catch(() => { });
           }
         }
       } catch (error) {
@@ -591,11 +596,71 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
       }
     }
   };
+  const initializeEventIngestion = (context: any) => {
+    async (context: any) => {
+      if (!isEventIngestionInitialized() && capturedConfig?.enabled) {
+        let provider: any | undefined;
+
+        if (
+          capturedConfig.provider &&
+          typeof capturedConfig.provider === 'object' &&
+          typeof capturedConfig.provider.ingest === 'function'
+        ) {
+          provider = capturedConfig.provider;
+        } else if (capturedConfig.client && capturedConfig.clientType) {
+          try {
+            switch (capturedConfig.clientType) {
+              case 'postgres':
+              case 'prisma':
+              case 'drizzle':
+                provider = createPostgresProvider({
+                  client: capturedConfig.client,
+                  tableName: capturedConfig.tableName,
+                  clientType: capturedConfig.clientType,
+                });
+                break;
+              case 'clickhouse':
+                provider = createClickHouseProvider({
+                  client: capturedConfig.client,
+                  table: capturedConfig.tableName,
+                });
+                break;
+              case 'http':
+                provider = createHttpProvider({
+                  url: capturedConfig.client,
+                  headers: (capturedConfig as any).headers || {},
+                });
+                break;
+            }
+
+            if (provider) {
+              initializeEventIngestion({
+                ...capturedConfig,
+                provider,
+              });
+            }
+          } catch (error) {
+          }
+        }
+      }
+      return context;
+    }
+  };
+  const initBeforeHook = {
+    matcher: () => true,
+    handler: async (ctx: any) => {
+      initializeEventIngestion(ctx)
+    },
+  };
 
   return {
     id: 'better-auth-studio-events',
+    init: async (ctx: any) => {
+       initializeEventIngestion(ctx)
+    },
     hooks: {
       before: [
+        initBeforeHook,
         {
           matcher: (context: any) => {
             return context.path === '/sign-out';
@@ -699,9 +764,7 @@ export function injectEventHooks(auth: any, eventsConfig: StudioConfig['events']
     }
 
     auth.options[INJECTED_HOOKS_MARKER] = true;
-
     wrapOrganizationPluginHooks(auth, eventsConfig);
-
     wrapAuthCallbacks(auth, eventsConfig);
   } catch (error) {
     console.error('[Event Hooks] Failed to inject:', error);

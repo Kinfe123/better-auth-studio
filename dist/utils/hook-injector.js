@@ -1,7 +1,8 @@
 import { createAuthMiddleware } from 'better-auth/plugins';
 import { wrapAuthCallbacks } from './auth-callbacks-injector.js';
-import { emitEvent } from './event-ingestion.js';
+import { emitEvent, isEventIngestionInitialized } from './event-ingestion.js';
 import { wrapOrganizationPluginHooks } from './org-hooks-injector.js';
+import { createClickHouseProvider, createHttpProvider, createPostgresProvider, } from '../providers/events/helpers.js';
 const INJECTED_HOOKS_MARKER = '__better_auth_studio_events_injected__';
 /**
  * Create a Better Auth plugin for event ingestion
@@ -487,10 +488,68 @@ function createEventIngestionPlugin(eventsConfig) {
             }
         }
     };
+    const initializeEventIngestion = (context) => {
+        async (context) => {
+            if (!isEventIngestionInitialized() && capturedConfig?.enabled) {
+                let provider;
+                if (capturedConfig.provider &&
+                    typeof capturedConfig.provider === 'object' &&
+                    typeof capturedConfig.provider.ingest === 'function') {
+                    provider = capturedConfig.provider;
+                }
+                else if (capturedConfig.client && capturedConfig.clientType) {
+                    try {
+                        switch (capturedConfig.clientType) {
+                            case 'postgres':
+                            case 'prisma':
+                            case 'drizzle':
+                                provider = createPostgresProvider({
+                                    client: capturedConfig.client,
+                                    tableName: capturedConfig.tableName,
+                                    clientType: capturedConfig.clientType,
+                                });
+                                break;
+                            case 'clickhouse':
+                                provider = createClickHouseProvider({
+                                    client: capturedConfig.client,
+                                    table: capturedConfig.tableName,
+                                });
+                                break;
+                            case 'http':
+                                provider = createHttpProvider({
+                                    url: capturedConfig.client,
+                                    headers: capturedConfig.headers || {},
+                                });
+                                break;
+                        }
+                        if (provider) {
+                            initializeEventIngestion({
+                                ...capturedConfig,
+                                provider,
+                            });
+                        }
+                    }
+                    catch (error) {
+                    }
+                }
+            }
+            return context;
+        };
+    };
+    const initBeforeHook = {
+        matcher: () => true,
+        handler: async (ctx) => {
+            initializeEventIngestion(ctx);
+        },
+    };
     return {
         id: 'better-auth-studio-events',
+        init: async (ctx) => {
+            initializeEventIngestion(ctx);
+        },
         hooks: {
             before: [
+                initBeforeHook,
                 {
                     matcher: (context) => {
                         return context.path === '/sign-out';

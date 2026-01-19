@@ -6,10 +6,6 @@ export function createPostgresProvider(options) {
     }
     let actualClient = client;
     if (clientType === 'drizzle') {
-        console.log({ client });
-        // Drizzle exposes the underlying client via $client property
-        // For postgres-js: db.$client.unsafe()
-        // For pg Pool: db.$client.query()
         if (client.$client) {
             actualClient = client.$client;
         }
@@ -18,8 +14,6 @@ export function createPostgresProvider(options) {
             actualClient = client.client;
         }
     }
-    // Validate client has required methods
-    // For Drizzle with postgres-js, allow unsafe() method as well
     const hasQuery = actualClient?.query || client?.query;
     const hasExecuteRaw = client?.$executeRaw;
     const hasExecute = client?.execute;
@@ -108,22 +102,16 @@ export function createPostgresProvider(options) {
                 try {
                     await executeQuery(indexQuery);
                 }
-                catch (err) {
-                    // Index might already exist, ignore
-                }
+                catch (err) { }
             }
-            console.log(`✅ Ensured ${schema}.${tableName} table exists for events`);
         }
         catch (error) {
-            // If table already exists, that's fine
             if (error?.message?.includes('already exists') || error?.code === '42P07') {
                 return;
             }
             console.error(`Failed to ensure ${schema}.${tableName} table:`, error);
-            // Don't throw - allow provider to work even if table creation fails
         }
     };
-    // Track if table creation is in progress or completed
     let tableEnsured = false;
     let tableEnsuringPromise = null;
     const ensureTableSync = async () => {
@@ -152,11 +140,8 @@ export function createPostgresProvider(options) {
     ensureTableSync().catch(console.error);
     return {
         async ingest(event) {
-            // Always ensure table exists before ingesting (wait for completion)
             await ensureTableSync();
-            // Support Prisma client ($executeRaw), Drizzle instance, or standard pg client (query/Pool)
             if (clientType === 'prisma' || client.$executeRaw) {
-                // Prisma client - use $executeRawUnsafe for parameterized queries
                 const query = `
           INSERT INTO ${schema}.${tableName} 
           (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
@@ -167,9 +152,7 @@ export function createPostgresProvider(options) {
                 }
                 catch (error) {
                     console.error(`Failed to insert event (${event.type}) into ${schema}.${tableName}:`, error);
-                    // If table doesn't exist (Prisma error codes), try to create it and retry
                     if (error.code === '42P01' || error.meta?.code === '42P01' || error.code === 'P2010') {
-                        // Reset tableEnsured and try again
                         tableEnsured = false;
                         await ensureTableSync();
                         try {
@@ -185,7 +168,8 @@ export function createPostgresProvider(options) {
                 }
             }
             else if ((actualClient && (actualClient.query || actualClient.unsafe)) ||
-                (client.query || client.unsafe)) {
+                client.query ||
+                client.unsafe) {
                 // Standard pg client (Pool/Client with query) or postgres-js client (with unsafe) or Drizzle with underlying client
                 const queryClient = actualClient || client;
                 const useUnsafe = queryClient.unsafe && !queryClient.query; // Use unsafe if postgres-js (has unsafe but no query)
@@ -310,7 +294,8 @@ export function createPostgresProvider(options) {
                 }
             }
             else if ((actualClient && (actualClient.query || actualClient.unsafe)) ||
-                (client.query || client.unsafe)) {
+                client.query ||
+                client.unsafe) {
                 // Standard pg client (Pool/Client with query) or postgres-js client (with unsafe) or Drizzle with underlying client
                 const batchQueryClient = actualClient || client;
                 const useUnsafe = batchQueryClient.unsafe && !batchQueryClient.query; // Use unsafe if postgres-js

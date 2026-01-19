@@ -7,13 +7,13 @@ import type { StudioConfig } from '../types/handler.js';
  * // server/api/studio/[...all].ts
  * import { betterAuthStudio } from 'better-auth-studio/nuxt';
  * import studioConfig from '~/studio.config';
- * import { toWebRequest } from 'better-auth/nuxt';
  *
- * export default defineEventHandler(async (event) => {
- *   const request = toWebRequest(event);
- *   return betterAuthStudio(studioConfig)(request);
- * });
+ * export default defineEventHandler(betterAuthStudio(studioConfig));
  * ```
+ *
+ * Note: The adapter will automatically read the request body using h3's readBody
+ * if available. If readBody is not accessible, make sure your Nuxt setup has
+ * auto-imports enabled for h3 utilities.
  */
-export declare function betterAuthStudio(config: StudioConfig): (request: Request) => Promise<Response>;
+export declare function betterAuthStudio(config: StudioConfig): (event: any) => Promise<Response | any>;
 //# sourceMappingURL=nuxt.d.ts.map

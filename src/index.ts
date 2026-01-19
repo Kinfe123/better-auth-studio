@@ -19,3 +19,4 @@ export {
   isEventIngestionInitialized,
   shutdownEventIngestion,
 } from './utils/event-ingestion.js';
+import './utils/server-init.js';

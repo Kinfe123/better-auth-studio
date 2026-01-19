@@ -1,5 +1,6 @@
 import { handleStudioRequest } from '../core/handler.js';
 import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
+import { injectEventHooks } from '../utils/hook-injector.js';
 
 /**
  * Remix adapter for Better Auth Studio
@@ -23,6 +24,10 @@ import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types
  * ```
  */
 export function betterAuthStudio(config: StudioConfig) {
+  if (config.events?.enabled && config.auth) {
+    injectEventHooks(config.auth, config.events);
+  }
+
   return async ({ request }: { request: Request }): Promise<Response> => {
     try {
       const universalReq = await convertRemixToUniversal({ request }, config);

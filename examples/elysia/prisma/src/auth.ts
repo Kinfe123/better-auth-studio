@@ -67,7 +67,7 @@ export const auth = betterAuth({
                 console.log('sendInvitationEmail', data, request);
             },
         }),
-        admin(),
+        admin(), 
     ],
     session: {
         expiresIn: 60 * 60 * 24 * 7, // 7 days

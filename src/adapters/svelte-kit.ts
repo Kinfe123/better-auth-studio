@@ -2,6 +2,7 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { handleStudioRequest } from '../core/handler.js';
 import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
+import { injectEventHooks } from '../utils/hook-injector.js';
 
 /**
  * SvelteKit adapter for Better Auth Studio
@@ -36,6 +37,10 @@ import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types
  * ```
  */
 export function betterAuthStudio(config: StudioConfig) {
+  if (config.events?.enabled && config.auth) {
+    injectEventHooks(config.auth, config.events);
+  }
+
   return async (event: RequestEvent): Promise<Response> => {
     try {
       const universalReq = await convertSvelteKitToUniversal(event, config);

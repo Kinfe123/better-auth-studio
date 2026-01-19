@@ -1,4 +1,4 @@
-import { handleStudioRequest, initializeEventIngestionAndHooks } from '../core/handler.js';
+import { handleStudioRequest } from '../core/handler.js';
 import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
 import { injectEventHooks } from '../utils/hook-injector.js';
 
@@ -15,6 +15,7 @@ export function betterAuthStudio(config: StudioConfig) {
   if (config.events?.enabled && config.auth) {
     injectEventHooks(config.auth, config.events);
   }
+
   return async (request: Request): Promise<Response> => {
     try {
       const universalRequest = await requestToUniversal(request);

@@ -1,4 +1,5 @@
 import { handleStudioRequest } from '../core/handler.js';
+import { injectEventHooks } from '../utils/hook-injector.js';
 /**
  * Astro adapter for Better Auth Studio
  *
@@ -17,6 +18,9 @@ import { handleStudioRequest } from '../core/handler.js';
  * ```
  */
 export function betterAuthStudio(config) {
+    if (config.events?.enabled && config.auth) {
+        injectEventHooks(config.auth, config.events);
+    }
     return async (ctx) => {
         try {
             const universalReq = await convertAstroToUniversal(ctx, config);

@@ -1,5 +1,6 @@
 import { handleStudioRequest } from '../core/handler.js';
 import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
+import { injectEventHooks } from '../utils/hook-injector.js';
 
 // TanStack Start server route handler context
 type TanStackStartHandlerContext = {
@@ -32,6 +33,10 @@ type TanStackStartHandlerContext = {
  * ```
  */
 export function betterAuthStudio(config: StudioConfig) {
+  if (config.events?.enabled && config.auth) {
+    injectEventHooks(config.auth, config.events);
+  }
+
   return async ({ request }: TanStackStartHandlerContext): Promise<Response> => {
     try {
       const universalReq = await convertTanStackStartToUniversal(request, config);

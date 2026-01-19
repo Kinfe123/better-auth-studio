@@ -1,11 +1,16 @@
 import type { Context } from 'elysia';
 import { handleStudioRequest } from '../core/handler.js';
 import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
+import { injectEventHooks } from '../utils/hook-injector.js';
 
 /**
  * Elysia adapter for Better Auth Studio
  */
 export function betterAuthStudio(config: StudioConfig) {
+  if (config.events?.enabled && config.auth) {
+    injectEventHooks(config.auth, config.events);
+  }
+
   return async (context: Context) => {
     try {
       const universalReq = await convertElysiaToUniversal(context);
