@@ -255,7 +255,7 @@ export default studioConfig;`,
                               value={activeTab}
                               onChange={(e) => setActiveTab(e.target.value)}
                               className="relative z-10 text-[11px] sm:text-[12px] font-light uppercase tracking-tight 
-                                text-white/90 border border-white/40 bg-white/10 
+                                text-white/90 border border-white/40 bg-white/5 
                                 px-2 py-[6px] pr-8 overflow-hidden transition-all duration-200
                                 appearance-none cursor-pointer w-full
                                 focus:border-white/40 focus:bg-white/10 focus:outline-none
