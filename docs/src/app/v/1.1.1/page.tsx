@@ -290,7 +290,7 @@ export default studioConfig;`,
                       </div>
                       {/* Desktop code block */}
                       <div className="pt-3 sm:pt-4 hidden md:block">
-                        <PixelCard variant="code" className="border-white/15 p-0 overflow-hidden">
+                        <PixelCard variant="highlight" className="border-white/15 p-0 overflow-hidden">
                           <div className="relative px-3 pb-2 pt-2 max-h-[350px] overflow-y-auto overflow-x-hidden thin-scrollbar">
                             <CodeHighlighter
                               code={codeExamples[activeTab as keyof typeof codeExamples]}
