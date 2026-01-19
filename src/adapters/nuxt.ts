@@ -13,7 +13,7 @@ import { injectEventHooks } from '../utils/hook-injector.js';
  *
  * export default defineEventHandler(betterAuthStudio(studioConfig));
  * ```
- * 
+ *
  * Note: The adapter will automatically read the request body using h3's readBody
  * if available. If readBody is not accessible, make sure your Nuxt setup has
  * auto-imports enabled for h3 utilities.
@@ -49,13 +49,10 @@ export function betterAuthStudio(config: StudioConfig): (event: any) => Promise<
   };
 }
 
-async function convertNuxtToUniversal(
-  event: any,
-  config: StudioConfig
-): Promise<UniversalRequest> {
+async function convertNuxtToUniversal(event: any, config: StudioConfig): Promise<UniversalRequest> {
   let body: any;
   const method = event.method;
-  
+
   if (method !== 'GET' && method !== 'HEAD') {
     // First check if body was already read by h3/Nuxt and stored on event
     if (event.body !== undefined) {
@@ -99,7 +96,7 @@ async function convertNuxtToUniversal(
   // Extract path and query
   const basePath = config.basePath || '/api/studio';
   const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
-  
+
   const url = getRequestURL(event);
   let path = url.pathname;
 
@@ -108,7 +105,7 @@ async function convertNuxtToUniversal(
   }
 
   const pathWithQuery = path + url.search;
-  
+
   return {
     url: pathWithQuery,
     method: method,
@@ -123,7 +120,6 @@ function getRequestURL(event: any): URL {
   const path = (event.node.req.url || '/').replace(/[/\\]{2,}/g, '/');
   return new URL(path, `${protocol}://${host}`);
 }
-
 
 function universalToResponse(res: UniversalResponse): Response {
   // Simply return a Response object - Nuxt/h3 will handle it properly
