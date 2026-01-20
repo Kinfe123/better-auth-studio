@@ -245,7 +245,13 @@ export default function Events() {
       setLoading(false);
     }
   }, []);
-
+  useEffect(() => {
+    if (showViewModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  } , [showViewModal])
   useEffect(() => {
     fetchEvents(true);
 
