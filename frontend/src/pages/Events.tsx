@@ -1,12 +1,12 @@
 import { format } from 'date-fns';
-import { AlertCircle, Eye, Filter, Loader, Search, X } from 'lucide-react';
+import { AlertCircle, Computer, Eye, Filter, Loader, Search, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CodeBlock } from '../components/CodeBlock';
 import { CopyableId } from '../components/CopyableId';
 import {
   AlertInfo,
   AlertTriangle,
-  Building,
   Building2,
   Check,
   CheckCircle,
@@ -15,6 +15,7 @@ import {
   User,
   Users,
 } from '../components/PixelIcons';
+import { Building } from '../components/PixelIcons';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import {
@@ -82,33 +83,15 @@ const getEventIcon = (eventType: string, severity?: string, status?: string) => 
     eventType.includes('team') ||
     eventType.includes('invitation')
   ) {
-    if (status === 'failed' || severity === 'failed') {
-      return <AlertTriangle className="w-4 h-4" />;
-    }
-    if (severity === 'success') {
-      return <Building className="w-4 h-4" />;
-    }
     return <Building2 className="w-4 h-4" />;
   }
 
   if (eventType.includes('user')) {
-    if (status === 'failed' || severity === 'failed') {
-      return <AlertTriangle className="w-4 h-4" />;
-    }
-    if (severity === 'success') {
-      return <User className="w-4 h-4" />;
-    }
     return <Users className="w-4 h-4" />;
   }
 
   if (eventType.includes('session') || eventType.includes('login')) {
-    if (status === 'failed' || severity === 'failed') {
-      return <AlertTriangle className="w-4 h-4" />;
-    }
-    if (severity === 'success') {
-      return <CheckCircle className="w-4 h-4" />;
-    }
-    return <Info className="w-4 h-4" />;
+    return <Computer className="w-4 h-4" />;
   }
 
   if (status === 'failed' || severity === 'failed') {
@@ -116,15 +99,24 @@ const getEventIcon = (eventType: string, severity?: string, status?: string) => 
   }
   switch (severity) {
     case 'success':
-      return <CheckCircle className="w-4 h-4" />;
+      return <Check className="w-4 h-4" />;
     case 'warning':
-      return <AlertCircle className="w-4 h-4" />;
+      return <AlertInfo className="w-4 h-4" />;
     case 'failed':
-      return <AlertTriangle className="w-4 h-4" />;
+      return <ErrorInfo className="w-4 h-4" />;
     default:
-      return <Info className="w-4 h-4" />;
+      return <ErrorInfo className="w-4 h-4" />;
   }
 };
+
+function getStudioConfig() {
+  return (window as any).__STUDIO_CONFIG__ || {};
+}
+
+function checkIsSelfHosted(): boolean {
+  const cfg = getStudioConfig();
+  return !!cfg.basePath;
+}
 
 export default function Events() {
   const navigate = useNavigate();
@@ -140,6 +132,9 @@ export default function Events() {
   const isPollingRef = useRef(false);
   const lastEventIdRef = useRef<string | null>(null);
   const pollInterval = 2000; // 2 seconds
+  const [isSelfHosted, setIsSelfHosted] = useState(false);
+  const [eventsEnabled, setEventsEnabled] = useState<boolean | null>(null);
+  const [checkingEvents, setCheckingEvents] = useState(true);
 
   const eventStats = useMemo(() => {
     const success = events.filter(
@@ -245,16 +240,56 @@ export default function Events() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    const checkConfig = async () => {
+      const selfHosted = checkIsSelfHosted();
+      setIsSelfHosted(selfHosted);
+
+      if (!selfHosted) {
+        setEventsEnabled(false);
+        setCheckingEvents(false);
+        return;
+      }
+
+      try {
+        // Use the dedicated events status endpoint
+        const response = await fetch(buildApiUrl('/api/events/status'));
+        const data = await response.json();
+        setEventsEnabled(data?.enabled === true);
+      } catch (error) {
+        console.error('Failed to check events status:', error);
+        setEventsEnabled(false);
+      } finally {
+        setCheckingEvents(false);
+      }
+    };
+
+    checkConfig();
+  }, []);
+
   useEffect(() => {
     if (showViewModal) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
     }
-  } , [showViewModal])
+  }, [showViewModal]);
+
   useEffect(() => {
+    if (checkingEvents) {
+      return;
+    }
+
+    if (!eventsEnabled || !isSelfHosted) {
+      setLoading(false);
+      return;
+    }
+
+    // Initial fetch
     fetchEvents(true);
 
+    // Set up polling interval
     const startPolling = () => {
       if (pollTimeoutRef.current) {
         clearInterval(pollTimeoutRef.current);
@@ -272,7 +307,7 @@ export default function Events() {
         clearInterval(pollTimeoutRef.current);
       }
     };
-  }, []);
+  }, [eventsEnabled, isSelfHosted, checkingEvents, fetchEvents]);
 
   const openViewModal = (event: AuthEvent) => {
     setSelectedEvent(event);
@@ -295,6 +330,89 @@ export default function Events() {
 
     return matchesSearch && matchesFilter;
   });
+
+  if (checkingEvents) {
+    return (
+      <div className="flex items-center justify-center h-32">
+        <div className="flex flex-col items-center space-y-3">
+          <Loader className="w-6 h-6 text-white animate-spin" />
+          <div className="text-white text-sm">Checking configuration...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isSelfHosted || !eventsEnabled) {
+    const exampleCode = `import { betterAuth } from 'better-auth';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { studio } from '@better-auth/studio';
+import { prisma } from './db';
+
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, { provider: 'postgresql' }),
+  secret: process.env.AUTH_SECRET!,
+  baseURL: process.env.AUTH_URL,
+  plugins: [
+    studio({
+      events: {
+        enabled: true,
+        client: prisma,
+        clientType: 'prisma',
+        tableName: 'auth_events',
+      },
+    }),
+  ],
+});`;
+
+    return (
+      <div className="space-y-6 p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl relative text-white font-light inline-flex items-start">
+              Events
+            </h1>
+            <p className="text-gray-400 mt-1 uppercase font-mono text-sm font-light">
+              Real-time authentication events and activity
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-8">
+          <div className="flex flex-col items-center justify-center space-y-6">
+            <div className="flex items-center space-x-3">
+              <AlertCircle className="w-8 h-8 text-yellow-400" />
+              <div className="text-center">
+                <h2 className="text-xl text-white font-light mb-2">
+                  Event Ingestion Not Enabled
+                </h2>
+                <p className="text-gray-400 text-sm font-mono">
+                  {!isSelfHosted
+                    ? 'Event ingestion is only available in self-hosted mode.'
+                    : 'Please enable event ingestion in your studio configuration to view events.'}
+                </p>
+              </div>
+            </div>
+
+            {isSelfHosted && (
+              <div className="w-full max-w-4xl">
+                <div className="mb-4">
+                  <p className="text-gray-300 text-sm font-mono mb-2">
+                    Add the following configuration to your <code className="text-yellow-400">studio.config.ts</code>:
+                  </p>
+                </div>
+                <CodeBlock
+                  code={exampleCode}
+                  language="typescript"
+                  fileName="studio.config.ts"
+                  className="w-full"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading && events.length === 0) {
     return (

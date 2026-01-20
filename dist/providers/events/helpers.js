@@ -1321,7 +1321,9 @@ export function createStorageProvider(options) {
                         userId: event.userId || event.user_id,
                         sessionId: event.sessionId || event.session_id,
                         organizationId: event.organizationId || event.organization_id,
-                        metadata: typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {},
+                        metadata: typeof event.metadata === 'string'
+                            ? JSON.parse(event.metadata)
+                            : event.metadata || {},
                         ipAddress: event.ipAddress || event.ip_address,
                         userAgent: event.userAgent || event.user_agent,
                         source: event.source || 'app',
@@ -1423,7 +1425,9 @@ export function createStorageProvider(options) {
                             userId: event.user_id || event.userId,
                             sessionId: event.session_id || event.sessionId,
                             organizationId: event.organization_id || event.organizationId,
-                            metadata: typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {},
+                            metadata: typeof event.metadata === 'string'
+                                ? JSON.parse(event.metadata)
+                                : event.metadata || {},
                             ipAddress: event.ip_address || event.ipAddress,
                             userAgent: event.user_agent || event.userAgent,
                             source: event.source || 'app',
@@ -1463,7 +1467,9 @@ export function createStorageProvider(options) {
                             userId: event.user_id || event.userId,
                             sessionId: event.session_id || event.sessionId,
                             organizationId: event.organization_id || event.organizationId,
-                            metadata: typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {},
+                            metadata: typeof event.metadata === 'string'
+                                ? JSON.parse(event.metadata)
+                                : event.metadata || {},
                             ipAddress: event.ip_address || event.ipAddress,
                             userAgent: event.user_agent || event.userAgent,
                             source: event.source || 'app',

@@ -17,6 +17,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { assetPath } from '@/lib/utils';
 import { useCounts } from '../contexts/CountsContext';
 import { useWebSocket } from '../hooks/useWebSocket';
+import { buildApiUrl } from '../utils/api';
 import CommandPalette from './CommandPalette';
 import { LiveEventMarquee } from './LiveEventMarquee';
 
@@ -369,6 +370,28 @@ export default function Layout({ children }: LayoutProps) {
     return count.toString();
   };
 
+  const [eventsEnabled, setEventsEnabled] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkEventsStatus = async () => {
+      if (!isSelfHosted) {
+        setEventsEnabled(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(buildApiUrl('/api/events/status'));
+        const data = await response.json();
+        setEventsEnabled(data?.enabled === true);
+      } catch (error) {
+        console.error('Failed to check events status:', error);
+        setEventsEnabled(false);
+      }
+    };
+
+    checkEventsStatus();
+  }, [isSelfHosted]);
+
   const navigation = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     {
@@ -383,11 +406,15 @@ export default function Layout({ children }: LayoutProps) {
       icon: Building2,
       badge: loading ? '...' : formatCount(counts.organizations),
     },
-    {
-      name: 'Events',
-      href: '/events',
-      icon: Activity,
-    },
+    ...(eventsEnabled === true
+      ? [
+          {
+            name: 'Events',
+            href: '/events',
+            icon: Activity,
+          },
+        ]
+      : []),
     {
       name: 'Database',
       href: '/database',
@@ -695,7 +722,7 @@ export default function Layout({ children }: LayoutProps) {
           const limit = liveMarqueeConfig?.limit ?? 50;
           const sort = liveMarqueeConfig?.sort ?? 'desc';
           const colors = liveMarqueeConfig?.colors;
-          return liveMarqueeEnabled && isSelfHosted ? (
+          return eventsEnabled === true && liveMarqueeEnabled && isSelfHosted ? (
             <LiveEventMarquee
               maxEvents={limit}
               pollInterval={pollInterval}

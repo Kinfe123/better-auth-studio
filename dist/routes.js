@@ -928,6 +928,96 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         };
         res.json(config);
     });
+    router.get('/api/events/status', async (_req, res) => {
+        try {
+            const { isEventIngestionInitialized, getEventIngestionProvider } = await import('./utils/event-ingestion.js');
+            const initialized = isEventIngestionInitialized();
+            const provider = getEventIngestionProvider();
+            // If not initialized, try to initialize it
+            if (!initialized) {
+                try {
+                    const { initializeEventIngestionAndHooks } = await import('./core/handler.js');
+                    const { existsSync } = await import('node:fs');
+                    const { join } = await import('node:path');
+                    const possibleFiles = [
+                        'studio.config.ts',
+                        'studio.config.js',
+                        'studio.config.mjs',
+                        'studio.config.cjs',
+                    ];
+                    let studioConfigPath = null;
+                    for (const file of possibleFiles) {
+                        const path = join(process.cwd(), file);
+                        if (existsSync(path)) {
+                            studioConfigPath = path;
+                            break;
+                        }
+                    }
+                    if (!studioConfigPath && configPath) {
+                        const configDir = require('node:path').dirname(configPath);
+                        for (const file of possibleFiles) {
+                            const path = require('node:path').join(configDir, file);
+                            if (existsSync(path)) {
+                                studioConfigPath = path;
+                                break;
+                            }
+                        }
+                    }
+                    if (studioConfigPath) {
+                        const { loadConfig } = await import('c12');
+                        const { getPathAliases } = await import('./config.js');
+                        // @ts-expect-error - No types available
+                        const babelPresetTypeScript = (await import('@babel/preset-typescript')).default;
+                        // @ts-expect-error - No types available
+                        const babelPresetReact = (await import('@babel/preset-react')).default;
+                        const alias = getPathAliases(process.cwd()) || {};
+                        const jitiOptions = {
+                            debug: false,
+                            transformOptions: {
+                                babel: {
+                                    presets: [
+                                        [babelPresetTypeScript, { isTSX: true, allExtensions: true }],
+                                        [babelPresetReact, { runtime: 'automatic' }],
+                                    ],
+                                },
+                            },
+                            extensions: ['.ts', '.js', '.tsx', '.jsx'],
+                            alias,
+                            interopDefault: true,
+                        };
+                        const { config } = await loadConfig({
+                            configFile: studioConfigPath,
+                            cwd: process.cwd(),
+                            dotenv: true,
+                            jitiOptions,
+                        });
+                        const studioConfig = config?.default || config?.config || config;
+                        if (studioConfig?.events?.enabled) {
+                            await initializeEventIngestionAndHooks(studioConfig);
+                        }
+                    }
+                }
+                catch (initError) {
+                    console.warn('Failed to initialize event ingestion:', initError?.message || initError);
+                }
+            }
+            const isEnabled = isEventIngestionInitialized() && !!getEventIngestionProvider();
+            res.json({
+                enabled: isEnabled,
+                initialized: isEventIngestionInitialized(),
+                hasProvider: !!getEventIngestionProvider(),
+            });
+        }
+        catch (error) {
+            console.error('Failed to check events status:', error);
+            res.json({
+                enabled: false,
+                initialized: false,
+                hasProvider: false,
+                error: error?.message || 'Unknown error',
+            });
+        }
+    });
     router.get('/api/stats', async (_req, res) => {
         try {
             const stats = await getAuthData(authConfig, 'stats', undefined, configPath, preloadedAdapter);
@@ -1549,7 +1639,12 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                     const { existsSync } = await import('node:fs');
                     const { join } = await import('node:path');
                     // Try to find and load studio config
-                    const possibleFiles = ['studio.config.ts', 'studio.config.js', 'studio.config.mjs', 'studio.config.cjs'];
+                    const possibleFiles = [
+                        'studio.config.ts',
+                        'studio.config.js',
+                        'studio.config.mjs',
+                        'studio.config.cjs',
+                    ];
                     let studioConfigPath = null;
                     for (const file of possibleFiles) {
                         const path = join(process.cwd(), file);

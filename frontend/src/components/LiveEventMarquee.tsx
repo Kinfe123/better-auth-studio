@@ -29,6 +29,15 @@ interface LiveEventMarqueeProps {
   };
 }
 
+function getStudioConfig() {
+  return (window as any).__STUDIO_CONFIG__ || {};
+}
+
+function checkIsSelfHosted(): boolean {
+  const cfg = getStudioConfig();
+  return !!cfg.basePath;
+}
+
 export function LiveEventMarquee({
   maxEvents: propMaxEvents,
   pollInterval = 2000,
@@ -49,6 +58,7 @@ export function LiveEventMarquee({
   const [events, setEvents] = useState<AuthEvent[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [_, setLastEventId] = useState<string | null>(null);
+  const [eventsEnabled, setEventsEnabled] = useState<boolean | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
   const pollTimeoutRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -59,7 +69,32 @@ export function LiveEventMarquee({
   const isAnimatingRef = useRef(false);
   const isPausedRef = useRef(false);
 
+  useEffect(() => {
+    const checkEventsStatus = async () => {
+      if (!checkIsSelfHosted()) {
+        setEventsEnabled(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(buildApiUrl('/api/events/status'));
+        const data = await response.json();
+        setEventsEnabled(data?.enabled === true);
+      } catch (error) {
+        console.error('Failed to check events status:', error);
+        setEventsEnabled(false);
+      }
+    };
+
+    checkEventsStatus();
+  }, []);
+
   const pollEvents = useCallback(async () => {
+    // Don't poll if events are not enabled
+    if (eventsEnabled !== true) {
+      return;
+    }
+
     if (isPollingRef.current) return;
     isPollingRef.current = true;
 
@@ -132,9 +167,14 @@ export function LiveEventMarquee({
     } finally {
       isPollingRef.current = false;
     }
-  }, [maxEvents, propSort]);
+  }, [maxEvents, propSort, eventsEnabled]);
 
   useEffect(() => {
+    // Don't start polling if events are not enabled
+    if (eventsEnabled !== true) {
+      return;
+    }
+
     // Initial poll
     pollEvents();
 
@@ -156,10 +196,15 @@ export function LiveEventMarquee({
         clearInterval(pollTimeoutRef.current);
       }
     };
-  }, [pollEvents, pollInterval]);
+  }, [pollEvents, pollInterval, eventsEnabled]);
 
   // Exponential backoff on errors
   useEffect(() => {
+    // Don't retry if events are not enabled
+    if (eventsEnabled !== true) {
+      return;
+    }
+
     if (!isConnected) {
       if (pollTimeoutRef.current) {
         clearInterval(pollTimeoutRef.current);
@@ -180,7 +225,7 @@ export function LiveEventMarquee({
 
       setTimeout(retryPoll, retryDelayRef.current);
     }
-  }, [isConnected, pollEvents, pollInterval]);
+  }, [isConnected, pollEvents, pollInterval, eventsEnabled]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -394,7 +439,9 @@ export function LiveEventMarquee({
             transform: 'translate3d(0px, 0, 0)', // Initial transform to prevent layout shift, use translate3d for GPU acceleration
           }}
         >
-          {events.length === 0 ? (
+          {eventsEnabled === false ? (
+            <span className="text-xs ml-5 font-mono text-white/50">Events not enabled</span>
+          ) : events.length === 0 ? (
             <span className="text-xs ml-5 font-mono text-white/50">Waiting for events...</span>
           ) : (
             [...events, ...events, ...events].map((event, index) => {
