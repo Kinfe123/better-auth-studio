@@ -1375,14 +1375,14 @@ export function createStorageProvider(options: {
                 );
               `;
               await executeRaw(createTableQuery);
-              
+
               // Create indexes
               const indexQueries = [
                 `CREATE INDEX IF NOT EXISTS idx_${tableName}_user_id ON ${tableName}(user_id)`,
                 `CREATE INDEX IF NOT EXISTS idx_${tableName}_type ON ${tableName}(type)`,
                 `CREATE INDEX IF NOT EXISTS idx_${tableName}_timestamp ON ${tableName}(timestamp DESC)`,
               ];
-              
+
               for (const indexQuery of indexQueries) {
                 try {
                   await executeRaw(indexQuery);
@@ -1390,7 +1390,7 @@ export function createStorageProvider(options: {
                   // Index might already exist
                 }
               }
-              
+
               tableEnsured = true;
               return;
             } catch (createError: any) {
@@ -1459,7 +1459,7 @@ export function createStorageProvider(options: {
     async ingestBatch(events: AuthEvent[]) {
       // Ensure table exists before ingesting
       await ensureTable();
-      
+
       if (adapter.createMany) {
         await adapter.createMany({
           model: tableName,
@@ -1528,7 +1528,9 @@ export function createStorageProvider(options: {
             sessionId: event.sessionId || event.session_id,
             organizationId: event.organizationId || event.organization_id,
             metadata:
-              typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {},
+              typeof event.metadata === 'string'
+                ? JSON.parse(event.metadata)
+                : event.metadata || {},
             ipAddress: event.ipAddress || event.ip_address,
             userAgent: event.userAgent || event.user_agent,
             source: event.source || 'app',
@@ -1561,23 +1563,24 @@ export function createStorageProvider(options: {
       // Fallback to raw SQL if findMany failed or not available
       // Check both the adapter and potentially the underlying client (for Prisma)
       const underlyingAdapter = (adapter as any)?._client || (adapter as any)?.client || adapter;
-      const useRawSQL = 
-        adapter.$queryRaw || 
-        adapter.$queryRawUnsafe || 
-        adapter.queryRaw || 
+      const useRawSQL =
+        adapter.$queryRaw ||
+        adapter.$queryRawUnsafe ||
+        adapter.queryRaw ||
         adapter.executeRaw ||
         underlyingAdapter?.$queryRaw ||
         underlyingAdapter?.$queryRawUnsafe ||
         underlyingAdapter?.queryRaw ||
         underlyingAdapter?.executeRaw;
-      
+
       if (useRawSQL) {
         // Use the adapter that has the raw SQL method
-        const sqlAdapter = adapter.$queryRawUnsafe || adapter.$queryRawUnsafe 
-          ? adapter 
-          : underlyingAdapter?.$queryRawUnsafe || underlyingAdapter?.$queryRaw
-            ? underlyingAdapter
-            : adapter;
+        const sqlAdapter =
+          adapter.$queryRawUnsafe || adapter.$queryRawUnsafe
+            ? adapter
+            : underlyingAdapter?.$queryRawUnsafe || underlyingAdapter?.$queryRaw
+              ? underlyingAdapter
+              : adapter;
         try {
           // Build WHERE clause
           const whereConditions: string[] = [];
@@ -1606,9 +1609,10 @@ export function createStorageProvider(options: {
             paramIndex++;
           }
 
-          const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
+          const whereClause =
+            whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
           const orderDirection = sort === 'desc' ? 'DESC' : 'ASC';
-          
+
           // Use appropriate raw SQL method
           let queryFn: (query: string) => Promise<any>;
           if (sqlAdapter.$queryRawUnsafe || adapter.$queryRawUnsafe) {
@@ -1617,19 +1621,20 @@ export function createStorageProvider(options: {
             // Replace $1, $2, etc. with actual values for Prisma
             params.forEach((param, index) => {
               const placeholder = `$${index + 1}`;
-              const value = typeof param === 'string' 
-                ? `'${param.replace(/'/g, "''")}'` 
-                : param === null 
-                  ? 'NULL' 
-                  : param instanceof Date 
-                    ? `'${param.toISOString()}'` 
-                    : String(param);
+              const value =
+                typeof param === 'string'
+                  ? `'${param.replace(/'/g, "''")}'`
+                  : param === null
+                    ? 'NULL'
+                    : param instanceof Date
+                      ? `'${param.toISOString()}'`
+                      : String(param);
               query = query.replace(new RegExp(`\\${placeholder}(?![0-9])`, 'g'), value);
             });
             const queryMethod = sqlAdapter.$queryRawUnsafe || adapter.$queryRawUnsafe;
             queryFn = async (q: string) => await queryMethod(q);
             const result = await queryFn(query);
-            
+
             const hasMore = result.length > limit;
             const paginatedEvents = result.slice(0, limit).map((event: any) => ({
               id: event.id,
@@ -1639,7 +1644,10 @@ export function createStorageProvider(options: {
               userId: event.user_id || event.userId,
               sessionId: event.session_id || event.sessionId,
               organizationId: event.organization_id || event.organizationId,
-              metadata: typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {},
+              metadata:
+                typeof event.metadata === 'string'
+                  ? JSON.parse(event.metadata)
+                  : event.metadata || {},
               ipAddress: event.ip_address || event.ipAddress,
               userAgent: event.user_agent || event.userAgent,
               source: event.source || 'app',
@@ -1658,7 +1666,7 @@ export function createStorageProvider(options: {
             // Other adapters - use parameterized query
             const query = `SELECT * FROM ${tableName} ${whereClause} ORDER BY timestamp ${orderDirection}, id ${orderDirection} LIMIT $${paramIndex}`;
             params.push(limit + 1);
-            
+
             if (sqlAdapter.$queryRaw || adapter.$queryRaw) {
               const queryMethod = sqlAdapter.$queryRaw || adapter.$queryRaw;
               queryFn = async (q: string) => await queryMethod(q, ...params);
@@ -1668,7 +1676,7 @@ export function createStorageProvider(options: {
             } else {
               throw new Error('Raw SQL not supported');
             }
-            
+
             const result = await queryFn(query);
             const hasMore = result.length > limit;
             const paginatedEvents = result.slice(0, limit).map((event: any) => ({
@@ -1679,7 +1687,10 @@ export function createStorageProvider(options: {
               userId: event.user_id || event.userId,
               sessionId: event.session_id || event.sessionId,
               organizationId: event.organization_id || event.organizationId,
-              metadata: typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {},
+              metadata:
+                typeof event.metadata === 'string'
+                  ? JSON.parse(event.metadata)
+                  : event.metadata || {},
               ipAddress: event.ip_address || event.ipAddress,
               userAgent: event.user_agent || event.userAgent,
               source: event.source || 'app',

@@ -258,7 +258,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
 
         if (isCallbackPath) {
           try {
-          const newSession = ctx.context?.newSession || returned?.newSession;
+            const newSession = ctx.context?.newSession || returned?.newSession;
             const user =
               newSession?.user ||
               returned?.user ||
@@ -268,7 +268,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
               (returned?.data && typeof returned.data === 'object' && 'user' in returned.data
                 ? returned.data.user
                 : null);
-          const existingUser = ctx.context?.existingUser;
+            const existingUser = ctx.context?.existingUser;
             const params = ctx.params;
             if (user) {
               const provider = path.includes('/callback/')
@@ -341,29 +341,29 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                         },
                         capturedConfig
                       ).catch(() => {});
-              } else if (isError) {
-                emitEvent(
+                    } else if (isError) {
+                      emitEvent(
                         'session.created',
-                  {
-                    status: 'failed',
-                    metadata: {
-                      reason:
+                        {
+                          status: 'failed',
+                          metadata: {
+                            reason:
                               returned.statusCode === 401
                                 ? 'authentication_failed'
                                 : returned.body?.code || 'unknown',
                             provider: path.includes('/callback/')
                               ? path.split('/callback/')[1]?.split('/')[0]
                               : undefined,
-                    },
-                    request: {
-                      headers: headersObj,
-                      ip: ip || undefined,
-                    },
-                  },
-                  capturedConfig
+                          },
+                          request: {
+                            headers: headersObj,
+                            ip: ip || undefined,
+                          },
+                        },
+                        capturedConfig
                       ).catch(() => {});
-              }
-            })
+                    }
+                  })
                   .catch(() => {});
               }
             }
@@ -533,8 +533,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 userId: session?.user?.id,
                 metadata: {
                   organizationName: body.name || organization?.name || 'Unknown',
-                  reason:
-                    returned.body?.message || returned.body.code,
+                  reason: returned.body?.message || returned.body.code,
                 },
                 request: {
                   headers: headersObj,
@@ -550,7 +549,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           const body = ctx.body || {};
           const organization = returned?.organization || ctx.context?.returned?.organization;
           const session = ctx.context?.session;
-          
+
           if (!isError && organization && session) {
             // Success is handled by hooks
           } else if (isError) {
@@ -562,8 +561,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 userId: session?.user?.id,
                 metadata: {
                   organizationName: body.name || organization?.name || 'Unknown',
-                  reason:
-                    returned.body?.message || returned.body.code,
+                  reason: returned.body?.message || returned.body.code,
                 },
                 request: {
                   headers: headersObj,
@@ -579,7 +577,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           const body = ctx.body || {};
           const organization = returned?.organization || ctx.context?.returned?.organization;
           const session = ctx.context?.session;
-          
+
           if (!isError && organization && session) {
             // Success is handled by hooks
           } else if (isError) {
@@ -591,8 +589,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 userId: session?.user?.id,
                 metadata: {
                   organizationName: organization?.name || 'Unknown',
-                  reason:
-                    returned.body?.message || returned.body.code,
+                  reason: returned.body?.message || returned.body.code,
                 },
                 request: {
                   headers: headersObj,
@@ -609,7 +606,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           const body = ctx.body || {};
           const member = returned?.member || ctx.context?.returned?.member;
           const session = ctx.context?.session;
-          
+
           if (!isError && member && session) {
           } else if (isError) {
             emitEvent(
@@ -619,8 +616,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 organizationId: body.organizationId,
                 userId: body.userId || member?.userId,
                 metadata: {
-                  reason:
-                        returned.body?.message || returned.body.code,
+                  reason: returned.body?.message || returned.body.code,
                 },
                 request: {
                   headers: headersObj,
@@ -635,7 +631,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
         if (path === '/organization/remove-member' || path === '/member/remove') {
           const body = ctx.body || {};
           const session = ctx.context?.session;
-          
+
           if (!isError && session) {
           } else if (isError) {
             emitEvent(
@@ -664,7 +660,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           const body = ctx.body || {};
           const member = returned?.member || ctx.context?.returned?.member;
           const session = ctx.context?.session;
-          
+
           if (!isError && member && session) {
             // Success is handled by hooks
           } else if (isError) {
@@ -697,7 +693,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           const body = ctx.body || {};
           const team = returned?.team || ctx.context?.returned?.team;
           const session = ctx.context?.session;
-          
+
           if (!isError && team && session) {
             // Success is handled by hooks
           } else if (isError) {
@@ -728,7 +724,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           const body = ctx.body || {};
           const team = returned?.team || ctx.context?.returned?.team;
           const session = ctx.context?.session;
-          
+
           if (!isError && team && session) {
             // Success is handled by hooks
           } else if (isError) {
@@ -741,8 +737,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 metadata: {
                   teamId: body.id || body.teamId,
                   teamName: body.name || team?.name || 'Unknown',
-                  reason:
-                    returned.body?.message || returned.body.code,
+                  reason: returned.body?.message || returned.body.code,
                 },
                 request: {
                   headers: headersObj,
@@ -757,7 +752,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
         if (path === '/team/delete' || path.startsWith('/team/delete')) {
           const body = ctx.body || {};
           const session = ctx.context?.session;
-          
+
           if (!isError && session) {
             // Success is handled by hooks
           } else if (isError) {
@@ -769,8 +764,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 userId: session?.user?.id,
                 metadata: {
                   teamId: body.id || body.teamId,
-                  reason:
-                    returned.body?.message || returned.body.code,
+                  reason: returned.body?.message || returned.body.code,
                 },
                 request: {
                   headers: headersObj,
@@ -786,7 +780,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           const body = ctx.body || {};
           const teamMember = returned?.teamMember || ctx.context?.returned?.teamMember;
           const session = ctx.context?.session;
-          
+
           if (!isError && teamMember && session) {
             // Success is handled by hooks
           } else if (isError) {
@@ -798,8 +792,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 userId: body.userId || teamMember?.userId,
                 metadata: {
                   teamId: body.teamId,
-                  reason:
-                    returned.body?.message || returned.body.code,
+                  reason: returned.body?.message || returned.body.code,
                 },
                 request: {
                   headers: headersObj,
@@ -814,7 +807,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
         if (path === '/team/remove-member' || path.startsWith('/team/remove-member')) {
           const body = ctx.body || {};
           const session = ctx.context?.session;
-          
+
           if (!isError && session) {
             // Success is handled by hooks
           } else if (isError) {
@@ -826,8 +819,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 userId: body.userId,
                 metadata: {
                   teamId: body.teamId,
-                  reason:
-                    returned.body?.message || returned.body.code,
+                  reason: returned.body?.message || returned.body.code,
                 },
                 request: {
                   headers: headersObj,
@@ -844,7 +836,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           const body = ctx.body || {};
           const invitation = returned?.invitation || ctx.context?.returned?.invitation;
           const session = ctx.context?.session;
-          
+
           if (!isError && invitation && session) {
             // Success is handled by hooks
           } else if (isError) {
@@ -856,8 +848,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 metadata: {
                   email: body.email || 'Unknown',
                   role: body.role || 'member',
-                  reason:
-                    returned.body?.message || returned.body.code,
+                  reason: returned.body?.message || returned.body.code,
                 },
                 request: {
                   headers: headersObj,
@@ -873,7 +864,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           const body = ctx.body || {};
           const invitation = returned?.invitation || ctx.context?.returned?.invitation;
           const session = ctx.context?.session;
-          
+
           if (!isError && invitation && session) {
             // Success is handled by hooks
           } else if (isError) {
@@ -886,8 +877,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 metadata: {
                   invitationId: body.id || body.invitationId,
                   email: invitation?.email || body.email || 'Unknown',
-                  reason:
-                    returned.body?.message || returned.body.code,
+                  reason: returned.body?.message || returned.body.code,
                 },
                 request: {
                   headers: headersObj,
@@ -903,7 +893,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           const body = ctx.body || {};
           const invitation = returned?.invitation || ctx.context?.returned?.invitation;
           const session = ctx.context?.session;
-          
+
           if (!isError && invitation && session) {
             // Success is handled by hooks
           } else if (isError) {
@@ -916,8 +906,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 metadata: {
                   invitationId: body.id || body.invitationId,
                   email: invitation?.email || body.email || 'Unknown',
-                  reason:
-                    returned.body?.message || returned.body.code,
+                  reason: returned.body?.message || returned.body.code,
                 },
                 request: {
                   headers: headersObj,
@@ -933,7 +922,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           const body = ctx.body || {};
           const invitation = returned?.invitation || ctx.context?.returned?.invitation;
           const session = ctx.context?.session;
-          
+
           if (!isError && invitation && session) {
             // Success is handled by hooks
           } else if (isError) {
@@ -946,8 +935,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                 metadata: {
                   invitationId: body.id || body.invitationId,
                   email: invitation?.email || body.email || 'Unknown',
-                  reason:
-                    returned.body?.message || returned.body.code,
+                  reason: returned.body?.message || returned.body.code,
                 },
                 request: {
                   headers: headersObj,
@@ -971,7 +959,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
     }, 0);
   });
 
-    const oauthAccountAfter = async (account: any, context: any) => {
+  const oauthAccountAfter = async (account: any, context: any) => {
     if (!context || !context.internalAdapter) {
       return;
     }
@@ -980,8 +968,8 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
       return;
     }
 
-      if (account.providerId !== 'credential') {
-        try {
+    if (account.providerId !== 'credential') {
+      try {
         if (
           typeof context.internalAdapter.findUserById !== 'function' ||
           typeof context.internalAdapter.findAccounts !== 'function'
@@ -989,58 +977,58 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           return;
         }
 
-          const user = await context.internalAdapter.findUserById(account.userId);
+        const user = await context.internalAdapter.findUserById(account.userId);
 
-          if (user) {
+        if (user) {
           const existingAccounts = await context.internalAdapter.findAccounts(account.userId);
           const isLinking = existingAccounts && existingAccounts.length > 1; // More than just this new account
 
-            if (isLinking) {
-              await emitEvent(
-                'oauth.linked',
-                {
-                  status: 'success',
-                  userId: account.userId,
-                  metadata: {
-                    provider: account.providerId,
-                    providerId: account.providerId,
-                    userEmail: user.email,
-                    email: user.email,
-                    name: user.name,
-                    accountId: account.accountId,
-                    linkedAt: new Date().toISOString(),
-                  },
+          if (isLinking) {
+            await emitEvent(
+              'oauth.linked',
+              {
+                status: 'success',
+                userId: account.userId,
+                metadata: {
+                  provider: account.providerId,
+                  providerId: account.providerId,
+                  userEmail: user.email,
+                  email: user.email,
+                  name: user.name,
+                  accountId: account.accountId,
+                  linkedAt: new Date().toISOString(),
                 },
+              },
               capturedConfig
-              ).catch(() => {});
-            } else {
-              await emitEvent(
-                'oauth.sign_in',
-                {
-                  status: 'success',
-                  userId: account.userId,
-                  metadata: {
-                    provider: account.providerId,
-                    providerId: account.providerId,
-                    userEmail: user.email,
-                    email: user.email,
-                    name: user.name,
-                    emailVerified: user.emailVerified,
-                    accountId: account.accountId,
-                    createdAt: user.createdAt
-                      ? new Date(user.createdAt).toISOString()
-                      : new Date().toISOString(),
-                  },
+            ).catch(() => {});
+          } else {
+            await emitEvent(
+              'oauth.sign_in',
+              {
+                status: 'success',
+                userId: account.userId,
+                metadata: {
+                  provider: account.providerId,
+                  providerId: account.providerId,
+                  userEmail: user.email,
+                  email: user.email,
+                  name: user.name,
+                  emailVerified: user.emailVerified,
+                  accountId: account.accountId,
+                  createdAt: user.createdAt
+                    ? new Date(user.createdAt).toISOString()
+                    : new Date().toISOString(),
                 },
+              },
               capturedConfig
-              ).catch(() => {});
-            }
+            ).catch(() => {});
           }
-        } catch (error) {
-          console.error('[OAuth DB Hook] Error:', error);
         }
+      } catch (error) {
+        console.error('[OAuth DB Hook] Error:', error);
       }
-    };
+    }
+  };
   const initializeEventIngestion = (context: any) => {
     async (context: any) => {
       if (!isEventIngestionInitialized() && capturedConfig?.enabled) {
@@ -1177,7 +1165,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
     //     },
     //   },
     // },
-    };
+  };
 }
 
 /**

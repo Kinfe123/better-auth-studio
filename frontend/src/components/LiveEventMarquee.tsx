@@ -107,10 +107,8 @@ export function LiveEventMarquee({
         setEvents((prev) => {
           // Merge and deduplicate - only add events we don't already have
           const existingIds = new Set(prev.map((e) => e.id));
-          const uniqueNew = data.events.filter(
-            (e: AuthEvent) => !existingIds.has(e.id)
-          );
-          
+          const uniqueNew = data.events.filter((e: AuthEvent) => !existingIds.has(e.id));
+
           if (uniqueNew.length > 0) {
             // Add new events to the front, keep max events
             const updated = [...uniqueNew, ...prev].slice(0, maxEvents);
@@ -120,7 +118,7 @@ export function LiveEventMarquee({
             }
             return updated;
           }
-          
+
           // No new events, return previous state
           return prev;
         });
