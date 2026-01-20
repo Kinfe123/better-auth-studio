@@ -7,13 +7,10 @@ import { CopyableId } from '../components/CopyableId';
 import {
   AlertInfo,
   AlertTriangle,
-  Building,
   Building2,
   Check,
-  CheckCircle,
   ErrorInfo,
   Info,
-  User,
   Users,
 } from '../components/PixelIcons';
 import { Button } from '../components/ui/button';
@@ -688,10 +685,11 @@ export const auth = betterAuth({
       {/* View Event Modal */}
       {showViewModal && selectedEvent && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none w-full max-w-lg p-6 shadow-2xl">
+          <div className="bg-black border border-white/15 rounded-none w-full max-w-2xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <div className="flex flex-col gap-2">
                 <h3 className="text-lg text-white font-light uppercase font-mono">Event Details</h3>
+                <CopyableId id={selectedEvent.id} variant="subscript" nonSliced />
               </div>
               <Button
                 variant="ghost"
