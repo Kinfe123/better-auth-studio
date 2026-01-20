@@ -5,6 +5,7 @@ interface Counts {
   organizations: number;
   sessions: number;
   teams?: number;
+  events?: number;
 }
 
 interface CountsContextType {
@@ -25,6 +26,7 @@ export function CountsProvider({ children }: CountsProviderProps) {
     organizations: 0,
     sessions: 0,
     teams: 0,
+    events: 0,
   });
   const [loading, setLoading] = useState(true);
 

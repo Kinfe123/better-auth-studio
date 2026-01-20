@@ -48,7 +48,7 @@ export function LiveEventMarquee({
 
   const [events, setEvents] = useState<AuthEvent[]>([]);
   const [isConnected, setIsConnected] = useState(false);
-  const [lastEventId, setLastEventId] = useState<string | null>(null);
+  const [_, setLastEventId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
   const pollTimeoutRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -72,15 +72,29 @@ export function LiveEventMarquee({
         sort: sortOrder, // Use configurable sort order
       });
 
-      if (lastEventId) {
-        params.append('after', lastEventId);
-      }
+      // Don't use 'after' cursor for polling - we want the latest events
+      // and will filter duplicates ourselves
 
       const apiPath = buildApiUrl('/api/events');
 
       const response = await fetch(`${apiPath}?${params.toString()}`);
 
       if (!response.ok) {
+        // Handle 500 errors gracefully
+        if (response.status === 500) {
+          try {
+            const errorData = await response.json();
+            if (
+              errorData.details?.includes('not found in schema') ||
+              errorData.details?.includes('Model')
+            ) {
+              setIsConnected(true);
+              return;
+            }
+          } catch {
+            // Continue with error
+          }
+        }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
@@ -90,21 +104,26 @@ export function LiveEventMarquee({
       retryDelayRef.current = 2000;
 
       if (data.events && Array.isArray(data.events)) {
-        const newEvents = data.events.filter(
-          (event: AuthEvent) => !lastEventId || event.id !== lastEventId
-        );
-
-        if (newEvents.length > 0) {
-          setEvents((prev) => {
-            // Merge and deduplicate
-            const existingIds = new Set(prev.map((e) => e.id));
-            const uniqueNew = newEvents.filter((e: AuthEvent) => !existingIds.has(e.id));
+        setEvents((prev) => {
+          // Merge and deduplicate - only add events we don't already have
+          const existingIds = new Set(prev.map((e) => e.id));
+          const uniqueNew = data.events.filter(
+            (e: AuthEvent) => !existingIds.has(e.id)
+          );
+          
+          if (uniqueNew.length > 0) {
+            // Add new events to the front, keep max events
             const updated = [...uniqueNew, ...prev].slice(0, maxEvents);
+            // Update last event ID to the newest one
+            if (updated.length > 0) {
+              setLastEventId(updated[0].id);
+            }
             return updated;
-          });
-
-          setLastEventId(newEvents[0].id);
-        }
+          }
+          
+          // No new events, return previous state
+          return prev;
+        });
       } else if (!data.events) {
         // If response doesn't have events array, log for debugging
         console.warn('Events API response missing events array:', data);
@@ -115,7 +134,7 @@ export function LiveEventMarquee({
     } finally {
       isPollingRef.current = false;
     }
-  }, [lastEventId, maxEvents, propSort]);
+  }, [maxEvents, propSort]);
 
   useEffect(() => {
     // Initial poll

@@ -50,7 +50,7 @@ export async function initializeEventIngestionAndHooks(config: StudioConfig): Pr
         case 'prisma':
         case 'drizzle':
           try {
-            provider = createPostgresProvider({
+          provider = createPostgresProvider({
               client: config.events.client,
               tableName: config.events.tableName,
               clientType: config.events.clientType,
@@ -62,9 +62,9 @@ export async function initializeEventIngestionAndHooks(config: StudioConfig): Pr
         case 'sqlite':
           try {
             provider = createSqliteProvider({
-              client: config.events.client,
-              tableName: config.events.tableName,
-            });
+            client: config.events.client,
+            tableName: config.events.tableName,
+          });
           } catch (error) {
             throw error;
           }

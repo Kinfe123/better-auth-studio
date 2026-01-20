@@ -1,4 +1,5 @@
 import {
+  Activity,
   Building2,
   Database,
   LayoutDashboard,
@@ -381,6 +382,11 @@ export default function Layout({ children }: LayoutProps) {
       href: '/organizations',
       icon: Building2,
       badge: loading ? '...' : formatCount(counts.organizations),
+    },
+    {
+      name: 'Events',
+      href: '/events',
+      icon: Activity,
     },
     {
       name: 'Database',

@@ -1325,48 +1325,93 @@ export function createStorageProvider(options: {
 }): EventIngestionProvider {
   const { adapter, tableName = 'auth_events' } = options;
 
-  const ensureTable = async () => {
+  let tableEnsured = false;
+  let tableEnsuringPromise: Promise<void> | null = null;
+
+  const ensureTable = async (): Promise<void> => {
     if (!adapter) return;
+    if (tableEnsured) return;
+    if (tableEnsuringPromise) return tableEnsuringPromise;
 
-    try {
-      if (adapter.findMany) {
-        await adapter.findMany({
-          model: tableName,
-          limit: 1,
-        });
-        return;
+    tableEnsuringPromise = (async () => {
+      try {
+        if (adapter.findMany) {
+          // Try to query the table to see if it exists
+          await adapter.findMany({
+            model: tableName,
+            limit: 1,
+          });
+          tableEnsured = true;
+          return;
+        }
+      } catch (error: any) {
+        // Table doesn't exist - try to create it if adapter supports raw SQL
+        if (
+          error?.message?.includes('not found in schema') ||
+          error?.message?.includes('Model') ||
+          error?.code === 'P2025' ||
+          error?.code === '42P01'
+        ) {
+          // Try to create table using raw SQL if adapter supports it
+          if (adapter.executeRaw || adapter.$executeRaw || adapter.queryRaw) {
+            try {
+              const executeRaw = adapter.executeRaw || adapter.$executeRaw || adapter.queryRaw;
+              const createTableQuery = `
+                CREATE TABLE IF NOT EXISTS ${tableName} (
+                  id TEXT PRIMARY KEY,
+                  type TEXT NOT NULL,
+                  timestamp TEXT NOT NULL DEFAULT (datetime('now')),
+                  status TEXT NOT NULL DEFAULT 'success',
+                  user_id TEXT,
+                  session_id TEXT,
+                  organization_id TEXT,
+                  metadata TEXT DEFAULT '{}',
+                  ip_address TEXT,
+                  user_agent TEXT,
+                  source TEXT DEFAULT 'app',
+                  display_message TEXT,
+                  display_severity TEXT,
+                  created_at TEXT DEFAULT (datetime('now'))
+                );
+              `;
+              await executeRaw(createTableQuery);
+              
+              // Create indexes
+              const indexQueries = [
+                `CREATE INDEX IF NOT EXISTS idx_${tableName}_user_id ON ${tableName}(user_id)`,
+                `CREATE INDEX IF NOT EXISTS idx_${tableName}_type ON ${tableName}(type)`,
+                `CREATE INDEX IF NOT EXISTS idx_${tableName}_timestamp ON ${tableName}(timestamp DESC)`,
+              ];
+              
+              for (const indexQuery of indexQueries) {
+                try {
+                  await executeRaw(indexQuery);
+                } catch {
+                  // Index might already exist
+                }
+              }
+              
+              tableEnsured = true;
+              return;
+            } catch (createError: any) {
+              // If we can't create the table, that's okay - it might need to be created manually
+              console.warn(
+                `Table ${tableName} may not exist. Please create it manually or run migrations.`
+              );
+            }
+          } else {
+            console.warn(
+              `Table ${tableName} may not exist. Please create it manually or run migrations.`
+            );
+          }
+        }
+      } finally {
+        tableEnsuringPromise = null;
       }
-    } catch (error: any) {
-      console.warn(
-        `Table ${tableName} may not exist. Please create it manually or run migrations.`
-      );
-      console.warn('SQL schema for reference:');
-      console.warn(`
-CREATE TABLE IF NOT EXISTS ${tableName} (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  type VARCHAR(100) NOT NULL,
-  timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  status VARCHAR(20) NOT NULL DEFAULT 'success',
-  user_id VARCHAR(255),
-  session_id VARCHAR(255),
-  organization_id VARCHAR(255),
-  metadata JSONB DEFAULT '{}',
-  ip_address INET,
-  user_agent TEXT,
-  source VARCHAR(50) DEFAULT 'app',
-  display_message TEXT,
-  display_severity VARCHAR(20),
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+    })();
 
-CREATE INDEX IF NOT EXISTS idx_${tableName}_user_id ON ${tableName}(user_id);
-CREATE INDEX IF NOT EXISTS idx_${tableName}_type ON ${tableName}(type);
-CREATE INDEX IF NOT EXISTS idx_${tableName}_timestamp ON ${tableName}(timestamp DESC);
-      `);
-    }
+    return tableEnsuringPromise;
   };
-
-  ensureTable().catch(console.error);
 
   return {
     async ingest(event: AuthEvent) {
@@ -1412,6 +1457,9 @@ CREATE INDEX IF NOT EXISTS idx_${tableName}_timestamp ON ${tableName}(timestamp 
     },
 
     async ingestBatch(events: AuthEvent[]) {
+      // Ensure table exists before ingesting
+      await ensureTable();
+      
       if (adapter.createMany) {
         await adapter.createMany({
           model: tableName,
@@ -1439,60 +1487,227 @@ CREATE INDEX IF NOT EXISTS idx_${tableName}_timestamp ON ${tableName}(timestamp 
     async query(options: EventQueryOptions): Promise<EventQueryResult> {
       const { limit = 20, after, sort = 'desc', type, userId } = options;
 
-      if (!adapter || !adapter.findMany) {
-        throw new Error('Adapter does not support findMany');
-      }
+      // Ensure table exists before querying
+      await ensureTable();
 
-      const where: any[] = [];
+      // First, try findMany (normal path)
+      if (adapter && adapter.findMany) {
+        try {
+          const where: any[] = [];
 
-      if (after) {
-        if (sort === 'desc') {
-          where.push({ field: 'id', operator: '<', value: after });
-        } else {
-          where.push({ field: 'id', operator: '>', value: after });
+          if (after) {
+            if (sort === 'desc') {
+              where.push({ field: 'id', operator: '<', value: after });
+            } else {
+              where.push({ field: 'id', operator: '>', value: after });
+            }
+          }
+
+          if (type) {
+            where.push({ field: 'type', value: type });
+          }
+
+          if (userId) {
+            where.push({ field: 'userId', value: userId });
+          }
+
+          const events = await adapter.findMany({
+            model: tableName,
+            where,
+            orderBy: [{ field: 'timestamp', direction: sort === 'desc' ? 'desc' : 'asc' }],
+            limit: limit + 1, // Get one extra to check hasMore
+          });
+
+          const hasMore = events.length > limit;
+          const paginatedEvents = events.slice(0, limit).map((event: any) => ({
+            id: event.id,
+            type: event.type,
+            timestamp: new Date(event.timestamp || event.createdAt),
+            status: event.status || 'success',
+            userId: event.userId || event.user_id,
+            sessionId: event.sessionId || event.session_id,
+            organizationId: event.organizationId || event.organization_id,
+            metadata:
+              typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {},
+            ipAddress: event.ipAddress || event.ip_address,
+            userAgent: event.userAgent || event.user_agent,
+            source: event.source || 'app',
+            display: {
+              message: event.displayMessage || event.display_message || event.type,
+              severity: event.displaySeverity || event.display_severity || 'info',
+            },
+          }));
+
+          return {
+            events: paginatedEvents,
+            hasMore,
+            nextCursor: hasMore ? paginatedEvents[paginatedEvents.length - 1].id : null,
+          };
+        } catch (findManyError: any) {
+          // If findMany fails with "model not found", try raw SQL
+          if (
+            findManyError?.message?.includes('not found in schema') ||
+            findManyError?.message?.includes('Model') ||
+            findManyError?.code === 'P2025'
+          ) {
+            // Fall through to raw SQL fallback
+          } else {
+            // Re-throw other errors
+            throw findManyError;
+          }
         }
       }
 
-      if (type) {
-        where.push({ field: 'type', value: type });
+      // Fallback to raw SQL if findMany failed or not available
+      // Check both the adapter and potentially the underlying client (for Prisma)
+      const underlyingAdapter = (adapter as any)?._client || (adapter as any)?.client || adapter;
+      const useRawSQL = 
+        adapter.$queryRaw || 
+        adapter.$queryRawUnsafe || 
+        adapter.queryRaw || 
+        adapter.executeRaw ||
+        underlyingAdapter?.$queryRaw ||
+        underlyingAdapter?.$queryRawUnsafe ||
+        underlyingAdapter?.queryRaw ||
+        underlyingAdapter?.executeRaw;
+      
+      if (useRawSQL) {
+        // Use the adapter that has the raw SQL method
+        const sqlAdapter = adapter.$queryRawUnsafe || adapter.$queryRawUnsafe 
+          ? adapter 
+          : underlyingAdapter?.$queryRawUnsafe || underlyingAdapter?.$queryRaw
+            ? underlyingAdapter
+            : adapter;
+        try {
+          // Build WHERE clause
+          const whereConditions: string[] = [];
+          const params: any[] = [];
+          let paramIndex = 1;
+
+          if (after) {
+            if (sort === 'desc') {
+              whereConditions.push(`id < $${paramIndex}`);
+            } else {
+              whereConditions.push(`id > $${paramIndex}`);
+            }
+            params.push(after);
+            paramIndex++;
+          }
+
+          if (type) {
+            whereConditions.push(`type = $${paramIndex}`);
+            params.push(type);
+            paramIndex++;
+          }
+
+          if (userId) {
+            whereConditions.push(`user_id = $${paramIndex}`);
+            params.push(userId);
+            paramIndex++;
+          }
+
+          const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
+          const orderDirection = sort === 'desc' ? 'DESC' : 'ASC';
+          
+          // Use appropriate raw SQL method
+          let queryFn: (query: string) => Promise<any>;
+          if (sqlAdapter.$queryRawUnsafe || adapter.$queryRawUnsafe) {
+            // Prisma - build query with parameters embedded
+            let query = `SELECT * FROM ${tableName} ${whereClause} ORDER BY timestamp ${orderDirection}, id ${orderDirection} LIMIT ${limit + 1}`;
+            // Replace $1, $2, etc. with actual values for Prisma
+            params.forEach((param, index) => {
+              const placeholder = `$${index + 1}`;
+              const value = typeof param === 'string' 
+                ? `'${param.replace(/'/g, "''")}'` 
+                : param === null 
+                  ? 'NULL' 
+                  : param instanceof Date 
+                    ? `'${param.toISOString()}'` 
+                    : String(param);
+              query = query.replace(new RegExp(`\\${placeholder}(?![0-9])`, 'g'), value);
+            });
+            const queryMethod = sqlAdapter.$queryRawUnsafe || adapter.$queryRawUnsafe;
+            queryFn = async (q: string) => await queryMethod(q);
+            const result = await queryFn(query);
+            
+            const hasMore = result.length > limit;
+            const paginatedEvents = result.slice(0, limit).map((event: any) => ({
+              id: event.id,
+              type: event.type,
+              timestamp: new Date(event.timestamp || event.created_at),
+              status: event.status || 'success',
+              userId: event.user_id || event.userId,
+              sessionId: event.session_id || event.sessionId,
+              organizationId: event.organization_id || event.organizationId,
+              metadata: typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {},
+              ipAddress: event.ip_address || event.ipAddress,
+              userAgent: event.user_agent || event.userAgent,
+              source: event.source || 'app',
+              display: {
+                message: event.display_message || event.displayMessage || event.type,
+                severity: event.display_severity || event.displaySeverity || 'info',
+              },
+            }));
+
+            return {
+              events: paginatedEvents,
+              hasMore,
+              nextCursor: hasMore ? paginatedEvents[paginatedEvents.length - 1].id : null,
+            };
+          } else {
+            // Other adapters - use parameterized query
+            const query = `SELECT * FROM ${tableName} ${whereClause} ORDER BY timestamp ${orderDirection}, id ${orderDirection} LIMIT $${paramIndex}`;
+            params.push(limit + 1);
+            
+            if (sqlAdapter.$queryRaw || adapter.$queryRaw) {
+              const queryMethod = sqlAdapter.$queryRaw || adapter.$queryRaw;
+              queryFn = async (q: string) => await queryMethod(q, ...params);
+            } else if (sqlAdapter.queryRaw || adapter.queryRaw) {
+              const queryMethod = sqlAdapter.queryRaw || adapter.queryRaw;
+              queryFn = async (q: string) => await queryMethod(q, params);
+            } else {
+              throw new Error('Raw SQL not supported');
+            }
+            
+            const result = await queryFn(query);
+            const hasMore = result.length > limit;
+            const paginatedEvents = result.slice(0, limit).map((event: any) => ({
+              id: event.id,
+              type: event.type,
+              timestamp: new Date(event.timestamp || event.created_at),
+              status: event.status || 'success',
+              userId: event.user_id || event.userId,
+              sessionId: event.session_id || event.sessionId,
+              organizationId: event.organization_id || event.organizationId,
+              metadata: typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {},
+              ipAddress: event.ip_address || event.ipAddress,
+              userAgent: event.user_agent || event.userAgent,
+              source: event.source || 'app',
+              display: {
+                message: event.display_message || event.displayMessage || event.type,
+                severity: event.display_severity || event.displaySeverity || 'info',
+              },
+            }));
+
+            return {
+              events: paginatedEvents,
+              hasMore,
+              nextCursor: hasMore ? paginatedEvents[paginatedEvents.length - 1].id : null,
+            };
+          }
+        } catch (rawError: any) {
+          // If raw SQL also fails, return empty result
+          console.warn('Raw SQL query failed:', rawError);
+          return {
+            events: [],
+            hasMore: false,
+            nextCursor: null,
+          };
+        }
       }
 
-      if (userId) {
-        where.push({ field: 'userId', value: userId });
-      }
-
-      const events = await adapter.findMany({
-        model: tableName,
-        where,
-        orderBy: [{ field: 'timestamp', direction: sort === 'desc' ? 'desc' : 'asc' }],
-        limit: limit + 1, // Get one extra to check hasMore
-      });
-
-      const hasMore = events.length > limit;
-      const paginatedEvents = events.slice(0, limit).map((event: any) => ({
-        id: event.id,
-        type: event.type,
-        timestamp: new Date(event.timestamp || event.createdAt),
-        status: event.status || 'success',
-        userId: event.userId || event.user_id,
-        sessionId: event.sessionId || event.session_id,
-        organizationId: event.organizationId || event.organization_id,
-        metadata:
-          typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {},
-        ipAddress: event.ipAddress || event.ip_address,
-        userAgent: event.userAgent || event.user_agent,
-        source: event.source || 'app',
-        display: {
-          message: event.displayMessage || event.display_message || event.type,
-          severity: event.displaySeverity || event.display_severity || 'info',
-        },
-      }));
-
-      return {
-        events: paginatedEvents,
-        hasMore,
-        nextCursor: hasMore ? paginatedEvents[paginatedEvents.length - 1].id : null,
-      };
+      // If we get here, neither findMany nor raw SQL worked
+      throw new Error('Adapter does not support findMany or raw SQL');
     },
   };
 }

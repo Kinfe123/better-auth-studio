@@ -8,6 +8,7 @@ import AccessDenied from './pages/AccessDenied';
 import Dashboard from './pages/Dashboard';
 import DatabaseVisualizer from './pages/DatabaseVisualizer';
 import EmailEditor from './pages/EmailEditor';
+import Events from './pages/Events';
 import Login from './pages/Login';
 import OrganizationDetails from './pages/OrganizationDetails';
 import Organizations from './pages/Organizations';
@@ -77,6 +78,7 @@ function MainRoutes() {
           <Route path="/teams/:teamId" element={<TeamDetails />} />
           <Route path="/organizations/:orgId/teams/:teamId" element={<TeamDetails />} />
           <Route path="/sessions" element={<Sessions />} />
+          <Route path="/events" element={<Events />} />
           <Route path="/database" element={<DatabaseVisualizer />} />
           <Route path="/database/demo" element={<DatabaseSchemaNodeDemo />} />
           <Route path="/emails" element={<EmailEditor />} />

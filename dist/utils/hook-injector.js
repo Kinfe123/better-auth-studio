@@ -420,6 +420,357 @@ function createEventIngestionPlugin(eventsConfig) {
                         }, capturedConfig).catch(() => { });
                     }
                 }
+                // Organization operation
+                if (path === '/organization/create') {
+                    const body = ctx.body || {};
+                    const organization = returned?.organization || ctx.context?.returned?.organization;
+                    const session = ctx.context?.session;
+                    if (!isError && organization && session) {
+                    }
+                    else if (isError) {
+                        emitEvent('organization.created', {
+                            status: 'failed',
+                            userId: session?.user?.id,
+                            metadata: {
+                                organizationName: body.name || organization?.name || 'Unknown',
+                                reason: returned.body?.message || returned.body.code,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                if (path === '/organization/update') {
+                    const body = ctx.body || {};
+                    const organization = returned?.organization || ctx.context?.returned?.organization;
+                    const session = ctx.context?.session;
+                    if (!isError && organization && session) {
+                        // Success is handled by hooks
+                    }
+                    else if (isError) {
+                        emitEvent('organization.updated', {
+                            status: 'failed',
+                            organizationId: body.id || body.organizationId,
+                            userId: session?.user?.id,
+                            metadata: {
+                                organizationName: body.name || organization?.name || 'Unknown',
+                                reason: returned.body?.message || returned.body.code,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                if (path === '/organization/delete') {
+                    const body = ctx.body || {};
+                    const organization = returned?.organization || ctx.context?.returned?.organization;
+                    const session = ctx.context?.session;
+                    if (!isError && organization && session) {
+                        // Success is handled by hooks
+                    }
+                    else if (isError) {
+                        emitEvent('organization.deleted', {
+                            status: 'failed',
+                            organizationId: body.id || body.organizationId,
+                            userId: session?.user?.id,
+                            metadata: {
+                                organizationName: organization?.name || 'Unknown',
+                                reason: returned.body?.message || returned.body.code,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                // Member operations
+                if (path === '/organization/add-member' || path === '/member/add') {
+                    const body = ctx.body || {};
+                    const member = returned?.member || ctx.context?.returned?.member;
+                    const session = ctx.context?.session;
+                    if (!isError && member && session) {
+                    }
+                    else if (isError) {
+                        emitEvent('member.added', {
+                            status: 'failed',
+                            organizationId: body.organizationId,
+                            userId: body.userId || member?.userId,
+                            metadata: {
+                                reason: returned.body?.message || returned.body.code,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                if (path === '/organization/remove-member' || path === '/member/remove') {
+                    const body = ctx.body || {};
+                    const session = ctx.context?.session;
+                    if (!isError && session) {
+                    }
+                    else if (isError) {
+                        emitEvent('member.removed', {
+                            status: 'failed',
+                            organizationId: body.organizationId,
+                            userId: body.userId,
+                            metadata: {
+                                reason: returned.statusCode === 404
+                                    ? 'member_not_found'
+                                    : returned.body?.code || returned.body?.message || 'unknown',
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                if (path === '/organization/update-member-role' || path === '/member/update-role') {
+                    const body = ctx.body || {};
+                    const member = returned?.member || ctx.context?.returned?.member;
+                    const session = ctx.context?.session;
+                    if (!isError && member && session) {
+                        // Success is handled by hooks
+                    }
+                    else if (isError) {
+                        emitEvent('member.role_changed', {
+                            status: 'failed',
+                            organizationId: body.organizationId,
+                            userId: body.userId || member?.userId,
+                            metadata: {
+                                oldRole: body.oldRole,
+                                newRole: body.role || body.newRole,
+                                reason: returned.statusCode === 404
+                                    ? 'member_not_found'
+                                    : returned.body?.code || returned.body?.message || 'unknown',
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                // Team operations
+                if (path === '/team/create' || path.startsWith('/team/create')) {
+                    const body = ctx.body || {};
+                    const team = returned?.team || ctx.context?.returned?.team;
+                    const session = ctx.context?.session;
+                    if (!isError && team && session) {
+                        // Success is handled by hooks
+                    }
+                    else if (isError) {
+                        emitEvent('team.created', {
+                            status: 'failed',
+                            organizationId: body.organizationId,
+                            userId: session?.user?.id,
+                            metadata: {
+                                teamName: body.name || 'Unknown',
+                                reason: returned.statusCode === 400
+                                    ? 'validation_failed'
+                                    : returned.body?.code || returned.body?.message || 'unknown',
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                if (path === '/team/update' || path.startsWith('/team/update')) {
+                    const body = ctx.body || {};
+                    const team = returned?.team || ctx.context?.returned?.team;
+                    const session = ctx.context?.session;
+                    if (!isError && team && session) {
+                        // Success is handled by hooks
+                    }
+                    else if (isError) {
+                        emitEvent('team.updated', {
+                            status: 'failed',
+                            organizationId: body.organizationId || team?.organizationId,
+                            userId: session?.user?.id,
+                            metadata: {
+                                teamId: body.id || body.teamId,
+                                teamName: body.name || team?.name || 'Unknown',
+                                reason: returned.body?.message || returned.body.code,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                if (path === '/team/delete' || path.startsWith('/team/delete')) {
+                    const body = ctx.body || {};
+                    const session = ctx.context?.session;
+                    if (!isError && session) {
+                        // Success is handled by hooks
+                    }
+                    else if (isError) {
+                        emitEvent('team.deleted', {
+                            status: 'failed',
+                            organizationId: body.organizationId,
+                            userId: session?.user?.id,
+                            metadata: {
+                                teamId: body.id || body.teamId,
+                                reason: returned.body?.message || returned.body.code,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                if (path === '/team/add-member' || path.startsWith('/team/add-member')) {
+                    const body = ctx.body || {};
+                    const teamMember = returned?.teamMember || ctx.context?.returned?.teamMember;
+                    const session = ctx.context?.session;
+                    if (!isError && teamMember && session) {
+                        // Success is handled by hooks
+                    }
+                    else if (isError) {
+                        emitEvent('team.member.added', {
+                            status: 'failed',
+                            organizationId: body.organizationId,
+                            userId: body.userId || teamMember?.userId,
+                            metadata: {
+                                teamId: body.teamId,
+                                reason: returned.body?.message || returned.body.code,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                if (path === '/team/remove-member' || path.startsWith('/team/remove-member')) {
+                    const body = ctx.body || {};
+                    const session = ctx.context?.session;
+                    if (!isError && session) {
+                        // Success is handled by hooks
+                    }
+                    else if (isError) {
+                        emitEvent('team.member.removed', {
+                            status: 'failed',
+                            organizationId: body.organizationId,
+                            userId: body.userId,
+                            metadata: {
+                                teamId: body.teamId,
+                                reason: returned.body?.message || returned.body.code,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                // Invitation operations
+                if (path === '/invitation/create' || path.startsWith('/invitation/create')) {
+                    const body = ctx.body || {};
+                    const invitation = returned?.invitation || ctx.context?.returned?.invitation;
+                    const session = ctx.context?.session;
+                    if (!isError && invitation && session) {
+                        // Success is handled by hooks
+                    }
+                    else if (isError) {
+                        emitEvent('invitation.created', {
+                            status: 'failed',
+                            organizationId: body.organizationId,
+                            metadata: {
+                                email: body.email || 'Unknown',
+                                role: body.role || 'member',
+                                reason: returned.body?.message || returned.body.code,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                if (path === '/invitation/accept' || path.startsWith('/invitation/accept')) {
+                    const body = ctx.body || {};
+                    const invitation = returned?.invitation || ctx.context?.returned?.invitation;
+                    const session = ctx.context?.session;
+                    if (!isError && invitation && session) {
+                        // Success is handled by hooks
+                    }
+                    else if (isError) {
+                        emitEvent('invitation.accepted', {
+                            status: 'failed',
+                            organizationId: invitation?.organizationId || body.organizationId,
+                            userId: session?.user?.id || body.userId,
+                            metadata: {
+                                invitationId: body.id || body.invitationId,
+                                email: invitation?.email || body.email || 'Unknown',
+                                reason: returned.body?.message || returned.body.code,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                if (path === '/invitation/reject' || path.startsWith('/invitation/reject')) {
+                    const body = ctx.body || {};
+                    const invitation = returned?.invitation || ctx.context?.returned?.invitation;
+                    const session = ctx.context?.session;
+                    if (!isError && invitation && session) {
+                        // Success is handled by hooks
+                    }
+                    else if (isError) {
+                        emitEvent('invitation.rejected', {
+                            status: 'failed',
+                            organizationId: invitation?.organizationId || body.organizationId,
+                            userId: session?.user?.id || body.userId,
+                            metadata: {
+                                invitationId: body.id || body.invitationId,
+                                email: invitation?.email || body.email || 'Unknown',
+                                reason: returned.body?.message || returned.body.code,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                if (path === '/invitation/cancel' || path.startsWith('/invitation/cancel')) {
+                    const body = ctx.body || {};
+                    const invitation = returned?.invitation || ctx.context?.returned?.invitation;
+                    const session = ctx.context?.session;
+                    if (!isError && invitation && session) {
+                        // Success is handled by hooks
+                    }
+                    else if (isError) {
+                        emitEvent('invitation.cancelled', {
+                            status: 'failed',
+                            organizationId: invitation?.organizationId || body.organizationId,
+                            userId: session?.user?.id || body.userId,
+                            metadata: {
+                                invitationId: body.id || body.invitationId,
+                                email: invitation?.email || body.email || 'Unknown',
+                                reason: returned.body?.message || returned.body.code,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
             }
             catch (error) {
                 const errorMessage = error?.message || String(error || '');
