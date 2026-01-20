@@ -558,7 +558,8 @@ export const auth = betterAuth({
                                     return (
                                         <tr
                                             key={event.id}
-                                            className={`border-b border-dashed border-white/5 hover:bg-white/5 transition-all ${isNew ? (isSuccess ? 'new-event-row bg-green-400/10 border-green-400/20' : isFailed ? 'new-event-row bg-red-400/10 border-red-400/20' : '') : ''}`}
+                                            onClick={() => openViewModal(event)}
+                                            className={`border-b border-dashed border-white/5 hover:bg-white/5 transition-all cursor-pointer ${isNew ? (isSuccess ? 'new-event-row bg-green-400/10 border-green-400/20' : isFailed ? 'new-event-row bg-red-400/10 border-red-400/20' : '') : ''}`}
                                         >
                                             <td className="py-4 px-4">
                                                 <div className="flex items-center space-x-3">
@@ -617,7 +618,10 @@ export const auth = betterAuth({
                                             <td className="py-4 px-4">
                                                 {event.userId ? (
                                                     <button
-                                                        onClick={() => navigate(`/users/${event.userId}`)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            navigate(`/users/${event.userId}`);
+                                                        }}
                                                         className="underline underline-offset-4 decoration-dashed hover:underline font-mono text-xs transition-colors"
                                                     >
                                                         {event.userId.slice(0, 8)}...
@@ -647,7 +651,10 @@ export const auth = betterAuth({
                                                     variant="ghost"
                                                     size="sm"
                                                     className="text-gray-400 hover:text-white rounded-none"
-                                                    onClick={() => openViewModal(event)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        openViewModal(event);
+                                                    }}
                                                 >
                                                     <Eye className="w-4 h-4" />
                                                 </Button>
@@ -668,9 +675,9 @@ export const auth = betterAuth({
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex flex-col gap-2">
                                 <h3 className="text-lg text-white font-light font-mono">
-                                   <span className="uppercase">
-                                    Event Details
-                                    </span> 
+                                    <span className="uppercase">
+                                        Event Details
+                                    </span>
                                     <CopyableId id={selectedEvent.id} variant="subscript" nonSliced />
                                 </h3>
                             </div>
