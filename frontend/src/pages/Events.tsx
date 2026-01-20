@@ -49,7 +49,6 @@ const formatDateTime = (value?: string | Date) => {
   const d = typeof value === 'string' ? new Date(value) : value;
   if (Number.isNaN(d.getTime())) return '—';
 
-  // Format: "JAN 19 17:23:47.33" (dd MMM HH:MM:SS.ms)
   const month = format(d, 'MMM').toUpperCase();
   const day = format(d, 'dd');
   const hours = String(d.getHours()).padStart(2, '0');
@@ -77,7 +76,6 @@ const getSeverityColor = (severity?: string, status?: string) => {
 };
 
 const getEventIcon = (eventType: string, severity?: string, status?: string) => {
-  // Organization-related events
   if (
     eventType.includes('organization') ||
     eventType.includes('member') ||
@@ -93,7 +91,6 @@ const getEventIcon = (eventType: string, severity?: string, status?: string) => 
     return <Building2 className="w-4 h-4" />;
   }
 
-  // User-related events
   if (eventType.includes('user')) {
     if (status === 'failed' || severity === 'failed') {
       return <AlertTriangle className="w-4 h-4" />;
@@ -104,7 +101,6 @@ const getEventIcon = (eventType: string, severity?: string, status?: string) => 
     return <Users className="w-4 h-4" />;
   }
 
-  // Session-related events
   if (eventType.includes('session') || eventType.includes('login')) {
     if (status === 'failed' || severity === 'failed') {
       return <AlertTriangle className="w-4 h-4" />;
@@ -115,7 +111,6 @@ const getEventIcon = (eventType: string, severity?: string, status?: string) => 
     return <Info className="w-4 h-4" />;
   }
 
-  // Default icons based on severity/status
   if (status === 'failed' || severity === 'failed') {
     return <AlertTriangle className="w-4 h-4" />;
   }
@@ -146,7 +141,6 @@ export default function Events() {
   const lastEventIdRef = useRef<string | null>(null);
   const pollInterval = 2000; // 2 seconds
 
-  // Calculate stats
   const eventStats = useMemo(() => {
     const success = events.filter(
       (e) => e.status === 'success' && e.display?.severity !== 'failed'
@@ -171,20 +165,13 @@ export default function Events() {
         sort: 'desc',
       });
 
-      // For polling, we want events that are NEWER than what we have
-      // Since we're sorting desc (newest first), we don't use 'after' cursor
-      // Instead, we fetch the latest events and filter out duplicates
-      // Only use 'after' if we want to paginate backwards (older events)
-
       const apiPath = buildApiUrl('/api/events');
       const response = await fetch(`${apiPath}?${params.toString()}`);
 
       if (!response.ok) {
-        // If 500 error, try to parse error message
         if (response.status === 500) {
           try {
             const errorData = await response.json();
-            // If it's a "model not found" error, treat as empty result
             if (
               errorData.details?.includes('not found in schema') ||
               errorData.details?.includes('Model')
@@ -197,7 +184,6 @@ export default function Events() {
               return;
             }
           } catch {
-            // If we can't parse error, continue with throw
           }
         }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -207,14 +193,12 @@ export default function Events() {
       setIsConnected(true);
 
       if (data.events && Array.isArray(data.events)) {
-        // Handle empty events array gracefully
         if (data.events.length === 0 && isInitial) {
           setEvents([]);
           setLoading(false);
           return;
         }
         if (isInitial) {
-          // Initial load - set all events
           setEvents(data.events);
           if (data.events.length > 0) {
             lastEventIdRef.current = data.events[0].id;
@@ -241,16 +225,13 @@ export default function Events() {
                 return combined;
               });
 
-              // Add new events to the top, keep max 100 events
               const updated = [...newEvents, ...prev];
               return updated.slice(0, 100);
             }
 
-            // No new events, return previous state
             return prev;
           });
 
-          // Update last event ID to the newest one we've seen
           if (data.events.length > 0) {
             lastEventIdRef.current = data.events[0].id;
           }
@@ -266,10 +247,8 @@ export default function Events() {
   }, []);
 
   useEffect(() => {
-    // Initial fetch
     fetchEvents(true);
 
-    // Set up polling interval
     const startPolling = () => {
       if (pollTimeoutRef.current) {
         clearInterval(pollTimeoutRef.current);
@@ -616,7 +595,6 @@ export default function Events() {
                     selectedEvent.status
                   )}`}
                 >
-                  {/* Horizontal pattern overlay for success in modal - only on icon */}
                   {selectedEvent.status === 'success' &&
                     selectedEvent.display?.severity !== 'failed' && (
                       <div
@@ -626,7 +604,6 @@ export default function Events() {
                         }}
                       />
                     )}
-                  {/* Horizontal pattern overlay for failed in modal - only on icon */}
                   {(selectedEvent.status === 'failed' ||
                     selectedEvent.display?.severity === 'failed') && (
                     <div
