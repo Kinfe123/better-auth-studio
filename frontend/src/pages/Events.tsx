@@ -7,6 +7,7 @@ import { CopyableId } from '../components/CopyableId';
 import {
   AlertInfo,
   AlertTriangle,
+  Building,
   Building2,
   Check,
   CheckCircle,
@@ -15,7 +16,6 @@ import {
   User,
   Users,
 } from '../components/PixelIcons';
-import { Building } from '../components/PixelIcons';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import {
@@ -178,8 +178,7 @@ export default function Events() {
               }
               return;
             }
-          } catch {
-          }
+          } catch {}
         }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -382,9 +381,7 @@ export const auth = betterAuth({
             <div className="flex items-center space-x-3">
               <AlertCircle className="w-8 h-8 text-yellow-400" />
               <div className="text-center">
-                <h2 className="text-xl text-white font-light mb-2">
-                  Event Ingestion Not Enabled
-                </h2>
+                <h2 className="text-xl text-white font-light mb-2">Event Ingestion Not Enabled</h2>
                 <p className="text-gray-400 text-sm font-mono">
                   {!isSelfHosted
                     ? 'Event ingestion is only available in self-hosted mode.'
@@ -397,7 +394,8 @@ export const auth = betterAuth({
               <div className="w-full max-w-4xl">
                 <div className="mb-4">
                   <p className="text-gray-300 text-sm font-mono mb-2">
-                    Add the following configuration to your <code className="text-yellow-400">studio.config.ts</code>:
+                    Add the following configuration to your{' '}
+                    <code className="text-yellow-400">studio.config.ts</code>:
                   </p>
                 </div>
                 <CodeBlock
