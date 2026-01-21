@@ -33,9 +33,7 @@ function getStudioConfig() {
   return (window as any).__STUDIO_CONFIG__ || {};
 }
 
-function parseTimeWindow(
-  timeWindow?: { since?: string; custom?: number }
-): Date | null {
+function parseTimeWindow(timeWindow?: { since?: string; custom?: number }): Date | null {
   if (!timeWindow) {
     const oneHourAgo = new Date();
     oneHourAgo.setHours(oneHourAgo.getHours() - 1);
@@ -506,7 +504,9 @@ export function LiveEventMarquee({
           {eventsEnabled === false ? (
             <span className="text-xs ml-5 font-mono text-white/50">Events not enabled</span>
           ) : events.length === 0 ? (
-            <span className="text-xs ml-5 font-mono text-white/50 animate-pulse">Waiting for events...</span>
+            <span className="text-xs ml-5 font-mono text-white/50 animate-pulse">
+              Waiting for events...
+            </span>
           ) : (
             [...events, ...events, ...events].map((event, index) => {
               const setIndex = Math.floor(index / events.length);

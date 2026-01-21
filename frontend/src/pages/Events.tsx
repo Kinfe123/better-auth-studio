@@ -164,9 +164,7 @@ function checkIsSelfHosted(): boolean {
   return !!cfg.basePath;
 }
 
-function parseTimeWindow(
-  timeWindow?: { since?: string; custom?: number }
-): Date | null {
+function parseTimeWindow(timeWindow?: { since?: string; custom?: number }): Date | null {
   if (!timeWindow) {
     // Default to 1 hour
     const oneHourAgo = new Date();
