@@ -166,23 +166,18 @@ function checkIsSelfHosted(): boolean {
 
 function parseTimeWindow(timeWindow?: { since?: string; custom?: number }): Date | null {
   if (!timeWindow) {
-    // Default to 1 hour
     const oneHourAgo = new Date();
     oneHourAgo.setHours(oneHourAgo.getHours() - 1);
     return oneHourAgo;
   }
 
-  // Handle object with 'since' or 'custom' (mutually exclusive)
   if (timeWindow.since !== undefined) {
-    // Use predefined 'since' value
     return parseTimeWindowString(timeWindow.since);
   } else if (timeWindow.custom !== undefined) {
-    // Use custom duration in seconds
     const now = new Date();
     now.setSeconds(now.getSeconds() - timeWindow.custom);
     return now;
   } else {
-    // Invalid object (neither since nor custom), default to 1 hour
     const oneHourAgo = new Date();
     oneHourAgo.setHours(oneHourAgo.getHours() - 1);
     return oneHourAgo;
@@ -192,7 +187,6 @@ function parseTimeWindow(timeWindow?: { since?: string; custom?: number }): Date
 function parseTimeWindowString(timeWindow: string): Date | null {
   const match = timeWindow.match(/^(\d+)([hmsd])$/i);
   if (!match) {
-    // Invalid format, default to 1 hour
     const oneHourAgo = new Date();
     oneHourAgo.setHours(oneHourAgo.getHours() - 1);
     return oneHourAgo;
