@@ -22,6 +22,7 @@ export interface EventQueryOptions {
     sort?: 'asc' | 'desc';
     type?: string;
     userId?: string;
+    since?: Date;
 }
 export interface EventQueryResult {
     events: AuthEvent[];

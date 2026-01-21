@@ -418,6 +418,23 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                     return res.status(401).json({ error: 'Unauthorized', message: result.error });
                 }
                 req.studioSession = result.session;
+                // Extend session expiry time on each authenticated request
+                if (result.session) {
+                    const refreshedSession = createStudioSession({
+                        id: result.session.userId,
+                        email: result.session.email,
+                        name: result.session.name,
+                        role: result.session.role,
+                    }, getSessionDuration());
+                    const encryptedSession = encryptSession(refreshedSession, getSessionSecret());
+                    res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === 'production',
+                        sameSite: 'lax',
+                        maxAge: getSessionDuration(),
+                        path: '/',
+                    });
+                }
             }
             next();
         });
@@ -705,6 +722,23 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         if (!isSessionValid(session)) {
             return res.json({ authenticated: false, reason: 'expired' });
         }
+        // Extend session expiry time on each successful check
+        if (session) {
+            const refreshedSession = createStudioSession({
+                id: session.userId,
+                email: session.email,
+                name: session.name,
+                role: session.role,
+            }, getSessionDuration());
+            const encryptedSession = encryptSession(refreshedSession, getSessionSecret());
+            res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: getSessionDuration(),
+                path: '/',
+            });
+        }
         return res.json({
             authenticated: true,
             user: {
@@ -712,7 +746,6 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 email: session.email,
                 name: session.name,
                 role: session.role,
-                image: session.image,
             },
         });
     });
@@ -1646,6 +1679,8 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             const sort = req.query.sort || 'desc'; // Default: 'desc' = newest first
             const type = req.query.type;
             const userId = req.query.userId;
+            const sinceParam = req.query.since; // ISO timestamp string
+            const since = sinceParam ? new Date(sinceParam) : undefined;
             const { getEventIngestionProvider, isEventIngestionInitialized } = await import('./utils/event-ingestion.js');
             // Check if event ingestion is initialized, if not, try to initialize it
             if (!isEventIngestionInitialized()) {
@@ -1716,6 +1751,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                         sort: sort,
                         type,
                         userId,
+                        since,
                     });
                     // Import event utilities for template fallback
                     const eventTypes = await import('./types/events.js');

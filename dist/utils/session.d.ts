@@ -3,7 +3,6 @@ export interface StudioSession {
     email: string;
     name: string;
     role: string;
-    image?: string;
     issuedAt: number;
     expiresAt: number;
 }

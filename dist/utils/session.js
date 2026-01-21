@@ -37,12 +37,17 @@ export function isSessionValid(session) {
     return session.expiresAt > Date.now();
 }
 export function createStudioSession(user, durationMs = 7 * 24 * 60 * 60 * 1000) {
+    // Truncate fields to prevent cookie size issues (max 4096 chars for cookie)
+    // Remove image field as it can be large and is optional
+    // Truncate name and email to reasonable lengths
+    const maxNameLength = 100;
+    const maxEmailLength = 255;
     return {
         userId: user.id,
-        email: user.email,
-        name: user.name || '',
+        email: user.email.length > maxEmailLength ? user.email.substring(0, maxEmailLength) : user.email,
+        name: (user.name || '').length > maxNameLength ? (user.name || '').substring(0, maxNameLength) : (user.name || ''),
         role: user.role || 'user',
-        image: user.image,
+        // Don't store image in session to reduce cookie size - it can be fetched from user data if needed
         issuedAt: Date.now(),
         expiresAt: Date.now() + durationMs,
     };

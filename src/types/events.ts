@@ -58,6 +58,7 @@ export interface EventQueryOptions {
   sort?: 'asc' | 'desc'; // 'desc' = newest first (default), 'asc' = oldest first
   type?: string;
   userId?: string;
+  since?: Date; // Filter events since this timestamp
 }
 
 export interface EventQueryResult {

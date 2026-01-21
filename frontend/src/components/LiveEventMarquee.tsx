@@ -33,6 +33,61 @@ function getStudioConfig() {
   return (window as any).__STUDIO_CONFIG__ || {};
 }
 
+function parseTimeWindow(
+  timeWindow?: { since?: string; custom?: number }
+): Date | null {
+  if (!timeWindow) {
+    const oneHourAgo = new Date();
+    oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+    return oneHourAgo;
+  }
+
+  if (timeWindow.since !== undefined) {
+    return parseTimeWindowString(timeWindow.since);
+  } else if (timeWindow.custom !== undefined) {
+    const now = new Date();
+    now.setSeconds(now.getSeconds() - timeWindow.custom);
+    return now;
+  } else {
+    const oneHourAgo = new Date();
+    oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+    return oneHourAgo;
+  }
+}
+
+function parseTimeWindowString(timeWindow: string): Date | null {
+  const match = timeWindow.match(/^(\d+)([hmsd])$/i);
+  if (!match) {
+    const oneHourAgo = new Date();
+    oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+    return oneHourAgo;
+  }
+
+  const value = parseInt(match[1], 10);
+  const unit = match[2].toLowerCase();
+  const now = new Date();
+
+  switch (unit) {
+    case 'm': // minutes
+      now.setMinutes(now.getMinutes() - value);
+      break;
+    case 'h': // hours
+      now.setHours(now.getHours() - value);
+      break;
+    case 'd': // days
+      now.setDate(now.getDate() - value);
+      break;
+    case 's': // seconds
+      now.setSeconds(now.getSeconds() - value);
+      break;
+    default:
+      // Default to 1 hour
+      now.setHours(now.getHours() - 1);
+  }
+
+  return now;
+}
+
 function checkIsSelfHosted(): boolean {
   const cfg = getStudioConfig();
   return !!cfg.basePath;
@@ -102,10 +157,19 @@ export function LiveEventMarquee({
       // Use sort from props, default to 'desc' (newest first)
       const sortOrder = propSort ?? 'desc';
 
+      // Get time window from config (nested under liveMarquee)
+      const config = getStudioConfig();
+      const timeWindow = config.events?.liveMarquee?.timeWindow || '1h';
+      const since = parseTimeWindow(timeWindow);
+
       const params = new URLSearchParams({
         limit: '10',
         sort: sortOrder, // Use configurable sort order
       });
+
+      if (since) {
+        params.append('since', since.toISOString());
+      }
 
       // Don't use 'after' cursor for polling - we want the latest events
       // and will filter duplicates ourselves
@@ -442,7 +506,7 @@ export function LiveEventMarquee({
           {eventsEnabled === false ? (
             <span className="text-xs ml-5 font-mono text-white/50">Events not enabled</span>
           ) : events.length === 0 ? (
-            <span className="text-xs ml-5 font-mono text-white/50">Waiting for events...</span>
+            <span className="text-xs ml-5 font-mono text-white/50 animate-pulse">Waiting for events...</span>
           ) : (
             [...events, ...events, ...events].map((event, index) => {
               const setIndex = Math.floor(index / events.length);

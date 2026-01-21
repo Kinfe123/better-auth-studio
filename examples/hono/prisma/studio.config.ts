@@ -19,6 +19,7 @@ const config: StudioConfig = {
   access: {
     roles: ['admin'],
     allowEmails: ['kinfetare83@gmail.com'],
+
   },
   events: {
     enabled: true,
@@ -31,6 +32,10 @@ const config: StudioConfig = {
       speed: 1,
       sort: "desc",
       pauseOnHover: true,
+      timeWindow: {
+        since: "15m"
+      },
+      limit: 10,
       colors: {
         success: '#34d399',
         info: '#fcd34d',

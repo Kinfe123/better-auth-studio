@@ -164,6 +164,67 @@ function checkIsSelfHosted(): boolean {
   return !!cfg.basePath;
 }
 
+function parseTimeWindow(
+  timeWindow?: { since?: string; custom?: number }
+): Date | null {
+  if (!timeWindow) {
+    // Default to 1 hour
+    const oneHourAgo = new Date();
+    oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+    return oneHourAgo;
+  }
+
+  // Handle object with 'since' or 'custom' (mutually exclusive)
+  if (timeWindow.since !== undefined) {
+    // Use predefined 'since' value
+    return parseTimeWindowString(timeWindow.since);
+  } else if (timeWindow.custom !== undefined) {
+    // Use custom duration in seconds
+    const now = new Date();
+    now.setSeconds(now.getSeconds() - timeWindow.custom);
+    return now;
+  } else {
+    // Invalid object (neither since nor custom), default to 1 hour
+    const oneHourAgo = new Date();
+    oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+    return oneHourAgo;
+  }
+}
+
+function parseTimeWindowString(timeWindow: string): Date | null {
+  const match = timeWindow.match(/^(\d+)([hmsd])$/i);
+  if (!match) {
+    // Invalid format, default to 1 hour
+    const oneHourAgo = new Date();
+    oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+    return oneHourAgo;
+  }
+
+  const value = parseInt(match[1], 10);
+  const unit = match[2].toLowerCase();
+  const now = new Date();
+
+  switch (unit) {
+    case 'm': // minutes
+      now.setMinutes(now.getMinutes() - value);
+      break;
+    case 'h': // hours
+      now.setHours(now.getHours() - value);
+      break;
+    case 'd': // days
+      now.setDate(now.getDate() - value);
+      break;
+    case 's': // seconds
+      now.setSeconds(now.getSeconds() - value);
+      break;
+    default:
+      // Default to 1 hour
+      now.setHours(now.getHours() - 1);
+  }
+
+  return now;
+}
+
 export default function Events() {
   const navigate = useNavigate();
   const [events, setEvents] = useState<AuthEvent[]>([]);
@@ -195,21 +256,33 @@ export default function Events() {
   const [activeFilters, setActiveFilters] = useState<FilterConfig[]>([]);
 
   const eventStats = useMemo(() => {
-    const failed = events.filter(
-      (e) => e.status === 'failed' || e.display?.severity === 'failed'
-    ).length;
-    const warning = events.filter((e) => e.display?.severity === 'warning').length;
-    const info = events.filter(
-      (e) => e.display?.severity === 'info' || (!e.display?.severity && e.status !== 'failed')
-    ).length;
-    const success = events.filter(
-      (e) =>
-        e.status === 'success' &&
-        e.display?.severity !== 'failed' &&
-        e.display?.severity !== 'warning' &&
-        e.display?.severity !== 'info' &&
-        !e.display?.severity
-    ).length;
+    // Use the same categorization logic as the chart
+    const failed = events.filter((e) => {
+      const status = e.status || 'success';
+      const severity = e.display?.severity;
+      return status === 'failed' || severity === 'failed';
+    }).length;
+
+    const warning = events.filter((e) => {
+      const severity = e.display?.severity;
+      return severity === 'warning';
+    }).length;
+
+    const info = events.filter((e) => {
+      const status = e.status || 'success';
+      const severity = e.display?.severity;
+      return severity === 'info' || (!severity && status !== 'failed');
+    }).length;
+
+    const success = events.filter((e) => {
+      const status = e.status || 'success';
+      const severity = e.display?.severity;
+      const isFailed = status === 'failed' || severity === 'failed';
+      const isWarning = severity === 'warning';
+      const isInfo = severity === 'info' || (!severity && status !== 'failed');
+      return status === 'success' && !isFailed && !isWarning && !isInfo;
+    }).length;
+
     return { success, failed, warning, info };
   }, [events]);
 
@@ -218,10 +291,19 @@ export default function Events() {
     isPollingRef.current = true;
 
     try {
+      // Get time window from config (nested under liveMarquee)
+      const config = getStudioConfig();
+      const timeWindow = config.events?.liveMarquee?.timeWindow || '1h';
+      const since = parseTimeWindow(timeWindow);
+
       const params = new URLSearchParams({
         limit: '50',
         sort: 'desc',
       });
+
+      if (since) {
+        params.append('since', since.toISOString());
+      }
 
       const apiPath = buildApiUrl('/api/events');
       const response = await fetch(`${apiPath}?${params.toString()}`);

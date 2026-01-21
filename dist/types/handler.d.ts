@@ -9,6 +9,14 @@ export type UniversalResponse = {
     headers: Record<string, string>;
     body: string | Buffer;
 };
+export type TimeWindowPreset = '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '12h' | '1d' | '2d' | '3d' | '7d' | '14d' | '30d';
+export type TimeWindowConfig = {
+    since: TimeWindowPreset;
+    custom?: never;
+} | {
+    custom: number;
+    since?: never;
+};
 export type LiveMarqueeConfig = {
     enabled?: boolean;
     pollInterval?: number;
@@ -17,6 +25,7 @@ export type LiveMarqueeConfig = {
     limit?: number;
     sort?: 'asc' | 'desc';
     colors?: EventColors;
+    timeWindow?: TimeWindowConfig;
 };
 export type StudioMetadata = {
     title?: string;

@@ -33,25 +33,6 @@ export const auth = betterAuth({
             redirectURI: `${baseURL}/api/auth/callback/discord`,
         },
     },
-    databaseHooks: {
-        account: {
-            create: {
-                after: async (account, context) => {
-                    console.log('create account', account, context);
-                }
-            } 
-        }
-    }, 
-    hooks: {
-        // before: createAuthMiddleware(async (ctx) => {
-        //     console.log("Before hook triggered", {ctx})
-        //     return ctx
-        // }),
-        // after: createAuthMiddleware(async (ctx) => {
-        //     console.log("After hook triggered", {ctx})
-        //     return ctx
-        // }),
-    },
     emailAndPassword: {
         enabled: true,
         disableSignUp: false,

@@ -504,6 +504,28 @@ export function createRoutes(
           return res.status(401).json({ error: 'Unauthorized', message: result.error });
         }
         (req as any).studioSession = result.session;
+
+        // Extend session expiry time on each authenticated request
+        if (result.session) {
+          const refreshedSession = createStudioSession(
+            {
+              id: result.session.userId,
+              email: result.session.email,
+              name: result.session.name,
+              role: result.session.role,
+            },
+            getSessionDuration()
+          );
+          const encryptedSession = encryptSession(refreshedSession, getSessionSecret());
+
+          res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: getSessionDuration(),
+            path: '/',
+          });
+        }
       }
 
       next();
@@ -847,6 +869,28 @@ export function createRoutes(
       return res.json({ authenticated: false, reason: 'expired' });
     }
 
+    // Extend session expiry time on each successful check
+    if (session) {
+      const refreshedSession = createStudioSession(
+        {
+          id: session.userId,
+          email: session.email,
+          name: session.name,
+          role: session.role,
+        },
+        getSessionDuration()
+      );
+      const encryptedSession = encryptSession(refreshedSession, getSessionSecret());
+
+      res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: getSessionDuration(),
+        path: '/',
+      });
+    }
+
     return res.json({
       authenticated: true,
       user: {
@@ -854,7 +898,6 @@ export function createRoutes(
         email: session!.email,
         name: session!.name,
         role: session!.role,
-        image: session!.image,
       },
     });
   });
@@ -1868,6 +1911,8 @@ export function createRoutes(
       const sort = (req.query.sort as string) || 'desc'; // Default: 'desc' = newest first
       const type = req.query.type as string;
       const userId = req.query.userId as string;
+      const sinceParam = req.query.since as string; // ISO timestamp string
+      const since = sinceParam ? new Date(sinceParam) : undefined;
 
       const { getEventIngestionProvider, isEventIngestionInitialized } = await import(
         './utils/event-ingestion.js'
@@ -1949,6 +1994,7 @@ export function createRoutes(
             sort: sort as 'asc' | 'desc',
             type,
             userId,
+            since,
           });
           // Import event utilities for template fallback
           const eventTypes = await import('./types/events.js');

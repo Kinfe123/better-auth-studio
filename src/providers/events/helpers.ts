@@ -442,7 +442,7 @@ export function createPostgresProvider(options: {
     },
 
     async query(options: EventQueryOptions): Promise<EventQueryResult> {
-      const { limit = 20, after, sort = 'desc', type, userId } = options;
+      const { limit = 20, after, sort = 'desc', type, userId, since } = options;
 
       let queryFn: (query: string, params?: any[]) => Promise<any>;
 
@@ -538,6 +538,11 @@ export function createPostgresProvider(options: {
       if (userId) {
         whereClauses.push(`user_id = $${paramIndex++}`);
         params.push(userId);
+      }
+
+      if (since) {
+        whereClauses.push(`timestamp >= $${paramIndex++}`);
+        params.push(since instanceof Date ? since.toISOString() : since);
       }
 
       const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
@@ -852,7 +857,7 @@ export function createSqliteProvider(options: {
     },
 
     async query(options: EventQueryOptions): Promise<EventQueryResult> {
-      const { limit = 20, after, sort = 'desc', type, userId } = options;
+      const { limit = 20, after, sort = 'desc', type, userId, since } = options;
 
       await ensureTableSync();
 
@@ -868,6 +873,11 @@ export function createSqliteProvider(options: {
         if (userId) {
           query += ` AND user_id = ?`;
           params.push(userId);
+        }
+
+        if (since) {
+          query += ` AND timestamp >= ?`;
+          params.push(since instanceof Date ? since.toISOString() : since);
         }
 
         if (after) {
@@ -1065,7 +1075,7 @@ export function createClickHouseProvider(options: {
     },
 
     async query(options: EventQueryOptions): Promise<EventQueryResult> {
-      const { limit = 20, after, sort = 'desc', type, userId } = options;
+      const { limit = 20, after, sort = 'desc', type, userId, since } = options;
       const tableFullName = database ? `${database}.${table}` : table;
 
       try {
@@ -1187,6 +1197,10 @@ export function createClickHouseProvider(options: {
       }
       if (userId) {
         whereClauses.push(`user_id = '${String(userId).replace(/'/g, "''")}'`);
+      }
+      if (since) {
+        const sinceDate = since instanceof Date ? since : new Date(since);
+        whereClauses.push(`timestamp >= '${sinceDate.toISOString().replace(/'/g, "''")}'`);
       }
 
       const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
@@ -1485,7 +1499,7 @@ export function createStorageProvider(options: {
     },
 
     async query(options: EventQueryOptions): Promise<EventQueryResult> {
-      const { limit = 20, after, sort = 'desc', type, userId } = options;
+      const { limit = 20, after, sort = 'desc', type, userId, since } = options;
 
       // Ensure table exists before querying
       await ensureTable();
@@ -1509,6 +1523,11 @@ export function createStorageProvider(options: {
 
           if (userId) {
             where.push({ field: 'userId', value: userId });
+          }
+
+          if (since) {
+            const sinceDate = since instanceof Date ? since : new Date(since);
+            where.push({ field: 'timestamp', operator: '>=', value: sinceDate });
           }
 
           const events = await adapter.findMany({
@@ -1606,6 +1625,12 @@ export function createStorageProvider(options: {
           if (userId) {
             whereConditions.push(`user_id = $${paramIndex}`);
             params.push(userId);
+            paramIndex++;
+          }
+
+          if (since) {
+            whereConditions.push(`timestamp >= $${paramIndex}`);
+            params.push(since instanceof Date ? since : new Date(since));
             paramIndex++;
           }
 

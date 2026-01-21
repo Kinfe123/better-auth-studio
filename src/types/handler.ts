@@ -10,6 +10,32 @@ export type UniversalResponse = {
   headers: Record<string, string>;
   body: string | Buffer;
 };
+export type TimeWindowPreset =
+  | '15m'
+  | '30m'
+  | '1h'
+  | '2h'
+  | '4h'
+  | '6h'
+  | '12h'
+  | '1d'
+  | '2d'
+  | '3d'
+  | '7d'
+  | '14d'
+  | '30d';
+
+// TimeWindowConfig is always an object with either 'since' OR 'custom' (mutually exclusive)
+export type TimeWindowConfig =
+  | {
+      since: TimeWindowPreset; // Predefined time window (e.g., '1h', '30m', '1d')
+      custom?: never; // Cannot use both 'since' and 'custom'
+    }
+  | {
+      custom: number; // Custom duration in seconds (e.g., 2 * 60 * 60 for 2 hours)
+      since?: never; // Cannot use both 'since' and 'custom'
+    };
+
 export type LiveMarqueeConfig = {
   enabled?: boolean;
   pollInterval?: number; // Polling interval in milliseconds (default: 2000)
@@ -18,6 +44,7 @@ export type LiveMarqueeConfig = {
   limit?: number; // Maximum number of events to display in marquee (default: 50)
   sort?: 'asc' | 'desc'; // Sort order for events: 'desc' = newest first (default), 'asc' = oldest first
   colors?: EventColors;
+  timeWindow?: TimeWindowConfig; // Time window for fetching events. Default: '1h'
 };
 export type StudioMetadata = {
   title?: string;
