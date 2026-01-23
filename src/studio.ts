@@ -1,24 +1,24 @@
-import { existsSync } from 'node:fs';
-import { createServer } from 'node:http';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { existsSync } from "node:fs";
+import { createServer } from "node:http";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 // @ts-expect-error - No types available
-import babelPresetReact from '@babel/preset-react';
+import babelPresetReact from "@babel/preset-react";
 // @ts-expect-error - No types available
-import babelPresetTypeScript from '@babel/preset-typescript';
-import { loadConfig } from 'c12';
-import chalk from 'chalk';
-import cors from 'cors';
-import express from 'express';
-import type { JitiOptions as JO } from 'jiti/native';
-import open from 'open';
-import type { WebSocket } from 'ws';
-import { WebSocketServer } from 'ws';
-import type { AuthConfig } from './config.js';
-import { getPathAliases } from './config.js';
-import { createRoutes } from './routes.js';
-import type { StudioConfig } from './types/handler.js';
-import { serveIndexHtml } from './utils/html-injector.js';
+import babelPresetTypeScript from "@babel/preset-typescript";
+import { loadConfig } from "c12";
+import chalk from "chalk";
+import cors from "cors";
+import express from "express";
+import type { JitiOptions as JO } from "jiti/native";
+import open from "open";
+import type { WebSocket } from "ws";
+import { WebSocketServer } from "ws";
+import type { AuthConfig } from "./config.js";
+import { getPathAliases } from "./config.js";
+import { createRoutes } from "./routes.js";
+import type { StudioConfig } from "./types/handler.js";
+import { serveIndexHtml } from "./utils/html-injector.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -56,42 +56,42 @@ export async function startStudio(options: StudioOptions) {
 
   app.use(
     cors({
-      origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
+      origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
       credentials: true,
-    })
+    }),
   );
 
-  app.use(express.json({ limit: '50mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+  app.use(express.json({ limit: "50mb" }));
+  app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
   let wss: WebSocketServer | null = null;
 
   if (watchMode) {
     wss = new WebSocketServer({ server });
 
-    wss.on('connection', (ws) => {
+    wss.on("connection", (ws) => {
       const heartbeat = setInterval(() => {
         if (ws.readyState === ws.OPEN) {
           ws.ping();
         }
       }, 30000);
 
-      ws.on('close', () => {
+      ws.on("close", () => {
         clearInterval(heartbeat);
       });
 
-      ws.on('error', (_error) => {
+      ws.on("error", (_error) => {
         clearInterval(heartbeat);
       });
 
       ws.send(
         JSON.stringify({
-          type: 'connected',
-          message: 'Connected to Better Auth Studio (watch mode)',
-        })
+          type: "connected",
+          message: "Connected to Better Auth Studio (watch mode)",
+        }),
       );
 
-      if (typeof onWatchConnection === 'function') {
+      if (typeof onWatchConnection === "function") {
         try {
           onWatchConnection(ws);
         } catch (_error) {}
@@ -101,16 +101,16 @@ export async function startStudio(options: StudioOptions) {
 
   app.use(createRoutes(authConfig, configPath, geoDbPath));
 
-  const publicDir = existsSync(join(__dirname, '../public'))
-    ? join(__dirname, '../public')
-    : join(__dirname, '../../public');
+  const publicDir = existsSync(join(__dirname, "../public"))
+    ? join(__dirname, "../public")
+    : join(__dirname, "../../public");
   let studioEnabled = false;
   let studioConfigPath: string | null = null;
   const possibleFiles = [
-    'studio.config.ts',
-    'studio.config.js',
-    'studio.config.mjs',
-    'studio.config.cjs',
+    "studio.config.ts",
+    "studio.config.js",
+    "studio.config.mjs",
+    "studio.config.cjs",
   ];
   for (const file of possibleFiles) {
     const path = join(process.cwd(), file);
@@ -137,11 +137,11 @@ export async function startStudio(options: StudioOptions) {
                   allExtensions: true,
                 },
               ],
-              [babelPresetReact, { runtime: 'automatic' }],
+              [babelPresetReact, { runtime: "automatic" }],
             ],
           },
         },
-        extensions: ['.ts', '.js', '.tsx', '.jsx'],
+        extensions: [".ts", ".js", ".tsx", ".jsx"],
         alias,
         interopDefault: true,
       };
@@ -174,90 +174,90 @@ export async function startStudio(options: StudioOptions) {
     } catch (_error) {}
   }
   app.use(
-    '/assets',
-    express.static(join(publicDir, 'assets'), {
+    "/assets",
+    express.static(join(publicDir, "assets"), {
       setHeaders: (res) => {
-        res.setHeader('Cache-Control', 'public, max-age=31536000');
+        res.setHeader("Cache-Control", "public, max-age=31536000");
       },
-    })
+    }),
   );
 
-  app.get('/vite.svg', (_req, res) => {
-    res.sendFile(join(publicDir, 'vite.svg'));
+  app.get("/vite.svg", (_req, res) => {
+    res.sendFile(join(publicDir, "vite.svg"));
   });
 
-  app.get('/favicon.svg', (_req, res) => {
-    res.sendFile(join(publicDir, 'favicon.svg'));
+  app.get("/favicon.svg", (_req, res) => {
+    res.sendFile(join(publicDir, "favicon.svg"));
   });
 
-  app.get('/logo.png', (_req, res) => {
-    res.sendFile(join(publicDir, 'logo.png'));
+  app.get("/logo.png", (_req, res) => {
+    res.sendFile(join(publicDir, "logo.png"));
   });
 
-  app.get('*', (_req, res) => {
+  app.get("*", (_req, res) => {
     const html = serveIndexHtml(publicDir, {
-      basePath: '', // CLI studio uses root path
+      basePath: "", // CLI studio uses root path
       metadata: {
-        title: 'Better Auth Studio',
-        theme: 'dark',
+        title: "Better Auth Studio",
+        theme: "dark",
       },
     });
 
-    res.setHeader('Content-Type', 'text/html');
+    res.setHeader("Content-Type", "text/html");
     res.send(html);
   });
 
   server.listen(port, host, () => {
     const url = `http://${host}:${port}`;
     if (logStartup) {
-      process.stdout.write('\n');
-      process.stdout.write(chalk.green('✔ Better Auth Studio is running!\n'));
-      process.stdout.write('\n');
+      process.stdout.write("\n");
+      process.stdout.write(chalk.green("✔ Better Auth Studio is running!\n"));
+      process.stdout.write("\n");
       process.stdout.write(chalk.white(`🌐 Open your browser and navigate to: `));
       const styledUrl1 = chalk.green(chalk.underline(url));
       process.stdout.write(createClickableLink(url, styledUrl1));
-      process.stdout.write('\n');
+      process.stdout.write("\n");
       process.stdout.write(chalk.white(`📊 Dashboard available at: `));
       const styledUrl2 = chalk.green(chalk.underline(url));
       process.stdout.write(createClickableLink(url, styledUrl2));
-      process.stdout.write('\n');
+      process.stdout.write("\n");
       process.stdout.write(chalk.white(`🔧 API endpoints available at: `));
       const apiUrl = `${url}/api`;
       const styledApiUrl = chalk.green(chalk.underline(apiUrl));
       process.stdout.write(createClickableLink(apiUrl, styledApiUrl));
-      process.stdout.write('\n');
+      process.stdout.write("\n");
       if (studioEnabled) {
-        process.stdout.write(chalk.white('📋 Studio config found: studio.config.ts\n'));
-        process.stdout.write('\n');
+        process.stdout.write(chalk.white("📋 Studio config found: studio.config.ts\n"));
+        process.stdout.write("\n");
       }
       if (eventsStatus) {
         if (eventsStatus.enabled) {
           if (eventsStatus.configured) {
-            const clientTypeInfo = eventsStatus.clientType ? ` (${eventsStatus.clientType})` : '';
+            const clientTypeInfo = eventsStatus.clientType ? ` (${eventsStatus.clientType})` : "";
             process.stdout.write(
-              chalk.green(`✅ Events enabled${clientTypeInfo} - configuration is valid\n`)
+              chalk.green(`✅ Events enabled${clientTypeInfo} - configuration is valid\n`),
             );
           } else {
             process.stdout.write(
               chalk.yellow(
-                '⚠️  Events enabled but not fully configured - ensure you have a client/provider set up\n'
-              )
+                "⚠️  Events enabled but not fully configured - ensure you have a client/provider set up\n",
+              ),
             );
           }
         } else {
-          process.stdout.write(chalk.gray('ℹ️  Events are disabled\n'));
+          process.stdout.write(chalk.gray("ℹ️  Events are disabled\n"));
         }
-        process.stdout.write('\n');
+        process.stdout.write("\n");
       }
       if (watchMode) {
         process.stdout.write(
-          chalk.white('👀 Watch mode enabled - config changes will reload automatically\n')
+          chalk.white("👀 Watch mode enabled - config changes will reload automatically\n"),
         );
-        process.stdout.write('\n');
+        process.stdout.write("\n");
       }
-      process.stdout.write('\n');
-      process.stdout.write(chalk.gray('Press Ctrl+C to stop the studio\n'));
-      process.stdout.write('\n');
+      process.stdout.write("\n");
+      process.stdout.write(chalk.gray("Press Ctrl+C to stop the studio\n"));
+      process.stdout.write("\n");
     }
 
     if (openBrowser) {
@@ -267,7 +267,7 @@ export async function startStudio(options: StudioOptions) {
     }
   });
 
-  process.on('SIGINT', () => {
+  process.on("SIGINT", () => {
     server.close(() => {
       process.exit(0);
     });

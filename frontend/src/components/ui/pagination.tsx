@@ -1,5 +1,5 @@
-import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
-import { Button } from './button';
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import { Button } from "./button";
 
 interface PaginationProps {
   currentPage: number;
@@ -32,7 +32,7 @@ export function Pagination({
     }
 
     if (currentPage - delta > 2) {
-      rangeWithDots.push(1, '...');
+      rangeWithDots.push(1, "...");
     } else {
       rangeWithDots.push(1);
     }
@@ -40,7 +40,7 @@ export function Pagination({
     rangeWithDots.push(...range);
 
     if (currentPage + delta < totalPages - 1) {
-      rangeWithDots.push('...', totalPages);
+      rangeWithDots.push("...", totalPages);
     } else if (totalPages > 1) {
       rangeWithDots.push(totalPages);
     }
@@ -75,7 +75,7 @@ export function Pagination({
 
         {/* Page Numbers */}
         {visiblePages.map((page, index) => {
-          if (page === '...') {
+          if (page === "...") {
             return (
               <Button
                 key={`dots-${index}`}
@@ -95,13 +95,13 @@ export function Pagination({
           return (
             <Button
               key={pageNumber}
-              variant={isCurrentPage ? 'default' : 'outline'}
+              variant={isCurrentPage ? "default" : "outline"}
               size="sm"
               onClick={() => onPageChange(pageNumber)}
               className={
                 isCurrentPage
-                  ? 'bg-white text-black rounded-none'
-                  : 'border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none'
+                  ? "bg-white text-black rounded-none"
+                  : "border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               }
             >
               {pageNumber}

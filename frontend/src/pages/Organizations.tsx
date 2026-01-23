@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import {
   Building2,
   Calendar as CalendarIcon,
@@ -12,22 +12,22 @@ import {
   Search,
   Trash2,
   X,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import type { DateRange } from 'react-day-picker';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { AnimatedNumber } from '../components/AnimatedNumber';
-import { CopyableId } from '../components/CopyableId';
-import { Terminal } from '../components/Terminal';
-import { Button } from '../components/ui/button';
-import { Calendar } from '../components/ui/calendar';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Pagination } from '../components/ui/pagination';
-import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '../components/ui/select';
-import { useCounts } from '../contexts/CountsContext';
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import type { DateRange } from "react-day-picker";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { AnimatedNumber } from "../components/AnimatedNumber";
+import { CopyableId } from "../components/CopyableId";
+import { Terminal } from "../components/Terminal";
+import { Button } from "../components/ui/button";
+import { Calendar } from "../components/ui/calendar";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Pagination } from "../components/ui/pagination";
+import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "../components/ui/select";
+import { useCounts } from "../contexts/CountsContext";
 
 interface Organization {
   id: string;
@@ -47,10 +47,10 @@ interface PluginStatus {
 }
 
 const formatDateTime = (value?: string) => {
-  if (!value) return '—';
+  if (!value) return "—";
   const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return '—';
-  return format(d, 'dd MMM yyyy; HH:mm');
+  if (Number.isNaN(d.getTime())) return "—";
+  return format(d, "dd MMM yyyy; HH:mm");
 };
 
 export default function Organizations() {
@@ -66,8 +66,8 @@ export default function Organizations() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [pluginStatus, setPluginStatus] = useState<PluginStatus | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, _setFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, _setFilter] = useState("all");
   const [activeFilters, setActiveFilters] = useState<FilterConfig[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [organizationsPerPage] = useState(20);
@@ -83,16 +83,16 @@ export default function Organizations() {
   const [seedingLogs, setSeedingLogs] = useState<
     Array<{
       id: string;
-      type: 'info' | 'success' | 'error' | 'progress';
+      type: "info" | "success" | "error" | "progress";
       message: string;
       timestamp: Date;
-      status?: 'pending' | 'running' | 'completed' | 'failed';
+      status?: "pending" | "running" | "completed" | "failed";
     }>
   >([]);
   const [isSeeding, setIsSeeding] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [createFormData, setCreateFormData] = useState({ name: '', slug: '' });
-  const [editFormData, setEditFormData] = useState({ name: '', slug: '' });
+  const [createFormData, setCreateFormData] = useState({ name: "", slug: "" });
+  const [editFormData, setEditFormData] = useState({ name: "", slug: "" });
 
   useEffect(() => {
     checkPluginStatus();
@@ -109,10 +109,10 @@ export default function Organizations() {
   const generateSlug = (name: string): string => {
     return name
       .toLowerCase()
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/[^a-z0-9-]/g, '') // Remove special characters except hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
+      .replace(/[^a-z0-9-]/g, "") // Remove special characters except hyphens
+      .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+      .replace(/^-|-$/g, ""); // Remove leading/trailing hyphens
   };
 
   const handleCreateNameChange = (name: string) => {
@@ -135,17 +135,17 @@ export default function Organizations() {
 
   const checkPluginStatus = async () => {
     try {
-      const response = await fetch('/api/plugins');
+      const response = await fetch("/api/plugins");
       const pluginLists: any = await response.json();
       const orgEnabled = (pluginLists?.plugins as any).find(
-        (plugin: any) => plugin.id === 'organization'
+        (plugin: any) => plugin.id === "organization",
       );
       setPluginStatus({
         enabled: !!orgEnabled,
         availablePlugins: (pluginLists?.plugins as any).map((plugin: any) => plugin.id),
         configPath: (pluginLists as any).configPath,
         organizationPlugin: (pluginLists?.plugins as any).find(
-          (plugin: any) => plugin.id === 'organization'
+          (plugin: any) => plugin.id === "organization",
         ),
       });
       if (orgEnabled) {
@@ -154,20 +154,20 @@ export default function Organizations() {
         setLoading(false);
       }
     } catch (error) {
-      console.error('Failed to check plugin status:', error);
-      setPluginStatus({ enabled: false, error: 'Failed to check plugin status' });
+      console.error("Failed to check plugin status:", error);
+      setPluginStatus({ enabled: false, error: "Failed to check plugin status" });
       setLoading(false);
     }
   };
 
   const fetchOrganizations = async () => {
     try {
-      const response = await fetch('/api/organizations?limit=10000');
+      const response = await fetch("/api/organizations?limit=10000");
       const data = await response.json();
       setOrganizations(data.organizations || []);
     } catch (error) {
-      console.error('Failed to fetch organizations:', error);
-      toast.error('Failed to fetch organizations');
+      console.error("Failed to fetch organizations:", error);
+      toast.error("Failed to fetch organizations");
     } finally {
       setLoading(false);
     }
@@ -179,17 +179,17 @@ export default function Organizations() {
 
     setSeedingLogs([
       {
-        id: 'start',
-        type: 'info',
+        id: "start",
+        type: "info",
         message: `Starting organization seeding process for ${count} organizations...`,
         timestamp: new Date(),
       },
     ]);
 
     try {
-      const response = await fetch('/api/seed/organizations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/seed/organizations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ count }),
       });
 
@@ -200,15 +200,15 @@ export default function Organizations() {
           if (r.success) {
             return {
               id: `org-${index}`,
-              type: 'progress' as const,
+              type: "progress" as const,
               message: `Creating organization: ${r.organization.name} (${r.organization.slug})`,
               timestamp: new Date(),
-              status: 'completed' as const,
+              status: "completed" as const,
             };
           } else {
             return {
               id: `org-${index}`,
-              type: 'error' as const,
+              type: "error" as const,
               message: `Failed to create organization ${index + 1}: ${r.error}`,
               timestamp: new Date(),
             };
@@ -221,8 +221,8 @@ export default function Organizations() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'complete',
-            type: 'success',
+            id: "complete",
+            type: "success",
             message: `✅ Seeding completed! Created ${successCount}/${count} organizations successfully`,
             timestamp: new Date(),
           },
@@ -234,9 +234,9 @@ export default function Organizations() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'error',
-            type: 'error',
-            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            id: "error",
+            type: "error",
+            message: `❌ Seeding failed: ${result.error || "Unknown error"}`,
             timestamp: new Date(),
           },
         ]);
@@ -245,8 +245,8 @@ export default function Organizations() {
       setSeedingLogs((prev) => [
         ...prev,
         {
-          id: 'error',
-          type: 'error',
+          id: "error",
+          type: "error",
           message: `❌ Network error: ${error}`,
           timestamp: new Date(),
         },
@@ -273,16 +273,16 @@ export default function Organizations() {
 
   const handleCreateOrganization = async () => {
     if (!createFormData.name) {
-      toast.error('Please fill in the organization name');
+      toast.error("Please fill in the organization name");
       return;
     }
 
-    const toastId = toast.loading('Creating organization...');
+    const toastId = toast.loading("Creating organization...");
     setIsCreating(true);
     try {
-      const response = await fetch('/api/organizations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/organizations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: createFormData.name,
           slug: createFormData.slug,
@@ -294,38 +294,38 @@ export default function Organizations() {
       if (result.success) {
         await fetchOrganizations();
         setShowCreateModal(false);
-        setCreateFormData({ name: '', slug: '' });
-        toast.success('Organization created successfully!', { id: toastId });
+        setCreateFormData({ name: "", slug: "" });
+        toast.success("Organization created successfully!", { id: toastId });
       } else {
-        toast.error(`Error creating organization: ${result.error || 'Unknown error'}`, {
+        toast.error(`Error creating organization: ${result.error || "Unknown error"}`, {
           id: toastId,
         });
       }
     } catch (error) {
-      console.error('Error creating organization:', error);
-      toast.error('Error creating organization', { id: toastId });
+      console.error("Error creating organization:", error);
+      toast.error("Error creating organization", { id: toastId });
     } finally {
       setIsCreating(false);
     }
   };
   const handleUpdateOrganization = async () => {
     if (!selectedOrganization) {
-      toast.error('No organization selected');
+      toast.error("No organization selected");
       return;
     }
 
     if (!editFormData.name) {
-      toast.error('Please fill in the organization name');
+      toast.error("Please fill in the organization name");
       return;
     }
 
     setIsUpdating(true);
-    const toastId = toast.loading('Updating organization...');
+    const toastId = toast.loading("Updating organization...");
 
     try {
       const response = await fetch(`/api/organizations/${selectedOrganization.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: editFormData.name,
           slug: editFormData.slug,
@@ -338,16 +338,16 @@ export default function Organizations() {
         await fetchOrganizations();
         setShowEditModal(false);
         setSelectedOrganization(null);
-        setEditFormData({ name: '', slug: '' });
-        toast.success('Organization updated successfully!', { id: toastId });
+        setEditFormData({ name: "", slug: "" });
+        toast.success("Organization updated successfully!", { id: toastId });
       } else {
-        toast.error(`Error updating organization: ${result.error || 'Unknown error'}`, {
+        toast.error(`Error updating organization: ${result.error || "Unknown error"}`, {
           id: toastId,
         });
       }
     } catch (error) {
-      console.error('Error updating organization:', error);
-      toast.error('Error updating organization', { id: toastId });
+      console.error("Error updating organization:", error);
+      toast.error("Error updating organization", { id: toastId });
     } finally {
       setIsUpdating(false);
     }
@@ -356,16 +356,16 @@ export default function Organizations() {
   const handleDeleteOrganization = async () => {
     setIsDeleting(true);
     if (!selectedOrganization) {
-      toast.error('No organization selected');
+      toast.error("No organization selected");
       return;
     }
 
-    const toastId = toast.loading('Deleting organization...');
+    const toastId = toast.loading("Deleting organization...");
 
     try {
       const response = await fetch(`/api/organizations/${selectedOrganization.id}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       });
 
       const result = await response.json();
@@ -375,15 +375,15 @@ export default function Organizations() {
         await refetchCounts();
         setShowDeleteModal(false);
         setSelectedOrganization(null);
-        toast.success('Organization deleted successfully!', { id: toastId });
+        toast.success("Organization deleted successfully!", { id: toastId });
       } else {
-        toast.error(`Error deleting organization: ${result.error || 'Unknown error'}`, {
+        toast.error(`Error deleting organization: ${result.error || "Unknown error"}`, {
           id: toastId,
         });
       }
     } catch (error) {
-      console.error('Error deleting organization:', error);
-      toast.error('Error deleting organization', { id: toastId });
+      console.error("Error deleting organization:", error);
+      toast.error("Error deleting organization", { id: toastId });
     } finally {
       setIsDeleting(false);
     }
@@ -391,32 +391,32 @@ export default function Organizations() {
 
   const exportOrganizationsToCSV = () => {
     if (organizations.length === 0) {
-      toast.error('No organizations to export');
+      toast.error("No organizations to export");
       return;
     }
 
-    const csvHeaders = ['ID', 'Name', 'Slug', 'Created At'];
+    const csvHeaders = ["ID", "Name", "Slug", "Created At"];
     const csvData = organizations.map((organization) => [
       organization.id,
-      organization.name || '',
-      organization.slug || '',
+      organization.name || "",
+      organization.slug || "",
       new Date(organization.createdAt).toLocaleString(),
     ]);
 
     const csvContent = [
-      csvHeaders.join(','),
-      ...csvData.map((row) => row.map((field) => `"${field}"`).join(',')),
-    ].join('\n');
+      csvHeaders.join(","),
+      ...csvData.map((row) => row.map((field) => `"${field}"`).join(",")),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
+    link.setAttribute("href", url);
     link.setAttribute(
-      'download',
-      `organizations-export-${new Date().toISOString().split('T')[0]}.csv`
+      "download",
+      `organizations-export-${new Date().toISOString().split("T")[0]}.csv`,
     );
-    link.style.visibility = 'hidden';
+    link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -452,7 +452,7 @@ export default function Organizations() {
 
     const matchesFilters = activeFilters.every((filter) => {
       switch (filter.type) {
-        case 'createdAt': {
+        case "createdAt": {
           if (!filter.dateRange?.from && !filter.dateRange?.to) return true;
           const orgDate = new Date(organization.createdAt);
           if (filter.dateRange?.from && filter.dateRange.from > orgDate) return false;
@@ -527,17 +527,19 @@ export default function Organizations() {
 
                 <div className="mt-4 bg-black/70 border border-dashed border-white/10 rounded-none p-3 overflow-x-auto">
                   <pre className="text-sm text-gray-300">
-                    <span className="text-blue-400">import</span> {`{ betterAuth }`}{' '}
-                    <span className="text-blue-400">from</span>{' '}
+                    <span className="text-blue-400">import</span> {`{ betterAuth }`}{" "}
+                    <span className="text-blue-400">from</span>{" "}
                     <span className="text-green-400">"better-auth"</span> <br />
-                    <span className="text-blue-400">import</span> {`{ organization }`}{' '}
-                    <span className="text-blue-400">from</span>{' '}
-                    <span className="text-green-400">"better-auth/plugins/organization"</span>{' '}
+                    <span className="text-blue-400">import</span> {`{ organization }`}{" "}
+                    <span className="text-blue-400">from</span>{" "}
+                    <span className="text-green-400">"better-auth/plugins/organization"</span>{" "}
                     <br />
-                    <span className="text-blue-400">export const</span>{' '}
-                    <span className="text-yellow-300">auth</span> ={' '}
+                    <span className="text-blue-400">export const</span>{" "}
+                    <span className="text-yellow-300">auth</span> ={" "}
                     <span className="text-yellow-300">betterAuth</span>({`{`} <br />
-                    <span className="text-gray-500 pl-10">// ... your existing configuration</span>{' '}
+                    <span className="text-gray-500 pl-10">
+                      // ... your existing configuration
+                    </span>{" "}
                     <br />
                     <span className="text-red-300 pl-10">plugins</span>: [ <br />
                     <span className="text-yellow-300 pl-12">organization({})</span>
@@ -562,7 +564,7 @@ export default function Organizations() {
               {pluginStatus.availablePlugins && pluginStatus.availablePlugins.length > 0 && (
                 <div className="mb-4">
                   <p className="text-gray-400 text-sm">
-                    Currently enabled plugins: {pluginStatus.availablePlugins.join(', ')}
+                    Currently enabled plugins: {pluginStatus.availablePlugins.join(", ")}
                   </p>
                 </div>
               )}
@@ -575,7 +577,7 @@ export default function Organizations() {
               </Button>
 
               <div className="mt-4 text-xs text-gray-500">
-                Need help? Check the{' '}
+                Need help? Check the{" "}
                 <a
                   href="https://better-auth.com/docs/plugins/organization"
                   target="_blank"
@@ -605,7 +607,7 @@ export default function Organizations() {
                 className="text-white font-mono text-sm"
                 prefix={<span className="mr-1 text-gray-500">[</span>}
                 suffix={<span className="ml-1 text-gray-500">]</span>}
-                format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                format={{ notation: "standard", maximumFractionDigits: 0 }}
               />
             </sup>
           </h1>
@@ -661,7 +663,7 @@ export default function Organizations() {
                 </div>
               </SelectTrigger>
               <SelectContent>
-                {!activeFilters.some((f) => f.type === 'createdAt') && (
+                {!activeFilters.some((f) => f.type === "createdAt") && (
                   <SelectItem value="createdAt">Created Date</SelectItem>
                 )}
               </SelectContent>
@@ -686,7 +688,7 @@ export default function Organizations() {
                 >
                   <Filter className="w-3 h-3 text-white" />
 
-                  {filter.type === 'createdAt' && (
+                  {filter.type === "createdAt" && (
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-white">Created:</span>
                       <Popover>
@@ -697,8 +699,8 @@ export default function Organizations() {
                           >
                             <CalendarIcon className="mr-1 h-3 w-3" />
                             {filter.dateRange?.from
-                              ? format(filter.dateRange.from, 'MMM dd yyyy')
-                              : 'From'}
+                              ? format(filter.dateRange.from, "MMM dd yyyy")
+                              : "From"}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0 bg-black border-white/10">
@@ -706,7 +708,7 @@ export default function Organizations() {
                             mode="single"
                             selected={filter.dateRange?.from}
                             onSelect={(date) =>
-                              updateFilterDateRange('createdAt', {
+                              updateFilterDateRange("createdAt", {
                                 from: date,
                                 to: filter.dateRange?.to,
                               })
@@ -725,8 +727,8 @@ export default function Organizations() {
                           >
                             <CalendarIcon className="mr-1 h-3 w-3" />
                             {filter.dateRange?.to
-                              ? format(filter.dateRange.to, 'MMM dd yyyy')
-                              : 'To'}
+                              ? format(filter.dateRange.to, "MMM dd yyyy")
+                              : "To"}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0 bg-black border-white/10">
@@ -734,7 +736,7 @@ export default function Organizations() {
                             mode="single"
                             selected={filter.dateRange?.to}
                             onSelect={(date) =>
-                              updateFilterDateRange('createdAt', {
+                              updateFilterDateRange("createdAt", {
                                 from: filter.dateRange?.from,
                                 to: date,
                               })
@@ -792,12 +794,12 @@ export default function Organizations() {
                       <div>
                         <h3 className="text-white font-medium text-lg">No organizations found</h3>
                         <p className="text-gray-400 text-sm mt-1">
-                          {searchTerm || filter !== 'all'
-                            ? 'Try adjusting your search or filter criteria'
-                            : 'Get started by creating your first organization'}
+                          {searchTerm || filter !== "all"
+                            ? "Try adjusting your search or filter criteria"
+                            : "Get started by creating your first organization"}
                         </p>
                       </div>
-                      {!searchTerm && filter === 'all' && (
+                      {!searchTerm && filter === "all" && (
                         <div className="flex items-center space-x-3">
                           <Button
                             onClick={() => setShowCreateModal(true)}
@@ -841,10 +843,10 @@ export default function Organizations() {
                       <div className="flex flex-col">
                         {new Date(organization.createdAt).toLocaleDateString()}
                         <p className="text-xs">
-                          {new Date(organization.createdAt).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
+                          {new Date(organization.createdAt).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
                           })}
                         </p>
                       </div>
@@ -948,9 +950,9 @@ export default function Organizations() {
                   <Button
                     onClick={() => {
                       const count = parseInt(
-                        (document.getElementById('organization-count') as HTMLInputElement)
-                          ?.value || '5',
-                        10
+                        (document.getElementById("organization-count") as HTMLInputElement)
+                          ?.value || "5",
+                        10,
                       );
                       handleSeedOrganizations(count);
                     }}
@@ -1056,7 +1058,7 @@ export default function Organizations() {
                 variant="outline"
                 onClick={() => {
                   setShowCreateModal(false);
-                  setCreateFormData({ name: '', slug: '' });
+                  setCreateFormData({ name: "", slug: "" });
                 }}
                 className="border font-mono uppercase text-xs border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
@@ -1067,7 +1069,7 @@ export default function Organizations() {
                 disabled={isCreating}
                 className="bg-white font-mono uppercase text-xs hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
-                {isCreating ? 'Creating...' : 'Create'}
+                {isCreating ? "Creating..." : "Create"}
               </Button>
             </div>
           </div>
@@ -1082,7 +1084,7 @@ export default function Organizations() {
             if (e.target === e.currentTarget) {
               setShowEditModal(false);
               setSelectedOrganization(null);
-              setEditFormData({ name: '', slug: '' });
+              setEditFormData({ name: "", slug: "" });
             }
           }}
         >
@@ -1100,7 +1102,7 @@ export default function Organizations() {
                 onClick={() => {
                   setShowEditModal(false);
                   setSelectedOrganization(null);
-                  setEditFormData({ name: '', slug: '' });
+                  setEditFormData({ name: "", slug: "" });
                 }}
                 className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
@@ -1160,7 +1162,7 @@ export default function Organizations() {
                 variant="outline"
                 onClick={() => {
                   setShowEditModal(false);
-                  setEditFormData({ name: '', slug: '' });
+                  setEditFormData({ name: "", slug: "" });
                 }}
                 disabled={isUpdating}
                 className="border font-mono uppercase text-xs border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
@@ -1172,7 +1174,7 @@ export default function Organizations() {
                 disabled={isUpdating}
                 className="bg-white font-mono uppercase text-xs hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
-                {isUpdating ? 'Updating...' : 'Update'}
+                {isUpdating ? "Updating..." : "Update"}
               </Button>
             </div>
           </div>
@@ -1233,7 +1235,7 @@ export default function Organizations() {
                 onClick={handleDeleteOrganization}
                 className="bg-red-600 font-mono uppercase text-xs hover:bg-red-700 text-white border border-red-600 rounded-none"
               >
-                {isDeleting ? 'Deleting...' : 'Delete'}
+                {isDeleting ? "Deleting..." : "Delete"}
               </Button>
             </div>
           </div>
@@ -1281,7 +1283,7 @@ export default function Organizations() {
               </div>
 
               <div className="space-y-2 text-sm">
-                {[{ label: 'Created', value: formatDateTime(selectedOrganization.createdAt) }].map(
+                {[{ label: "Created", value: formatDateTime(selectedOrganization.createdAt) }].map(
                   (item) => (
                     <div
                       key={item.label}
@@ -1294,7 +1296,7 @@ export default function Organizations() {
                         {item.value}
                       </div>
                     </div>
-                  )
+                  ),
                 )}
               </div>
             </div>

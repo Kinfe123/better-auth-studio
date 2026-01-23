@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { buildApiUrl } from '../utils/api';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { buildApiUrl } from "../utils/api";
 
 interface AuthEvent {
   id: string;
   type: string;
   timestamp: string;
-  status?: 'success' | 'failed';
+  status?: "success" | "failed";
   display?: {
     message: string;
-    severity?: 'info' | 'success' | 'warning' | 'failed';
+    severity?: "info" | "success" | "warning" | "failed";
   };
   metadata?: Record<string, any>;
 }
@@ -19,7 +19,7 @@ interface LiveEventMarqueeProps {
   speed?: number;
   pauseOnHover?: boolean;
   limit?: number;
-  sort?: 'asc' | 'desc'; // Sort order for events: 'desc' = newest first, 'asc' = oldest first
+  sort?: "asc" | "desc"; // Sort order for events: 'desc' = newest first, 'asc' = oldest first
   colors?: {
     success?: string;
     info?: string;
@@ -66,16 +66,16 @@ function parseTimeWindowString(timeWindow: string): Date | null {
   const now = new Date();
 
   switch (unit) {
-    case 'm': // minutes
+    case "m": // minutes
       now.setMinutes(now.getMinutes() - value);
       break;
-    case 'h': // hours
+    case "h": // hours
       now.setHours(now.getHours() - value);
       break;
-    case 'd': // days
+    case "d": // days
       now.setDate(now.getDate() - value);
       break;
-    case 's': // seconds
+    case "s": // seconds
       now.setSeconds(now.getSeconds() - value);
       break;
     default:
@@ -130,11 +130,11 @@ export function LiveEventMarquee({
       }
 
       try {
-        const response = await fetch(buildApiUrl('/api/events/status'));
+        const response = await fetch(buildApiUrl("/api/events/status"));
         const data = await response.json();
         setEventsEnabled(data?.enabled === true);
       } catch (error) {
-        console.error('Failed to check events status:', error);
+        console.error("Failed to check events status:", error);
         setEventsEnabled(false);
       }
     };
@@ -153,25 +153,25 @@ export function LiveEventMarquee({
 
     try {
       // Use sort from props, default to 'desc' (newest first)
-      const sortOrder = propSort ?? 'desc';
+      const sortOrder = propSort ?? "desc";
 
       const config = getStudioConfig();
-      const timeWindow = config.liveMarquee?.timeWindow || '1h';
+      const timeWindow = config.liveMarquee?.timeWindow || "1h";
       const since = parseTimeWindow(timeWindow);
 
       const params = new URLSearchParams({
-        limit: '10',
+        limit: "10",
         sort: sortOrder, // Use configurable sort order
       });
 
       if (since) {
-        params.append('since', since.toISOString());
+        params.append("since", since.toISOString());
       }
 
       // Don't use 'after' cursor for polling - we want the latest events
       // and will filter duplicates ourselves
 
-      const apiPath = buildApiUrl('/api/events');
+      const apiPath = buildApiUrl("/api/events");
 
       const response = await fetch(`${apiPath}?${params.toString()}`);
 
@@ -181,8 +181,8 @@ export function LiveEventMarquee({
           try {
             const errorData = await response.json();
             if (
-              errorData.details?.includes('not found in schema') ||
-              errorData.details?.includes('Model')
+              errorData.details?.includes("not found in schema") ||
+              errorData.details?.includes("Model")
             ) {
               setIsConnected(true);
               return;
@@ -229,10 +229,10 @@ export function LiveEventMarquee({
         });
       } else if (!data.events) {
         // If response doesn't have events array, log for debugging
-        console.warn('Events API response missing events array:', data);
+        console.warn("Events API response missing events array:", data);
       }
     } catch (error) {
-      console.error('Failed to poll events:', error);
+      console.error("Failed to poll events:", error);
       setIsConnected(false);
     } finally {
       isPollingRef.current = false;
@@ -379,7 +379,7 @@ export function LiveEventMarquee({
       const currentSpeed = speedRef.current;
 
       const validSpeed =
-        typeof currentSpeed === 'number' &&
+        typeof currentSpeed === "number" &&
         !isNaN(currentSpeed) &&
         isFinite(currentSpeed) &&
         currentSpeed > 0
@@ -430,11 +430,11 @@ export function LiveEventMarquee({
     const colors = propColors || {};
 
     const defaults = {
-      success: 'text-green-400', // #34d399
-      info: 'text-amber-300', // #fcd34d
-      warning: 'text-yellow-400', // #facc15
-      error: 'text-red-400', // #f87171
-      failed: 'text-red-400', // #f87171
+      success: "text-green-400", // #34d399
+      info: "text-amber-300", // #fcd34d
+      warning: "text-yellow-400", // #facc15
+      error: "text-red-400", // #f87171
+      failed: "text-red-400", // #f87171
     };
 
     return {
@@ -448,25 +448,25 @@ export function LiveEventMarquee({
 
   const getSeverityColor = (
     severity?: string,
-    status?: 'success' | 'failed'
+    status?: "success" | "failed",
   ): { className?: string; style?: React.CSSProperties } => {
     const colors = getEventColors();
     let colorValue: string;
 
-    if (status === 'failed' || severity === 'failed') {
+    if (status === "failed" || severity === "failed") {
       colorValue = colors.failed;
     } else {
       switch (severity) {
-        case 'success':
+        case "success":
           colorValue = colors.success;
           break;
-        case 'error':
+        case "error":
           colorValue = colors.error;
           break;
-        case 'warning':
+        case "warning":
           colorValue = colors.warning;
           break;
-        case 'info':
+        case "info":
           colorValue = colors.info;
           break;
         default:
@@ -507,7 +507,7 @@ export function LiveEventMarquee({
           const currentSpeed = speedRef.current;
           // Ensure speed is a valid positive number
           const validSpeed =
-            typeof currentSpeed === 'number' &&
+            typeof currentSpeed === "number" &&
             !isNaN(currentSpeed) &&
             isFinite(currentSpeed) &&
             currentSpeed > 0
@@ -566,11 +566,11 @@ export function LiveEventMarquee({
       <div className="absolute -top-1 right-4 z-10 flex items-center gap-1 py-1">
         <div
           className={`w-1 h-1 rounded-full ${
-            isConnected ? 'bg-green-400 animate-pulse' : 'bg-red-400'
+            isConnected ? "bg-green-400 animate-pulse" : "bg-red-400"
           }`}
         />
         <span className="text-[9px] animate-pulse font-mono text-white/50">
-          {isConnected ? 'LIVE' : 'CONNECTING...'}
+          {isConnected ? "LIVE" : "CONNECTING..."}
         </span>
       </div>
 
@@ -579,8 +579,8 @@ export function LiveEventMarquee({
           ref={containerRef}
           className="flex items-center gap-8 whitespace-nowrap"
           style={{
-            willChange: 'transform',
-            transform: 'translate3d(0px, 0, 0)', // Initial transform to prevent layout shift, use translate3d for GPU acceleration
+            willChange: "transform",
+            transform: "translate3d(0px, 0, 0)", // Initial transform to prevent layout shift, use translate3d for GPU acceleration
           }}
         >
           {eventsEnabled === false ? (
@@ -610,7 +610,7 @@ export function LiveEventMarquee({
                       {new Date(event.timestamp).toLocaleTimeString()}
                     </span>
                     <span
-                      className={`text-xs font-mono ${getSeverityColor(event.display?.severity, event.status).className || ''}`}
+                      className={`text-xs font-mono ${getSeverityColor(event.display?.severity, event.status).className || ""}`}
                       style={getSeverityColor(event.display?.severity, event.status).style}
                     >
                       {event.display?.message || event.type}

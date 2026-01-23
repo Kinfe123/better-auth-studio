@@ -8,125 +8,114 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthPathRouteImport } from './routes/auth/$path'
-import { Route as AccountPathRouteImport } from './routes/account/$path'
-import { Route as ApiStudioSplatRouteImport } from './routes/api/studio/$'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as AuthPathRouteImport } from "./routes/auth/$path";
+import { Route as AccountPathRouteImport } from "./routes/account/$path";
+import { Route as ApiStudioSplatRouteImport } from "./routes/api/studio/$";
+import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth/$";
 
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuthPathRoute = AuthPathRouteImport.update({
-  id: '/auth/$path',
-  path: '/auth/$path',
+  id: "/auth/$path",
+  path: "/auth/$path",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AccountPathRoute = AccountPathRouteImport.update({
-  id: '/account/$path',
-  path: '/account/$path',
+  id: "/account/$path",
+  path: "/account/$path",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiStudioSplatRoute = ApiStudioSplatRouteImport.update({
-  id: '/api/studio/$',
-  path: '/api/studio/$',
+  id: "/api/studio/$",
+  path: "/api/studio/$",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
+  id: "/api/auth/$",
+  path: "/api/auth/$",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/account/$path': typeof AccountPathRoute
-  '/auth/$path': typeof AuthPathRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/studio/$': typeof ApiStudioSplatRoute
+  "/": typeof IndexRoute;
+  "/account/$path": typeof AccountPathRoute;
+  "/auth/$path": typeof AuthPathRoute;
+  "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/api/studio/$": typeof ApiStudioSplatRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/account/$path': typeof AccountPathRoute
-  '/auth/$path': typeof AuthPathRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/studio/$': typeof ApiStudioSplatRoute
+  "/": typeof IndexRoute;
+  "/account/$path": typeof AccountPathRoute;
+  "/auth/$path": typeof AuthPathRoute;
+  "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/api/studio/$": typeof ApiStudioSplatRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/account/$path': typeof AccountPathRoute
-  '/auth/$path': typeof AuthPathRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/studio/$': typeof ApiStudioSplatRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/account/$path": typeof AccountPathRoute;
+  "/auth/$path": typeof AuthPathRoute;
+  "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/api/studio/$": typeof ApiStudioSplatRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/account/$path'
-    | '/auth/$path'
-    | '/api/auth/$'
-    | '/api/studio/$'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/account/$path' | '/auth/$path' | '/api/auth/$' | '/api/studio/$'
-  id:
-    | '__root__'
-    | '/'
-    | '/account/$path'
-    | '/auth/$path'
-    | '/api/auth/$'
-    | '/api/studio/$'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: "/" | "/account/$path" | "/auth/$path" | "/api/auth/$" | "/api/studio/$";
+  fileRoutesByTo: FileRoutesByTo;
+  to: "/" | "/account/$path" | "/auth/$path" | "/api/auth/$" | "/api/studio/$";
+  id: "__root__" | "/" | "/account/$path" | "/auth/$path" | "/api/auth/$" | "/api/studio/$";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AccountPathRoute: typeof AccountPathRoute
-  AuthPathRoute: typeof AuthPathRoute
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  ApiStudioSplatRoute: typeof ApiStudioSplatRoute
+  IndexRoute: typeof IndexRoute;
+  AccountPathRoute: typeof AccountPathRoute;
+  AuthPathRoute: typeof AuthPathRoute;
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
+  ApiStudioSplatRoute: typeof ApiStudioSplatRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/$path': {
-      id: '/auth/$path'
-      path: '/auth/$path'
-      fullPath: '/auth/$path'
-      preLoaderRoute: typeof AuthPathRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/account/$path': {
-      id: '/account/$path'
-      path: '/account/$path'
-      fullPath: '/account/$path'
-      preLoaderRoute: typeof AccountPathRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/studio/$': {
-      id: '/api/studio/$'
-      path: '/api/studio/$'
-      fullPath: '/api/studio/$'
-      preLoaderRoute: typeof ApiStudioSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/auth/$path": {
+      id: "/auth/$path";
+      path: "/auth/$path";
+      fullPath: "/auth/$path";
+      preLoaderRoute: typeof AuthPathRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/account/$path": {
+      id: "/account/$path";
+      path: "/account/$path";
+      fullPath: "/account/$path";
+      preLoaderRoute: typeof AccountPathRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/api/studio/$": {
+      id: "/api/studio/$";
+      path: "/api/studio/$";
+      fullPath: "/api/studio/$";
+      preLoaderRoute: typeof ApiStudioSplatRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/api/auth/$": {
+      id: "/api/auth/$";
+      path: "/api/auth/$";
+      fullPath: "/api/auth/$";
+      preLoaderRoute: typeof ApiAuthSplatRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
@@ -136,16 +125,16 @@ const rootRouteChildren: RootRouteChildren = {
   AuthPathRoute: AuthPathRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiStudioSplatRoute: ApiStudioSplatRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
+import type { getRouter } from "./router.tsx";
+import type { createStart } from "@tanstack/react-start";
+declare module "@tanstack/react-start" {
   interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
+    ssr: true;
+    router: Awaited<ReturnType<typeof getRouter>>;
   }
 }

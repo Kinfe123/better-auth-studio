@@ -2,8 +2,8 @@
   "name": "better-auth-express-mongodb-example",
   "version": "1.0.0",
   "description": "Express.js example with Better Auth and MongoDB",
-  "main": "dist/index.js",
   "type": "module",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -28,4 +28,3 @@
     "node": ">=18.0.0"
   }
 }
-

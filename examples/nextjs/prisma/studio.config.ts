@@ -1,22 +1,22 @@
-import type { StudioConfig } from 'better-auth-studio';
-import { auth } from './lib/auth';
-import { createClient } from '@clickhouse/client';
+import type { StudioConfig } from "better-auth-studio";
+import { auth } from "./lib/auth";
+import { createClient } from "@clickhouse/client";
 
 const clickhouseClient = createClient({
   host: process.env.CLICKHOUSE_HOST,
-  username: process.env.CLICKHOUSE_USERNAME || 'default',
-  password: process.env.CLICKHOUSE_PASSWORD || '',
+  username: process.env.CLICKHOUSE_USERNAME || "default",
+  password: process.env.CLICKHOUSE_PASSWORD || "",
 });
 const config: StudioConfig = {
   auth,
-  basePath: '/api/studio',
+  basePath: "/api/studio",
   metadata: {
-    title: 'Better Auth Studio',
-    theme: 'dark',
+    title: "Better Auth Studio",
+    theme: "dark",
   },
   access: {
-    roles: ['admin'],
-    allowEmails: ['kinfetare83@gmail.com' , 'kinfishtechy@gmail.com'],
+    roles: ["admin"],
+    allowEmails: ["kinfetare83@gmail.com", "kinfishtechy@gmail.com"],
   },
   // events: {
   //   enabled: true,

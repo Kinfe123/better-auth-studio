@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
-import { existsSync, readFileSync } from 'node:fs';
-import { basename, dirname, isAbsolute, join, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import chalk from 'chalk';
-import chokidar from 'chokidar';
-import { Command } from 'commander';
-import { WebSocket } from 'ws';
-import { initCommand } from './cli/commands/init.js';
-import { findAuthConfig } from './config.js';
-import { startStudio } from './studio.js';
-import { detectDatabaseWithDialect } from './utils/database-detection.js';
-import { possibleConfigFiles } from './utils.js';
+import { existsSync, readFileSync } from "node:fs";
+import { basename, dirname, isAbsolute, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
+import chalk from "chalk";
+import chokidar from "chokidar";
+import { Command } from "commander";
+import { WebSocket } from "ws";
+import { initCommand } from "./cli/commands/init.js";
+import { findAuthConfig } from "./config.js";
+import { startStudio } from "./studio.js";
+import { detectDatabaseWithDialect } from "./utils/database-detection.js";
+import { possibleConfigFiles } from "./utils.js";
 
 async function findAuthConfigPath(): Promise<string | null> {
   let currentDir = process.cwd();
@@ -51,11 +51,11 @@ let currentStudio: any = null;
 let watcher: any = null;
 let webSocketServer: any = null;
 
-type StoredWatchMessage = 'status' | 'change';
+type StoredWatchMessage = "status" | "change";
 
 const createDefaultStatusPayload = () => ({
-  type: 'studio_status',
-  status: 'up_to_date',
+  type: "studio_status",
+  status: "up_to_date",
   updatedAt: Date.now(),
 });
 
@@ -75,14 +75,14 @@ const handleWatchConnection = (ws: WebSocket) => {
 
 function broadcastWatchMessage(
   message: Record<string, any>,
-  options?: { remember?: StoredWatchMessage }
+  options?: { remember?: StoredWatchMessage },
 ) {
   const payload = JSON.stringify(message);
 
-  if (options?.remember === 'status') {
+  if (options?.remember === "status") {
     lastStatusMessage = payload;
   }
-  if (options?.remember === 'change') {
+  if (options?.remember === "change") {
     lastConfigChangeMessage = payload;
   }
 
@@ -133,7 +133,7 @@ function getFileDisplayInfo(filePath?: string | null) {
 }
 
 function formatChangeLabel(fileInfo: ReturnType<typeof getFileDisplayInfo>) {
-  return fileInfo.filePath || fileInfo.fileName || 'auth config';
+  return fileInfo.filePath || fileInfo.fileName || "auth config";
 }
 
 async function startStudioWithWatch(options: StudioWatchOptions) {
@@ -159,13 +159,13 @@ async function startStudioWithWatch(options: StudioWatchOptions) {
 
     broadcastWatchMessage(
       {
-        type: 'studio_status',
-        status: 'up_to_date',
+        type: "studio_status",
+        status: "up_to_date",
         updatedAt: Date.now(),
         fileName: fileInfo.fileName,
         filePath: fileInfo.filePath,
       },
-      { remember: 'status' }
+      { remember: "status" },
     );
 
     watcher = chokidar.watch(resolvedPath, {
@@ -173,29 +173,29 @@ async function startStudioWithWatch(options: StudioWatchOptions) {
       ignoreInitial: true,
     });
 
-    watcher.on('change', async (changedPath: string) => {
+    watcher.on("change", async (changedPath: string) => {
       const changeInfo = getFileDisplayInfo(changedPath || configPath);
       const changeLabel = formatChangeLabel(changeInfo);
 
       process.stdout.write(
-        `${chalk.yellow(`\n↻ Reloading Better Auth Studio (changed ${changeLabel})`)}\n`
+        `${chalk.yellow(`\n↻ Reloading Better Auth Studio (changed ${changeLabel})`)}\n`,
       );
 
       try {
         broadcastWatchMessage(
           {
-            type: 'studio_status',
-            status: 'refreshing',
+            type: "studio_status",
+            status: "refreshing",
             updatedAt: Date.now(),
             fileName: changeInfo.fileName,
             filePath: changeInfo.filePath,
           },
-          { remember: 'status' }
+          { remember: "status" },
         );
 
         broadcastWatchMessage({
-          type: 'config_change_detected',
-          message: 'Auth configuration change detected',
+          type: "config_change_detected",
+          message: "Auth configuration change detected",
           fileName: changeInfo.fileName,
           filePath: changeInfo.filePath,
           changedAt: Date.now(),
@@ -203,7 +203,7 @@ async function startStudioWithWatch(options: StudioWatchOptions) {
 
         await new Promise((resolve) => setTimeout(resolve, 75));
 
-        if (currentStudio && typeof currentStudio.close === 'function') {
+        if (currentStudio && typeof currentStudio.close === "function") {
           await currentStudio.close();
         }
 
@@ -211,14 +211,14 @@ async function startStudioWithWatch(options: StudioWatchOptions) {
         if (!newAuthConfig) {
           broadcastWatchMessage(
             {
-              type: 'studio_status',
-              status: 'error',
+              type: "studio_status",
+              status: "error",
               updatedAt: Date.now(),
-              message: 'Unable to reload auth configuration.',
+              message: "Unable to reload auth configuration.",
               fileName: changeInfo.fileName,
               filePath: changeInfo.filePath,
             },
-            { remember: 'status' }
+            { remember: "status" },
           );
           return;
         }
@@ -239,59 +239,59 @@ async function startStudioWithWatch(options: StudioWatchOptions) {
 
         broadcastWatchMessage(
           {
-            type: 'studio_status',
-            status: 'up_to_date',
+            type: "studio_status",
+            status: "up_to_date",
             updatedAt: Date.now(),
             fileName: changeInfo.fileName,
             filePath: changeInfo.filePath,
           },
-          { remember: 'status' }
+          { remember: "status" },
         );
 
         broadcastWatchMessage(
           {
-            type: 'config_changed',
-            message: 'Configuration has been reloaded',
+            type: "config_changed",
+            message: "Configuration has been reloaded",
             fileName: changeInfo.fileName,
             filePath: changeInfo.filePath,
             changedAt: Date.now(),
           },
-          { remember: 'change' }
+          { remember: "change" },
         );
 
         process.stdout.write(`${chalk.green(`✔ Reload complete (${changeLabel})`)}\n`);
       } catch (error) {
         broadcastWatchMessage(
           {
-            type: 'studio_status',
-            status: 'error',
+            type: "studio_status",
+            status: "error",
             updatedAt: Date.now(),
-            message: error instanceof Error ? error.message : 'Unknown error',
+            message: error instanceof Error ? error.message : "Unknown error",
             fileName: changeInfo.fileName,
             filePath: changeInfo.filePath,
           },
-          { remember: 'status' }
+          { remember: "status" },
         );
 
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
         process.stdout.write(
-          `${chalk.red(`✖ Reload failed (${changeLabel}) - ${errorMessage}`)}\n`
+          `${chalk.red(`✖ Reload failed (${changeLabel}) - ${errorMessage}`)}\n`,
         );
       }
     });
 
-    watcher.on('error', (_error: any) => {});
+    watcher.on("error", (_error: any) => {});
   }
 
   // Handle graceful shutdown
-  process.on('SIGINT', async () => {
+  process.on("SIGINT", async () => {
     if (watcher) {
       await watcher.close();
     }
     if (webSocketServer) {
       webSocketServer.close();
     }
-    if (currentStudio && typeof currentStudio.close === 'function') {
+    if (currentStudio && typeof currentStudio.close === "function") {
       await currentStudio.close();
     }
     process.exit(0);
@@ -303,29 +303,29 @@ const program = new Command();
 function getPackageVersion(): string {
   try {
     const __dirname = dirname(fileURLToPath(import.meta.url));
-    const packageJsonPath = join(__dirname, '../package.json');
+    const packageJsonPath = join(__dirname, "../package.json");
     if (existsSync(packageJsonPath)) {
-      const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-      return packageJson.version || '1.0.0';
+      const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
+      return packageJson.version || "1.0.0";
     }
   } catch (_error) {}
-  return '1.0.0';
+  return "1.0.0";
 }
 
 program
-  .name('better-auth-studio')
-  .description('Better Auth Studio - Admin dashboard for Better Auth')
+  .name("better-auth-studio")
+  .description("Better Auth Studio - Admin dashboard for Better Auth")
   .version(getPackageVersion());
 
 program
-  .command('start')
-  .description('Start Better Auth Studio')
-  .option('-p, --port <port>', 'Port to run the studio on', '3002')
-  .option('-h, --host <host>', 'Host to run the studio on', 'localhost')
-  .option('-c, --config <path>', 'Path to the auth configuration file')
-  .option('--geo-db <path>', 'Path to MaxMind GeoLite2 database file (.mmdb)')
-  .option('-w, --watch', 'Watch for changes in auth config file and reload server')
-  .option('--no-open', 'Do not open browser automatically')
+  .command("start")
+  .description("Start Better Auth Studio")
+  .option("-p, --port <port>", "Port to run the studio on", "3002")
+  .option("-h, --host <host>", "Host to run the studio on", "localhost")
+  .option("-c, --config <path>", "Path to the auth configuration file")
+  .option("--geo-db <path>", "Path to MaxMind GeoLite2 database file (.mmdb)")
+  .option("-w, --watch", "Watch for changes in auth config file and reload server")
+  .option("--no-open", "Do not open browser automatically")
   .action(async (options) => {
     try {
       const resolvedConfigPath =
@@ -339,7 +339,7 @@ program
         process.exit(1);
       }
 
-      let databaseInfo = 'Not configured';
+      let databaseInfo = "Not configured";
 
       try {
         const detectedDb = await detectDatabaseWithDialect();
@@ -349,14 +349,14 @@ program
       } catch (_error) {}
 
       // Fallback to existing logic
-      if (databaseInfo === 'Not configured' && authConfig.database) {
+      if (databaseInfo === "Not configured" && authConfig.database) {
         const configPath = await findAuthConfigPath();
         if (configPath) {
-          const content = readFileSync(configPath, 'utf-8');
-          if (content.includes('drizzleAdapter')) {
-            databaseInfo = 'Drizzle';
-          } else if (content.includes('prismaAdapter')) {
-            databaseInfo = 'Prisma';
+          const content = readFileSync(configPath, "utf-8");
+          if (content.includes("drizzleAdapter")) {
+            databaseInfo = "Drizzle";
+          } else if (content.includes("prismaAdapter")) {
+            databaseInfo = "Prisma";
           } else if (authConfig.database.adapter && authConfig.database.provider) {
             const adapter = authConfig.database.adapter;
             const adapterName = adapter.charAt(0).toUpperCase() + adapter.slice(1);
@@ -379,22 +379,22 @@ program
         }
       }
 
-      let _providersInfo = 'None';
-      if (authConfig.socialProviders && typeof authConfig.socialProviders === 'object') {
+      let _providersInfo = "None";
+      if (authConfig.socialProviders && typeof authConfig.socialProviders === "object") {
         const providerNames = Object.keys(authConfig.socialProviders);
         if (providerNames.length > 0) {
-          _providersInfo = providerNames.join(', ');
+          _providersInfo = providerNames.join(", ");
         }
       } else if (authConfig.providers && Array.isArray(authConfig.providers)) {
         const providerNames = authConfig.providers.map((p) => p.type || p.name).filter(Boolean);
         if (providerNames.length > 0) {
-          _providersInfo = providerNames.join(', ');
+          _providersInfo = providerNames.join(", ");
         }
       }
 
       if (options.watch && !configPathForRoutes) {
         console.warn(
-          '⚠ Unable to locate your auth config file. Watch mode will be disabled for this session.'
+          "⚠ Unable to locate your auth config file. Watch mode will be disabled for this session.",
         );
       }
 
@@ -425,17 +425,17 @@ program
   });
 
 program
-  .command('init')
-  .description('Initialize Better Auth Studio for self-hosting')
+  .command("init")
+  .description("Initialize Better Auth Studio for self-hosting")
   .option(
-    '--api-dir <path>',
-    'Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.'
+    "--api-dir <path>",
+    'Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.',
   )
   .action(async (options) => {
     try {
       await initCommand({ apiDir: options.apiDir });
     } catch (error) {
-      console.error(chalk.red('Error initializing studio:'), error);
+      console.error(chalk.red("Error initializing studio:"), error);
       process.exit(1);
     }
   });

@@ -1,5 +1,5 @@
-import { Command } from 'cmdk';
-import type { LucideIcon } from 'lucide-react';
+import { Command } from "cmdk";
+import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
   BarChart3,
@@ -13,9 +13,9 @@ import {
   UserPlus,
   Users,
   Wrench,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface CommandItem {
   id: string;
@@ -37,14 +37,14 @@ interface CommandPaletteProps {
 
 export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const navigate = useNavigate();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [plugins, setPlugins] = useState<any>(null);
 
   // Fetch plugins on mount
   useEffect(() => {
     const fetchPlugins = async () => {
       try {
-        const response = await fetch('/api/plugins');
+        const response = await fetch("/api/plugins");
         const data = await response.json();
         setPlugins(data);
       } catch (_error) {}
@@ -60,104 +60,104 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
 
   const commands: CommandItem[] = [
     {
-      id: 'users',
-      title: 'Users',
-      description: 'Manage users and their accounts',
+      id: "users",
+      title: "Users",
+      description: "Manage users and their accounts",
       icon: Users,
-      action: () => navigate('/users'),
-      category: 'Navigation',
-      keywords: ['user', 'account', 'profile'],
+      action: () => navigate("/users"),
+      category: "Navigation",
+      keywords: ["user", "account", "profile"],
     },
     {
-      id: 'organizations',
-      title: 'Organizations',
-      description: 'Manage organizations and teams',
+      id: "organizations",
+      title: "Organizations",
+      description: "Manage organizations and teams",
       icon: Building2,
-      action: () => navigate('/organizations'),
-      category: 'Navigation',
-      keywords: ['org', 'company', 'team'],
-      requiresPlugin: 'organization',
-      disabled: !isPluginEnabled('organization'),
-      disabledMessage: 'Enable organization plugin in settings',
+      action: () => navigate("/organizations"),
+      category: "Navigation",
+      keywords: ["org", "company", "team"],
+      requiresPlugin: "organization",
+      disabled: !isPluginEnabled("organization"),
+      disabledMessage: "Enable organization plugin in settings",
     },
     {
-      id: 'sessions',
-      title: 'Sessions',
-      description: 'View active user sessions',
+      id: "sessions",
+      title: "Sessions",
+      description: "View active user sessions",
       icon: BarChart3,
-      action: () => navigate('/sessions'),
-      category: 'Navigation',
-      keywords: ['session', 'login', 'active'],
+      action: () => navigate("/sessions"),
+      category: "Navigation",
+      keywords: ["session", "login", "active"],
     },
     {
-      id: 'tools',
-      title: 'Tools',
-      description: 'View tools and utilities',
+      id: "tools",
+      title: "Tools",
+      description: "View tools and utilities",
       icon: Wrench,
-      action: () => navigate('/tools'),
-      category: 'Navigation',
-      keywords: ['utilities', 'tools'],
+      action: () => navigate("/tools"),
+      category: "Navigation",
+      keywords: ["utilities", "tools"],
     },
     {
-      id: 'database',
-      title: 'Database',
-      description: 'View database and schema',
+      id: "database",
+      title: "Database",
+      description: "View database and schema",
       icon: Database,
       disabled: true,
-      action: () => navigate('/database'),
-      category: 'Navigation',
-      keywords: ['database', 'schema'],
+      action: () => navigate("/database"),
+      category: "Navigation",
+      keywords: ["database", "schema"],
     },
     {
-      id: 'settings',
-      title: 'Settings',
-      description: 'Configure Better Auth Studio',
+      id: "settings",
+      title: "Settings",
+      description: "Configure Better Auth Studio",
       icon: Settings,
-      action: () => navigate('/settings'),
-      category: 'Navigation',
-      keywords: ['config', 'setup', 'preferences'],
+      action: () => navigate("/settings"),
+      category: "Navigation",
+      keywords: ["config", "setup", "preferences"],
     },
     {
-      id: 'dashboard',
-      title: 'Dashboard',
-      description: 'View overview and statistics',
+      id: "dashboard",
+      title: "Dashboard",
+      description: "View overview and statistics",
       icon: BarChart3,
-      action: () => navigate('/'),
-      category: 'Navigation',
-      keywords: ['overview', 'stats', 'home'],
+      action: () => navigate("/"),
+      category: "Navigation",
+      keywords: ["overview", "stats", "home"],
     },
     {
-      id: 'create-user',
-      title: 'Create User',
-      description: 'Add a new user to the system',
+      id: "create-user",
+      title: "Create User",
+      description: "Add a new user to the system",
       icon: UserPlus,
-      action: () => navigate('/users'),
-      category: 'Actions',
-      keywords: ['add', 'new', 'register'],
+      action: () => navigate("/users"),
+      category: "Actions",
+      keywords: ["add", "new", "register"],
     },
     {
-      id: 'create-organization',
-      title: 'Create Organization',
-      description: 'Create a new organization',
+      id: "create-organization",
+      title: "Create Organization",
+      description: "Create a new organization",
       icon: Plus,
-      action: () => navigate('/organizations'),
-      category: 'Actions',
-      keywords: ['add', 'new', 'org'],
-      requiresPlugin: 'organization',
-      disabled: !isPluginEnabled('organization'),
-      disabledMessage: 'Enable organization plugin in settings',
+      action: () => navigate("/organizations"),
+      category: "Actions",
+      keywords: ["add", "new", "org"],
+      requiresPlugin: "organization",
+      disabled: !isPluginEnabled("organization"),
+      disabledMessage: "Enable organization plugin in settings",
     },
     {
-      id: 'invite-user',
-      title: 'Invite User',
-      description: 'Send invitation to join organization',
+      id: "invite-user",
+      title: "Invite User",
+      description: "Send invitation to join organization",
       icon: Mail,
-      action: () => navigate('/organizations'),
-      category: 'Actions',
-      keywords: ['invite', 'email', 'send'],
-      requiresPlugin: 'organization',
-      disabled: !isPluginEnabled('organization'),
-      disabledMessage: 'Enable organization plugin in settings',
+      action: () => navigate("/organizations"),
+      category: "Actions",
+      keywords: ["invite", "email", "send"],
+      requiresPlugin: "organization",
+      disabled: !isPluginEnabled("organization"),
+      disabledMessage: "Enable organization plugin in settings",
     },
   ];
 
@@ -178,35 +178,35 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
       acc[command.category].push(command);
       return acc;
     },
-    {} as Record<string, CommandItem[]>
+    {} as Record<string, CommandItem[]>,
   );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
       }
     };
 
     if (isOpen) {
       // Prevent background scroll when command palette is open
-      document.body.style.overflow = 'hidden';
-      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = "hidden";
+      document.addEventListener("keydown", handleEscape);
 
       return () => {
-        document.body.style.overflow = 'unset';
-        document.removeEventListener('keydown', handleEscape);
+        document.body.style.overflow = "unset";
+        document.removeEventListener("keydown", handleEscape);
       };
     }
   }, [isOpen, onClose]);
@@ -268,8 +268,8 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
                         }}
                         className={`flex items-center space-x-3 px-0 py-2 rounded-none transition-colors relative ${
                           isDisabled
-                            ? 'opacity-40 cursor-not-allowed blur-[0.5px]'
-                            : 'hover:bg-white/5 cursor-pointer'
+                            ? "opacity-40 cursor-not-allowed blur-[0.5px]"
+                            : "hover:bg-white/5 cursor-pointer"
                         }`}
                       >
                         <Icon className="w-4 h-4 text-white" />
@@ -294,17 +294,17 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
           <div className="border-t border-dashed border-white/10 px-3 py-2 text-xs text-gray-400">
             <div className="flex items-center justify-between">
               <span>
-                Press{' '}
+                Press{" "}
                 <kbd className="px-1 py-0.5 border border-dashed border-white/20 rounded-sm">
                   ↑↓
-                </kbd>{' '}
+                </kbd>{" "}
                 to navigate
               </span>
               <span>
-                Press{' '}
+                Press{" "}
                 <kbd className="px-1 py-0.5 border border-dashed border-white/20 rounded-sm">
                   Enter
-                </kbd>{' '}
+                </kbd>{" "}
                 to select
               </span>
             </div>

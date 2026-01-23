@@ -1,6 +1,6 @@
-import { existsSync, readFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { dirname, join, resolve } from 'node:path';
+import { existsSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { dirname, join, resolve } from "node:path";
 
 /**
  * Find the project root by looking for package.json files up the directory tree
@@ -9,10 +9,10 @@ import { dirname, join, resolve } from 'node:path';
  */
 function findProjectRoot(startDir: string): string {
   let currentDir = resolve(startDir);
-  const root = resolve('/');
+  const root = resolve("/");
 
   while (currentDir !== root) {
-    const packageJsonPath = join(currentDir, 'package.json');
+    const packageJsonPath = join(currentDir, "package.json");
     if (existsSync(packageJsonPath)) {
       return currentDir;
     }
@@ -29,25 +29,25 @@ function findProjectRoot(startDir: string): string {
  */
 export async function getPackageVersion(
   packageName: string,
-  cwd?: string
+  cwd?: string,
 ): Promise<string | undefined> {
   const searchDir = cwd || process.cwd();
 
   try {
     const projectRoot = findProjectRoot(searchDir);
-    const packageJsonPath = join(searchDir, 'package.json');
+    const packageJsonPath = join(searchDir, "package.json");
     if (existsSync(packageJsonPath)) {
-      const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+      const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
       if (packageJson.dependencies?.[packageName]) {
-        return packageJson.dependencies[packageName].replace(/[\^~]/, '');
+        return packageJson.dependencies[packageName].replace(/[\^~]/, "");
       }
 
       if (packageJson.devDependencies?.[packageName]) {
-        return packageJson.devDependencies[packageName].replace(/[\^~]/, '');
+        return packageJson.devDependencies[packageName].replace(/[\^~]/, "");
       }
 
       if (packageJson.peerDependencies?.[packageName]) {
-        return packageJson.peerDependencies[packageName].replace(/[\^~]/, '');
+        return packageJson.peerDependencies[packageName].replace(/[\^~]/, "");
       }
     }
 
@@ -58,7 +58,7 @@ export async function getPackageVersion(
       });
 
       if (existsSync(packagePath)) {
-        const packageJson = JSON.parse(readFileSync(packagePath, 'utf-8'));
+        const packageJson = JSON.parse(readFileSync(packagePath, "utf-8"));
         return packageJson.version;
       }
     } catch (_resolveError: any) {

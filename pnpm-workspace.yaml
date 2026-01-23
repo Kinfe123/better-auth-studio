@@ -1,4 +1,4 @@
 packages:
-  - 'frontend/**'
-  - 'docs/**'
-  - 'src/**'
+  - "frontend/**"
+  - "docs/**"
+  - "src/**"

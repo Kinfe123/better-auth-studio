@@ -10,14 +10,14 @@ import {
   ReactFlow,
   useEdgesState,
   useNodesState,
-} from '@xyflow/react';
-import { useCallback, useEffect, useState } from 'react';
-import '@xyflow/react/dist/style.css';
-import { Link2, Settings, X } from 'lucide-react';
-import { Analytics } from '@/components/PixelIcons';
-import { DatabaseSchemaNode, type DatabaseSchemaNodeData } from '../components/DatabaseSchemaNode';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+} from "@xyflow/react";
+import { useCallback, useEffect, useState } from "react";
+import "@xyflow/react/dist/style.css";
+import { Link2, Settings, X } from "lucide-react";
+import { Analytics } from "@/components/PixelIcons";
+import { DatabaseSchemaNode, type DatabaseSchemaNodeData } from "../components/DatabaseSchemaNode";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 
 const nodeTypes = {
   databaseSchemaNode: DatabaseSchemaNode,
@@ -34,7 +34,7 @@ interface Field {
 }
 
 interface Relationship {
-  type: 'one-to-many' | 'many-to-one' | 'one-to-one';
+  type: "one-to-many" | "many-to-one" | "one-to-one";
   target: string;
   field: string;
 }
@@ -79,18 +79,18 @@ export default function DatabaseVisualizer() {
 
   useEffect(() => {
     if (selectedTable) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [selectedTable]);
 
   const fetchEnabledPlugins = useCallback(async () => {
     try {
-      const response = await fetch('/api/plugins');
+      const response = await fetch("/api/plugins");
       const data = await response.json();
       if (data.plugins && Array.isArray(data.plugins)) {
         setEnabledPlugins(data.plugins.filter((p: Plugin) => p.enabled));
@@ -109,10 +109,10 @@ export default function DatabaseVisualizer() {
       if (data.success) {
         setSchema(data.schema);
       } else {
-        setError(data.error || 'Failed to fetch schema');
+        setError(data.error || "Failed to fetch schema");
       }
     } catch (_err) {
-      setError('Failed to fetch database schema');
+      setError("Failed to fetch database schema");
     } finally {
       setLoading(false);
     }
@@ -130,13 +130,13 @@ export default function DatabaseVisualizer() {
     }
 
     const contributions: PluginContribution[] = enabledPlugins.map((plugin) => {
-      const pluginTables = schema.tables.filter((table) => (table.origin || 'core') === plugin.id);
+      const pluginTables = schema.tables.filter((table) => (table.origin || "core") === plugin.id);
 
       const tableCount = pluginTables.length;
       const fieldCount = pluginTables.reduce((sum, table) => sum + table.fields.length, 0);
       const relationshipCount = pluginTables.reduce(
         (sum, table) => sum + table.relationships.length,
-        0
+        0,
       );
 
       return {
@@ -158,7 +158,7 @@ export default function DatabaseVisualizer() {
     const allEdges: Edge[] = [];
 
     schema.tables.forEach((table, index) => {
-      const tableOrigin = table.origin || 'core';
+      const tableOrigin = table.origin || "core";
       const columns = table.fields.map((field) => ({
         id: `${table.name}-${field.name}`,
         isPrimary: field.primaryKey || false,
@@ -179,7 +179,7 @@ export default function DatabaseVisualizer() {
 
       newNodes.push({
         id: table.name,
-        type: 'databaseSchemaNode',
+        type: "databaseSchemaNode",
         position,
         data: {
           name: table.name,
@@ -211,39 +211,39 @@ export default function DatabaseVisualizer() {
 
           if (!edgeMap.has(edgeKey)) {
             let relationshipLabel: string;
-            if (rel.type === 'one-to-one') {
-              relationshipLabel = '1:1';
-            } else if (rel.type === 'many-to-one') {
-              relationshipLabel = 'N:1';
+            if (rel.type === "one-to-one") {
+              relationshipLabel = "1:1";
+            } else if (rel.type === "many-to-one") {
+              relationshipLabel = "N:1";
             } else {
-              relationshipLabel = '1:N';
+              relationshipLabel = "1:N";
             }
 
             const edge: Edge = {
               id: edgeKey,
               source: sourceTable,
               target: targetTable,
-              type: 'smoothstep',
+              type: "smoothstep",
               animated: false,
               style: {
-                stroke: '#6b7280',
+                stroke: "#6b7280",
                 strokeWidth: 2,
-                strokeDasharray: '0',
+                strokeDasharray: "0",
               },
               label: relationshipLabel,
               labelStyle: {
-                fontSize: '11px',
-                fill: '#9ca3af',
-                fontWeight: '500',
+                fontSize: "11px",
+                fill: "#9ca3af",
+                fontWeight: "500",
               },
               labelBgStyle: {
-                fill: 'rgba(0, 0, 0, 0.9)',
+                fill: "rgba(0, 0, 0, 0.9)",
                 fillOpacity: 1,
                 borderRadius: 4,
               },
               markerEnd: {
-                type: 'arrowclosed',
-                color: '#6b7280',
+                type: "arrowclosed",
+                color: "#6b7280",
                 width: 12,
                 height: 12,
               },
@@ -294,23 +294,23 @@ export default function DatabaseVisualizer() {
       });
 
       const filteredEdges = allEdges.filter(
-        (edge) => edge.source === highlightedTableName || edge.target === highlightedTableName
+        (edge) => edge.source === highlightedTableName || edge.target === highlightedTableName,
       );
 
       filteredEdges.forEach((edge) => {
         edge.style = {
           ...edge.style,
-          stroke: '#60a5fa',
+          stroke: "#60a5fa",
           strokeWidth: 3,
         };
         edge.labelStyle = {
           ...edge.labelStyle,
-          fill: '#60a5fa',
-          fontWeight: '600',
+          fill: "#60a5fa",
+          fontWeight: "600",
         };
         edge.markerEnd = {
-          type: 'arrowclosed',
-          color: '#60a5fa',
+          type: "arrowclosed",
+          color: "#60a5fa",
           width: 14,
           height: 14,
         };
@@ -346,7 +346,7 @@ export default function DatabaseVisualizer() {
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
+    [setEdges],
   );
 
   const handleNodeClick = useCallback(
@@ -357,7 +357,7 @@ export default function DatabaseVisualizer() {
         setHighlightedTableName(node.id);
       }
     },
-    [highlightedTableName]
+    [highlightedTableName],
   );
 
   useEffect(() => {
@@ -370,9 +370,9 @@ export default function DatabaseVisualizer() {
       }
     };
 
-    window.addEventListener('highlightTable' as any, handleHighlightTable as EventListener);
+    window.addEventListener("highlightTable" as any, handleHighlightTable as EventListener);
     return () => {
-      window.removeEventListener('highlightTable' as any, handleHighlightTable as EventListener);
+      window.removeEventListener("highlightTable" as any, handleHighlightTable as EventListener);
     };
   }, [highlightedTableName]);
 
@@ -459,14 +459,14 @@ export default function DatabaseVisualizer() {
                       }}
                       className={`w-full text-left border p-3 rounded-none transition-colors ${
                         highlightedTableName === table.name
-                          ? 'border-blue-500/50 bg-blue-500/10'
-                          : 'border-white/10 hover:border-white/20 hover:bg-white/5'
+                          ? "border-blue-500/50 bg-blue-500/10"
+                          : "border-white/10 hover:border-white/20 hover:bg-white/5"
                       }`}
                     >
                       <div className="flex items-center justify-between text-sm text-white">
                         <span>{table.displayName}</span>
                         <span className="text-xs uppercase font-mono text-gray-400">
-                          {table.origin === 'core' ? 'Core' : 'Extended'}
+                          {table.origin === "core" ? "Core" : "Extended"}
                         </span>
                       </div>
                       <div className="text-xs text-gray-400 mt-1">
@@ -590,11 +590,11 @@ export default function DatabaseVisualizer() {
               connectionLineType="smoothstep"
               defaultEdgeOptions={{
                 style: {
-                  stroke: '#6b7280',
+                  stroke: "#6b7280",
                   strokeWidth: 2,
                 },
                 animated: false,
-                type: 'smoothstep',
+                type: "smoothstep",
               }}
               nodesDraggable={true}
               nodesConnectable={false}
@@ -604,8 +604,8 @@ export default function DatabaseVisualizer() {
               <MiniMap
                 className="bg-gray-900 border-white/20"
                 nodeColor={(node) => {
-                  if (node.data?.isForeign) return '#374151';
-                  return '#1f2937';
+                  if (node.data?.isForeign) return "#374151";
+                  return "#1f2937";
                 }}
                 maskColor="rgba(0, 0, 0, 0.9)"
               />
@@ -635,7 +635,7 @@ export default function DatabaseVisualizer() {
                 <div>
                   <h3 className="text-xl font-light text-white">{selectedTable.displayName}</h3>
                   <p className="text-xs text-gray-400 mt-0.5 uppercase font-mono">
-                    {selectedTable.name} · {selectedTable.origin === 'core' ? 'Core' : 'Extended'}
+                    {selectedTable.name} · {selectedTable.origin === "core" ? "Core" : "Extended"}
                   </p>
                 </div>
                 <Button
@@ -657,7 +657,7 @@ export default function DatabaseVisualizer() {
                 <div className="space-y-0">
                   {selectedTable.fields.map((field, index) => {
                     const relatedInfo = selectedTable.relationships.find(
-                      (rel) => rel.field === field.name
+                      (rel) => rel.field === field.name,
                     );
                     const relatedTarget =
                       relatedInfo && schema
@@ -667,7 +667,7 @@ export default function DatabaseVisualizer() {
                     return (
                       <div
                         key={field.name}
-                        className={`border-b border-dashed border-white/10 py-3 ${index === selectedTable.fields.length - 1 ? 'border-b-0' : ''}`}
+                        className={`border-b border-dashed border-white/10 py-3 ${index === selectedTable.fields.length - 1 ? "border-b-0" : ""}`}
                       >
                         <div className="flex items-start justify-between mb-1.5">
                           <div className="flex items-center space-x-2">
@@ -711,7 +711,7 @@ export default function DatabaseVisualizer() {
                           )}
                           {field.defaultValue !== undefined && (
                             <p className="text-xs text-gray-500 font-mono">
-                              Default:{' '}
+                              Default:{" "}
                               <span className="text-gray-400">{String(field.defaultValue)}</span>
                             </p>
                           )}
@@ -732,16 +732,16 @@ export default function DatabaseVisualizer() {
                     {selectedTable.relationships.map((rel, index) => {
                       const targetTable = schema?.tables.find((t) => t.name === rel.target);
                       const relationshipLabel =
-                        rel.type === 'one-to-one'
-                          ? '1:1'
-                          : rel.type === 'many-to-one'
-                            ? 'N:1'
-                            : '1:N';
+                        rel.type === "one-to-one"
+                          ? "1:1"
+                          : rel.type === "many-to-one"
+                            ? "N:1"
+                            : "1:N";
 
                       return (
                         <div
                           key={`${rel.target}-${rel.field}-${index}`}
-                          className={`border-b border-dashed border-white/10 py-3 ${index === selectedTable.relationships.length - 1 ? 'border-b-0' : ''}`}
+                          className={`border-b border-dashed border-white/10 py-3 ${index === selectedTable.relationships.length - 1 ? "border-b-0" : ""}`}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2">
@@ -762,7 +762,7 @@ export default function DatabaseVisualizer() {
                             </span>
                           </div>
                           <p className="text-xs text-gray-500 mt-1 font-mono uppercase ml-0">
-                            {rel.type.replace('-', ' ')}
+                            {rel.type.replace("-", " ")}
                           </p>
                         </div>
                       );
@@ -794,7 +794,7 @@ export default function DatabaseVisualizer() {
                       Origin
                     </span>
                     <p className="text-white text-sm uppercase font-mono font-light">
-                      {selectedTable.origin === 'core' ? 'Core' : 'Extended'}
+                      {selectedTable.origin === "core" ? "Core" : "Extended"}
                     </p>
                   </div>
                 </div>

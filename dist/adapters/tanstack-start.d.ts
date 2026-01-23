@@ -1,6 +1,6 @@
-import type { StudioConfig } from '../types/handler.js';
+import type { StudioConfig } from "../types/handler.js";
 type TanStackStartHandlerContext = {
-    request: Request;
+  request: Request;
 };
 /**
  * TanStack Start adapter for Better Auth Studio
@@ -27,6 +27,8 @@ type TanStackStartHandlerContext = {
  * });
  * ```
  */
-export declare function betterAuthStudio(config: StudioConfig): ({ request }: TanStackStartHandlerContext) => Promise<Response>;
+export declare function betterAuthStudio(
+  config: StudioConfig,
+): ({ request }: TanStackStartHandlerContext) => Promise<Response>;
 export {};
 //# sourceMappingURL=tanstack-start.d.ts.map

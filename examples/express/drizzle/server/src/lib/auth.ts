@@ -12,8 +12,8 @@ export const auth = betterAuth({
     github: {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-      redirectUri: "http://localhost:3000/api/auth/callback/github"
-    }
+      redirectUri: "http://localhost:3000/api/auth/callback/github",
+    },
   },
   emailAndPassword: {
     enabled: true,
@@ -26,29 +26,29 @@ export const auth = betterAuth({
       // Send reset password email
       console.log(`Reset password email for ${user.email}: ${url}`);
     },
-    resetPasswordTokenExpiresIn: 3600 // 1 hour
+    resetPasswordTokenExpiresIn: 3600, // 1 hour
   },
   plugins: [
     organization({
       teams: {
-        enabled: true
-      }
+        enabled: true,
+      },
     }),
     twoFactor({}),
     admin(),
     apiKey(),
-    phoneNumber()
+    phoneNumber(),
   ],
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24 // 1 day
+    updateAge: 60 * 60 * 24, // 1 day
   },
   rateLimit: {
     enabled: true,
     window: 14,
-    max: 100
+    max: 100,
   },
   telemetry: {
-    enabled: false
-  }
+    enabled: false,
+  },
 });

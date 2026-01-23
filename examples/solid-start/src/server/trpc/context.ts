@@ -1,6 +1,6 @@
-import type { inferAsyncReturnType } from '@trpc/server'
-import type { createSolidAPIHandlerContext } from 'solid-start-trpc'
-import { prisma } from '~/server/db/client'
+import type { inferAsyncReturnType } from "@trpc/server";
+import type { createSolidAPIHandlerContext } from "solid-start-trpc";
+import { prisma } from "~/server/db/client";
 
 export const createContextInner = async (opts: createSolidAPIHandlerContext) => {
   // const user = await authenticator.isAuthenticated(opts.req)
@@ -8,11 +8,11 @@ export const createContextInner = async (opts: createSolidAPIHandlerContext) => 
     ...opts,
     prisma,
     // user,
-  }
-}
+  };
+};
 
 export const createContext = async (opts: createSolidAPIHandlerContext) => {
-  return await createContextInner(opts)
-}
+  return await createContextInner(opts);
+};
 
-export type Context = inferAsyncReturnType<typeof createContext>
+export type Context = inferAsyncReturnType<typeof createContext>;

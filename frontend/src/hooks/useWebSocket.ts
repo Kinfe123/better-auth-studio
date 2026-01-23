@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 interface WebSocketMessage {
   type: string;
@@ -7,12 +7,12 @@ interface WebSocketMessage {
 }
 
 type WebSocketConnectionStatus =
-  | 'connecting'
-  | 'open'
-  | 'closed'
-  | 'reconnecting'
-  | 'unavailable'
-  | 'error';
+  | "connecting"
+  | "open"
+  | "closed"
+  | "reconnecting"
+  | "unavailable"
+  | "error";
 
 interface UseWebSocketOptions {
   onStatusChange?: (status: WebSocketConnectionStatus) => void;
@@ -21,7 +21,7 @@ interface UseWebSocketOptions {
 
 export function useWebSocket(
   onMessage: (message: WebSocketMessage) => void,
-  options?: UseWebSocketOptions
+  options?: UseWebSocketOptions,
 ) {
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -44,15 +44,15 @@ export function useWebSocket(
 
     const connect = () => {
       try {
-        statusChangeRef.current?.('connecting');
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        statusChangeRef.current?.("connecting");
+        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         const wsUrl = `${protocol}//${window.location.host}`;
         wsRef.current = new WebSocket(wsUrl);
 
         wsRef.current.onopen = () => {
           reconnectAttempts.current = 0;
           hasConnectedRef.current = true;
-          statusChangeRef.current?.('open');
+          statusChangeRef.current?.("open");
           if (reconnectTimeoutRef.current) {
             clearTimeout(reconnectTimeoutRef.current);
             reconnectTimeoutRef.current = null;
@@ -75,28 +75,28 @@ export function useWebSocket(
           // If connection was refused (code 1006) or server unavailable (code 1001),
           // it means WebSocket server is not running (normal mode)
           if (!hasConnectedRef.current && (event.code === 1006 || event.code === 1001)) {
-            statusChangeRef.current?.('unavailable');
+            statusChangeRef.current?.("unavailable");
             return;
           }
 
-          statusChangeRef.current?.('closed');
+          statusChangeRef.current?.("closed");
 
           if (reconnectAttempts.current < maxReconnectAttempts) {
             reconnectAttempts.current++;
             const delay = Math.min(1000 * 2 ** reconnectAttempts.current, 10000);
 
-            statusChangeRef.current?.('reconnecting');
+            statusChangeRef.current?.("reconnecting");
 
             reconnectTimeoutRef.current = setTimeout(() => {
               connect();
             }, delay);
           } else {
-            statusChangeRef.current?.('unavailable');
+            statusChangeRef.current?.("unavailable");
           }
         };
 
         wsRef.current.onerror = (_error) => {
-          statusChangeRef.current?.('error');
+          statusChangeRef.current?.("error");
         };
       } catch (_error) {}
     };

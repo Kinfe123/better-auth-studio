@@ -1,27 +1,27 @@
-import { useEffect, useState } from 'react';
-import { Navigate, Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
-import { Toaster } from 'sonner';
-import DatabaseSchemaNodeDemo from './components/DatabaseSchemaNodeDemo';
-import Layout from './components/Layout';
-import { CountsProvider } from './contexts/CountsContext';
-import AccessDenied from './pages/AccessDenied';
-import Dashboard from './pages/Dashboard';
-import DatabaseVisualizer from './pages/DatabaseVisualizer';
-import EmailEditor from './pages/EmailEditor';
-import Events from './pages/Events';
-import Login from './pages/Login';
-import OrganizationDetails from './pages/OrganizationDetails';
-import Organizations from './pages/Organizations';
-import Sessions from './pages/Sessions';
-import Settings from './pages/Settings';
-import TeamDetails from './pages/TeamDetails';
-import Teams from './pages/Teams';
-import Tools from './pages/Tools';
-import UserDetails from './pages/UserDetails';
-import Users from './pages/Users';
+import { useEffect, useState } from "react";
+import { Navigate, Route, BrowserRouter as Router, Routes, useLocation } from "react-router-dom";
+import { Toaster } from "sonner";
+import DatabaseSchemaNodeDemo from "./components/DatabaseSchemaNodeDemo";
+import Layout from "./components/Layout";
+import { CountsProvider } from "./contexts/CountsContext";
+import AccessDenied from "./pages/AccessDenied";
+import Dashboard from "./pages/Dashboard";
+import DatabaseVisualizer from "./pages/DatabaseVisualizer";
+import EmailEditor from "./pages/EmailEditor";
+import Events from "./pages/Events";
+import Login from "./pages/Login";
+import OrganizationDetails from "./pages/OrganizationDetails";
+import Organizations from "./pages/Organizations";
+import Sessions from "./pages/Sessions";
+import Settings from "./pages/Settings";
+import TeamDetails from "./pages/TeamDetails";
+import Teams from "./pages/Teams";
+import Tools from "./pages/Tools";
+import UserDetails from "./pages/UserDetails";
+import Users from "./pages/Users";
 
 const config = (window as any).__STUDIO_CONFIG__;
-const basePath = config?.basePath !== undefined ? config.basePath : '';
+const basePath = config?.basePath !== undefined ? config.basePath : "";
 const isSelfHosted = !!basePath;
 
 interface AuthState {
@@ -37,8 +37,8 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const studioAuthPath = basePath ? `${basePath}/auth` : '/api/auth';
-        const response = await fetch(`${studioAuthPath}/session`, { credentials: 'include' });
+        const studioAuthPath = basePath ? `${basePath}/auth` : "/api/auth";
+        const response = await fetch(`${studioAuthPath}/session`, { credentials: "include" });
         const data = await response.json();
         setAuth({ loading: false, authenticated: data.authenticated, user: data.user });
       } catch {
@@ -125,10 +125,10 @@ function App() {
         richColors
         toastOptions={{
           style: {
-            border: 'dashed 1px #ffffff20',
-            borderRadius: '0',
+            border: "dashed 1px #ffffff20",
+            borderRadius: "0",
           },
-          className: 'font-mono uppercase',
+          className: "font-mono uppercase",
         }}
         closeButton
       />

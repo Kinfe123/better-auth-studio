@@ -1,13 +1,13 @@
-import { Clock1, LucideLoader, LucideTrash, SendIcon } from 'lucide-react';
-import type React from 'react';
-import { cn } from '@/lib/utils';
+import { Clock1, LucideLoader, LucideTrash, SendIcon } from "lucide-react";
+import type React from "react";
+import { cn } from "@/lib/utils";
 
 interface IconProps {
   className?: string;
   size?: number;
 }
 
-export const Plus: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Plus: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +19,7 @@ export const Plus: React.FC<IconProps> = ({ className = '', size = 24 }) => (
     <path d="M11 4h2v7h7v2h-7v7h-2v-7H4v-2h7V4z" fill="currentColor" />
   </svg>
 );
-export const Info: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Info: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -28,14 +28,14 @@ export const Info: React.FC<IconProps> = ({ className = '', size = 24 }) => (
     width={size}
     height={size}
   >
-    {' '}
+    {" "}
     <path
       d="M3 3h2v18H3V3zm16 0H5v2h14v14H5v2h16V3h-2zm-8 6h2V7h-2v2zm2 8h-2v-6h2v6z"
       fill="currentColor"
-    />{' '}
+    />{" "}
   </svg>
 );
-export const ErrorInfo: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const ErrorInfo: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -44,14 +44,14 @@ export const ErrorInfo: React.FC<IconProps> = ({ className = '', size = 24 }) =>
     width={size}
     height={size}
   >
-    {' '}
+    {" "}
     <path
       d="M5 3H3v18h18V3H5zm14 2v14H5V5h14zm-8 4H9V7H7v2h2v2h2v2H9v2H7v2h2v-2h2v-2h2v2h2v2h2v-2h-2v-2h-2v-2h2V9h2V7h-2v2h-2v2h-2V9z"
       fill="currentColor"
-    />{' '}
+    />{" "}
   </svg>
 );
-export const AlertInfo: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const AlertInfo: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -60,14 +60,14 @@ export const AlertInfo: React.FC<IconProps> = ({ className = '', size = 24 }) =>
     width={size}
     height={size}
   >
-    {' '}
+    {" "}
     <path
       d="M13 1h-2v2H9v2H7v2H5v2H3v2H1v2h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h2v-2h-2V9h-2V7h-2V5h-2V3h-2V1zm0 2v2h2v2h2v2h2v2h2v2h-2v2h-2v2h-2v2h-2v2h-2v-2H9v-2H7v-2H5v-2H3v-2h2V9h2V7h2V5h2V3h2zm0 4h-2v6h2V7zm0 8h-2v2h2v-2z"
       fill="currentColor"
-    />{' '}
+    />{" "}
   </svg>
 );
-export const Monitor: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Monitor: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -80,7 +80,7 @@ export const Monitor: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const Layout: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Layout: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -96,7 +96,7 @@ export const Layout: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const ChevronDown: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const ChevronDown: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +112,7 @@ export const ChevronDown: React.FC<IconProps> = ({ className = '', size = 24 }) 
   </svg>
 );
 
-export const ChevronLeft: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const ChevronLeft: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -128,7 +128,7 @@ export const ChevronLeft: React.FC<IconProps> = ({ className = '', size = 24 }) 
   </svg>
 );
 
-export const ChevronRight: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const ChevronRight: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -144,7 +144,7 @@ export const ChevronRight: React.FC<IconProps> = ({ className = '', size = 24 })
   </svg>
 );
 
-export const ChevronUp: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const ChevronUp: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -160,7 +160,7 @@ export const ChevronUp: React.FC<IconProps> = ({ className = '', size = 24 }) =>
   </svg>
 );
 
-export const Check: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Check: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -176,7 +176,7 @@ export const Check: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const Calendar: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Calendar: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -192,7 +192,7 @@ export const Calendar: React.FC<IconProps> = ({ className = '', size = 24 }) => 
   </svg>
 );
 
-export const Building: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Building: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -208,7 +208,7 @@ export const Building: React.FC<IconProps> = ({ className = '', size = 24 }) => 
   </svg>
 );
 
-export const ArrowDown: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const ArrowDown: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -224,7 +224,7 @@ export const ArrowDown: React.FC<IconProps> = ({ className = '', size = 24 }) =>
   </svg>
 );
 
-export const ArrowLeft: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const ArrowLeft: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -240,7 +240,7 @@ export const ArrowLeft: React.FC<IconProps> = ({ className = '', size = 24 }) =>
   </svg>
 );
 
-export const ArrowRight: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const ArrowRight: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -256,7 +256,7 @@ export const ArrowRight: React.FC<IconProps> = ({ className = '', size = 24 }) =
   </svg>
 );
 
-export const Analytics: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Analytics: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -272,7 +272,7 @@ export const Analytics: React.FC<IconProps> = ({ className = '', size = 24 }) =>
   </svg>
 );
 
-export const Command: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Command: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -288,7 +288,7 @@ export const Command: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const Mail: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Mail: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -304,7 +304,7 @@ export const Mail: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const Search: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Search: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -320,7 +320,7 @@ export const Search: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const Trending: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Trending: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -336,7 +336,7 @@ export const Trending: React.FC<IconProps> = ({ className = '', size = 24 }) => 
   </svg>
 );
 
-export const User: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const User: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -352,7 +352,7 @@ export const User: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const Users: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Users: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -369,7 +369,7 @@ export const Users: React.FC<IconProps> = ({ className = '', size = 24 }) => (
 );
 
 // Additional icons that might be needed
-export const X: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const X: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -385,7 +385,7 @@ export const X: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const Edit: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Edit: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -401,11 +401,11 @@ export const Edit: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const Clock: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Clock: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <Clock1 size={size} className={cn(className)} />
 );
 
-export const Database: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Database: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -421,7 +421,7 @@ export const Database: React.FC<IconProps> = ({ className = '', size = 24 }) => 
   </svg>
 );
 
-export const Globe: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Globe: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -437,7 +437,7 @@ export const Globe: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const UserMinus: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const UserMinus: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -453,7 +453,7 @@ export const UserMinus: React.FC<IconProps> = ({ className = '', size = 24 }) =>
   </svg>
 );
 
-export const UserPlus: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const UserPlus: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -469,7 +469,7 @@ export const UserPlus: React.FC<IconProps> = ({ className = '', size = 24 }) => 
   </svg>
 );
 
-export const Ban: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Ban: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -489,7 +489,7 @@ export const Loader: React.FC<IconProps> = (props) => (
   <LucideLoader {...props} className="w-4 h-4 animate-spin" />
 );
 
-export const Phone: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Phone: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -502,7 +502,7 @@ export const Phone: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const HashIcon: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const HashIcon: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -518,11 +518,11 @@ export const HashIcon: React.FC<IconProps> = ({ className = '', size = 24 }) => 
   </svg>
 );
 
-export const Building2: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Building2: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <Building className={className} size={size} />
 );
 
-export const ArrowUpRight: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const ArrowUpRight: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -538,11 +538,11 @@ export const ArrowUpRight: React.FC<IconProps> = ({ className = '', size = 24 })
   </svg>
 );
 
-export const BarChart3: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const BarChart3: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <Analytics className={className} size={size} />
 );
 
-export const Copy: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Copy: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -555,7 +555,7 @@ export const Copy: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const Settings: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Settings: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -571,7 +571,7 @@ export const Settings: React.FC<IconProps> = ({ className = '', size = 24 }) => 
   </svg>
 );
 
-export const Shield: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Shield: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -587,7 +587,7 @@ export const Shield: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const AlertTriangle: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const AlertTriangle: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -603,15 +603,15 @@ export const AlertTriangle: React.FC<IconProps> = ({ className = '', size = 24 }
   </svg>
 );
 
-export const Trash2: React.FC<IconProps> = ({ className = '', size = 24 }) => (
-  <LucideTrash className={cn(className, 'w-4 h-4')} size={size} />
+export const Trash2: React.FC<IconProps> = ({ className = "", size = 24 }) => (
+  <LucideTrash className={cn(className, "w-4 h-4")} size={size} />
 );
 
-export const Send: React.FC<IconProps> = ({ className = '', size = 24 }) => (
-  <SendIcon className={cn(className, 'w-4 h-4')} size={size} />
+export const Send: React.FC<IconProps> = ({ className = "", size = 24 }) => (
+  <SendIcon className={cn(className, "w-4 h-4")} size={size} />
 );
 
-export const CheckCircle: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const CheckCircle: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -627,7 +627,7 @@ export const CheckCircle: React.FC<IconProps> = ({ className = '', size = 24 }) 
   </svg>
 );
 
-export const Zap: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const Zap: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -643,7 +643,7 @@ export const Zap: React.FC<IconProps> = ({ className = '', size = 24 }) => (
   </svg>
 );
 
-export const DollarSign: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const DollarSign: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -656,7 +656,7 @@ export const DollarSign: React.FC<IconProps> = ({ className = '', size = 24 }) =
   </svg>
 );
 
-export const StudioLogo: React.FC<IconProps> = ({ className = '', size = 24 }) => (
+export const StudioLogo: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 288 180"

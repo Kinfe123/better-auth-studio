@@ -1,8 +1,8 @@
-import { Check, Copy, FileCode } from 'lucide-react';
-import { useState } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { Button } from './ui/button';
+import { Check, Copy, FileCode } from "lucide-react";
+import { useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { Button } from "./ui/button";
 
 interface CodeBlockProps {
   code: string;
@@ -13,9 +13,9 @@ interface CodeBlockProps {
 
 export function CodeBlock({
   code,
-  language = 'typescript',
-  fileName = 'auth.ts',
-  className = '',
+  language = "typescript",
+  fileName = "auth.ts",
+  className = "",
 }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
@@ -31,16 +31,16 @@ export function CodeBlock({
     ...vscDarkPlus,
     'pre[class*="language-"]': {
       ...vscDarkPlus['pre[class*="language-"]'],
-      background: '#0d1117',
-      padding: '1.25rem',
+      background: "#0d1117",
+      padding: "1.25rem",
       margin: 0,
       borderRadius: 0,
     },
     'code[class*="language-"]': {
       ...vscDarkPlus['code[class*="language-"]'],
-      background: 'transparent',
-      fontSize: '13px',
-      lineHeight: '1.6',
+      background: "transparent",
+      fontSize: "13px",
+      lineHeight: "1.6",
       fontFamily:
         'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
     },
@@ -71,16 +71,16 @@ export function CodeBlock({
           style={customStyle}
           customStyle={{
             margin: 0,
-            padding: '1.25rem',
-            background: 'black',
-            border: '1px dashed #333333',
+            padding: "1.25rem",
+            background: "black",
+            border: "1px dashed #333333",
           }}
           codeTagProps={{
             style: {
               fontFamily:
                 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
-              fontSize: '13px',
-              lineHeight: '1.6',
+              fontSize: "13px",
+              lineHeight: "1.6",
             },
           }}
         >

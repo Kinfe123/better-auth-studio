@@ -1,29 +1,29 @@
-import { describe, it, expect, afterEach } from 'vitest';
-import { startStudio } from '../src/studio';
-import type { AuthConfig } from '../src/config';
+import { describe, it, expect, afterEach } from "vitest";
+import { startStudio } from "../src/studio";
+import type { AuthConfig } from "../src/config";
 
-describe('Studio', () => {
+describe("Studio", () => {
   let testServer: any = null;
 
   afterEach(async () => {
-    if (testServer && typeof testServer.close === 'function') {
+    if (testServer && typeof testServer.close === "function") {
       await new Promise<void>((resolve) => {
         testServer.close(() => resolve());
       });
     }
   });
 
-  it('should start studio server successfully', async () => {
+  it("should start studio server successfully", async () => {
     const mockAuthConfig: AuthConfig = {
       database: {
-        adapter: 'prisma',
-        provider: 'postgresql',
+        adapter: "prisma",
+        provider: "postgresql",
       },
     };
 
     const result = await startStudio({
       port: 0, // Use random port
-      host: 'localhost',
+      host: "localhost",
       openBrowser: false,
       authConfig: mockAuthConfig,
       logStartup: false,
@@ -31,22 +31,22 @@ describe('Studio', () => {
 
     expect(result).toBeDefined();
     expect(result.server).toBeDefined();
-    expect(typeof result.server.close).toBe('function');
-    
+    expect(typeof result.server.close).toBe("function");
+
     testServer = result.server;
   });
 
-  it('should start studio with watch mode', async () => {
+  it("should start studio with watch mode", async () => {
     const mockAuthConfig: AuthConfig = {
       database: {
-        adapter: 'drizzle',
-        provider: 'pg',
+        adapter: "drizzle",
+        provider: "pg",
       },
     };
 
     const result = await startStudio({
       port: 0,
-      host: 'localhost',
+      host: "localhost",
       openBrowser: false,
       authConfig: mockAuthConfig,
       watchMode: true,
@@ -56,20 +56,20 @@ describe('Studio', () => {
     expect(result).toBeDefined();
     expect(result.server).toBeDefined();
     expect(result.wss).toBeDefined(); // WebSocket server should exist in watch mode
-    
+
     testServer = result.server;
   });
 
-  it('should start studio without watch mode', async () => {
+  it("should start studio without watch mode", async () => {
     const mockAuthConfig: AuthConfig = {
       database: {
-        adapter: 'prisma',
+        adapter: "prisma",
       },
     };
 
     const result = await startStudio({
       port: 0,
-      host: 'localhost',
+      host: "localhost",
       openBrowser: false,
       authConfig: mockAuthConfig,
       watchMode: false,
@@ -79,14 +79,14 @@ describe('Studio', () => {
     expect(result).toBeDefined();
     expect(result.server).toBeDefined();
     expect(result.wss).toBeNull(); // No WebSocket server in non-watch mode
-    
+
     testServer = result.server;
   });
 
-  it('should handle onWatchConnection callback', async () => {
+  it("should handle onWatchConnection callback", async () => {
     const mockAuthConfig: AuthConfig = {
       database: {
-        adapter: 'prisma',
+        adapter: "prisma",
       },
     };
 
@@ -94,7 +94,7 @@ describe('Studio', () => {
 
     const result = await startStudio({
       port: 0,
-      host: 'localhost',
+      host: "localhost",
       openBrowser: false,
       authConfig: mockAuthConfig,
       watchMode: true,
@@ -106,8 +106,7 @@ describe('Studio', () => {
 
     expect(result).toBeDefined();
     expect(result.wss).toBeDefined();
-    
+
     testServer = result.server;
   });
 });
-

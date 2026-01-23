@@ -1,20 +1,20 @@
-import { Check, Copy } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { Check, Copy } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface CopyableIdProps {
   id: string;
   label?: string;
   nonSliced?: boolean;
   className?: string;
-  variant?: 'inline' | 'detail' | 'subscript';
+  variant?: "inline" | "detail" | "subscript";
 }
 
 export function CopyableId({
   id,
-  label = 'ID',
-  className = '',
-  variant = 'inline',
+  label = "ID",
+  className = "",
+  variant = "inline",
   nonSliced = false,
 }: CopyableIdProps) {
   const [copied, setCopied] = useState(false);
@@ -23,14 +23,14 @@ export function CopyableId({
     try {
       await navigator.clipboard.writeText(id);
       setCopied(true);
-      toast.success('Copied to clipboard');
+      toast.success("Copied to clipboard");
       setTimeout(() => setCopied(false), 2000);
     } catch (_error) {
-      toast.error('Failed to copy to clipboard');
+      toast.error("Failed to copy to clipboard");
     }
   };
 
-  if (variant === 'detail') {
+  if (variant === "detail") {
     return (
       <div className={`flex justify-between items-center ${className}`}>
         <span className="text-gray-400 font-mono uppercase text-xs">{label}:</span>
@@ -50,7 +50,7 @@ export function CopyableId({
     );
   }
 
-  if (variant === 'subscript') {
+  if (variant === "subscript") {
     return (
       <sup
         onClick={copyToClipboard}

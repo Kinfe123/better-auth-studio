@@ -1,9 +1,9 @@
-import { ArrowUpRight, Edit } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'sonner';
-import { AnimatedNumber } from '../components/AnimatedNumber';
-import { CopyableId } from '../components/CopyableId';
+import { ArrowUpRight, Edit } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+import { AnimatedNumber } from "../components/AnimatedNumber";
+import { CopyableId } from "../components/CopyableId";
 import {
   ArrowLeft,
   Building2,
@@ -16,18 +16,18 @@ import {
   UserPlus,
   Users,
   X,
-} from '../components/PixelIcons';
-import { Terminal } from '../components/Terminal';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
+} from "../components/PixelIcons";
+import { Terminal } from "../components/Terminal";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/ui/select';
+} from "../components/ui/select";
 
 interface Organization {
   id: string;
@@ -52,7 +52,7 @@ interface Invitation {
   id: string;
   email: string;
   role: string;
-  status: 'pending' | 'accepted' | 'expired' | 'rejected' | 'cancelled';
+  status: "pending" | "accepted" | "expired" | "rejected" | "cancelled";
   organizationId: string;
   teamId?: string;
   inviterId: string;
@@ -83,8 +83,8 @@ export default function OrganizationDetails() {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'details' | 'members' | 'invitations' | 'teams'>(
-    'details'
+  const [activeTab, setActiveTab] = useState<"details" | "members" | "invitations" | "teams">(
+    "details",
   );
   const [teamsEnabled, setTeamsEnabled] = useState(false);
   const [organizationEnabled, setOrganizationEnabled] = useState(false);
@@ -97,12 +97,12 @@ export default function OrganizationDetails() {
   const [showDeleteTeamModal, setShowDeleteTeamModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
-  const [editFormData, setEditFormData] = useState({ name: '', slug: '' });
+  const [editFormData, setEditFormData] = useState({ name: "", slug: "" });
 
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [selectedInviterId, setSelectedInviterId] = useState('');
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [selectedInviterId, setSelectedInviterId] = useState("");
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
-  const [teamFormData, setTeamFormData] = useState({ name: '' });
+  const [teamFormData, setTeamFormData] = useState({ name: "" });
   const [inviting, setInviting] = useState(false);
   const [isCreatingTeam, setIsCreatingTeam] = useState(false);
   const [isUpdatingTeam, setIsUpdatingTeam] = useState(false);
@@ -110,10 +110,10 @@ export default function OrganizationDetails() {
   const [seedingLogs, setSeedingLogs] = useState<
     Array<{
       id: string;
-      type: 'info' | 'success' | 'error' | 'progress';
+      type: "info" | "success" | "error" | "progress";
       message: string;
       timestamp: Date;
-      status?: 'pending' | 'running' | 'completed' | 'failed';
+      status?: "pending" | "running" | "completed" | "failed";
     }>
   >([]);
   const [isSeeding, setIsSeeding] = useState(false);
@@ -123,10 +123,10 @@ export default function OrganizationDetails() {
   const [teamSeedingLogs, setTeamSeedingLogs] = useState<
     Array<{
       id: string;
-      type: 'info' | 'success' | 'error' | 'progress';
+      type: "info" | "success" | "error" | "progress";
       message: string;
       timestamp: Date;
-      status?: 'pending' | 'running' | 'completed' | 'failed';
+      status?: "pending" | "running" | "completed" | "failed";
     }>
   >([]);
   const [isTeamSeeding, setIsTeamSeeding] = useState(false);
@@ -166,13 +166,13 @@ export default function OrganizationDetails() {
   }, []);
 
   useEffect(() => {
-    if (activeTab === 'members' && orgId) {
+    if (activeTab === "members" && orgId) {
       fetchMembers();
     }
   }, [activeTab, orgId]);
 
   useEffect(() => {
-    if (activeTab === 'invitations' && orgId) {
+    if (activeTab === "invitations" && orgId) {
       fetchInvitations();
     }
   }, [activeTab, orgId]);
@@ -190,11 +190,11 @@ export default function OrganizationDetails() {
       } else if (data.organization) {
         setOrganization(data.organization);
       } else {
-        toast.error('Organization not found');
+        toast.error("Organization not found");
       }
     } catch (error) {
-      console.error('Failed to fetch organization:', error);
-      toast.error('Failed to load organization');
+      console.error("Failed to fetch organization:", error);
+      toast.error("Failed to load organization");
     } finally {
       setLoading(false);
     }
@@ -202,22 +202,22 @@ export default function OrganizationDetails() {
 
   const checkTeamsEnabled = async () => {
     try {
-      const response = await fetch('/api/plugins/teams/status');
+      const response = await fetch("/api/plugins/teams/status");
       const data = await response.json();
       setTeamsEnabled(data.enabled);
     } catch (error) {
-      console.error('Failed to check teams status:', error);
+      console.error("Failed to check teams status:", error);
       setTeamsEnabled(false);
     }
   };
 
   const checkOrganizationEnabled = async () => {
     try {
-      const response = await fetch('/api/plugins/organization/status');
+      const response = await fetch("/api/plugins/organization/status");
       const data = await response.json();
       setOrganizationEnabled(data.enabled);
     } catch (error) {
-      console.error('Failed to check organization status:', error);
+      console.error("Failed to check organization status:", error);
       setOrganizationEnabled(false);
     }
   };
@@ -231,8 +231,8 @@ export default function OrganizationDetails() {
         setTeams(data.teams || []);
       }
     } catch (error) {
-      console.error('Failed to fetch teams:', error);
-      toast.error('Failed to load teams');
+      console.error("Failed to fetch teams:", error);
+      toast.error("Failed to load teams");
     }
   };
 
@@ -245,8 +245,8 @@ export default function OrganizationDetails() {
         setInvitations(data.invitations || []);
       }
     } catch (error) {
-      console.error('Failed to fetch invitations:', error);
-      toast.error('Failed to load invitations');
+      console.error("Failed to fetch invitations:", error);
+      toast.error("Failed to load invitations");
     }
   };
 
@@ -259,8 +259,8 @@ export default function OrganizationDetails() {
         setMembers(data.members || []);
       }
     } catch (error) {
-      console.error('Failed to fetch members:', error);
-      toast.error('Failed to load members');
+      console.error("Failed to fetch members:", error);
+      toast.error("Failed to load members");
     }
   };
 
@@ -270,8 +270,8 @@ export default function OrganizationDetails() {
 
     setSeedingLogs([
       {
-        id: 'start',
-        type: 'info',
+        id: "start",
+        type: "info",
         message: `Starting member seeding process for ${count} members...`,
         timestamp: new Date(),
       },
@@ -279,8 +279,8 @@ export default function OrganizationDetails() {
 
     try {
       const response = await fetch(`/api/organizations/${orgId}/seed-members`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ count }),
       });
 
@@ -291,15 +291,15 @@ export default function OrganizationDetails() {
           if (r.success) {
             return {
               id: `member-${index}`,
-              type: 'progress' as const,
+              type: "progress" as const,
               message: `Adding member: ${r.member.user.name} (${r.member.user.email})`,
               timestamp: new Date(),
-              status: 'completed' as const,
+              status: "completed" as const,
             };
           } else {
             return {
               id: `member-${index}`,
-              type: 'error' as const,
+              type: "error" as const,
               message: `Failed to add member ${index + 1}: ${r.error}`,
               timestamp: new Date(),
             };
@@ -312,8 +312,8 @@ export default function OrganizationDetails() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'complete',
-            type: 'success',
+            id: "complete",
+            type: "success",
             message: `✅ Seeding completed! Added ${successCount}/${count} members successfully`,
             timestamp: new Date(),
           },
@@ -325,25 +325,25 @@ export default function OrganizationDetails() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'error',
-            type: 'error',
-            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            id: "error",
+            type: "error",
+            message: `❌ Seeding failed: ${result.error || "Unknown error"}`,
             timestamp: new Date(),
           },
         ]);
-        toast.error(result.error || 'Failed to seed members');
+        toast.error(result.error || "Failed to seed members");
       }
     } catch (error) {
       setSeedingLogs((prev) => [
         ...prev,
         {
-          id: 'error',
-          type: 'error',
+          id: "error",
+          type: "error",
           message: `❌ Network error: ${error}`,
           timestamp: new Date(),
         },
       ]);
-      toast.error('Failed to seed members');
+      toast.error("Failed to seed members");
     } finally {
       setIsSeeding(false);
     }
@@ -355,8 +355,8 @@ export default function OrganizationDetails() {
 
     setTeamSeedingLogs([
       {
-        id: 'start',
-        type: 'info',
+        id: "start",
+        type: "info",
         message: `Starting team seeding process for ${count} teams...`,
         timestamp: new Date(),
       },
@@ -364,8 +364,8 @@ export default function OrganizationDetails() {
 
     try {
       const response = await fetch(`/api/organizations/${orgId}/seed-teams`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ count }),
       });
 
@@ -376,15 +376,15 @@ export default function OrganizationDetails() {
           if (r.success) {
             return {
               id: `team-${index}`,
-              type: 'progress' as const,
+              type: "progress" as const,
               message: `Creating team: ${r.team.name}`,
               timestamp: new Date(),
-              status: 'completed' as const,
+              status: "completed" as const,
             };
           } else {
             return {
               id: `team-${index}`,
-              type: 'error' as const,
+              type: "error" as const,
               message: `Failed to create team ${index + 1}: ${r.error}`,
               timestamp: new Date(),
             };
@@ -397,8 +397,8 @@ export default function OrganizationDetails() {
         setTeamSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'complete',
-            type: 'success',
+            id: "complete",
+            type: "success",
             message: `✅ Seeding completed! Created ${successCount}/${count} teams successfully`,
             timestamp: new Date(),
           },
@@ -410,25 +410,25 @@ export default function OrganizationDetails() {
         setTeamSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'error',
-            type: 'error',
-            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            id: "error",
+            type: "error",
+            message: `❌ Seeding failed: ${result.error || "Unknown error"}`,
             timestamp: new Date(),
           },
         ]);
-        toast.error(result.error || 'Failed to seed teams');
+        toast.error(result.error || "Failed to seed teams");
       }
     } catch (error) {
       setTeamSeedingLogs((prev) => [
         ...prev,
         {
-          id: 'error',
-          type: 'error',
+          id: "error",
+          type: "error",
           message: `❌ Network error: ${error}`,
           timestamp: new Date(),
         },
       ]);
-      toast.error('Failed to seed teams');
+      toast.error("Failed to seed teams");
     } finally {
       setIsTeamSeeding(false);
     }
@@ -436,24 +436,24 @@ export default function OrganizationDetails() {
 
   const fetchAvailableUsers = async () => {
     try {
-      const response = await fetch('/api/users/all');
+      const response = await fetch("/api/users/all");
       const data = await response.json();
 
       if (data.success) {
         setAvailableUsers(data.users || []);
       }
     } catch (error) {
-      console.error('Failed to fetch users:', error);
+      console.error("Failed to fetch users:", error);
     }
   };
 
   const generateSlug = (name: string): string => {
     return name
       .toLowerCase()
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/[^a-z0-9-]/g, '') // Remove special characters except hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
+      .replace(/[^a-z0-9-]/g, "") // Remove special characters except hyphens
+      .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+      .replace(/^-|-$/g, ""); // Remove leading/trailing hyphens
   };
 
   const openEditModal = () => {
@@ -474,22 +474,22 @@ export default function OrganizationDetails() {
 
   const handleUpdateOrganization = async () => {
     if (!organization) {
-      toast.error('No organization selected');
+      toast.error("No organization selected");
       return;
     }
 
     if (!editFormData.name) {
-      toast.error('Please fill in the organization name');
+      toast.error("Please fill in the organization name");
       return;
     }
 
     setIsUpdating(true);
-    const toastId = toast.loading('Updating organization...');
+    const toastId = toast.loading("Updating organization...");
 
     try {
       const response = await fetch(`/api/organizations/${organization.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: editFormData.name,
           slug: editFormData.slug,
@@ -501,16 +501,16 @@ export default function OrganizationDetails() {
       if (result.success) {
         await fetchOrganization();
         setShowEditModal(false);
-        setEditFormData({ name: '', slug: '' });
-        toast.success('Organization updated successfully!', { id: toastId });
+        setEditFormData({ name: "", slug: "" });
+        toast.success("Organization updated successfully!", { id: toastId });
       } else {
-        toast.error(`Error updating organization: ${result.error || 'Unknown error'}`, {
+        toast.error(`Error updating organization: ${result.error || "Unknown error"}`, {
           id: toastId,
         });
       }
     } catch (error) {
-      console.error('Error updating organization:', error);
-      toast.error('Error updating organization', { id: toastId });
+      console.error("Error updating organization:", error);
+      toast.error("Error updating organization", { id: toastId });
     } finally {
       setIsUpdating(false);
     }
@@ -523,25 +523,25 @@ export default function OrganizationDetails() {
 
   const handleInviteUser = async () => {
     if (!inviteEmail) {
-      toast.error('Please enter an email address');
+      toast.error("Please enter an email address");
       return;
     }
 
     if (!selectedInviterId) {
-      toast.error('Please select an inviter');
+      toast.error("Please select an inviter");
       return;
     }
 
     setInviting(true);
-    const toastId = toast.loading('Sending invitation...');
+    const toastId = toast.loading("Sending invitation...");
 
     try {
       const response = await fetch(`/api/organizations/${orgId}/invitations`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: inviteEmail,
-          role: 'member',
+          role: "member",
           inviterId: selectedInviterId,
         }),
       });
@@ -551,17 +551,17 @@ export default function OrganizationDetails() {
       if (result.success) {
         await fetchInvitations();
         setShowInviteModal(false);
-        setInviteEmail('');
-        setSelectedInviterId('');
-        toast.success('Invitation sent successfully!', { id: toastId });
+        setInviteEmail("");
+        setSelectedInviterId("");
+        toast.success("Invitation sent successfully!", { id: toastId });
       } else {
-        toast.error(`Error sending invitation: ${result.error || 'Unknown error'}`, {
+        toast.error(`Error sending invitation: ${result.error || "Unknown error"}`, {
           id: toastId,
         });
       }
     } catch (error) {
-      console.error('Error sending invitation:', error);
-      toast.error('Error sending invitation', { id: toastId });
+      console.error("Error sending invitation:", error);
+      toast.error("Error sending invitation", { id: toastId });
     } finally {
       setInviting(false);
     }
@@ -569,27 +569,27 @@ export default function OrganizationDetails() {
 
   const handleCancelInvitation = async (invitationId: string) => {
     setCancellingInvitations((prev) => ({ ...prev, [invitationId]: true }));
-    const toastId = toast.loading('Cancelling invitation...');
+    const toastId = toast.loading("Cancelling invitation...");
 
     try {
       const response = await fetch(`/api/invitations/${invitationId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       });
 
       const result = await response.json();
 
       if (result.success) {
         await fetchInvitations();
-        toast.success('Invitation cancelled successfully!', { id: toastId });
+        toast.success("Invitation cancelled successfully!", { id: toastId });
       } else {
-        toast.error(`Error cancelling invitation: ${result.error || 'Unknown error'}`, {
+        toast.error(`Error cancelling invitation: ${result.error || "Unknown error"}`, {
           id: toastId,
         });
       }
     } catch (error) {
-      console.error('Error cancelling invitation:', error);
-      toast.error('Error cancelling invitation', { id: toastId });
+      console.error("Error cancelling invitation:", error);
+      toast.error("Error cancelling invitation", { id: toastId });
     } finally {
       setCancellingInvitations((prev) => {
         const { [invitationId]: _, ...rest } = prev;
@@ -600,12 +600,12 @@ export default function OrganizationDetails() {
 
   const handleResendInvitation = async (invitationId: string, email: string) => {
     setResendingInvitations((prev) => ({ ...prev, [invitationId]: true }));
-    const toastId = toast.loading('Resending invitation...');
+    const toastId = toast.loading("Resending invitation...");
 
     try {
       const response = await fetch(`/api/invitations/${invitationId}/resend`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
       });
 
       const result = await response.json();
@@ -614,13 +614,13 @@ export default function OrganizationDetails() {
         await fetchInvitations();
         toast.success(`Invitation resent to ${email}!`, { id: toastId });
       } else {
-        toast.error(`Error resending invitation: ${result.error || 'Unknown error'}`, {
+        toast.error(`Error resending invitation: ${result.error || "Unknown error"}`, {
           id: toastId,
         });
       }
     } catch (error) {
-      console.error('Error resending invitation:', error);
-      toast.error('Error resending invitation', { id: toastId });
+      console.error("Error resending invitation:", error);
+      toast.error("Error resending invitation", { id: toastId });
     } finally {
       setResendingInvitations((prev) => {
         const { [invitationId]: _, ...rest } = prev;
@@ -635,8 +635,8 @@ export default function OrganizationDetails() {
 
     try {
       const response = await fetch(`/api/members/${memberId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       });
 
       const result = await response.json();
@@ -645,11 +645,11 @@ export default function OrganizationDetails() {
         await fetchMembers();
         toast.success(`${userName} removed from organization!`, { id: toastId });
       } else {
-        toast.error(`Error removing member: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error removing member: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error removing member:', error);
-      toast.error('Error removing member', { id: toastId });
+      console.error("Error removing member:", error);
+      toast.error("Error removing member", { id: toastId });
     } finally {
       setRemovingMembers((prev) => {
         const { [memberId]: _, ...rest } = prev;
@@ -660,17 +660,17 @@ export default function OrganizationDetails() {
 
   const handleCreateTeam = async () => {
     if (!teamFormData.name) {
-      toast.error('Please enter a team name');
+      toast.error("Please enter a team name");
       return;
     }
 
     setIsCreatingTeam(true);
-    const toastId = toast.loading('Creating team...');
+    const toastId = toast.loading("Creating team...");
 
     try {
       const response = await fetch(`/api/organizations/${orgId}/teams`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: teamFormData.name,
           organizationId: orgId,
@@ -682,14 +682,14 @@ export default function OrganizationDetails() {
       if (result.success) {
         await fetchTeams();
         setShowCreateTeamModal(false);
-        setTeamFormData({ name: '' });
-        toast.success('Team created successfully!', { id: toastId });
+        setTeamFormData({ name: "" });
+        toast.success("Team created successfully!", { id: toastId });
       } else {
-        toast.error(`Error creating team: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error creating team: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error creating team:', error);
-      toast.error('Error creating team', { id: toastId });
+      console.error("Error creating team:", error);
+      toast.error("Error creating team", { id: toastId });
     } finally {
       setIsCreatingTeam(false);
     }
@@ -697,17 +697,17 @@ export default function OrganizationDetails() {
 
   const handleUpdateTeam = async () => {
     if (!selectedTeam || !teamFormData.name) {
-      toast.error('Please enter a team name');
+      toast.error("Please enter a team name");
       return;
     }
 
     setIsUpdatingTeam(true);
-    const toastId = toast.loading('Updating team...');
+    const toastId = toast.loading("Updating team...");
 
     try {
       const response = await fetch(`/api/teams/${selectedTeam.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: teamFormData.name,
         }),
@@ -719,14 +719,14 @@ export default function OrganizationDetails() {
         await fetchTeams();
         setShowEditTeamModal(false);
         setSelectedTeam(null);
-        setTeamFormData({ name: '' });
-        toast.success('Team updated successfully!', { id: toastId });
+        setTeamFormData({ name: "" });
+        toast.success("Team updated successfully!", { id: toastId });
       } else {
-        toast.error(`Error updating team: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error updating team: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error updating team:', error);
-      toast.error('Error updating team', { id: toastId });
+      console.error("Error updating team:", error);
+      toast.error("Error updating team", { id: toastId });
     } finally {
       setIsUpdatingTeam(false);
     }
@@ -734,17 +734,17 @@ export default function OrganizationDetails() {
 
   const handleDeleteTeam = async () => {
     if (!selectedTeam) {
-      toast.error('No team selected');
+      toast.error("No team selected");
       return;
     }
 
     setIsDeletingTeam(true);
-    const toastId = toast.loading('Deleting team...');
+    const toastId = toast.loading("Deleting team...");
 
     try {
       const response = await fetch(`/api/teams/${selectedTeam.id}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       });
 
       const result = await response.json();
@@ -753,13 +753,13 @@ export default function OrganizationDetails() {
         await fetchTeams();
         setShowDeleteTeamModal(false);
         setSelectedTeam(null);
-        toast.success('Team deleted successfully!', { id: toastId });
+        toast.success("Team deleted successfully!", { id: toastId });
       } else {
-        toast.error(`Error deleting team: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error deleting team: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (error) {
-      console.error('Error deleting team:', error);
-      toast.error('Error deleting team', { id: toastId });
+      console.error("Error deleting team:", error);
+      toast.error("Error deleting team", { id: toastId });
     } finally {
       setIsDeletingTeam(false);
     }
@@ -815,10 +815,10 @@ export default function OrganizationDetails() {
           <span className="mb-4 ml-0 flex justify-start items-start text-left border-none text-white">
             <span className="font-light">
               <span
-                onClick={() => navigate('/organizations')}
+                onClick={() => navigate("/organizations")}
                 className="uppercase cursor-pointer text-white/80 font-mono text-sm"
               >
-                orgs /{' '}
+                orgs /{" "}
               </span>
               <span className="text-white font-mono text-sm">{orgId}</span>
             </span>
@@ -866,11 +866,11 @@ export default function OrganizationDetails() {
         <div className="border-b border-dashed border-white/20">
           <nav className="flex space-x-8 px-6">
             <button
-              onClick={() => setActiveTab('details')}
+              onClick={() => setActiveTab("details")}
               className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'details'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                activeTab === "details"
+                  ? "border-white text-white"
+                  : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
               }`}
             >
               <Building2 className="w-4 h-4 text-white/90" />
@@ -882,17 +882,17 @@ export default function OrganizationDetails() {
                     className="text-white/80 font-mono text-xs"
                     prefix={<span className="mr-0.5 text-gray-500">[</span>}
                     suffix={<span className="ml-0.5 text-gray-500">]</span>}
-                    format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                    format={{ notation: "standard", maximumFractionDigits: 0 }}
                   />
                 </sup>
               </span>
             </button>
             <button
-              onClick={() => setActiveTab('members')}
+              onClick={() => setActiveTab("members")}
               className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'members'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                activeTab === "members"
+                  ? "border-white text-white"
+                  : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
               }`}
             >
               <Users className="w-4 h-4 text-white/90" />
@@ -904,17 +904,17 @@ export default function OrganizationDetails() {
                     className="text-white/80 font-mono text-xs"
                     prefix={<span className="mr-0.5 text-gray-500">[</span>}
                     suffix={<span className="ml-0.5 text-gray-500">]</span>}
-                    format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                    format={{ notation: "standard", maximumFractionDigits: 0 }}
                   />
                 </sup>
               </span>
             </button>
             <button
-              onClick={() => setActiveTab('invitations')}
+              onClick={() => setActiveTab("invitations")}
               className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'invitations'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                activeTab === "invitations"
+                  ? "border-white text-white"
+                  : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
               }`}
             >
               <Mail className="w-4 h-4 text-white/90" />
@@ -926,17 +926,17 @@ export default function OrganizationDetails() {
                     className="text-white/80 font-mono text-xs"
                     prefix={<span className="mr-0.5 text-gray-500">[</span>}
                     suffix={<span className="ml-0.5 text-gray-500">]</span>}
-                    format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                    format={{ notation: "standard", maximumFractionDigits: 0 }}
                   />
                 </sup>
               </span>
             </button>
             <button
-              onClick={() => setActiveTab('teams')}
+              onClick={() => setActiveTab("teams")}
               className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'teams'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                activeTab === "teams"
+                  ? "border-white text-white"
+                  : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
               }`}
             >
               <Users className="w-4 h-4 text-white/90" />
@@ -948,7 +948,7 @@ export default function OrganizationDetails() {
                     className="text-white/80 font-mono text-xs"
                     prefix={<span className="mr-0.5 text-gray-500">[</span>}
                     suffix={<span className="ml-0.5 text-gray-500">]</span>}
-                    format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                    format={{ notation: "standard", maximumFractionDigits: 0 }}
                   />
                 </sup>
               </span>
@@ -958,7 +958,7 @@ export default function OrganizationDetails() {
 
         <div className="p-6">
           {/* Tab Content */}
-          {activeTab === 'details' && (
+          {activeTab === "details" && (
             <div className="space-y-6 overflow-x-hidden">
               <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
                 <h3 className="text-sm uppercase font-mono text-gray-400 mb-4 tracking-wider">
@@ -977,10 +977,10 @@ export default function OrganizationDetails() {
                   <div>
                     <label className="text-sm text-gray-400 font-mono uppercase">Created</label>
                     <p className="text-white font-sans mt-1">
-                      {new Date(organization.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
+                      {new Date(organization.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                       })}
                     </p>
                   </div>
@@ -995,7 +995,7 @@ export default function OrganizationDetails() {
                       <p className="text-2xl text-white font-sans font-light">
                         <AnimatedNumber
                           value={members.length}
-                          format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                          format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </p>
                       <p className="text-sm text-gray-400 font-mono uppercase">Members</p>
@@ -1009,7 +1009,7 @@ export default function OrganizationDetails() {
                       <p className="text-2xl text-white font-sans font-light">
                         <AnimatedNumber
                           value={teams.length}
-                          format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                          format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </p>
                       <p className="text-sm text-gray-400 font-mono uppercase">Teams</p>
@@ -1023,7 +1023,7 @@ export default function OrganizationDetails() {
                       <p className="text-2xl text-white font-sans font-light">
                         <AnimatedNumber
                           value={invitations.length}
-                          format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                          format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </p>
                       <p className="text-sm text-gray-400 font-mono uppercase">Invitations</p>
@@ -1038,9 +1038,9 @@ export default function OrganizationDetails() {
                         <AnimatedNumber
                           value={Math.ceil(
                             (new Date().getTime() - new Date(organization.createdAt).getTime()) /
-                              (1000 * 60 * 60 * 24)
+                              (1000 * 60 * 60 * 24),
                           )}
-                          format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                          format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </p>
                       <p className="text-sm text-gray-400 font-mono uppercase">Days Active</p>
@@ -1051,7 +1051,7 @@ export default function OrganizationDetails() {
             </div>
           )}
 
-          {activeTab === 'teams' && (
+          {activeTab === "teams" && (
             <div className="space-y-6">
               {/* Teams Header */}
               <div className="flex items-center justify-between">
@@ -1110,23 +1110,23 @@ export default function OrganizationDetails() {
 
                         <div className="mt-4 bg-black/70 border border-dashed border-white/10 rounded-none p-3 overflow-x-auto">
                           <pre className="text-sm text-gray-300">
-                            <span className="text-blue-400">import</span> {`{ betterAuth }`}{' '}
-                            <span className="text-blue-400">from</span>{' '}
+                            <span className="text-blue-400">import</span> {`{ betterAuth }`}{" "}
+                            <span className="text-blue-400">from</span>{" "}
                             <span className="text-green-400">"better-auth"</span> <br />
-                            <span className="text-blue-400">import</span> {`{ organization }`}{' '}
-                            <span className="text-blue-400">from</span>{' '}
+                            <span className="text-blue-400">import</span> {`{ organization }`}{" "}
+                            <span className="text-blue-400">from</span>{" "}
                             <span className="text-green-400">"better-auth/plugins"</span> <br />
-                            <span className="text-blue-400">export const</span>{' '}
-                            <span className="text-yellow-300">auth</span> ={' '}
+                            <span className="text-blue-400">export const</span>{" "}
+                            <span className="text-yellow-300">auth</span> ={" "}
                             <span className="text-yellow-300">betterAuth</span>({`{`} <br />
                             <span className="text-gray-500 pl-10">
                               // ... your existing configuration
-                            </span>{' '}
+                            </span>{" "}
                             <br />
                             <span className="text-red-300 pl-10">plugins</span>: [ <br />
                             <span className="text-yellow-300 pl-12">organization</span>({`{`} <br />
                             <span className="text-red-300 pl-16">teams</span>: {`{`} <br />
-                            <span className="text-yellow-300 pl-20">enabled</span>:{' '}
+                            <span className="text-yellow-300 pl-20">enabled</span>:{" "}
                             <span className="text-blue-400">true</span> <br />
                             <span className="pl-16">{`}`}</span> <br />
                             <span className="pl-12">{`})`}</span> <br />
@@ -1155,7 +1155,7 @@ export default function OrganizationDetails() {
                       </Button>
 
                       <div className="mt-4 text-xs text-gray-500">
-                        Need help? Check the{' '}
+                        Need help? Check the{" "}
                         <a
                           href="https://better-auth.com/docs/plugins/organization"
                           target="_blank"
@@ -1265,7 +1265,7 @@ export default function OrganizationDetails() {
             </div>
           )}
 
-          {activeTab === 'members' && (
+          {activeTab === "members" && (
             <div className="space-y-6">
               {/* Members Header */}
               <div className="flex items-center justify-between">
@@ -1401,7 +1401,7 @@ export default function OrganizationDetails() {
             </div>
           )}
 
-          {activeTab === 'invitations' && (
+          {activeTab === "invitations" && (
             <div className="space-y-6">
               {/* Invitations Header */}
               <div className="flex items-center justify-between">
@@ -1461,12 +1461,12 @@ export default function OrganizationDetails() {
                                 <div>
                                   <div className="text-white font-light">{invitation.email}</div>
                                   <div className="text-[11px] font-mono uppercase text-gray-400">
-                                    Expires on{' '}
+                                    Expires on{" "}
                                     <span className="text-whtie">
-                                      {new Date(invitation.expiresAt).toLocaleDateString('en-US', {
-                                        month: 'short',
-                                        year: 'numeric',
-                                        day: 'numeric',
+                                      {new Date(invitation.expiresAt).toLocaleDateString("en-US", {
+                                        month: "short",
+                                        year: "numeric",
+                                        day: "numeric",
                                       })}
                                     </span>
                                   </div>
@@ -1478,13 +1478,13 @@ export default function OrganizationDetails() {
                                 <div className="flex items-center space-x-2">
                                   <Users className="w-4 h-4 text-gray-400" />
                                   <span className="text-white text-sm">
-                                    {teams.find((t) => t.id === invitation.teamId)?.name || 'Team'}
+                                    {teams.find((t) => t.id === invitation.teamId)?.name || "Team"}
                                   </span>
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       navigate(
-                                        `/organizations/${orgId}/teams/${invitation.teamId}`
+                                        `/organizations/${orgId}/teams/${invitation.teamId}`,
                                       );
                                     }}
                                     className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
@@ -1505,14 +1505,14 @@ export default function OrganizationDetails() {
                             <td className="py-4 px-4">
                               <span
                                 className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${
-                                  invitation.status === 'accepted'
-                                    ? 'bg-green-900/50 text-green-400 border border-green-500/30'
-                                    : invitation.status === 'rejected' ||
-                                        invitation.status === 'cancelled'
-                                      ? 'bg-red-900/50 text-red-400 border border-red-500/30'
-                                      : invitation.status === 'expired'
-                                        ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-500/30'
-                                        : 'bg-blue-900/50 text-blue-400 border border-blue-500/30'
+                                  invitation.status === "accepted"
+                                    ? "bg-green-900/50 text-green-400 border border-green-500/30"
+                                    : invitation.status === "rejected" ||
+                                        invitation.status === "cancelled"
+                                      ? "bg-red-900/50 text-red-400 border border-red-500/30"
+                                      : invitation.status === "expired"
+                                        ? "bg-yellow-900/50 text-yellow-400 border border-yellow-500/30"
+                                        : "bg-blue-900/50 text-blue-400 border border-blue-500/30"
                                 }`}
                               >
                                 {invitation.status}
@@ -1523,8 +1523,8 @@ export default function OrganizationDetails() {
                               <br />
                               <span className="text-xs text-gray-400">
                                 {new Date(invitation.expiresAt).toLocaleTimeString([], {
-                                  hour: '2-digit',
-                                  minute: '2-digit',
+                                  hour: "2-digit",
+                                  minute: "2-digit",
                                 })}
                               </span>
                             </td>
@@ -1594,8 +1594,8 @@ export default function OrganizationDetails() {
                 size="sm"
                 onClick={() => {
                   setShowInviteModal(false);
-                  setInviteEmail('');
-                  setSelectedInviterId('');
+                  setInviteEmail("");
+                  setSelectedInviterId("");
                 }}
                 disabled={inviting}
                 className="text-gray-400 -mt-2 hover:text-white rounded-none"
@@ -1678,8 +1678,8 @@ export default function OrganizationDetails() {
                 variant="outline"
                 onClick={() => {
                   setShowInviteModal(false);
-                  setInviteEmail('');
-                  setSelectedInviterId('');
+                  setInviteEmail("");
+                  setSelectedInviterId("");
                 }}
                 disabled={inviting}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
@@ -1691,7 +1691,7 @@ export default function OrganizationDetails() {
                 disabled={inviting}
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {inviting ? 'Sending...' : 'Send Invitation'}
+                {inviting ? "Sending..." : "Send Invitation"}
               </Button>
             </div>
           </div>
@@ -1709,7 +1709,7 @@ export default function OrganizationDetails() {
                 size="sm"
                 onClick={() => {
                   setShowCreateTeamModal(false);
-                  setTeamFormData({ name: '' });
+                  setTeamFormData({ name: "" });
                 }}
                 className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
@@ -1742,7 +1742,7 @@ export default function OrganizationDetails() {
                 variant="outline"
                 onClick={() => {
                   setShowCreateTeamModal(false);
-                  setTeamFormData({ name: '' });
+                  setTeamFormData({ name: "" });
                 }}
                 disabled={isCreatingTeam}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
@@ -1754,7 +1754,7 @@ export default function OrganizationDetails() {
                 disabled={isCreatingTeam}
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {isCreatingTeam ? 'Creating...' : 'Create Team'}
+                {isCreatingTeam ? "Creating..." : "Create Team"}
               </Button>
             </div>
           </div>
@@ -1772,7 +1772,7 @@ export default function OrganizationDetails() {
                 size="sm"
                 onClick={() => {
                   setShowEditTeamModal(false);
-                  setTeamFormData({ name: '' });
+                  setTeamFormData({ name: "" });
                 }}
                 disabled={isUpdatingTeam}
                 className="text-gray-400 -mt-2 hover:text-white rounded-none"
@@ -1821,7 +1821,7 @@ export default function OrganizationDetails() {
                 variant="outline"
                 onClick={() => {
                   setShowEditTeamModal(false);
-                  setTeamFormData({ name: '' });
+                  setTeamFormData({ name: "" });
                 }}
                 disabled={isUpdatingTeam}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase text-xs tracking-tight"
@@ -1833,7 +1833,7 @@ export default function OrganizationDetails() {
                 disabled={isUpdatingTeam}
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {isUpdatingTeam ? 'Updating...' : 'Update Team'}
+                {isUpdatingTeam ? "Updating..." : "Update Team"}
               </Button>
             </div>
           </div>
@@ -1893,7 +1893,7 @@ export default function OrganizationDetails() {
                 disabled={isDeletingTeam}
                 className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {isDeletingTeam ? 'Deleting...' : 'Delete Team'}
+                {isDeletingTeam ? "Deleting..." : "Delete Team"}
               </Button>
             </div>
           </div>
@@ -1964,7 +1964,7 @@ export default function OrganizationDetails() {
                   <Button
                     onClick={() => {
                       const count = parseInt(
-                        (document.getElementById('member-count') as HTMLInputElement)?.value || '5'
+                        (document.getElementById("member-count") as HTMLInputElement)?.value || "5",
                       );
                       handleSeedMembers(count);
                     }}
@@ -2077,7 +2077,7 @@ export default function OrganizationDetails() {
                   <Button
                     onClick={() => {
                       const count = parseInt(
-                        (document.getElementById('team-count') as HTMLInputElement)?.value || '3'
+                        (document.getElementById("team-count") as HTMLInputElement)?.value || "3",
                       );
                       handleSeedTeams(count);
                     }}
@@ -2132,7 +2132,7 @@ export default function OrganizationDetails() {
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowEditModal(false);
-              setEditFormData({ name: '', slug: '' });
+              setEditFormData({ name: "", slug: "" });
             }
           }}
         >
@@ -2149,7 +2149,7 @@ export default function OrganizationDetails() {
                 size="sm"
                 onClick={() => {
                   setShowEditModal(false);
-                  setEditFormData({ name: '', slug: '' });
+                  setEditFormData({ name: "", slug: "" });
                 }}
                 className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
@@ -2209,7 +2209,7 @@ export default function OrganizationDetails() {
                 variant="outline"
                 onClick={() => {
                   setShowEditModal(false);
-                  setEditFormData({ name: '', slug: '' });
+                  setEditFormData({ name: "", slug: "" });
                 }}
                 disabled={isUpdating}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
@@ -2221,7 +2221,7 @@ export default function OrganizationDetails() {
                 disabled={isUpdating}
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
-                {isUpdating ? 'Updating...' : 'Update'}
+                {isUpdating ? "Updating..." : "Update"}
               </Button>
             </div>
           </div>

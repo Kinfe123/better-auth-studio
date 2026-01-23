@@ -1,67 +1,67 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 export function serveIndexHtml(publicDir, config = {}) {
-    const indexPath = join(publicDir, 'index.html');
-    let html = readFileSync(indexPath, 'utf-8');
-    const frontendConfig = prepareFrontendConfig(config);
-    html = injectConfig(html, frontendConfig);
-    return html;
+  const indexPath = join(publicDir, "index.html");
+  let html = readFileSync(indexPath, "utf-8");
+  const frontendConfig = prepareFrontendConfig(config);
+  html = injectConfig(html, frontendConfig);
+  return html;
 }
 function prepareFrontendConfig(config) {
-    const defaultMetadata = {
-        title: 'Better Auth Studio',
-        logo: '',
-        favicon: '',
-        company: {
-            name: '',
-            website: '',
-        },
-        theme: 'dark',
-        customStyles: '',
-    };
-    const mergedMetadata = {
-        ...defaultMetadata,
-        ...(config.metadata || {}),
-        company: {
-            ...defaultMetadata.company,
-            ...(config.metadata?.company || {}),
-        },
-    };
-    const eventsConfig = config.events;
-    const liveMarqueeConfig = eventsConfig?.liveMarquee;
-    const shouldIncludeLiveMarquee = !!liveMarqueeConfig || !!eventsConfig?.enabled;
-    const liveMarquee = shouldIncludeLiveMarquee
-        ? {
-            enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false
-            pollInterval: liveMarqueeConfig?.pollInterval || 2000, // Default: 2000ms
-            speed: liveMarqueeConfig?.speed ?? 0.5, // Default: 0.5 pixels per frame
-            pauseOnHover: liveMarqueeConfig?.pauseOnHover ?? true, // Default: true
-            limit: liveMarqueeConfig?.limit ?? 50, // Default: 50 events in marquee
-            sort: liveMarqueeConfig?.sort ?? 'desc', // Default: 'desc' (newest first)
-            colors: liveMarqueeConfig?.colors || undefined,
-            timeWindow: liveMarqueeConfig?.timeWindow || undefined, // Include timeWindow config
-        }
-        : undefined;
-    return {
-        basePath: config.basePath || '',
-        metadata: mergedMetadata,
-        liveMarquee: liveMarquee,
-    };
+  const defaultMetadata = {
+    title: "Better Auth Studio",
+    logo: "",
+    favicon: "",
+    company: {
+      name: "",
+      website: "",
+    },
+    theme: "dark",
+    customStyles: "",
+  };
+  const mergedMetadata = {
+    ...defaultMetadata,
+    ...(config.metadata || {}),
+    company: {
+      ...defaultMetadata.company,
+      ...(config.metadata?.company || {}),
+    },
+  };
+  const eventsConfig = config.events;
+  const liveMarqueeConfig = eventsConfig?.liveMarquee;
+  const shouldIncludeLiveMarquee = !!liveMarqueeConfig || !!eventsConfig?.enabled;
+  const liveMarquee = shouldIncludeLiveMarquee
+    ? {
+        enabled: liveMarqueeConfig?.enabled !== false, // Default to true if not explicitly false
+        pollInterval: liveMarqueeConfig?.pollInterval || 2000, // Default: 2000ms
+        speed: liveMarqueeConfig?.speed ?? 0.5, // Default: 0.5 pixels per frame
+        pauseOnHover: liveMarqueeConfig?.pauseOnHover ?? true, // Default: true
+        limit: liveMarqueeConfig?.limit ?? 50, // Default: 50 events in marquee
+        sort: liveMarqueeConfig?.sort ?? "desc", // Default: 'desc' (newest first)
+        colors: liveMarqueeConfig?.colors || undefined,
+        timeWindow: liveMarqueeConfig?.timeWindow || undefined, // Include timeWindow config
+      }
+    : undefined;
+  return {
+    basePath: config.basePath || "",
+    metadata: mergedMetadata,
+    liveMarquee: liveMarquee,
+  };
 }
 function injectConfig(html, config) {
-    // Safely serialize (prevent XSS)
-    const safeJson = JSON.stringify(config)
-        .replace(/</g, '\\u003c')
-        .replace(/>/g, '\\u003e')
-        .replace(/&/g, '\\u0026');
-    // Escape title for HTML insertion
-    const escapedTitle = config.metadata.title
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    const script = `
+  // Safely serialize (prevent XSS)
+  const safeJson = JSON.stringify(config)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
+  // Escape title for HTML insertion
+  const escapedTitle = config.metadata.title
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+  const script = `
     <script>
       window.__STUDIO_CONFIG__ = ${safeJson};
       Object.freeze(window.__STUDIO_CONFIG__);
@@ -71,49 +71,49 @@ function injectConfig(html, config) {
       }
     </script>
   `;
-    let modifiedHtml = html;
-    // Replace title tag
-    modifiedHtml = modifiedHtml.replace(/<title>.*?<\/title>/i, `<title>${escapedTitle}</title>`);
-    // Replace favicon if provided
-    if (config.metadata.favicon) {
-        const escapedFavicon = config.metadata.favicon
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-        const faviconLower = config.metadata.favicon.toLowerCase();
-        let mimeType = 'image/png'; // default
-        if (faviconLower.endsWith('.ico')) {
-            mimeType = 'image/x-icon';
-        }
-        else if (faviconLower.endsWith('.svg')) {
-            mimeType = 'image/svg+xml';
-        }
-        else if (faviconLower.endsWith('.jpg') || faviconLower.endsWith('.jpeg')) {
-            mimeType = 'image/jpeg';
-        }
-        else if (faviconLower.endsWith('.webp')) {
-            mimeType = 'image/webp';
-        }
-        const faviconTag = `<link rel="icon" type="${mimeType}" href="${escapedFavicon}" />`;
-        // Replace existing favicon/link rel="icon" tags
-        modifiedHtml = modifiedHtml.replace(/<link[^>]*rel=["'](icon|shortcut icon)["'][^>]*>/gi, faviconTag);
-        // If no existing favicon tag, add one before </head>
-        if (!modifiedHtml.includes('rel="icon"') && !modifiedHtml.includes("rel='icon'")) {
-            modifiedHtml = modifiedHtml.replace('</head>', `  ${faviconTag}\n</head>`);
-        }
+  let modifiedHtml = html;
+  // Replace title tag
+  modifiedHtml = modifiedHtml.replace(/<title>.*?<\/title>/i, `<title>${escapedTitle}</title>`);
+  // Replace favicon if provided
+  if (config.metadata.favicon) {
+    const escapedFavicon = config.metadata.favicon
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+    const faviconLower = config.metadata.favicon.toLowerCase();
+    let mimeType = "image/png"; // default
+    if (faviconLower.endsWith(".ico")) {
+      mimeType = "image/x-icon";
+    } else if (faviconLower.endsWith(".svg")) {
+      mimeType = "image/svg+xml";
+    } else if (faviconLower.endsWith(".jpg") || faviconLower.endsWith(".jpeg")) {
+      mimeType = "image/jpeg";
+    } else if (faviconLower.endsWith(".webp")) {
+      mimeType = "image/webp";
     }
-    if (config.basePath) {
-        const basePath = config.basePath;
-        modifiedHtml = modifiedHtml
-            .replace(/href="\/assets\//g, `href="${basePath}/assets/`)
-            .replace(/src="\/assets\//g, `src="${basePath}/assets/`)
-            .replace(/href="\/vite\.svg"/g, `href="${basePath}/vite.svg"`)
-            .replace(/href="\/favicon\.svg"/g, `href="${basePath}/favicon.svg"`)
-            .replace(/href="\/logo\.png"/g, `href="${basePath}/logo.png"`)
-            .replace(/src="\/logo\.png"/g, `src="${basePath}/logo.png"`);
+    const faviconTag = `<link rel="icon" type="${mimeType}" href="${escapedFavicon}" />`;
+    // Replace existing favicon/link rel="icon" tags
+    modifiedHtml = modifiedHtml.replace(
+      /<link[^>]*rel=["'](icon|shortcut icon)["'][^>]*>/gi,
+      faviconTag,
+    );
+    // If no existing favicon tag, add one before </head>
+    if (!modifiedHtml.includes('rel="icon"') && !modifiedHtml.includes("rel='icon'")) {
+      modifiedHtml = modifiedHtml.replace("</head>", `  ${faviconTag}\n</head>`);
     }
-    return modifiedHtml.replace('</head>', `${script}</head>`);
+  }
+  if (config.basePath) {
+    const basePath = config.basePath;
+    modifiedHtml = modifiedHtml
+      .replace(/href="\/assets\//g, `href="${basePath}/assets/`)
+      .replace(/src="\/assets\//g, `src="${basePath}/assets/`)
+      .replace(/href="\/vite\.svg"/g, `href="${basePath}/vite.svg"`)
+      .replace(/href="\/favicon\.svg"/g, `href="${basePath}/favicon.svg"`)
+      .replace(/href="\/logo\.png"/g, `href="${basePath}/logo.png"`)
+      .replace(/src="\/logo\.png"/g, `src="${basePath}/logo.png"`);
+  }
+  return modifiedHtml.replace("</head>", `${script}</head>`);
 }
 //# sourceMappingURL=html-injector.js.map

@@ -1,25 +1,25 @@
-import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from 'fs';
-import { dirname, extname, join, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from "fs";
+import { dirname, extname, join, resolve } from "path";
+import { fileURLToPath } from "url";
 import {
   createClickHouseProvider,
   createHttpProvider,
   createPostgresProvider,
   createSqliteProvider,
   createStorageProvider,
-} from '../providers/events/helpers.js';
-import type { EventIngestionProvider } from '../types/events.js';
+} from "../providers/events/helpers.js";
+import type { EventIngestionProvider } from "../types/events.js";
 import type {
   StudioConfig,
   StudioMetadata,
   UniversalRequest,
   UniversalResponse,
   WindowStudioConfig,
-} from '../types/handler.js';
-import { initializeEventIngestion, isEventIngestionInitialized } from '../utils/event-ingestion.js';
-import { injectEventHooks } from '../utils/hook-injector.js';
-import { serveIndexHtml as getIndexHtml } from '../utils/html-injector.js';
-import { decryptSession, isSessionValid, STUDIO_COOKIE_NAME } from '../utils/session.js';
+} from "../types/handler.js";
+import { initializeEventIngestion, isEventIngestionInitialized } from "../utils/event-ingestion.js";
+import { injectEventHooks } from "../utils/hook-injector.js";
+import { serveIndexHtml as getIndexHtml } from "../utils/html-injector.js";
+import { decryptSession, isSessionValid, STUDIO_COOKIE_NAME } from "../utils/session.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,15 +40,15 @@ export async function initializeEventIngestionAndHooks(config: StudioConfig): Pr
 
     if (
       config.events.provider &&
-      typeof config.events.provider === 'object' &&
-      typeof config.events.provider.ingest === 'function'
+      typeof config.events.provider === "object" &&
+      typeof config.events.provider.ingest === "function"
     ) {
       provider = config.events.provider;
     } else if (config.events.client && config.events.clientType) {
       switch (config.events.clientType) {
-        case 'postgres':
-        case 'prisma':
-        case 'drizzle':
+        case "postgres":
+        case "prisma":
+        case "drizzle":
           try {
             provider = createPostgresProvider({
               client: config.events.client,
@@ -59,7 +59,7 @@ export async function initializeEventIngestionAndHooks(config: StudioConfig): Pr
             throw error;
           }
           break;
-        case 'sqlite':
+        case "sqlite":
           try {
             provider = createSqliteProvider({
               client: config.events.client,
@@ -69,13 +69,13 @@ export async function initializeEventIngestionAndHooks(config: StudioConfig): Pr
             throw error;
           }
           break;
-        case 'clickhouse':
+        case "clickhouse":
           provider = createClickHouseProvider({
             client: config.events.client,
             table: config.events.tableName,
           });
           break;
-        case 'http':
+        case "http":
           provider = createHttpProvider({
             url: config.events.client,
             headers: (config.events as any).headers || {},
@@ -87,7 +87,7 @@ export async function initializeEventIngestionAndHooks(config: StudioConfig): Pr
       if (authAdapter) {
         provider = createStorageProvider({
           adapter: authAdapter,
-          tableName: config.events.tableName || 'auth_events',
+          tableName: config.events.tableName || "auth_events",
         });
       }
     }
@@ -111,77 +111,77 @@ export async function initializeEventIngestionAndHooks(config: StudioConfig): Pr
  */
 export async function handleStudioRequest(
   request: UniversalRequest,
-  config: StudioConfig
+  config: StudioConfig,
 ): Promise<UniversalResponse> {
   try {
     const isSelfHosted = !!config.basePath;
-    const basePath = config.basePath || '';
+    const basePath = config.basePath || "";
 
     let path = request.url;
-    const [pathname, queryString] = path.split('?');
+    const [pathname, queryString] = path.split("?");
 
     if (isSelfHosted && basePath) {
-      const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+      const normalizedBasePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
       let normalizedPath = pathname;
 
-      if (normalizedPath === normalizedBasePath || normalizedPath === normalizedBasePath + '/') {
-        normalizedPath = '/';
-      } else if (normalizedPath.startsWith(normalizedBasePath + '/')) {
+      if (normalizedPath === normalizedBasePath || normalizedPath === normalizedBasePath + "/") {
+        normalizedPath = "/";
+      } else if (normalizedPath.startsWith(normalizedBasePath + "/")) {
         normalizedPath = normalizedPath.slice(normalizedBasePath.length);
       } else if (normalizedPath.startsWith(normalizedBasePath)) {
-        normalizedPath = normalizedPath.slice(normalizedBasePath.length) || '/';
+        normalizedPath = normalizedPath.slice(normalizedBasePath.length) || "/";
       }
 
-      path = normalizedPath + (queryString ? '?' + queryString : '');
+      path = normalizedPath + (queryString ? "?" + queryString : "");
     } else {
-      path = pathname + (queryString ? '?' + queryString : '');
+      path = pathname + (queryString ? "?" + queryString : "");
     }
 
-    if (path === '' || path === '/') {
-      path = '/';
+    if (path === "" || path === "/") {
+      path = "/";
     }
 
     if (
-      path.startsWith('/assets/') ||
-      path === '/vite.svg' ||
-      path === '/favicon.svg' ||
-      path === '/logo.png'
+      path.startsWith("/assets/") ||
+      path === "/vite.svg" ||
+      path === "/favicon.svg" ||
+      path === "/logo.png"
     ) {
       return handleStaticFile(path, config);
     }
 
-    if (path === '/') {
+    if (path === "/") {
       return handleStaticFile(path, config);
     }
 
-    const spaRoutes = ['/login', '/access-denied'];
-    if (spaRoutes.some((r) => path === r || path.startsWith(r + '?'))) {
+    const spaRoutes = ["/login", "/access-denied"];
+    if (spaRoutes.some((r) => path === r || path.startsWith(r + "?"))) {
       return handleStaticFile(path, config);
     }
 
-    if (path.startsWith('/api/')) {
+    if (path.startsWith("/api/")) {
       if (isSelfHosted && isProtectedApiPath(path)) {
         const sessionResult = verifyStudioSession(request, config);
         if (!sessionResult.valid) {
-          return jsonResponse(401, { error: 'Unauthorized', message: sessionResult.error });
+          return jsonResponse(401, { error: "Unauthorized", message: sessionResult.error });
         }
       }
       return await handleApiRoute(request, path, config);
     }
 
     if (isSelfHosted) {
-      const acceptHeader = request.headers['accept'] || request.headers['Accept'] || '';
+      const acceptHeader = request.headers["accept"] || request.headers["Accept"] || "";
       const wantsJson =
-        acceptHeader.includes('application/json') ||
-        acceptHeader === '*/*' ||
-        !acceptHeader.includes('text/html');
+        acceptHeader.includes("application/json") ||
+        acceptHeader === "*/*" ||
+        !acceptHeader.includes("text/html");
 
       if (wantsJson) {
-        const apiPath = '/api' + path;
+        const apiPath = "/api" + path;
         if (isProtectedApiPath(apiPath)) {
           const sessionResult = verifyStudioSession(request, config);
           if (!sessionResult.valid) {
-            return jsonResponse(401, { error: 'Unauthorized', message: sessionResult.error });
+            return jsonResponse(401, { error: "Unauthorized", message: sessionResult.error });
           }
         }
         return await handleApiRoute(request, apiPath, config);
@@ -193,10 +193,10 @@ export async function handleStudioRequest(
 
     return handleStaticFile(path, config);
   } catch (error) {
-    console.error('Studio handler error:', error);
+    console.error("Studio handler error:", error);
     return jsonResponse(500, {
-      error: 'Internal server error',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      error: "Internal server error",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
@@ -229,17 +229,17 @@ function getSessionSecret(config: StudioConfig): string {
     config.access?.secret ||
     config.auth?.options?.secret ||
     process.env.BETTER_AUTH_SECRET ||
-    'studio-default-secret'
+    "studio-default-secret"
   );
 }
 
 function parseCookies(cookieHeader: string | undefined): Record<string, string> {
   if (!cookieHeader) return {};
   const cookies: Record<string, string> = {};
-  cookieHeader.split(';').forEach((part) => {
-    const [name, ...rest] = part.trim().split('=');
+  cookieHeader.split(";").forEach((part) => {
+    const [name, ...rest] = part.trim().split("=");
     if (name) {
-      cookies[name] = rest.join('=');
+      cookies[name] = rest.join("=");
     }
   });
   return cookies;
@@ -247,19 +247,19 @@ function parseCookies(cookieHeader: string | undefined): Record<string, string> 
 
 function verifyStudioSession(
   request: UniversalRequest,
-  config: StudioConfig
+  config: StudioConfig,
 ): { valid: boolean; session?: any; error?: string } {
-  const cookieHeader = request.headers['cookie'] || request.headers['Cookie'];
+  const cookieHeader = request.headers["cookie"] || request.headers["Cookie"];
   const cookies = parseCookies(cookieHeader as string);
   const sessionCookie = cookies[STUDIO_COOKIE_NAME];
 
   if (!sessionCookie) {
-    return { valid: false, error: 'No session cookie' };
+    return { valid: false, error: "No session cookie" };
   }
 
   const session = decryptSession(sessionCookie, getSessionSecret(config));
   if (!isSessionValid(session)) {
-    return { valid: false, error: 'Session expired' };
+    return { valid: false, error: "Session expired" };
   }
 
   return { valid: true, session };
@@ -267,12 +267,12 @@ function verifyStudioSession(
 
 function isProtectedApiPath(path: string): boolean {
   const publicPaths = [
-    '/api/auth/sign-in',
-    '/api/auth/session',
-    '/api/auth/logout',
-    '/api/auth/verify',
-    '/api/auth/oauth',
-    '/api/health',
+    "/api/auth/sign-in",
+    "/api/auth/session",
+    "/api/auth/logout",
+    "/api/auth/verify",
+    "/api/auth/oauth",
+    "/api/health",
   ];
   return !publicPaths.some((p) => path.startsWith(p));
 }
@@ -280,9 +280,9 @@ function isProtectedApiPath(path: string): boolean {
 async function handleApiRoute(
   request: UniversalRequest,
   path: string,
-  config: StudioConfig
+  config: StudioConfig,
 ): Promise<UniversalResponse> {
-  const { routeApiRequest } = await import('../routes/api-router.js');
+  const { routeApiRequest } = await import("../routes/api-router.js");
 
   try {
     const result = await routeApiRequest({
@@ -291,25 +291,25 @@ async function handleApiRoute(
       headers: request.headers,
       body: request.body,
       auth: config.auth,
-      basePath: config.basePath || '/api/studio',
+      basePath: config.basePath || "/api/studio",
       accessConfig: config.access,
       studioConfig: config,
     });
 
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
 
     if (result.cookies && result.cookies.length > 0) {
       const cookieStrings = result.cookies.map((c) => {
         let cookie = `${c.name}=${c.value}`;
-        if (c.options.httpOnly) cookie += '; HttpOnly';
-        if (c.options.secure) cookie += '; Secure';
+        if (c.options.httpOnly) cookie += "; HttpOnly";
+        if (c.options.secure) cookie += "; Secure";
         if (c.options.sameSite) cookie += `; SameSite=${c.options.sameSite}`;
         if (c.options.maxAge !== undefined)
           cookie += `; Max-Age=${Math.floor(c.options.maxAge / 1000)}`;
         if (c.options.path) cookie += `; Path=${c.options.path}`;
         return cookie;
       });
-      headers['Set-Cookie'] = cookieStrings.join(', ');
+      headers["Set-Cookie"] = cookieStrings.join(", ");
     }
 
     return {
@@ -318,8 +318,8 @@ async function handleApiRoute(
       body: JSON.stringify(result.data),
     };
   } catch (error) {
-    console.error('API route error:', error);
-    return jsonResponse(500, { error: 'Internal server error' });
+    console.error("API route error:", error);
+    return jsonResponse(500, { error: "Internal server error" });
   }
 }
 
@@ -327,18 +327,18 @@ function isNextJsProject(): boolean {
   try {
     const cwd = process.cwd();
     // Check for .next directory (build output)
-    if (existsSync(join(cwd, '.next'))) {
+    if (existsSync(join(cwd, ".next"))) {
       return true;
     }
     // Check for next.config.js or next.config.ts
-    if (existsSync(join(cwd, 'next.config.js')) || existsSync(join(cwd, 'next.config.ts'))) {
+    if (existsSync(join(cwd, "next.config.js")) || existsSync(join(cwd, "next.config.ts"))) {
       return true;
     }
     // Check package.json for next dependency
-    const pkgPath = join(cwd, 'package.json');
+    const pkgPath = join(cwd, "package.json");
     if (existsSync(pkgPath)) {
       try {
-        const pkgContent = readFileSync(pkgPath, 'utf-8');
+        const pkgContent = readFileSync(pkgPath, "utf-8");
         const pkg = JSON.parse(pkgContent);
         if (pkg.dependencies?.next || pkg.devDependencies?.next) {
           return true;
@@ -351,16 +351,16 @@ function isNextJsProject(): boolean {
 
 function findPublicDir(): string | null {
   const candidates: string[] = [];
-  const debug = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+  const debug = process.env.VERCEL === "1" || process.env.NODE_ENV === "production";
   const isNextJs = isNextJsProject();
 
   // PRIORITY 1: Direct resolution from __dirname (most reliable)
   if (__dirname) {
-    const directPublic = resolve(__dirname, '../public');
+    const directPublic = resolve(__dirname, "../public");
     candidates.unshift(directPublic);
 
     if (debug && !existsSync(directPublic)) {
-      console.log('[Studio] Direct path not found:', directPublic);
+      console.log("[Studio] Direct path not found:", directPublic);
     }
   }
 
@@ -369,7 +369,7 @@ function findPublicDir(): string | null {
     const packageMatch = __dirname.match(/(.+[/\\]better-auth-studio)(?:[/\\]dist[/\\]core)?$/);
     if (packageMatch) {
       const packageRoot = packageMatch[1];
-      candidates.unshift(join(packageRoot, 'dist', 'public'));
+      candidates.unshift(join(packageRoot, "dist", "public"));
     }
   }
 
@@ -377,12 +377,12 @@ function findPublicDir(): string | null {
   if (__dirname) {
     let searchDir = __dirname;
     for (let i = 0; i < 10; i++) {
-      const nmPath = join(searchDir, 'node_modules', 'better-auth-studio', 'dist', 'public');
+      const nmPath = join(searchDir, "node_modules", "better-auth-studio", "dist", "public");
       if (existsSync(nmPath)) {
         candidates.unshift(nmPath);
         break;
       }
-      const parent = resolve(searchDir, '..');
+      const parent = resolve(searchDir, "..");
       if (parent === searchDir) break;
       searchDir = parent;
     }
@@ -394,23 +394,23 @@ function findPublicDir(): string | null {
     if (moduleUrl) {
       const modulePath = fileURLToPath(moduleUrl);
       const moduleDir = dirname(modulePath);
-      candidates.push(resolve(moduleDir, '../public'));
+      candidates.push(resolve(moduleDir, "../public"));
 
       // Also walk up from module location to find node_modules
       let moduleSearchDir = moduleDir;
       for (let i = 0; i < 10; i++) {
         const nmPath = join(
           moduleSearchDir,
-          'node_modules',
-          'better-auth-studio',
-          'dist',
-          'public'
+          "node_modules",
+          "better-auth-studio",
+          "dist",
+          "public",
         );
         if (existsSync(nmPath)) {
           candidates.push(nmPath);
           break;
         }
-        const parent = resolve(moduleSearchDir, '..');
+        const parent = resolve(moduleSearchDir, "..");
         if (parent === moduleSearchDir) break;
         moduleSearchDir = parent;
       }
@@ -421,11 +421,11 @@ function findPublicDir(): string | null {
   if (isNextJs) {
     try {
       const cwd = process.cwd();
-      const nextServer = join(cwd, '.next', 'server');
+      const nextServer = join(cwd, ".next", "server");
       if (existsSync(nextServer)) {
         candidates.push(
-          join(nextServer, 'node_modules', 'better-auth-studio', 'dist', 'public'),
-          join(nextServer, 'chunks', 'node_modules', 'better-auth-studio', 'dist', 'public')
+          join(nextServer, "node_modules", "better-auth-studio", "dist", "public"),
+          join(nextServer, "chunks", "node_modules", "better-auth-studio", "dist", "public"),
         );
       }
     } catch (err) {
@@ -437,8 +437,8 @@ function findPublicDir(): string | null {
   try {
     const cwd = process.cwd();
     candidates.push(
-      join(cwd, 'node_modules', 'better-auth-studio', 'dist', 'public'),
-      join(cwd, 'static', 'studio')
+      join(cwd, "node_modules", "better-auth-studio", "dist", "public"),
+      join(cwd, "static", "studio"),
     );
   } catch (err) {}
 
@@ -448,10 +448,10 @@ function findPublicDir(): string | null {
       if (existsSync(candidate)) {
         const stats = statSync(candidate);
         if (stats.isDirectory()) {
-          const indexPath = join(candidate, 'index.html');
+          const indexPath = join(candidate, "index.html");
           if (existsSync(indexPath)) {
             if (debug) {
-              console.log('[Studio] ✓ Found public directory:', candidate);
+              console.log("[Studio] ✓ Found public directory:", candidate);
             }
             return candidate;
           }
@@ -461,9 +461,9 @@ function findPublicDir(): string | null {
   }
 
   if (debug) {
-    console.error('[Studio] ✗ Could not find public directory');
-    console.error('[Studio] __dirname:', __dirname);
-    console.error('[Studio] Checked', candidates.length, 'candidates');
+    console.error("[Studio] ✗ Could not find public directory");
+    console.error("[Studio] __dirname:", __dirname);
+    console.error("[Studio] Checked", candidates.length, "candidates");
   }
 
   return null;
@@ -477,12 +477,12 @@ function handleStaticFile(path: string, config: StudioConfig): UniversalResponse
   }
 
   if (!cachedPublicDir) {
-    if (path === '/' || path === '') {
+    if (path === "/" || path === "") {
       return {
         status: 503,
         headers: {
-          'Content-Type': 'text/html',
-          'Cache-Control': 'no-cache',
+          "Content-Type": "text/html",
+          "Cache-Control": "no-cache",
         },
         body: `<!DOCTYPE html>
 <html>
@@ -590,10 +590,10 @@ function handleStaticFile(path: string, config: StudioConfig): UniversalResponse
     }
 
     return jsonResponse(503, {
-      error: 'Public directory not found',
-      message: 'Studio UI assets could not be located. This is likely a Vercel bundling issue.',
+      error: "Public directory not found",
+      message: "Studio UI assets could not be located. This is likely a Vercel bundling issue.",
       suggestion:
-        'For Next.js, add outputFileTracingIncludes to next.config.js to include the public directory. See the HTML error page for details.',
+        "For Next.js, add outputFileTracingIncludes to next.config.js to include the public directory. See the HTML error page for details.",
     });
   }
 
@@ -603,9 +603,9 @@ function handleStaticFile(path: string, config: StudioConfig): UniversalResponse
 function handleStaticFileFromDir(
   path: string,
   publicDir: string,
-  config: StudioConfig
+  config: StudioConfig,
 ): UniversalResponse {
-  if (path === '/' || path === '') {
+  if (path === "/" || path === "") {
     return serveIndexHtml(publicDir, config);
   }
 
@@ -618,8 +618,8 @@ function handleStaticFileFromDir(
     return {
       status: 200,
       headers: {
-        'Content-Type': contentType,
-        'Cache-Control': getCacheControl(path),
+        "Content-Type": contentType,
+        "Cache-Control": getCacheControl(path),
       },
       body: content,
     };
@@ -634,8 +634,8 @@ function serveIndexHtml(publicDir: string, config: StudioConfig): UniversalRespo
   return {
     status: 200,
     headers: {
-      'Content-Type': 'text/html',
-      'Cache-Control': 'no-cache',
+      "Content-Type": "text/html",
+      "Cache-Control": "no-cache",
     },
     body: html,
   };
@@ -644,32 +644,32 @@ function serveIndexHtml(publicDir: string, config: StudioConfig): UniversalRespo
 function jsonResponse(status: number, data: any): UniversalResponse {
   return {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   };
 }
 
 function getContentType(ext: string): string {
   const types: Record<string, string> = {
-    '.html': 'text/html',
-    '.js': 'application/javascript',
-    '.css': 'text/css',
-    '.json': 'application/json',
-    '.png': 'image/png',
-    '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg',
-    '.svg': 'image/svg+xml',
-    '.ico': 'image/x-icon',
-    '.woff': 'font/woff',
-    '.woff2': 'font/woff2',
-    '.ttf': 'font/ttf',
+    ".html": "text/html",
+    ".js": "application/javascript",
+    ".css": "text/css",
+    ".json": "application/json",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".svg": "image/svg+xml",
+    ".ico": "image/x-icon",
+    ".woff": "font/woff",
+    ".woff2": "font/woff2",
+    ".ttf": "font/ttf",
   };
-  return types[ext] || 'application/octet-stream';
+  return types[ext] || "application/octet-stream";
 }
 
 function getCacheControl(path: string): string {
   if (path.match(/\.(js|css|png|jpg|jpeg|svg|woff|woff2|ttf)$/)) {
-    return 'public, max-age=31536000, immutable';
+    return "public, max-age=31536000, immutable";
   }
-  return 'no-cache';
+  return "no-cache";
 }

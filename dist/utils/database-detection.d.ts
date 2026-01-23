@@ -1,4 +1,4 @@
-import type { DatabaseDetectionResult, DetectionInfo } from '../types';
+import type { DatabaseDetectionResult, DetectionInfo } from "../types";
 /**
  * Detect database type and version from installed packages
  * @param cwd - Current working directory to search in
@@ -10,7 +10,9 @@ export declare function detectDatabase(cwd?: string): Promise<DetectionInfo | un
  * @param cwd - Current working directory to search in
  * @returns DatabaseDetectionResult with database name, version, and dialect info
  */
-export declare function detectDatabaseWithDialect(cwd?: string): Promise<DatabaseDetectionResult | undefined>;
+export declare function detectDatabaseWithDialect(
+  cwd?: string,
+): Promise<DatabaseDetectionResult | undefined>;
 /**
  * Get all detected databases (useful for projects with multiple database connections)
  * @param cwd - Current working directory to search in

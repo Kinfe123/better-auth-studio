@@ -1,7 +1,7 @@
-import type { Context } from 'elysia';
-import { handleStudioRequest } from '../core/handler.js';
-import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
-import { injectEventHooks } from '../utils/hook-injector.js';
+import type { Context } from "elysia";
+import { handleStudioRequest } from "../core/handler.js";
+import type { StudioConfig, UniversalRequest, UniversalResponse } from "../types/handler.js";
+import { injectEventHooks } from "../utils/hook-injector.js";
 
 /**
  * Elysia adapter for Better Auth Studio
@@ -18,9 +18,9 @@ export function betterAuthStudio(config: StudioConfig) {
 
       return sendElysiaResponse(context, universalRes);
     } catch (error) {
-      console.error('Studio handler error:', error);
+      console.error("Studio handler error:", error);
       context.set.status = 500;
-      return { error: 'Internal server error' };
+      return { error: "Internal server error" };
     }
   };
 }
@@ -29,20 +29,20 @@ async function convertElysiaToUniversal(context: Context): Promise<UniversalRequ
   let body: any;
   const method = context.request.method;
 
-  if (method !== 'GET' && method !== 'HEAD') {
+  if (method !== "GET" && method !== "HEAD") {
     const elysiaBody = (context as any).body ?? (context as any).query ?? undefined;
 
     if (elysiaBody !== undefined) {
       body = elysiaBody;
     } else {
-      const contentType = context.request.headers.get('content-type') || '';
+      const contentType = context.request.headers.get("content-type") || "";
 
       try {
-        if (contentType.includes('application/json')) {
+        if (contentType.includes("application/json")) {
           body = await context.request.json();
         } else if (
-          contentType.includes('application/x-www-form-urlencoded') ||
-          contentType.includes('multipart/form-data')
+          contentType.includes("application/x-www-form-urlencoded") ||
+          contentType.includes("multipart/form-data")
         ) {
           const formData = await context.request.formData();
           body = Object.fromEntries(formData.entries());
@@ -88,16 +88,16 @@ function sendElysiaResponse(context: Context, universal: UniversalResponse): Res
       status: universal.status,
       headers: universal.headers,
     });
-  } else if (typeof universal.body === 'string') {
+  } else if (typeof universal.body === "string") {
     const contentType =
-      universal.headers['content-type'] || universal.headers['Content-Type'] || '';
-    if (contentType.includes('application/json')) {
+      universal.headers["content-type"] || universal.headers["Content-Type"] || "";
+    if (contentType.includes("application/json")) {
       try {
         return JSON.parse(universal.body);
       } catch {
         return universal.body;
       }
-    } else if (contentType.includes('text/html')) {
+    } else if (contentType.includes("text/html")) {
       return new Response(universal.body, {
         status: universal.status,
         headers: universal.headers,

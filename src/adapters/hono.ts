@@ -1,8 +1,8 @@
-import type { Context } from 'hono';
-import type { StatusCode } from 'hono/utils/http-status.js';
-import { handleStudioRequest } from '../core/handler.js';
-import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
-import { injectEventHooks } from '../utils/hook-injector.js';
+import type { Context } from "hono";
+import type { StatusCode } from "hono/utils/http-status.js";
+import { handleStudioRequest } from "../core/handler.js";
+import type { StudioConfig, UniversalRequest, UniversalResponse } from "../types/handler.js";
+import { injectEventHooks } from "../utils/hook-injector.js";
 
 /**
  * Hono adapter for Better Auth Studio
@@ -20,8 +20,8 @@ export function betterAuthStudio(config: StudioConfig) {
 
       return sendHonoResponse(c, universalRes);
     } catch (error) {
-      console.error('Studio handler error:', error);
-      return c.json({ error: 'Internal server error' }, 500);
+      console.error("Studio handler error:", error);
+      return c.json({ error: "Internal server error" }, 500);
     }
   };
 }
@@ -30,13 +30,13 @@ async function convertHonoToUniversal(c: Context): Promise<UniversalRequest> {
   let body: any;
   const method = c.req.method;
 
-  if (method !== 'GET' && method !== 'HEAD') {
-    const contentType = c.req.header('content-type') || '';
-    if (contentType.includes('application/json')) {
+  if (method !== "GET" && method !== "HEAD") {
+    const contentType = c.req.header("content-type") || "";
+    if (contentType.includes("application/json")) {
       try {
         body = await c.req.json();
       } catch {}
-    } else if (contentType.includes('application/x-www-form-urlencoded')) {
+    } else if (contentType.includes("application/x-www-form-urlencoded")) {
       try {
         body = await c.req.parseBody();
       } catch {}
@@ -68,16 +68,16 @@ function sendHonoResponse(c: Context, universal: UniversalResponse): Response {
 
   if (Buffer.isBuffer(universal.body)) {
     return c.body(universal.body as any);
-  } else if (typeof universal.body === 'string') {
+  } else if (typeof universal.body === "string") {
     const contentType =
-      universal.headers['content-type'] || universal.headers['Content-Type'] || '';
-    if (contentType.includes('application/json')) {
+      universal.headers["content-type"] || universal.headers["Content-Type"] || "";
+    if (contentType.includes("application/json")) {
       try {
         return c.json(JSON.parse(universal.body));
       } catch {
         return c.text(universal.body);
       }
-    } else if (contentType.includes('text/html')) {
+    } else if (contentType.includes("text/html")) {
       return c.html(universal.body);
     } else {
       return c.text(universal.body);

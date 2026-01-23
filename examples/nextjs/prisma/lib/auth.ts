@@ -1,34 +1,34 @@
-import { betterAuth } from 'better-auth';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { organization, admin, createAuthMiddleware } from 'better-auth/plugins';
-import { prisma } from '@/lib/db';
-import { buttonConfig, apiConfig } from '@/components/Button';
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { organization, admin, createAuthMiddleware } from "better-auth/plugins";
+import { prisma } from "@/lib/db";
+import { buttonConfig, apiConfig } from "@/components/Button";
 
 export const auth = betterAuth({
-  secret: process.env.AUTH_SECRET || 'better-auth-secret-123456789',
-  database: prismaAdapter(prisma, { provider: 'postgresql' }),
-  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+  secret: process.env.AUTH_SECRET || "better-auth-secret-123456789",
+  database: prismaAdapter(prisma, { provider: "postgresql" }),
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   basePath: apiConfig.basePath,
   socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID || '',
-      clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
+      clientId: process.env.GITHUB_CLIENT_ID || "",
+      clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
     },
     google: {
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     },
   },
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
-      console.log("Before hook triggered", {ctx})
-      return ctx
+      console.log("Before hook triggered", { ctx });
+      return ctx;
     }),
     after: createAuthMiddleware(async (ctx) => {
-      if(ctx.path === "/sign-up/email"){
-        console.log("After hook triggered", {ctx})
+      if (ctx.path === "/sign-up/email") {
+        console.log("After hook triggered", { ctx });
       }
-      return ctx
+      return ctx;
     }),
   },
   emailAndPassword: {
@@ -51,7 +51,7 @@ export const auth = betterAuth({
         enabled: true,
       },
       sendInvitationEmail: async (data, request) => {
-        console.log('sendInvitationEmail', data, request);
+        console.log("sendInvitationEmail", data, request);
       },
     }),
     admin(),
@@ -68,6 +68,5 @@ export const auth = betterAuth({
   telemetry: {
     enabled: false,
   },
-  trustedOrigins: ['http://localhost:3000', 'http://localhost:3002'],
+  trustedOrigins: ["http://localhost:3000", "http://localhost:3002"],
 });
-

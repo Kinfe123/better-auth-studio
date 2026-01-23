@@ -16,13 +16,13 @@ import {
   Trash2,
   Type,
   Underline,
-} from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
-export type BlockType = 'heading' | 'paragraph' | 'button' | 'image' | 'divider';
+export type BlockType = "heading" | "paragraph" | "button" | "image" | "divider";
 
 export interface EmailBlock {
   id: string;
@@ -35,7 +35,7 @@ export interface EmailBlock {
     fontFamily?: string;
     color?: string;
     backgroundColor?: string;
-    textAlign?: 'left' | 'center' | 'right';
+    textAlign?: "left" | "center" | "right";
     padding?: string;
     margin?: string;
     width?: string;
@@ -65,38 +65,38 @@ const parseHtmlToBlocks = (html: string): EmailBlock[] => {
 
   const parser = new DOMParser();
   const doc = parser.parseFromString(
-    html.includes('<body') ? html : `<body>${html}</body>`,
-    'text/html'
+    html.includes("<body") ? html : `<body>${html}</body>`,
+    "text/html",
   );
   const body = doc.body;
   const blocks: EmailBlock[] = [];
 
   Array.from(body.children).forEach((element, index) => {
     const tagName = element.tagName.toLowerCase();
-    const styles = parseStyles(element.getAttribute('style') || '');
+    const styles = parseStyles(element.getAttribute("style") || "");
 
-    if (tagName === 'div') {
-      const heading = element.querySelector('h1, h2, h3, h4, h5, h6');
+    if (tagName === "div") {
+      const heading = element.querySelector("h1, h2, h3, h4, h5, h6");
       if (heading) {
         const headingTag = heading.tagName.toLowerCase();
-        const headingStyles = parseStyles(heading.getAttribute('style') || '');
+        const headingStyles = parseStyles(heading.getAttribute("style") || "");
         blocks.push({
           id: `block-${Date.now()}-${index}`,
-          type: 'heading',
-          content: heading.textContent || '',
+          type: "heading",
+          content: heading.textContent || "",
           styles: {
             fontSize:
               headingStyles.fontSize ||
               styles.fontSize ||
-              (headingTag === 'h1' ? '24px' : headingTag === 'h2' ? '20px' : '18px'),
-            fontWeight: headingStyles.fontWeight || styles.fontWeight || '300',
-            fontStyle: headingStyles.fontStyle || styles.fontStyle || 'normal',
-            color: headingStyles.color || styles.color || '#ffffff',
-            backgroundColor: styles.backgroundColor || styles['background-color'] || '#000000',
-            textAlign: (styles.textAlign || headingStyles.textAlign || 'center') as any,
-            padding: styles.padding || '20px',
-            margin: styles.margin || '0 0 30px 0',
-            textDecoration: headingStyles.textDecoration || 'none',
+              (headingTag === "h1" ? "24px" : headingTag === "h2" ? "20px" : "18px"),
+            fontWeight: headingStyles.fontWeight || styles.fontWeight || "300",
+            fontStyle: headingStyles.fontStyle || styles.fontStyle || "normal",
+            color: headingStyles.color || styles.color || "#ffffff",
+            backgroundColor: styles.backgroundColor || styles["background-color"] || "#000000",
+            textAlign: (styles.textAlign || headingStyles.textAlign || "center") as any,
+            padding: styles.padding || "20px",
+            margin: styles.margin || "0 0 30px 0",
+            textDecoration: headingStyles.textDecoration || "none",
           },
         });
         return;
@@ -104,105 +104,105 @@ const parseHtmlToBlocks = (html: string): EmailBlock[] => {
     }
 
     if (
-      tagName === 'h1' ||
-      tagName === 'h2' ||
-      tagName === 'h3' ||
-      tagName === 'h4' ||
-      tagName === 'h5' ||
-      tagName === 'h6'
+      tagName === "h1" ||
+      tagName === "h2" ||
+      tagName === "h3" ||
+      tagName === "h4" ||
+      tagName === "h5" ||
+      tagName === "h6"
     ) {
       blocks.push({
         id: `block-${Date.now()}-${index}`,
-        type: 'heading',
-        content: element.textContent || '',
+        type: "heading",
+        content: element.textContent || "",
         styles: {
           fontSize:
-            styles.fontSize || (tagName === 'h1' ? '32px' : tagName === 'h2' ? '24px' : '20px'),
-          fontWeight: styles.fontWeight || 'bold',
-          fontStyle: styles.fontStyle || 'normal',
-          color: styles.color || '#000000',
-          backgroundColor: styles.backgroundColor || styles['background-color'] || undefined,
-          textAlign: (styles.textAlign as any) || 'left',
+            styles.fontSize || (tagName === "h1" ? "32px" : tagName === "h2" ? "24px" : "20px"),
+          fontWeight: styles.fontWeight || "bold",
+          fontStyle: styles.fontStyle || "normal",
+          color: styles.color || "#000000",
+          backgroundColor: styles.backgroundColor || styles["background-color"] || undefined,
+          textAlign: (styles.textAlign as any) || "left",
           padding:
             styles.padding ||
-            (styles.backgroundColor || styles['background-color'] ? '8px 12px' : '0'),
-          margin: styles.margin || '0 0 16px 0',
-          textDecoration: styles.textDecoration || 'none',
+            (styles.backgroundColor || styles["background-color"] ? "8px 12px" : "0"),
+          margin: styles.margin || "0 0 16px 0",
+          textDecoration: styles.textDecoration || "none",
         },
       });
-    } else if (tagName === 'p') {
+    } else if (tagName === "p") {
       blocks.push({
         id: `block-${Date.now()}-${index}`,
-        type: 'paragraph',
-        content: element.textContent || '',
+        type: "paragraph",
+        content: element.textContent || "",
         styles: {
-          fontSize: styles.fontSize || '16px',
-          fontWeight: styles.fontWeight || 'normal',
-          fontStyle: styles.fontStyle || 'normal',
-          color: styles.color || '#333333',
-          backgroundColor: styles.backgroundColor || styles['background-color'] || undefined,
-          textAlign: (styles.textAlign as any) || 'left',
+          fontSize: styles.fontSize || "16px",
+          fontWeight: styles.fontWeight || "normal",
+          fontStyle: styles.fontStyle || "normal",
+          color: styles.color || "#333333",
+          backgroundColor: styles.backgroundColor || styles["background-color"] || undefined,
+          textAlign: (styles.textAlign as any) || "left",
           padding:
             styles.padding ||
-            (styles.backgroundColor || styles['background-color'] ? '8px 12px' : '0'),
-          margin: styles.margin || '0 0 16px 0',
-          textDecoration: styles.textDecoration || 'none',
+            (styles.backgroundColor || styles["background-color"] ? "8px 12px" : "0"),
+          margin: styles.margin || "0 0 16px 0",
+          textDecoration: styles.textDecoration || "none",
         },
       });
-    } else if (tagName === 'a' || (tagName === 'div' && element.querySelector('a'))) {
-      const link = element.querySelector('a') || (element as HTMLAnchorElement);
+    } else if (tagName === "a" || (tagName === "div" && element.querySelector("a"))) {
+      const link = element.querySelector("a") || (element as HTMLAnchorElement);
       blocks.push({
         id: `block-${Date.now()}-${index}`,
-        type: 'button',
-        content: link.textContent || '',
+        type: "button",
+        content: link.textContent || "",
         styles: {
-          fontSize: styles.fontSize || '16px',
-          fontWeight: styles.fontWeight || 'normal',
-          fontStyle: styles.fontStyle || 'normal',
-          color: styles.color || '#ffffff',
-          backgroundColor: styles.backgroundColor || '#000000',
-          textAlign: (styles.textAlign as any) || 'center',
-          padding: styles.padding || '12px 30px',
-          margin: styles.margin || '16px 0',
-          borderRadius: styles.borderRadius || '4px',
-          textDecoration: styles.textDecoration || 'none',
+          fontSize: styles.fontSize || "16px",
+          fontWeight: styles.fontWeight || "normal",
+          fontStyle: styles.fontStyle || "normal",
+          color: styles.color || "#ffffff",
+          backgroundColor: styles.backgroundColor || "#000000",
+          textAlign: (styles.textAlign as any) || "center",
+          padding: styles.padding || "12px 30px",
+          margin: styles.margin || "16px 0",
+          borderRadius: styles.borderRadius || "4px",
+          textDecoration: styles.textDecoration || "none",
         },
         attributes: {
-          href: link.getAttribute('href') || '',
+          href: link.getAttribute("href") || "",
         },
       });
-    } else if (tagName === 'img' || (tagName === 'div' && element.querySelector('img'))) {
-      const img = element.querySelector('img') || (element as HTMLImageElement);
-      const imgStyles = tagName === 'img' ? styles : parseStyles(img.getAttribute('style') || '');
-      const divStyles = tagName === 'div' ? styles : {};
+    } else if (tagName === "img" || (tagName === "div" && element.querySelector("img"))) {
+      const img = element.querySelector("img") || (element as HTMLImageElement);
+      const imgStyles = tagName === "img" ? styles : parseStyles(img.getAttribute("style") || "");
+      const divStyles = tagName === "div" ? styles : {};
 
       blocks.push({
         id: `block-${Date.now()}-${index}`,
-        type: 'image',
-        content: '',
+        type: "image",
+        content: "",
         styles: {
-          width: imgStyles.width || divStyles.width || '70px',
-          maxWidth: imgStyles.maxWidth || divStyles.maxWidth || '70px',
-          height: imgStyles.height || divStyles.height || 'auto',
-          margin: divStyles.margin || styles.margin || '0 0 30px 0',
-          textAlign: (divStyles.textAlign || styles.textAlign || 'left') as
-            | 'left'
-            | 'center'
-            | 'right',
+          width: imgStyles.width || divStyles.width || "70px",
+          maxWidth: imgStyles.maxWidth || divStyles.maxWidth || "70px",
+          height: imgStyles.height || divStyles.height || "auto",
+          margin: divStyles.margin || styles.margin || "0 0 30px 0",
+          textAlign: (divStyles.textAlign || styles.textAlign || "left") as
+            | "left"
+            | "center"
+            | "right",
         },
         attributes: {
-          src: img.getAttribute('src') || '',
-          alt: img.getAttribute('alt') || '',
+          src: img.getAttribute("src") || "",
+          alt: img.getAttribute("alt") || "",
         },
       });
-    } else if (tagName === 'hr') {
+    } else if (tagName === "hr") {
       blocks.push({
         id: `block-${Date.now()}-${index}`,
-        type: 'divider',
-        content: '',
+        type: "divider",
+        content: "",
         styles: {
-          border: styles.border || '1px solid #eeeeee',
-          margin: styles.margin || '30px 0',
+          border: styles.border || "1px solid #eeeeee",
+          margin: styles.margin || "30px 0",
         },
       });
     }
@@ -213,8 +213,8 @@ const parseHtmlToBlocks = (html: string): EmailBlock[] => {
     : [
         {
           id: `block-${Date.now()}`,
-          type: 'paragraph',
-          content: 'Click to edit',
+          type: "paragraph",
+          content: "Click to edit",
           styles: {},
         },
       ];
@@ -222,8 +222,8 @@ const parseHtmlToBlocks = (html: string): EmailBlock[] => {
 
 const parseStyles = (styleString: string): Record<string, string> => {
   const styles: Record<string, string> = {};
-  styleString.split(';').forEach((style) => {
-    const [key, value] = style.split(':').map((s) => s.trim());
+  styleString.split(";").forEach((style) => {
+    const [key, value] = style.split(":").map((s) => s.trim());
     if (key && value) {
       const camelKey = key.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
       styles[camelKey] = value;
@@ -234,11 +234,11 @@ const parseStyles = (styleString: string): Record<string, string> => {
 };
 
 const linkifyText = (text: string): string => {
-  if (!text) return '';
+  if (!text) return "";
   const urlRegex = /((?:https?:\/\/|www\.)[^\s<>"']+)/gi;
 
   return text.replace(urlRegex, (match) => {
-    const href = match.startsWith('http') ? match : `https://${match}`;
+    const href = match.startsWith("http") ? match : `https://${match}`;
     return `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: underline;">${match}</a>`;
   });
 };
@@ -248,49 +248,49 @@ const blocksToHtml = (blocks: EmailBlock[]): string => {
     .map((block) => {
       const styleString = Object.entries(block.styles)
         .filter(([_, value]) => value)
-        .map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value}`)
-        .join('; ');
+        .map(([key, value]) => `${key.replace(/([A-Z])/g, "-$1").toLowerCase()}: ${value}`)
+        .join("; ");
 
       switch (block.type) {
-        case 'heading':
+        case "heading":
           return `<h1 style="${styleString}">${linkifyText(block.content)}</h1>`;
-        case 'paragraph':
+        case "paragraph":
           return `<p style="${styleString}">${linkifyText(block.content)}</p>`;
-        case 'button': {
-          const href = block.attributes?.href || '{{url}}';
+        case "button": {
+          const href = block.attributes?.href || "{{url}}";
           const buttonStyles = { ...block.styles };
           if (!buttonStyles.textDecoration) {
-            buttonStyles.textDecoration = 'none';
+            buttonStyles.textDecoration = "none";
           }
           const buttonStyleString = Object.entries(buttonStyles)
             .filter(([_, value]) => value)
-            .map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value}`)
-            .join('; ');
-          return `<div style="text-align: ${block.styles.textAlign || 'center'}; margin: ${block.styles.margin || '16px 0'}">
+            .map(([key, value]) => `${key.replace(/([A-Z])/g, "-$1").toLowerCase()}: ${value}`)
+            .join("; ");
+          return `<div style="text-align: ${block.styles.textAlign || "center"}; margin: ${block.styles.margin || "16px 0"}">
           <a href="${href}" style="display: inline-block; ${buttonStyleString};">${block.content}</a>
         </div>`;
         }
-        case 'image': {
+        case "image": {
           const imageStyleString = Object.entries(block.styles)
             .filter(
               ([key, value]) =>
-                value && key !== 'textAlign' && key !== 'margin' && key !== 'display'
+                value && key !== "textAlign" && key !== "margin" && key !== "display",
             )
-            .map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value}`)
-            .join('; ');
-          const margin = block.styles.margin || '0 0 30px 0';
-          const textAlign = block.styles.textAlign || 'left';
+            .map(([key, value]) => `${key.replace(/([A-Z])/g, "-$1").toLowerCase()}: ${value}`)
+            .join("; ");
+          const margin = block.styles.margin || "0 0 30px 0";
+          const textAlign = block.styles.textAlign || "left";
           return `<div style="margin: ${margin}; text-align: ${textAlign}">
-            <img src="${block.attributes?.src || ''}" alt="${block.attributes?.alt || ''}" style="display: inline-block; ${imageStyleString}" />
+            <img src="${block.attributes?.src || ""}" alt="${block.attributes?.alt || ""}" style="display: inline-block; ${imageStyleString}" />
           </div>`;
         }
-        case 'divider':
+        case "divider":
           return `<hr style="${styleString}" />`;
         default:
-          return '';
+          return "";
       }
     })
-    .join('\n');
+    .join("\n");
 
   return `<!DOCTYPE html>
 <html>
@@ -308,10 +308,10 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
   const [blocks, setBlocks] = useState<EmailBlock[]>([]);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit');
+  const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
   const editingRefs = useRef<Map<string, HTMLElement>>(new Map());
   const isInternalUpdateRef = useRef(false);
-  const lastHtmlRef = useRef<string>('');
+  const lastHtmlRef = useRef<string>("");
   const previewIframeRef = useRef<HTMLIFrameElement>(null);
   const lastSelectedBlockRef = useRef<EmailBlock | null>(null);
   const stableSelectedBlockIdRef = useRef<string | null>(null);
@@ -376,7 +376,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
   }, [blocks, onChange]);
 
   useEffect(() => {
-    if (viewMode === 'preview' && previewIframeRef.current) {
+    if (viewMode === "preview" && previewIframeRef.current) {
       const iframe = previewIframeRef.current;
       const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
       if (iframeDoc) {
@@ -388,14 +388,14 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
         iframe.onload = () => {
           const doc = iframe.contentDocument || iframe.contentWindow?.document;
           if (doc) {
-            const links = doc.querySelectorAll('a');
+            const links = doc.querySelectorAll("a");
             links.forEach((link) => {
-              link.addEventListener('click', (event) => {
-                const href = link.getAttribute('href');
-                if (href && href !== '{{url}}' && !href.startsWith('#')) {
-                  if (href.startsWith('http://') || href.startsWith('https://')) {
+              link.addEventListener("click", (event) => {
+                const href = link.getAttribute("href");
+                if (href && href !== "{{url}}" && !href.startsWith("#")) {
+                  if (href.startsWith("http://") || href.startsWith("https://")) {
                     event.preventDefault();
-                    window.open(href, '_blank', 'noopener,noreferrer');
+                    window.open(href, "_blank", "noopener,noreferrer");
                   }
                 }
               });
@@ -408,7 +408,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                 body.offsetHeight,
                 doc.documentElement.clientHeight,
                 doc.documentElement.scrollHeight,
-                doc.documentElement.offsetHeight
+                doc.documentElement.offsetHeight,
               );
               iframe.style.height = `${height}px`;
             }
@@ -438,7 +438,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
 
   const updateBlock = useCallback((blockId: string, updates: Partial<EmailBlock>) => {
     setBlocks((prev) =>
-      prev.map((block) => (block.id === blockId ? { ...block, ...updates } : block))
+      prev.map((block) => (block.id === blockId ? { ...block, ...updates } : block)),
     );
   }, []);
 
@@ -447,27 +447,27 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
       id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type,
       content:
-        type === 'button'
-          ? 'Button Text'
-          : type === 'heading'
-            ? 'Heading'
-            : type === 'paragraph'
-              ? 'Paragraph text'
-              : '',
+        type === "button"
+          ? "Button Text"
+          : type === "heading"
+            ? "Heading"
+            : type === "paragraph"
+              ? "Paragraph text"
+              : "",
       styles: {
-        fontSize: type === 'heading' ? '24px' : '16px',
-        color: type === 'button' ? '#ffffff' : '#333333',
-        backgroundColor: type === 'button' ? '#000000' : undefined,
-        textAlign: type === 'button' ? 'center' : 'left',
-        padding: type === 'button' ? '12px 30px' : '0',
-        margin: '16px 0',
-        borderRadius: type === 'button' ? '4px' : undefined,
+        fontSize: type === "heading" ? "24px" : "16px",
+        color: type === "button" ? "#ffffff" : "#333333",
+        backgroundColor: type === "button" ? "#000000" : undefined,
+        textAlign: type === "button" ? "center" : "left",
+        padding: type === "button" ? "12px 30px" : "0",
+        margin: "16px 0",
+        borderRadius: type === "button" ? "4px" : undefined,
       },
       attributes:
-        type === 'button'
-          ? { href: '{{url}}' }
-          : type === 'image'
-            ? { src: '', alt: '' }
+        type === "button"
+          ? { href: "{{url}}" }
+          : type === "image"
+            ? { src: "", alt: "" }
             : undefined,
     };
     const updatedBlocks = [...blocksRef.current, newBlock];
@@ -489,15 +489,15 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
     }
   };
 
-  const moveBlock = useCallback((blockId: string, direction: 'up' | 'down') => {
+  const moveBlock = useCallback((blockId: string, direction: "up" | "down") => {
     setBlocks((prev) => {
       const index = prev.findIndex((b) => b.id === blockId);
       if (index === -1) return prev;
-      if (direction === 'up' && index === 0) return prev;
-      if (direction === 'down' && index === prev.length - 1) return prev;
+      if (direction === "up" && index === 0) return prev;
+      if (direction === "down" && index === prev.length - 1) return prev;
 
       const newBlocks = [...prev];
-      const targetIndex = direction === 'up' ? index - 1 : index + 1;
+      const targetIndex = direction === "up" ? index - 1 : index + 1;
       [newBlocks[index], newBlocks[targetIndex]] = [newBlocks[targetIndex], newBlocks[index]];
       return newBlocks;
     });
@@ -568,7 +568,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
     setSelectedBlockId(blockId);
     stableSelectedBlockIdRef.current = blockId;
 
-    if (target.contentEditable === 'true') {
+    if (target.contentEditable === "true") {
       if (editingBlockId !== blockId) {
         startEditing(blockId);
       }
@@ -585,9 +585,9 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       setEditingBlockId(null);
-    } else if (e.key === 'Enter') {
+    } else if (e.key === "Enter") {
       e.preventDefault();
     }
   };
@@ -678,14 +678,14 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
     <div className="flex-1 flex overflow-hidden h-full min-h-0">
       <div
         className="flex-1 flex flex-col overflow-hidden bg-white border-none border-white/10 min-h-0"
-        style={{ minWidth: '500px' }}
+        style={{ minWidth: "500px" }}
       >
         <div className="p-4 border-y border-dashed border-white/10 bg-black/[93%]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Button
-                variant={viewMode === 'edit' ? 'default' : 'ghost'}
-                onClick={() => setViewMode('edit')}
+                variant={viewMode === "edit" ? "default" : "ghost"}
+                onClick={() => setViewMode("edit")}
                 className="h-7 px-3 text-xs rounded-none border border-dashed border-white/20"
                 title="Edit Mode"
               >
@@ -693,8 +693,8 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                 Edit
               </Button>
               <Button
-                variant={viewMode === 'preview' ? 'default' : 'ghost'}
-                onClick={() => setViewMode('preview')}
+                variant={viewMode === "preview" ? "default" : "ghost"}
+                onClick={() => setViewMode("preview")}
                 className="h-7 px-3 text-xs rounded-none border border-dashed border-white/20"
                 title="Preview Mode"
               >
@@ -702,12 +702,12 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                 Preview
               </Button>
             </div>
-            {viewMode === 'edit' && (
+            {viewMode === "edit" && (
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => addBlock('heading')}
+                  onClick={() => addBlock("heading")}
                   className="h-7 px-2 text-xs rounded-none border border-dashed border-white/20 hover:bg-white/10"
                   title="Add Heading"
                 >
@@ -717,7 +717,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => addBlock('paragraph')}
+                  onClick={() => addBlock("paragraph")}
                   className="h-7 px-2 text-xs rounded-none border border-dashed border-white/20 hover:bg-white/10"
                   title="Add Paragraph"
                 >
@@ -727,7 +727,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => addBlock('button')}
+                  onClick={() => addBlock("button")}
                   className="h-7 px-2 text-xs rounded-none border border-dashed border-white/20 hover:bg-white/10"
                   title="Add Button"
                 >
@@ -737,7 +737,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => addBlock('image')}
+                  onClick={() => addBlock("image")}
                   className="h-7 px-2 text-xs rounded-none border border-dashed border-white/20 hover:bg-white/10"
                   title="Add Image"
                 >
@@ -747,7 +747,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => addBlock('divider')}
+                  onClick={() => addBlock("divider")}
                   className="h-7 px-2 text-xs rounded-none border border-dashed border-white/20 hover:bg-white/10"
                   title="Add Divider"
                 >
@@ -758,14 +758,14 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
           </div>
         </div>
 
-        {viewMode === 'edit' ? (
+        {viewMode === "edit" ? (
           <div
             className="flex-1 overflow-y-auto overflow-x-hidden p-8 bg-gray-50 min-h-0"
-            style={{ overscrollBehavior: 'contain' }}
+            style={{ overscrollBehavior: "contain" }}
           >
             <div
               className="max-w-2xl mx-auto bg-white shadow-lg p-8"
-              style={{ width: '100%', paddingBottom: '2rem' }}
+              style={{ width: "100%", paddingBottom: "2rem" }}
             >
               {blocks.length === 0 ? (
                 <div className="text-center py-20 text-gray-400">
@@ -783,9 +783,9 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                   return (
                     <div
                       key={block.id}
-                      className={`relative group mb-4 ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
+                      className={`relative group mb-4 ${isSelected ? "ring-2 ring-blue-500" : ""}`}
                       onClick={(e) => {
-                        if ((e.target as HTMLElement).contentEditable !== 'true') {
+                        if ((e.target as HTMLElement).contentEditable !== "true") {
                           setSelectedBlockId(block.id);
                           stableSelectedBlockIdRef.current = block.id;
                         }
@@ -796,7 +796,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              moveBlock(block.id, 'up');
+                              moveBlock(block.id, "up");
                             }}
                             disabled={index === 0}
                             className="h-7 w-7 p-0 bg-black/90 border border-dashed border-white/30 hover:bg-black/30 hover:border-white/60 rounded-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
@@ -807,7 +807,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              moveBlock(block.id, 'down');
+                              moveBlock(block.id, "down");
                             }}
                             disabled={index === blocks.length - 1}
                             className="h-7 w-7 p-0 bg-black/90 border border-dashed border-white/30 hover:bg-black/30 hover:border-white/60 rounded-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
@@ -838,7 +838,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                         </div>
                       )}
 
-                      {block.type === 'heading' && (
+                      {block.type === "heading" && (
                         <h1
                           ref={(el) => {
                             if (el) editingRefs.current.set(block.id, el);
@@ -853,31 +853,31 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                           }}
                           onBlur={createBlurHandler(block.id)}
                           onKeyDown={handleKeyDown}
-                          onInput={(e) => handleInput(block.id, e.currentTarget.textContent || '')}
+                          onInput={(e) => handleInput(block.id, e.currentTarget.textContent || "")}
                           style={{
-                            fontSize: block.styles.fontSize || '24px',
-                            fontWeight: block.styles.fontWeight || 'bold',
-                            fontStyle: block.styles.fontStyle || 'normal',
-                            fontFamily: block.styles.fontFamily || 'inherit',
-                            color: block.styles.color || '#000000',
+                            fontSize: block.styles.fontSize || "24px",
+                            fontWeight: block.styles.fontWeight || "bold",
+                            fontStyle: block.styles.fontStyle || "normal",
+                            fontFamily: block.styles.fontFamily || "inherit",
+                            color: block.styles.color || "#000000",
                             backgroundColor: block.styles.backgroundColor || undefined,
-                            textAlign: block.styles.textAlign || 'left',
+                            textAlign: block.styles.textAlign || "left",
                             padding:
                               block.styles.padding ||
-                              (block.styles.backgroundColor ? '8px 12px' : '0'),
-                            margin: block.styles.margin || '0 0 16px 0',
-                            lineHeight: block.styles.lineHeight || '1.2',
-                            letterSpacing: block.styles.letterSpacing || '0',
-                            textDecoration: block.styles.textDecoration || 'none',
-                            outline: isEditing ? '2px dashed #3b82f6' : 'none',
-                            minHeight: '1.5em',
+                              (block.styles.backgroundColor ? "8px 12px" : "0"),
+                            margin: block.styles.margin || "0 0 16px 0",
+                            lineHeight: block.styles.lineHeight || "1.2",
+                            letterSpacing: block.styles.letterSpacing || "0",
+                            textDecoration: block.styles.textDecoration || "none",
+                            outline: isEditing ? "2px dashed #3b82f6" : "none",
+                            minHeight: "1.5em",
                           }}
                         >
                           {block.content}
                         </h1>
                       )}
 
-                      {block.type === 'paragraph' && (
+                      {block.type === "paragraph" && (
                         <p
                           ref={(el) => {
                             if (el) editingRefs.current.set(block.id, el);
@@ -892,35 +892,35 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                           }}
                           onBlur={createBlurHandler(block.id)}
                           onKeyDown={handleKeyDown}
-                          onInput={(e) => handleInput(block.id, e.currentTarget.textContent || '')}
+                          onInput={(e) => handleInput(block.id, e.currentTarget.textContent || "")}
                           style={{
-                            fontSize: block.styles.fontSize || '16px',
-                            fontWeight: block.styles.fontWeight || 'normal',
-                            fontStyle: block.styles.fontStyle || 'normal',
-                            fontFamily: block.styles.fontFamily || 'inherit',
-                            color: block.styles.color || '#333333',
+                            fontSize: block.styles.fontSize || "16px",
+                            fontWeight: block.styles.fontWeight || "normal",
+                            fontStyle: block.styles.fontStyle || "normal",
+                            fontFamily: block.styles.fontFamily || "inherit",
+                            color: block.styles.color || "#333333",
                             backgroundColor: block.styles.backgroundColor || undefined,
-                            textAlign: block.styles.textAlign || 'left',
+                            textAlign: block.styles.textAlign || "left",
                             padding:
                               block.styles.padding ||
-                              (block.styles.backgroundColor ? '8px 12px' : '0'),
-                            margin: block.styles.margin || '0 0 16px 0',
-                            lineHeight: block.styles.lineHeight || '1.6',
-                            letterSpacing: block.styles.letterSpacing || '0',
-                            textDecoration: block.styles.textDecoration || 'none',
-                            outline: isEditing ? '2px dashed #3b82f6' : 'none',
-                            minHeight: '1.5em',
+                              (block.styles.backgroundColor ? "8px 12px" : "0"),
+                            margin: block.styles.margin || "0 0 16px 0",
+                            lineHeight: block.styles.lineHeight || "1.6",
+                            letterSpacing: block.styles.letterSpacing || "0",
+                            textDecoration: block.styles.textDecoration || "none",
+                            outline: isEditing ? "2px dashed #3b82f6" : "none",
+                            minHeight: "1.5em",
                           }}
                         >
                           {block.content}
                         </p>
                       )}
 
-                      {block.type === 'button' && (
+                      {block.type === "button" && (
                         <div
                           style={{
-                            textAlign: block.styles.textAlign || 'center',
-                            margin: block.styles.margin || '16px 0',
+                            textAlign: block.styles.textAlign || "center",
+                            margin: block.styles.margin || "16px 0",
                           }}
                           onClick={(e) => {
                             if (isSelected || isEditing) {
@@ -950,30 +950,30 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                             onBlur={createBlurHandler(block.id)}
                             onKeyDown={handleKeyDown}
                             onInput={(e) =>
-                              handleInput(block.id, e.currentTarget.textContent || '')
+                              handleInput(block.id, e.currentTarget.textContent || "")
                             }
                             style={{
-                              display: 'inline-block',
-                              fontSize: block.styles.fontSize || '16px',
-                              fontWeight: block.styles.fontWeight || 'normal',
-                              fontStyle: block.styles.fontStyle || 'normal',
-                              fontFamily: block.styles.fontFamily || 'inherit',
-                              color: block.styles.color || '#ffffff',
-                              backgroundColor: block.styles.backgroundColor || '#000000',
-                              padding: block.styles.padding || '12px 30px',
-                              borderRadius: block.styles.borderRadius || '4px',
-                              border: block.styles.border || 'none',
-                              letterSpacing: block.styles.letterSpacing || '0',
-                              textDecoration: block.styles.textDecoration || 'none',
+                              display: "inline-block",
+                              fontSize: block.styles.fontSize || "16px",
+                              fontWeight: block.styles.fontWeight || "normal",
+                              fontStyle: block.styles.fontStyle || "normal",
+                              fontFamily: block.styles.fontFamily || "inherit",
+                              color: block.styles.color || "#ffffff",
+                              backgroundColor: block.styles.backgroundColor || "#000000",
+                              padding: block.styles.padding || "12px 30px",
+                              borderRadius: block.styles.borderRadius || "4px",
+                              border: block.styles.border || "none",
+                              letterSpacing: block.styles.letterSpacing || "0",
+                              textDecoration: block.styles.textDecoration || "none",
                               outline: isEditing
-                                ? '2px dashed #3b82f6'
+                                ? "2px dashed #3b82f6"
                                 : isSelected
-                                  ? '2px solid #3b82f6'
-                                  : 'none',
-                              minWidth: '100px',
-                              cursor: isEditing ? 'text' : 'default',
-                              userSelect: 'text',
-                              transition: 'border-radius 0.2s ease',
+                                  ? "2px solid #3b82f6"
+                                  : "none",
+                              minWidth: "100px",
+                              cursor: isEditing ? "text" : "default",
+                              userSelect: "text",
+                              transition: "border-radius 0.2s ease",
                             }}
                           >
                             {block.content}
@@ -981,33 +981,33 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                         </div>
                       )}
 
-                      {block.type === 'image' && (
+                      {block.type === "image" && (
                         <div
                           style={{
-                            margin: block.styles.margin || '0 0 30px 0',
-                            textAlign: block.styles.textAlign || 'left',
+                            margin: block.styles.margin || "0 0 30px 0",
+                            textAlign: block.styles.textAlign || "left",
                           }}
                         >
                           <img
-                            src={block.attributes?.src || 'https://via.placeholder.com/600x300'}
-                            alt={block.attributes?.alt || ''}
+                            src={block.attributes?.src || "https://via.placeholder.com/600x300"}
+                            alt={block.attributes?.alt || ""}
                             style={{
-                              width: block.styles.width || '70px',
-                              maxWidth: block.styles.maxWidth || '70px',
-                              height: block.styles.height || 'auto',
-                              display: 'inline-block',
-                              outline: isSelected ? '2px dashed #3b82f6' : 'none',
+                              width: block.styles.width || "70px",
+                              maxWidth: block.styles.maxWidth || "70px",
+                              height: block.styles.height || "auto",
+                              display: "inline-block",
+                              outline: isSelected ? "2px dashed #3b82f6" : "none",
                             }}
                           />
                         </div>
                       )}
 
-                      {block.type === 'divider' && (
+                      {block.type === "divider" && (
                         <hr
                           style={{
-                            border: block.styles.border || '1px solid #eeeeee',
-                            margin: block.styles.margin || '30px 0',
-                            outline: isSelected ? '2px dashed #3b82f6' : 'none',
+                            border: block.styles.border || "1px solid #eeeeee",
+                            margin: block.styles.margin || "30px 0",
+                            outline: isSelected ? "2px dashed #3b82f6" : "none",
                           }}
                         />
                       )}
@@ -1020,17 +1020,17 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
         ) : (
           <div
             className="flex-1 overflow-y-auto overflow-x-hidden p-8 bg-gray-50 min-h-0"
-            style={{ overscrollBehavior: 'contain' }}
+            style={{ overscrollBehavior: "contain" }}
           >
             <div
               className="max-w-2xl mx-auto bg-white shadow-lg p-8"
-              style={{ width: '100%', paddingBottom: '2rem' }}
+              style={{ width: "100%", paddingBottom: "2rem" }}
             >
               <iframe
                 ref={previewIframeRef}
                 className="w-full border-0"
                 title="Email Preview"
-                style={{ minHeight: '100%', display: 'block' }}
+                style={{ minHeight: "100%", display: "block" }}
                 sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation"
               />
             </div>
@@ -1038,24 +1038,24 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
         )}
       </div>
 
-      {stableBlockForSidebar && viewMode === 'edit' && (
+      {stableBlockForSidebar && viewMode === "edit" && (
         <div
           className="w-96 h-[calc(100vh-400px)] border-l border-dashed border-white/20 bg-black/40 flex flex-col flex-shrink-0 overflow-scroll"
-          style={{ minWidth: '384px', maxWidth: '384px' }}
+          style={{ minWidth: "384px", maxWidth: "384px" }}
         >
           <div className="p-4 border-b border-dashed border-white/10 bg-black/40 z-10 flex-shrink-0">
             <Label className="text-xs uppercase font-mono text-gray-400">
               {stableBlockForSidebar.type.charAt(0).toUpperCase() +
-                stableBlockForSidebar.type.slice(1)}{' '}
+                stableBlockForSidebar.type.slice(1)}{" "}
               Properties
             </Label>
           </div>
 
           <div
             className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4"
-            style={{ overscrollBehavior: 'contain', minHeight: 0 }}
+            style={{ overscrollBehavior: "contain", minHeight: 0 }}
           >
-            {stableBlockForSidebar.type !== 'divider' && stableBlockForSidebar.type !== 'image' && (
+            {stableBlockForSidebar.type !== "divider" && stableBlockForSidebar.type !== "image" && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Content
@@ -1070,9 +1070,9 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                 <p className="text-xs text-gray-500 mt-1">Double-click on canvas to edit inline</p>
               </div>
             )}
-            {(stableBlockForSidebar.type === 'heading' ||
-              stableBlockForSidebar.type === 'paragraph' ||
-              stableBlockForSidebar.type === 'button') && (
+            {(stableBlockForSidebar.type === "heading" ||
+              stableBlockForSidebar.type === "paragraph" ||
+              stableBlockForSidebar.type === "button") && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Text Formatting
@@ -1080,7 +1080,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                 <div className="flex gap-2">
                   <Button
                     variant={
-                      stableBlockForSidebar.styles.fontWeight === 'bold' ? 'default' : 'ghost'
+                      stableBlockForSidebar.styles.fontWeight === "bold" ? "default" : "ghost"
                     }
                     size="sm"
                     onClick={() =>
@@ -1088,7 +1088,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                         styles: {
                           ...stableBlockForSidebar.styles,
                           fontWeight:
-                            stableBlockForSidebar.styles.fontWeight === 'bold' ? 'normal' : 'bold',
+                            stableBlockForSidebar.styles.fontWeight === "bold" ? "normal" : "bold",
                         },
                       })
                     }
@@ -1099,7 +1099,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                   </Button>
                   <Button
                     variant={
-                      stableBlockForSidebar.styles.fontStyle === 'italic' ? 'default' : 'ghost'
+                      stableBlockForSidebar.styles.fontStyle === "italic" ? "default" : "ghost"
                     }
                     size="sm"
                     onClick={() =>
@@ -1107,9 +1107,9 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                         styles: {
                           ...stableBlockForSidebar.styles,
                           fontStyle:
-                            stableBlockForSidebar.styles.fontStyle === 'italic'
-                              ? 'normal'
-                              : 'italic',
+                            stableBlockForSidebar.styles.fontStyle === "italic"
+                              ? "normal"
+                              : "italic",
                         },
                       })
                     }
@@ -1120,9 +1120,9 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                   </Button>
                   <Button
                     variant={
-                      stableBlockForSidebar.styles.textDecoration === 'underline'
-                        ? 'default'
-                        : 'ghost'
+                      stableBlockForSidebar.styles.textDecoration === "underline"
+                        ? "default"
+                        : "ghost"
                     }
                     size="sm"
                     onClick={() =>
@@ -1130,9 +1130,9 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                         styles: {
                           ...stableBlockForSidebar.styles,
                           textDecoration:
-                            stableBlockForSidebar.styles.textDecoration === 'underline'
-                              ? 'none'
-                              : 'underline',
+                            stableBlockForSidebar.styles.textDecoration === "underline"
+                              ? "none"
+                              : "underline",
                         },
                       })
                     }
@@ -1143,9 +1143,9 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                   </Button>
                   <Button
                     variant={
-                      stableBlockForSidebar.styles.textDecoration === 'line-through'
-                        ? 'default'
-                        : 'ghost'
+                      stableBlockForSidebar.styles.textDecoration === "line-through"
+                        ? "default"
+                        : "ghost"
                     }
                     size="sm"
                     onClick={() =>
@@ -1153,9 +1153,9 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                         styles: {
                           ...stableBlockForSidebar.styles,
                           textDecoration:
-                            stableBlockForSidebar.styles.textDecoration === 'line-through'
-                              ? 'none'
-                              : 'line-through',
+                            stableBlockForSidebar.styles.textDecoration === "line-through"
+                              ? "none"
+                              : "line-through",
                         },
                       })
                     }
@@ -1168,13 +1168,13 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {stableBlockForSidebar.type === 'button' && (
+            {stableBlockForSidebar.type === "button" && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Link URL
                 </Label>
                 <Input
-                  value={stableBlockForSidebar.attributes?.href || ''}
+                  value={stableBlockForSidebar.attributes?.href || ""}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       attributes: { ...stableBlockForSidebar.attributes, href: e.target.value },
@@ -1186,13 +1186,13 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {stableBlockForSidebar.type === 'image' && (
+            {stableBlockForSidebar.type === "image" && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Image URL
                 </Label>
                 <Input
-                  value={stableBlockForSidebar.attributes?.src || ''}
+                  value={stableBlockForSidebar.attributes?.src || ""}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       attributes: { ...stableBlockForSidebar.attributes, src: e.target.value },
@@ -1205,7 +1205,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                   Alt Text
                 </Label>
                 <Input
-                  value={stableBlockForSidebar.attributes?.alt || ''}
+                  value={stableBlockForSidebar.attributes?.alt || ""}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       attributes: { ...stableBlockForSidebar.attributes, alt: e.target.value },
@@ -1220,14 +1220,14 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                   </Label>
                   <div className="flex gap-2">
                     {[
-                      { value: 'left' as const, icon: AlignLeft },
-                      { value: 'center' as const, icon: AlignCenter },
-                      { value: 'right' as const, icon: AlignRight },
+                      { value: "left" as const, icon: AlignLeft },
+                      { value: "center" as const, icon: AlignCenter },
+                      { value: "right" as const, icon: AlignRight },
                     ].map(({ value: align, icon: Icon }) => (
                       <Button
                         key={align}
                         variant={
-                          stableBlockForSidebar.styles.textAlign === align ? 'default' : 'ghost'
+                          stableBlockForSidebar.styles.textAlign === align ? "default" : "ghost"
                         }
                         size="sm"
                         onClick={() =>
@@ -1246,15 +1246,15 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {(stableBlockForSidebar.type === 'heading' ||
-              stableBlockForSidebar.type === 'paragraph' ||
-              stableBlockForSidebar.type === 'button') && (
+            {(stableBlockForSidebar.type === "heading" ||
+              stableBlockForSidebar.type === "paragraph" ||
+              stableBlockForSidebar.type === "button") && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Font Family
                 </Label>
                 <select
-                  value={stableBlockForSidebar.styles.fontFamily || 'inherit'}
+                  value={stableBlockForSidebar.styles.fontFamily || "inherit"}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       styles: { ...stableBlockForSidebar.styles, fontFamily: e.target.value },
@@ -1275,15 +1275,15 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {(stableBlockForSidebar.type === 'heading' ||
-              stableBlockForSidebar.type === 'paragraph' ||
-              stableBlockForSidebar.type === 'button') && (
+            {(stableBlockForSidebar.type === "heading" ||
+              stableBlockForSidebar.type === "paragraph" ||
+              stableBlockForSidebar.type === "button") && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Font Size
                 </Label>
                 <Input
-                  value={stableBlockForSidebar.styles.fontSize ?? ''}
+                  value={stableBlockForSidebar.styles.fontSize ?? ""}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       styles: {
@@ -1298,14 +1298,14 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {stableBlockForSidebar.type !== 'divider' && stableBlockForSidebar.type !== 'image' && (
+            {stableBlockForSidebar.type !== "divider" && stableBlockForSidebar.type !== "image" && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Text Color
                 </Label>
                 <Input
                   type="color"
-                  value={stableBlockForSidebar.styles.color || '#333333'}
+                  value={stableBlockForSidebar.styles.color || "#333333"}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       styles: { ...stableBlockForSidebar.styles, color: e.target.value },
@@ -1316,34 +1316,34 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {(stableBlockForSidebar.type === 'button' ||
-              stableBlockForSidebar.type === 'heading' ||
-              stableBlockForSidebar.type === 'paragraph') && (
+            {(stableBlockForSidebar.type === "button" ||
+              stableBlockForSidebar.type === "heading" ||
+              stableBlockForSidebar.type === "paragraph") && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Background Color
                 </Label>
                 <Input
                   type="color"
-                  value={stableBlockForSidebar.styles.backgroundColor || '#ffffff'}
+                  value={stableBlockForSidebar.styles.backgroundColor || "#ffffff"}
                   onChange={(e) => {
                     const newBackgroundColor = e.target.value;
                     const currentPadding = stableBlockForSidebar.styles.padding;
                     const hasBackgroundColor =
-                      newBackgroundColor && newBackgroundColor !== '#ffffff';
+                      newBackgroundColor && newBackgroundColor !== "#ffffff";
                     const shouldAddPadding =
-                      hasBackgroundColor && (!currentPadding || currentPadding === '0');
+                      hasBackgroundColor && (!currentPadding || currentPadding === "0");
 
                     updateBlock(stableBlockForSidebar.id, {
                       styles: {
                         ...stableBlockForSidebar.styles,
                         backgroundColor: hasBackgroundColor ? newBackgroundColor : undefined,
                         padding: shouldAddPadding
-                          ? '8px 12px'
+                          ? "8px 12px"
                           : hasBackgroundColor
-                            ? currentPadding || '8px 12px'
-                            : currentPadding === '8px 12px'
-                              ? '0'
+                            ? currentPadding || "8px 12px"
+                            : currentPadding === "8px 12px"
+                              ? "0"
                               : currentPadding,
                       },
                     });
@@ -1351,7 +1351,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                   className="h-8 w-full bg-black border border-dashed border-white/20 rounded-none"
                 />
                 {stableBlockForSidebar.styles.backgroundColor &&
-                  stableBlockForSidebar.styles.backgroundColor !== '#ffffff' && (
+                  stableBlockForSidebar.styles.backgroundColor !== "#ffffff" && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -1361,7 +1361,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                           styles: {
                             ...stableBlockForSidebar.styles,
                             backgroundColor: undefined,
-                            padding: currentPadding === '8px 12px' ? '0' : currentPadding,
+                            padding: currentPadding === "8px 12px" ? "0" : currentPadding,
                           },
                         });
                       }}
@@ -1373,21 +1373,21 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {stableBlockForSidebar.type !== 'divider' && stableBlockForSidebar.type !== 'image' && (
+            {stableBlockForSidebar.type !== "divider" && stableBlockForSidebar.type !== "image" && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Text Align
                 </Label>
                 <div className="flex gap-2">
                   {[
-                    { value: 'left' as const, icon: AlignLeft },
-                    { value: 'center' as const, icon: AlignCenter },
-                    { value: 'right' as const, icon: AlignRight },
+                    { value: "left" as const, icon: AlignLeft },
+                    { value: "center" as const, icon: AlignCenter },
+                    { value: "right" as const, icon: AlignRight },
                   ].map(({ value: align, icon: Icon }) => (
                     <Button
                       key={align}
                       variant={
-                        stableBlockForSidebar.styles.textAlign === align ? 'default' : 'ghost'
+                        stableBlockForSidebar.styles.textAlign === align ? "default" : "ghost"
                       }
                       size="sm"
                       onClick={() =>
@@ -1405,14 +1405,14 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {(stableBlockForSidebar.type === 'heading' ||
-              stableBlockForSidebar.type === 'paragraph') && (
+            {(stableBlockForSidebar.type === "heading" ||
+              stableBlockForSidebar.type === "paragraph") && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Line Height
                 </Label>
                 <Input
-                  value={stableBlockForSidebar.styles.lineHeight ?? ''}
+                  value={stableBlockForSidebar.styles.lineHeight ?? ""}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       styles: {
@@ -1427,15 +1427,15 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {(stableBlockForSidebar.type === 'heading' ||
-              stableBlockForSidebar.type === 'paragraph' ||
-              stableBlockForSidebar.type === 'button') && (
+            {(stableBlockForSidebar.type === "heading" ||
+              stableBlockForSidebar.type === "paragraph" ||
+              stableBlockForSidebar.type === "button") && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Letter Spacing
                 </Label>
                 <Input
-                  value={stableBlockForSidebar.styles.letterSpacing ?? ''}
+                  value={stableBlockForSidebar.styles.letterSpacing ?? ""}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       styles: {
@@ -1450,13 +1450,13 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {stableBlockForSidebar.type !== 'divider' && (
+            {stableBlockForSidebar.type !== "divider" && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Margin
                 </Label>
                 <Input
-                  value={stableBlockForSidebar.styles.margin ?? ''}
+                  value={stableBlockForSidebar.styles.margin ?? ""}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       styles: {
@@ -1472,14 +1472,14 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {(stableBlockForSidebar.type === 'button' ||
-              stableBlockForSidebar.type === 'heading') && (
+            {(stableBlockForSidebar.type === "button" ||
+              stableBlockForSidebar.type === "heading") && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Padding
                 </Label>
                 <Input
-                  value={stableBlockForSidebar.styles.padding ?? ''}
+                  value={stableBlockForSidebar.styles.padding ?? ""}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       styles: {
@@ -1495,13 +1495,13 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {stableBlockForSidebar.type === 'button' && (
+            {stableBlockForSidebar.type === "button" && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Border Radius
                 </Label>
                 <Input
-                  value={stableBlockForSidebar.styles.borderRadius ?? ''}
+                  value={stableBlockForSidebar.styles.borderRadius ?? ""}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       styles: {
@@ -1516,13 +1516,13 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {stableBlockForSidebar.type === 'button' && (
+            {stableBlockForSidebar.type === "button" && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Border
                 </Label>
                 <Input
-                  value={stableBlockForSidebar.styles.border ?? ''}
+                  value={stableBlockForSidebar.styles.border ?? ""}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       styles: {
@@ -1538,14 +1538,14 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </div>
             )}
 
-            {stableBlockForSidebar.type === 'image' && (
+            {stableBlockForSidebar.type === "image" && (
               <>
                 <div>
                   <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                     Width
                   </Label>
                   <Input
-                    value={stableBlockForSidebar.styles.width ?? ''}
+                    value={stableBlockForSidebar.styles.width ?? ""}
                     onChange={(e) =>
                       updateBlock(stableBlockForSidebar.id, {
                         styles: {
@@ -1563,7 +1563,7 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
                     Height
                   </Label>
                   <Input
-                    value={stableBlockForSidebar.styles.height ?? ''}
+                    value={stableBlockForSidebar.styles.height ?? ""}
                     onChange={(e) =>
                       updateBlock(stableBlockForSidebar.id, {
                         styles: {
@@ -1579,13 +1579,13 @@ export default function VisualEmailBuilder({ html, onChange }: VisualEmailBuilde
               </>
             )}
 
-            {stableBlockForSidebar.type === 'divider' && (
+            {stableBlockForSidebar.type === "divider" && (
               <div>
                 <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                   Border Style
                 </Label>
                 <Input
-                  value={stableBlockForSidebar.styles.border ?? ''}
+                  value={stableBlockForSidebar.styles.border ?? ""}
                   onChange={(e) =>
                     updateBlock(stableBlockForSidebar.id, {
                       styles: {

@@ -1,4 +1,4 @@
-import { createHmac, randomBytes } from 'node:crypto';
+import { createHmac, randomBytes } from "node:crypto";
 import {
   existsSync,
   readFileSync as readFile,
@@ -6,38 +6,38 @@ import {
   unlinkSync,
   writeFileSync as writeFile,
   writeFileSync,
-} from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, join, join as pathJoin, sep as pathSep } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join, join as pathJoin, sep as pathSep } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 // @ts-expect-error - No types available
-import babelPresetReact from '@babel/preset-react';
+import babelPresetReact from "@babel/preset-react";
 // @ts-expect-error - No types available
-import babelPresetTypeScript from '@babel/preset-typescript';
+import babelPresetTypeScript from "@babel/preset-typescript";
 // @ts-expect-error
-import { hex } from '@better-auth/utils/hex';
-import { scryptAsync } from '@noble/hashes/scrypt.js';
-import { loadConfig } from 'c12';
-import { type Request, type Response, Router } from 'express';
-import { createJiti } from 'jiti';
-import type { JitiOptions as JO } from 'jiti/native';
-import { createRequire } from 'module';
+import { hex } from "@better-auth/utils/hex";
+import { scryptAsync } from "@noble/hashes/scrypt.js";
+import { loadConfig } from "c12";
+import { type Request, type Response, Router } from "express";
+import { createJiti } from "jiti";
+import type { JitiOptions as JO } from "jiti/native";
+import { createRequire } from "module";
 import {
   createMockAccount,
   createMockSession,
   createMockUser,
   createMockVerification,
   getAuthAdapter,
-} from './auth-adapter.js';
-import type { AuthConfig } from './config.js';
-import { getPathAliases, possiblePaths } from './config.js';
-import { getAuthData } from './data.js';
-import { initializeGeoService, resolveIPLocation, setGeoDbPath } from './geo-service.js';
-import type { AuthEvent, AuthEventType } from './types/events.js';
-import type { StudioConfig } from './types/handler.js';
-import { detectDatabaseWithDialect } from './utils/database-detection.js';
-import type { StudioAccessConfig } from './utils/html-injector.js';
+} from "./auth-adapter.js";
+import type { AuthConfig } from "./config.js";
+import { getPathAliases, possiblePaths } from "./config.js";
+import { getAuthData } from "./data.js";
+import { initializeGeoService, resolveIPLocation, setGeoDbPath } from "./geo-service.js";
+import type { AuthEvent, AuthEventType } from "./types/events.js";
+import type { StudioConfig } from "./types/handler.js";
+import { detectDatabaseWithDialect } from "./utils/database-detection.js";
+import type { StudioAccessConfig } from "./utils/html-injector.js";
 import {
   createStudioSession,
   decryptSession,
@@ -45,7 +45,7 @@ import {
   isSessionValid,
   STUDIO_COOKIE_NAME,
   type StudioSession,
-} from './utils/session.js';
+} from "./utils/session.js";
 
 const config = {
   N: 16384,
@@ -54,7 +54,7 @@ const config = {
   dkLen: 64,
 };
 async function generateKey(password: string, salt: string) {
-  return await scryptAsync(password.normalize('NFKC'), salt, {
+  return await scryptAsync(password.normalize("NFKC"), salt, {
     N: config.N,
     p: config.p,
     r: config.r,
@@ -64,11 +64,11 @@ async function generateKey(password: string, salt: string) {
 }
 
 async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
-  if (!storedHash || typeof storedHash !== 'string') {
+  if (!storedHash || typeof storedHash !== "string") {
     return false;
   }
 
-  const parts = storedHash.split(':');
+  const parts = storedHash.split(":");
   if (parts.length !== 2) {
     return false;
   }
@@ -90,39 +90,39 @@ async function verifyPassword(password: string, storedHash: string): Promise<boo
 function getStudioVersion(): string {
   try {
     const __dirname = dirname(fileURLToPath(import.meta.url));
-    const packageJsonPath = join(__dirname, '../package.json');
+    const packageJsonPath = join(__dirname, "../package.json");
     if (existsSync(packageJsonPath)) {
-      const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-      return packageJson.version || '1.0.0';
+      const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
+      return packageJson.version || "1.0.0";
     }
 
-    const nodeModulesPath = join(process.cwd(), 'node_modules/better-auth-studio/package.json');
+    const nodeModulesPath = join(process.cwd(), "node_modules/better-auth-studio/package.json");
     if (existsSync(nodeModulesPath)) {
-      const packageJson = JSON.parse(readFileSync(nodeModulesPath, 'utf-8'));
-      return packageJson.version || '1.0.0';
+      const packageJson = JSON.parse(readFileSync(nodeModulesPath, "utf-8"));
+      return packageJson.version || "1.0.0";
     }
 
     try {
       const require = createRequire(import.meta.url);
-      const resolvedPath = require.resolve('better-auth-studio/package.json');
+      const resolvedPath = require.resolve("better-auth-studio/package.json");
       if (existsSync(resolvedPath)) {
-        const packageJson = JSON.parse(readFileSync(resolvedPath, 'utf-8'));
-        return packageJson.version || '1.0.0';
+        const packageJson = JSON.parse(readFileSync(resolvedPath, "utf-8"));
+        return packageJson.version || "1.0.0";
       }
     } catch (_resolveError) {}
   } catch (_error) {}
-  return '1.0.0';
+  return "1.0.0";
 }
 
 function _resolveModuleWithExtensions(id: string, parent: string): string {
-  if (!id.startsWith('./') && !id.startsWith('../')) {
+  if (!id.startsWith("./") && !id.startsWith("../")) {
     return id;
   }
 
   const parentDir = dirname(parent);
   const basePath = join(parentDir, id);
 
-  const extensions = ['.ts', '.js', '.mjs', '.cjs'];
+  const extensions = [".ts", ".js", ".mjs", ".cjs"];
 
   for (const ext of extensions) {
     const fullPath = basePath + ext;
@@ -145,20 +145,20 @@ function _resolveModuleWithExtensions(id: string, parent: string): string {
 
 export async function safeImportAuthConfig(authConfigPath: string, noCache = false): Promise<any> {
   try {
-    if (authConfigPath.endsWith('.ts')) {
+    if (authConfigPath.endsWith(".ts")) {
       const aliases: Record<string, string> = {};
       const authConfigDir = dirname(authConfigPath);
 
       let projectDir = authConfigDir;
-      let tsconfigPath = join(projectDir, 'tsconfig.json');
+      let tsconfigPath = join(projectDir, "tsconfig.json");
       while (!existsSync(tsconfigPath) && projectDir !== dirname(projectDir)) {
         projectDir = dirname(projectDir);
-        tsconfigPath = join(projectDir, 'tsconfig.json');
+        tsconfigPath = join(projectDir, "tsconfig.json");
       }
 
-      const content = readFileSync(authConfigPath, 'utf-8');
+      const content = readFileSync(authConfigPath, "utf-8");
 
-      const { getPathAliases } = await import('./config.js');
+      const { getPathAliases } = await import("./config.js");
       const tsconfigAliases = getPathAliases(projectDir) || {};
 
       const relativeImportRegex = /import\s+.*?\s+from\s+['"](\.\/[^'"]+)['"]/g;
@@ -174,16 +174,16 @@ export async function safeImportAuthConfig(authConfigPath: string, noCache = fal
         foundImports.add(match[1]);
       }
       for (const importPath of foundImports) {
-        const importName = importPath.replace('./', '');
+        const importName = importPath.replace("./", "");
         const possiblePaths = [
           join(authConfigDir, `${importName}.ts`),
           join(authConfigDir, `${importName}.js`),
           join(authConfigDir, `${importName}.mjs`),
           join(authConfigDir, `${importName}.cjs`),
-          join(authConfigDir, importName, 'index.ts'),
-          join(authConfigDir, importName, 'index.js'),
-          join(authConfigDir, importName, 'index.mjs'),
-          join(authConfigDir, importName, 'index.cjs'),
+          join(authConfigDir, importName, "index.ts"),
+          join(authConfigDir, importName, "index.js"),
+          join(authConfigDir, importName, "index.mjs"),
+          join(authConfigDir, importName, "index.cjs"),
         ];
 
         for (const path of possiblePaths) {
@@ -198,19 +198,19 @@ export async function safeImportAuthConfig(authConfigPath: string, noCache = fal
       const pathAliasRegex = /import\s+.*?\s+from\s+['"](\$[^'"]+)['"]/g;
       while ((match = pathAliasRegex.exec(content)) !== null) {
         const aliasPath = match[1];
-        const aliasBase = aliasPath.split('/')[0];
+        const aliasBase = aliasPath.split("/")[0];
         if (tsconfigAliases[aliasBase]) {
-          const remainingPath = aliasPath.replace(aliasBase, '').replace(/^\//, '');
+          const remainingPath = aliasPath.replace(aliasBase, "").replace(/^\//, "");
           const resolvedPath = join(tsconfigAliases[aliasBase], remainingPath);
           const possiblePaths = [
             `${resolvedPath}.ts`,
             `${resolvedPath}.js`,
             `${resolvedPath}.mjs`,
             `${resolvedPath}.cjs`,
-            join(resolvedPath, 'index.ts'),
-            join(resolvedPath, 'index.js'),
-            join(resolvedPath, 'index.mjs'),
-            join(resolvedPath, 'index.cjs'),
+            join(resolvedPath, "index.ts"),
+            join(resolvedPath, "index.js"),
+            join(resolvedPath, "index.mjs"),
+            join(resolvedPath, "index.cjs"),
           ];
           for (const path of possiblePaths) {
             if (existsSync(path)) {
@@ -231,7 +231,7 @@ export async function safeImportAuthConfig(authConfigPath: string, noCache = fal
       try {
         return await jiti.import(authConfigPath);
       } catch (_importError: any) {
-        const content = readFileSync(authConfigPath, 'utf-8');
+        const content = readFileSync(authConfigPath, "utf-8");
 
         return {
           auth: {
@@ -246,13 +246,13 @@ export async function safeImportAuthConfig(authConfigPath: string, noCache = fal
     return await import(authConfigPath);
   } catch (importError) {
     try {
-      const { dirname, join } = await import('node:path');
+      const { dirname, join } = await import("node:path");
       const { existsSync, readFileSync, writeFileSync, mkdtempSync, unlinkSync, rmdirSync } =
-        await import('node:fs');
-      const { tmpdir } = await import('node:os');
+        await import("node:fs");
+      const { tmpdir } = await import("node:os");
 
       const projectDir = dirname(authConfigPath);
-      const content = readFileSync(authConfigPath, 'utf-8');
+      const content = readFileSync(authConfigPath, "utf-8");
 
       let resolvedContent = content;
 
@@ -260,7 +260,7 @@ export async function safeImportAuthConfig(authConfigPath: string, noCache = fal
       let nodeModulesPath = null;
 
       while (currentDir && currentDir !== dirname(currentDir)) {
-        const potentialNodeModules = join(currentDir, 'node_modules');
+        const potentialNodeModules = join(currentDir, "node_modules");
         if (existsSync(potentialNodeModules)) {
           nodeModulesPath = potentialNodeModules;
           break;
@@ -268,30 +268,30 @@ export async function safeImportAuthConfig(authConfigPath: string, noCache = fal
         currentDir = dirname(currentDir);
       }
 
-      resolvedContent = '';
+      resolvedContent = "";
 
       resolvedContent = resolvedContent.replace(
         /import\s+([^"']*)\s+from\s+["']\.\/[^"']*["'];/g,
-        '// Ignored local import'
+        "// Ignored local import",
       );
 
       resolvedContent = resolvedContent.replace(
         /import\s+{\s*magicLink\s*}\s+from\s+["']\.\/magic-link["'];/g,
-        `const magicLink = () => ({ id: 'magic-link', name: 'Magic Link' });`
+        `const magicLink = () => ({ id: 'magic-link', name: 'Magic Link' });`,
       );
 
       if (nodeModulesPath) {
-        const tempDir = mkdtempSync(join(tmpdir(), 'better-auth-studio-'));
-        const tempFile = join(tempDir, 'resolved-auth-config.js');
+        const tempDir = mkdtempSync(join(tmpdir(), "better-auth-studio-"));
+        const tempFile = join(tempDir, "resolved-auth-config.js");
 
         let commonJsContent = resolvedContent
-          .replace(/export\s+const\s+(\w+)\s*=/g, 'const $1 =')
-          .replace(/export\s+default\s+/g, 'module.exports = ')
-          .replace(/export\s+type\s+.*$/gm, '// $&')
-          .replace(/import\s+type\s+.*$/gm, '// $&');
+          .replace(/export\s+const\s+(\w+)\s*=/g, "const $1 =")
+          .replace(/export\s+default\s+/g, "module.exports = ")
+          .replace(/export\s+type\s+.*$/gm, "// $&")
+          .replace(/import\s+type\s+.*$/gm, "// $&");
 
-        if (!commonJsContent.includes('module.exports')) {
-          commonJsContent += '\nmodule.exports = { auth };';
+        if (!commonJsContent.includes("module.exports")) {
+          commonJsContent += "\nmodule.exports = { auth };";
         }
 
         writeFileSync(tempFile, commonJsContent);
@@ -318,7 +318,7 @@ export async function safeImportAuthConfig(authConfigPath: string, noCache = fal
           }
         }
       } else {
-        throw new Error('No node_modules found');
+        throw new Error("No node_modules found");
       }
     } catch (_resolveError) {
       throw importError;
@@ -327,8 +327,8 @@ export async function safeImportAuthConfig(authConfigPath: string, noCache = fal
 }
 
 async function findAuthConfigPath(): Promise<string | null> {
-  const { join, dirname } = await import('node:path');
-  const { existsSync } = await import('node:fs');
+  const { join, dirname } = await import("node:path");
+  const { existsSync } = await import("node:fs");
 
   for (const path of possiblePaths) {
     const fullPath = join(process.cwd(), path);
@@ -347,7 +347,7 @@ export function createRoutes(
   preloadedAuthOptions?: any,
   accessConfig?: StudioAccessConfig,
   authInstance?: any,
-  studioConfig?: StudioConfig
+  studioConfig?: StudioConfig,
 ): Router {
   const isSelfHosted = !!preloadedAdapter;
 
@@ -361,7 +361,7 @@ export function createRoutes(
     try {
       const authConfigPath = configPath || (await findAuthConfigPath());
       if (authConfigPath) {
-        const { getConfig } = await import('./config.js');
+        const { getConfig } = await import("./config.js");
         return await getConfig({
           cwd: process.cwd(),
           configPath: authConfigPath,
@@ -378,20 +378,20 @@ export function createRoutes(
   const router = Router();
   const base64UrlEncode = (value: Buffer | string) =>
     Buffer.from(value)
-      .toString('base64')
-      .replace(/=+$/u, '')
-      .replace(/\+/gu, '-')
-      .replace(/\//gu, '_');
+      .toString("base64")
+      .replace(/=+$/u, "")
+      .replace(/\+/gu, "-")
+      .replace(/\//gu, "_");
   const base64UrlDecode = (value: string) => {
-    const normalized = value.replace(/-/gu, '+').replace(/_/gu, '/');
-    const padded = normalized + '==='.slice((normalized.length + 3) % 4);
-    return Buffer.from(padded, 'base64').toString('utf8');
+    const normalized = value.replace(/-/gu, "+").replace(/_/gu, "/");
+    const padded = normalized + "===".slice((normalized.length + 3) % 4);
+    return Buffer.from(padded, "base64").toString("utf8");
   };
   const formatRelativeDuration = (ms: number) => {
     const absMs = Math.abs(ms);
     const mins = Math.floor(absMs / 60000);
     if (mins >= 1) {
-      return `${mins} min${mins === 1 ? '' : 's'}`;
+      return `${mins} min${mins === 1 ? "" : "s"}`;
     }
     const secs = Math.max(1, Math.floor(absMs / 1000));
     return `${secs}s`;
@@ -420,7 +420,7 @@ export function createRoutes(
         delete: preloadedAdapter.delete?.bind(preloadedAdapter),
         createUser: async (data: any) => {
           return await preloadedAdapter.create({
-            model: 'user',
+            model: "user",
             data: {
               createdAt: new Date(),
               updatedAt: new Date(),
@@ -434,32 +434,32 @@ export function createRoutes(
         },
         createSession: async (data: any) => {
           return await preloadedAdapter.create({
-            model: 'session',
+            model: "session",
             data: { createdAt: new Date(), updatedAt: new Date(), ...data },
           });
         },
         createAccount: async (data: any) => {
           return await preloadedAdapter.create({
-            model: 'account',
+            model: "account",
             data: { createdAt: new Date(), updatedAt: new Date(), ...data },
           });
         },
         createVerification: async (data: any) => {
           return await preloadedAdapter.create({
-            model: 'verification',
+            model: "verification",
             data: { createdAt: new Date(), updatedAt: new Date(), ...data },
           });
         },
         createOrganization: async (data: any) => {
           return await preloadedAdapter.create({
-            model: 'organization',
+            model: "organization",
             data: { createdAt: new Date(), updatedAt: new Date(), ...data },
           });
         },
         getUsers: async () => {
           try {
-            if (typeof preloadedAdapter.findMany === 'function') {
-              return (await preloadedAdapter.findMany({ model: 'user' })) || [];
+            if (typeof preloadedAdapter.findMany === "function") {
+              return (await preloadedAdapter.findMany({ model: "user" })) || [];
             }
             return [];
           } catch {
@@ -468,8 +468,8 @@ export function createRoutes(
         },
         getSessions: async () => {
           try {
-            if (typeof preloadedAdapter.findMany === 'function') {
-              return (await preloadedAdapter.findMany({ model: 'session' })) || [];
+            if (typeof preloadedAdapter.findMany === "function") {
+              return (await preloadedAdapter.findMany({ model: "session" })) || [];
             }
             return [];
           } catch {
@@ -485,12 +485,12 @@ export function createRoutes(
     router.use((req: Request, res: Response, next) => {
       const path = req.path;
       const publicPaths = [
-        '/api/auth/sign-in',
-        '/api/auth/session',
-        '/api/auth/logout',
-        '/api/auth/verify',
-        '/api/auth/oauth',
-        '/api/health',
+        "/api/auth/sign-in",
+        "/api/auth/session",
+        "/api/auth/logout",
+        "/api/auth/verify",
+        "/api/auth/oauth",
+        "/api/health",
       ];
 
       const isPublic = publicPaths.some((p) => path.startsWith(p));
@@ -498,10 +498,10 @@ export function createRoutes(
         return next();
       }
 
-      if (path.startsWith('/api/')) {
+      if (path.startsWith("/api/")) {
         const result = verifyStudioSession(req);
         if (!result.valid) {
-          return res.status(401).json({ error: 'Unauthorized', message: result.error });
+          return res.status(401).json({ error: "Unauthorized", message: result.error });
         }
         (req as any).studioSession = result.session;
 
@@ -514,16 +514,16 @@ export function createRoutes(
               name: result.session.name,
               role: result.session.role,
             },
-            getSessionDuration()
+            getSessionDuration(),
           );
           const encryptedSession = encryptSession(refreshedSession, getSessionSecret());
 
           res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
             maxAge: getSessionDuration(),
-            path: '/',
+            path: "/",
           });
         }
       }
@@ -532,17 +532,17 @@ export function createRoutes(
     });
   }
 
-  router.get('/api/health', (_req: Request, res: Response) => {
+  router.get("/api/health", (_req: Request, res: Response) => {
     const uptime = process.uptime();
     const hours = Math.floor(uptime / 3600);
     const minutes = Math.floor((uptime % 3600) / 60);
     const seconds = Math.floor(uptime % 60);
 
     res.json({
-      status: 'ok',
+      status: "ok",
       timestamp: new Date().toISOString(),
       system: {
-        studioVersion: '1.0.0',
+        studioVersion: "1.0.0",
         nodeVersion: process.version,
         platform: process.platform,
         arch: process.arch,
@@ -563,12 +563,12 @@ export function createRoutes(
       accessConfig?.secret ||
       preloadedAuthOptions?.secret ||
       process.env.BETTER_AUTH_SECRET ||
-      'studio-default-secret'
+      "studio-default-secret"
     );
   };
 
   const getAllowedRoles = (): string[] => {
-    return accessConfig?.roles || ['admin'];
+    return accessConfig?.roles || ["admin"];
   };
 
   const getSessionDuration = (): number => {
@@ -594,12 +594,12 @@ export function createRoutes(
 
     const sessionCookie = req.cookies?.[STUDIO_COOKIE_NAME];
     if (!sessionCookie) {
-      return { valid: false, error: 'No session cookie' };
+      return { valid: false, error: "No session cookie" };
     }
 
     const session = decryptSession(sessionCookie, getSessionSecret());
     if (!isSessionValid(session)) {
-      return { valid: false, error: 'Session expired' };
+      return { valid: false, error: "Session expired" };
     }
 
     return { valid: true, session };
@@ -612,17 +612,17 @@ export function createRoutes(
 
     const result = verifyStudioSession(req);
     if (!result.valid) {
-      return res.status(401).json({ error: 'Unauthorized', message: result.error });
+      return res.status(401).json({ error: "Unauthorized", message: result.error });
     }
 
     (req as any).studioSession = result.session;
     next();
   };
 
-  router.post('/api/auth/sign-in', async (req: Request, res: Response) => {
+  router.post("/api/auth/sign-in", async (req: Request, res: Response) => {
     try {
       if (!authInstance) {
-        return res.status(500).json({ success: false, message: 'Auth not configured' });
+        return res.status(500).json({ success: false, message: "Auth not configured" });
       }
 
       // Safety check: ensure body is an object before destructuring
@@ -630,7 +630,7 @@ export function createRoutes(
       const { email, password } = body;
 
       if (!email || !password) {
-        return res.status(400).json({ success: false, message: 'Email and password required' });
+        return res.status(400).json({ success: false, message: "Email and password required" });
       }
 
       const adapter = await getAuthAdapterWithConfig();
@@ -643,49 +643,49 @@ export function createRoutes(
           body: { email, password },
         });
       } catch (err: any) {
-        signInError = err?.message || 'Sign-in failed';
+        signInError = err?.message || "Sign-in failed";
       }
       if (!signInResult || signInResult.error || signInError) {
-        const errorMessage = signInError || signInResult?.error?.message || 'Invalid credentials';
+        const errorMessage = signInError || signInResult?.error?.message || "Invalid credentials";
 
-        if (errorMessage.includes('Invalid password hash') && adapter?.findMany) {
+        if (errorMessage.includes("Invalid password hash") && adapter?.findMany) {
           const users = await adapter.findMany({
-            model: 'user',
-            where: [{ field: 'email', value: email }],
+            model: "user",
+            where: [{ field: "email", value: email }],
             limit: 1,
           });
           if (!users || users.length === 0) {
-            return res.status(401).json({ success: false, message: 'Invalid credentials' });
+            return res.status(401).json({ success: false, message: "Invalid credentials" });
           }
 
           const userId = users[0].id;
           const accounts = await adapter.findMany({
-            model: 'account',
-            where: [{ field: 'userId', value: userId }],
+            model: "account",
+            where: [{ field: "userId", value: userId }],
             limit: 10,
           });
 
           const credentialAccount = accounts?.find(
-            (acc: any) => acc.providerId === 'credential' || acc.providerId === 'email'
+            (acc: any) => acc.providerId === "credential" || acc.providerId === "email",
           );
 
           if (!credentialAccount) {
             return res.status(401).json({
               success: false,
               message:
-                'No password set for this account. Please use social login or reset your password.',
+                "No password set for this account. Please use social login or reset your password.",
             });
           }
 
           if (!credentialAccount.password) {
             return res.status(401).json({
               success: false,
-              message: 'Password not configured. Please reset your password.',
+              message: "Password not configured. Please reset your password.",
             });
           }
           const isValidPassword = await verifyPassword(password, credentialAccount.password);
           if (!isValidPassword) {
-            return res.status(401).json({ success: false, message: 'Invalid credentials' });
+            return res.status(401).json({ success: false, message: "Invalid credentials" });
           }
 
           const userRole = users[0].role;
@@ -695,14 +695,14 @@ export function createRoutes(
             return res.status(403).json({
               success: false,
               message: `Access denied.`,
-              userRole: user.role || 'none',
+              userRole: user.role || "none",
             });
           }
 
           if (!isEmailAllowed(user.email)) {
             return res.status(403).json({
               success: false,
-              message: 'Access denied. Your email is not authorized to access this dashboard.',
+              message: "Access denied. Your email is not authorized to access this dashboard.",
             });
           }
 
@@ -711,10 +711,10 @@ export function createRoutes(
 
           res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
             maxAge: getSessionDuration(),
-            path: '/',
+            path: "/",
           });
 
           return res.json({
@@ -731,13 +731,13 @@ export function createRoutes(
 
       const userId = signInResult.user?.id;
       if (!userId) {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        return res.status(401).json({ success: false, message: "Invalid credentials" });
       }
       let userRole: string | null = null;
       if (adapter?.findMany) {
         const users = await adapter.findMany({
-          model: 'user',
-          where: [{ field: 'id', value: userId }],
+          model: "user",
+          where: [{ field: "id", value: userId }],
           limit: 1,
         });
         if (users && users.length > 0) {
@@ -752,14 +752,14 @@ export function createRoutes(
         return res.status(403).json({
           success: false,
           message: `Access denied.`,
-          userRole: user.role || 'none',
+          userRole: user.role || "none",
         });
       }
 
       if (!isEmailAllowed(user.email)) {
         return res.status(403).json({
           success: false,
-          message: 'Access denied. Your email is not authorized to access this dashboard.',
+          message: "Access denied. Your email is not authorized to access this dashboard.",
         });
       }
 
@@ -768,10 +768,10 @@ export function createRoutes(
 
       res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
         maxAge: getSessionDuration(),
-        path: '/',
+        path: "/",
       });
 
       return res.json({
@@ -779,42 +779,42 @@ export function createRoutes(
         user: { id: user.id, email: user.email, name: user.name, role: user.role },
       });
     } catch (error: any) {
-      console.error('Sign-in error:', error);
+      console.error("Sign-in error:", error);
       return res.status(401).json({
         success: false,
-        message: error?.message || 'Invalid credentials',
+        message: error?.message || "Invalid credentials",
       });
     }
   });
 
-  router.get('/api/auth/oauth/:provider', async (req: Request, res: Response) => {
+  router.get("/api/auth/oauth/:provider", async (req: Request, res: Response) => {
     try {
       if (!authInstance) {
-        return res.status(500).json({ success: false, message: 'Auth not configured' });
+        return res.status(500).json({ success: false, message: "Auth not configured" });
       }
 
       const provider = req.params.provider;
       const callbackURL = req.query.callbackURL as string;
-      const authBasePath = authInstance.options?.basePath || '/api/auth';
+      const authBasePath = authInstance.options?.basePath || "/api/auth";
 
-      const oauthUrl = `${authBasePath}/sign-in/${provider}?callbackURL=${encodeURIComponent(callbackURL || '/')}`;
+      const oauthUrl = `${authBasePath}/sign-in/${provider}?callbackURL=${encodeURIComponent(callbackURL || "/")}`;
       return res.redirect(oauthUrl);
     } catch (error) {
-      console.error('OAuth redirect error:', error);
-      return res.status(500).json({ success: false, message: 'OAuth redirect failed' });
+      console.error("OAuth redirect error:", error);
+      return res.status(500).json({ success: false, message: "OAuth redirect failed" });
     }
   });
 
-  router.post('/api/auth/verify', async (req: Request, res: Response) => {
+  router.post("/api/auth/verify", async (req: Request, res: Response) => {
     try {
       if (!authInstance) {
-        return res.status(500).json({ success: false, message: 'Auth not configured' });
+        return res.status(500).json({ success: false, message: "Auth not configured" });
       }
 
       const session = await authInstance.api.getSession({ headers: req.headers });
 
       if (!session?.user) {
-        return res.status(401).json({ success: false, message: 'Not authenticated' });
+        return res.status(401).json({ success: false, message: "Not authenticated" });
       }
 
       const user = session.user;
@@ -823,15 +823,15 @@ export function createRoutes(
       if (!allowedRoles.includes(user.role)) {
         return res.status(403).json({
           success: false,
-          message: `Access denied. Required role: ${allowedRoles.join(' or ')}`,
-          userRole: user.role || 'none',
+          message: `Access denied. Required role: ${allowedRoles.join(" or ")}`,
+          userRole: user.role || "none",
         });
       }
 
       if (!isEmailAllowed(user.email)) {
         return res.status(403).json({
           success: false,
-          message: 'Access denied. Your email is not authorized to access this dashboard.',
+          message: "Access denied. Your email is not authorized to access this dashboard.",
         });
       }
 
@@ -840,10 +840,10 @@ export function createRoutes(
 
       res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
         maxAge: getSessionDuration(),
-        path: '/',
+        path: "/",
       });
 
       return res.json({
@@ -851,12 +851,12 @@ export function createRoutes(
         user: { id: user.id, email: user.email, name: user.name, role: user.role },
       });
     } catch (error) {
-      console.error('Auth verify error:', error);
-      return res.status(500).json({ success: false, message: 'Failed to verify session' });
+      console.error("Auth verify error:", error);
+      return res.status(500).json({ success: false, message: "Failed to verify session" });
     }
   });
 
-  router.get('/api/auth/session', (req: Request, res: Response) => {
+  router.get("/api/auth/session", (req: Request, res: Response) => {
     const sessionCookie = req.cookies?.[STUDIO_COOKIE_NAME];
 
     if (!sessionCookie) {
@@ -866,7 +866,7 @@ export function createRoutes(
     const session = decryptSession(sessionCookie, getSessionSecret());
 
     if (!isSessionValid(session)) {
-      return res.json({ authenticated: false, reason: 'expired' });
+      return res.json({ authenticated: false, reason: "expired" });
     }
 
     // Extend session expiry time on each successful check
@@ -878,16 +878,16 @@ export function createRoutes(
           name: session.name,
           role: session.role,
         },
-        getSessionDuration()
+        getSessionDuration(),
       );
       const encryptedSession = encryptSession(refreshedSession, getSessionSecret());
 
       res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
         maxAge: getSessionDuration(),
-        path: '/',
+        path: "/",
       });
     }
 
@@ -902,41 +902,41 @@ export function createRoutes(
     });
   });
 
-  router.get('/api/auth/logout', (_req: Request, res: Response) => {
-    res.cookie(STUDIO_COOKIE_NAME, '', {
+  router.get("/api/auth/logout", (_req: Request, res: Response) => {
+    res.cookie(STUDIO_COOKIE_NAME, "", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
       maxAge: 0,
-      path: '/',
+      path: "/",
     });
 
-    return res.json({ success: true, message: 'Logged out' });
+    return res.json({ success: true, message: "Logged out" });
   });
 
-  router.get('/api/version-check', async (_req: Request, res: Response) => {
+  router.get("/api/version-check", async (_req: Request, res: Response) => {
     try {
       const __dirname = dirname(fileURLToPath(import.meta.url));
-      const projectRoot = join(__dirname, '..');
+      const projectRoot = join(__dirname, "..");
 
-      let currentVersion = '1.0.0';
+      let currentVersion = "1.0.0";
 
       try {
-        const betterAuthPkgPath = join(projectRoot, 'node_modules', 'better-auth', 'package.json');
+        const betterAuthPkgPath = join(projectRoot, "node_modules", "better-auth", "package.json");
         if (existsSync(betterAuthPkgPath)) {
-          const betterAuthPkg = JSON.parse(readFileSync(betterAuthPkgPath, 'utf-8'));
-          currentVersion = betterAuthPkg.version || '1.0.0';
+          const betterAuthPkg = JSON.parse(readFileSync(betterAuthPkgPath, "utf-8"));
+          currentVersion = betterAuthPkg.version || "1.0.0";
         }
       } catch (_error) {
         try {
-          const packageJsonPath = join(projectRoot, 'package.json');
+          const packageJsonPath = join(projectRoot, "package.json");
           if (existsSync(packageJsonPath)) {
-            const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+            const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
             const versionString =
-              packageJson.dependencies?.['better-auth'] ||
-              packageJson.devDependencies?.['better-auth'] ||
-              '1.0.0';
-            currentVersion = versionString.replace(/[\^~>=<]/g, '');
+              packageJson.dependencies?.["better-auth"] ||
+              packageJson.devDependencies?.["better-auth"] ||
+              "1.0.0";
+            currentVersion = versionString.replace(/[\^~>=<]/g, "");
           }
         } catch {}
       }
@@ -945,7 +945,7 @@ export function createRoutes(
       let isOutdated = false;
 
       try {
-        const npmResponse = await fetch('https://registry.npmjs.org/better-auth/latest');
+        const npmResponse = await fetch("https://registry.npmjs.org/better-auth/latest");
         if (npmResponse.ok) {
           const npmData = await npmResponse.json();
           latestVersion = (npmData as { version: string }).version || currentVersion;
@@ -960,19 +960,19 @@ export function createRoutes(
         current: currentVersion,
         latest: latestVersion,
         isOutdated,
-        updateCommand: 'npm install better-auth@latest',
+        updateCommand: "npm install better-auth@latest",
       });
     } catch (_error) {
       res.status(500).json({
-        error: 'Failed to check version',
-        current: 'unknown',
-        latest: 'unknown',
+        error: "Failed to check version",
+        current: "unknown",
+        latest: "unknown",
         isOutdated: false,
       });
     }
   });
 
-  router.post('/api/geo/resolve', (req: Request, res: Response) => {
+  router.post("/api/geo/resolve", (req: Request, res: Response) => {
     try {
       const body = req.body || {};
       const { ipAddress } = body;
@@ -980,7 +980,7 @@ export function createRoutes(
       if (!ipAddress) {
         return res.status(400).json({
           success: false,
-          error: 'IP address is required',
+          error: "IP address is required",
         });
       }
 
@@ -989,7 +989,7 @@ export function createRoutes(
       if (!location) {
         return res.status(404).json({
           success: false,
-          error: 'Location not found for IP address',
+          error: "Location not found for IP address",
         });
       }
 
@@ -1000,18 +1000,18 @@ export function createRoutes(
     } catch (_error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to resolve IP location',
+        error: "Failed to resolve IP location",
       });
     }
   });
 
-  router.get('/api/config', async (_req: Request, res: Response) => {
+  router.get("/api/config", async (_req: Request, res: Response) => {
     const effectiveConfig = preloadedAuthOptions || authConfig;
 
-    let databaseType = 'unknown';
-    let databaseDialect = 'unknown';
-    let databaseAdapter = 'unknown';
-    let databaseVersion = 'unknown';
+    let databaseType = "unknown";
+    let databaseDialect = "unknown";
+    let databaseAdapter = "unknown";
+    let databaseVersion = "unknown";
     let adapterConfig: any = null;
     let adapterProvider: any = null;
     try {
@@ -1032,37 +1032,37 @@ export function createRoutes(
       }
     } catch (_error) {}
 
-    let studioVersion = '1.0.0';
+    let studioVersion = "1.0.0";
     try {
-      const response = await fetch('https://registry.npmjs.org/better-auth-studio/latest', {
+      const response = await fetch("https://registry.npmjs.org/better-auth-studio/latest", {
         signal: AbortSignal.timeout(2000), // 2 second timeout
       });
       if (response.ok) {
         const data = (await response.json()) as { version?: string };
-        studioVersion = data.version || '1.0.0';
+        studioVersion = data.version || "1.0.0";
       }
     } catch (_npmError) {
       studioVersion = getStudioVersion();
     }
 
-    if (databaseType === 'unknown' && !isSelfHosted) {
+    if (databaseType === "unknown" && !isSelfHosted) {
       const authConfigPath = configPath || (await findAuthConfigPath());
       if (authConfigPath) {
         try {
-          const content = readFileSync(authConfigPath, 'utf-8');
-          if (content.includes('drizzleAdapter')) {
-            databaseType = 'Drizzle';
-          } else if (content.includes('prismaAdapter')) {
-            databaseType = 'Prisma';
-          } else if (content.includes('better-sqlite3') || content.includes('new Database(')) {
-            databaseType = 'SQLite';
+          const content = readFileSync(authConfigPath, "utf-8");
+          if (content.includes("drizzleAdapter")) {
+            databaseType = "Drizzle";
+          } else if (content.includes("prismaAdapter")) {
+            databaseType = "Prisma";
+          } else if (content.includes("better-sqlite3") || content.includes("new Database(")) {
+            databaseType = "SQLite";
           }
         } catch (_error) {}
       }
 
-      if (databaseType === 'unknown') {
-        let type = effectiveConfig.database?.type || effectiveConfig.database?.adapter || 'unknown';
-        if (type && type !== 'unknown') {
+      if (databaseType === "unknown") {
+        let type = effectiveConfig.database?.type || effectiveConfig.database?.adapter || "unknown";
+        if (type && type !== "unknown") {
           type = type.charAt(0).toUpperCase() + type.slice(1);
         }
         databaseType = type;
@@ -1070,15 +1070,15 @@ export function createRoutes(
     }
 
     const config = {
-      appName: effectiveConfig.appName || 'Better Auth',
+      appName: effectiveConfig.appName || "Better Auth",
       baseURL: effectiveConfig.baseURL || process.env.BETTER_AUTH_URL,
-      basePath: effectiveConfig.basePath || '/api/auth',
-      secret: effectiveConfig.secret ? 'Configured' : 'Not set',
+      basePath: effectiveConfig.basePath || "/api/auth",
+      secret: effectiveConfig.secret ? "Configured" : "Not set",
       database: {
         type: databaseType,
         adapter: effectiveConfig.database?.adapter || databaseAdapter,
         version: databaseVersion,
-        casing: effectiveConfig.database?.casing || 'camel',
+        casing: effectiveConfig.database?.casing || "camel",
         debugLogs: effectiveConfig.database?.debugLogs || false,
         url: effectiveConfig.database?.url,
         adapterConfig: adapterConfig,
@@ -1100,7 +1100,7 @@ export function createRoutes(
         : [],
 
       user: {
-        modelName: effectiveConfig.user?.modelName || 'user',
+        modelName: effectiveConfig.user?.modelName || "user",
         changeEmail: {
           enabled: effectiveConfig.user?.changeEmail?.enabled || false,
         },
@@ -1112,7 +1112,7 @@ export function createRoutes(
       session: effectiveConfig.session,
       account: effectiveConfig.account,
       verification: {
-        modelName: effectiveConfig.verification?.modelName || 'verification',
+        modelName: effectiveConfig.verification?.modelName || "verification",
         disableCleanup: effectiveConfig.verification?.disableCleanup || false,
       },
       trustedOrigins: effectiveConfig.trustedOrigins,
@@ -1130,11 +1130,10 @@ export function createRoutes(
     res.json(config);
   });
 
-  router.get('/api/events/status', async (_req: Request, res: Response) => {
+  router.get("/api/events/status", async (_req: Request, res: Response) => {
     try {
-      const { isEventIngestionInitialized, getEventIngestionProvider } = await import(
-        './utils/event-ingestion.js'
-      );
+      const { isEventIngestionInitialized, getEventIngestionProvider } =
+        await import("./utils/event-ingestion.js");
 
       const initialized = isEventIngestionInitialized();
       const provider = getEventIngestionProvider();
@@ -1143,15 +1142,15 @@ export function createRoutes(
 
       if (!initialized && !configToUse) {
         try {
-          const { initializeEventIngestionAndHooks } = await import('./core/handler.js');
-          const { existsSync } = await import('node:fs');
-          const { join } = await import('node:path');
+          const { initializeEventIngestionAndHooks } = await import("./core/handler.js");
+          const { existsSync } = await import("node:fs");
+          const { join } = await import("node:path");
 
           const possibleFiles = [
-            'studio.config.ts',
-            'studio.config.js',
-            'studio.config.mjs',
-            'studio.config.cjs',
+            "studio.config.ts",
+            "studio.config.js",
+            "studio.config.mjs",
+            "studio.config.cjs",
           ];
           let studioConfigPath: string | null = null;
 
@@ -1164,9 +1163,9 @@ export function createRoutes(
           }
 
           if (!studioConfigPath && configPath) {
-            const configDir = require('node:path').dirname(configPath);
+            const configDir = require("node:path").dirname(configPath);
             for (const file of possibleFiles) {
-              const path = require('node:path').join(configDir, file);
+              const path = require("node:path").join(configDir, file);
               if (existsSync(path)) {
                 studioConfigPath = path;
                 break;
@@ -1188,11 +1187,11 @@ export function createRoutes(
                         allExtensions: true,
                       },
                     ],
-                    [babelPresetReact, { runtime: 'automatic' }],
+                    [babelPresetReact, { runtime: "automatic" }],
                   ],
                 },
               },
-              extensions: ['.ts', '.js', '.tsx', '.jsx'],
+              extensions: [".ts", ".js", ".tsx", ".jsx"],
               alias,
               interopDefault: true,
             };
@@ -1209,16 +1208,16 @@ export function createRoutes(
             }
           }
         } catch (initError: any) {
-          console.warn('Failed to load studio config:', initError?.message || initError);
+          console.warn("Failed to load studio config:", initError?.message || initError);
         }
       }
 
       if (!initialized && configToUse?.events?.enabled) {
         try {
-          const { initializeEventIngestionAndHooks } = await import('./core/handler.js');
+          const { initializeEventIngestionAndHooks } = await import("./core/handler.js");
           await initializeEventIngestionAndHooks(configToUse);
         } catch (initError: any) {
-          console.warn('Failed to initialize event ingestion:', initError?.message || initError);
+          console.warn("Failed to initialize event ingestion:", initError?.message || initError);
         }
       }
 
@@ -1233,31 +1232,31 @@ export function createRoutes(
         hasProvider: !!getEventIngestionProvider(),
       });
     } catch (error: any) {
-      console.error('Failed to check events status:', error);
+      console.error("Failed to check events status:", error);
       res.json({
         enabled: false,
         initialized: false,
         hasProvider: false,
-        error: error?.message || 'Unknown error',
+        error: error?.message || "Unknown error",
       });
     }
   });
 
-  router.get('/api/stats', async (_req: Request, res: Response) => {
+  router.get("/api/stats", async (_req: Request, res: Response) => {
     try {
-      const stats = await getAuthData(authConfig, 'stats', undefined, configPath, preloadedAdapter);
+      const stats = await getAuthData(authConfig, "stats", undefined, configPath, preloadedAdapter);
       res.json(stats);
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch statistics' });
+      res.status(500).json({ error: "Failed to fetch statistics" });
     }
   });
 
-  router.get('/api/analytics', async (req: Request, res: Response) => {
+  router.get("/api/analytics", async (req: Request, res: Response) => {
     try {
-      const { period = 'ALL', type = 'users', from, to } = req.query;
+      const { period = "ALL", type = "users", from, to } = req.query;
       const analytics = await getAuthData(
         authConfig,
-        'analytics',
+        "analytics",
         {
           period: period as string,
           type: type as string,
@@ -1265,15 +1264,15 @@ export function createRoutes(
           to: to as string | undefined,
         },
         configPath,
-        preloadedAdapter
+        preloadedAdapter,
       );
       res.json(analytics);
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch analytics' });
+      res.status(500).json({ error: "Failed to fetch analytics" });
     }
   });
 
-  router.get('/api/counts', async (_req: Request, res: Response) => {
+  router.get("/api/counts", async (_req: Request, res: Response) => {
     try {
       const adapter = await getAuthAdapterWithConfig();
       let userCount = 0;
@@ -1289,7 +1288,7 @@ export function createRoutes(
 
         if (betterAuthConfig) {
           const plugins = betterAuthConfig.plugins || [];
-          const organizationPlugin = plugins.find((plugin: any) => plugin.id === 'organization');
+          const organizationPlugin = plugins.find((plugin: any) => plugin.id === "organization");
           organizationPluginEnabled = !!organizationPlugin;
 
           if (organizationPlugin) {
@@ -1307,23 +1306,23 @@ export function createRoutes(
 
       if (adapter) {
         try {
-          if (typeof adapter.findMany === 'function') {
-            const users = await adapter.findMany({ model: 'user', limit: 100000 });
+          if (typeof adapter.findMany === "function") {
+            const users = await adapter.findMany({ model: "user", limit: 100000 });
             userCount = users?.length || 0;
           }
         } catch (_error) {}
 
         try {
-          if (typeof adapter.findMany === 'function') {
-            const sessions = await adapter.findMany({ model: 'session', limit: 100000 });
+          if (typeof adapter.findMany === "function") {
+            const sessions = await adapter.findMany({ model: "session", limit: 100000 });
             sessionCount = sessions?.length || 0;
           }
         } catch (_error) {}
 
         if (organizationPluginEnabled) {
           try {
-            if (typeof adapter.findMany === 'function') {
-              const organizations = await adapter.findMany({ model: 'organization', limit: 10000 });
+            if (typeof adapter.findMany === "function") {
+              const organizations = await adapter.findMany({ model: "organization", limit: 10000 });
               organizationCount = organizations?.length || 0;
             }
           } catch (_error) {
@@ -1333,8 +1332,8 @@ export function createRoutes(
 
         if (teamsPluginEnabled) {
           try {
-            if (typeof adapter.findMany === 'function') {
-              const teams = await adapter.findMany({ model: 'team', limit: 10000 });
+            if (typeof adapter.findMany === "function") {
+              const teams = await adapter.findMany({ model: "team", limit: 10000 });
               teamCount = teams?.length || 0;
             }
           } catch (_error) {
@@ -1346,21 +1345,21 @@ export function createRoutes(
       // Get events count
       let eventsCount = 0;
       try {
-        const { getEventIngestionProvider } = await import('./utils/event-ingestion.js');
+        const { getEventIngestionProvider } = await import("./utils/event-ingestion.js");
         const eventProvider = getEventIngestionProvider();
         if (eventProvider && eventProvider.query) {
           // Query with a reasonable limit to get count
           // If we get exactly the limit, there might be more, but we'll show the count we have
-          const result = await eventProvider.query({ limit: 10000, sort: 'desc' });
+          const result = await eventProvider.query({ limit: 10000, sort: "desc" });
           eventsCount = result.events?.length || 0;
         }
       } catch (error: any) {
         // Handle case where table/model doesn't exist yet - don't log as error
         if (
-          error?.message?.includes('not found in schema') ||
-          error?.message?.includes('Model') ||
-          error?.code === 'P2025' ||
-          error?.code === '42P01'
+          error?.message?.includes("not found in schema") ||
+          error?.message?.includes("Model") ||
+          error?.code === "P2025" ||
+          error?.code === "42P01"
         ) {
           // Table doesn't exist yet - count stays 0
           eventsCount = 0;
@@ -1378,59 +1377,59 @@ export function createRoutes(
         events: eventsCount,
       });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch counts' });
+      res.status(500).json({ error: "Failed to fetch counts" });
     }
   });
-  router.get('/api/users/all', async (_req: Request, res: Response) => {
+  router.get("/api/users/all", async (_req: Request, res: Response) => {
     try {
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       let users: any[] = [];
       if (adapter.findMany) {
-        users = await adapter.findMany({ model: 'user', limit: 100000 }).catch(() => []);
+        users = await adapter.findMany({ model: "user", limit: 100000 }).catch(() => []);
       } else if (adapter.getUsers) {
         users = await adapter.getUsers();
       }
 
       res.json({ success: true, users });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch users' });
+      res.status(500).json({ error: "Failed to fetch users" });
     }
   });
 
-  router.get('/api/users/:userId', async (req: Request, res: Response) => {
+  router.get("/api/users/:userId", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.findMany) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
       const users = await adapter.findMany({
-        model: 'user',
-        where: [{ field: 'id', value: userId }],
+        model: "user",
+        where: [{ field: "id", value: userId }],
         limit: 1,
       });
       const user = users && users.length > 0 ? users[0] : null;
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(404).json({ error: "User not found" });
       }
       res.json({ user });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch user' });
+      res.status(500).json({ error: "Failed to fetch user" });
     }
   });
 
-  router.put('/api/users/:userId', async (req: Request, res: Response) => {
+  router.put("/api/users/:userId", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const body = req.body || {};
       const { name, email, role, image } = body;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.update) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const updateData: any = { name, email };
@@ -1442,15 +1441,15 @@ export function createRoutes(
       }
 
       const user = await adapter.update({
-        model: 'user',
-        where: [{ field: 'id', value: userId }],
+        model: "user",
+        where: [{ field: "id", value: userId }],
         update: updateData,
       });
 
       // Emit event
-      const { emitEvent } = await import('./utils/event-ingestion.js');
-      await emitEvent('user.updated', {
-        status: 'success',
+      const { emitEvent } = await import("./utils/event-ingestion.js");
+      await emitEvent("user.updated", {
+        status: "success",
         userId,
         metadata: updateData,
         request: { headers: req.headers as Record<string, string>, ip: req.ip },
@@ -1458,51 +1457,51 @@ export function createRoutes(
 
       res.json({ success: true, user });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to update user' });
+      res.status(500).json({ error: "Failed to update user" });
     }
   });
-  router.put('/api/users/:userId/password', async (req: Request, res: Response) => {
+  router.put("/api/users/:userId/password", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const body = req.body || {};
       const { password } = body;
 
       if (!password) {
-        return res.status(400).json({ error: 'Password is required' });
+        return res.status(400).json({ error: "Password is required" });
       }
 
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       if (!adapter.update) {
-        return res.status(500).json({ error: 'Auth adapter update method not available' });
+        return res.status(500).json({ error: "Auth adapter update method not available" });
       }
 
       // Find the credential account first to get its unique id (fixes Prisma error)
       let credentialAccount = null;
       if (adapter.findFirst) {
         credentialAccount = await adapter.findFirst({
-          model: 'account',
+          model: "account",
           where: [
-            { field: 'userId', value: userId },
-            { field: 'providerId', value: 'credential' },
+            { field: "userId", value: userId },
+            { field: "providerId", value: "credential" },
           ],
         });
       } else if (adapter.findMany) {
         const accounts = await adapter.findMany({
-          model: 'account',
+          model: "account",
           where: [
-            { field: 'userId', value: userId },
-            { field: 'providerId', value: 'credential' },
+            { field: "userId", value: userId },
+            { field: "providerId", value: "credential" },
           ],
         });
         credentialAccount = accounts && accounts.length > 0 ? accounts[0] : null;
       }
 
       if (!credentialAccount) {
-        return res.status(404).json({ error: 'Credential account not found' });
+        return res.status(404).json({ error: "Credential account not found" });
       }
 
       let hashedPassword = password;
@@ -1511,13 +1510,13 @@ export function createRoutes(
         const key = await generateKey(password, salt);
         hashedPassword = `${salt}:${hex.encode(key)}`;
       } catch {
-        return res.status(500).json({ error: 'Failed to hash password' });
+        return res.status(500).json({ error: "Failed to hash password" });
       }
 
       // Update using the account's unique id to fix Prisma error
       const updatedAccount = await adapter.update({
-        model: 'account',
-        where: [{ field: 'id', value: credentialAccount.id }],
+        model: "account",
+        where: [{ field: "id", value: credentialAccount.id }],
         update: {
           password: hashedPassword,
           updatedAt: new Date().toISOString(),
@@ -1526,35 +1525,35 @@ export function createRoutes(
 
       res.json({ success: true, account: updatedAccount });
     } catch (error: any) {
-      res.status(500).json({ error: 'Failed to update password', message: error?.message });
+      res.status(500).json({ error: "Failed to update password", message: error?.message });
     }
   });
-  router.delete('/api/users/:userId', async (req: Request, res: Response) => {
+  router.delete("/api/users/:userId", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.delete) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
-      await adapter.delete({ model: 'user', where: [{ field: 'id', value: userId }] });
+      await adapter.delete({ model: "user", where: [{ field: "id", value: userId }] });
       res.json({ success: true });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to delete user' });
+      res.status(500).json({ error: "Failed to delete user" });
     }
   });
 
-  router.get('/api/users/:userId/organizations', async (req: Request, res: Response) => {
+  router.get("/api/users/:userId/organizations", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.findMany) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const [memberships, organizations] = await Promise.all([
-        adapter.findMany({ model: 'member', limit: 10000 }),
-        adapter.findMany({ model: 'organization', limit: 10000 }),
+        adapter.findMany({ model: "member", limit: 10000 }),
+        adapter.findMany({ model: "organization", limit: 10000 }),
       ]);
 
       const userMemberships = memberships.filter((membership: any) => membership.userId === userId);
@@ -1566,40 +1565,40 @@ export function createRoutes(
           organization: organization
             ? {
                 id: organization.id,
-                name: organization.name || 'Unknown Organization',
-                slug: organization.slug || 'unknown',
+                name: organization.name || "Unknown Organization",
+                slug: organization.slug || "unknown",
                 image: organization.image,
                 createdAt: organization.createdAt,
               }
             : {
                 id: membership.organizationId,
-                name: 'Unknown Organization',
-                slug: 'unknown',
+                name: "Unknown Organization",
+                slug: "unknown",
                 createdAt: membership.createdAt,
               },
-          role: membership.role || 'member',
+          role: membership.role || "member",
           joinedAt: membership.createdAt,
         };
       });
 
       res.json({ memberships: formattedMemberships });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch user organizations' });
+      res.status(500).json({ error: "Failed to fetch user organizations" });
     }
   });
 
-  router.get('/api/users/:userId/teams', async (req: Request, res: Response) => {
+  router.get("/api/users/:userId/teams", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.findMany) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const [memberships, teams, organizations] = await Promise.all([
-        adapter.findMany({ model: 'teamMember', limit: 10000 }),
-        adapter.findMany({ model: 'team', limit: 10000 }),
-        adapter.findMany({ model: 'organization', limit: 10000 }),
+        adapter.findMany({ model: "teamMember", limit: 10000 }),
+        adapter.findMany({ model: "team", limit: 10000 }),
+        adapter.findMany({ model: "organization", limit: 10000 }),
       ]);
 
       const userMemberships = memberships.filter((membership: any) => membership.userId === userId);
@@ -1615,85 +1614,85 @@ export function createRoutes(
           team: team
             ? {
                 id: team.id,
-                name: team.name || 'Unknown Team',
+                name: team.name || "Unknown Team",
                 organizationId: team.organizationId,
                 organizationName: organization
-                  ? organization.name || 'Unknown Organization'
-                  : 'Unknown Organization',
-                organizationSlug: organization ? organization.slug || 'unknown' : 'unknown',
+                  ? organization.name || "Unknown Organization"
+                  : "Unknown Organization",
+                organizationSlug: organization ? organization.slug || "unknown" : "unknown",
               }
             : {
                 id: membership.teamId,
-                name: 'Unknown Team',
-                organizationId: 'unknown',
-                organizationName: 'Unknown Organization',
-                organizationSlug: 'unknown',
+                name: "Unknown Team",
+                organizationId: "unknown",
+                organizationName: "Unknown Organization",
+                organizationSlug: "unknown",
               },
-          role: membership.role || 'member',
+          role: membership.role || "member",
           joinedAt: membership.createdAt,
         };
       });
 
       res.json({ memberships: formattedMemberships });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch user teams' });
+      res.status(500).json({ error: "Failed to fetch user teams" });
     }
   });
 
-  router.delete('/api/organizations/members/:membershipId', async (req: Request, res: Response) => {
+  router.delete("/api/organizations/members/:membershipId", async (req: Request, res: Response) => {
     try {
       const { membershipId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.delete) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       await adapter.delete({
-        model: 'member',
-        where: [{ field: 'id', value: membershipId }],
+        model: "member",
+        where: [{ field: "id", value: membershipId }],
       });
       res.json({ success: true });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to remove user from organization' });
+      res.status(500).json({ error: "Failed to remove user from organization" });
     }
   });
 
-  router.delete('/api/teams/members/:membershipId', async (req: Request, res: Response) => {
+  router.delete("/api/teams/members/:membershipId", async (req: Request, res: Response) => {
     try {
       const { membershipId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.delete) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       await adapter.delete({
-        model: 'teamMember',
-        where: [{ field: 'id', value: membershipId }],
+        model: "teamMember",
+        where: [{ field: "id", value: membershipId }],
       });
       res.json({ success: true });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to remove user from team' });
+      res.status(500).json({ error: "Failed to remove user from team" });
     }
   });
 
-  router.post('/api/users/:userId/ban', async (req: Request, res: Response) => {
+  router.post("/api/users/:userId/ban", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.update) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const user = await adapter.update({
-        model: 'user',
+        model: "user",
         id: userId,
         data: { banned: true },
       });
 
       // Emit event
-      const { emitEvent } = await import('./utils/event-ingestion.js');
-      await emitEvent('user.banned', {
-        status: 'success',
+      const { emitEvent } = await import("./utils/event-ingestion.js");
+      await emitEvent("user.banned", {
+        status: "success",
         userId,
         metadata: {
           name: user?.name,
@@ -1705,20 +1704,20 @@ export function createRoutes(
 
       res.json({ success: true, user });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to ban user' });
+      res.status(500).json({ error: "Failed to ban user" });
     }
   });
 
-  router.get('/api/users/:userId/accounts', async (req: Request, res: Response) => {
+  router.get("/api/users/:userId/accounts", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.findMany) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const accounts = await adapter.findMany({
-        model: 'account',
+        model: "account",
         limit: 10000,
       });
 
@@ -1726,7 +1725,7 @@ export function createRoutes(
         .filter((account: any) => account.userId === userId)
         .map((account: any) => ({
           id: account.id,
-          providerId: account.providerId || account.provider || 'unknown',
+          providerId: account.providerId || account.provider || "unknown",
           accountId: account.accountId || account.providerAccountId || account.id,
           createdAt: account.createdAt || account.created_at || null,
           updatedAt: account.updatedAt || account.updated_at || null,
@@ -1737,46 +1736,46 @@ export function createRoutes(
 
       res.json({ accounts: userAccounts });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch user accounts' });
+      res.status(500).json({ error: "Failed to fetch user accounts" });
     }
   });
 
-  router.delete('/api/users/:userId/accounts/:accountId', async (req: Request, res: Response) => {
+  router.delete("/api/users/:userId/accounts/:accountId", async (req: Request, res: Response) => {
     try {
       const { userId, accountId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.findMany || !adapter.delete) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const existingAccounts = await adapter.findMany({
-        model: 'account',
-        where: [{ field: 'id', value: accountId }],
+        model: "account",
+        where: [{ field: "id", value: accountId }],
         limit: 1,
       });
 
       const account = existingAccounts?.[0];
       if (!account || account.userId !== userId) {
-        return res.status(404).json({ error: 'Account not found for this user' });
+        return res.status(404).json({ error: "Account not found for this user" });
       }
 
-      await adapter.delete({ model: 'account', where: [{ field: 'id', value: accountId }] });
+      await adapter.delete({ model: "account", where: [{ field: "id", value: accountId }] });
       res.json({ success: true });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to unlink account' });
+      res.status(500).json({ error: "Failed to unlink account" });
     }
   });
 
-  router.get('/api/users/:userId/sessions', async (req: Request, res: Response) => {
+  router.get("/api/users/:userId/sessions", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.findMany) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const sessions = await adapter.findMany({
-        model: 'session',
+        model: "session",
         limit: 10000,
       });
 
@@ -1786,8 +1785,8 @@ export function createRoutes(
         id: session.id,
         token: session.token,
         expiresAt: session.expiresAt,
-        ipAddress: session.ipAddress || 'Unknown',
-        userAgent: session.userAgent || 'Unknown',
+        ipAddress: session.ipAddress || "Unknown",
+        userAgent: session.userAgent || "Unknown",
         activeOrganizationId: session.activeOrganizationId,
         activeTeamId: session.activeTeamId,
         createdAt: session.createdAt,
@@ -1796,51 +1795,51 @@ export function createRoutes(
 
       res.json({ sessions: formattedSessions });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch user sessions' });
+      res.status(500).json({ error: "Failed to fetch user sessions" });
     }
   });
 
-  router.delete('/api/sessions/:sessionId', async (req: Request, res: Response) => {
+  router.delete("/api/sessions/:sessionId", async (req: Request, res: Response) => {
     try {
       const { sessionId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.delete) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
-      await adapter.delete({ model: 'session', where: [{ field: 'id', value: sessionId }] });
+      await adapter.delete({ model: "session", where: [{ field: "id", value: sessionId }] });
       res.json({ success: true });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to delete session' });
+      res.status(500).json({ error: "Failed to delete session" });
     }
   });
 
-  router.get('/api/teams/:teamId', async (req: Request, res: Response) => {
+  router.get("/api/teams/:teamId", async (req: Request, res: Response) => {
     try {
       const { teamId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.findMany) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const teams = await adapter.findMany({
-        model: 'team',
-        where: [{ field: 'id', value: teamId }],
+        model: "team",
+        where: [{ field: "id", value: teamId }],
         limit: 1,
       });
 
       const team = teams && teams.length > 0 ? teams[0] : null;
 
       if (!team) {
-        return res.status(404).json({ success: false, error: 'Team not found' });
+        return res.status(404).json({ success: false, error: "Team not found" });
       }
 
       // Fetch organization details for the team
       let organization = null;
       try {
         const orgs = await adapter.findMany({
-          model: 'organization',
-          where: [{ field: 'id', value: team.organizationId }],
+          model: "organization",
+          where: [{ field: "id", value: team.organizationId }],
           limit: 1,
         });
         organization = orgs && orgs.length > 0 ? orgs[0] : null;
@@ -1864,28 +1863,28 @@ export function createRoutes(
 
       res.json({ success: true, team: transformedTeam });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch team' });
+      res.status(500).json({ error: "Failed to fetch team" });
     }
   });
 
-  router.get('/api/organizations/:orgId', async (req: Request, res: Response) => {
+  router.get("/api/organizations/:orgId", async (req: Request, res: Response) => {
     try {
       const { orgId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.findMany) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const organizations = await adapter.findMany({
-        model: 'organization',
-        where: [{ field: 'id', value: orgId }],
+        model: "organization",
+        where: [{ field: "id", value: orgId }],
         limit: 1,
       });
 
       const organization = organizations && organizations.length > 0 ? organizations[0] : null;
 
       if (!organization) {
-        return res.status(404).json({ success: false, error: 'Organization not found' });
+        return res.status(404).json({ success: false, error: "Organization not found" });
       }
 
       const transformedOrganization = {
@@ -1899,38 +1898,37 @@ export function createRoutes(
 
       res.json({ success: true, organization: transformedOrganization });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch organization' });
+      res.status(500).json({ error: "Failed to fetch organization" });
     }
   });
 
   // Events API endpoint with cursor-based pagination
-  router.get('/api/events', async (req: Request, res: Response) => {
+  router.get("/api/events", async (req: Request, res: Response) => {
     try {
       const limit = parseInt(req.query.limit as string, 10) || 20;
       const after = req.query.after as string; // Cursor
-      const sort = (req.query.sort as string) || 'desc'; // Default: 'desc' = newest first
+      const sort = (req.query.sort as string) || "desc"; // Default: 'desc' = newest first
       const type = req.query.type as string;
       const userId = req.query.userId as string;
       const sinceParam = req.query.since as string; // ISO timestamp string
       const since = sinceParam ? new Date(sinceParam) : undefined;
 
-      const { getEventIngestionProvider, isEventIngestionInitialized } = await import(
-        './utils/event-ingestion.js'
-      );
+      const { getEventIngestionProvider, isEventIngestionInitialized } =
+        await import("./utils/event-ingestion.js");
 
       // Check if event ingestion is initialized, if not, try to initialize it
       if (!isEventIngestionInitialized()) {
         try {
-          const { initializeEventIngestionAndHooks } = await import('./core/handler.js');
-          const { existsSync } = await import('node:fs');
-          const { join } = await import('node:path');
+          const { initializeEventIngestionAndHooks } = await import("./core/handler.js");
+          const { existsSync } = await import("node:fs");
+          const { join } = await import("node:path");
 
           // Try to find and load studio config
           const possibleFiles = [
-            'studio.config.ts',
-            'studio.config.js',
-            'studio.config.mjs',
-            'studio.config.cjs',
+            "studio.config.ts",
+            "studio.config.js",
+            "studio.config.mjs",
+            "studio.config.cjs",
           ];
           let studioConfigPath: string | null = null;
 
@@ -1943,12 +1941,12 @@ export function createRoutes(
           }
 
           if (studioConfigPath) {
-            const { loadConfig } = await import('c12');
-            const { getPathAliases } = await import('./config.js');
+            const { loadConfig } = await import("c12");
+            const { getPathAliases } = await import("./config.js");
             // @ts-expect-error - No types available
-            const babelPresetTypeScript = (await import('@babel/preset-typescript')).default;
+            const babelPresetTypeScript = (await import("@babel/preset-typescript")).default;
             // @ts-expect-error - No types available
-            const babelPresetReact = (await import('@babel/preset-react')).default;
+            const babelPresetReact = (await import("@babel/preset-react")).default;
 
             const alias = getPathAliases(process.cwd()) || {};
             const jitiOptions = {
@@ -1957,11 +1955,11 @@ export function createRoutes(
                 babel: {
                   presets: [
                     [babelPresetTypeScript, { isTSX: true, allExtensions: true }],
-                    [babelPresetReact, { runtime: 'automatic' }],
+                    [babelPresetReact, { runtime: "automatic" }],
                   ],
                 },
               },
-              extensions: ['.ts', '.js', '.tsx', '.jsx'],
+              extensions: [".ts", ".js", ".tsx", ".jsx"],
               alias,
               interopDefault: true,
             };
@@ -1980,7 +1978,7 @@ export function createRoutes(
           }
         } catch (initError: any) {
           // If initialization fails, continue - we'll handle it gracefully below
-          console.warn('Failed to initialize event ingestion:', initError?.message || initError);
+          console.warn("Failed to initialize event ingestion:", initError?.message || initError);
         }
       }
 
@@ -1991,13 +1989,13 @@ export function createRoutes(
           const result = await eventProvider.query({
             limit,
             after,
-            sort: sort as 'asc' | 'desc',
+            sort: sort as "asc" | "desc",
             type,
             userId,
             since,
           });
           // Import event utilities for template fallback
-          const eventTypes = await import('./types/events.js');
+          const eventTypes = await import("./types/events.js");
           const EVENT_TEMPLATES = eventTypes.EVENT_TEMPLATES;
           const getEventSeverity = eventTypes.getEventSeverity;
           const transformedEvents = result.events.map((event: AuthEvent) => {
@@ -2006,7 +2004,7 @@ export function createRoutes(
                 id: event.id,
                 type: event.type,
                 timestamp: event.timestamp,
-                status: (event as any).status || 'success',
+                status: (event as any).status || "success",
                 userId: event.userId,
                 sessionId: event.sessionId,
                 organizationId: event.organizationId,
@@ -2032,10 +2030,10 @@ export function createRoutes(
         } catch (providerError: any) {
           // Handle case where table/model doesn't exist yet
           if (
-            providerError?.message?.includes('not found in schema') ||
-            providerError?.message?.includes('Model') ||
-            providerError?.code === 'P2025' ||
-            providerError?.code === '42P01'
+            providerError?.message?.includes("not found in schema") ||
+            providerError?.message?.includes("Model") ||
+            providerError?.code === "P2025" ||
+            providerError?.code === "42P01"
           ) {
             // Table doesn't exist yet - return empty result instead of error
             return res.json({
@@ -2045,12 +2043,12 @@ export function createRoutes(
             });
           }
 
-          console.error('Event provider query failed:', providerError);
+          console.error("Event provider query failed:", providerError);
           // If provider query fails, don't fall back to adapter - return error
           return res.status(500).json({
-            error: 'Failed to query events from provider',
+            error: "Failed to query events from provider",
             details: providerError?.message || String(providerError),
-            provider: 'event-ingestion',
+            provider: "event-ingestion",
           });
         }
       }
@@ -2058,33 +2056,33 @@ export function createRoutes(
       // Fallback to adapter (for storage provider or when provider doesn't support query)
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Event provider or adapter not available' });
+        return res.status(500).json({ error: "Event provider or adapter not available" });
       }
 
       const where: any[] = [];
 
       // Cursor-based pagination
       if (after) {
-        if (sort === 'desc') {
-          where.push({ field: 'id', operator: '<', value: after });
+        if (sort === "desc") {
+          where.push({ field: "id", operator: "<", value: after });
         } else {
-          where.push({ field: 'id', operator: '>', value: after });
+          where.push({ field: "id", operator: ">", value: after });
         }
       }
 
       if (type) {
-        where.push({ field: 'type', value: type });
+        where.push({ field: "type", value: type });
       }
       if (userId) {
-        where.push({ field: 'userId', value: userId });
+        where.push({ field: "userId", value: userId });
       }
 
       let events: any[] = [];
       if (adapter.findMany) {
         events = await adapter.findMany({
-          model: 'auth_events',
+          model: "auth_events",
           where,
-          orderBy: [{ field: 'timestamp', direction: sort === 'desc' ? 'desc' : 'asc' }],
+          orderBy: [{ field: "timestamp", direction: sort === "desc" ? "desc" : "asc" }],
           limit: limit + 1, // Get one extra to check hasMore
         });
       }
@@ -2093,40 +2091,40 @@ export function createRoutes(
       const paginatedEvents = events.slice(0, limit);
 
       // Import event utilities
-      const eventTypes = await import('./types/events.js');
+      const eventTypes = await import("./types/events.js");
       const EVENT_TEMPLATES = eventTypes.EVENT_TEMPLATES;
       const getEventSeverity = eventTypes.getEventSeverity;
 
       const transformedEvents = paginatedEvents.map((event: any) => {
         // Parse metadata
         const metadata =
-          typeof event.metadata === 'string' ? JSON.parse(event.metadata) : event.metadata || {};
+          typeof event.metadata === "string" ? JSON.parse(event.metadata) : event.metadata || {};
 
         // Create a temporary event object for template function
         const tempEvent = {
           id: event.id,
           type: event.type,
           timestamp: new Date(event.timestamp || event.createdAt),
-          status: (event as any).status || 'success',
+          status: (event as any).status || "success",
           userId: event.userId || event.user_id,
           sessionId: event.sessionId || event.session_id,
           organizationId: event.organizationId || event.organization_id,
           metadata,
-          source: event.source || 'app',
+          source: event.source || "app",
         };
 
         return {
           id: event.id,
           type: event.type,
           timestamp: event.timestamp || event.createdAt,
-          status: (event as any).status || 'success',
+          status: (event as any).status || "success",
           userId: event.userId || event.user_id,
           sessionId: event.sessionId || event.session_id,
           organizationId: event.organizationId || event.organization_id,
           metadata,
           ipAddress: event.ipAddress || event.ip_address,
           userAgent: event.userAgent || event.user_agent,
-          source: event.source || 'app',
+          source: event.source || "app",
           display: {
             message:
               event.displayMessage ||
@@ -2136,7 +2134,7 @@ export function createRoutes(
             severity:
               event.displaySeverity ||
               event.display_severity ||
-              getEventSeverity(tempEvent, (event as any).status || 'success'),
+              getEventSeverity(tempEvent, (event as any).status || "success"),
           },
         };
       });
@@ -2147,27 +2145,27 @@ export function createRoutes(
         nextCursor: hasMore ? transformedEvents[transformedEvents.length - 1].id : null,
       });
     } catch (error) {
-      console.error('Failed to fetch events:', error);
+      console.error("Failed to fetch events:", error);
       res.status(500).json({
-        error: 'Failed to fetch events',
+        error: "Failed to fetch events",
         details: error instanceof Error ? error.message : String(error),
       });
     }
   });
 
-  router.get('/api/users', async (req: Request, res: Response) => {
+  router.get("/api/users", async (req: Request, res: Response) => {
     try {
       const page = parseInt(req.query.page as string, 10) || 1;
       const limit = parseInt(req.query.limit as string, 10) || 20;
       const search = req.query.search as string;
       try {
         const adapter = await getAuthAdapterWithConfig();
-        if (adapter && typeof adapter.findMany === 'function') {
+        if (adapter && typeof adapter.findMany === "function") {
           const shouldPaginate = limit < 1000;
           const fetchLimit = shouldPaginate ? limit : undefined;
 
           const allUsers = await adapter.findMany({
-            model: 'user',
+            model: "user",
             limit: fetchLimit || 100000,
           });
           let filteredUsers = allUsers || [];
@@ -2175,7 +2173,7 @@ export function createRoutes(
             filteredUsers = filteredUsers.filter(
               (user: any) =>
                 user.email?.toLowerCase().includes(search.toLowerCase()) ||
-                user.name?.toLowerCase().includes(search.toLowerCase())
+                user.name?.toLowerCase().includes(search.toLowerCase()),
             );
           }
 
@@ -2209,10 +2207,10 @@ export function createRoutes(
 
       const result = await getAuthData(
         authConfig,
-        'users',
+        "users",
         { page, limit, search },
         configPath,
-        preloadedAdapter
+        preloadedAdapter,
       );
 
       const transformedUsers = (result.data || []).map((user: any) => ({
@@ -2232,61 +2230,61 @@ export function createRoutes(
 
       res.json({ users: transformedUsers });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch users' });
+      res.status(500).json({ error: "Failed to fetch users" });
     }
   });
 
-  router.get('/api/sessions', async (req: Request, res: Response) => {
+  router.get("/api/sessions", async (req: Request, res: Response) => {
     try {
       const page = parseInt(req.query.page as string, 10) || 1;
       const limit = parseInt(req.query.limit as string, 10) || 20;
 
       const sessions = await getAuthData(
         authConfig,
-        'sessions',
+        "sessions",
         { page, limit },
         configPath,
-        preloadedAdapter
+        preloadedAdapter,
       );
       res.json(sessions);
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch sessions' });
+      res.status(500).json({ error: "Failed to fetch sessions" });
     }
   });
 
-  router.get('/api/providers', async (_req: Request, res: Response) => {
+  router.get("/api/providers", async (_req: Request, res: Response) => {
     try {
       const providers = await getAuthData(
         authConfig,
-        'providers',
+        "providers",
         undefined,
         configPath,
-        preloadedAdapter
+        preloadedAdapter,
       );
       res.json(providers);
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch providers' });
+      res.status(500).json({ error: "Failed to fetch providers" });
     }
   });
 
-  router.delete('/api/users/:id', async (req: Request, res: Response) => {
+  router.delete("/api/users/:id", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      await getAuthData(authConfig, 'deleteUser', { id }, configPath, preloadedAdapter);
+      await getAuthData(authConfig, "deleteUser", { id }, configPath, preloadedAdapter);
       res.json({ success: true });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to delete user' });
+      res.status(500).json({ error: "Failed to delete user" });
     }
   });
 
-  router.get('/api/plugins', async (_req: Request, res: Response) => {
+  router.get("/api/plugins", async (_req: Request, res: Response) => {
     try {
       const betterAuthConfig = preloadedAuthOptions || (await getAuthConfigSafe());
 
       if (betterAuthConfig) {
         const plugins = betterAuthConfig.plugins || [];
         const pluginInfo = plugins
-          .filter((plugin: any) => plugin.id !== 'better-auth-studio-events')
+          .filter((plugin: any) => plugin.id !== "better-auth-studio-events")
           .map((plugin: any) => ({
             id: plugin.id,
             name: plugin.name || plugin.id,
@@ -2307,7 +2305,7 @@ export function createRoutes(
         if (!authConfigPath) {
           return res.json({
             plugins: [],
-            error: 'No auth config found',
+            error: "No auth config found",
             configPath: null,
           });
         }
@@ -2317,7 +2315,7 @@ export function createRoutes(
           try {
             authModule = await safeImportAuthConfig(authConfigPath, true); // Disable cache for real-time plugin checks
           } catch (_importError) {
-            const content = readFileSync(authConfigPath, 'utf-8');
+            const content = readFileSync(authConfigPath, "utf-8");
 
             authModule = {
               auth: {
@@ -2333,13 +2331,13 @@ export function createRoutes(
           if (!auth) {
             return res.json({
               plugins: [],
-              error: 'No auth export found',
+              error: "No auth export found",
               configPath: authConfigPath,
             });
           }
           const plugins = auth.options?.plugins || [];
           const pluginInfo = plugins
-            .filter((plugin: any) => plugin.id !== 'better-auth-studio-events')
+            .filter((plugin: any) => plugin.id !== "better-auth-studio-events")
             .map((plugin: any) => ({
               id: plugin.id,
               name: plugin.name || plugin.id,
@@ -2354,7 +2352,7 @@ export function createRoutes(
         } catch (_error) {
           return res.json({
             plugins: [],
-            error: 'Failed to load auth config - import failed and regex extraction unavailable',
+            error: "Failed to load auth config - import failed and regex extraction unavailable",
             configPath: authConfigPath,
           });
         }
@@ -2362,15 +2360,15 @@ export function createRoutes(
 
       return res.json({
         plugins: [],
-        error: 'No auth config found',
+        error: "No auth config found",
         configPath: null,
       });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch plugins' });
+      res.status(500).json({ error: "Failed to fetch plugins" });
     }
   });
 
-  router.get('/api/database/info', async (_req: Request, res: Response) => {
+  router.get("/api/database/info", async (_req: Request, res: Response) => {
     try {
       if (isSelfHosted && preloadedAuthOptions) {
         const database = preloadedAuthOptions.database;
@@ -2384,7 +2382,7 @@ export function createRoutes(
       if (!authConfigPath) {
         return res.json({
           database: null,
-          error: 'No auth config found',
+          error: "No auth config found",
           configPath: null,
         });
       }
@@ -2396,7 +2394,7 @@ export function createRoutes(
         if (!auth) {
           return res.json({
             database: null,
-            error: 'No auth export found',
+            error: "No auth export found",
             configPath: authConfigPath,
           });
         }
@@ -2409,41 +2407,41 @@ export function createRoutes(
       } catch (_error) {
         res.json({
           database: null,
-          error: 'Failed to load auth config - import failed and regex extraction unavailable',
+          error: "Failed to load auth config - import failed and regex extraction unavailable",
           configPath: authConfigPath,
         });
       }
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch database info' });
+      res.status(500).json({ error: "Failed to fetch database info" });
     }
   });
 
-  router.get('/api/database/test', async (_req: Request, res: Response) => {
+  router.get("/api/database/test", async (_req: Request, res: Response) => {
     try {
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.findMany) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
       const result = await adapter.findMany({
-        model: 'user',
+        model: "user",
         limit: 1,
       });
       return res.json({ success: true, result: result });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to test database connection',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to test database connection",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
 
-  router.post('/api/tools/migrations/run', async (req: Request, res: Response) => {
+  router.post("/api/tools/migrations/run", async (req: Request, res: Response) => {
     try {
       const { provider, script } = req.body as { provider?: string; script?: string };
 
       if (!provider) {
-        return res.status(400).json({ success: false, error: 'Migration provider is required' });
+        return res.status(400).json({ success: false, error: "Migration provider is required" });
       }
       if (script) {
         // TODO: use more of sandbox environment to execute the script for security reasons
@@ -2452,46 +2450,46 @@ export function createRoutes(
         } catch (error) {
           return res
             .status(500)
-            .json({ success: false, error: 'Failed to execute migration script' });
+            .json({ success: false, error: "Failed to execute migration script" });
         }
         return res.json({
           success: true,
         });
       } else {
-        return res.status(400).json({ success: false, error: 'No script provided' });
+        return res.status(400).json({ success: false, error: "No script provided" });
       }
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to process migration request',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to process migration request",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
 
-  router.post('/api/tools/health-check', async (_req: Request, res: Response) => {
+  router.post("/api/tools/health-check", async (_req: Request, res: Response) => {
     try {
       const baseUrl =
-        authConfig.baseURL?.replace(/\/$/, '') ||
-        process.env.BETTER_AUTH_URL?.replace(/\/$/, '') ||
-        'http://localhost:3000';
-      const basePathRaw = authConfig.basePath || '/api/auth';
+        authConfig.baseURL?.replace(/\/$/, "") ||
+        process.env.BETTER_AUTH_URL?.replace(/\/$/, "") ||
+        "http://localhost:3000";
+      const basePathRaw = authConfig.basePath || "/api/auth";
       const basePath =
-        basePathRaw === '/' ? '' : basePathRaw.startsWith('/') ? basePathRaw : `/${basePathRaw}`;
+        basePathRaw === "/" ? "" : basePathRaw.startsWith("/") ? basePathRaw : `/${basePathRaw}`;
       const endpointChecks = [
         {
-          label: 'Sign In',
-          method: 'POST',
-          path: '/sign-in/email',
+          label: "Sign In",
+          method: "POST",
+          path: "/sign-in/email",
           body: JSON.stringify({
             email: `test-${Date.now()}@example.com`,
-            password: 'test-password-123',
+            password: "test-password-123",
           }),
         },
         {
-          label: 'Get Session',
-          method: 'GET',
-          path: '/get-session',
+          label: "Get Session",
+          method: "GET",
+          path: "/get-session",
         },
       ] as const;
 
@@ -2502,11 +2500,11 @@ export function createRoutes(
             const fetchOptions: RequestInit = {
               method: check.method,
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
               },
             };
 
-            if (check.method === 'POST' && check.body) {
+            if (check.method === "POST" && check.body) {
               fetchOptions.body = check.body;
             }
 
@@ -2533,10 +2531,10 @@ export function createRoutes(
               endpoint: check.path,
               ok: false,
               status: null,
-              error: error instanceof Error ? error.message : 'Unknown error',
+              error: error instanceof Error ? error.message : "Unknown error",
             };
           }
-        })
+        }),
       );
 
       const allPassed = checks.every((check) => check.ok);
@@ -2545,12 +2543,12 @@ export function createRoutes(
       if (allPassed) {
         res.json({
           success: true,
-          message: 'All Better Auth endpoints are healthy',
+          message: "All Better Auth endpoints are healthy",
         });
       } else {
         res.json({
           success: false,
-          message: 'Some Better Auth endpoints failed health checks',
+          message: "Some Better Auth endpoints failed health checks",
           failedEndpoints: failedChecks.map((check) => ({
             endpoint: check.endpoint,
             status: check.status,
@@ -2561,34 +2559,34 @@ export function createRoutes(
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Health check failed',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Health check failed",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
 
-  router.post('/api/tools/validate-config', async (_req: Request, res: Response) => {
+  router.post("/api/tools/validate-config", async (_req: Request, res: Response) => {
     try {
       const results: Array<{
         category: string;
         check: string;
-        status: 'pass' | 'fail' | 'warning';
+        status: "pass" | "fail" | "warning";
         message: string;
         suggestion?: string;
-        severity: 'error' | 'warning' | 'info';
+        severity: "error" | "warning" | "info";
       }> = [];
 
       const addResult = (
         category: string,
         check: string,
-        status: 'pass' | 'fail' | 'warning',
+        status: "pass" | "fail" | "warning",
         message: string,
         suggestion?: string,
-        severity: 'error' | 'warning' | 'info' = status === 'fail'
-          ? 'error'
-          : status === 'warning'
-            ? 'warning'
-            : 'info'
+        severity: "error" | "warning" | "info" = status === "fail"
+          ? "error"
+          : status === "warning"
+            ? "warning"
+            : "info",
       ) => {
         results.push({ category, check, status, message, suggestion, severity });
       };
@@ -2597,111 +2595,111 @@ export function createRoutes(
       const secret = process.env.BETTER_AUTH_SECRET || process.env.AUTH_SECRET;
       if (!secret) {
         addResult(
-          'Core Config',
-          'Secret Key',
-          'fail',
-          'BETTER_AUTH_SECRET or AUTH_SECRET environment variable is not set',
-          'Set BETTER_AUTH_SECRET in your .env file with a strong random string (minimum 32 characters)',
-          'error'
+          "Core Config",
+          "Secret Key",
+          "fail",
+          "BETTER_AUTH_SECRET or AUTH_SECRET environment variable is not set",
+          "Set BETTER_AUTH_SECRET in your .env file with a strong random string (minimum 32 characters)",
+          "error",
         );
       } else if (secret.length < 32) {
         addResult(
-          'Core Config',
-          'Secret Key',
-          'warning',
+          "Core Config",
+          "Secret Key",
+          "warning",
           `Secret key is only ${secret.length} characters. Recommended minimum is 32 characters`,
-          'Generate a longer secret key for better security',
-          'warning'
+          "Generate a longer secret key for better security",
+          "warning",
         );
       } else {
         addResult(
-          'Core Config',
-          'Secret Key',
-          'pass',
-          'Secret key is configured and meets length requirements'
+          "Core Config",
+          "Secret Key",
+          "pass",
+          "Secret key is configured and meets length requirements",
         );
       }
 
       const baseURL = authConfig.baseURL || process.env.BETTER_AUTH_URL;
       if (!baseURL) {
         addResult(
-          'Core Config',
-          'Base URL',
-          'warning',
-          'baseURL is not configured. Using default localhost:3000',
-          'Set baseURL in your auth config or BETTER_AUTH_URL environment variable',
-          'warning'
+          "Core Config",
+          "Base URL",
+          "warning",
+          "baseURL is not configured. Using default localhost:3000",
+          "Set baseURL in your auth config or BETTER_AUTH_URL environment variable",
+          "warning",
         );
       } else {
         try {
           new URL(baseURL);
-          addResult('Core Config', 'Base URL', 'pass', `Base URL is valid: ${baseURL}`);
+          addResult("Core Config", "Base URL", "pass", `Base URL is valid: ${baseURL}`);
         } catch {
           addResult(
-            'Core Config',
-            'Base URL',
-            'fail',
+            "Core Config",
+            "Base URL",
+            "fail",
             `Base URL format is invalid: ${baseURL}`,
-            'Ensure baseURL is a valid URL (e.g., https://example.com)',
-            'error'
+            "Ensure baseURL is a valid URL (e.g., https://example.com)",
+            "error",
           );
         }
       }
 
-      const basePath = authConfig.basePath || '/api/auth';
-      if (!basePath.startsWith('/')) {
+      const basePath = authConfig.basePath || "/api/auth";
+      if (!basePath.startsWith("/")) {
         addResult(
-          'Core Config',
-          'Base Path',
-          'fail',
+          "Core Config",
+          "Base Path",
+          "fail",
           `Base path must start with '/': ${basePath}`,
-          'Change basePath to start with a forward slash (e.g., /api/auth)',
-          'error'
+          "Change basePath to start with a forward slash (e.g., /api/auth)",
+          "error",
         );
       } else {
-        addResult('Core Config', 'Base Path', 'pass', `Base path is valid: ${basePath}`);
+        addResult("Core Config", "Base Path", "pass", `Base path is valid: ${basePath}`);
       }
 
       // 2. Database Configuration
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
         addResult(
-          'Database',
-          'Adapter',
-          'fail',
-          'Database adapter is not available or not configured',
-          'Ensure your database adapter is properly configured in your auth config',
-          'error'
+          "Database",
+          "Adapter",
+          "fail",
+          "Database adapter is not available or not configured",
+          "Ensure your database adapter is properly configured in your auth config",
+          "error",
         );
       } else {
-        addResult('Database', 'Adapter', 'pass', 'Database adapter is configured');
+        addResult("Database", "Adapter", "pass", "Database adapter is configured");
 
         // Test database connection
         try {
           if (adapter.findMany) {
             await adapter.findMany({
-              model: 'user',
+              model: "user",
               limit: 1,
             });
-            addResult('Database', 'Connection', 'pass', 'Database connection is working');
+            addResult("Database", "Connection", "pass", "Database connection is working");
           } else {
             addResult(
-              'Database',
-              'Connection',
-              'warning',
-              'Cannot test database connection (findMany method not available)',
+              "Database",
+              "Connection",
+              "warning",
+              "Cannot test database connection (findMany method not available)",
               undefined,
-              'warning'
+              "warning",
             );
           }
         } catch (error) {
           addResult(
-            'Database',
-            'Connection',
-            'fail',
-            `Database connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            'Check your database connection string and ensure the database is accessible',
-            'error'
+            "Database",
+            "Connection",
+            "fail",
+            `Database connection failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+            "Check your database connection string and ensure the database is accessible",
+            "error",
           );
         }
       }
@@ -2709,19 +2707,19 @@ export function createRoutes(
       const dbUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.MYSQL_URL;
       if (!dbUrl && !authConfig.database?.url) {
         addResult(
-          'Database',
-          'Connection String',
-          'warning',
-          'No database connection string found in environment variables',
-          'Set DATABASE_URL, POSTGRES_URL, or MYSQL_URL in your .env file',
-          'warning'
+          "Database",
+          "Connection String",
+          "warning",
+          "No database connection string found in environment variables",
+          "Set DATABASE_URL, POSTGRES_URL, or MYSQL_URL in your .env file",
+          "warning",
         );
       } else {
         addResult(
-          'Database',
-          'Connection String',
-          'pass',
-          'Database connection string is configured'
+          "Database",
+          "Connection String",
+          "pass",
+          "Database connection string is configured",
         );
       }
 
@@ -2738,88 +2736,88 @@ export function createRoutes(
           }));
       if (effectiveSocialProviders.length === 0) {
         addResult(
-          'OAuth Providers',
-          'Providers',
-          'warning',
-          'No OAuth providers configured',
-          'This is optional. Add social providers if you need OAuth authentication',
-          'info'
+          "OAuth Providers",
+          "Providers",
+          "warning",
+          "No OAuth providers configured",
+          "This is optional. Add social providers if you need OAuth authentication",
+          "info",
         );
       } else {
         addResult(
-          'OAuth Providers',
-          'Providers',
-          'pass',
-          `${effectiveSocialProviders.length} OAuth provider(s) configured`
+          "OAuth Providers",
+          "Providers",
+          "pass",
+          `${effectiveSocialProviders.length} OAuth provider(s) configured`,
         );
 
         effectiveSocialProviders.forEach((provider: any) => {
           if (provider.enabled) {
             if (!provider.clientId) {
               addResult(
-                'OAuth Providers',
+                "OAuth Providers",
                 `${provider.name} - Client ID`,
-                'fail',
+                "fail",
                 `${provider.name} is enabled but clientId is missing`,
                 `Add clientId for ${provider.name} in your auth config`,
-                'error'
+                "error",
               );
             } else {
               addResult(
-                'OAuth Providers',
+                "OAuth Providers",
                 `${provider.name} - Client ID`,
-                'pass',
-                'Client ID is configured'
+                "pass",
+                "Client ID is configured",
               );
             }
 
             if (!provider.clientSecret) {
               addResult(
-                'OAuth Providers',
+                "OAuth Providers",
                 `${provider.name} - Client Secret`,
-                'fail',
+                "fail",
                 `${provider.name} is enabled but clientSecret is missing`,
                 `Add clientSecret for ${provider.name} in your auth config`,
-                'error'
+                "error",
               );
             } else {
               addResult(
-                'OAuth Providers',
+                "OAuth Providers",
                 `${provider.name} - Client Secret`,
-                'pass',
-                'Client Secret is configured'
+                "pass",
+                "Client Secret is configured",
               );
             }
 
             if (provider.redirectURI) {
               const baseUrl =
-                authConfig.baseURL || process.env.BETTER_AUTH_URL || 'http://localhost:3000';
-              const expectedRedirect = `${baseUrl}${authConfig.basePath || '/api/auth'}/callback/${provider.id}`;
+                authConfig.baseURL || process.env.BETTER_AUTH_URL || "http://localhost:3000";
+              const expectedRedirect = `${baseUrl}${authConfig.basePath || "/api/auth"}/callback/${provider.id}`;
               if (!provider.redirectURI.includes(baseUrl)) {
                 addResult(
-                  'OAuth Providers',
+                  "OAuth Providers",
                   `${provider.name} - Redirect URI`,
-                  'warning',
+                  "warning",
                   `Redirect URI may not match baseURL: ${provider.redirectURI}`,
                   `Expected format: ${expectedRedirect}. Ensure this matches your OAuth provider settings`,
-                  'warning'
+                  "warning",
                 );
               } else {
                 addResult(
-                  'OAuth Providers',
+                  "OAuth Providers",
                   `${provider.name} - Redirect URI`,
-                  'pass',
-                  'Redirect URI is configured'
+                  "pass",
+                  "Redirect URI is configured",
                 );
               }
             } else {
               addResult(
-                'OAuth Providers',
+                "OAuth Providers",
                 `${provider.name} - Redirect URI`,
-                'warning',
-                'Redirect URI is not explicitly set (will use default)',
+                "warning",
+                "Redirect URI is not explicitly set (will use default)",
                 undefined,
-                'warning'
+                "warning",
               );
             }
           }
@@ -2830,32 +2828,32 @@ export function createRoutes(
       const emailAndPassword = authConfig.emailAndPassword;
       if (emailAndPassword?.enabled) {
         addResult(
-          'Email & Password',
-          'Enabled',
-          'pass',
-          'Email and password authentication is enabled'
+          "Email & Password",
+          "Enabled",
+          "pass",
+          "Email and password authentication is enabled",
         );
 
         if (emailAndPassword.minPasswordLength && emailAndPassword.minPasswordLength < 8) {
           addResult(
-            'Email & Password',
-            'Password Policy',
-            'warning',
+            "Email & Password",
+            "Password Policy",
+            "warning",
             `Minimum password length is ${emailAndPassword.minPasswordLength}. Recommended minimum is 8`,
-            'Consider increasing minPasswordLength to 8 or higher',
-            'warning'
+            "Consider increasing minPasswordLength to 8 or higher",
+            "warning",
           );
         } else {
-          addResult('Email & Password', 'Password Policy', 'pass', 'Password policy is configured');
+          addResult("Email & Password", "Password Policy", "pass", "Password policy is configured");
         }
       } else {
         addResult(
-          'Email & Password',
-          'Enabled',
-          'warning',
-          'Email and password authentication is disabled',
-          'Enable emailAndPassword in your config if you need email/password auth',
-          'info'
+          "Email & Password",
+          "Enabled",
+          "warning",
+          "Email and password authentication is disabled",
+          "Enable emailAndPassword in your config if you need email/password auth",
+          "info",
         );
       }
 
@@ -2863,53 +2861,53 @@ export function createRoutes(
       const advanced = authConfig.advanced || {};
       const cookieAttrs = advanced.defaultCookieAttributes || {};
 
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === "production") {
         if (cookieAttrs.secure !== true) {
           addResult(
-            'Security',
-            'Cookie Security',
-            'fail',
-            'Cookie secure flag is not set to true in production',
-            'Set secure: true in defaultCookieAttributes for production',
-            'error'
+            "Security",
+            "Cookie Security",
+            "fail",
+            "Cookie secure flag is not set to true in production",
+            "Set secure: true in defaultCookieAttributes for production",
+            "error",
           );
         } else {
-          addResult('Security', 'Cookie Security', 'pass', 'Cookie secure flag is enabled');
+          addResult("Security", "Cookie Security", "pass", "Cookie secure flag is enabled");
         }
 
-        if (cookieAttrs.sameSite === 'none' && !cookieAttrs.secure) {
+        if (cookieAttrs.sameSite === "none" && !cookieAttrs.secure) {
           addResult(
-            'Security',
-            'Cookie SameSite',
-            'fail',
+            "Security",
+            "Cookie SameSite",
+            "fail",
             'sameSite: "none" requires secure: true',
             'Set secure: true when using sameSite: "none"',
-            'error'
+            "error",
           );
         }
       } else {
         if (cookieAttrs.secure === false) {
           addResult(
-            'Security',
-            'Cookie Security',
-            'warning',
-            'Cookie secure flag is false (acceptable for development)',
-            'Ensure secure: true in production',
-            'warning'
+            "Security",
+            "Cookie Security",
+            "warning",
+            "Cookie secure flag is false (acceptable for development)",
+            "Ensure secure: true in production",
+            "warning",
           );
         }
       }
 
       if (cookieAttrs.httpOnly !== false) {
-        addResult('Security', 'Cookie HttpOnly', 'pass', 'HttpOnly flag is enabled (recommended)');
+        addResult("Security", "Cookie HttpOnly", "pass", "HttpOnly flag is enabled (recommended)");
       } else {
         addResult(
-          'Security',
-          'Cookie HttpOnly',
-          'warning',
-          'HttpOnly flag is disabled',
-          'Enable httpOnly: true for better security',
-          'warning'
+          "Security",
+          "Cookie HttpOnly",
+          "warning",
+          "HttpOnly flag is disabled",
+          "Enable httpOnly: true for better security",
+          "warning",
         );
       }
 
@@ -2918,12 +2916,12 @@ export function createRoutes(
       const trustedOrigins = Array.isArray(trustedOriginsRaw) ? trustedOriginsRaw : [];
       if (trustedOrigins.length === 0) {
         addResult(
-          'Security',
-          'Trusted Origins',
-          'warning',
-          'No trusted origins configured',
-          'Configure trustedOrigins to restrict CORS to specific domains',
-          'warning'
+          "Security",
+          "Trusted Origins",
+          "warning",
+          "No trusted origins configured",
+          "Configure trustedOrigins to restrict CORS to specific domains",
+          "warning",
         );
       } else {
         const invalidOrigins = trustedOrigins.filter((origin: string) => {
@@ -2937,49 +2935,49 @@ export function createRoutes(
 
         if (invalidOrigins.length > 0) {
           addResult(
-            'Security',
-            'Trusted Origins',
-            'fail',
-            `Invalid trusted origin(s): ${invalidOrigins.join(', ')}`,
-            'Ensure all trusted origins are valid URLs',
-            'error'
+            "Security",
+            "Trusted Origins",
+            "fail",
+            `Invalid trusted origin(s): ${invalidOrigins.join(", ")}`,
+            "Ensure all trusted origins are valid URLs",
+            "error",
           );
         } else {
           addResult(
-            'Security',
-            'Trusted Origins',
-            'pass',
-            `${trustedOrigins.length} trusted origin(s) configured`
+            "Security",
+            "Trusted Origins",
+            "pass",
+            `${trustedOrigins.length} trusted origin(s) configured`,
           );
         }
       }
 
       // 7. Environment Variables
-      const requiredEnvVars = ['BETTER_AUTH_SECRET', 'AUTH_SECRET'];
+      const requiredEnvVars = ["BETTER_AUTH_SECRET", "AUTH_SECRET"];
       const missingEnvVars = requiredEnvVars.filter((varName) => !process.env[varName]);
       if (missingEnvVars.length > 0) {
         addResult(
-          'Environment',
-          'Required Variables',
-          'fail',
-          `Missing required environment variables: ${missingEnvVars.join(', ')}`,
-          'Set the required environment variables in your .env file',
-          'error'
+          "Environment",
+          "Required Variables",
+          "fail",
+          `Missing required environment variables: ${missingEnvVars.join(", ")}`,
+          "Set the required environment variables in your .env file",
+          "error",
         );
       } else {
         addResult(
-          'Environment',
-          'Required Variables',
-          'pass',
-          'All required environment variables are set'
+          "Environment",
+          "Required Variables",
+          "pass",
+          "All required environment variables are set",
         );
       }
 
       // Summary
-      const errors = results.filter((r) => r.severity === 'error').length;
-      const warnings = results.filter((r) => r.severity === 'warning').length;
-      const passes = results.filter((r) => r.status === 'pass').length;
-      const infos = results.filter((r) => r.severity === 'info').length;
+      const errors = results.filter((r) => r.severity === "error").length;
+      const warnings = results.filter((r) => r.severity === "warning").length;
+      const passes = results.filter((r) => r.status === "pass").length;
+      const infos = results.filter((r) => r.severity === "info").length;
 
       res.json({
         success: errors === 0,
@@ -2995,13 +2993,13 @@ export function createRoutes(
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to validate configuration',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to validate configuration",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
 
-  router.get('/api/database/detect', async (_req: Request, res: Response) => {
+  router.get("/api/database/detect", async (_req: Request, res: Response) => {
     try {
       const detectedDb = await detectDatabaseWithDialect();
 
@@ -3020,19 +3018,19 @@ export function createRoutes(
         res.json({
           success: false,
           database: null,
-          message: 'No supported database packages detected',
+          message: "No supported database packages detected",
         });
       }
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to detect database',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to detect database",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
 
-  router.get('/api/db', async (_req: Request, res: Response) => {
+  router.get("/api/db", async (_req: Request, res: Response) => {
     try {
       const detectedDb = await detectDatabaseWithDialect();
 
@@ -3049,54 +3047,54 @@ export function createRoutes(
       } else {
         res.json({
           success: false,
-          name: 'unknown',
-          version: 'unknown',
-          dialect: 'unknown',
-          adapter: 'unknown',
-          displayName: 'Unknown',
+          name: "unknown",
+          version: "unknown",
+          dialect: "unknown",
+          adapter: "unknown",
+          displayName: "Unknown",
           autoDetected: false,
-          message: 'No supported database packages detected',
+          message: "No supported database packages detected",
         });
       }
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to get database information',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to get database information",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
 
-  router.post('/api/admin/ban-user', async (req: Request, res: Response) => {
+  router.post("/api/admin/ban-user", async (req: Request, res: Response) => {
     try {
       const auth = preloadedAuthOptions || (await getAuthConfigSafe());
       if (!auth) {
         return res.status(400).json({
           success: false,
-          error: 'No auth config found',
+          error: "No auth config found",
         });
       }
 
       const plugins = auth.plugins || [];
-      const adminPlugin = plugins.find((plugin: any) => plugin.id === 'admin');
+      const adminPlugin = plugins.find((plugin: any) => plugin.id === "admin");
 
       if (!adminPlugin) {
         return res.status(400).json({
           success: false,
           error:
-            'Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration.',
+            "Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration.",
         });
       }
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.update) {
         return res.status(500).json({
           success: false,
-          error: 'Auth adapter not available',
+          error: "Auth adapter not available",
         });
       }
       const bannedUser = await adapter.update({
-        model: 'user',
-        where: [{ field: 'id', value: req.body.userId }],
+        model: "user",
+        where: [{ field: "id", value: req.body.userId }],
         update: { banned: true, banReason: req.body.banReason, banExpires: req.body.banExpires },
       });
 
@@ -3104,49 +3102,49 @@ export function createRoutes(
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to ban user',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to ban user",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
 
-  router.post('/api/admin/unban-user', async (req: Request, res: Response) => {
+  router.post("/api/admin/unban-user", async (req: Request, res: Response) => {
     try {
       const auth = preloadedAuthOptions || (await getAuthConfigSafe());
       if (!auth) {
         return res.status(400).json({
           success: false,
-          error: 'No auth config found',
+          error: "No auth config found",
         });
       }
 
       const plugins = auth.plugins || [];
-      const adminPlugin = plugins.find((plugin: any) => plugin.id === 'admin');
+      const adminPlugin = plugins.find((plugin: any) => plugin.id === "admin");
 
       if (!adminPlugin) {
         return res.status(400).json({
           success: false,
           error:
-            'Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration.',
+            "Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration.",
         });
       }
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.update) {
         return res.status(500).json({
           success: false,
-          error: 'Auth adapter not available',
+          error: "Auth adapter not available",
         });
       }
       const unbannedUser = await adapter.update({
-        model: 'user',
-        where: [{ field: 'id', value: req.body.userId }],
+        model: "user",
+        where: [{ field: "id", value: req.body.userId }],
         update: { banned: false, banReason: null, banExpires: null },
       });
 
       // Emit event
-      const { emitEvent } = await import('./utils/event-ingestion.js');
-      await emitEvent('user.unbanned', {
-        status: 'success',
+      const { emitEvent } = await import("./utils/event-ingestion.js");
+      await emitEvent("user.unbanned", {
+        status: "success",
         userId: req.body.userId,
         metadata: {
           name: unbannedUser?.name,
@@ -3159,25 +3157,25 @@ export function createRoutes(
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to unban user',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to unban user",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
 
-  router.get('/api/admin/status', async (_req: Request, res: Response) => {
+  router.get("/api/admin/status", async (_req: Request, res: Response) => {
     try {
       const betterAuthConfig = preloadedAuthOptions || (await getAuthConfigSafe());
       if (!betterAuthConfig) {
         return res.json({
           enabled: false,
-          error: 'No auth config found',
+          error: "No auth config found",
           configPath: null,
         });
       }
 
       const plugins = betterAuthConfig.plugins || [];
-      const adminPlugin = plugins.find((plugin: any) => plugin.id === 'admin');
+      const adminPlugin = plugins.find((plugin: any) => plugin.id === "admin");
 
       res.json({
         enabled: !!adminPlugin,
@@ -3187,17 +3185,17 @@ export function createRoutes(
     } catch (error) {
       res.status(500).json({
         enabled: false,
-        error: 'Failed to check admin status',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to check admin status",
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
 
-  const CONTEXT_CORE_TABLES = new Set(['user', 'session', 'account', 'verification']);
+  const CONTEXT_CORE_TABLES = new Set(["user", "session", "account", "verification"]);
 
   async function resolveSchemaConfigPath(): Promise<string | null> {
     if (configPath) {
-      return configPath.startsWith('/') ? configPath : join(process.cwd(), configPath);
+      return configPath.startsWith("/") ? configPath : join(process.cwd(), configPath);
     }
     return await findAuthConfigPath();
   }
@@ -3228,11 +3226,11 @@ export function createRoutes(
   }
 
   function formatDisplayName(name: string) {
-    if (!name) return 'Unknown';
+    if (!name) return "Unknown";
     return name
-      .replace(/[_-]/g, ' ')
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .replace(/\s+/g, ' ')
+      .replace(/[_-]/g, " ")
+      .replace(/([a-z])([A-Z])/g, "$1 $2")
+      .replace(/\s+/g, " ")
       .trim()
       .replace(/^./, (char) => char.toUpperCase());
   }
@@ -3241,13 +3239,13 @@ export function createRoutes(
     if (value === undefined || value === null) {
       return value;
     }
-    if (typeof value === 'function') {
-      return 'function';
+    if (typeof value === "function") {
+      return "function";
     }
     if (value instanceof Date) {
       return value.toISOString();
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       try {
         return JSON.stringify(value);
       } catch (_error) {
@@ -3263,7 +3261,7 @@ export function createRoutes(
         (rel: any) =>
           rel.type === relationship.type &&
           rel.target === relationship.target &&
-          rel.field === relationship.field
+          rel.field === relationship.field,
       )
     ) {
       list.push(relationship);
@@ -3273,7 +3271,7 @@ export function createRoutes(
   function inferTargetTable(fieldName: string, tableMap: Map<string, any>) {
     if (!fieldName) return null;
     const normalized = fieldName.toLowerCase();
-    if (!normalized.endsWith('id')) {
+    if (!normalized.endsWith("id")) {
       return null;
     }
     const candidate = normalized.slice(0, -2);
@@ -3298,11 +3296,11 @@ export function createRoutes(
         const meta = fieldValue as any;
         return {
           name: fieldName,
-          type: meta?.type || 'unknown',
+          type: meta?.type || "unknown",
           required: Boolean(meta?.required),
           primaryKey: Boolean(meta?.primaryKey),
           unique: Boolean(meta?.unique),
-          description: meta?.description || '',
+          description: meta?.description || "",
           sortable: Boolean(meta?.sortable),
           defaultValue: formatDefaultValue(meta?.defaultValue),
         };
@@ -3314,7 +3312,7 @@ export function createRoutes(
         origin:
           tableMeta?.plugin?.id ||
           tableMeta?.pluginId ||
-          (CONTEXT_CORE_TABLES.has(name) ? 'core' : 'extended'),
+          (CONTEXT_CORE_TABLES.has(name) ? "core" : "extended"),
         order: tableMeta?.order ?? Number.MAX_SAFE_INTEGER,
         fields,
         relationships: [] as any[],
@@ -3329,7 +3327,7 @@ export function createRoutes(
         const target = inferTargetTable(field.name, tableLookupByLower);
         if (target && target !== table.name) {
           addRelationshipIfMissing(table.relationships, {
-            type: 'many-to-one',
+            type: "many-to-one",
             target,
             field: field.name,
           });
@@ -3337,7 +3335,7 @@ export function createRoutes(
           const targetTable = tableLookupByLower.get(target.toLowerCase());
           if (targetTable) {
             addRelationshipIfMissing(targetTable.relationships, {
-              type: 'one-to-many',
+              type: "one-to-many",
               target: table.name,
               field: field.name,
             });
@@ -3375,20 +3373,20 @@ export function createRoutes(
     }
   }
 
-  router.get('/api/database/schema', async (req: Request, res: Response) => {
+  router.get("/api/database/schema", async (req: Request, res: Response) => {
     try {
       const adapter = await getAuthAdapterWithConfig();
       const { plugins } = req.query;
 
       let selectedPlugins: any[] = [];
-      if (plugins && typeof plugins === 'string') {
-        selectedPlugins = plugins.split(',').filter(Boolean);
+      if (plugins && typeof plugins === "string") {
+        selectedPlugins = plugins.split(",").filter(Boolean);
       }
 
       if (!adapter) {
         return res.json({
           schema: null,
-          error: 'Auth adapter not available',
+          error: "Auth adapter not available",
         });
       }
 
@@ -3399,7 +3397,7 @@ export function createRoutes(
           success: false,
           schema: null,
           error:
-            'Failed to load schema from Better Auth context. Please ensure your auth configuration is properly set up.',
+            "Failed to load schema from Better Auth context. Please ensure your auth configuration is properly set up.",
         });
       }
 
@@ -3408,8 +3406,8 @@ export function createRoutes(
         new Set(
           schema.tables
             .map((table: any) => table.origin)
-            .filter((origin: string) => origin !== 'core' && origin !== 'extended')
-        )
+            .filter((origin: string) => origin !== "core" && origin !== "extended"),
+        ),
       );
 
       res.json({
@@ -3421,24 +3419,24 @@ export function createRoutes(
     } catch (_error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch database schema',
+        error: "Failed to fetch database schema",
       });
     }
   });
 
-  router.get('/api/plugins/teams/status', async (_req: Request, res: Response) => {
+  router.get("/api/plugins/teams/status", async (_req: Request, res: Response) => {
     try {
       const betterAuthConfig = preloadedAuthOptions || (await getAuthConfigSafe());
       if (!betterAuthConfig) {
         return res.json({
           enabled: false,
-          error: 'No auth config found',
+          error: "No auth config found",
           configPath: isSelfHosted ? null : configPath || null,
         });
       }
 
       const plugins = betterAuthConfig.plugins || [];
-      const organizationPlugin = plugins.find((plugin: any) => plugin.id === 'organization');
+      const organizationPlugin = plugins.find((plugin: any) => plugin.id === "organization");
       if (organizationPlugin) {
         let teamsEnabled = false;
 
@@ -3450,14 +3448,14 @@ export function createRoutes(
           teamsEnabled = true;
         } else if (
           organizationPlugin.options?.teams &&
-          typeof organizationPlugin.options.teams === 'object'
+          typeof organizationPlugin.options.teams === "object"
         ) {
           teamsEnabled = organizationPlugin.options.teams.enabled === true;
-        } else if (organizationPlugin.teams && typeof organizationPlugin.teams === 'object') {
+        } else if (organizationPlugin.teams && typeof organizationPlugin.teams === "object") {
           teamsEnabled = organizationPlugin.teams.enabled === true;
         }
         const teamSchema = organizationPlugin.schema;
-        teamsEnabled = 'team' in teamSchema;
+        teamsEnabled = "team" in teamSchema;
         return res.json({
           enabled: teamsEnabled,
           configPath: isSelfHosted ? null : configPath || null,
@@ -3468,32 +3466,32 @@ export function createRoutes(
           enabled: false,
           configPath: isSelfHosted ? null : configPath || null,
           organizationPlugin: null,
-          error: 'Organization plugin not found',
+          error: "Organization plugin not found",
         });
       }
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to check teams status' });
+      res.status(500).json({ error: "Failed to check teams status" });
     }
   });
 
-  router.get('/api/organizations/:orgId/invitations', async (req: Request, res: Response) => {
+  router.get("/api/organizations/:orgId/invitations", async (req: Request, res: Response) => {
     try {
       const { orgId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
-      if (adapter && typeof adapter.findMany === 'function') {
+      if (adapter && typeof adapter.findMany === "function") {
         try {
           const invitations = await adapter.findMany({
-            model: 'invitation',
+            model: "invitation",
             where: [
-              { field: 'organizationId', value: orgId },
-              { field: 'status', value: 'pending' },
+              { field: "organizationId", value: orgId },
+              { field: "status", value: "pending" },
             ],
           });
           const transformedInvitations = (invitations || []).map((invitation: any) => ({
             id: invitation.id,
             email: invitation.email,
-            role: invitation.role || 'member',
-            status: invitation.status || 'pending',
+            role: invitation.role || "member",
+            status: invitation.status || "pending",
             organizationId: invitation.organizationId,
             teamId: invitation.teamId,
             inviterId: invitation.inviterId,
@@ -3507,20 +3505,20 @@ export function createRoutes(
 
       res.json({ success: true, invitations: [] });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch invitations' });
+      res.status(500).json({ error: "Failed to fetch invitations" });
     }
   });
 
-  router.get('/api/organizations/:orgId/members', async (req: Request, res: Response) => {
+  router.get("/api/organizations/:orgId/members", async (req: Request, res: Response) => {
     try {
       const { orgId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
 
-      if (adapter && typeof adapter.findMany === 'function') {
+      if (adapter && typeof adapter.findMany === "function") {
         try {
           const members = await adapter.findMany({
-            model: 'member',
-            where: [{ field: 'organizationId', value: orgId }],
+            model: "member",
+            where: [{ field: "organizationId", value: orgId }],
             limit: 10000,
           });
           const membersWithUsers = await Promise.all(
@@ -3528,8 +3526,8 @@ export function createRoutes(
               try {
                 if (adapter.findMany) {
                   const users = await adapter.findMany({
-                    model: 'user',
-                    where: [{ field: 'id', value: member.userId }],
+                    model: "user",
+                    where: [{ field: "id", value: member.userId }],
                     limit: 1,
                   });
                   const user = users?.[0];
@@ -3537,7 +3535,7 @@ export function createRoutes(
                     id: member.id,
                     userId: member.userId,
                     organizationId: member.organizationId,
-                    role: member.role || 'member',
+                    role: member.role || "member",
                     joinedAt: member.joinedAt || member.createdAt,
                     user: user
                       ? {
@@ -3554,7 +3552,7 @@ export function createRoutes(
               } catch (_error) {
                 return null;
               }
-            })
+            }),
           );
 
           const validMembers = membersWithUsers.filter((member) => member?.user);
@@ -3566,27 +3564,27 @@ export function createRoutes(
 
       res.json({ success: true, members: [] });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch members' });
+      res.status(500).json({ error: "Failed to fetch members" });
     }
   });
 
-  router.post('/api/organizations/:orgId/seed-members', async (req: Request, res: Response) => {
+  router.post("/api/organizations/:orgId/seed-members", async (req: Request, res: Response) => {
     try {
       const { orgId } = req.params;
       const { count = 5 } = req.body;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       if (!adapter.findMany || !adapter.create) {
-        return res.status(500).json({ error: 'Adapter findMany method not available' });
+        return res.status(500).json({ error: "Adapter findMany method not available" });
       }
 
       const generateRandomString = (length: number) => {
-        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        let result = '';
+        const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+        let result = "";
         for (let i = 0; i < length; i++) {
           result += chars.charAt(Math.floor(Math.random() * chars.length));
         }
@@ -3610,19 +3608,19 @@ export function createRoutes(
           };
 
           const user = await adapter.create({
-            model: 'user',
+            model: "user",
             data: userData,
           });
 
           const memberData = {
             organizationId: orgId,
             userId: user.id,
-            role: 'member',
+            role: "member",
             createdAt: new Date(),
           };
 
           await adapter.create({
-            model: 'member',
+            model: "member",
             data: memberData,
           });
 
@@ -3639,7 +3637,7 @@ export function createRoutes(
         } catch (error) {
           results.push({
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -3650,27 +3648,27 @@ export function createRoutes(
         results,
       });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to seed members' });
+      res.status(500).json({ error: "Failed to seed members" });
     }
   });
 
-  router.post('/api/organizations/:orgId/seed-teams', async (req: Request, res: Response) => {
+  router.post("/api/organizations/:orgId/seed-teams", async (req: Request, res: Response) => {
     try {
       const { orgId } = req.params;
       const { count = 3 } = req.body;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       if (!adapter.create) {
-        return res.status(500).json({ error: 'Adapter create method not available' });
+        return res.status(500).json({ error: "Adapter create method not available" });
       }
 
       const generateRandomString = (length: number) => {
-        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        let result = '';
+        const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+        let result = "";
         for (let i = 0; i < length; i++) {
           result += chars.charAt(Math.floor(Math.random() * chars.length));
         }
@@ -3678,16 +3676,16 @@ export function createRoutes(
       };
 
       const teamNames = [
-        'Engineering',
-        'Design',
-        'Marketing',
-        'Sales',
-        'Support',
-        'Product',
-        'Operations',
-        'Finance',
-        'HR',
-        'Legal',
+        "Engineering",
+        "Design",
+        "Marketing",
+        "Sales",
+        "Support",
+        "Product",
+        "Operations",
+        "Finance",
+        "HR",
+        "Legal",
       ];
 
       const results = [];
@@ -3705,7 +3703,7 @@ export function createRoutes(
           };
 
           const team = await adapter.create({
-            model: 'team',
+            model: "team",
             data: teamData,
           });
 
@@ -3719,7 +3717,7 @@ export function createRoutes(
         } catch (error) {
           results.push({
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -3730,58 +3728,58 @@ export function createRoutes(
         results,
       });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to seed teams' });
+      res.status(500).json({ error: "Failed to seed teams" });
     }
   });
 
-  router.delete('/api/members/:id', async (req: Request, res: Response) => {
+  router.delete("/api/members/:id", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       if (!adapter.delete) {
-        return res.status(500).json({ error: 'Adapter delete method not available' });
+        return res.status(500).json({ error: "Adapter delete method not available" });
       }
 
       await adapter.delete({
-        model: 'member',
-        where: [{ field: 'id', value: id }],
+        model: "member",
+        where: [{ field: "id", value: id }],
       });
 
       res.json({ success: true });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to remove member' });
+      res.status(500).json({ error: "Failed to remove member" });
     }
   });
 
-  router.post('/api/invitations/:id/resend', async (req: Request, res: Response) => {
+  router.post("/api/invitations/:id/resend", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       if (!adapter.update) {
-        return res.status(500).json({ error: 'Adapter update method not available' });
+        return res.status(500).json({ error: "Adapter update method not available" });
       }
 
       let invitation = null;
       try {
         invitation = await adapter.findOne({
-          model: 'invitation',
-          where: [{ field: 'id', value: id }],
+          model: "invitation",
+          where: [{ field: "id", value: id }],
         });
       } catch (_findError) {
-        if (typeof adapter.findMany === 'function') {
+        if (typeof adapter.findMany === "function") {
           const invitations = await adapter.findMany({
-            model: 'invitation',
-            where: [{ field: 'id', value: id }],
+            model: "invitation",
+            where: [{ field: "id", value: id }],
             limit: 1,
           });
           invitation = invitations && invitations.length > 0 ? invitations[0] : null;
@@ -3789,12 +3787,12 @@ export function createRoutes(
       }
 
       if (!invitation) {
-        return res.status(404).json({ error: 'Invitation not found' });
+        return res.status(404).json({ error: "Invitation not found" });
       }
 
       await adapter.update({
-        model: 'invitation',
-        where: [{ field: 'id', value: id }],
+        model: "invitation",
+        where: [{ field: "id", value: id }],
         update: {
           expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
           updatedAt: new Date().toISOString(),
@@ -3803,34 +3801,34 @@ export function createRoutes(
 
       res.json({ success: true });
     } catch (error) {
-      console.error('Error resending invitation:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to resend invitation';
+      console.error("Error resending invitation:", error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to resend invitation";
       res.status(500).json({
-        error: 'Failed to resend invitation',
+        error: "Failed to resend invitation",
         details: isSelfHosted ? errorMessage : undefined,
       });
     }
   });
 
-  router.get('/api/users/:userId/invitations', async (req: Request, res: Response) => {
+  router.get("/api/users/:userId/invitations", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       let user;
       try {
         user = await adapter.findOne({
-          model: 'user',
-          where: [{ field: 'id', value: userId }],
+          model: "user",
+          where: [{ field: "id", value: userId }],
         });
       } catch (error: any) {
-        console.error('Error fetching user:', error);
+        console.error("Error fetching user:", error);
         return res.status(500).json({
-          error: 'Failed to fetch user',
+          error: "Failed to fetch user",
           details: error?.message || String(error),
         });
       }
@@ -3839,18 +3837,18 @@ export function createRoutes(
         return res.json({ success: true, invitations: [] });
       }
 
-      if (typeof adapter.findMany !== 'function') {
+      if (typeof adapter.findMany !== "function") {
         return res.json({ success: true, invitations: [] });
       }
 
       let invitations;
       try {
         invitations = await adapter.findMany({
-          model: 'invitation',
-          where: [{ field: 'email', value: user.email }],
+          model: "invitation",
+          where: [{ field: "email", value: user.email }],
         });
       } catch (error: any) {
-        console.error('Error fetching invitations:', error);
+        console.error("Error fetching invitations:", error);
         return res.json({ success: true, invitations: [] });
       }
 
@@ -3859,21 +3857,21 @@ export function createRoutes(
       }
       const transformedInvitations = await Promise.all(
         invitations.map(async (invitation: any) => {
-          let organizationName = 'Unknown';
+          let organizationName = "Unknown";
           let teamName: string | undefined;
 
           try {
             if (
               invitation.organizationId &&
-              (typeof adapter.findOne === 'function' || typeof adapter.findUnique === 'function')
+              (typeof adapter.findOne === "function" || typeof adapter.findUnique === "function")
             ) {
               try {
                 const findMethod = adapter.findOne || adapter.findUnique;
                 const org = await findMethod({
-                  model: 'organization',
-                  where: [{ field: 'id', value: invitation.organizationId }],
+                  model: "organization",
+                  where: [{ field: "id", value: invitation.organizationId }],
                 });
-                organizationName = org?.name || 'Unknown';
+                organizationName = org?.name || "Unknown";
               } catch (_orgError) {
                 // Ignore org fetch errors
               }
@@ -3881,13 +3879,13 @@ export function createRoutes(
 
             if (
               invitation.teamId &&
-              (typeof adapter.findOne === 'function' || typeof adapter.findUnique === 'function')
+              (typeof adapter.findOne === "function" || typeof adapter.findUnique === "function")
             ) {
               try {
                 const findMethod = adapter.findOne || adapter.findUnique;
                 const team = await findMethod({
-                  model: 'team',
-                  where: [{ field: 'id', value: invitation.teamId }],
+                  model: "team",
+                  where: [{ field: "id", value: invitation.teamId }],
                 });
                 teamName = team?.name;
               } catch (_teamError) {}
@@ -3897,8 +3895,8 @@ export function createRoutes(
           return {
             id: invitation.id,
             email: invitation.email,
-            role: invitation.role || 'member',
-            status: invitation.status || 'pending',
+            role: invitation.role || "member",
+            status: invitation.status || "pending",
             organizationId: invitation.organizationId,
             organizationName,
             teamId: invitation.teamId,
@@ -3907,51 +3905,51 @@ export function createRoutes(
             expiresAt: invitation.expiresAt,
             createdAt: invitation.createdAt,
           };
-        })
+        }),
       );
 
       res.json({ success: true, invitations: transformedInvitations });
     } catch (error: any) {
-      console.error('Error in /api/users/:userId/invitations:', error);
+      console.error("Error in /api/users/:userId/invitations:", error);
       res.status(500).json({
-        error: 'Failed to fetch invitations',
+        error: "Failed to fetch invitations",
         details: error?.message || String(error),
       });
     }
   });
 
-  router.post('/api/invitations/:id/accept', async (req: Request, res: Response) => {
+  router.post("/api/invitations/:id/accept", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const { userId } = req.body;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       if (!userId) {
-        return res.status(400).json({ error: 'User ID is required' });
+        return res.status(400).json({ error: "User ID is required" });
       }
 
       const invitation = await adapter.findOne({
-        model: 'invitation',
-        where: [{ field: 'id', value: id }],
+        model: "invitation",
+        where: [{ field: "id", value: id }],
       });
 
       if (!invitation) {
-        return res.status(404).json({ error: 'Invitation not found' });
+        return res.status(404).json({ error: "Invitation not found" });
       }
 
-      if (invitation.status !== 'pending') {
-        return res.status(400).json({ error: 'Invitation is not pending' });
+      if (invitation.status !== "pending") {
+        return res.status(400).json({ error: "Invitation is not pending" });
       }
 
       await adapter.update({
-        model: 'invitation',
-        where: [{ field: 'id', value: id }],
+        model: "invitation",
+        where: [{ field: "id", value: id }],
         update: {
-          status: 'accepted',
+          status: "accepted",
           updatedAt: new Date().toISOString(),
         },
       });
@@ -3960,20 +3958,20 @@ export function createRoutes(
         try {
           // Check if member already exists
           let existingMember = null;
-          if (typeof adapter.findFirst === 'function') {
+          if (typeof adapter.findFirst === "function") {
             existingMember = await adapter.findFirst({
-              model: 'member',
+              model: "member",
               where: [
-                { field: 'organizationId', value: invitation.organizationId },
-                { field: 'userId', value: userId },
+                { field: "organizationId", value: invitation.organizationId },
+                { field: "userId", value: userId },
               ],
             });
-          } else if (typeof adapter.findMany === 'function') {
+          } else if (typeof adapter.findMany === "function") {
             const members = await adapter.findMany({
-              model: 'member',
+              model: "member",
               where: [
-                { field: 'organizationId', value: invitation.organizationId },
-                { field: 'userId', value: userId },
+                { field: "organizationId", value: invitation.organizationId },
+                { field: "userId", value: userId },
               ],
             });
             existingMember = members && members.length > 0 ? members[0] : null;
@@ -3981,17 +3979,17 @@ export function createRoutes(
 
           if (!existingMember) {
             await adapter.create({
-              model: 'member',
+              model: "member",
               data: {
                 organizationId: invitation.organizationId,
                 userId: userId,
-                role: invitation.role || 'member',
+                role: invitation.role || "member",
                 createdAt: new Date().toISOString(),
               },
             });
           }
         } catch (error: any) {
-          console.error('Error creating member:', error);
+          console.error("Error creating member:", error);
           // Ignore errors creating membership
         }
       }
@@ -3999,20 +3997,20 @@ export function createRoutes(
       if (invitation.teamId) {
         try {
           let existingMember = null;
-          if (typeof adapter.findFirst === 'function') {
+          if (typeof adapter.findFirst === "function") {
             existingMember = await adapter.findFirst({
-              model: 'teamMember',
+              model: "teamMember",
               where: [
-                { field: 'teamId', value: invitation.teamId },
-                { field: 'userId', value: userId },
+                { field: "teamId", value: invitation.teamId },
+                { field: "userId", value: userId },
               ],
             });
-          } else if (typeof adapter.findMany === 'function') {
+          } else if (typeof adapter.findMany === "function") {
             const members = await adapter.findMany({
-              model: 'teamMember',
+              model: "teamMember",
               where: [
-                { field: 'teamId', value: invitation.teamId },
-                { field: 'userId', value: userId },
+                { field: "teamId", value: invitation.teamId },
+                { field: "userId", value: userId },
               ],
             });
             existingMember = members && members.length > 0 ? members[0] : null;
@@ -4020,7 +4018,7 @@ export function createRoutes(
 
           if (!existingMember) {
             await adapter.create({
-              model: 'teamMember',
+              model: "teamMember",
               data: {
                 teamId: invitation.teamId,
                 userId: userId,
@@ -4029,113 +4027,113 @@ export function createRoutes(
             });
           }
         } catch (error: any) {
-          console.error('Error creating team member:', error);
+          console.error("Error creating team member:", error);
           // Ignore errors creating team membership
         }
       }
 
       res.json({ success: true });
     } catch (error) {
-      console.error('Failed to accept invitation:', error);
-      res.status(500).json({ error: 'Failed to accept invitation' });
+      console.error("Failed to accept invitation:", error);
+      res.status(500).json({ error: "Failed to accept invitation" });
     }
   });
 
-  router.post('/api/invitations/:id/reject', async (req: Request, res: Response) => {
+  router.post("/api/invitations/:id/reject", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       await adapter.update({
-        model: 'invitation',
-        where: [{ field: 'id', value: id }],
+        model: "invitation",
+        where: [{ field: "id", value: id }],
         update: {
-          status: 'rejected',
+          status: "rejected",
           updatedAt: new Date().toISOString(),
         },
       });
 
       res.json({ success: true });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to reject invitation' });
+      res.status(500).json({ error: "Failed to reject invitation" });
     }
   });
 
-  router.delete('/api/invitations/:id', async (req: Request, res: Response) => {
+  router.delete("/api/invitations/:id", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       if (!adapter.update) {
-        return res.status(500).json({ error: 'Adapter update method not available' });
+        return res.status(500).json({ error: "Adapter update method not available" });
       }
 
       await adapter.update({
-        model: 'invitation',
-        where: [{ field: 'id', value: id }],
+        model: "invitation",
+        where: [{ field: "id", value: id }],
         update: {
-          status: 'cancelled',
+          status: "cancelled",
           updatedAt: new Date().toISOString(),
         },
       });
 
       res.json({ success: true });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to cancel invitation' });
+      res.status(500).json({ error: "Failed to cancel invitation" });
     }
   });
 
-  router.post('/api/organizations/:orgId/invitations', async (req: Request, res: Response) => {
+  router.post("/api/organizations/:orgId/invitations", async (req: Request, res: Response) => {
     try {
       const { orgId } = req.params;
-      const { email, role = 'member', inviterId, teamId } = req.body;
-      if (!email || typeof email !== 'string') {
-        return res.status(400).json({ error: 'Email is required' });
+      const { email, role = "member", inviterId, teamId } = req.body;
+      if (!email || typeof email !== "string") {
+        return res.status(400).json({ error: "Email is required" });
       }
 
       if (!orgId) {
-        return res.status(400).json({ error: 'Organization ID is required' });
+        return res.status(400).json({ error: "Organization ID is required" });
       }
 
       if (!inviterId) {
-        return res.status(400).json({ error: 'Inviter ID is required' });
+        return res.status(400).json({ error: "Inviter ID is required" });
       }
 
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       if (!adapter.create) {
-        return res.status(500).json({ error: 'Adapter create method not available' });
+        return res.status(500).json({ error: "Adapter create method not available" });
       }
 
       try {
         const organization = await adapter.findOne({
-          model: 'organization',
-          where: [{ field: 'id', value: orgId }],
+          model: "organization",
+          where: [{ field: "id", value: orgId }],
         });
         if (!organization) {
-          return res.status(404).json({ error: 'Organization not found' });
+          return res.status(404).json({ error: "Organization not found" });
         }
       } catch (orgError) {
         try {
-          if (typeof adapter.findMany === 'function') {
+          if (typeof adapter.findMany === "function") {
             const orgs = await adapter.findMany({
-              model: 'organization',
-              where: [{ field: 'id', value: orgId }],
+              model: "organization",
+              where: [{ field: "id", value: orgId }],
               limit: 1,
             });
             if (!orgs || orgs.length === 0) {
-              return res.status(404).json({ error: 'Organization not found' });
+              return res.status(404).json({ error: "Organization not found" });
             }
           }
         } catch (_fallbackError) {}
@@ -4143,22 +4141,22 @@ export function createRoutes(
 
       try {
         let existingInvitation = null;
-        if (typeof adapter.findFirst === 'function') {
+        if (typeof adapter.findFirst === "function") {
           existingInvitation = await adapter.findFirst({
-            model: 'invitation',
+            model: "invitation",
             where: [
-              { field: 'email', value: email.toLowerCase() },
-              { field: 'organizationId', value: orgId },
-              { field: 'status', value: 'pending' },
+              { field: "email", value: email.toLowerCase() },
+              { field: "organizationId", value: orgId },
+              { field: "status", value: "pending" },
             ],
           });
-        } else if (typeof adapter.findMany === 'function') {
+        } else if (typeof adapter.findMany === "function") {
           const invitations = await adapter.findMany({
-            model: 'invitation',
+            model: "invitation",
             where: [
-              { field: 'email', value: email.toLowerCase() },
-              { field: 'organizationId', value: orgId },
-              { field: 'status', value: 'pending' },
+              { field: "email", value: email.toLowerCase() },
+              { field: "organizationId", value: orgId },
+              { field: "status", value: "pending" },
             ],
             limit: 1,
           });
@@ -4168,7 +4166,7 @@ export function createRoutes(
         if (existingInvitation) {
           return res
             .status(400)
-            .json({ error: 'A pending invitation already exists for this email' });
+            .json({ error: "A pending invitation already exists for this email" });
         }
       } catch (_duplicateCheckError) {}
 
@@ -4176,7 +4174,7 @@ export function createRoutes(
         email: email.toLowerCase(),
         role,
         organizationId: orgId,
-        status: 'pending',
+        status: "pending",
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
         inviterId: inviterId,
       };
@@ -4186,27 +4184,27 @@ export function createRoutes(
       }
 
       const createdInvitation = await adapter.create({
-        model: 'invitation',
+        model: "invitation",
         data: {
           ...invitationData,
         },
       });
 
       if (!createdInvitation) {
-        return res.status(500).json({ error: 'Failed to create invitation' });
+        return res.status(500).json({ error: "Failed to create invitation" });
       }
       res.json({ success: true, invitation: createdInvitation });
     } catch (error) {
-      console.error('Error creating invitation:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create invitation';
+      console.error("Error creating invitation:", error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to create invitation";
       res.status(500).json({
-        error: 'Failed to create invitation',
+        error: "Failed to create invitation",
         details: isSelfHosted ? errorMessage : undefined,
       });
     }
   });
 
-  router.get('/api/organizations/:orgId/teams', async (req: Request, res: Response) => {
+  router.get("/api/organizations/:orgId/teams", async (req: Request, res: Response) => {
     try {
       const { orgId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
@@ -4214,15 +4212,15 @@ export function createRoutes(
       if (!adapter) {
         return res.status(500).json({
           success: false,
-          error: 'Auth adapter not available',
+          error: "Auth adapter not available",
           teams: [],
         });
       }
 
-      if (typeof adapter.findMany !== 'function') {
+      if (typeof adapter.findMany !== "function") {
         return res.status(500).json({
           success: false,
-          error: 'Adapter findMany method not available',
+          error: "Adapter findMany method not available",
           teams: [],
         });
       }
@@ -4232,13 +4230,13 @@ export function createRoutes(
 
         try {
           teams = await adapter.findMany({
-            model: 'team',
-            where: [{ field: 'organizationId', value: orgId }],
+            model: "team",
+            where: [{ field: "organizationId", value: orgId }],
             limit: 10000,
           });
         } catch (whereError: any) {
           const allTeams = await adapter.findMany({
-            model: 'team',
+            model: "team",
             limit: 10000,
           });
           teams = (allTeams || []).filter((team: any) => team.organizationId === orgId);
@@ -4254,8 +4252,8 @@ export function createRoutes(
               let memberCount = 0;
               if (adapter.findMany) {
                 const teamMembers = await adapter.findMany({
-                  model: 'teamMember',
-                  where: [{ field: 'teamId', value: team.id }],
+                  model: "teamMember",
+                  where: [{ field: "teamId", value: team.id }],
                   limit: 10000,
                 });
                 memberCount = teamMembers ? teamMembers.length : 0;
@@ -4281,7 +4279,7 @@ export function createRoutes(
                 memberCount: 0,
               };
             }
-          })
+          }),
         );
 
         const validTeams = transformedTeams.filter((team) => team !== null);
@@ -4291,26 +4289,26 @@ export function createRoutes(
         return res.json({
           success: true,
           teams: [],
-          error: error?.message || 'Failed to fetch teams',
+          error: error?.message || "Failed to fetch teams",
         });
       }
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch teams',
-        message: error?.message || 'Unknown error',
+        error: "Failed to fetch teams",
+        message: error?.message || "Unknown error",
       });
     }
   });
 
-  router.post('/api/organizations/:orgId/teams', async (req: Request, res: Response) => {
+  router.post("/api/organizations/:orgId/teams", async (req: Request, res: Response) => {
     try {
       const { orgId } = req.params;
       const { name } = req.body;
 
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const teamData = {
@@ -4326,10 +4324,10 @@ export function createRoutes(
         ...teamData,
       };
       if (!adapter.create) {
-        return res.status(500).json({ error: 'Adapter create method not available' });
+        return res.status(500).json({ error: "Adapter create method not available" });
       }
       const teamResult = await adapter.create({
-        model: 'team',
+        model: "team",
         data: {
           name: teamData.name,
           organizationId: teamData.organizationId,
@@ -4338,24 +4336,24 @@ export function createRoutes(
         },
       });
       if (!teamResult) {
-        return res.status(500).json({ error: 'Failed to create team' });
+        return res.status(500).json({ error: "Failed to create team" });
       }
       res.json({ success: true, team });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to create team' });
+      res.status(500).json({ error: "Failed to create team" });
     }
   });
 
-  router.get('/api/teams/:teamId/members', async (req: Request, res: Response) => {
+  router.get("/api/teams/:teamId/members", async (req: Request, res: Response) => {
     try {
       const { teamId } = req.params;
       const adapter = await getAuthAdapterWithConfig();
 
-      if (adapter && typeof adapter.findMany === 'function') {
+      if (adapter && typeof adapter.findMany === "function") {
         try {
           const teamMembers = await adapter.findMany({
-            model: 'teamMember',
-            where: [{ field: 'teamId', value: teamId }],
+            model: "teamMember",
+            where: [{ field: "teamId", value: teamId }],
             limit: 10000,
           });
 
@@ -4364,8 +4362,8 @@ export function createRoutes(
               try {
                 if (adapter.findMany) {
                   const users = await adapter.findMany({
-                    model: 'user',
-                    where: [{ field: 'id', value: member.userId }],
+                    model: "user",
+                    where: [{ field: "id", value: member.userId }],
                     limit: 1,
                   });
                   const user = users?.[0];
@@ -4374,7 +4372,7 @@ export function createRoutes(
                     id: member.id,
                     userId: member.userId,
                     teamId: member.teamId,
-                    role: member.role || 'member',
+                    role: member.role || "member",
                     joinedAt: member.joinedAt || member.createdAt,
                     user: user
                       ? {
@@ -4391,7 +4389,7 @@ export function createRoutes(
               } catch (_error) {
                 return null;
               }
-            })
+            }),
           );
 
           const validMembers = membersWithUsers.filter((member) => member?.user);
@@ -4403,26 +4401,26 @@ export function createRoutes(
 
       res.json({ success: true, members: [] });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch team members' });
+      res.status(500).json({ error: "Failed to fetch team members" });
     }
   });
 
-  router.post('/api/teams/:teamId/members', async (req: Request, res: Response) => {
+  router.post("/api/teams/:teamId/members", async (req: Request, res: Response) => {
     try {
       const { teamId } = req.params;
       const { userIds } = req.body;
 
       if (!Array.isArray(userIds) || userIds.length === 0) {
-        return res.status(400).json({ error: 'userIds array is required' });
+        return res.status(400).json({ error: "userIds array is required" });
       }
 
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Adapter not available' });
+        return res.status(500).json({ error: "Adapter not available" });
       }
 
       if (!adapter.create) {
-        return res.status(500).json({ error: 'Adapter create method not available' });
+        return res.status(500).json({ error: "Adapter create method not available" });
       }
 
       const results = [];
@@ -4432,10 +4430,10 @@ export function createRoutes(
           if (adapter.findMany) {
             try {
               const existing = await adapter.findMany({
-                model: 'teamMember',
+                model: "teamMember",
                 where: [
-                  { field: 'teamId', value: teamId },
-                  { field: 'userId', value: userId },
+                  { field: "teamId", value: teamId },
+                  { field: "userId", value: userId },
                 ],
                 limit: 1,
               });
@@ -4444,11 +4442,11 @@ export function createRoutes(
               // if where clause isn't working.
               try {
                 const allMembers = await adapter.findMany({
-                  model: 'teamMember',
+                  model: "teamMember",
                   limit: 10000,
                 });
                 existingMember = (allMembers || []).find(
-                  (m: any) => m.teamId === teamId && m.userId === userId
+                  (m: any) => m.teamId === teamId && m.userId === userId,
                 );
               } catch (_fallbackError) {}
             }
@@ -4458,18 +4456,18 @@ export function createRoutes(
             results.push({
               success: false,
               userId,
-              error: 'User is already a member of this team',
+              error: "User is already a member of this team",
             });
             continue;
           }
 
           const now = new Date();
           await adapter.create({
-            model: 'teamMember',
+            model: "teamMember",
             data: {
               teamId,
               userId,
-              role: 'member',
+              role: "member",
               createdAt: now,
               updatedAt: now,
             },
@@ -4477,7 +4475,7 @@ export function createRoutes(
 
           results.push({ success: true, userId });
         } catch (error: any) {
-          const errorMessage = error?.message || error?.toString() || 'Unknown error';
+          const errorMessage = error?.message || error?.toString() || "Unknown error";
           results.push({
             success: false,
             userId,
@@ -4489,114 +4487,114 @@ export function createRoutes(
       const successCount = results.filter((r) => r.success).length;
       res.json({
         success: results.some((r) => r.success),
-        message: `Added ${successCount} member${successCount !== 1 ? 's' : ''}`,
+        message: `Added ${successCount} member${successCount !== 1 ? "s" : ""}`,
         results,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        error: 'Failed to add team members',
-        message: error?.message || 'Unknown error',
+        error: "Failed to add team members",
+        message: error?.message || "Unknown error",
       });
     }
   });
 
-  router.delete('/api/team-members/:id', async (req: Request, res: Response) => {
+  router.delete("/api/team-members/:id", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter || !adapter.delete) {
-        return res.status(500).json({ error: 'Adapter not available' });
+        return res.status(500).json({ error: "Adapter not available" });
       }
 
       await adapter.delete({
-        model: 'teamMember',
-        where: [{ field: 'id', value: id }],
+        model: "teamMember",
+        where: [{ field: "id", value: id }],
       });
 
       res.json({ success: true });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to remove team member' });
+      res.status(500).json({ error: "Failed to remove team member" });
     }
   });
 
-  router.put('/api/teams/:id', async (req: Request, res: Response) => {
+  router.put("/api/teams/:id", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const { name } = req.body;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
       const updatedTeam = {
         id,
         name,
       };
       if (!adapter.update) {
-        return res.status(500).json({ error: 'Adapter update method not available' });
+        return res.status(500).json({ error: "Adapter update method not available" });
       }
       await adapter.update({
-        model: 'team',
-        where: [{ field: 'id', value: id }],
+        model: "team",
+        where: [{ field: "id", value: id }],
         update: {
           name: updatedTeam.name,
         },
       });
       res.json({ success: true, team: updatedTeam });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to update team' });
+      res.status(500).json({ error: "Failed to update team" });
     }
   });
 
-  router.delete('/api/teams/:id', async (req: Request, res: Response) => {
+  router.delete("/api/teams/:id", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
       if (!adapter.delete) {
-        return res.status(500).json({ error: 'Adapter delete method not available' });
+        return res.status(500).json({ error: "Adapter delete method not available" });
       }
       await adapter.delete({
-        model: 'team',
-        where: [{ field: 'id', value: id }],
+        model: "team",
+        where: [{ field: "id", value: id }],
       });
       res.json({ success: true });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to delete team' });
+      res.status(500).json({ error: "Failed to delete team" });
     }
   });
 
-  router.get('/api/plugins/organization/status', async (_req: Request, res: Response) => {
+  router.get("/api/plugins/organization/status", async (_req: Request, res: Response) => {
     try {
       const betterAuthConfig = preloadedAuthOptions || (await getAuthConfigSafe());
       if (!betterAuthConfig) {
         return res.json({
           enabled: false,
-          error: 'No auth config found',
+          error: "No auth config found",
           configPath: null,
         });
       }
 
       const plugins = betterAuthConfig?.plugins || [];
-      const hasOrganizationPlugin = plugins.find((plugin: any) => plugin.id === 'organization');
+      const hasOrganizationPlugin = plugins.find((plugin: any) => plugin.id === "organization");
 
       return res.json({
         enabled: !!hasOrganizationPlugin,
         configPath: configPath || null,
         availablePlugins:
-          plugins.filter((p: any) => p.id !== 'better-auth-studio-events').map((p: any) => p.id) ||
+          plugins.filter((p: any) => p.id !== "better-auth-studio-events").map((p: any) => p.id) ||
           [],
         organizationPlugin: hasOrganizationPlugin || null,
       });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to check plugin status' });
+      res.status(500).json({ error: "Failed to check plugin status" });
     }
   });
 
-  router.get('/api/organizations', async (req: Request, res: Response) => {
+  router.get("/api/organizations", async (req: Request, res: Response) => {
     try {
       const _page = parseInt(req.query.page as string, 10) || 1;
       const limit = parseInt(req.query.limit as string, 10) || 20;
@@ -4604,27 +4602,27 @@ export function createRoutes(
 
       try {
         const adapter = await getAuthAdapterWithConfig();
-        if (adapter && typeof adapter.findMany === 'function') {
+        if (adapter && typeof adapter.findMany === "function") {
           const allOrganizations = await adapter.findMany({
-            model: 'organization',
+            model: "organization",
             limit: limit,
           });
 
           res.json({ organizations: allOrganizations });
         }
       } catch (_error) {
-        res.status(500).json({ error: 'Failed to fetch organizations' });
+        res.status(500).json({ error: "Failed to fetch organizations" });
       }
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to fetch organizations' });
+      res.status(500).json({ error: "Failed to fetch organizations" });
     }
   });
 
-  router.post('/api/organizations', async (req: Request, res: Response) => {
+  router.post("/api/organizations", async (req: Request, res: Response) => {
     try {
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const orgData = req.body;
@@ -4632,30 +4630,30 @@ export function createRoutes(
       if (!orgData.slug && orgData.name) {
         orgData.slug = orgData.name
           .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9-]/g, '');
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "");
       }
 
       const organization = await adapter.createOrganization(orgData);
       res.json({ success: true, organization });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to create organization' });
+      res.status(500).json({ error: "Failed to create organization" });
     }
   });
 
-  router.put('/api/organizations/:id', async (req: Request, res: Response) => {
+  router.put("/api/organizations/:id", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const orgData = req.body;
       const adapter: any = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
       if (orgData.name && !orgData.slug) {
         orgData.slug = orgData.name
           .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9-]/g, '');
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "");
       }
 
       const updatedOrganization = {
@@ -4664,90 +4662,90 @@ export function createRoutes(
         updatedAt: new Date().toISOString(),
       };
       const updatedOrg = await adapter.update({
-        model: 'organization',
-        where: [{ field: 'id', value: id }],
+        model: "organization",
+        where: [{ field: "id", value: id }],
         update: updatedOrganization,
       });
       res.json({ success: true, organization: updatedOrg });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to update organization' });
+      res.status(500).json({ error: "Failed to update organization" });
     }
   });
 
-  router.delete('/api/organizations/:id', async (req: Request, res: Response) => {
+  router.delete("/api/organizations/:id", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const adapter: any = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
       const deletedOrg = await adapter.delete({
-        model: 'organization',
-        where: [{ field: 'id', value: id }],
+        model: "organization",
+        where: [{ field: "id", value: id }],
       });
       res.json({ success: true, organization: deletedOrg });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to delete organization' });
+      res.status(500).json({ error: "Failed to delete organization" });
     }
   });
 
-  router.post('/api/users', async (req: Request, res: Response) => {
+  router.post("/api/users", async (req: Request, res: Response) => {
     try {
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const userData = req.body;
       if (!adapter.createUser) {
-        return res.status(500).json({ error: 'createUser method not available on adapter' });
+        return res.status(500).json({ error: "createUser method not available on adapter" });
       }
       const user = await adapter.createUser(userData);
       res.json({ success: true, user });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to create user' });
+      res.status(500).json({ error: "Failed to create user" });
     }
   });
 
-  router.put('/api/users/:id', async (req: Request, res: Response) => {
+  router.put("/api/users/:id", async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const userData = req.body;
 
       const updatedUser = await getAuthData(
         authConfig,
-        'updateUser',
+        "updateUser",
         { id, userData },
         configPath,
-        preloadedAdapter
+        preloadedAdapter,
       );
       res.json({ success: true, user: updatedUser });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to update user' });
+      res.status(500).json({ error: "Failed to update user" });
     }
   });
 
-  router.post('/api/seed/users', async (req: Request, res: Response) => {
+  router.post("/api/seed/users", async (req: Request, res: Response) => {
     try {
       const { count = 1, role } = req.body;
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const results = [];
       for (let i = 0; i < count; i++) {
         try {
-          if (typeof adapter.createUser !== 'function') {
-            throw new Error('createUser method not available on adapter');
+          if (typeof adapter.createUser !== "function") {
+            throw new Error("createUser method not available on adapter");
           }
           let userRole = role;
-          if (role === 'mix') {
-            userRole = Math.random() < 0.5 ? 'admin' : 'user';
+          if (role === "mix") {
+            userRole = Math.random() < 0.5 ? "admin" : "user";
           }
           const user = await createMockUser(adapter, i + 1, userRole);
           if (!user) {
-            throw new Error('Failed to create user');
+            throw new Error("Failed to create user");
           }
           results.push({
             success: true,
@@ -4758,7 +4756,7 @@ export function createRoutes(
         } catch (error) {
           results.push({
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -4768,34 +4766,34 @@ export function createRoutes(
         results,
       });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to seed users' });
+      res.status(500).json({ error: "Failed to seed users" });
     }
   });
 
-  router.post('/api/seed/sessions', async (req: Request, res: Response) => {
+  router.post("/api/seed/sessions", async (req: Request, res: Response) => {
     try {
       const { count = 1 } = req.body;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       let user;
       try {
         user = await createMockUser(adapter, 1);
       } catch (_error) {
-        return res.status(500).json({ error: 'Failed to create user for session' });
+        return res.status(500).json({ error: "Failed to create user for session" });
       }
 
       const results = [];
       for (let i = 0; i < count; i++) {
         try {
-          if (typeof adapter.createSession !== 'function') {
-            throw new Error('createSession method not available on adapter');
+          if (typeof adapter.createSession !== "function") {
+            throw new Error("createSession method not available on adapter");
           }
           if (!user) {
-            throw new Error('Failed to create user');
+            throw new Error("Failed to create user");
           }
           const session = await createMockSession(adapter, user.id, i + 1);
           results.push({
@@ -4811,7 +4809,7 @@ export function createRoutes(
         } catch (error) {
           results.push({
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -4822,32 +4820,32 @@ export function createRoutes(
         results,
       });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to seed sessions' });
+      res.status(500).json({ error: "Failed to seed sessions" });
     }
   });
 
-  router.post('/api/users/:userId/seed-sessions', async (req: Request, res: Response) => {
+  router.post("/api/users/:userId/seed-sessions", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const { count = 3 } = req.body;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
       const user = await (adapter as any).findOne({
-        model: 'user',
-        where: [{ field: 'id', value: userId }],
+        model: "user",
+        where: [{ field: "id", value: userId }],
       });
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(404).json({ error: "User not found" });
       }
 
       const results = [];
       for (let i = 0; i < count; i++) {
         try {
-          if (typeof adapter.createSession !== 'function') {
-            throw new Error('createSession method not available on adapter');
+          if (typeof adapter.createSession !== "function") {
+            throw new Error("createSession method not available on adapter");
           }
 
           const session = await createMockSession(adapter, userId, i + 1);
@@ -4867,7 +4865,7 @@ export function createRoutes(
         } catch (error) {
           results.push({
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -4878,37 +4876,37 @@ export function createRoutes(
         results,
       });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to seed sessions for user' });
+      res.status(500).json({ error: "Failed to seed sessions for user" });
     }
   });
 
-  router.post('/api/users/:userId/seed-accounts', async (req: Request, res: Response) => {
+  router.post("/api/users/:userId/seed-accounts", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const { count = 1, providerId } = req.body;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
       const user = await (adapter as any).findOne({
-        model: 'user',
-        where: [{ field: 'id', value: userId }],
+        model: "user",
+        where: [{ field: "id", value: userId }],
       });
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(404).json({ error: "User not found" });
       }
 
       const results = [];
       for (let i = 0; i < count; i++) {
         try {
-          if (typeof adapter.createAccount !== 'function') {
-            throw new Error('createAccount method not available on adapter');
+          if (typeof adapter.createAccount !== "function") {
+            throw new Error("createAccount method not available on adapter");
           }
 
           const account = await createMockAccount(adapter, userId, i + 1, providerId);
           if (!account) {
-            throw new Error('Failed to create account');
+            throw new Error("Failed to create account");
           }
 
           results.push({
@@ -4926,7 +4924,7 @@ export function createRoutes(
         } catch (error) {
           results.push({
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -4937,34 +4935,34 @@ export function createRoutes(
         results,
       });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to seed accounts for user' });
+      res.status(500).json({ error: "Failed to seed accounts for user" });
     }
   });
 
-  router.post('/api/seed/accounts', async (req: Request, res: Response) => {
+  router.post("/api/seed/accounts", async (req: Request, res: Response) => {
     try {
       const { count = 1 } = req.body;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       let user;
       try {
         user = await createMockUser(adapter, 1);
       } catch (_error) {
-        return res.status(500).json({ error: 'Failed to create user for account' });
+        return res.status(500).json({ error: "Failed to create user for account" });
       }
 
       const results = [];
       for (let i = 0; i < count; i++) {
         try {
-          if (typeof adapter.createAccount !== 'function') {
-            throw new Error('createAccount method not available on adapter');
+          if (typeof adapter.createAccount !== "function") {
+            throw new Error("createAccount method not available on adapter");
           }
           if (!user) {
-            throw new Error('Failed to create user');
+            throw new Error("Failed to create user");
           }
           const account = await createMockAccount(adapter, user.id, i + 1);
           results.push({
@@ -4981,7 +4979,7 @@ export function createRoutes(
         } catch (error) {
           results.push({
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -4992,30 +4990,30 @@ export function createRoutes(
         results,
       });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to seed accounts' });
+      res.status(500).json({ error: "Failed to seed accounts" });
     }
   });
 
-  router.post('/api/seed/verifications', async (req: Request, res: Response) => {
+  router.post("/api/seed/verifications", async (req: Request, res: Response) => {
     try {
       const { count = 1 } = req.body;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const results = [];
       for (let i = 0; i < count; i++) {
         try {
-          if (typeof adapter.createVerification !== 'function') {
-            throw new Error('createVerification method not available on adapter');
+          if (typeof adapter.createVerification !== "function") {
+            throw new Error("createVerification method not available on adapter");
           }
 
           const verification = await createMockVerification(
             adapter,
             `user${i + 1}@example.com`,
-            i + 1
+            i + 1,
           );
           results.push({
             success: true,
@@ -5030,7 +5028,7 @@ export function createRoutes(
         } catch (error) {
           results.push({
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -5041,17 +5039,17 @@ export function createRoutes(
         results,
       });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to seed verifications' });
+      res.status(500).json({ error: "Failed to seed verifications" });
     }
   });
 
-  router.post('/api/seed/organizations', async (req: Request, res: Response) => {
+  router.post("/api/seed/organizations", async (req: Request, res: Response) => {
     try {
       const { count = 1 } = req.body;
       const adapter = await getAuthAdapterWithConfig();
 
       if (!adapter) {
-        return res.status(500).json({ error: 'Auth adapter not available' });
+        return res.status(500).json({ error: "Auth adapter not available" });
       }
 
       const results = [];
@@ -5063,10 +5061,10 @@ export function createRoutes(
           const generateSlug = (name: string): string => {
             return name
               .toLowerCase()
-              .replace(/\s+/g, '-') // Replace spaces with hyphens
-              .replace(/[^a-z0-9-]/g, '') // Remove special characters except hyphens
-              .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-              .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+              .replace(/\s+/g, "-") // Replace spaces with hyphens
+              .replace(/[^a-z0-9-]/g, "") // Remove special characters except hyphens
+              .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+              .replace(/^-|-$/g, ""); // Remove leading/trailing hyphens
           };
 
           const organizationData = {
@@ -5091,7 +5089,7 @@ export function createRoutes(
         } catch (error) {
           results.push({
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -5102,11 +5100,11 @@ export function createRoutes(
         results,
       });
     } catch (_error) {
-      res.status(500).json({ error: 'Failed to seed organizations' });
+      res.status(500).json({ error: "Failed to seed organizations" });
     }
   });
 
-  router.get('/api/tools/oauth/providers', async (_req: Request, res: Response) => {
+  router.get("/api/tools/oauth/providers", async (_req: Request, res: Response) => {
     try {
       const effectiveConfig = preloadedAuthOptions || authConfig || {};
       const socialProviders = effectiveConfig.socialProviders || {};
@@ -5131,26 +5129,26 @@ export function createRoutes(
         })),
       });
     } catch (error) {
-      console.error('Failed to fetch OAuth providers:', error);
-      res.status(500).json({ success: false, error: 'Failed to fetch OAuth providers' });
+      console.error("Failed to fetch OAuth providers:", error);
+      res.status(500).json({ success: false, error: "Failed to fetch OAuth providers" });
     }
   });
 
-  router.get('/api/tools/oauth/credentials', async (req: Request, res: Response) => {
+  router.get("/api/tools/oauth/credentials", async (req: Request, res: Response) => {
     try {
       const { provider, origin } = req.query;
 
-      if (!provider || typeof provider !== 'string') {
+      if (!provider || typeof provider !== "string") {
         return res.status(400).json({
           success: false,
-          error: 'Provider is required',
+          error: "Provider is required",
         });
       }
 
-      if (!origin || typeof origin !== 'string') {
+      if (!origin || typeof origin !== "string") {
         return res.status(400).json({
           success: false,
-          error: 'Origin is required',
+          error: "Origin is required",
         });
       }
 
@@ -5163,11 +5161,11 @@ export function createRoutes(
       // Placeholder - replace this with actual import at top of file
       const getOAuthCredentials = (global as any).getOAuthCredentials;
 
-      if (typeof getOAuthCredentials !== 'function') {
+      if (typeof getOAuthCredentials !== "function") {
         return res.status(500).json({
           success: false,
           error:
-            'OAuth credentials function not configured. Please import getOAuthCredentials function.',
+            "OAuth credentials function not configured. Please import getOAuthCredentials function.",
         });
       }
 
@@ -5177,26 +5175,26 @@ export function createRoutes(
       if (credentialsResult === null) {
         return res.status(404).json({
           success: false,
-          error: 'No credential found',
+          error: "No credential found",
         });
       }
 
       // Handle error cases with proper messages as requested
       if (credentialsResult.error) {
-        if (credentialsResult.error === 'NO_CREDENTIALS_FOUND') {
+        if (credentialsResult.error === "NO_CREDENTIALS_FOUND") {
           return res.status(404).json({
             success: false,
-            error: 'No credential found',
+            error: "No credential found",
           });
-        } else if (credentialsResult.error === 'INVALID_ORIGIN') {
+        } else if (credentialsResult.error === "INVALID_ORIGIN") {
           return res.status(400).json({
             success: false,
-            error: 'Invalid origin. OAuth credentials are only available for localhost origins.',
+            error: "Invalid origin. OAuth credentials are only available for localhost origins.",
           });
         } else {
           return res.status(400).json({
             success: false,
-            error: credentialsResult.error || 'Failed to get OAuth credentials',
+            error: credentialsResult.error || "Failed to get OAuth credentials",
           });
         }
       }
@@ -5205,7 +5203,7 @@ export function createRoutes(
       if (!credentialsResult.result) {
         return res.status(404).json({
           success: false,
-          error: 'No credential found',
+          error: "No credential found",
         });
       }
 
@@ -5214,7 +5212,7 @@ export function createRoutes(
       if (!clientId || !clientSecret) {
         return res.status(404).json({
           success: false,
-          error: 'No credential found',
+          error: "No credential found",
         });
       }
 
@@ -5224,20 +5222,20 @@ export function createRoutes(
         clientSecret,
       });
     } catch (error) {
-      console.error('Failed to fetch OAuth credentials:', error);
+      console.error("Failed to fetch OAuth credentials:", error);
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch OAuth credentials',
+        error: "Failed to fetch OAuth credentials",
         details: error instanceof Error ? error.message : String(error),
       });
     }
   });
 
-  router.post('/api/tools/oauth/test', async (req: Request, res: Response) => {
+  router.post("/api/tools/oauth/test", async (req: Request, res: Response) => {
     try {
       const { provider } = req.body;
       if (!provider) {
-        return res.status(400).json({ success: false, error: 'Provider is required' });
+        return res.status(400).json({ success: false, error: "Provider is required" });
       }
 
       const effectiveConfig = preloadedAuthOptions || authConfig || {};
@@ -5254,7 +5252,7 @@ export function createRoutes(
       const selectedProvider = providers.find((p: any) => (p.id || p.type) === provider);
 
       if (!selectedProvider) {
-        return res.status(404).json({ success: false, error: 'Provider not found' });
+        return res.status(404).json({ success: false, error: "Provider not found" });
       }
 
       const testSessionId = `oauth-test-${Date.now()}-${Math.random().toString(36).substring(7)}`;
@@ -5262,10 +5260,10 @@ export function createRoutes(
       oauthTestSessions.set(testSessionId, {
         provider,
         startTime: Date.now(),
-        status: 'pending',
+        status: "pending",
       });
 
-      const studioBaseUrl = `${req.protocol}://${req.get('host')}`;
+      const studioBaseUrl = `${req.protocol}://${req.get("host")}`;
 
       res.json({
         success: true,
@@ -5276,7 +5274,7 @@ export function createRoutes(
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to initiate OAuth test',
+        error: "Failed to initiate OAuth test",
         details: error instanceof Error ? error.message : String(error),
       });
     }
@@ -5286,7 +5284,7 @@ export function createRoutes(
   const oauthTestSessions = new Map<string, any>();
   const oauthTestResults = new Map<string, any>();
 
-  router.get('/api/tools/oauth/start', async (req: Request, res: Response) => {
+  router.get("/api/tools/oauth/start", async (req: Request, res: Response) => {
     try {
       const { testSessionId, provider } = req.query;
 
@@ -5294,7 +5292,7 @@ export function createRoutes(
         return res
           .status(400)
           .send(
-            '<html><body style="background:#000;color:#fff;font-family:monospace;padding:20px;">Missing test session or provider</body></html>'
+            '<html><body style="background:#000;color:#fff;font-family:monospace;padding:20px;">Missing test session or provider</body></html>',
           );
       }
 
@@ -5303,19 +5301,19 @@ export function createRoutes(
         return res
           .status(404)
           .send(
-            '<html><body style="background:#000;color:#fff;font-family:monospace;padding:20px;">OAuth test session not found</body></html>'
+            '<html><body style="background:#000;color:#fff;font-family:monospace;padding:20px;">OAuth test session not found</body></html>',
           );
       }
 
-      const authBaseUrl = authConfig.baseURL || 'http://localhost:3000';
-      const basePath = authConfig.basePath || '/api/auth';
+      const authBaseUrl = authConfig.baseURL || "http://localhost:3000";
+      const basePath = authConfig.basePath || "/api/auth";
 
       const payload = {
         provider,
         additionalData: { testSessionId },
       };
 
-      res.setHeader('Content-Type', 'text/html');
+      res.setHeader("Content-Type", "text/html");
       res.send(`
         <!DOCTYPE html>
         <html>
@@ -5468,12 +5466,12 @@ export function createRoutes(
       res
         .status(500)
         .send(
-          '<html><body style="background:#000;color:#fff;font-family:monospace;padding:20px;">Failed to start OAuth test</body></html>'
+          '<html><body style="background:#000;color:#fff;font-family:monospace;padding:20px;">Failed to start OAuth test</body></html>',
         );
     }
   });
 
-  router.get('/api/tools/oauth/callback', async (req: Request, res: Response) => {
+  router.get("/api/tools/oauth/callback", async (req: Request, res: Response) => {
     try {
       const { testSessionId, error: oauthError } = req.query;
 
@@ -5508,7 +5506,7 @@ export function createRoutes(
         <!DOCTYPE html>
         <html>
         <head>
-          <title>OAuth Test ${oauthError ? 'Failed' : 'Success'}</title>
+          <title>OAuth Test ${oauthError ? "Failed" : "Success"}</title>
           <link rel="preconnect" href="https://fonts.googleapis.com">
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
           <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -5544,10 +5542,10 @@ export function createRoutes(
         </head>
         <body>
           <div class="box">
-            <h1 class="${oauthError ? 'error' : 'success'}">
-              ${oauthError ? '❌ OAuth Test Failed' : '✅ OAuth Test Completed'}
+            <h1 class="${oauthError ? "error" : "success"}">
+              ${oauthError ? "❌ OAuth Test Failed" : "✅ OAuth Test Completed"}
             </h1>
-            <p>${oauthError ? oauthError : 'Waiting for account creation...'}</p>
+            <p>${oauthError ? oauthError : "Waiting for account creation..."}</p>
           </div>
           <script>
             if (window.opener) {
@@ -5563,12 +5561,12 @@ export function createRoutes(
       `);
     } catch (_error) {
       res.send(
-        '<html><body style="background:#000;color:#fff;text-align:center;"><h1>OAuth Test Error</h1><p>Callback processing failed</p></body></html>'
+        '<html><body style="background:#000;color:#fff;text-align:center;"><h1>OAuth Test Error</h1><p>Callback processing failed</p></body></html>',
       );
     }
   });
 
-  router.get('/api/tools/oauth/status', async (req: Request, res: Response) => {
+  router.get("/api/tools/oauth/status", async (req: Request, res: Response) => {
     try {
       const { testSessionId } = req.query;
 
@@ -5607,8 +5605,8 @@ export function createRoutes(
 
       try {
         const accounts = await adapter.findMany({
-          model: 'account',
-          where: [{ field: 'providerId', value: provider }],
+          model: "account",
+          where: [{ field: "providerId", value: provider }],
           limit: 50,
         });
 
@@ -5616,7 +5614,7 @@ export function createRoutes(
           .map((account: any) => ({
             account,
             created: parseDate(
-              account.createdAt || account.created_at || account.updatedAt || account.updated_at
+              account.createdAt || account.created_at || account.updatedAt || account.updated_at,
             ),
           }))
           .filter((entry: any) => entry.created >= threshold)
@@ -5627,7 +5625,7 @@ export function createRoutes(
 
       try {
         const sessions = await adapter.findMany({
-          model: 'session',
+          model: "session",
           limit: 50,
         });
 
@@ -5638,7 +5636,7 @@ export function createRoutes(
               sessionItem.createdAt ||
                 sessionItem.created_at ||
                 sessionItem.updatedAt ||
-                sessionItem.updated_at
+                sessionItem.updated_at,
             ),
           }))
           .filter((entry: any) => entry.created >= threshold)
@@ -5653,8 +5651,8 @@ export function createRoutes(
           const userId = recentAccount?.userId || recentSession?.userId;
           if (userId) {
             const users = await adapter.findMany({
-              model: 'user',
-              where: [{ field: 'id', value: userId }],
+              model: "user",
+              where: [{ field: "id", value: userId }],
               limit: 1,
             });
 
@@ -5697,23 +5695,23 @@ export function createRoutes(
 
       res.json({ hasResult: false });
     } catch (_error) {
-      res.status(500).json({ hasResult: false, error: 'Failed to check status' });
+      res.status(500).json({ hasResult: false, error: "Failed to check status" });
     }
   });
 
-  router.post('/api/tools/jwt/decode', async (req: Request, res: Response) => {
+  router.post("/api/tools/jwt/decode", async (req: Request, res: Response) => {
     try {
       const { token, secret } = req.body || {};
 
-      if (!token || typeof token !== 'string') {
-        return res.status(400).json({ success: false, error: 'JWT token is required' });
+      if (!token || typeof token !== "string") {
+        return res.status(400).json({ success: false, error: "JWT token is required" });
       }
 
-      const segments = token.split('.');
+      const segments = token.split(".");
       if (segments.length < 2) {
         return res
           .status(400)
-          .json({ success: false, error: 'Token must have at least header and payload' });
+          .json({ success: false, error: "Token must have at least header and payload" });
       }
 
       let header: Record<string, any> = {};
@@ -5723,29 +5721,29 @@ export function createRoutes(
         header = JSON.parse(base64UrlDecode(segments[0]));
         payload = JSON.parse(base64UrlDecode(segments[1]));
       } catch (_error) {
-        return res.status(400).json({ success: false, error: 'Invalid token encoding' });
+        return res.status(400).json({ success: false, error: "Invalid token encoding" });
       }
 
       const signature = segments[2] || null;
       let verified = false;
       let usedSecret: string | null = null;
 
-      if (signature && header.alg === 'HS256') {
+      if (signature && header.alg === "HS256") {
         const secretToUse =
-          typeof secret === 'string' && secret.trim().length > 0 ? secret : authConfig.secret;
+          typeof secret === "string" && secret.trim().length > 0 ? secret : authConfig.secret;
         if (secretToUse) {
           const signingInput = `${segments[0]}.${segments[1]}`;
-          const expected = createHmac('sha256', secretToUse)
+          const expected = createHmac("sha256", secretToUse)
             .update(signingInput)
-            .digest('base64url');
+            .digest("base64url");
           verified = expected === signature;
-          usedSecret = secretToUse === authConfig.secret ? 'authConfig.secret' : 'custom';
+          usedSecret = secretToUse === authConfig.secret ? "authConfig.secret" : "custom";
         }
       }
 
       const now = Date.now();
-      const issuedAtSeconds = typeof payload.iat === 'number' ? payload.iat : null;
-      const expiresAtSeconds = typeof payload.exp === 'number' ? payload.exp : null;
+      const issuedAtSeconds = typeof payload.iat === "number" ? payload.iat : null;
+      const expiresAtSeconds = typeof payload.exp === "number" ? payload.exp : null;
       const issuedAtFormatted = issuedAtSeconds
         ? new Date(issuedAtSeconds * 1000).toISOString()
         : null;
@@ -5766,17 +5764,17 @@ export function createRoutes(
       const expired = expiresInMs !== null ? expiresInMs <= 0 : false;
 
       const standardClaims = new Set([
-        'iss',
-        'sub',
-        'aud',
-        'exp',
-        'nbf',
-        'iat',
-        'jti',
-        'auth_time',
+        "iss",
+        "sub",
+        "aud",
+        "exp",
+        "nbf",
+        "iat",
+        "jti",
+        "auth_time",
       ]);
       const customClaims = Object.fromEntries(
-        Object.entries(payload).filter(([key]) => !standardClaims.has(key))
+        Object.entries(payload).filter(([key]) => !standardClaims.has(key)),
       );
 
       res.json({
@@ -5794,14 +5792,14 @@ export function createRoutes(
         customClaims,
       });
     } catch (_error) {
-      res.status(500).json({ success: false, error: 'Failed to decode JWT' });
+      res.status(500).json({ success: false, error: "Failed to decode JWT" });
     }
   });
 
-  router.post('/api/tools/token-generator', async (req: Request, res: Response) => {
+  router.post("/api/tools/token-generator", async (req: Request, res: Response) => {
     try {
       const {
-        type = 'api_key',
+        type = "api_key",
         subject,
         audience,
         expiresInMinutes = 15,
@@ -5809,15 +5807,15 @@ export function createRoutes(
         secretOverride,
       } = req.body || {};
 
-      const safeType = typeof type === 'string' ? type : 'api_key';
+      const safeType = typeof type === "string" ? type : "api_key";
       const expiresMinutes = Number.isFinite(Number(expiresInMinutes))
         ? Number(expiresInMinutes)
         : 15;
       const boundedMinutes = Math.min(Math.max(expiresMinutes, 1), 1440);
       const expiresAt = new Date(Date.now() + boundedMinutes * 60 * 1000).toISOString();
 
-      if (safeType === 'api_key') {
-        const token = `ba_api_${randomBytes(24).toString('base64url')}`;
+      if (safeType === "api_key") {
+        const token = `ba_api_${randomBytes(24).toString("base64url")}`;
         return res.json({
           success: true,
           type: safeType,
@@ -5829,31 +5827,31 @@ export function createRoutes(
         });
       }
 
-      if (safeType === 'jwt') {
+      if (safeType === "jwt") {
         const claims =
-          customClaims && typeof customClaims === 'object'
+          customClaims && typeof customClaims === "object"
             ? (customClaims as Record<string, any>)
             : {};
         const nowSeconds = Math.floor(Date.now() / 1000);
         const payload = {
-          iss: authConfig.baseURL || 'better-auth-studio',
-          aud: audience || authConfig.baseURL || 'better-auth-studio',
-          sub: subject || 'test-user',
+          iss: authConfig.baseURL || "better-auth-studio",
+          aud: audience || authConfig.baseURL || "better-auth-studio",
+          sub: subject || "test-user",
           iat: nowSeconds,
           exp: nowSeconds + boundedMinutes * 60,
           jti: `studio_${Date.now()}`,
           ...claims,
         };
-        const header = { alg: 'HS256', typ: 'JWT' };
+        const header = { alg: "HS256", typ: "JWT" };
         const encodedHeader = base64UrlEncode(JSON.stringify(header));
         const encodedPayload = base64UrlEncode(JSON.stringify(payload));
         const secretToUse =
-          typeof secretOverride === 'string' && secretOverride.trim().length > 0
+          typeof secretOverride === "string" && secretOverride.trim().length > 0
             ? secretOverride
-            : authConfig.secret || 'better-auth-secret';
-        const signature = createHmac('sha256', secretToUse)
+            : authConfig.secret || "better-auth-secret";
+        const signature = createHmac("sha256", secretToUse)
           .update(`${encodedHeader}.${encodedPayload}`)
-          .digest('base64url');
+          .digest("base64url");
         const token = `${encodedHeader}.${encodedPayload}.${signature}`;
 
         return res.json({
@@ -5869,18 +5867,18 @@ export function createRoutes(
         });
       }
 
-      res.status(400).json({ success: false, error: 'Unsupported token type' });
+      res.status(400).json({ success: false, error: "Unsupported token type" });
     } catch (_error) {
-      res.status(500).json({ success: false, error: 'Failed to generate token' });
+      res.status(500).json({ success: false, error: "Failed to generate token" });
     }
   });
 
-  router.post('/api/tools/plugin-generator', async (req: Request, res: Response) => {
+  router.post("/api/tools/plugin-generator", async (req: Request, res: Response) => {
     try {
       const {
         pluginName,
         description,
-        clientFramework = 'react',
+        clientFramework = "react",
         tables = [],
         hooks = [],
         middleware = [],
@@ -5888,15 +5886,15 @@ export function createRoutes(
         rateLimit,
       } = req.body || {};
 
-      if (!pluginName || typeof pluginName !== 'string' || pluginName.trim().length === 0) {
-        return res.status(400).json({ success: false, error: 'Plugin name is required' });
+      if (!pluginName || typeof pluginName !== "string" || pluginName.trim().length === 0) {
+        return res.status(400).json({ success: false, error: "Plugin name is required" });
       }
 
       const validNameRegex = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
       if (!validNameRegex.test(pluginName.trim())) {
         return res.status(400).json({
           success: false,
-          error: 'Plugin name must be a valid JavaScript identifier (letters, numbers, _, $)',
+          error: "Plugin name must be a valid JavaScript identifier (letters, numbers, _, $)",
         });
       }
 
@@ -5914,40 +5912,40 @@ export function createRoutes(
                     ?.filter((f: any) => f.name.trim())
                     .map((field: any) => {
                       const attrs: string[] = [`type: "${field.type}"`];
-                      attrs.push(`required: ${field.required ? 'true' : 'false'}`);
-                      attrs.push(`unique: ${field.unique ? 'true' : 'false'}`);
-                      attrs.push('input: false');
+                      attrs.push(`required: ${field.required ? "true" : "false"}`);
+                      attrs.push(`unique: ${field.unique ? "true" : "false"}`);
+                      attrs.push("input: false");
 
                       // Handle defaultValue
                       if (
                         field.defaultValue !== undefined &&
                         field.defaultValue !== null &&
-                        field.defaultValue !== ''
+                        field.defaultValue !== ""
                       ) {
-                        if (field.type === 'string') {
+                        if (field.type === "string") {
                           attrs.push(`defaultValue: "${field.defaultValue}"`);
-                        } else if (field.type === 'boolean') {
+                        } else if (field.type === "boolean") {
                           attrs.push(
-                            `defaultValue: ${field.defaultValue === 'true' || field.defaultValue === true}`
+                            `defaultValue: ${field.defaultValue === "true" || field.defaultValue === true}`,
                           );
-                        } else if (field.type === 'number') {
+                        } else if (field.type === "number") {
                           attrs.push(`defaultValue: ${field.defaultValue}`);
-                        } else if (field.type === 'date') {
-                          if (field.defaultValue === 'now()') {
-                            attrs.push('defaultValue: new Date()');
+                        } else if (field.type === "date") {
+                          if (field.defaultValue === "now()") {
+                            attrs.push("defaultValue: new Date()");
                           } else {
                             attrs.push(`defaultValue: new Date("${field.defaultValue}")`);
                           }
                         }
-                      } else if (field.type === 'boolean') {
+                      } else if (field.type === "boolean") {
                         // Default to false for boolean if no defaultValue specified
-                        attrs.push('defaultValue: false');
+                        attrs.push("defaultValue: false");
                       }
 
-                      const attrStr = attrs.join(',\n            ');
+                      const attrStr = attrs.join(",\n            ");
                       return `          ${field.name}: {\n            ${attrStr}\n          }`;
                     })
-                    .join(',\n') || '';
+                    .join(",\n") || "";
 
                 const tableName =
                   table.isExtending && table.extendedTableName
@@ -5960,45 +5958,45 @@ ${fields}
         },
       }`;
               })
-              .join(',\n')
-          : '';
+              .join(",\n")
+          : "";
 
       const preserveIndentation = (code: string, baseIndent: string): string => {
-        if (!code.trim()) return '';
+        if (!code.trim()) return "";
 
-        const lines = code.split('\n');
+        const lines = code.split("\n");
         const nonEmptyLines = lines.filter((line) => line.trim());
 
-        if (nonEmptyLines.length === 0) return '';
+        if (nonEmptyLines.length === 0) return "";
 
         const minIndent = Math.min(
           ...nonEmptyLines.map((line) => {
             const match = line.match(/^(\s*)/);
             return match ? match[1].length : 0;
-          })
+          }),
         );
 
         return lines
           .map((line) => {
-            if (!line.trim()) return '';
-            const currentIndent = line.match(/^(\s*)/)?.[1] || '';
+            if (!line.trim()) return "";
+            const currentIndent = line.match(/^(\s*)/)?.[1] || "";
             const relativeIndent = Math.max(0, currentIndent.length - minIndent);
             const content = line.trim();
-            return baseIndent + ' '.repeat(relativeIndent) + content;
+            return baseIndent + " ".repeat(relativeIndent) + content;
           })
           .filter(Boolean)
-          .join('\n');
+          .join("\n");
       };
 
       const beforeHooks = hooks
-        .filter((h: any) => h.timing === 'before')
+        .filter((h: any) => h.timing === "before")
         .map((hook: any) => {
-          let matcher = '';
-          if (hook.action === 'sign-up') {
+          let matcher = "";
+          if (hook.action === "sign-up") {
             matcher = `(ctx) => ctx.path.startsWith("/sign-up")`;
-          } else if (hook.action === 'sign-in') {
+          } else if (hook.action === "sign-in") {
             matcher = `(ctx) => ctx.path.startsWith("/sign-in")`;
-          } else if (hook.action === 'custom' && hook.customPath) {
+          } else if (hook.action === "custom" && hook.customPath) {
             matcher = `(ctx) => ctx.path === "${hook.customPath}"`;
             if (hook.customMatcher) {
               matcher = `(ctx) => ctx.path === "${hook.customPath}" && (${hook.customMatcher})`;
@@ -6008,8 +6006,8 @@ ${fields}
           }
 
           const formattedHookLogic = preserveIndentation(
-            hook.hookLogic || '// Hook logic here',
-            '            '
+            hook.hookLogic || "// Hook logic here",
+            "            ",
           );
 
           return `        {
@@ -6021,14 +6019,14 @@ ${formattedHookLogic}
         });
 
       const afterHooks = hooks
-        .filter((h: any) => h.timing === 'after')
+        .filter((h: any) => h.timing === "after")
         .map((hook: any) => {
-          let matcher = '';
-          if (hook.action === 'sign-up') {
+          let matcher = "";
+          if (hook.action === "sign-up") {
             matcher = `(ctx) => ctx.path.startsWith("/sign-up")`;
-          } else if (hook.action === 'sign-in') {
+          } else if (hook.action === "sign-in") {
             matcher = `(ctx) => ctx.path.startsWith("/sign-in")`;
-          } else if (hook.action === 'custom' && hook.customPath) {
+          } else if (hook.action === "custom" && hook.customPath) {
             matcher = `(ctx) => ctx.path === "${hook.customPath}"`;
             if (hook.customMatcher) {
               matcher = `(ctx) => ctx.path === "${hook.customPath}" && (${hook.customMatcher})`;
@@ -6038,8 +6036,8 @@ ${formattedHookLogic}
           }
 
           const formattedHookLogic = preserveIndentation(
-            hook.hookLogic || '// Hook logic here',
-            '            '
+            hook.hookLogic || "// Hook logic here",
+            "            ",
           );
 
           return `        {
@@ -6053,8 +6051,8 @@ ${formattedHookLogic}
       const middlewareCode = middleware
         .map((mw: any) => {
           const formattedMiddlewareLogic = preserveIndentation(
-            mw.middlewareLogic || '// Middleware logic here',
-            '          '
+            mw.middlewareLogic || "// Middleware logic here",
+            "          ",
           );
 
           return `      {
@@ -6064,7 +6062,7 @@ ${formattedMiddlewareLogic}
         }),
       }`;
         })
-        .join(',\n');
+        .join(",\n");
 
       const endpointsCode =
         endpoints.length > 0
@@ -6072,35 +6070,35 @@ ${formattedMiddlewareLogic}
               .map((endpoint: any) => {
                 const endpointName =
                   endpoint.name?.trim() || `endpoint${endpoints.indexOf(endpoint) + 1}`;
-                const sanitizedName = endpointName.replace(/[^a-zA-Z0-9]/g, '');
+                const sanitizedName = endpointName.replace(/[^a-zA-Z0-9]/g, "");
                 const endpointPath = endpoint.path?.trim() || `/${camelCaseName}/${sanitizedName}`;
                 const handlerLogic =
                   endpoint.handlerLogic ||
-                  '// Endpoint handler logic here\nreturn ctx.json({ success: true });';
-                const formattedHandlerLogic = preserveIndentation(handlerLogic, '          ');
+                  "// Endpoint handler logic here\nreturn ctx.json({ success: true });";
+                const formattedHandlerLogic = preserveIndentation(handlerLogic, "          ");
 
                 return `      ${sanitizedName}: createAuthEndpoint(
         "${endpointPath}",
         {
-          method: "${endpoint.method || 'POST'}",
+          method: "${endpoint.method || "POST"}",
         },
         async (ctx) => {
 ${formattedHandlerLogic}
         },
       ),`;
               })
-              .join('\n')
-          : '';
+              .join("\n")
+          : "";
 
       const rateLimitCode = rateLimit
         ? (() => {
             const rl = rateLimit as any;
-            let pathMatcher = '';
-            if (rl.pathType === 'exact') {
+            let pathMatcher = "";
+            if (rl.pathType === "exact") {
               pathMatcher = `(path: string) => path === "${rl.path}"`;
-            } else if (rl.pathType === 'prefix') {
+            } else if (rl.pathType === "prefix") {
               pathMatcher = `(path: string) => path.startsWith("${rl.path}")`;
-            } else if (rl.pathType === 'regex') {
+            } else if (rl.pathType === "regex") {
               pathMatcher = `(path: string) => new RegExp("${rl.path.replace(/"/g, '\\"')}").test(path)`;
             } else {
               pathMatcher = `(path: string) => true`;
@@ -6113,18 +6111,18 @@ ${formattedHandlerLogic}
       max: ${maxValue},
       pathMatcher: ${pathMatcher}`;
           })()
-        : '';
+        : "";
 
       const cleanCode = (code: string): string => {
         return code
-          .split('\n')
+          .split("\n")
           .map((line) => line.trimEnd())
           .filter((line, index, arr) => {
-            if (line === '' && arr[index + 1] === '') return false;
+            if (line === "" && arr[index + 1] === "") return false;
             return true;
           })
-          .join('\n')
-          .replace(/\n{3,}/g, '\n\n')
+          .join("\n")
+          .replace(/\n{3,}/g, "\n\n")
           .trim();
       };
 
@@ -6137,12 +6135,12 @@ ${formattedHandlerLogic}
       if (beforeHooks.length > 0 || afterHooks.length > 0) {
         const hooksParts: string[] = [];
         if (beforeHooks.length > 0) {
-          hooksParts.push(`      before: [\n${beforeHooks.join(',\n')}\n      ]`);
+          hooksParts.push(`      before: [\n${beforeHooks.join(",\n")}\n      ]`);
         }
         if (afterHooks.length > 0) {
-          hooksParts.push(`      after: [\n${afterHooks.join(',\n')}\n      ]`);
+          hooksParts.push(`      after: [\n${afterHooks.join(",\n")}\n      ]`);
         }
-        pluginParts.push(`    hooks: {\n${hooksParts.join(',\n')}\n    }`);
+        pluginParts.push(`    hooks: {\n${hooksParts.join(",\n")}\n    }`);
       }
 
       if (middlewareCode) {
@@ -6160,19 +6158,19 @@ ${formattedHandlerLogic}
       const imports: string[] = ['import type { BetterAuthPlugin } from "@better-auth/core"'];
       if (hooks.length > 0 || middleware.length > 0 || endpoints.length > 0) {
         imports.push(
-          'import { createAuthEndpoint, createAuthMiddleware } from "@better-auth/core/api"'
+          'import { createAuthEndpoint, createAuthMiddleware } from "@better-auth/core/api"',
         );
       }
 
       const serverPluginBody =
         pluginParts.length > 0
-          ? `    id: "${camelCaseName}",\n${pluginParts.join(',\n')}`
+          ? `    id: "${camelCaseName}",\n${pluginParts.join(",\n")}`
           : `    id: "${camelCaseName}"`;
 
       const serverPluginCode = cleanCode(`import type { BetterAuthPlugin } from "@better-auth/core";
-${imports.join('\n')}
+${imports.join("\n")}
 
-${description ? `/**\n * ${description.replace(/\n/g, '\n * ')}\n */` : ''}
+${description ? `/**\n * ${description.replace(/\n/g, "\n * ")}\n */` : ""}
 export const ${camelCaseName} = (options?: Record<string, any>) => {
   return {
 ${serverPluginBody}
@@ -6184,20 +6182,20 @@ ${serverPluginBody}
         endpoints.length > 0
           ? endpoints
               .map((endpoint: any) => {
-                const endpointPath = endpoint.path?.trim() || '';
-                const method = endpoint.method || 'POST';
+                const endpointPath = endpoint.path?.trim() || "";
+                const method = endpoint.method || "POST";
                 return `      "${endpointPath}": "${method}"`;
               })
-              .join(',\n')
-          : '';
+              .join(",\n")
+          : "";
 
       const sessionAffectingPaths = endpoints
         .filter((endpoint: any) => {
-          const path = endpoint.path?.trim() || '';
-          return path.includes('/sign-in') || path.includes('/sign-up');
+          const path = endpoint.path?.trim() || "";
+          return path.includes("/sign-in") || path.includes("/sign-up");
         })
         .map((endpoint: any) => {
-          const endpointPath = endpoint.path?.trim() || '';
+          const endpointPath = endpoint.path?.trim() || "";
           return `      {
         matcher: (path) => path === "${endpointPath}",
         signal: "$sessionSignal",
@@ -6206,8 +6204,8 @@ ${serverPluginBody}
 
       const atomListenersCode =
         sessionAffectingPaths.length > 0
-          ? `\n    atomListeners: [\n${sessionAffectingPaths.join(',\n')}\n    ],`
-          : '';
+          ? `\n    atomListeners: [\n${sessionAffectingPaths.join(",\n")}\n    ],`
+          : "";
 
       const clientPluginCode =
         cleanCode(`import type { BetterAuthClientPlugin } from "@better-auth/core";
@@ -6216,7 +6214,7 @@ import type { ${camelCaseName} } from "..";
 export const ${camelCaseName}Client = () => {
   return {
     id: "${camelCaseName}",
-    $InferServerPlugin: {} as ReturnType<typeof ${camelCaseName}>,${pathMethods ? `\n    pathMethods: {\n${pathMethods}\n    },` : ''}${atomListenersCode}
+    $InferServerPlugin: {} as ReturnType<typeof ${camelCaseName}>,${pathMethods ? `\n    pathMethods: {\n${pathMethods}\n    },` : ""}${atomListenersCode}
   } satisfies BetterAuthClientPlugin;
 };
 `);
@@ -6233,12 +6231,12 @@ export const auth = betterAuth({
 `);
 
       const frameworkImportMap: Record<string, string> = {
-        react: 'better-auth/react',
-        svelte: 'better-auth/svelte',
-        solid: 'better-auth/solid',
-        vue: 'better-auth/vue',
+        react: "better-auth/react",
+        svelte: "better-auth/svelte",
+        solid: "better-auth/solid",
+        vue: "better-auth/vue",
       };
-      const frameworkImport = frameworkImportMap[clientFramework] || 'better-auth/react';
+      const frameworkImport = frameworkImportMap[clientFramework] || "better-auth/react";
 
       const baseURLMap: Record<string, string> = {
         react: 'process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000"',
@@ -6272,31 +6270,31 @@ export const authClient = createAuthClient({
           filePaths: {
             server: `plugin/${camelCaseName}/index.ts`,
             client: `plugin/${camelCaseName}/client/index.ts`,
-            serverSetup: 'auth.ts',
-            clientSetup: 'auth-client.ts',
+            serverSetup: "auth.ts",
+            clientSetup: "auth-client.ts",
           },
         },
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to generate plugin';
+      const message = error instanceof Error ? error.message : "Failed to generate plugin";
       res.status(500).json({ success: false, error: message });
     }
   });
 
-  router.post('/api/tools/export', async (req: Request, res: Response) => {
+  router.post("/api/tools/export", async (req: Request, res: Response) => {
     try {
       const { tables, format, limit } = req.body;
 
       if (!tables || !Array.isArray(tables) || tables.length === 0) {
-        return res.status(400).json({ success: false, error: 'No tables specified' });
+        return res.status(400).json({ success: false, error: "No tables specified" });
       }
 
-      const exportLimit = Math.min(Math.max(parseInt(limit || '1000', 10), 1), 10000);
-      const exportFormat = format === 'csv' ? 'csv' : 'json';
+      const exportLimit = Math.min(Math.max(parseInt(limit || "1000", 10), 1), 10000);
+      const exportFormat = format === "csv" ? "csv" : "json";
 
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.findMany) {
-        return res.status(500).json({ success: false, error: 'Auth adapter not available' });
+        return res.status(500).json({ success: false, error: "Auth adapter not available" });
       }
 
       const exportData: Record<string, any[]> = {};
@@ -6317,7 +6315,7 @@ export const authClient = createAuthClient({
       let filename: string;
       let contentType: string;
 
-      if (exportFormat === 'csv') {
+      if (exportFormat === "csv") {
         const csvRows: string[] = [];
 
         for (const [tableName, rows] of Object.entries(exportData)) {
@@ -6331,27 +6329,27 @@ export const authClient = createAuthClient({
           });
           const headers = Array.from(allKeys);
 
-          csvRows.push(headers.map((h) => `"${h}"`).join(','));
+          csvRows.push(headers.map((h) => `"${h}"`).join(","));
 
           rows.forEach((row: any) => {
             const values = headers.map((header) => {
               const value = row[header];
-              if (value === null || value === undefined) return '';
-              if (typeof value === 'object')
+              if (value === null || value === undefined) return "";
+              if (typeof value === "object")
                 return `"${JSON.stringify(value).replace(/"/g, '""')}"`;
               return `"${String(value).replace(/"/g, '""')}"`;
             });
-            csvRows.push(values.join(','));
+            csvRows.push(values.join(","));
           });
         }
 
-        output = csvRows.join('\n');
-        filename = `better-auth-export-${new Date().toISOString().split('T')[0]}.csv`;
-        contentType = 'text/csv';
+        output = csvRows.join("\n");
+        filename = `better-auth-export-${new Date().toISOString().split("T")[0]}.csv`;
+        contentType = "text/csv";
       } else {
         output = JSON.stringify(exportData, null, 2);
-        filename = `better-auth-export-${new Date().toISOString().split('T')[0]}.json`;
-        contentType = 'application/json';
+        filename = `better-auth-export-${new Date().toISOString().split("T")[0]}.json`;
+        contentType = "application/json";
       }
 
       res.json({
@@ -6361,23 +6359,23 @@ export const authClient = createAuthClient({
         contentType,
         tables: tables,
         rowCounts: Object.fromEntries(
-          Object.entries(exportData).map(([table, rows]) => [table, rows.length])
+          Object.entries(exportData).map(([table, rows]) => [table, rows.length]),
         ),
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to export data',
+        error: error instanceof Error ? error.message : "Failed to export data",
       });
     }
   });
 
-  router.post('/api/tools/password-strength', async (req: Request, res: Response) => {
+  router.post("/api/tools/password-strength", async (req: Request, res: Response) => {
     try {
       const { password } = req.body || {};
 
-      if (!password || typeof password !== 'string') {
-        return res.status(400).json({ success: false, error: 'Password is required' });
+      if (!password || typeof password !== "string") {
+        return res.status(400).json({ success: false, error: "Password is required" });
       }
 
       const emailAndPassword =
@@ -6394,7 +6392,7 @@ export const authClient = createAuthClient({
       // Length check
       const lengthCheck = password.length >= minLength && password.length <= maxLength;
       checks.push({
-        name: 'Length',
+        name: "Length",
         passed: lengthCheck,
         message: lengthCheck
           ? `Meets length requirement (${minLength}-${maxLength} chars)`
@@ -6404,7 +6402,7 @@ export const authClient = createAuthClient({
 
       const minLengthCheck = password.length >= minLength;
       checks.push({
-        name: 'Minimum Length',
+        name: "Minimum Length",
         passed: minLengthCheck,
         message: minLengthCheck
           ? `At least ${minLength} characters`
@@ -6414,7 +6412,7 @@ export const authClient = createAuthClient({
 
       const maxLengthCheck = password.length <= maxLength;
       checks.push({
-        name: 'Maximum Length',
+        name: "Maximum Length",
         passed: maxLengthCheck,
         message: maxLengthCheck
           ? `Within ${maxLength} character limit`
@@ -6424,36 +6422,36 @@ export const authClient = createAuthClient({
       // Uppercase check
       const hasUppercase = /[A-Z]/.test(password);
       checks.push({
-        name: 'Uppercase Letter',
+        name: "Uppercase Letter",
         passed: hasUppercase,
-        message: hasUppercase ? 'Contains uppercase letter' : 'Missing uppercase letter',
+        message: hasUppercase ? "Contains uppercase letter" : "Missing uppercase letter",
       });
       if (hasUppercase) score += 0.5;
 
       // Lowercase check
       const hasLowercase = /[a-z]/.test(password);
       checks.push({
-        name: 'Lowercase Letter',
+        name: "Lowercase Letter",
         passed: hasLowercase,
-        message: hasLowercase ? 'Contains lowercase letter' : 'Missing lowercase letter',
+        message: hasLowercase ? "Contains lowercase letter" : "Missing lowercase letter",
       });
       if (hasLowercase) score += 0.5;
 
       // Number check
       const hasNumber = /\d/.test(password);
       checks.push({
-        name: 'Number',
+        name: "Number",
         passed: hasNumber,
-        message: hasNumber ? 'Contains number' : 'Missing number',
+        message: hasNumber ? "Contains number" : "Missing number",
       });
       if (hasNumber) score += 0.5;
 
       // Special character check
       const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
       checks.push({
-        name: 'Special Character',
+        name: "Special Character",
         passed: hasSpecialChar,
-        message: hasSpecialChar ? 'Contains special character' : 'Missing special character',
+        message: hasSpecialChar ? "Contains special character" : "Missing special character",
       });
       if (hasSpecialChar) score += 0.5;
 
@@ -6461,11 +6459,11 @@ export const authClient = createAuthClient({
       const commonPatterns = [/12345/, /password/i, /qwerty/i, /abc123/i, /admin/i, /letmein/i];
       const hasCommonPattern = commonPatterns.some((pattern) => pattern.test(password));
       checks.push({
-        name: 'Common Pattern',
+        name: "Common Pattern",
         passed: !hasCommonPattern,
         message: hasCommonPattern
-          ? 'Contains common pattern (weak)'
-          : 'No common patterns detected',
+          ? "Contains common pattern (weak)"
+          : "No common patterns detected",
       });
       if (!hasCommonPattern) score += 0.5;
 
@@ -6473,20 +6471,20 @@ export const authClient = createAuthClient({
       const uniqueChars = new Set(password).size;
       const entropyCheck = uniqueChars >= password.length * 0.5;
       checks.push({
-        name: 'Character Variety',
+        name: "Character Variety",
         passed: entropyCheck,
-        message: entropyCheck ? 'Good character variety' : 'Low character variety (repetitive)',
+        message: entropyCheck ? "Good character variety" : "Low character variety (repetitive)",
       });
       if (entropyCheck) score += 0.5;
 
       // Determine strength
       const finalScore = Math.min(Math.round(score), 5);
-      let strength: 'weak' | 'fair' | 'good' | 'strong' | 'very-strong';
-      if (finalScore <= 1) strength = 'weak';
-      else if (finalScore === 2) strength = 'fair';
-      else if (finalScore === 3) strength = 'good';
-      else if (finalScore === 4) strength = 'strong';
-      else strength = 'very-strong';
+      let strength: "weak" | "fair" | "good" | "strong" | "very-strong";
+      if (finalScore <= 1) strength = "weak";
+      else if (finalScore === 2) strength = "fair";
+      else if (finalScore === 3) strength = "good";
+      else if (finalScore === 4) strength = "strong";
+      else strength = "very-strong";
 
       const meetsConfig = lengthCheck && minLengthCheck && maxLengthCheck;
 
@@ -6504,51 +6502,51 @@ export const authClient = createAuthClient({
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to check password strength',
+        error: error instanceof Error ? error.message : "Failed to check password strength",
       });
     }
   });
 
-  router.post('/api/tools/test-oauth-credentials', async (req: Request, res: Response) => {
+  router.post("/api/tools/test-oauth-credentials", async (req: Request, res: Response) => {
     try {
       const { provider, clientId, clientSecret, redirectURI } = req.body || {};
 
       if (!provider || !clientId || !clientSecret) {
         return res.status(400).json({
           success: false,
-          message: 'Provider, Client ID, and Client Secret are required',
+          message: "Provider, Client ID, and Client Secret are required",
         });
       }
 
-      if (provider.toLowerCase() === 'google') {
+      if (provider.toLowerCase() === "google") {
         try {
           const tokenInfoUrl = `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=test`;
 
           const isValidClientIdFormat = /^[\d\w-]+\.apps\.googleusercontent\.com$|^\d+$/.test(
-            clientId
+            clientId,
           );
 
           if (!isValidClientIdFormat) {
             return res.json({
               success: false,
-              message: 'Invalid Google Client ID format',
+              message: "Invalid Google Client ID format",
               details: {
-                provider: 'google',
-                clientIdFormat: 'Should end with .apps.googleusercontent.com or be numeric',
+                provider: "google",
+                clientIdFormat: "Should end with .apps.googleusercontent.com or be numeric",
               },
             });
           }
 
-          const discoveryUrl = 'https://accounts.google.com/.well-known/openid-configuration';
+          const discoveryUrl = "https://accounts.google.com/.well-known/openid-configuration";
           const discoveryResponse = await fetch(discoveryUrl);
 
           if (!discoveryResponse.ok) {
             return res.json({
               success: false,
-              message: 'Unable to reach Google OAuth service',
+              message: "Unable to reach Google OAuth service",
               details: {
-                provider: 'google',
-                error: 'Network error',
+                provider: "google",
+                error: "Network error",
               },
             });
           }
@@ -6559,9 +6557,9 @@ export const authClient = createAuthClient({
             } catch {
               return res.json({
                 success: false,
-                message: 'Invalid Redirect URI format',
+                message: "Invalid Redirect URI format",
                 details: {
-                  provider: 'google',
+                  provider: "google",
                   redirectURI: redirectURI,
                 },
               });
@@ -6570,21 +6568,21 @@ export const authClient = createAuthClient({
 
           return res.json({
             success: true,
-            message: 'Google OAuth credentials format is valid',
+            message: "Google OAuth credentials format is valid",
             details: {
-              provider: 'google',
-              clientId: clientId.substring(0, 20) + '...',
-              redirectURI: redirectURI || 'Not configured',
-              note: 'Credentials format validated. Test with actual OAuth flow to confirm.',
+              provider: "google",
+              clientId: clientId.substring(0, 20) + "...",
+              redirectURI: redirectURI || "Not configured",
+              note: "Credentials format validated. Test with actual OAuth flow to confirm.",
             },
           });
         } catch (error) {
           return res.json({
             success: false,
-            message: 'Failed to validate Google OAuth credentials',
+            message: "Failed to validate Google OAuth credentials",
             details: {
-              provider: 'google',
-              error: error instanceof Error ? error.message : 'Unknown error',
+              provider: "google",
+              error: error instanceof Error ? error.message : "Unknown error",
             },
           });
         }
@@ -6593,7 +6591,7 @@ export const authClient = createAuthClient({
       if (!clientId.trim() || !clientSecret.trim()) {
         return res.json({
           success: false,
-          message: 'Client ID and Secret cannot be empty',
+          message: "Client ID and Secret cannot be empty",
         });
       }
 
@@ -6603,7 +6601,7 @@ export const authClient = createAuthClient({
         } catch {
           return res.json({
             success: false,
-            message: 'Invalid Redirect URI format',
+            message: "Invalid Redirect URI format",
             details: {
               provider: provider,
               redirectURI: redirectURI,
@@ -6617,30 +6615,30 @@ export const authClient = createAuthClient({
         message: `${provider} OAuth credentials format is valid`,
         details: {
           provider: provider,
-          clientId: clientId.substring(0, 20) + '...',
-          redirectURI: redirectURI || 'Not configured',
-          note: 'Credentials format validated. Test with actual OAuth flow to confirm.',
+          clientId: clientId.substring(0, 20) + "...",
+          redirectURI: redirectURI || "Not configured",
+          note: "Credentials format validated. Test with actual OAuth flow to confirm.",
         },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to test OAuth credentials',
+        message: error instanceof Error ? error.message : "Failed to test OAuth credentials",
       });
     }
   });
 
-  router.post('/api/tools/generate-secret', async (_req: Request, res: Response) => {
+  router.post("/api/tools/generate-secret", async (_req: Request, res: Response) => {
     try {
-      const { length = 32, format = 'hex' } = _req.body || {};
+      const { length = 32, format = "hex" } = _req.body || {};
 
       const secretLength =
-        typeof length === 'number' && length >= 16 && length <= 128 ? length : 32;
-      const secretFormat = format === 'base64' ? 'base64' : 'hex';
+        typeof length === "number" && length >= 16 && length <= 128 ? length : 32;
+      const secretFormat = format === "base64" ? "base64" : "hex";
 
       const secretBytes = randomBytes(secretLength);
       const secret =
-        secretFormat === 'hex' ? secretBytes.toString('hex') : secretBytes.toString('base64');
+        secretFormat === "hex" ? secretBytes.toString("hex") : secretBytes.toString("base64");
 
       const entropy = secretLength * 8; // bits of entropy
 
@@ -6655,23 +6653,23 @@ export const authClient = createAuthClient({
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to generate secret',
+        message: error instanceof Error ? error.message : "Failed to generate secret",
       });
     }
   });
 
-  router.post('/api/tools/check-env-secret', async (_req: Request, res: Response) => {
+  router.post("/api/tools/check-env-secret", async (_req: Request, res: Response) => {
     try {
-      const envPath = join(process.cwd(), '.env');
-      const envLocalPath = join(process.cwd(), '.env.local');
+      const envPath = join(process.cwd(), ".env");
+      const envLocalPath = join(process.cwd(), ".env.local");
       const targetPath = existsSync(envLocalPath) ? envLocalPath : envPath;
-      const envContent = existsSync(targetPath) ? readFileSync(targetPath, 'utf-8') : '';
-      const envLines = envContent.split('\n');
+      const envContent = existsSync(targetPath) ? readFileSync(targetPath, "utf-8") : "";
+      const envLines = envContent.split("\n");
       let existingSecret: string | undefined;
 
       envLines.forEach((line) => {
         const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith('#')) return;
+        if (!trimmed || trimmed.startsWith("#")) return;
 
         const match = trimmed.match(/^BETTER_AUTH_SECRET\s*=\s*(.*)$/i);
         if (match) {
@@ -6684,13 +6682,13 @@ export const authClient = createAuthClient({
               value = value.slice(1, -1).trim();
             }
           }
-          if (value && value.trim() !== '') {
+          if (value && value.trim() !== "") {
             existingSecret = value;
           }
         }
       });
 
-      const hasExisting = !!existingSecret && existingSecret.trim() !== '';
+      const hasExisting = !!existingSecret && existingSecret.trim() !== "";
 
       res.json({
         success: true,
@@ -6701,42 +6699,42 @@ export const authClient = createAuthClient({
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to check secret',
+        message: error instanceof Error ? error.message : "Failed to check secret",
       });
     }
   });
 
-  router.post('/api/tools/write-env-secret', async (req: Request, res: Response) => {
+  router.post("/api/tools/write-env-secret", async (req: Request, res: Response) => {
     try {
       if (isSelfHosted) {
         return res.status(403).json({
           success: false,
-          message: 'On hosted versions, they are not to write it to file system',
+          message: "On hosted versions, they are not to write it to file system",
         });
       }
 
-      const { secret, action = 'override' } = req.body || {};
+      const { secret, action = "override" } = req.body || {};
 
       if (!secret) {
         return res.status(400).json({
           success: false,
-          message: 'Secret is required',
+          message: "Secret is required",
         });
       }
 
-      const envPath = join(process.cwd(), '.env');
-      const envLocalPath = join(process.cwd(), '.env.local');
+      const envPath = join(process.cwd(), ".env");
+      const envLocalPath = join(process.cwd(), ".env.local");
 
       const targetPath = existsSync(envLocalPath) ? envLocalPath : envPath;
-      const envContent = existsSync(targetPath) ? readFileSync(targetPath, 'utf-8') : '';
+      const envContent = existsSync(targetPath) ? readFileSync(targetPath, "utf-8") : "";
 
-      const envLines = envContent.split('\n');
+      const envLines = envContent.split("\n");
       const envMap = new Map<string, { line: string; index: number }>();
       const newLines: string[] = [];
 
       envLines.forEach((line, index) => {
         const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith('#')) {
+        if (!trimmed || trimmed.startsWith("#")) {
           newLines.push(line);
           return;
         }
@@ -6744,9 +6742,9 @@ export const authClient = createAuthClient({
         const match = trimmed.match(/^([^=#]+)\s*=\s*(.*)$/);
         if (match) {
           const key = match[1].trim();
-          if (key.toUpperCase() === 'BETTER_AUTH_SECRET') {
-            envMap.set('BETTER_AUTH_SECRET', { line, index });
-            if (action === 'override') {
+          if (key.toUpperCase() === "BETTER_AUTH_SECRET") {
+            envMap.set("BETTER_AUTH_SECRET", { line, index });
+            if (action === "override") {
               newLines.push(`BETTER_AUTH_SECRET=${secret}`);
             } else {
               newLines.push(line);
@@ -6759,56 +6757,56 @@ export const authClient = createAuthClient({
         }
       });
 
-      if (!envMap.has('BETTER_AUTH_SECRET')) {
-        if (newLines.length > 0 && newLines[newLines.length - 1].trim() !== '') {
-          newLines.push('');
+      if (!envMap.has("BETTER_AUTH_SECRET")) {
+        if (newLines.length > 0 && newLines[newLines.length - 1].trim() !== "") {
+          newLines.push("");
         }
         newLines.push(`BETTER_AUTH_SECRET=${secret}`);
       }
 
-      const newContent = newLines.join('\n');
-      writeFileSync(targetPath, newContent, 'utf-8');
+      const newContent = newLines.join("\n");
+      writeFileSync(targetPath, newContent, "utf-8");
 
       res.json({
         success: true,
-        message: 'Secret written successfully',
+        message: "Secret written successfully",
         path: targetPath,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to write secret to .env',
+        message: error instanceof Error ? error.message : "Failed to write secret to .env",
       });
     }
   });
 
-  router.post('/api/tools/check-env-credentials', async (req: Request, res: Response) => {
+  router.post("/api/tools/check-env-credentials", async (req: Request, res: Response) => {
     try {
       const { provider } = req.body || {};
 
       if (!provider) {
         return res.status(400).json({
           success: false,
-          message: 'Provider is required',
+          message: "Provider is required",
         });
       }
 
-      const envPath = join(process.cwd(), '.env');
-      const envLocalPath = join(process.cwd(), '.env.local');
+      const envPath = join(process.cwd(), ".env");
+      const envLocalPath = join(process.cwd(), ".env.local");
 
       const targetPath = existsSync(envLocalPath) ? envLocalPath : envPath;
-      const envContent = existsSync(targetPath) ? readFileSync(targetPath, 'utf-8') : '';
+      const envContent = existsSync(targetPath) ? readFileSync(targetPath, "utf-8") : "";
 
       const providerUpper = provider.toUpperCase();
       const clientIdKey = `${providerUpper}_CLIENT_ID`;
       const clientSecretKey = `${providerUpper}_CLIENT_SECRET`;
 
-      const envLines = envContent.split('\n');
+      const envLines = envContent.split("\n");
       const existingCredentials: Record<string, string> = {};
 
       envLines.forEach((line) => {
         const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith('#')) return;
+        if (!trimmed || trimmed.startsWith("#")) return;
 
         const match = trimmed.match(/^([^=#]+)=(.*)$/);
         if (match) {
@@ -6830,7 +6828,7 @@ export const authClient = createAuthClient({
 
       const isValueEmpty = (val: string | undefined): boolean => {
         if (!val) return true;
-        return val.trim() === '';
+        return val.trim() === "";
       };
 
       const hasExisting =
@@ -6846,42 +6844,42 @@ export const authClient = createAuthClient({
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to check credentials',
+        message: error instanceof Error ? error.message : "Failed to check credentials",
       });
     }
   });
 
-  router.post('/api/tools/write-env-credentials', async (req: Request, res: Response) => {
+  router.post("/api/tools/write-env-credentials", async (req: Request, res: Response) => {
     try {
       if (isSelfHosted) {
         return res.status(403).json({
           success: false,
-          message: 'On hosted versions, they are not to write it to file system',
+          message: "On hosted versions, they are not to write it to file system",
         });
       }
 
-      const { provider, clientId, clientSecret, action = 'override' } = req.body || {};
+      const { provider, clientId, clientSecret, action = "override" } = req.body || {};
 
       if (!provider || !clientId || !clientSecret) {
         return res.status(400).json({
           success: false,
-          message: 'Provider, Client ID, and Client Secret are required',
+          message: "Provider, Client ID, and Client Secret are required",
         });
       }
 
-      const envPath = join(process.cwd(), '.env');
-      const envLocalPath = join(process.cwd(), '.env.local');
+      const envPath = join(process.cwd(), ".env");
+      const envLocalPath = join(process.cwd(), ".env.local");
 
       const targetPath = existsSync(envLocalPath) ? envLocalPath : envPath;
-      const envContent = existsSync(targetPath) ? readFileSync(targetPath, 'utf-8') : '';
+      const envContent = existsSync(targetPath) ? readFileSync(targetPath, "utf-8") : "";
 
-      const envLines = envContent.split('\n');
+      const envLines = envContent.split("\n");
       const envMap = new Map<string, { line: string; index: number }>();
       const newLines: string[] = [];
 
       envLines.forEach((line, index) => {
         const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith('#')) {
+        if (!trimmed || trimmed.startsWith("#")) {
           newLines.push(line);
           return;
         }
@@ -6890,7 +6888,7 @@ export const authClient = createAuthClient({
         if (match) {
           const key = match[1].trim();
           const value = match[2].trim();
-          if (value.trim() !== '') {
+          if (value.trim() !== "") {
             envMap.set(key, { line, index });
           }
           newLines.push(line);
@@ -6903,7 +6901,7 @@ export const authClient = createAuthClient({
       let clientIdKey = `${providerUpper}_CLIENT_ID`;
       let clientSecretKey = `${providerUpper}_CLIENT_SECRET`;
 
-      if (action === 'append') {
+      if (action === "append") {
         let suffix = 2;
         while (envMap.has(clientIdKey) || envMap.has(clientSecretKey)) {
           clientIdKey = `${providerUpper}_CLIENT_ID_${suffix}`;
@@ -6919,7 +6917,7 @@ export const authClient = createAuthClient({
         return trimmed.startsWith(`${clientIdKey}=`);
       });
 
-      if (action === 'override' && envMap.has(clientIdKey)) {
+      if (action === "override" && envMap.has(clientIdKey)) {
         const existing = envMap.get(clientIdKey)!;
         newLines[existing.index] = `${clientIdKey}=${clientId}`;
         updated = true;
@@ -6933,13 +6931,13 @@ export const authClient = createAuthClient({
         if (
           newLines.length > 0 &&
           newLines[newLines.length - 1] &&
-          !newLines[newLines.length - 1].endsWith('\n')
+          !newLines[newLines.length - 1].endsWith("\n")
         ) {
           if (
-            !newLines[newLines.length - 1].endsWith('\r\n') &&
-            !newLines[newLines.length - 1].endsWith('\n')
+            !newLines[newLines.length - 1].endsWith("\r\n") &&
+            !newLines[newLines.length - 1].endsWith("\n")
           ) {
-            newLines.push('');
+            newLines.push("");
           }
         }
         newLines.push(`${clientIdKey}=${clientId}`);
@@ -6951,7 +6949,7 @@ export const authClient = createAuthClient({
         return trimmed.startsWith(`${clientSecretKey}=`);
       });
 
-      if (action === 'override' && envMap.has(clientSecretKey)) {
+      if (action === "override" && envMap.has(clientSecretKey)) {
         const existing = envMap.get(clientSecretKey)!;
         newLines[existing.index] = `${clientSecretKey}=${clientSecret}`;
         updated = true;
@@ -6968,55 +6966,55 @@ export const authClient = createAuthClient({
         updated = true;
       }
 
-      const newContent = newLines.join('\n');
-      writeFileSync(targetPath, newContent, 'utf-8');
+      const newContent = newLines.join("\n");
+      writeFileSync(targetPath, newContent, "utf-8");
 
       res.json({
         success: true,
-        message: 'OAuth credentials written successfully',
+        message: "OAuth credentials written successfully",
         path: targetPath,
         variables: {
           [clientIdKey]: clientId,
-          [clientSecretKey]: '***',
+          [clientSecretKey]: "***",
         },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to write credentials to .env',
+        message: error instanceof Error ? error.message : "Failed to write credentials to .env",
       });
     }
   });
 
-  router.post('/api/tools/apply-email-template', async (req: Request, res: Response) => {
+  router.post("/api/tools/apply-email-template", async (req: Request, res: Response) => {
     try {
       const { subject, html, templateId } = req.body || {};
       if (!subject || !html || !templateId) {
         return res
           .status(400)
-          .json({ success: false, message: 'templateId, subject and html are required' });
+          .json({ success: false, message: "templateId, subject and html are required" });
       }
 
       const authPathFromConfig = configPath ? join(process.cwd(), configPath) : null;
       const authPath = authPathFromConfig || (await findAuthConfigPath());
       if (!authPath || !existsSync(authPath)) {
-        return res.status(404).json({ success: false, message: 'auth.ts not found' });
+        return res.status(404).json({ success: false, message: "auth.ts not found" });
       }
 
-      let fileContent = readFileSync(authPath, 'utf-8');
+      let fileContent = readFileSync(authPath, "utf-8");
 
       const escapedSubject = subject
-        .replace(/\\/g, '\\\\')
-        .replace(/`/g, '\\`')
-        .replace(/\${/g, '\\${');
-      const escapedHtml = html.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\${/g, '\\${');
+        .replace(/\\/g, "\\\\")
+        .replace(/`/g, "\\`")
+        .replace(/\${/g, "\\${");
+      const escapedHtml = html.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\${/g, "\\${");
 
       if (!fileContent.includes("from 'resend'")) {
         fileContent = `import { Resend } from 'resend';\n` + fileContent;
       }
 
-      if (!fileContent.includes('const resend = new Resend(')) {
-        const importBlockEnd = fileContent.indexOf('\n', fileContent.lastIndexOf('import'));
+      if (!fileContent.includes("const resend = new Resend(")) {
+        const importBlockEnd = fileContent.indexOf("\n", fileContent.lastIndexOf("import"));
         if (importBlockEnd > -1) {
           fileContent =
             fileContent.slice(0, importBlockEnd + 1) +
@@ -7036,7 +7034,7 @@ export const authClient = createAuthClient({
           sectionRegex?: RegExp;
         }
       > = {
-        'password-reset': {
+        "password-reset": {
           regex: /sendResetPassword\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
           sectionRegex: /emailAndPassword\s*:\s*\{\s*/,
           fn: `sendResetPassword: async ({ user, url, token }, request) => {
@@ -7057,7 +7055,7 @@ export const authClient = createAuthClient({
         });
       }`,
         },
-        'email-verification': {
+        "email-verification": {
           regex: /sendVerificationEmail\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
           sectionRegex: /emailVerification\s*:\s*\{\s*/,
           fn: `sendVerificationEmail: async ({ user, url, token }, request) => {
@@ -7078,7 +7076,7 @@ export const authClient = createAuthClient({
         });
       }`,
         },
-        'magic-link': {
+        "magic-link": {
           regex: /sendMagicLink\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
           sectionRegex: /magicLink\s*:\s*\{\s*/,
           fn: `sendMagicLink: async ({ email, token, url }, ctx) => {
@@ -7097,7 +7095,7 @@ export const authClient = createAuthClient({
         });
       }`,
         },
-        'org-invitation': {
+        "org-invitation": {
           regex: /sendInvitationEmail\s*:\s*async\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\},?/,
           fn: `sendInvitationEmail: async ({ data, request }: {
         data: {
@@ -7152,11 +7150,11 @@ export const authClient = createAuthClient({
       if (!handler) {
         return res
           .status(400)
-          .json({ success: false, message: 'Unsupported templateId for apply' });
+          .json({ success: false, message: "Unsupported templateId for apply" });
       }
 
-      if (!fileContent.includes('const sendEmail = async')) {
-        const insertPoint = fileContent.indexOf('export const auth');
+      if (!fileContent.includes("const sendEmail = async")) {
+        const insertPoint = fileContent.indexOf("export const auth");
         fileContent =
           fileContent.slice(0, insertPoint) +
           `const sendEmail = async ({ to, subject, text, html }: { to: string; subject: string; text?: string; html?: string }) => {\n  console.log(\`Sending email to \${to} | \${subject}\`);\n  if (text) console.log('Text content:', text);\n  if (html) console.log('HTML content:', html);\n};\n\n` +
@@ -7165,12 +7163,12 @@ export const authClient = createAuthClient({
 
       if (handler.regex.test(fileContent)) {
         fileContent = fileContent.replace(handler.regex, `${handler.fn},`);
-      } else if (templateId === 'org-invitation') {
+      } else if (templateId === "org-invitation") {
         const orgPluginRegex = /organization\(\s*\{\s*/;
         if (!orgPluginRegex.test(fileContent)) {
           return res.status(400).json({
             success: false,
-            message: 'organization plugin config not found in auth.ts',
+            message: "organization plugin config not found in auth.ts",
           });
         }
         fileContent = fileContent.replace(orgPluginRegex, (m) => `${m}${handler.fn},\n      `);
@@ -7179,23 +7177,23 @@ export const authClient = createAuthClient({
         if (!sectionRegex.test(fileContent)) {
           return res.status(400).json({
             success: false,
-            message: 'target email config section not found in auth.ts',
+            message: "target email config section not found in auth.ts",
           });
         }
         fileContent = fileContent.replace(sectionRegex, (m) => `${m}${handler.fn},\n    `);
       }
 
-      writeFileSync(authPath, fileContent, 'utf-8');
+      writeFileSync(authPath, fileContent, "utf-8");
       res.json({ success: true, path: authPath });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        message: error?.message || 'Failed to apply invitation template',
+        message: error?.message || "Failed to apply invitation template",
       });
     }
   });
 
-  router.get('/api/tools/check-resend-api-key', async (_req: Request, res: Response) => {
+  router.get("/api/tools/check-resend-api-key", async (_req: Request, res: Response) => {
     try {
       const apiKey = process.env.RESEND_API_KEY;
       const hasApiKey = !!apiKey && apiKey.trim().length > 0;
@@ -7209,21 +7207,21 @@ export const authClient = createAuthClient({
 
       const verifiedSenders: string[] = [];
       try {
-        const { createRequire } = await import('node:module');
-        const { resolve } = await import('node:path');
-        const { existsSync } = await import('node:fs');
+        const { createRequire } = await import("node:module");
+        const { resolve } = await import("node:path");
+        const { existsSync } = await import("node:fs");
 
-        const userRequire = createRequire(resolve(process.cwd(), 'package.json'));
+        const userRequire = createRequire(resolve(process.cwd(), "package.json"));
         let Resend: any;
 
         try {
-          const resendPath = userRequire.resolve('resend');
+          const resendPath = userRequire.resolve("resend");
           const resendModule = await import(resendPath);
           Resend = resendModule.Resend || resendModule.default?.Resend || resendModule.default;
         } catch {
-          const userNodeModules = resolve(process.cwd(), 'node_modules', 'resend');
+          const userNodeModules = resolve(process.cwd(), "node_modules", "resend");
           if (existsSync(userNodeModules)) {
-            const resendModule = await import(resolve(userNodeModules, 'index.js'));
+            const resendModule = await import(resolve(userNodeModules, "index.js"));
             Resend = resendModule.Resend || resendModule.default?.Resend || resendModule.default;
           }
         }
@@ -7232,11 +7230,11 @@ export const authClient = createAuthClient({
           const resend = new Resend(apiKey);
 
           try {
-            if (resend.domains && typeof resend.domains.list === 'function') {
+            if (resend.domains && typeof resend.domains.list === "function") {
               const domainsResult = await resend.domains.list();
               if (domainsResult && domainsResult.data && Array.isArray(domainsResult.data)) {
                 domainsResult.data.forEach((domain: any) => {
-                  if (domain && domain.name && domain.status === 'verified') {
+                  if (domain && domain.name && domain.status === "verified") {
                     verifiedSenders.push(`noreply@${domain.name}`);
                     verifiedSenders.push(`hello@${domain.name}`);
                   }
@@ -7259,19 +7257,19 @@ export const authClient = createAuthClient({
       res.status(500).json({
         success: false,
         hasApiKey: false,
-        message: error?.message || 'Failed to check API key',
+        message: error?.message || "Failed to check API key",
       });
     }
   });
 
-  router.post('/api/tools/send-test-email', async (req: Request, res: Response) => {
+  router.post("/api/tools/send-test-email", async (req: Request, res: Response) => {
     try {
       const { templateId, to, subject, html, fieldValues, from } = req.body || {};
 
       if (!to || !subject || !html) {
         return res.status(400).json({
           success: false,
-          message: 'to, subject, and html are required',
+          message: "to, subject, and html are required",
         });
       }
 
@@ -7279,7 +7277,7 @@ export const authClient = createAuthClient({
         return res.status(400).json({
           success: false,
           message:
-            'from email address is required. Please use a verified domain/email from your Resend account.',
+            "from email address is required. Please use a verified domain/email from your Resend account.",
         });
       }
 
@@ -7288,7 +7286,7 @@ export const authClient = createAuthClient({
         return res.status(400).json({
           success: false,
           message:
-            'RESEND_API_KEY not found in environment variables. Please add it to your .env file.',
+            "RESEND_API_KEY not found in environment variables. Please add it to your .env file.",
         });
       }
 
@@ -7299,12 +7297,12 @@ export const authClient = createAuthClient({
         Object.entries(fieldValues).forEach(([key, value]) => {
           const placeholder = `{{${key}}}`;
           processedHtml = processedHtml.replace(
-            new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
-            String(value)
+            new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+            String(value),
           );
           processedSubject = processedSubject.replace(
-            new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
-            String(value)
+            new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+            String(value),
           );
         });
       }
@@ -7312,41 +7310,41 @@ export const authClient = createAuthClient({
       processedHtml = processedHtml.replace(/\{\{year\}\}/g, new Date().getFullYear().toString());
       processedSubject = processedSubject.replace(
         /\{\{year\}\}/g,
-        new Date().getFullYear().toString()
+        new Date().getFullYear().toString(),
       );
 
       let Resend: any;
       try {
-        const { createRequire } = await import('node:module');
-        const { resolve } = await import('node:path');
-        const { existsSync } = await import('node:fs');
+        const { createRequire } = await import("node:module");
+        const { resolve } = await import("node:path");
+        const { existsSync } = await import("node:fs");
 
-        const userRequire = createRequire(resolve(process.cwd(), 'package.json'));
+        const userRequire = createRequire(resolve(process.cwd(), "package.json"));
 
         try {
-          const resendPath = userRequire.resolve('resend');
+          const resendPath = userRequire.resolve("resend");
           const resendModule = await import(resendPath);
           Resend = resendModule.Resend || resendModule.default?.Resend || resendModule.default;
         } catch (resolveError) {
-          const userNodeModules = resolve(process.cwd(), 'node_modules', 'resend');
+          const userNodeModules = resolve(process.cwd(), "node_modules", "resend");
           if (!existsSync(userNodeModules)) {
-            throw new Error('Resend package not found in user project');
+            throw new Error("Resend package not found in user project");
           }
-          const resendModule = await import(resolve(userNodeModules, 'index.js'));
+          const resendModule = await import(resolve(userNodeModules, "index.js"));
           Resend = resendModule.Resend || resendModule.default?.Resend || resendModule.default;
         }
       } catch (error) {
         return res.status(400).json({
           success: false,
           message:
-            'Resend package not found. Please install it in your project: npm install resend',
+            "Resend package not found. Please install it in your project: npm install resend",
         });
       }
 
       if (!Resend) {
         return res.status(400).json({
           success: false,
-          message: 'Failed to load Resend. Please ensure resend is installed: npm install resend',
+          message: "Failed to load Resend. Please ensure resend is installed: npm install resend",
         });
       }
 
@@ -7362,19 +7360,19 @@ export const authClient = createAuthClient({
       if (emailResult.error) {
         return res.status(500).json({
           success: false,
-          message: emailResult.error.message || 'Failed to send email via Resend',
+          message: emailResult.error.message || "Failed to send email via Resend",
         });
       }
 
       res.json({
         success: true,
-        message: 'Test email sent successfully',
+        message: "Test email sent successfully",
         emailId: emailResult.data?.id,
       });
     } catch (error: any) {
       res.status(500).json({
         success: false,
-        message: error?.message || 'Failed to send test email',
+        message: error?.message || "Failed to send test email",
       });
     }
   });
@@ -7410,28 +7408,28 @@ export async function handleStudioApiRequest(ctx: {
   const authOptions = ctx.auth?.options || null;
   const router = createRoutes(
     ctx.auth as any,
-    ctx.configPath || '',
+    ctx.configPath || "",
     undefined,
     preloadedAdapter,
     authOptions,
     ctx.accessConfig,
     ctx.auth,
-    ctx.studioConfig
+    ctx.studioConfig,
   );
 
-  const [pathname, queryString] = ctx.path.split('?');
+  const [pathname, queryString] = ctx.path.split("?");
   const query: Record<string, string> = {};
   if (queryString) {
-    queryString.split('&').forEach((param) => {
-      const [key, value] = param.split('=');
-      if (key) query[key] = decodeURIComponent(value || '');
+    queryString.split("&").forEach((param) => {
+      const [key, value] = param.split("=");
+      if (key) query[key] = decodeURIComponent(value || "");
     });
   }
 
   try {
     const route = findMatchingRoute(router, pathname, ctx.method);
     if (!route) {
-      return { status: 404, data: { error: 'Not found', path: pathname } };
+      return { status: 404, data: { error: "Not found", path: pathname } };
     }
 
     const cookies: Array<{ name: string; value: string; options: any }> = [];
@@ -7439,9 +7437,9 @@ export async function handleStudioApiRequest(ctx: {
     const parseCookies = (cookieHeader: string): Record<string, string> => {
       const result: Record<string, string> = {};
       if (cookieHeader) {
-        cookieHeader.split(';').forEach((cookie) => {
-          const [key, ...rest] = cookie.split('=');
-          if (key) result[key.trim()] = rest.join('=').trim();
+        cookieHeader.split(";").forEach((cookie) => {
+          const [key, ...rest] = cookie.split("=");
+          if (key) result[key.trim()] = rest.join("=").trim();
         });
       }
       return result;
@@ -7456,7 +7454,7 @@ export async function handleStudioApiRequest(ctx: {
       body: ctx.body,
       query: query,
       params: route.params,
-      cookies: parseCookies(ctx.headers['cookie'] || ctx.headers['Cookie'] || ''),
+      cookies: parseCookies(ctx.headers["cookie"] || ctx.headers["Cookie"] || ""),
     };
 
     let responseStatus = 200;
@@ -7489,15 +7487,15 @@ export async function handleStudioApiRequest(ctx: {
     await route.handler(mockReq, mockRes);
     return { status: responseStatus, data: responseData, cookies };
   } catch (error) {
-    console.error('Studio API error:', error);
-    return { status: 500, data: { error: 'Internal server error' } };
+    console.error("Studio API error:", error);
+    return { status: 500, data: { error: "Internal server error" } };
   }
 }
 
 function findMatchingRoute(
   router: any,
   path: string,
-  method: string
+  method: string,
 ): { handler: Function; params: Record<string, string> } | null {
   const routes = router.stack || [];
 
@@ -7528,9 +7526,9 @@ function extractParams(routePath: string, requestPath: string): Record<string, s
   const routeRegex = routePath
     .replace(/:([^/]+)/g, (_, paramName) => {
       paramNames.push(paramName);
-      return '([^/]+)';
+      return "([^/]+)";
     })
-    .replace(/\*/g, '.*');
+    .replace(/\*/g, ".*");
 
   const regex = new RegExp(`^${routeRegex}$`);
   const match = requestPath.match(regex);

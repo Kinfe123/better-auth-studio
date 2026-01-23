@@ -2,8 +2,8 @@
   "name": "better-auth-elysia-prisma-example",
   "version": "1.0.0",
   "description": "Better Auth Studio example with Elysia and Prisma",
-  "main": "src/index.ts",
   "type": "module",
+  "main": "src/index.ts",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "start": "bun run src/index.ts",
@@ -30,4 +30,3 @@
     "bun": ">=1.0.0"
   }
 }
-

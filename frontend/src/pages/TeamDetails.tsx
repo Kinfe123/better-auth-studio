@@ -1,10 +1,10 @@
-import { format } from 'date-fns';
-import { ArrowUpRight, Edit } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'sonner';
-import { AnimatedNumber } from '../components/AnimatedNumber';
-import { CopyableId } from '../components/CopyableId';
+import { format } from "date-fns";
+import { ArrowUpRight, Edit } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+import { AnimatedNumber } from "../components/AnimatedNumber";
+import { CopyableId } from "../components/CopyableId";
 import {
   Building2,
   Calendar,
@@ -14,10 +14,10 @@ import {
   UserPlus,
   Users,
   X,
-} from '../components/PixelIcons';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
+} from "../components/PixelIcons";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 
 interface Team {
   id: string;
@@ -57,10 +57,10 @@ interface User {
 }
 
 const formatDateTime = (value?: string) => {
-  if (!value) return '—';
+  if (!value) return "—";
   const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return '—';
-  return format(d, 'dd MMM yyyy; HH:mm');
+  if (Number.isNaN(d.getTime())) return "—";
+  return format(d, "dd MMM yyyy; HH:mm");
 };
 
 export default function TeamDetails() {
@@ -69,15 +69,15 @@ export default function TeamDetails() {
   const [team, setTeam] = useState<Team | null>(null);
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'details' | 'members'>('details');
+  const [activeTab, setActiveTab] = useState<"details" | "members">("details");
 
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [showEditTeamModal, setShowEditTeamModal] = useState(false);
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [teamFormData, setTeamFormData] = useState({ name: '' });
+  const [teamFormData, setTeamFormData] = useState({ name: "" });
   const [removingMembers, setRemovingMembers] = useState<Record<string, boolean>>({});
 
   const fetchTeam = useCallback(async () => {
@@ -93,10 +93,10 @@ export default function TeamDetails() {
         setTeam(data.team);
         setTeamFormData({ name: data.team.name });
       } else {
-        toast.error('Team not found');
+        toast.error("Team not found");
       }
     } catch (_error) {
-      toast.error('Failed to load team');
+      toast.error("Failed to load team");
     } finally {
       setLoading(false);
     }
@@ -112,13 +112,13 @@ export default function TeamDetails() {
         setMembers(data.members || []);
       }
     } catch (_error) {
-      toast.error('Failed to load team members');
+      toast.error("Failed to load team members");
     }
   }, [teamId]);
 
   const fetchAvailableUsers = async () => {
     try {
-      const response = await fetch('/api/users?limit=10000');
+      const response = await fetch("/api/users?limit=10000");
       const data = await response.json();
 
       const memberUserIds = members.map((member) => member.userId);
@@ -126,7 +126,7 @@ export default function TeamDetails() {
 
       setAvailableUsers(available);
     } catch (_error) {
-      toast.error('Failed to load users');
+      toast.error("Failed to load users");
     }
   };
   useEffect(() => {
@@ -138,16 +138,16 @@ export default function TeamDetails() {
 
   const handleUpdateTeam = async () => {
     if (!teamFormData.name) {
-      toast.error('Please enter a team name');
+      toast.error("Please enter a team name");
       return;
     }
 
-    const toastId = toast.loading('Updating team...');
+    const toastId = toast.loading("Updating team...");
 
     try {
       const response = await fetch(`/api/teams/${teamId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: teamFormData.name }),
       });
 
@@ -156,18 +156,18 @@ export default function TeamDetails() {
       if (result.success) {
         await fetchTeam();
         setShowEditTeamModal(false);
-        toast.success('Team updated successfully!', { id: toastId });
+        toast.success("Team updated successfully!", { id: toastId });
       } else {
-        toast.error(`Error updating team: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error updating team: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (_error) {
-      toast.error('Error updating team', { id: toastId });
+      toast.error("Error updating team", { id: toastId });
     }
   };
 
   const handleAddMembers = async () => {
     if (selectedUsers.length === 0) {
-      toast.error('Please select at least one user');
+      toast.error("Please select at least one user");
       return;
     }
 
@@ -175,8 +175,8 @@ export default function TeamDetails() {
 
     try {
       const response = await fetch(`/api/teams/${teamId}/members`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userIds: selectedUsers }),
       });
 
@@ -186,13 +186,13 @@ export default function TeamDetails() {
         await fetchTeamMembers();
         setShowAddMemberModal(false);
         setSelectedUsers([]);
-        setSearchTerm('');
+        setSearchTerm("");
         toast.success(`Successfully added ${selectedUsers.length} members!`, { id: toastId });
       } else {
-        toast.error(`Error adding members: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error adding members: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (_error) {
-      toast.error('Error adding members', { id: toastId });
+      toast.error("Error adding members", { id: toastId });
     }
   };
 
@@ -202,8 +202,8 @@ export default function TeamDetails() {
 
     try {
       const response = await fetch(`/api/team-members/${memberId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       });
 
       const result = await response.json();
@@ -212,10 +212,10 @@ export default function TeamDetails() {
         await fetchTeamMembers();
         toast.success(`${userName} removed from team!`, { id: toastId });
       } else {
-        toast.error(`Error removing member: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error removing member: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (_error) {
-      toast.error('Error removing team member', { id: toastId });
+      toast.error("Error removing team member", { id: toastId });
     } finally {
       setRemovingMembers((prev) => {
         const { [memberId]: _, ...rest } = prev;
@@ -231,14 +231,14 @@ export default function TeamDetails() {
 
   const toggleUserSelection = (userId: string) => {
     setSelectedUsers((prev) =>
-      prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]
+      prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId],
     );
   };
 
   const filteredUsers = availableUsers.filter(
     (user) =>
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   if (loading) {
@@ -262,7 +262,7 @@ export default function TeamDetails() {
                 onClick={() => navigate(`/organizations/${orgId}`)}
                 className="uppercase cursor-pointer text-white/80 font-mono text-sm"
               >
-                teams /{' '}
+                teams /{" "}
               </span>
               <span className="text-white font-mono text-sm">{teamId}</span>
             </span>
@@ -288,7 +288,7 @@ export default function TeamDetails() {
                 onClick={() => navigate(`/organizations/${team.organizationId}`)}
                 className="uppercase cursor-pointer text-white/80 font-mono text-sm"
               >
-                teams /{' '}
+                teams /{" "}
               </span>
               <span className="text-white font-mono text-sm">{teamId}</span>
             </span>
@@ -341,22 +341,22 @@ export default function TeamDetails() {
         <div className="border-b border-dashed border-white/20">
           <nav className="flex space-x-8 px-6">
             <button
-              onClick={() => setActiveTab('details')}
+              onClick={() => setActiveTab("details")}
               className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'details'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                activeTab === "details"
+                  ? "border-white text-white"
+                  : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
               }`}
             >
               <Users className="w-4 h-4 text-white/90" />
               <span className="font-mono uppercase text-xs font-normal">Details</span>
             </button>
             <button
-              onClick={() => setActiveTab('members')}
+              onClick={() => setActiveTab("members")}
               className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === 'members'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                activeTab === "members"
+                  ? "border-white text-white"
+                  : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
               }`}
             >
               <Users className="w-4 h-4 text-white/90" />
@@ -368,7 +368,7 @@ export default function TeamDetails() {
                     className="text-white/80 font-mono text-xs"
                     prefix={<span className="mr-0.5 text-gray-500">[</span>}
                     suffix={<span className="ml-0.5 text-gray-500">]</span>}
-                    format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                    format={{ notation: "standard", maximumFractionDigits: 0 }}
                   />
                 </sup>
               </span>
@@ -378,7 +378,7 @@ export default function TeamDetails() {
 
         <div className="p-6">
           {/* Tab Content */}
-          {activeTab === 'details' && (
+          {activeTab === "details" && (
             <div className="space-y-6 overflow-x-hidden">
               {/* Team Information */}
               <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
@@ -396,7 +396,7 @@ export default function TeamDetails() {
                       Organization
                     </label>
                     <p className="text-white font-sans mt-1">
-                      {team.organization?.name || 'Unknown'}
+                      {team.organization?.name || "Unknown"}
                     </p>
                   </div>
                   <div>
@@ -421,7 +421,7 @@ export default function TeamDetails() {
                       <p className="text-2xl text-white font-sans font-light">
                         <AnimatedNumber
                           value={members.length}
-                          format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                          format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </p>
                       <p className="text-sm text-gray-400 font-mono uppercase">Members</p>
@@ -436,9 +436,9 @@ export default function TeamDetails() {
                         <AnimatedNumber
                           value={Math.ceil(
                             (Date.now() - new Date(team.createdAt).getTime()) /
-                              (1000 * 60 * 60 * 24)
+                              (1000 * 60 * 60 * 24),
                           )}
-                          format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                          format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </p>
                       <p className="text-sm text-gray-400 font-mono uppercase">Days Active</p>
@@ -452,7 +452,7 @@ export default function TeamDetails() {
                       <p className="text-2xl text-white font-sans font-light">
                         <AnimatedNumber
                           value={1}
-                          format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                          format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </p>
                       <p className="text-sm text-gray-400 font-mono uppercase">Organization</p>
@@ -463,7 +463,7 @@ export default function TeamDetails() {
             </div>
           )}
 
-          {activeTab === 'members' && (
+          {activeTab === "members" && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -474,7 +474,7 @@ export default function TeamDetails() {
                       className="text-white/80 font-mono text-xs"
                       prefix={<span className="mr-0.5 text-gray-500">[</span>}
                       suffix={<span className="ml-0.5 text-gray-500">]</span>}
-                      format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                      format={{ notation: "standard", maximumFractionDigits: 0 }}
                     />
                   </h3>
                   <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
@@ -605,7 +605,7 @@ export default function TeamDetails() {
                 onClick={() => {
                   setShowAddMemberModal(false);
                   setSelectedUsers([]);
-                  setSearchTerm('');
+                  setSearchTerm("");
                 }}
                 className="text-gray-400 hover:text-white rounded-none"
               >
@@ -629,7 +629,7 @@ export default function TeamDetails() {
               {selectedUsers.length > 0 && (
                 <div className="bg-blue-900/20 border border-blue-500/30 rounded-none p-3">
                   <p className="text-blue-400 text-sm">
-                    {selectedUsers.length} user{selectedUsers.length !== 1 ? 's' : ''} selected
+                    {selectedUsers.length} user{selectedUsers.length !== 1 ? "s" : ""} selected
                   </p>
                 </div>
               )}
@@ -642,7 +642,7 @@ export default function TeamDetails() {
                       <div
                         key={user.id}
                         className={`flex items-center space-x-3 p-4 cursor-pointer hover:bg-white/5 ${
-                          selectedUsers.includes(user.id) ? 'bg-blue-900/20' : ''
+                          selectedUsers.includes(user.id) ? "bg-blue-900/20" : ""
                         }`}
                         onClick={() => toggleUserSelection(user.id)}
                       >
@@ -681,7 +681,7 @@ export default function TeamDetails() {
                 onClick={() => {
                   setShowAddMemberModal(false);
                   setSelectedUsers([]);
-                  setSearchTerm('');
+                  setSearchTerm("");
                 }}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
@@ -693,7 +693,7 @@ export default function TeamDetails() {
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
                 <UserPlus className="w-4 h-4 mr-2" />
-                Add {selectedUsers.length} Member{selectedUsers.length !== 1 ? 's' : ''}
+                Add {selectedUsers.length} Member{selectedUsers.length !== 1 ? "s" : ""}
               </Button>
             </div>
           </div>

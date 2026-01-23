@@ -1,18 +1,30 @@
 // @refresh reload
-import { Suspense } from 'solid-js'
-import { useLocation, A, Body, ErrorBoundary, FileRoutes, Head, Html, Meta, Routes, Scripts, Title } from 'solid-start'
-import './root.css'
-import { session } from './utils/auth'
-import { authClient } from './lib/auth-client'
+import { Suspense } from "solid-js";
+import {
+  useLocation,
+  A,
+  Body,
+  ErrorBoundary,
+  FileRoutes,
+  Head,
+  Html,
+  Meta,
+  Routes,
+  Scripts,
+  Title,
+} from "solid-start";
+import "./root.css";
+import { session } from "./utils/auth";
+import { authClient } from "./lib/auth-client";
 
 export default function Root() {
-  const location = useLocation()
+  const location = useLocation();
   const active = (path: string) =>
-    path == location.pathname ? 'border-sky-600' : 'border-transparent hover:border-sky-600'
+    path == location.pathname ? "border-sky-600" : "border-transparent hover:border-sky-600";
 
   const handleSignOut = async () => {
-    await authClient.signOut()
-  }
+    await authClient.signOut();
+  };
 
   return (
     <Html lang="en">
@@ -26,13 +38,13 @@ export default function Root() {
           <ErrorBoundary>
             <nav class="bg-sky-800">
               <ul class="container flex items-center m-auto p-3 text-gray-200">
-                <li class={`border-b-2 ${active('/')} mx-1.5 sm:mx-6`}>
+                <li class={`border-b-2 ${active("/")} mx-1.5 sm:mx-6`}>
                   <A href="/">Home</A>
                 </li>
-                <li class={`border-b-2 ${active('/about')} mx-1.5 sm:mx-6`}>
+                <li class={`border-b-2 ${active("/about")} mx-1.5 sm:mx-6`}>
                   <A href="/about">About</A>
                 </li>
-                <li class={`ml-auto ${session()?.user ? 'block' : 'hidden'}`}>
+                <li class={`ml-auto ${session()?.user ? "block" : "hidden"}`}>
                   <button onClick={handleSignOut}>Logout</button>
                 </li>
               </ul>
@@ -45,5 +57,5 @@ export default function Root() {
         <Scripts />
       </Body>
     </Html>
-  )
+  );
 }

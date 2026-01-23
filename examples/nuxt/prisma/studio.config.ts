@@ -1,18 +1,17 @@
-import type { StudioConfig } from 'better-auth-studio';
-import { auth } from '~/server/lib/auth';
+import type { StudioConfig } from "better-auth-studio";
+import { auth } from "~/server/lib/auth";
 
 const config: StudioConfig = {
   auth,
-  basePath: '/api/studio',
+  basePath: "/api/studio",
   metadata: {
-    title: 'Admin Dashboard',
-    theme: 'dark',
+    title: "Admin Dashboard",
+    theme: "dark",
   },
   access: {
-    roles: ['admin'],
-    allowEmails: ['kinfetare83@gmail.com'],
+    roles: ["admin"],
+    allowEmails: ["kinfetare83@gmail.com"],
   },
 };
 
 export default config;
-

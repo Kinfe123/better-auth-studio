@@ -1,18 +1,10 @@
-import { format } from 'date-fns';
-import {
-  Calendar as CalendarIcon,
-  Computer,
-  Eye,
-  Filter,
-  Loader,
-  Search,
-  X,
-} from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { DateRange } from 'react-day-picker';
-import { useNavigate } from 'react-router-dom';
-import { CodeBlock } from '../components/CodeBlock';
-import { CopyableId } from '../components/CopyableId';
+import { format } from "date-fns";
+import { Calendar as CalendarIcon, Computer, Eye, Filter, Loader, Search, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { DateRange } from "react-day-picker";
+import { useNavigate } from "react-router-dom";
+import { CodeBlock } from "../components/CodeBlock";
+import { CopyableId } from "../components/CopyableId";
 import {
   AlertInfo,
   AlertTriangle,
@@ -21,133 +13,133 @@ import {
   ErrorInfo,
   Info,
   Users,
-} from '../components/PixelIcons';
-import { Button } from '../components/ui/button';
-import { Calendar } from '../components/ui/calendar';
-import { Checkbox } from '../components/ui/checkbox';
-import { Input } from '../components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
+} from "../components/PixelIcons";
+import { Button } from "../components/ui/button";
+import { Calendar } from "../components/ui/calendar";
+import { Checkbox } from "../components/ui/checkbox";
+import { Input } from "../components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/ui/select';
-import { buildApiUrl } from '../utils/api';
+} from "../components/ui/select";
+import { buildApiUrl } from "../utils/api";
 
 const EVENT_TYPES = [
-  'user.joined',
-  'user.logged_in',
-  'user.updated',
-  'user.logged_out',
-  'user.password_changed',
-  'user.email_verified',
-  'user.banned',
-  'user.unbanned',
-  'user.deleted',
-  'user.delete_verification_requested',
-  'organization.created',
-  'organization.deleted',
-  'organization.updated',
-  'member.added',
-  'member.removed',
-  'member.role_changed',
-  'session.created',
-  'password.reset_requested',
-  'password.reset_completed',
-  'password.reset_requested_otp',
-  'password.reset_completed_otp',
-  'oauth.linked',
-  'oauth.unlinked',
-  'oauth.sign_in',
-  'team.created',
-  'team.updated',
-  'team.deleted',
-  'team.member.added',
-  'team.member.removed',
-  'invitation.created',
-  'invitation.accepted',
-  'invitation.rejected',
-  'invitation.cancelled',
+  "user.joined",
+  "user.logged_in",
+  "user.updated",
+  "user.logged_out",
+  "user.password_changed",
+  "user.email_verified",
+  "user.banned",
+  "user.unbanned",
+  "user.deleted",
+  "user.delete_verification_requested",
+  "organization.created",
+  "organization.deleted",
+  "organization.updated",
+  "member.added",
+  "member.removed",
+  "member.role_changed",
+  "session.created",
+  "password.reset_requested",
+  "password.reset_completed",
+  "password.reset_requested_otp",
+  "password.reset_completed_otp",
+  "oauth.linked",
+  "oauth.unlinked",
+  "oauth.sign_in",
+  "team.created",
+  "team.updated",
+  "team.deleted",
+  "team.member.added",
+  "team.member.removed",
+  "invitation.created",
+  "invitation.accepted",
+  "invitation.rejected",
+  "invitation.cancelled",
 ] as const;
 
 interface AuthEvent {
   id: string;
   type: string;
   timestamp: string | Date;
-  status?: 'success' | 'failed';
+  status?: "success" | "failed";
   userId?: string;
   sessionId?: string;
   organizationId?: string;
   metadata?: Record<string, any>;
   ipAddress?: string;
   userAgent?: string;
-  source?: 'app' | 'api';
+  source?: "app" | "api";
   display?: {
     message: string;
-    severity?: 'info' | 'success' | 'warning' | 'failed';
+    severity?: "info" | "success" | "warning" | "failed";
   };
 }
 
 const formatDateTime = (value?: string | Date) => {
-  if (!value) return '—';
-  const d = typeof value === 'string' ? new Date(value) : value;
-  if (Number.isNaN(d.getTime())) return '—';
+  if (!value) return "—";
+  const d = typeof value === "string" ? new Date(value) : value;
+  if (Number.isNaN(d.getTime())) return "—";
 
-  const month = format(d, 'MMM').toUpperCase();
-  const day = format(d, 'dd');
-  const hours = String(d.getHours()).padStart(2, '0');
-  const minutes = String(d.getMinutes()).padStart(2, '0');
-  const seconds = String(d.getSeconds()).padStart(2, '0');
-  const milliseconds = String(d.getMilliseconds()).padStart(2, '0').slice(0, 2);
+  const month = format(d, "MMM").toUpperCase();
+  const day = format(d, "dd");
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  const seconds = String(d.getSeconds()).padStart(2, "0");
+  const milliseconds = String(d.getMilliseconds()).padStart(2, "0").slice(0, 2);
 
   return `${month} ${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
 };
 
 const getSeverityColor = (severity?: string, status?: string) => {
-  if (status === 'failed') {
-    return 'text-red-400/70 border-white/15 bg-white/5';
+  if (status === "failed") {
+    return "text-red-400/70 border-white/15 bg-white/5";
   }
   switch (severity) {
-    case 'success':
-      return 'text-green-400/70 border-white/15 bg-white/5';
-    case 'warning':
-      return 'text-yellow-400/70 border-white/15 bg-white/5';
-    case 'failed':
-      return 'text-red-400/70 border-white/15 bg-white/5';
+    case "success":
+      return "text-green-400/70 border-white/15 bg-white/5";
+    case "warning":
+      return "text-yellow-400/70 border-white/15 bg-white/5";
+    case "failed":
+      return "text-red-400/70 border-white/15 bg-white/5";
     default:
-      return 'text-blue-400/70 border-white/15 bg-white/5';
+      return "text-blue-400/70 border-white/15 bg-white/5";
   }
 };
 
 const getEventIcon = (eventType: string, severity?: string, status?: string) => {
   if (
-    eventType.includes('organization') ||
-    eventType.includes('member') ||
-    eventType.includes('team') ||
-    eventType.includes('invitation')
+    eventType.includes("organization") ||
+    eventType.includes("member") ||
+    eventType.includes("team") ||
+    eventType.includes("invitation")
   ) {
     return <Building2 className="w-4 h-4" />;
   }
 
-  if (eventType.includes('user')) {
+  if (eventType.includes("user")) {
     return <Users className="w-4 h-4" />;
   }
 
-  if (eventType.includes('session') || eventType.includes('login')) {
+  if (eventType.includes("session") || eventType.includes("login")) {
     return <Computer className="w-4 h-4" />;
   }
 
-  if (status === 'failed' || severity === 'failed') {
+  if (status === "failed" || severity === "failed") {
     return <AlertTriangle className="w-4 h-4" />;
   }
   switch (severity) {
-    case 'success':
+    case "success":
       return <Check className="w-4 h-4" />;
-    case 'warning':
+    case "warning":
       return <AlertInfo className="w-4 h-4" />;
-    case 'failed':
+    case "failed":
       return <ErrorInfo className="w-4 h-4" />;
     default:
       return <ErrorInfo className="w-4 h-4" />;
@@ -167,8 +159,8 @@ export default function Events() {
   const navigate = useNavigate();
   const [events, setEvents] = useState<AuthEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("all");
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<AuthEvent | null>(null);
   const [_, setIsConnected] = useState(false);
@@ -182,7 +174,7 @@ export default function Events() {
   const [checkingEvents, setCheckingEvents] = useState(true);
   const [hoveredBarIndex, setHoveredBarIndex] = useState<number | null>(null);
   const [hoveredBarPosition, setHoveredBarPosition] = useState<{ x: number; y: number } | null>(
-    null
+    null,
   );
 
   interface FilterConfig {
@@ -196,29 +188,29 @@ export default function Events() {
   const eventStats = useMemo(() => {
     // Use the same categorization logic as the chart
     const failed = events.filter((e) => {
-      const status = e.status || 'success';
+      const status = e.status || "success";
       const severity = e.display?.severity;
-      return status === 'failed' || severity === 'failed';
+      return status === "failed" || severity === "failed";
     }).length;
 
     const warning = events.filter((e) => {
       const severity = e.display?.severity;
-      return severity === 'warning';
+      return severity === "warning";
     }).length;
 
     const info = events.filter((e) => {
-      const status = e.status || 'success';
+      const status = e.status || "success";
       const severity = e.display?.severity;
-      return severity === 'info' || (!severity && status !== 'failed');
+      return severity === "info" || (!severity && status !== "failed");
     }).length;
 
     const success = events.filter((e) => {
-      const status = e.status || 'success';
+      const status = e.status || "success";
       const severity = e.display?.severity;
-      const isFailed = status === 'failed' || severity === 'failed';
-      const isWarning = severity === 'warning';
-      const isInfo = severity === 'info' || (!severity && status !== 'failed');
-      return status === 'success' && !isFailed && !isWarning && !isInfo;
+      const isFailed = status === "failed" || severity === "failed";
+      const isWarning = severity === "warning";
+      const isInfo = severity === "info" || (!severity && status !== "failed");
+      return status === "success" && !isFailed && !isWarning && !isInfo;
     }).length;
 
     return { success, failed, warning, info };
@@ -230,11 +222,11 @@ export default function Events() {
 
     try {
       const params = new URLSearchParams({
-        limit: '50',
-        sort: 'desc',
+        limit: "50",
+        sort: "desc",
       });
 
-      const apiPath = buildApiUrl('/api/events');
+      const apiPath = buildApiUrl("/api/events");
       const response = await fetch(`${apiPath}?${params.toString()}`);
 
       if (!response.ok) {
@@ -242,8 +234,8 @@ export default function Events() {
           try {
             const errorData = await response.json();
             if (
-              errorData.details?.includes('not found in schema') ||
-              errorData.details?.includes('Model')
+              errorData.details?.includes("not found in schema") ||
+              errorData.details?.includes("Model")
             ) {
               setIsConnected(true);
               if (isInitial) {
@@ -303,7 +295,7 @@ export default function Events() {
         }
       }
     } catch (error) {
-      console.error('Failed to fetch events:', error);
+      console.error("Failed to fetch events:", error);
       setIsConnected(false);
     } finally {
       isPollingRef.current = false;
@@ -323,11 +315,11 @@ export default function Events() {
       }
 
       try {
-        const response = await fetch(buildApiUrl('/api/events/status'));
+        const response = await fetch(buildApiUrl("/api/events/status"));
         const data = await response.json();
         setEventsEnabled(data?.enabled === true);
       } catch (error) {
-        console.error('Failed to check events status:', error);
+        console.error("Failed to check events status:", error);
         setEventsEnabled(false);
       } finally {
         setCheckingEvents(false);
@@ -339,9 +331,9 @@ export default function Events() {
 
   useEffect(() => {
     if (showViewModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     }
   }, [showViewModal]);
 
@@ -384,7 +376,7 @@ export default function Events() {
   const addFilter = (filterType: string) => {
     const exists = activeFilters.some((f) => f.type === filterType);
     if (!exists) {
-      if (filterType === 'eventType') {
+      if (filterType === "eventType") {
         setActiveFilters((prev) => [...prev, { type: filterType, eventTypes: [] }]);
       } else {
         setActiveFilters((prev) => [...prev, { type: filterType }]);
@@ -424,16 +416,16 @@ export default function Events() {
       event.id.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesFilter =
-      filter === 'all' ||
-      (filter === 'success' && event.status === 'success') ||
-      (filter === 'failed' && event.status === 'failed') ||
-      (filter === 'info' && event.display?.severity === 'info') ||
-      (filter === 'warning' && event.display?.severity === 'warning');
+      filter === "all" ||
+      (filter === "success" && event.status === "success") ||
+      (filter === "failed" && event.status === "failed") ||
+      (filter === "info" && event.display?.severity === "info") ||
+      (filter === "warning" && event.display?.severity === "warning");
 
     // Apply active filters
     if (activeFilters.length > 0) {
       const matchesActiveFilters = activeFilters.every((filter) => {
-        if (filter.type === 'timestamp') {
+        if (filter.type === "timestamp") {
           if (!filter.dateRange?.from && !filter.dateRange?.to) return true;
           const eventDate = new Date(event.timestamp);
           if (filter.dateRange?.from) {
@@ -448,7 +440,7 @@ export default function Events() {
           }
           return true;
         }
-        if (filter.type === 'eventType') {
+        if (filter.type === "eventType") {
           if (!filter.eventTypes || filter.eventTypes.length === 0) return true;
           return filter.eventTypes.includes(event.type);
         }
@@ -514,8 +506,8 @@ export const auth = betterAuth({
                 <h2 className="text-xl text-white font-light mb-2">Event Ingestion Not Enabled</h2>
                 <p className="text-gray-400 text-sm font-mono">
                   {!isSelfHosted
-                    ? 'Event ingestion is only available in self-hosted mode.'
-                    : 'Please enable event ingestion in your studio configuration to view events.'}
+                    ? "Event ingestion is only available in self-hosted mode."
+                    : "Please enable event ingestion in your studio configuration to view events."}
                 </p>
               </div>
             </div>
@@ -524,7 +516,7 @@ export const auth = betterAuth({
               <div className="w-full max-w-4xl">
                 <div className="mb-4">
                   <p className="text-gray-300 text-sm font-mono mb-2">
-                    Add the following configuration to your{' '}
+                    Add the following configuration to your{" "}
                     <code className="text-yellow-400">studio.config.ts</code>:
                   </p>
                 </div>
@@ -646,7 +638,7 @@ export const auth = betterAuth({
 
           {(() => {
             const sortedEvents = [...events].sort(
-              (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+              (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
             );
             const firstEvent = sortedEvents[0];
             const lastEvent = sortedEvents[sortedEvents.length - 1];
@@ -654,29 +646,29 @@ export const auth = betterAuth({
               new Date(lastEvent.timestamp).getTime() - new Date(firstEvent.timestamp).getTime();
             const daysDiff = timeRange / (1000 * 60 * 60 * 24);
 
-            let groupBy: 'hour' | 'day' | 'week' | 'month' = 'hour';
+            let groupBy: "hour" | "day" | "week" | "month" = "hour";
             let timeKeys: string[] = [];
             let timeLabels: string[] = [];
 
             if (daysDiff <= 1) {
               // Group by hours - show all 24 hours
-              groupBy = 'hour';
+              groupBy = "hour";
               timeKeys = Array.from({ length: 24 }, (_, i) => i.toString());
               timeLabels = Array.from({ length: 24 }, (_, i) => {
                 if (i % 4 === 0) {
-                  return `${i.toString().padStart(2, '0')}:00`;
+                  return `${i.toString().padStart(2, "0")}:00`;
                 }
-                return '';
+                return "";
               });
             } else if (daysDiff <= 7) {
               // Group by days - show all 7 days of the week
-              groupBy = 'day';
-              const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+              groupBy = "day";
+              const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
               timeKeys = Array.from({ length: 7 }, (_, i) => i.toString());
               timeLabels = dayNames;
             } else if (daysDiff <= 30) {
               // Group by weeks - show weeks
-              groupBy = 'week';
+              groupBy = "week";
               const startDate = new Date(firstEvent.timestamp);
               const endDate = new Date(lastEvent.timestamp);
 
@@ -692,7 +684,7 @@ export const auth = betterAuth({
 
               let weekNum = 1;
               while (currentDate <= endDate) {
-                const weekKey = format(currentDate, 'yyyy-MM-dd');
+                const weekKey = format(currentDate, "yyyy-MM-dd");
                 weeksInRange.push(weekKey);
                 weekLabels.push(`Week ${weekNum}`);
                 currentDate.setDate(currentDate.getDate() + 7);
@@ -703,20 +695,20 @@ export const auth = betterAuth({
               timeLabels = weekLabels;
             } else {
               // Group by months - show all 12 months
-              groupBy = 'month';
+              groupBy = "month";
               const monthNames = [
-                'Jan',
-                'Feb',
-                'Mar',
-                'Apr',
-                'May',
-                'Jun',
-                'Jul',
-                'Aug',
-                'Sep',
-                'Oct',
-                'Nov',
-                'Dec',
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
               ];
               timeKeys = Array.from({ length: 12 }, (_, i) => i.toString());
               timeLabels = monthNames;
@@ -734,33 +726,33 @@ export const auth = betterAuth({
 
             events.forEach((event) => {
               const eventDate = new Date(event.timestamp);
-              let key = '';
+              let key = "";
 
-              if (groupBy === 'hour') {
+              if (groupBy === "hour") {
                 const hour = eventDate.getHours();
                 key = hour.toString();
-              } else if (groupBy === 'day') {
+              } else if (groupBy === "day") {
                 const dayOfWeek = eventDate.getDay();
                 key = dayOfWeek.toString();
-              } else if (groupBy === 'week') {
+              } else if (groupBy === "week") {
                 const weekStart = new Date(eventDate);
                 weekStart.setHours(0, 0, 0, 0);
                 const dayOfWeek = weekStart.getDay();
                 weekStart.setDate(weekStart.getDate() - dayOfWeek);
-                key = format(weekStart, 'yyyy-MM-dd');
+                key = format(weekStart, "yyyy-MM-dd");
               } else {
                 const month = eventDate.getMonth();
                 key = month.toString();
               }
 
               if (groupedData[key]) {
-                const status = event.status || 'success';
+                const status = event.status || "success";
                 const severity = event.display?.severity;
 
-                const isFailed = status === 'failed' || severity === 'failed';
-                const isWarning = severity === 'warning';
-                const isInfo = severity === 'info' || (!severity && status !== 'failed');
-                const isSuccess = status === 'success' && !isFailed && !isWarning && !isInfo;
+                const isFailed = status === "failed" || severity === "failed";
+                const isWarning = severity === "warning";
+                const isInfo = severity === "info" || (!severity && status !== "failed");
+                const isSuccess = status === "success" && !isFailed && !isWarning && !isInfo;
 
                 if (isFailed) {
                   groupedData[key].failed++;
@@ -775,7 +767,7 @@ export const auth = betterAuth({
             });
 
             const allTotals = Object.values(groupedData).map(
-              (d) => d.success + d.failed + d.warning + d.info
+              (d) => d.success + d.failed + d.warning + d.info,
             );
             const maxValue = Math.max(...allTotals, 1);
             const yAxisStep = Math.ceil(maxValue / 5);
@@ -825,7 +817,7 @@ export const auth = betterAuth({
                             className="flex-1 transition-all duration-200 ease-out relative cursor-pointer group flex flex-col-reverse border border-dashed border-white/20"
                             style={{
                               height: `${totalHeightPercent}%`,
-                              minHeight: total > 0 ? '2px' : '0',
+                              minHeight: total > 0 ? "2px" : "0",
                             }}
                             onMouseEnter={(e) => {
                               const rect = e.currentTarget.getBoundingClientRect();
@@ -835,11 +827,11 @@ export const auth = betterAuth({
                               const tooltipHeight = 120;
                               const constrainedX = Math.max(
                                 tooltipWidth / 2,
-                                Math.min(window.innerWidth - tooltipWidth / 2, x)
+                                Math.min(window.innerWidth - tooltipWidth / 2, x),
                               );
                               const constrainedY = Math.max(
                                 tooltipHeight + 10,
-                                Math.min(window.innerHeight - 10, y)
+                                Math.min(window.innerHeight - 10, y),
                               );
                               setHoveredBarIndex(index);
                               setHoveredBarPosition({ x: constrainedX, y: constrainedY });
@@ -854,16 +846,16 @@ export const auth = betterAuth({
                                 className="w-full relative"
                                 style={{
                                   height: `${successPercent}%`,
-                                  backgroundColor: 'rgba(34, 197, 94, 0.05)',
-                                  minHeight: data.success > 0 ? '1px' : '0',
+                                  backgroundColor: "rgba(34, 197, 94, 0.05)",
+                                  minHeight: data.success > 0 ? "1px" : "0",
                                 }}
                               >
                                 <div
                                   className="absolute inset-0"
                                   style={{
                                     backgroundImage:
-                                      'repeating-linear-gradient(-45deg, #ffffff, #ffffff 1px, transparent 1px, transparent 6px)',
-                                    opacity: '0.07',
+                                      "repeating-linear-gradient(-45deg, #ffffff, #ffffff 1px, transparent 1px, transparent 6px)",
+                                    opacity: "0.07",
                                   }}
                                 />
                               </div>
@@ -873,16 +865,16 @@ export const auth = betterAuth({
                                 className="w-full relative"
                                 style={{
                                   height: `${failedPercent}%`,
-                                  backgroundColor: 'rgba(239, 68, 68, 0.05)',
-                                  minHeight: data.failed > 0 ? '1px' : '0',
+                                  backgroundColor: "rgba(239, 68, 68, 0.05)",
+                                  minHeight: data.failed > 0 ? "1px" : "0",
                                 }}
                               >
                                 <div
                                   className="absolute inset-0"
                                   style={{
                                     backgroundImage:
-                                      'repeating-linear-gradient(-45deg, #ffffff, #ffffff 1px, transparent 1px, transparent 6px)',
-                                    opacity: '0.07',
+                                      "repeating-linear-gradient(-45deg, #ffffff, #ffffff 1px, transparent 1px, transparent 6px)",
+                                    opacity: "0.07",
                                   }}
                                 />
                               </div>
@@ -892,16 +884,16 @@ export const auth = betterAuth({
                                 className="w-full relative"
                                 style={{
                                   height: `${warningPercent}%`,
-                                  backgroundColor: 'rgba(234, 179, 8, 0.05)',
-                                  minHeight: data.warning > 0 ? '1px' : '0',
+                                  backgroundColor: "rgba(234, 179, 8, 0.05)",
+                                  minHeight: data.warning > 0 ? "1px" : "0",
                                 }}
                               >
                                 <div
                                   className="absolute inset-0"
                                   style={{
                                     backgroundImage:
-                                      'repeating-linear-gradient(-45deg, #ffffff, #ffffff 1px, transparent 1px, transparent 6px)',
-                                    opacity: '0.07',
+                                      "repeating-linear-gradient(-45deg, #ffffff, #ffffff 1px, transparent 1px, transparent 6px)",
+                                    opacity: "0.07",
                                   }}
                                 />
                               </div>
@@ -911,16 +903,16 @@ export const auth = betterAuth({
                                 className="w-full relative"
                                 style={{
                                   height: `${infoPercent}%`,
-                                  backgroundColor: 'rgba(59, 130, 246, 0.05)',
-                                  minHeight: data.info > 0 ? '1px' : '0',
+                                  backgroundColor: "rgba(59, 130, 246, 0.05)",
+                                  minHeight: data.info > 0 ? "1px" : "0",
                                 }}
                               >
                                 <div
                                   className="absolute inset-0"
                                   style={{
                                     backgroundImage:
-                                      'repeating-linear-gradient(-45deg, #ffffff, #ffffff 1px, transparent 1px, transparent 6px)',
-                                    opacity: '0.07',
+                                      "repeating-linear-gradient(-45deg, #ffffff, #ffffff 1px, transparent 1px, transparent 6px)",
+                                    opacity: "0.07",
                                   }}
                                 />
                               </div>
@@ -942,33 +934,33 @@ export const auth = betterAuth({
                           info: 0,
                         };
                         const total = data.success + data.failed + data.warning + data.info;
-                        let label = timeLabels[hoveredBarIndex] || '';
+                        let label = timeLabels[hoveredBarIndex] || "";
 
                         // Convert short day names to full names for tooltip
                         const dayNameMap: Record<string, string> = {
-                          Sun: 'Sunday',
-                          Mon: 'Monday',
-                          Tue: 'Tuesday',
-                          Wed: 'Wednesday',
-                          Thu: 'Thursday',
-                          Fri: 'Friday',
-                          Sat: 'Saturday',
+                          Sun: "Sunday",
+                          Mon: "Monday",
+                          Tue: "Tuesday",
+                          Wed: "Wednesday",
+                          Thu: "Thursday",
+                          Fri: "Friday",
+                          Sat: "Saturday",
                         };
 
                         // Convert short month names to full names for tooltip
                         const monthNameMap: Record<string, string> = {
-                          Jan: 'January',
-                          Feb: 'February',
-                          Mar: 'March',
-                          Apr: 'April',
-                          May: 'May',
-                          Jun: 'June',
-                          Jul: 'July',
-                          Aug: 'August',
-                          Sep: 'September',
-                          Oct: 'October',
-                          Nov: 'November',
-                          Dec: 'December',
+                          Jan: "January",
+                          Feb: "February",
+                          Mar: "March",
+                          Apr: "April",
+                          May: "May",
+                          Jun: "June",
+                          Jul: "July",
+                          Aug: "August",
+                          Sep: "September",
+                          Oct: "October",
+                          Nov: "November",
+                          Dec: "December",
                         };
 
                         if (dayNameMap[label]) {
@@ -983,8 +975,8 @@ export const auth = betterAuth({
                             style={{
                               left: `${hoveredBarPosition.x}px`,
                               top: `${hoveredBarPosition.y}px`,
-                              transform: 'translate(-50%, -100%)',
-                              maxWidth: 'calc(100vw - 20px)',
+                              transform: "translate(-50%, -100%)",
+                              maxWidth: "calc(100vw - 20px)",
                             }}
                           >
                             <div className="bg-black border overflow-x-hidden border-white/20 rounded-sm px-4 py-3 shadow-lg min-w-[150px]">
@@ -1010,7 +1002,7 @@ export const auth = betterAuth({
                                       <span className="text-xs font-mono uppercase">Success</span>
                                       <span
                                         className="text-xs font-mono"
-                                        style={{ color: '#22c55e' }}
+                                        style={{ color: "#22c55e" }}
                                       >
                                         {data.success}
                                       </span>
@@ -1025,7 +1017,7 @@ export const auth = betterAuth({
                                       <span className="text-xs font-mono uppercase">Failed</span>
                                       <span
                                         className="text-xs font-mono"
-                                        style={{ color: '#ef4444' }}
+                                        style={{ color: "#ef4444" }}
                                       >
                                         {data.failed}
                                       </span>
@@ -1040,7 +1032,7 @@ export const auth = betterAuth({
                                       <span className="text-xs font-mono uppercase">Warning</span>
                                       <span
                                         className="text-xs font-mono"
-                                        style={{ color: '#eab308' }}
+                                        style={{ color: "#eab308" }}
                                       >
                                         {data.warning}
                                       </span>
@@ -1054,7 +1046,7 @@ export const auth = betterAuth({
                                     <span className="text-xs font-mono uppercase">Info</span>
                                     <span
                                       className="text-xs font-mono"
-                                      style={{ color: '#3b82f6' }}
+                                      style={{ color: "#3b82f6" }}
                                     >
                                       {data.info}
                                     </span>
@@ -1072,7 +1064,7 @@ export const auth = betterAuth({
                 <div className="flex justify-between text-xs text-gray-500 font-mono mt-2">
                   {timeLabels.map((label, idx) => (
                     <span key={`${label}-${idx}`} className="flex-1 text-center truncate">
-                      {label || ''}
+                      {label || ""}
                     </span>
                   ))}
                 </div>
@@ -1118,10 +1110,10 @@ export const auth = betterAuth({
                 </div>
               </SelectTrigger>
               <SelectContent className="font-mono uppercase text-[11px]">
-                {!activeFilters.some((f) => f.type === 'timestamp') && (
+                {!activeFilters.some((f) => f.type === "timestamp") && (
                   <SelectItem value="timestamp">Date Range</SelectItem>
                 )}
-                {!activeFilters.some((f) => f.type === 'eventType') && (
+                {!activeFilters.some((f) => f.type === "eventType") && (
                   <SelectItem value="eventType">Event Type</SelectItem>
                 )}
               </SelectContent>
@@ -1136,7 +1128,7 @@ export const auth = betterAuth({
                 key={filter.type}
                 className="flex items-center gap-2 px-3 py-1.5 bg-black/50 border border-dashed border-white/20 rounded-none"
               >
-                {filter.type === 'timestamp' && (
+                {filter.type === "timestamp" && (
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono uppercase text-gray-400">Date:</span>
                     <Popover>
@@ -1147,8 +1139,8 @@ export const auth = betterAuth({
                         >
                           <CalendarIcon className="mr-1 h-3 w-3" />
                           {filter.dateRange?.from
-                            ? format(filter.dateRange.from, 'MMM dd yyyy')
-                            : 'From'}
+                            ? format(filter.dateRange.from, "MMM dd yyyy")
+                            : "From"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0 bg-black border-white/10">
@@ -1156,7 +1148,7 @@ export const auth = betterAuth({
                           mode="single"
                           selected={filter.dateRange?.from}
                           onSelect={(date) =>
-                            updateFilterDateRange('timestamp', {
+                            updateFilterDateRange("timestamp", {
                               from: date,
                               to: filter.dateRange?.to,
                             })
@@ -1174,7 +1166,7 @@ export const auth = betterAuth({
                           className="h-8 px-3 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
                         >
                           <CalendarIcon className="mr-1 h-3 w-3" />
-                          {filter.dateRange?.to ? format(filter.dateRange.to, 'MMM dd yyyy') : 'To'}
+                          {filter.dateRange?.to ? format(filter.dateRange.to, "MMM dd yyyy") : "To"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0 bg-black border-white/10">
@@ -1182,7 +1174,7 @@ export const auth = betterAuth({
                           mode="single"
                           selected={filter.dateRange?.to}
                           onSelect={(date) =>
-                            updateFilterDateRange('timestamp', {
+                            updateFilterDateRange("timestamp", {
                               from: filter.dateRange?.from,
                               to: date,
                             })
@@ -1198,7 +1190,7 @@ export const auth = betterAuth({
                   </div>
                 )}
 
-                {filter.type === 'eventType' && (
+                {filter.type === "eventType" && (
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono uppercase text-gray-400">Event Types:</span>
                     <Popover>
@@ -1209,7 +1201,7 @@ export const auth = betterAuth({
                         >
                           {filter.eventTypes && filter.eventTypes.length > 0
                             ? `${filter.eventTypes.length} selected`
-                            : 'Select types'}
+                            : "Select types"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0 bg-black border-white/10 max-h-[400px] overflow-y-auto">
@@ -1227,7 +1219,7 @@ export const auth = betterAuth({
                                 >
                                   <Checkbox
                                     checked={isSelected}
-                                    onCheckedChange={() => toggleEventType('eventType', eventType)}
+                                    onCheckedChange={() => toggleEventType("eventType", eventType)}
                                     className="border-white/20 data-[state=checked]:bg-white data-[state=checked]:border-white"
                                   />
                                   <span className="text-xs font-mono text-white">{eventType}</span>
@@ -1284,23 +1276,23 @@ export const auth = betterAuth({
               ) : (
                 filteredEvents.map((event) => {
                   const isNew = newEventIds.has(event.id);
-                  const severity = event.display?.severity || 'info';
-                  const status = event.status || 'success';
-                  const isSuccess = status === 'success' && severity !== 'failed';
-                  const isFailed = status === 'failed' || severity === 'failed';
+                  const severity = event.display?.severity || "info";
+                  const status = event.status || "success";
+                  const isSuccess = status === "success" && severity !== "failed";
+                  const isFailed = status === "failed" || severity === "failed";
 
                   return (
                     <tr
                       key={event.id}
                       onClick={() => openViewModal(event)}
-                      className={`border-b border-dashed border-white/5 hover:bg-white/5 transition-all cursor-pointer ${isNew ? (isSuccess ? 'new-event-row bg-green-400/10 border-green-400/20' : isFailed ? 'new-event-row bg-red-400/10 border-red-400/20' : '') : ''}`}
+                      className={`border-b border-dashed border-white/5 hover:bg-white/5 transition-all cursor-pointer ${isNew ? (isSuccess ? "new-event-row bg-green-400/10 border-green-400/20" : isFailed ? "new-event-row bg-red-400/10 border-red-400/20" : "") : ""}`}
                     >
                       <td className="py-4 px-4">
                         <div className="flex items-center space-x-3">
                           <div
                             className={`w-10 h-10 rounded-none border border-dashed flex items-center justify-center relative overflow-hidden group ${getSeverityColor(
                               severity,
-                              status
+                              status,
                             )}`}
                           >
                             {/* Horizontal pattern overlay for success - only on icon, show on hover */}
@@ -1342,7 +1334,7 @@ export const auth = betterAuth({
                         <div className="flex items-center space-x-2">
                           <div
                             className={`w-px h-5 rounded-none ${
-                              status === 'success' ? 'bg-green-400' : 'bg-red-400'
+                              status === "success" ? "bg-green-400" : "bg-red-400"
                             }`}
                           />
                           <span className="text-xs font-mono uppercase text-gray-400">
@@ -1369,13 +1361,13 @@ export const auth = betterAuth({
                         <div className="flex font-mono uppercase flex-col">
                           {new Date(event.timestamp).toLocaleString()}
                           <p className="text-xs">
-                            {new Date(event.timestamp).toLocaleString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit',
+                            {new Date(event.timestamp).toLocaleString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
                               hour12: false,
                             })}
                           </p>
@@ -1435,11 +1427,11 @@ export const auth = betterAuth({
                 <div
                   className={`w-14 h-14 rounded-none border border-dashed flex items-center justify-center relative overflow-hidden ${getSeverityColor(
                     selectedEvent.display?.severity,
-                    selectedEvent.status
+                    selectedEvent.status,
                   )}`}
                 >
-                  {selectedEvent.status === 'success' &&
-                    selectedEvent.display?.severity !== 'failed' && (
+                  {selectedEvent.status === "success" &&
+                    selectedEvent.display?.severity !== "failed" && (
                       <div
                         className="absolute inset-0 pointer-events-none opacity-[8%]"
                         style={{
@@ -1447,8 +1439,8 @@ export const auth = betterAuth({
                         }}
                       />
                     )}
-                  {(selectedEvent.status === 'failed' ||
-                    selectedEvent.display?.severity === 'failed') && (
+                  {(selectedEvent.status === "failed" ||
+                    selectedEvent.display?.severity === "failed") && (
                     <div
                       className="absolute inset-0 pointer-events-none opacity-[8%]"
                       style={{
@@ -1460,7 +1452,7 @@ export const auth = betterAuth({
                     {getEventIcon(
                       selectedEvent.type,
                       selectedEvent.display?.severity,
-                      selectedEvent.status
+                      selectedEvent.status,
                     )}
                   </div>
                 </div>
@@ -1477,39 +1469,39 @@ export const auth = betterAuth({
               <div className="space-y-2 text-sm">
                 {[
                   {
-                    label: 'Status',
-                    value: (selectedEvent.status || 'success').toUpperCase(),
+                    label: "Status",
+                    value: (selectedEvent.status || "success").toUpperCase(),
                   },
                   {
-                    label: 'Severity',
-                    value: (selectedEvent.display?.severity || 'info').toUpperCase(),
+                    label: "Severity",
+                    value: (selectedEvent.display?.severity || "info").toUpperCase(),
                   },
                   {
-                    label: 'Timestamp',
+                    label: "Timestamp",
                     value: formatDateTime(selectedEvent.timestamp),
                   },
                   {
-                    label: 'Source',
-                    value: (selectedEvent.source || 'app').toUpperCase(),
+                    label: "Source",
+                    value: (selectedEvent.source || "app").toUpperCase(),
                   },
                   selectedEvent.userId && {
-                    label: 'User ID',
+                    label: "User ID",
                     value: selectedEvent.userId,
                   },
                   selectedEvent.sessionId && {
-                    label: 'Session ID',
+                    label: "Session ID",
                     value: selectedEvent.sessionId,
                   },
                   selectedEvent.organizationId && {
-                    label: 'Organization ID',
+                    label: "Organization ID",
                     value: selectedEvent.organizationId,
                   },
                   selectedEvent.ipAddress && {
-                    label: 'IP Address',
+                    label: "IP Address",
                     value: selectedEvent.ipAddress,
                   },
                   selectedEvent.userAgent && {
-                    label: 'User Agent',
+                    label: "User Agent",
                     value: selectedEvent.userAgent,
                   },
                 ]

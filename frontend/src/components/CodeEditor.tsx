@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useEffect, useRef, useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface CodeEditorProps {
   value: string;
@@ -13,9 +13,9 @@ interface CodeEditorProps {
 export function CodeEditor({
   value,
   onChange,
-  language = 'typescript',
-  placeholder = '',
-  className = '',
+  language = "typescript",
+  placeholder = "",
+  className = "",
 }: CodeEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
@@ -37,14 +37,14 @@ export function CodeEditor({
         }
       };
 
-      textarea.addEventListener('scroll', syncScroll);
-      return () => textarea.removeEventListener('scroll', syncScroll);
+      textarea.addEventListener("scroll", syncScroll);
+      return () => textarea.removeEventListener("scroll", syncScroll);
     }
   }, []);
 
-  const baseFontSize = '12px';
-  const baseLineHeight = '1.5';
-  const basePadding = '0.75rem';
+  const baseFontSize = "12px";
+  const baseLineHeight = "1.5";
+  const basePadding = "0.75rem";
   const baseFontFamily =
     'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace';
 
@@ -53,15 +53,15 @@ export function CodeEditor({
     ...vscDarkPlus,
     'pre[class*="language-"]': {
       ...vscDarkPlus['pre[class*="language-"]'],
-      background: 'transparent',
+      background: "transparent",
       padding: 0,
       margin: 0,
       borderRadius: 0,
-      overflow: 'visible',
+      overflow: "visible",
     },
     'code[class*="language-"]': {
       ...vscDarkPlus['code[class*="language-"]'],
-      background: 'transparent',
+      background: "transparent",
       fontSize: baseFontSize,
       lineHeight: baseLineHeight,
       fontFamily: baseFontFamily,
@@ -74,15 +74,15 @@ export function CodeEditor({
     lineHeight: baseLineHeight,
     padding: basePadding,
     margin: 0,
-    border: 'none',
-    outline: 'none',
-    resize: 'none' as const,
-    color: 'transparent',
-    caretColor: '#fff',
-    background: 'transparent',
-    width: '100%',
-    minHeight: '200px',
-    overflow: 'auto',
+    border: "none",
+    outline: "none",
+    resize: "none" as const,
+    color: "transparent",
+    caretColor: "#fff",
+    background: "transparent",
+    width: "100%",
+    minHeight: "200px",
+    overflow: "auto",
     tabSize: 2,
   };
 
@@ -96,7 +96,7 @@ export function CodeEditor({
         className="absolute inset-0 pointer-events-none overflow-auto"
         style={{
           padding: basePadding,
-          boxSizing: 'border-box',
+          boxSizing: "border-box",
         }}
       >
         <SyntaxHighlighter
@@ -105,15 +105,15 @@ export function CodeEditor({
           customStyle={{
             margin: 0,
             padding: 0,
-            background: 'transparent',
-            minHeight: '200px',
+            background: "transparent",
+            minHeight: "200px",
           }}
           codeTagProps={{
             style: {
               fontFamily: baseFontFamily,
               fontSize: baseFontSize,
               lineHeight: baseLineHeight,
-              display: 'block',
+              display: "block",
             },
           }}
           PreTag={({ children, ...props }) => (
@@ -122,7 +122,7 @@ export function CodeEditor({
               style={{
                 margin: 0,
                 padding: 0,
-                background: 'transparent',
+                background: "transparent",
                 fontSize: baseFontSize,
                 lineHeight: baseLineHeight,
                 fontFamily: baseFontFamily,
@@ -145,8 +145,8 @@ export function CodeEditor({
         className="relative w-full min-h-[200px] bg-transparent text-white font-mono text-xs rounded-none focus:outline-none resize-none"
         style={{
           ...textareaStyle,
-          boxSizing: 'border-box',
-          position: 'relative',
+          boxSizing: "border-box",
+          position: "relative",
           zIndex: 1,
         }}
         spellCheck={false}

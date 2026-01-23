@@ -3,19 +3,19 @@ import {
   createHttpProvider,
   createPostgresProvider,
   createSqliteProvider,
-} from '../providers/events/helpers.js';
+} from "../providers/events/helpers.js";
 import type {
   AuthEvent,
   AuthEventType,
   EventIngestionProvider,
   EventQueryOptions,
   EventQueryResult,
-} from '../types/events.js';
-import { EVENT_TEMPLATES, getEventSeverity } from '../types/events.js';
-import type { StudioConfig } from '../types/handler.js';
+} from "../types/events.js";
+import { EVENT_TEMPLATES, getEventSeverity } from "../types/events.js";
+import type { StudioConfig } from "../types/handler.js";
 
 let provider: EventIngestionProvider | null = null;
-let config: StudioConfig['events'] | null = null;
+let config: StudioConfig["events"] | null = null;
 let eventQueue: AuthEvent[] = [];
 let flushTimer: NodeJS.Timeout | null = null;
 let isShuttingDown = false;
@@ -24,7 +24,7 @@ let isInitialized = false;
 /**
  * Initialize event ingestion
  */
-export function initializeEventIngestion(eventsConfig: StudioConfig['events']): void {
+export function initializeEventIngestion(eventsConfig: StudioConfig["events"]): void {
   if (!eventsConfig?.enabled) {
     return;
   }
@@ -39,9 +39,9 @@ export function initializeEventIngestion(eventsConfig: StudioConfig['events']): 
     provider = eventsConfig.provider;
   } else if (eventsConfig.client && eventsConfig.clientType) {
     switch (eventsConfig.clientType) {
-      case 'postgres':
-      case 'prisma':
-      case 'drizzle':
+      case "postgres":
+      case "prisma":
+      case "drizzle":
         try {
           provider = createPostgresProvider({
             client: eventsConfig.client,
@@ -52,7 +52,7 @@ export function initializeEventIngestion(eventsConfig: StudioConfig['events']): 
           throw error;
         }
         break;
-      case 'sqlite':
+      case "sqlite":
         try {
           provider = createSqliteProvider({
             client: eventsConfig.client,
@@ -62,13 +62,13 @@ export function initializeEventIngestion(eventsConfig: StudioConfig['events']): 
           throw error;
         }
         break;
-      case 'clickhouse':
+      case "clickhouse":
         provider = createClickHouseProvider({
           client: eventsConfig.client,
           table: eventsConfig.tableName,
         });
         break;
-      case 'http':
+      case "http":
         provider = createHttpProvider({
           url: eventsConfig.client,
           headers: (eventsConfig as any).headers || {},
@@ -97,14 +97,14 @@ export function initializeEventIngestion(eventsConfig: StudioConfig['events']): 
 export async function emitEvent(
   type: AuthEventType,
   data: {
-    status: 'success' | 'failed';
+    status: "success" | "failed";
     userId?: string;
     sessionId?: string;
     organizationId?: string;
     metadata?: Record<string, any>;
     request?: { headers: Record<string, string>; ip?: string };
   },
-  eventsConfig?: StudioConfig['events']
+  eventsConfig?: StudioConfig["events"],
 ): Promise<void> {
   if (!isInitialized && eventsConfig?.enabled) {
     initializeEventIngestion(eventsConfig);
@@ -133,7 +133,7 @@ export async function emitEvent(
 
   const template = EVENT_TEMPLATES[type];
   const tempEvent: AuthEvent = {
-    id: '',
+    id: "",
     type,
     timestamp: new Date(),
     status: data.status,
@@ -141,7 +141,7 @@ export async function emitEvent(
     sessionId: data.sessionId,
     organizationId: data.organizationId,
     metadata: data.metadata || {},
-    source: 'app',
+    source: "app",
   };
   const displayMessage = template ? template(tempEvent) : type;
   const event: AuthEvent = {
@@ -154,8 +154,8 @@ export async function emitEvent(
     organizationId: data.organizationId,
     metadata: data.metadata || {},
     ipAddress: data.request?.ip,
-    userAgent: data.request?.headers['user-agent'] || data.request?.headers['User-Agent'],
-    source: 'app',
+    userAgent: data.request?.headers["user-agent"] || data.request?.headers["User-Agent"],
+    source: "app",
     display: {
       message: displayMessage,
       severity: getEventSeverity(tempEvent, data.status),
@@ -167,7 +167,7 @@ export async function emitEvent(
       await useConfig.onEventIngest(event);
     } catch (error) {
       // Don't block event ingestion if callback fails
-      console.error('onEventIngest callback error:', error);
+      console.error("onEventIngest callback error:", error);
     }
   }
 
@@ -207,7 +207,7 @@ async function flushEvents(): Promise<void> {
       try {
         await config.onEventIngest(event);
       } catch (error) {
-        console.error('onEventIngest callback error:', error);
+        console.error("onEventIngest callback error:", error);
       }
     }
   }

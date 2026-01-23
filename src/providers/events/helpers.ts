@@ -4,25 +4,25 @@ import type {
   EventIngestionProvider,
   EventQueryOptions,
   EventQueryResult,
-} from '../../types/events.js';
+} from "../../types/events.js";
 
 export function createPostgresProvider(options: {
   client: any;
   tableName?: string;
   schema?: string;
-  clientType?: 'postgres' | 'prisma' | 'drizzle';
+  clientType?: "postgres" | "prisma" | "drizzle";
 }): EventIngestionProvider {
-  const { client, tableName = 'auth_events', schema = 'public', clientType } = options;
+  const { client, tableName = "auth_events", schema = "public", clientType } = options;
 
   // Validate client is provided
   if (!client) {
     throw new Error(
-      'Postgres client is required. Provide a pg Pool, Client, or Prisma client instance.'
+      "Postgres client is required. Provide a pg Pool, Client, or Prisma client instance.",
     );
   }
 
   let actualClient: any = client;
-  if (clientType === 'drizzle') {
+  if (clientType === "drizzle") {
     if (client.$client) {
       actualClient = client.$client;
     } else if (client.client) {
@@ -38,11 +38,11 @@ export function createPostgresProvider(options: {
 
   if (!hasQuery && !hasExecuteRaw && !hasExecute && !hasUnsafe) {
     const errorMessage =
-      clientType === 'prisma'
-        ? 'Invalid Prisma client. Client must have a `$executeRaw` method.'
-        : clientType === 'drizzle'
-          ? 'Invalid Drizzle client. Drizzle instance must wrap a postgres-js (with `unsafe` method) or pg (with `query` method) client.'
-          : 'Invalid Postgres client. Client must have either a `query` method (pg Pool/Client) or `$executeRaw` method (Prisma client).';
+      clientType === "prisma"
+        ? "Invalid Prisma client. Client must have a `$executeRaw` method."
+        : clientType === "drizzle"
+          ? "Invalid Drizzle client. Drizzle instance must wrap a postgres-js (with `unsafe` method) or pg (with `query` method) client."
+          : "Invalid Postgres client. Client must have either a `query` method (pg Pool/Client) or `$executeRaw` method (Prisma client).";
     throw new Error(errorMessage);
   }
 
@@ -54,12 +54,12 @@ export function createPostgresProvider(options: {
       // Support Prisma client ($executeRaw), Drizzle instance ($client), or standard pg client (query)
       let executeQuery: (query: string) => Promise<any>;
 
-      if (clientType === 'prisma' || client.$executeRaw) {
+      if (clientType === "prisma" || client.$executeRaw) {
         // Prisma client
         executeQuery = async (query: string) => {
           return await client.$executeRawUnsafe(query);
         };
-      } else if (clientType === 'drizzle') {
+      } else if (clientType === "drizzle") {
         // Drizzle client - use $client which exposes the underlying client
         if (actualClient?.unsafe) {
           // postgres-js client via db.$client.unsafe()
@@ -73,7 +73,7 @@ export function createPostgresProvider(options: {
           };
         } else {
           throw new Error(
-            `Drizzle client.$client doesn't expose 'unsafe' (postgres-js) or 'query' (pg) method. Available methods: ${Object.keys(actualClient || {}).join(', ')}`
+            `Drizzle client.$client doesn't expose 'unsafe' (postgres-js) or 'query' (pg) method. Available methods: ${Object.keys(actualClient || {}).join(", ")}`,
           );
         }
       } else if (actualClient?.query) {
@@ -87,7 +87,7 @@ export function createPostgresProvider(options: {
         };
       } else {
         throw new Error(
-          `Postgres client doesn't support $executeRaw or query method. Available properties: ${Object.keys(client).join(', ')}`
+          `Postgres client doesn't support $executeRaw or query method. Available properties: ${Object.keys(client).join(", ")}`,
         );
       }
 
@@ -127,7 +127,7 @@ export function createPostgresProvider(options: {
         } catch (err) {}
       }
     } catch (error: any) {
-      if (error?.message?.includes('already exists') || error?.code === '42P07') {
+      if (error?.message?.includes("already exists") || error?.code === "42P07") {
         return;
       }
       console.error(`Failed to ensure ${schema}.${tableName} table:`, error);
@@ -151,7 +151,7 @@ export function createPostgresProvider(options: {
         await ensureTable();
         tableEnsured = true;
       } catch (error) {
-        console.error('Failed to ensure table:', error);
+        console.error("Failed to ensure table:", error);
         tableEnsuringPromise = null;
         throw error;
       } finally {
@@ -168,20 +168,20 @@ export function createPostgresProvider(options: {
     async ingest(event: AuthEvent) {
       await ensureTableSync();
 
-      if (clientType === 'prisma' || client.$executeRaw) {
+      if (clientType === "prisma" || client.$executeRaw) {
         const query = `
           INSERT INTO ${schema}.${tableName} 
           (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
-          VALUES ('${event.id}'::uuid, '${event.type}', '${event.timestamp.toISOString()}', '${event.status || 'success'}', ${event.userId ? `'${event.userId.replace(/'/g, "''")}'` : 'NULL'}, ${event.sessionId ? `'${event.sessionId.replace(/'/g, "''")}'` : 'NULL'}, ${event.organizationId ? `'${event.organizationId.replace(/'/g, "''")}'` : 'NULL'}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress.replace(/'/g, "''")}'` : 'NULL'}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : 'NULL'}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : 'NULL'}, ${event.display?.severity ? `'${event.display.severity}'` : 'NULL'})
+          VALUES ('${event.id}'::uuid, '${event.type}', '${event.timestamp.toISOString()}', '${event.status || "success"}', ${event.userId ? `'${event.userId.replace(/'/g, "''")}'` : "NULL"}, ${event.sessionId ? `'${event.sessionId.replace(/'/g, "''")}'` : "NULL"}, ${event.organizationId ? `'${event.organizationId.replace(/'/g, "''")}'` : "NULL"}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress.replace(/'/g, "''")}'` : "NULL"}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : "NULL"}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : "NULL"}, ${event.display?.severity ? `'${event.display.severity}'` : "NULL"})
         `;
         try {
           await client.$executeRawUnsafe(query);
         } catch (error: any) {
           console.error(
             `Failed to insert event (${event.type}) into ${schema}.${tableName}:`,
-            error
+            error,
           );
-          if (error.code === '42P01' || error.meta?.code === '42P01' || error.code === 'P2010') {
+          if (error.code === "42P01" || error.meta?.code === "42P01" || error.code === "P2010") {
             tableEnsured = false;
             await ensureTableSync();
             try {
@@ -208,16 +208,16 @@ export function createPostgresProvider(options: {
           const query = `
             INSERT INTO ${schema}.${tableName} 
             (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
-            VALUES ('${event.id}'::uuid, '${event.type}', '${event.timestamp.toISOString()}', '${event.status || 'success'}', ${event.userId ? `'${event.userId.replace(/'/g, "''")}'` : 'NULL'}, ${event.sessionId ? `'${event.sessionId.replace(/'/g, "''")}'` : 'NULL'}, ${event.organizationId ? `'${event.organizationId.replace(/'/g, "''")}'` : 'NULL'}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress.replace(/'/g, "''")}'` : 'NULL'}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : 'NULL'}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : 'NULL'}, ${event.display?.severity ? `'${event.display.severity}'` : 'NULL'})
+            VALUES ('${event.id}'::uuid, '${event.type}', '${event.timestamp.toISOString()}', '${event.status || "success"}', ${event.userId ? `'${event.userId.replace(/'/g, "''")}'` : "NULL"}, ${event.sessionId ? `'${event.sessionId.replace(/'/g, "''")}'` : "NULL"}, ${event.organizationId ? `'${event.organizationId.replace(/'/g, "''")}'` : "NULL"}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress.replace(/'/g, "''")}'` : "NULL"}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : "NULL"}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : "NULL"}, ${event.display?.severity ? `'${event.display.severity}'` : "NULL"})
           `;
           try {
             await queryClient.unsafe(query);
           } catch (error: any) {
             console.error(
               `Failed to insert event (${event.type}) into ${schema}.${tableName}:`,
-              error
+              error,
             );
-            if (error.code === '42P01') {
+            if (error.code === "42P01") {
               tableEnsured = false;
               await ensureTableSync();
               try {
@@ -241,7 +241,7 @@ export function createPostgresProvider(options: {
                 event.id,
                 event.type,
                 event.timestamp,
-                event.status || 'success',
+                event.status || "success",
                 event.userId || null,
                 event.sessionId || null,
                 event.organizationId || null,
@@ -251,14 +251,14 @@ export function createPostgresProvider(options: {
                 event.source,
                 event.display?.message || null,
                 event.display?.severity || null,
-              ]
+              ],
             );
           } catch (error: any) {
             console.error(
               `Failed to insert event (${event.type}) into ${schema}.${tableName}:`,
-              error
+              error,
             );
-            if (error.code === '42P01') {
+            if (error.code === "42P01") {
               tableEnsured = false;
               await ensureTableSync();
               try {
@@ -270,7 +270,7 @@ export function createPostgresProvider(options: {
                     event.id,
                     event.type,
                     event.timestamp,
-                    event.status || 'success',
+                    event.status || "success",
                     event.userId || null,
                     event.sessionId || null,
                     event.organizationId || null,
@@ -280,7 +280,7 @@ export function createPostgresProvider(options: {
                     event.source,
                     event.display?.message || null,
                     event.display?.severity || null,
-                  ]
+                  ],
                 );
                 return;
               } catch (retryError: any) {
@@ -289,13 +289,13 @@ export function createPostgresProvider(options: {
               }
             }
             if (
-              error.code === 'ECONNREFUSED' ||
-              error.code === 'ETIMEDOUT' ||
-              error.message?.includes('Connection terminated')
+              error.code === "ECONNREFUSED" ||
+              error.code === "ETIMEDOUT" ||
+              error.message?.includes("Connection terminated")
             ) {
               if (client.end) {
                 console.warn(
-                  `⚠️  Connection error with pg Pool. The pool will retry automatically on next query.`
+                  `⚠️  Connection error with pg Pool. The pool will retry automatically on next query.`,
                 );
               }
             }
@@ -304,7 +304,7 @@ export function createPostgresProvider(options: {
         }
       } else {
         throw new Error(
-          'Postgres client does not support $executeRaw, query, or unsafe method. Make sure you are passing a valid pg Pool, Client, Prisma client, or Drizzle instance.'
+          "Postgres client does not support $executeRaw, query, or unsafe method. Make sure you are passing a valid pg Pool, Client, Prisma client, or Drizzle instance.",
         );
       }
     },
@@ -315,7 +315,7 @@ export function createPostgresProvider(options: {
       await ensureTableSync();
 
       // Support Prisma client ($executeRaw), Drizzle instance, or standard pg client (query)
-      if (clientType === 'prisma' || client.$executeRaw) {
+      if (clientType === "prisma" || client.$executeRaw) {
         // Prisma client - use $executeRawUnsafe for batch inserts
         const CHUNK_SIZE = 500; // Reasonable chunk size for string-based queries
         for (let i = 0; i < events.length; i += CHUNK_SIZE) {
@@ -323,9 +323,9 @@ export function createPostgresProvider(options: {
           const values = chunk
             .map(
               (event) =>
-                `('${event.id}', '${event.type}', '${event.timestamp.toISOString()}', '${event.status || 'success'}', ${event.userId ? `'${event.userId.replace(/'/g, "''")}'` : 'NULL'}, ${event.sessionId ? `'${event.sessionId.replace(/'/g, "''")}'` : 'NULL'}, ${event.organizationId ? `'${event.organizationId.replace(/'/g, "''")}'` : 'NULL'}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress.replace(/'/g, "''")}'` : 'NULL'}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : 'NULL'}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : 'NULL'}, ${event.display?.severity ? `'${event.display.severity}'` : 'NULL'})`
+                `('${event.id}', '${event.type}', '${event.timestamp.toISOString()}', '${event.status || "success"}', ${event.userId ? `'${event.userId.replace(/'/g, "''")}'` : "NULL"}, ${event.sessionId ? `'${event.sessionId.replace(/'/g, "''")}'` : "NULL"}, ${event.organizationId ? `'${event.organizationId.replace(/'/g, "''")}'` : "NULL"}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress.replace(/'/g, "''")}'` : "NULL"}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : "NULL"}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : "NULL"}, ${event.display?.severity ? `'${event.display.severity}'` : "NULL"})`,
             )
-            .join(', ');
+            .join(", ");
 
           const query = `
             INSERT INTO ${schema}.${tableName} 
@@ -357,9 +357,9 @@ export function createPostgresProvider(options: {
             const values = chunk
               .map(
                 (event) =>
-                  `('${event.id}', '${event.type}', '${event.timestamp.toISOString()}', '${event.status || 'success'}', ${event.userId ? `'${event.userId.replace(/'/g, "''")}'` : 'NULL'}, ${event.sessionId ? `'${event.sessionId.replace(/'/g, "''")}'` : 'NULL'}, ${event.organizationId ? `'${event.organizationId.replace(/'/g, "''")}'` : 'NULL'}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress.replace(/'/g, "''")}'` : 'NULL'}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : 'NULL'}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : 'NULL'}, ${event.display?.severity ? `'${event.display.severity}'` : 'NULL'})`
+                  `('${event.id}', '${event.type}', '${event.timestamp.toISOString()}', '${event.status || "success"}', ${event.userId ? `'${event.userId.replace(/'/g, "''")}'` : "NULL"}, ${event.sessionId ? `'${event.sessionId.replace(/'/g, "''")}'` : "NULL"}, ${event.organizationId ? `'${event.organizationId.replace(/'/g, "''")}'` : "NULL"}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress.replace(/'/g, "''")}'` : "NULL"}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : "NULL"}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : "NULL"}, ${event.display?.severity ? `'${event.display.severity}'` : "NULL"})`,
               )
-              .join(', ');
+              .join(", ");
 
             const query = `
               INSERT INTO ${schema}.${tableName} 
@@ -388,7 +388,7 @@ export function createPostgresProvider(options: {
                 const base = i * PARAMS_PER_EVENT;
                 return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 4}, $${base + 5}, $${base + 6}, $${base + 7}, $${base + 8}, $${base + 9}, $${base + 10}, $${base + 11}, $${base + 12}, $${base + 13})`;
               })
-              .join(', ');
+              .join(", ");
 
             const query = `
               INSERT INTO ${schema}.${tableName} 
@@ -400,7 +400,7 @@ export function createPostgresProvider(options: {
               event.id,
               event.type,
               event.timestamp,
-              event.status || 'success',
+              event.status || "success",
               event.userId || null,
               event.sessionId || null,
               event.organizationId || null,
@@ -417,16 +417,16 @@ export function createPostgresProvider(options: {
             } catch (error: any) {
               console.error(
                 `Failed to insert batch chunk (${chunk.length} events) into ${schema}.${tableName}:`,
-                error
+                error,
               );
               if (
-                error.code === 'ECONNREFUSED' ||
-                error.code === 'ETIMEDOUT' ||
-                error.message?.includes('Connection terminated')
+                error.code === "ECONNREFUSED" ||
+                error.code === "ETIMEDOUT" ||
+                error.message?.includes("Connection terminated")
               ) {
                 if (client.end) {
                   console.warn(
-                    `⚠️  Connection error with pg Pool. The pool will retry automatically on next query.`
+                    `⚠️  Connection error with pg Pool. The pool will retry automatically on next query.`,
                   );
                 }
               }
@@ -436,13 +436,13 @@ export function createPostgresProvider(options: {
         }
       } else {
         throw new Error(
-          'Postgres client does not support $executeRaw or query method. Make sure you are passing a valid pg Pool, Client, or Prisma client.'
+          "Postgres client does not support $executeRaw or query method. Make sure you are passing a valid pg Pool, Client, or Prisma client.",
         );
       }
     },
 
     async query(options: EventQueryOptions): Promise<EventQueryResult> {
-      const { limit = 20, after, sort = 'desc', type, userId, since } = options;
+      const { limit = 20, after, sort = "desc", type, userId, since } = options;
 
       let queryFn: (query: string, params?: any[]) => Promise<any>;
 
@@ -454,16 +454,16 @@ export function createPostgresProvider(options: {
             params.forEach((param, index) => {
               const placeholder = `$${index + 1}`;
               const value =
-                typeof param === 'string'
+                typeof param === "string"
                   ? `'${param.replace(/'/g, "''")}'`
                   : param === null
-                    ? 'NULL'
+                    ? "NULL"
                     : param instanceof Date
                       ? `'${param.toISOString()}'`
                       : String(param);
               processedQuery = processedQuery.replace(
-                new RegExp(`\\${placeholder}(?![0-9])`, 'g'),
-                value
+                new RegExp(`\\${placeholder}(?![0-9])`, "g"),
+                value,
               );
             });
             return await client.$queryRawUnsafe(processedQuery);
@@ -478,7 +478,7 @@ export function createPostgresProvider(options: {
           return result;
         };
       } else {
-        throw new Error('Postgres client does not support $executeRaw or query method');
+        throw new Error("Postgres client does not support $executeRaw or query method");
       }
 
       try {
@@ -493,8 +493,8 @@ export function createPostgresProvider(options: {
         if (client.$executeRaw) {
           // Prisma client - replace $1, $2 with actual values
           const prismaQuery = checkTableQuery
-            .replace('$1', `'${schema}'`)
-            .replace('$2', `'${tableName}'`);
+            .replace("$1", `'${schema}'`)
+            .replace("$2", `'${tableName}'`);
           checkResult = await client.$queryRawUnsafe(prismaQuery);
         } else {
           // Standard pg client
@@ -521,7 +521,7 @@ export function createPostgresProvider(options: {
 
       // Cursor-based pagination
       if (after) {
-        if (sort === 'desc') {
+        if (sort === "desc") {
           whereClauses.push(`id < $${paramIndex++}`);
           params.push(after);
         } else {
@@ -545,9 +545,9 @@ export function createPostgresProvider(options: {
         params.push(since instanceof Date ? since.toISOString() : since);
       }
 
-      const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+      const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
 
-      const orderDirection = sort === 'desc' ? 'DESC' : 'ASC';
+      const orderDirection = sort === "desc" ? "DESC" : "ASC";
       const query = `
         SELECT id, type, timestamp, status, user_id, session_id, organization_id, 
                metadata, ip_address, user_agent, source, display_message, display_severity
@@ -566,18 +566,18 @@ export function createPostgresProvider(options: {
           id: row.id,
           type: row.type,
           timestamp: new Date(row.timestamp),
-          status: row.status || 'success',
+          status: row.status || "success",
           userId: row.user_id,
           sessionId: row.session_id,
           organizationId: row.organization_id,
           metadata:
-            typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata || {},
+            typeof row.metadata === "string" ? JSON.parse(row.metadata) : row.metadata || {},
           ipAddress: row.ip_address,
           userAgent: row.user_agent,
-          source: row.source || 'app',
+          source: row.source || "app",
           display: {
             message: row.display_message || row.type,
-            severity: row.display_severity || 'info',
+            severity: row.display_severity || "info",
           },
         }));
 
@@ -587,7 +587,7 @@ export function createPostgresProvider(options: {
           nextCursor: hasMore ? events[events.length - 1].id : null,
         };
       } catch (error: any) {
-        if (error?.message?.includes('does not exist') || error?.code === '42P01') {
+        if (error?.message?.includes("does not exist") || error?.code === "42P01") {
           return {
             events: [],
             hasMore: false,
@@ -604,39 +604,39 @@ export function createSqliteProvider(options: {
   client: any;
   tableName?: string;
 }): EventIngestionProvider {
-  const { client, tableName = 'auth_events' } = options;
+  const { client, tableName = "auth_events" } = options;
 
   // Validate client is provided
   if (!client) {
-    throw new Error('SQLite client is required. Provide a better-sqlite3 Database instance.');
+    throw new Error("SQLite client is required. Provide a better-sqlite3 Database instance.");
   }
 
   // Handle case where client might be a function (lazy initialization) or already initialized
-  const actualClient = typeof client === 'function' ? client() : client;
+  const actualClient = typeof client === "function" ? client() : client;
 
   // If client initialization failed (native module not found), try to provide helpful error
   if (!actualClient) {
     throw new Error(
-      'SQLite client initialization failed. Make sure better-sqlite3 is properly installed and built. ' +
-        'Run: pnpm rebuild better-sqlite3 or npm rebuild better-sqlite3'
+      "SQLite client initialization failed. Make sure better-sqlite3 is properly installed and built. " +
+        "Run: pnpm rebuild better-sqlite3 or npm rebuild better-sqlite3",
     );
   }
 
   // Validate client has required methods (better-sqlite3 Database)
-  const hasExec = typeof actualClient.exec === 'function';
-  const hasPrepare = typeof actualClient.prepare === 'function';
+  const hasExec = typeof actualClient.exec === "function";
+  const hasPrepare = typeof actualClient.prepare === "function";
 
   if (!hasExec || !hasPrepare) {
     // If methods don't exist, it might be an initialization error - provide helpful message
     if (actualClient instanceof Error) {
       throw new Error(
         `SQLite client initialization error: ${actualClient.message}. ` +
-          'Make sure better-sqlite3 native module is built. Run: pnpm rebuild better-sqlite3'
+          "Make sure better-sqlite3 native module is built. Run: pnpm rebuild better-sqlite3",
       );
     }
     throw new Error(
-      'Invalid SQLite client. Client must have `exec` and `prepare` methods (better-sqlite3 Database instance). ' +
-        'If using better-sqlite3, make sure the native module is built: pnpm rebuild better-sqlite3'
+      "Invalid SQLite client. Client must have `exec` and `prepare` methods (better-sqlite3 Database instance). " +
+        "If using better-sqlite3, make sure the native module is built: pnpm rebuild better-sqlite3",
     );
   }
 
@@ -682,7 +682,7 @@ export function createSqliteProvider(options: {
         }
       }
     } catch (error: any) {
-      if (error?.message?.includes('already exists')) {
+      if (error?.message?.includes("already exists")) {
         return;
       }
       console.error(`Failed to ensure ${tableName} table:`, error);
@@ -732,7 +732,7 @@ export function createSqliteProvider(options: {
           event.id,
           event.type,
           event.timestamp.toISOString(),
-          event.status || 'success',
+          event.status || "success",
           event.userId || null,
           event.sessionId || null,
           event.organizationId || null,
@@ -741,12 +741,12 @@ export function createSqliteProvider(options: {
           event.userAgent || null,
           event.source,
           event.display?.message || null,
-          event.display?.severity || null
+          event.display?.severity || null,
         );
       } catch (error: any) {
         console.error(`Failed to insert event (${event.type}) into ${tableName}:`, error);
         // If table doesn't exist, try to create it and retry
-        if (error.message?.includes('no such table')) {
+        if (error.message?.includes("no such table")) {
           tableEnsured = false;
           await ensureTableSync();
           try {
@@ -759,7 +759,7 @@ export function createSqliteProvider(options: {
               event.id,
               event.type,
               event.timestamp.toISOString(),
-              event.status || 'success',
+              event.status || "success",
               event.userId || null,
               event.sessionId || null,
               event.organizationId || null,
@@ -768,7 +768,7 @@ export function createSqliteProvider(options: {
               event.userAgent || null,
               event.source,
               event.display?.message || null,
-              event.display?.severity || null
+              event.display?.severity || null,
             );
             return;
           } catch (retryError: any) {
@@ -798,7 +798,7 @@ export function createSqliteProvider(options: {
               event.id,
               event.type,
               event.timestamp.toISOString(),
-              event.status || 'success',
+              event.status || "success",
               event.userId || null,
               event.sessionId || null,
               event.organizationId || null,
@@ -807,7 +807,7 @@ export function createSqliteProvider(options: {
               event.userAgent || null,
               event.source,
               event.display?.message || null,
-              event.display?.severity || null
+              event.display?.severity || null,
             );
           }
         });
@@ -815,7 +815,7 @@ export function createSqliteProvider(options: {
         transaction(events);
       } catch (error: any) {
         console.error(`Failed to insert batch (${events.length} events):`, error);
-        if (error.message?.includes('no such table')) {
+        if (error.message?.includes("no such table")) {
           tableEnsured = false;
           await ensureTableSync();
           try {
@@ -831,7 +831,7 @@ export function createSqliteProvider(options: {
                   event.id,
                   event.type,
                   event.timestamp.toISOString(),
-                  event.status || 'success',
+                  event.status || "success",
                   event.userId || null,
                   event.sessionId || null,
                   event.organizationId || null,
@@ -840,7 +840,7 @@ export function createSqliteProvider(options: {
                   event.userAgent || null,
                   event.source,
                   event.display?.message || null,
-                  event.display?.severity || null
+                  event.display?.severity || null,
                 );
               }
             });
@@ -857,7 +857,7 @@ export function createSqliteProvider(options: {
     },
 
     async query(options: EventQueryOptions): Promise<EventQueryResult> {
-      const { limit = 20, after, sort = 'desc', type, userId, since } = options;
+      const { limit = 20, after, sort = "desc", type, userId, since } = options;
 
       await ensureTableSync();
 
@@ -885,7 +885,7 @@ export function createSqliteProvider(options: {
           params.push(after);
         }
 
-        query += ` ORDER BY timestamp ${sort === 'desc' ? 'DESC' : 'ASC'}`;
+        query += ` ORDER BY timestamp ${sort === "desc" ? "DESC" : "ASC"}`;
         query += ` LIMIT ?`;
         params.push(limit + 1); // Fetch one extra to check if there are more
 
@@ -897,15 +897,15 @@ export function createSqliteProvider(options: {
           id: row.id,
           type: row.type as AuthEventType,
           timestamp: new Date(row.timestamp),
-          status: row.status as 'success' | 'failed',
+          status: row.status as "success" | "failed",
           userId: row.user_id || undefined,
           sessionId: row.session_id || undefined,
           organizationId: row.organization_id || undefined,
           metadata:
-            typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata || {},
+            typeof row.metadata === "string" ? JSON.parse(row.metadata) : row.metadata || {},
           ipAddress: row.ip_address || undefined,
           userAgent: row.user_agent || undefined,
-          source: row.source || 'app',
+          source: row.source || "app",
           display:
             row.display_message || row.display_severity
               ? {
@@ -921,7 +921,7 @@ export function createSqliteProvider(options: {
           nextCursor: hasMore && events.length > 0 ? events[events.length - 1].id : null,
         };
       } catch (error: any) {
-        if (error.message?.includes('no such table')) {
+        if (error.message?.includes("no such table")) {
           await ensureTableSync();
           return { events: [], hasMore: false, nextCursor: null };
         }
@@ -937,7 +937,7 @@ export function createClickHouseProvider(options: {
   table?: string;
   database?: string;
 }): EventIngestionProvider {
-  const { client, table = 'auth_events', database } = options;
+  const { client, table = "auth_events", database } = options;
 
   const ensureTable = async () => {
     if (!client) return;
@@ -976,7 +976,7 @@ export function createClickHouseProvider(options: {
         console.warn(`⚠️  ClickHouse client doesn't support exec or query methods`);
       }
     } catch (error: any) {
-      if (error?.message?.includes('already exists') || error?.code === 57) {
+      if (error?.message?.includes("already exists") || error?.code === 57) {
         return;
       }
       console.error(`Failed to ensure ${table} table in ClickHouse:`, error);
@@ -993,7 +993,7 @@ export function createClickHouseProvider(options: {
       await ensureTable();
       tableEnsured = true;
     } catch (error) {
-      console.error('Failed to ensure table:', error);
+      console.error("Failed to ensure table:", error);
     } finally {
       tableEnsuring = false;
     }
@@ -1014,16 +1014,16 @@ export function createClickHouseProvider(options: {
       id: event.id,
       type: event.type,
       timestamp: event.timestamp,
-      status: event.status || 'success',
-      user_id: event.userId || '',
-      session_id: event.sessionId || '',
-      organization_id: event.organizationId || '',
+      status: event.status || "success",
+      user_id: event.userId || "",
+      session_id: event.sessionId || "",
+      organization_id: event.organizationId || "",
       metadata: JSON.stringify(event.metadata || {}),
-      ip_address: event.ipAddress || '',
-      user_agent: event.userAgent || '',
+      ip_address: event.ipAddress || "",
+      user_agent: event.userAgent || "",
       source: event.source,
-      display_message: event.display?.message || '',
-      display_severity: event.display?.severity || '',
+      display_message: event.display?.message || "",
+      display_severity: event.display?.severity || "",
     }));
 
     try {
@@ -1031,16 +1031,16 @@ export function createClickHouseProvider(options: {
         await client.insert({
           table: tableFullName,
           values: rows,
-          format: 'JSONEachRow',
+          format: "JSONEachRow",
         });
         console.log(`✅ Inserted ${rows.length} event(s) into ClickHouse ${tableFullName}`);
       } else {
         const values = rows
           .map(
             (row) =>
-              `('${row.id}', '${row.type}', '${new Date(row.timestamp).toISOString().replace('T', ' ').slice(0, 19)}', '${row.status || 'success'}', ${row.user_id ? `'${row.user_id.replace(/'/g, "''")}'` : 'NULL'}, ${row.session_id ? `'${row.session_id.replace(/'/g, "''")}'` : 'NULL'}, ${row.organization_id ? `'${row.organization_id.replace(/'/g, "''")}'` : 'NULL'}, '${row.metadata.replace(/'/g, "''")}', ${row.ip_address ? `'${row.ip_address.replace(/'/g, "''")}'` : 'NULL'}, ${row.user_agent ? `'${row.user_agent.replace(/'/g, "''")}'` : 'NULL'}, '${row.source}', ${row.display_message ? `'${row.display_message.replace(/'/g, "''")}'` : 'NULL'}, ${row.display_severity ? `'${row.display_severity}'` : 'NULL'})`
+              `('${row.id}', '${row.type}', '${new Date(row.timestamp).toISOString().replace("T", " ").slice(0, 19)}', '${row.status || "success"}', ${row.user_id ? `'${row.user_id.replace(/'/g, "''")}'` : "NULL"}, ${row.session_id ? `'${row.session_id.replace(/'/g, "''")}'` : "NULL"}, ${row.organization_id ? `'${row.organization_id.replace(/'/g, "''")}'` : "NULL"}, '${row.metadata.replace(/'/g, "''")}', ${row.ip_address ? `'${row.ip_address.replace(/'/g, "''")}'` : "NULL"}, ${row.user_agent ? `'${row.user_agent.replace(/'/g, "''")}'` : "NULL"}, '${row.source}', ${row.display_message ? `'${row.display_message.replace(/'/g, "''")}'` : "NULL"}, ${row.display_severity ? `'${row.display_severity}'` : "NULL"})`,
           )
-          .join(', ');
+          .join(", ");
 
         const insertQuery = `
             INSERT INTO ${tableFullName} 
@@ -1053,10 +1053,10 @@ export function createClickHouseProvider(options: {
         } else if (client.query) {
           await client.query({ query: insertQuery });
         } else {
-          throw new Error('ClickHouse client does not support insert, exec, or query methods');
+          throw new Error("ClickHouse client does not support insert, exec, or query methods");
         }
         console.log(
-          `✅ Inserted ${rows.length} event(s) into ClickHouse ${tableFullName} via query`
+          `✅ Inserted ${rows.length} event(s) into ClickHouse ${tableFullName} via query`,
         );
       }
     } catch (error: any) {
@@ -1075,7 +1075,7 @@ export function createClickHouseProvider(options: {
     },
 
     async query(options: EventQueryOptions): Promise<EventQueryResult> {
-      const { limit = 20, after, sort = 'desc', type, userId, since } = options;
+      const { limit = 20, after, sort = "desc", type, userId, since } = options;
       const tableFullName = database ? `${database}.${table}` : table;
 
       try {
@@ -1086,7 +1086,7 @@ export function createClickHouseProvider(options: {
           try {
             const checkResult = await client.query({
               query: checkTableQuery,
-              format: 'JSONEachRow',
+              format: "JSONEachRow",
             });
             const rows = await checkResult.json();
             tableExists =
@@ -1097,7 +1097,7 @@ export function createClickHouseProvider(options: {
         } else if (client.exec) {
           try {
             const checkResult = await client.exec({ query: checkTableQuery });
-            tableExists = checkResult === '1' || String(checkResult).includes('1');
+            tableExists = checkResult === "1" || String(checkResult).includes("1");
           } catch {
             tableExists = false;
           }
@@ -1145,7 +1145,7 @@ export function createClickHouseProvider(options: {
               try {
                 const columnResult = await client.query({
                   query: checkColumnQuery,
-                  format: 'JSONEachRow',
+                  format: "JSONEachRow",
                 });
                 const columnRows = await columnResult.json();
                 columnExists = columnRows && columnRows.length > 0 && columnRows[0]?.exists > 0;
@@ -1155,7 +1155,7 @@ export function createClickHouseProvider(options: {
             } else if (client.exec) {
               try {
                 const columnResult = await client.exec({ query: checkColumnQuery });
-                columnExists = String(columnResult).includes('1') || columnResult === '1';
+                columnExists = String(columnResult).includes("1") || columnResult === "1";
               } catch {
                 columnExists = false;
               }
@@ -1179,14 +1179,14 @@ export function createClickHouseProvider(options: {
           }
         }
       } catch (error: any) {
-        if (!error?.message?.includes('already exists') && error?.code !== 57) {
+        if (!error?.message?.includes("already exists") && error?.code !== 57) {
           console.warn(`Failed to ensure ClickHouse table ${tableFullName}:`, error);
         }
       }
 
       const whereClauses: string[] = [];
       if (after) {
-        if (sort === 'desc') {
+        if (sort === "desc") {
           whereClauses.push(`id < '${String(after).replace(/'/g, "''")}'`);
         } else {
           whereClauses.push(`id > '${String(after).replace(/'/g, "''")}'`);
@@ -1202,13 +1202,13 @@ export function createClickHouseProvider(options: {
         const sinceDate = since instanceof Date ? since : new Date(since);
         // ClickHouse requires DateTime type, so we need to cast the string to DateTime
         // Format: 'YYYY-MM-DD HH:MM:SS' or use toDateTime() function
-        const isoString = sinceDate.toISOString().replace('T', ' ').slice(0, 19);
+        const isoString = sinceDate.toISOString().replace("T", " ").slice(0, 19);
         whereClauses.push(`timestamp >= toDateTime('${isoString.replace(/'/g, "''")}')`);
       }
 
-      const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+      const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
 
-      const orderDirection = sort === 'desc' ? 'DESC' : 'ASC';
+      const orderDirection = sort === "desc" ? "DESC" : "ASC";
 
       let query = `
         SELECT id, type, timestamp, status, user_id, session_id, organization_id, 
@@ -1224,18 +1224,18 @@ export function createClickHouseProvider(options: {
 
       try {
         if (client.query) {
-          const queryResult = await client.query({ query, format: 'JSONEachRow' });
+          const queryResult = await client.query({ query, format: "JSONEachRow" });
           result = await queryResult.json();
         } else if (client.exec) {
-          const execResult = await client.exec({ query, format: 'JSONEachRow' });
-          result = typeof execResult === 'string' ? JSON.parse(execResult) : execResult;
+          const execResult = await client.exec({ query, format: "JSONEachRow" });
+          result = typeof execResult === "string" ? JSON.parse(execResult) : execResult;
         } else {
-          throw new Error('ClickHouse client does not support query or exec methods');
+          throw new Error("ClickHouse client does not support query or exec methods");
         }
       } catch (error: any) {
         if (
-          error?.message?.includes('Unknown expression identifier') &&
-          error?.message?.includes('status')
+          error?.message?.includes("Unknown expression identifier") &&
+          error?.message?.includes("status")
         ) {
           console.warn(`Status column not found in ${tableFullName}, querying without it`);
           hasStatusColumn = false;
@@ -1251,11 +1251,11 @@ export function createClickHouseProvider(options: {
 
           try {
             if (client.query) {
-              const queryResult = await client.query({ query, format: 'JSONEachRow' });
+              const queryResult = await client.query({ query, format: "JSONEachRow" });
               result = await queryResult.json();
             } else if (client.exec) {
-              const execResult = await client.exec({ query, format: 'JSONEachRow' });
-              result = typeof execResult === 'string' ? JSON.parse(execResult) : execResult;
+              const execResult = await client.exec({ query, format: "JSONEachRow" });
+              result = typeof execResult === "string" ? JSON.parse(execResult) : execResult;
             }
           } catch (retryError: any) {
             if (retryError?.message?.includes("doesn't exist") || retryError?.code === 60) {
@@ -1284,17 +1284,17 @@ export function createClickHouseProvider(options: {
         id: row.id,
         type: row.type,
         timestamp: new Date(row.timestamp),
-        status: hasStatusColumn ? row.status || 'success' : 'success',
+        status: hasStatusColumn ? row.status || "success" : "success",
         userId: row.user_id || undefined,
         sessionId: row.session_id || undefined,
         organizationId: row.organization_id || undefined,
-        metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata || {},
+        metadata: typeof row.metadata === "string" ? JSON.parse(row.metadata) : row.metadata || {},
         ipAddress: row.ip_address || undefined,
         userAgent: row.user_agent || undefined,
-        source: row.source || 'app',
+        source: row.source || "app",
         display: {
           message: row.display_message || row.type,
-          severity: row.display_severity || 'info',
+          severity: row.display_severity || "info",
         },
       }));
 
@@ -1319,8 +1319,8 @@ export function createHttpProvider(options: {
     async ingest(event: AuthEvent) {
       const payload = transform ? transform(event) : event;
       await client(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...headers },
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...headers },
         body: JSON.stringify(payload),
       });
     },
@@ -1328,8 +1328,8 @@ export function createHttpProvider(options: {
     async ingestBatch(events: AuthEvent[]) {
       const payload = events.map((event) => (transform ? transform(event) : event));
       await client(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...headers },
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...headers },
         body: JSON.stringify({ events: payload }),
       });
     },
@@ -1340,7 +1340,7 @@ export function createStorageProvider(options: {
   adapter: any;
   tableName?: string;
 }): EventIngestionProvider {
-  const { adapter, tableName = 'auth_events' } = options;
+  const { adapter, tableName = "auth_events" } = options;
 
   let tableEnsured = false;
   let tableEnsuringPromise: Promise<void> | null = null;
@@ -1364,10 +1364,10 @@ export function createStorageProvider(options: {
       } catch (error: any) {
         // Table doesn't exist - try to create it if adapter supports raw SQL
         if (
-          error?.message?.includes('not found in schema') ||
-          error?.message?.includes('Model') ||
-          error?.code === 'P2025' ||
-          error?.code === '42P01'
+          error?.message?.includes("not found in schema") ||
+          error?.message?.includes("Model") ||
+          error?.code === "P2025" ||
+          error?.code === "42P01"
         ) {
           // Try to create table using raw SQL if adapter supports it
           if (adapter.executeRaw || adapter.$executeRaw || adapter.queryRaw) {
@@ -1413,12 +1413,12 @@ export function createStorageProvider(options: {
             } catch (createError: any) {
               // If we can't create the table, that's okay - it might need to be created manually
               console.warn(
-                `Table ${tableName} may not exist. Please create it manually or run migrations.`
+                `Table ${tableName} may not exist. Please create it manually or run migrations.`,
               );
             }
           } else {
             console.warn(
-              `Table ${tableName} may not exist. Please create it manually or run migrations.`
+              `Table ${tableName} may not exist. Please create it manually or run migrations.`,
             );
           }
         }
@@ -1439,7 +1439,7 @@ export function createStorageProvider(options: {
             id: event.id,
             type: event.type,
             timestamp: event.timestamp,
-            status: event.status || 'success',
+            status: event.status || "success",
             userId: event.userId,
             sessionId: event.sessionId,
             organizationId: event.organizationId,
@@ -1458,7 +1458,7 @@ export function createStorageProvider(options: {
             id: event.id,
             type: event.type,
             timestamp: event.timestamp,
-            status: event.status || 'success',
+            status: event.status || "success",
             user_id: event.userId,
             session_id: event.sessionId,
             organization_id: event.organizationId,
@@ -1484,7 +1484,7 @@ export function createStorageProvider(options: {
             id: event.id,
             type: event.type,
             timestamp: event.timestamp,
-            status: event.status || 'success',
+            status: event.status || "success",
             userId: event.userId,
             sessionId: event.sessionId,
             organizationId: event.organizationId,
@@ -1502,7 +1502,7 @@ export function createStorageProvider(options: {
     },
 
     async query(options: EventQueryOptions): Promise<EventQueryResult> {
-      const { limit = 20, after, sort = 'desc', type, userId, since } = options;
+      const { limit = 20, after, sort = "desc", type, userId, since } = options;
 
       // Ensure table exists before querying
       await ensureTable();
@@ -1513,30 +1513,30 @@ export function createStorageProvider(options: {
           const where: any[] = [];
 
           if (after) {
-            if (sort === 'desc') {
-              where.push({ field: 'id', operator: '<', value: after });
+            if (sort === "desc") {
+              where.push({ field: "id", operator: "<", value: after });
             } else {
-              where.push({ field: 'id', operator: '>', value: after });
+              where.push({ field: "id", operator: ">", value: after });
             }
           }
 
           if (type) {
-            where.push({ field: 'type', value: type });
+            where.push({ field: "type", value: type });
           }
 
           if (userId) {
-            where.push({ field: 'userId', value: userId });
+            where.push({ field: "userId", value: userId });
           }
 
           if (since) {
             const sinceDate = since instanceof Date ? since : new Date(since);
-            where.push({ field: 'timestamp', operator: '>=', value: sinceDate });
+            where.push({ field: "timestamp", operator: ">=", value: sinceDate });
           }
 
           const events = await adapter.findMany({
             model: tableName,
             where,
-            orderBy: [{ field: 'timestamp', direction: sort === 'desc' ? 'desc' : 'asc' }],
+            orderBy: [{ field: "timestamp", direction: sort === "desc" ? "desc" : "asc" }],
             limit: limit + 1, // Get one extra to check hasMore
           });
 
@@ -1545,20 +1545,20 @@ export function createStorageProvider(options: {
             id: event.id,
             type: event.type,
             timestamp: new Date(event.timestamp || event.createdAt),
-            status: event.status || 'success',
+            status: event.status || "success",
             userId: event.userId || event.user_id,
             sessionId: event.sessionId || event.session_id,
             organizationId: event.organizationId || event.organization_id,
             metadata:
-              typeof event.metadata === 'string'
+              typeof event.metadata === "string"
                 ? JSON.parse(event.metadata)
                 : event.metadata || {},
             ipAddress: event.ipAddress || event.ip_address,
             userAgent: event.userAgent || event.user_agent,
-            source: event.source || 'app',
+            source: event.source || "app",
             display: {
               message: event.displayMessage || event.display_message || event.type,
-              severity: event.displaySeverity || event.display_severity || 'info',
+              severity: event.displaySeverity || event.display_severity || "info",
             },
           }));
 
@@ -1570,9 +1570,9 @@ export function createStorageProvider(options: {
         } catch (findManyError: any) {
           // If findMany fails with "model not found", try raw SQL
           if (
-            findManyError?.message?.includes('not found in schema') ||
-            findManyError?.message?.includes('Model') ||
-            findManyError?.code === 'P2025'
+            findManyError?.message?.includes("not found in schema") ||
+            findManyError?.message?.includes("Model") ||
+            findManyError?.code === "P2025"
           ) {
             // Fall through to raw SQL fallback
           } else {
@@ -1610,7 +1610,7 @@ export function createStorageProvider(options: {
           let paramIndex = 1;
 
           if (after) {
-            if (sort === 'desc') {
+            if (sort === "desc") {
               whereConditions.push(`id < $${paramIndex}`);
             } else {
               whereConditions.push(`id > $${paramIndex}`);
@@ -1638,8 +1638,8 @@ export function createStorageProvider(options: {
           }
 
           const whereClause =
-            whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
-          const orderDirection = sort === 'desc' ? 'DESC' : 'ASC';
+            whereConditions.length > 0 ? `WHERE ${whereConditions.join(" AND ")}` : "";
+          const orderDirection = sort === "desc" ? "DESC" : "ASC";
 
           // Use appropriate raw SQL method
           let queryFn: (query: string) => Promise<any>;
@@ -1650,14 +1650,14 @@ export function createStorageProvider(options: {
             params.forEach((param, index) => {
               const placeholder = `$${index + 1}`;
               const value =
-                typeof param === 'string'
+                typeof param === "string"
                   ? `'${param.replace(/'/g, "''")}'`
                   : param === null
-                    ? 'NULL'
+                    ? "NULL"
                     : param instanceof Date
                       ? `'${param.toISOString()}'`
                       : String(param);
-              query = query.replace(new RegExp(`\\${placeholder}(?![0-9])`, 'g'), value);
+              query = query.replace(new RegExp(`\\${placeholder}(?![0-9])`, "g"), value);
             });
             const queryMethod = sqlAdapter.$queryRawUnsafe || adapter.$queryRawUnsafe;
             queryFn = async (q: string) => await queryMethod(q);
@@ -1668,20 +1668,20 @@ export function createStorageProvider(options: {
               id: event.id,
               type: event.type,
               timestamp: new Date(event.timestamp || event.created_at),
-              status: event.status || 'success',
+              status: event.status || "success",
               userId: event.user_id || event.userId,
               sessionId: event.session_id || event.sessionId,
               organizationId: event.organization_id || event.organizationId,
               metadata:
-                typeof event.metadata === 'string'
+                typeof event.metadata === "string"
                   ? JSON.parse(event.metadata)
                   : event.metadata || {},
               ipAddress: event.ip_address || event.ipAddress,
               userAgent: event.user_agent || event.userAgent,
-              source: event.source || 'app',
+              source: event.source || "app",
               display: {
                 message: event.display_message || event.displayMessage || event.type,
-                severity: event.display_severity || event.displaySeverity || 'info',
+                severity: event.display_severity || event.displaySeverity || "info",
               },
             }));
 
@@ -1702,7 +1702,7 @@ export function createStorageProvider(options: {
               const queryMethod = sqlAdapter.queryRaw || adapter.queryRaw;
               queryFn = async (q: string) => await queryMethod(q, params);
             } else {
-              throw new Error('Raw SQL not supported');
+              throw new Error("Raw SQL not supported");
             }
 
             const result = await queryFn(query);
@@ -1711,20 +1711,20 @@ export function createStorageProvider(options: {
               id: event.id,
               type: event.type,
               timestamp: new Date(event.timestamp || event.created_at),
-              status: event.status || 'success',
+              status: event.status || "success",
               userId: event.user_id || event.userId,
               sessionId: event.session_id || event.sessionId,
               organizationId: event.organization_id || event.organizationId,
               metadata:
-                typeof event.metadata === 'string'
+                typeof event.metadata === "string"
                   ? JSON.parse(event.metadata)
                   : event.metadata || {},
               ipAddress: event.ip_address || event.ipAddress,
               userAgent: event.user_agent || event.userAgent,
-              source: event.source || 'app',
+              source: event.source || "app",
               display: {
                 message: event.display_message || event.displayMessage || event.type,
-                severity: event.display_severity || event.displaySeverity || 'info',
+                severity: event.display_severity || event.displaySeverity || "info",
               },
             }));
 
@@ -1736,7 +1736,7 @@ export function createStorageProvider(options: {
           }
         } catch (rawError: any) {
           // If raw SQL also fails, return empty result
-          console.warn('Raw SQL query failed:', rawError);
+          console.warn("Raw SQL query failed:", rawError);
           return {
             events: [],
             hasMore: false,
@@ -1746,7 +1746,7 @@ export function createStorageProvider(options: {
       }
 
       // If we get here, neither findMany nor raw SQL worked
-      throw new Error('Adapter does not support findMany or raw SQL');
+      throw new Error("Adapter does not support findMany or raw SQL");
     },
   };
 }

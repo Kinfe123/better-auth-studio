@@ -13,8 +13,8 @@ export const auth = betterAuth({
     github: {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      redirectURI: `${baseURL}/api/auth/callback/github`
-    }
+      redirectURI: `${baseURL}/api/auth/callback/github`,
+    },
   },
   emailAndPassword: {
     enabled: true,
@@ -26,28 +26,28 @@ export const auth = betterAuth({
     sendResetPassword: async ({ user, url, token }) => {
       console.log(`Reset password email for ${user.email}: ${url}`);
     },
-    resetPasswordTokenExpiresIn: 3600 // 1 hour
+    resetPasswordTokenExpiresIn: 3600, // 1 hour
   },
   plugins: [
     organization({
       teams: {
-        enabled: true
-      }
+        enabled: true,
+      },
     }),
     admin(),
     twoFactor({}),
-    apiKey()
+    apiKey(),
   ],
   session: {
     expiresIn: 60 * 60 * 24 * 45, // 45 days (testing WebSocket hot reload)
-    updateAge: 60 * 60 * 24 // 1 day
+    updateAge: 60 * 60 * 24, // 1 day
   },
   rateLimit: {
     enabled: true,
     window: 10,
-    max: 100
+    max: 100,
   },
   telemetry: {
-    enabled: false
-  }
+    enabled: false,
+  },
 });

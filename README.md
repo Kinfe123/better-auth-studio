@@ -1,9 +1,8 @@
-# Better Auth Studio 
+# Better Auth Studio
 
 > ⚠️ **Beta Version Notice**
-> 
+>
 > Better Auth Studio is currently in **beta** and in early development. You may encounter bugs or incomplete features. Please report any issues you find on our GitHub repository to help us improve the project. Your feedback is greatly appreciated!
-
 
 A web-based studio interface for managing Better Auth applications. Better Auth Studio provides a comprehensive dashboard for managing users, organizations, teams, and more.
 
@@ -17,8 +16,6 @@ You can try a live, demo version of Better Auth Studio here:
 - **Password:** `admin@test.com`
 
 This online demo lets you explore the admin studio UI. Please note this is a test environment.
-
-
 
 ## 🚀 Quick Start
 
@@ -45,24 +42,27 @@ pnpm add -g better-auth-studio
 Or use pnpx to run it without installation:
 
 ```bash
-pnpx better-auth-studio [cmd] 
+pnpx better-auth-studio [cmd]
 ```
 
 ### Basic Usage
 
 1. **Navigate to your Better Auth project directory**
+
    ```bash
    cd your-better-auth-project
    ```
 
 2. **Start the studio**
-   
+
    If installed as dev dependency:
+
    ```bash
    pnpm better-auth-studio start
    ```
-   
+
    Or with pnpx:
+
    ```bash
    pnpx better-auth-studio start
    ```
@@ -86,7 +86,7 @@ Before using Better Auth Studio, ensure you have:
 Better Auth Studio automatically detects and works with:
 
 - **Prisma** (`prismaAdapter`)
-- **Drizzle** (`drizzleAdapter`) 
+- **Drizzle** (`drizzleAdapter`)
 - **SQLite** (`new Database()` from better-sqlite3)
 - **PostgreSQL** (via Prisma or Drizzle)
 - **MySQL** (via Prisma or Drizzle)
@@ -94,6 +94,7 @@ Better Auth Studio automatically detects and works with:
 ### Example Configuration Files
 
 #### Prisma Setup
+
 ```typescript
 // auth.ts
 import { betterAuth } from "better-auth";
@@ -111,6 +112,7 @@ export const auth = betterAuth({
 ```
 
 #### Drizzle Setup
+
 ```typescript
 // auth.ts
 import { betterAuth } from "better-auth";
@@ -126,6 +128,7 @@ export const auth = betterAuth({
 ```
 
 #### SQLite Setup
+
 ```typescript
 // auth.ts
 import { betterAuth } from "better-auth";
@@ -140,9 +143,11 @@ export const auth = betterAuth({
 ## 🎯 Features
 
 ### 📊 Dashboard
+
 - **Overview statistics** - User, teams and organization counts data
 
 ### 👥 User Management
+
 - **View all users** - Paginated list with search and filtering
 - **Create users** - Add new users with email/password
 - **Edit users** - Update user information, email verification status
@@ -151,6 +156,7 @@ export const auth = betterAuth({
 - **User details** - View user profiles, and accounts
 
 ### 🏢 Organization Management
+
 - **View organizations** - List all organizations with pagination
 - **Create organizations** - Add new organizations with custom slugs
 - **Edit organizations** - Update organization details
@@ -160,6 +166,7 @@ export const auth = betterAuth({
 - **Bulk seeding** - Generate test organizations and teams
 
 ### ⚙️ Settings & Configuration
+
 - **Plugin status** - Check which Better Auth plugins are enabled
 - **Database configuration** - View current database adapter and settings
 - **Social providers** - Configure OAuth providers (GitHub, Google, etc.)
@@ -168,11 +175,13 @@ export const auth = betterAuth({
 ## 🛠️ Command Line Options
 
 ### Start Studio
+
 ```bash
 pnpx better-auth-studio start [options]
 ```
 
 **Options:**
+
 - `--port <number>` - Specify port (default: 3000)
 - `--host <string>` - Specify host (default: localhost)
 - `--no-open` - Don't automatically open browser
@@ -180,6 +189,7 @@ pnpx better-auth-studio start [options]
 - `--watch` - Watch for changes in auth config file and reload server automatically
 
 **Examples:**
+
 ```bash
 # Start on custom port (if installed as dev dependency)
 pnpm better-auth-studio start --port 3001
@@ -205,6 +215,7 @@ pnpx better-auth-studio start --port 3001 --watch --config ./src/auth.ts
 Specify a custom path to your auth config file when it's in a non-standard location or auto-detection fails.
 
 **Example:**
+
 ```bash
 # With relative path
 pnpm better-auth-studio start --config ./src/lib/auth.ts
@@ -220,6 +231,7 @@ pnpm better-auth-studio start --config /path/to/project/auth.ts
 Automatically reload the server when your `auth.ts` file changes. Perfect for development when iterating on your auth configuration.
 
 **Example:**
+
 ```bash
 # Start with watch mode enabled
 pnpx better-auth-studio start --watch
@@ -228,6 +240,7 @@ pnpx better-auth-studio start --watch
 **How it works:** Monitors your auth config file for changes, automatically restarts the server, and updates the browser UI via WebSocket - no manual refresh needed.
 
 ### Other Commands
+
 ```bash
 # Check version
 pnpx better-auth-studio --version
@@ -255,11 +268,13 @@ pnpm add better-auth-studio
 ### Setup
 
 **Step 1: Initialize configuration**
+
 ```bash
 pnpx better-auth-studio init
 ```
 
 This creates a `studio.config.ts` file:
+
 ```typescript
 import type { StudioConfig } from "better-auth-studio";
 import { auth } from "./lib/auth";
@@ -283,19 +298,14 @@ export default config;
 ### Next.js (App Router)
 
 The init command automatically creates `app/api/studio/[[...path]]/route.ts`:
+
 ```typescript
 import { betterAuthStudio } from "better-auth-studio/nextjs";
 import studioConfig from "@/studio.config";
 
 const handler = betterAuthStudio(studioConfig);
 
-export {
-  handler as GET,
-  handler as POST,
-  handler as PUT,
-  handler as DELETE,
-  handler as PATCH,
-};
+export { handler as GET, handler as POST, handler as PUT, handler as DELETE, handler as PATCH };
 ```
 
 Access at `http://localhost:3000/api/studio`
@@ -303,6 +313,7 @@ Access at `http://localhost:3000/api/studio`
 ### Express
 
 Add the studio handler to your server:
+
 ```typescript
 import express from "express";
 import { toNodeHandler } from "better-auth/node";
@@ -323,17 +334,18 @@ Access at `http://localhost:3000/api/studio`
 
 ### Configuration Options
 
-| Option | Required | Description |
-|--------|----------|-------------|
-| `auth` | Yes | Your Better Auth instance |
-| `basePath` | Yes | URL path where studio is mounted |
-| `access.allowEmails` | No | Array of admin email addresses |
-| `access.roles` | No | Array of allowed user roles |
-| `metadata` | No | Custom branding (title, theme) |
+| Option               | Required | Description                      |
+| -------------------- | -------- | -------------------------------- |
+| `auth`               | Yes      | Your Better Auth instance        |
+| `basePath`           | Yes      | URL path where studio is mounted |
+| `access.allowEmails` | No       | Array of admin email addresses   |
+| `access.roles`       | No       | Array of allowed user roles      |
+| `metadata`           | No       | Custom branding (title, theme)   |
 
 ## 📝 Development
 
 ### Running from Source
+
 ```bash
 # Clone the repository
 git clone https://github.com/Kinfe123/better-auth-studio.git
@@ -350,6 +362,7 @@ pnpm dev
 ```
 
 ### Contributing
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes

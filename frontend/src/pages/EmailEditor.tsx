@@ -1,12 +1,12 @@
-import { Code, Copy, Loader, Mail, Send, X } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
-import { toast } from 'sonner';
-import { Check } from '@/components/PixelIcons';
-import { CodeBlock } from '../components/CodeBlock';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import VisualEmailBuilder from '../components/VisualEmailBuilder';
+import { Code, Copy, Loader, Mail, Send, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { Check } from "@/components/PixelIcons";
+import { CodeBlock } from "../components/CodeBlock";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import VisualEmailBuilder from "../components/VisualEmailBuilder";
 
 interface EmailTemplate {
   id: string;
@@ -14,14 +14,14 @@ interface EmailTemplate {
   subject: string;
   html: string;
   fields: string[];
-  category: 'authentication' | 'organization' | 'notification';
+  category: "authentication" | "organization" | "notification";
 }
 
 const emailTemplates: Record<string, EmailTemplate> = {
-  'password-reset': {
-    id: 'password-reset',
-    name: 'Password Reset',
-    subject: 'Reset Your Password',
+  "password-reset": {
+    id: "password-reset",
+    name: "Password Reset",
+    subject: "Reset Your Password",
     html: `<!DOCTYPE html>
 <html>
 <head>
@@ -56,13 +56,13 @@ const emailTemplates: Record<string, EmailTemplate> = {
   <p style="color: #999; font-size: 12px; text-align: center;">© {{year}} Better Auth. All rights reserved.</p>
 </body>
 </html>`,
-    fields: ['user.name', 'user.email', 'url', 'token', 'expiresIn'],
-    category: 'authentication',
+    fields: ["user.name", "user.email", "url", "token", "expiresIn"],
+    category: "authentication",
   },
-  'email-verification': {
-    id: 'email-verification',
-    name: 'Email Verification',
-    subject: 'Verify Your Email Address',
+  "email-verification": {
+    id: "email-verification",
+    name: "Email Verification",
+    subject: "Verify Your Email Address",
     html: `<!DOCTYPE html>
 <html>
 <head>
@@ -95,13 +95,13 @@ const emailTemplates: Record<string, EmailTemplate> = {
   <p style="color: #999; font-size: 12px; text-align: center;">© {{year}} Better Auth. All rights reserved.</p>
 </body>
 </html>`,
-    fields: ['user.name', 'user.email', 'url', 'token', 'expiresIn'],
-    category: 'authentication',
+    fields: ["user.name", "user.email", "url", "token", "expiresIn"],
+    category: "authentication",
   },
-  'magic-link': {
-    id: 'magic-link',
-    name: 'Magic Link',
-    subject: 'Sign in to your account',
+  "magic-link": {
+    id: "magic-link",
+    name: "Magic Link",
+    subject: "Sign in to your account",
     html: `<!DOCTYPE html>
 <html>
 <head>
@@ -136,12 +136,12 @@ const emailTemplates: Record<string, EmailTemplate> = {
   <p style="color: #999; font-size: 12px; text-align: center;">© {{year}} Better Auth. All rights reserved.</p>
 </body>
 </html>`,
-    fields: ['user.email', 'url', 'token', 'expiresIn'],
-    category: 'authentication',
+    fields: ["user.email", "url", "token", "expiresIn"],
+    category: "authentication",
   },
-  'org-invitation': {
-    id: 'org-invitation',
-    name: 'Organization Invitation',
+  "org-invitation": {
+    id: "org-invitation",
+    name: "Organization Invitation",
     subject: "You've been invited to {{organization.name}}",
     html: `<!DOCTYPE html>
 <html>
@@ -176,22 +176,22 @@ const emailTemplates: Record<string, EmailTemplate> = {
 </body>
 </html>`,
     fields: [
-      'invitation.url',
-      'invitation.expiresAt',
-      'invitation.email',
-      'invitation.role',
-      'inviter.user.name',
-      'inviter.user.email',
-      'organization.name',
-      'organization.slug',
-      'expiresIn',
+      "invitation.url",
+      "invitation.expiresAt",
+      "invitation.email",
+      "invitation.role",
+      "inviter.user.name",
+      "inviter.user.email",
+      "organization.name",
+      "organization.slug",
+      "expiresIn",
     ],
-    category: 'organization',
+    category: "organization",
   },
-  'email-otp': {
-    id: 'email-otp',
-    name: 'Email OTP',
-    subject: 'Your Verification Code',
+  "email-otp": {
+    id: "email-otp",
+    name: "Email OTP",
+    subject: "Your Verification Code",
     html: `<!DOCTYPE html>
 <html>
 <head>
@@ -231,44 +231,44 @@ const emailTemplates: Record<string, EmailTemplate> = {
   <p style="color: #999; font-size: 12px; text-align: center;">© {{year}} Better Auth. All rights reserved.</p>
 </body>
 </html>`,
-    fields: ['email', 'otp', 'type', 'expiresIn'],
-    category: 'authentication',
+    fields: ["email", "otp", "type", "expiresIn"],
+    category: "authentication",
   },
 };
 
 export default function EmailEditor() {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [emailHtml, setEmailHtml] = useState('');
-  const [emailSubject, setEmailSubject] = useState('');
+  const [emailHtml, setEmailHtml] = useState("");
+  const [emailSubject, setEmailSubject] = useState("");
   const [showCodeModal, setShowCodeModal] = useState(false);
   const [activeCategory, setActiveCategory] = useState<
-    'all' | 'authentication' | 'organization' | 'notification'
-  >('all');
+    "all" | "authentication" | "organization" | "notification"
+  >("all");
   const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
   const [showFieldSimulator, setShowFieldSimulator] = useState(false);
-  const [renderedHtml, setRenderedHtml] = useState('');
+  const [renderedHtml, setRenderedHtml] = useState("");
   const [isApplying, setIsApplying] = useState(false);
   const [showResendModal, setShowResendModal] = useState(false);
   const [commandCopied, setCommandCopied] = useState(false);
   const [showTestEmailModal, setShowTestEmailModal] = useState(false);
-  const [testEmailAddress, setTestEmailAddress] = useState('');
+  const [testEmailAddress, setTestEmailAddress] = useState("");
   const [testFieldValues, setTestFieldValues] = useState<Record<string, string>>({});
   const [isSendingTestEmail, setIsSendingTestEmail] = useState(false);
   const [resendApiKeyStatus, setResendApiKeyStatus] = useState<
-    'checking' | 'found' | 'missing' | null
+    "checking" | "found" | "missing" | null
   >(null);
   const [verifiedSenders, setVerifiedSenders] = useState<string[]>([]);
-  const [fromEmail, setFromEmail] = useState('');
-  const [testSubject, setTestSubject] = useState('');
+  const [fromEmail, setFromEmail] = useState("");
+  const [testSubject, setTestSubject] = useState("");
 
   useEffect(() => {
     if (showCodeModal || showResendModal || showTestEmailModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showCodeModal, showResendModal, showTestEmailModal]);
 
@@ -278,35 +278,35 @@ export default function EmailEditor() {
       if (template) {
         const initialValues: Record<string, string> = {};
         template.fields.forEach((field) => {
-          initialValues[field] = fieldValues[field] || '';
+          initialValues[field] = fieldValues[field] || "";
         });
         setTestFieldValues(initialValues);
-        setTestSubject(emailSubject || template.subject || '');
+        setTestSubject(emailSubject || template.subject || "");
         checkResendApiKey();
       }
     }
   }, [showTestEmailModal, selectedTemplate, emailSubject]);
 
   const checkResendApiKey = async () => {
-    setResendApiKeyStatus('checking');
+    setResendApiKeyStatus("checking");
     try {
-      const response = await fetch('/api/tools/check-resend-api-key');
+      const response = await fetch("/api/tools/check-resend-api-key");
       const data = await response.json();
       if (data.hasApiKey) {
-        setResendApiKeyStatus('found');
+        setResendApiKeyStatus("found");
         if (data.verifiedSenders && data.verifiedSenders.length > 0) {
           setVerifiedSenders(data.verifiedSenders);
           setFromEmail(data.verifiedSenders[0]);
         }
       } else {
-        setResendApiKeyStatus('missing');
+        setResendApiKeyStatus("missing");
         setVerifiedSenders([]);
-        setFromEmail('');
+        setFromEmail("");
       }
     } catch (error) {
-      setResendApiKeyStatus('missing');
+      setResendApiKeyStatus("missing");
       setVerifiedSenders([]);
-      setFromEmail('');
+      setFromEmail("");
     }
   };
 
@@ -316,17 +316,17 @@ export default function EmailEditor() {
     setIsSendingTestEmail(true);
     try {
       const template = emailTemplates[selectedTemplate];
-      const baseHtml = emailHtml || template?.html || '';
-      const baseSubject = testSubject || template?.subject || 'Test Email';
+      const baseHtml = emailHtml || template?.html || "";
+      const baseSubject = testSubject || template?.subject || "Test Email";
 
       if (!fromEmail) {
-        toast.error('Please select or enter a verified sender email address');
+        toast.error("Please select or enter a verified sender email address");
         return;
       }
 
-      const response = await fetch('/api/tools/send-test-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/tools/send-test-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           templateId: selectedTemplate,
           to: testEmailAddress,
@@ -339,14 +339,14 @@ export default function EmailEditor() {
 
       const data = await response.json();
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Failed to send test email');
+        throw new Error(data.message || "Failed to send test email");
       }
-      toast.success('Test email sent successfully!');
+      toast.success("Test email sent successfully!");
       setShowTestEmailModal(false);
-      setTestEmailAddress('');
-      setTestSubject('');
+      setTestEmailAddress("");
+      setTestSubject("");
     } catch (err: any) {
-      toast.error(err?.message || 'Failed to send test email');
+      toast.error(err?.message || "Failed to send test email");
     } finally {
       setIsSendingTestEmail(false);
     }
@@ -363,22 +363,22 @@ export default function EmailEditor() {
       setRenderedHtml(template.html);
       const defaults: Record<string, string> = {};
       template.fields.forEach((field) => {
-        if (field.includes('user.name')) defaults[field] = 'John Doe';
-        else if (field.includes('user.email')) defaults[field] = 'john@example.com';
-        else if (field.includes('url')) defaults[field] = 'https://example.com/reset?token=abc123';
-        else if (field.includes('token')) defaults[field] = 'abc123xyz';
-        else if (field.includes('expiresIn')) defaults[field] = '24 hours';
-        else if (field.includes('app.name')) defaults[field] = 'My App';
-        else if (field.includes('org.name')) defaults[field] = 'Acme Corp';
-        else if (field.includes('org.slug')) defaults[field] = 'acme-corp';
-        else if (field.includes('inviter.name')) defaults[field] = 'Jane Smith';
-        else if (field.includes('inviter.email')) defaults[field] = 'jane@example.com';
-        else if (field.includes('role')) defaults[field] = 'member';
-        else if (field.includes('dashboardUrl')) defaults[field] = 'https://example.com/dashboard';
-        else if (field === 'email') defaults[field] = 'user@example.com';
-        else if (field === 'otp') defaults[field] = '123456';
-        else if (field === 'type') defaults[field] = 'sign-in';
-        else if (field.includes('expiresIn')) defaults[field] = '5 minutes';
+        if (field.includes("user.name")) defaults[field] = "John Doe";
+        else if (field.includes("user.email")) defaults[field] = "john@example.com";
+        else if (field.includes("url")) defaults[field] = "https://example.com/reset?token=abc123";
+        else if (field.includes("token")) defaults[field] = "abc123xyz";
+        else if (field.includes("expiresIn")) defaults[field] = "24 hours";
+        else if (field.includes("app.name")) defaults[field] = "My App";
+        else if (field.includes("org.name")) defaults[field] = "Acme Corp";
+        else if (field.includes("org.slug")) defaults[field] = "acme-corp";
+        else if (field.includes("inviter.name")) defaults[field] = "Jane Smith";
+        else if (field.includes("inviter.email")) defaults[field] = "jane@example.com";
+        else if (field.includes("role")) defaults[field] = "member";
+        else if (field.includes("dashboardUrl")) defaults[field] = "https://example.com/dashboard";
+        else if (field === "email") defaults[field] = "user@example.com";
+        else if (field === "otp") defaults[field] = "123456";
+        else if (field === "type") defaults[field] = "sign-in";
+        else if (field.includes("expiresIn")) defaults[field] = "5 minutes";
       });
       setFieldValues(defaults);
     }
@@ -398,22 +398,22 @@ export default function EmailEditor() {
 
   const confirmApplyToAuth = async (templateId: string) => {
     setShowResendModal(false);
-    const subjectToApply = emailSubject || emailTemplates[templateId]?.subject || 'Email subject';
-    const htmlToApply = renderedHtml || emailHtml || emailTemplates[templateId]?.html || '';
+    const subjectToApply = emailSubject || emailTemplates[templateId]?.subject || "Email subject";
+    const htmlToApply = renderedHtml || emailHtml || emailTemplates[templateId]?.html || "";
     setIsApplying(true);
     try {
-      const resp = await fetch('/api/tools/apply-email-template', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const resp = await fetch("/api/tools/apply-email-template", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ templateId, subject: subjectToApply, html: htmlToApply }),
       });
       const data = await resp.json();
       if (!resp.ok || !data.success) {
-        throw new Error(data.message || 'Failed to apply to auth.ts');
+        throw new Error(data.message || "Failed to apply to auth.ts");
       }
-      toast.success('Applied to auth.ts');
+      toast.success("Applied to auth.ts");
     } catch (err: any) {
-      toast.error(err?.message || 'Failed to apply to auth.ts');
+      toast.error(err?.message || "Failed to apply to auth.ts");
     } finally {
       setIsApplying(false);
     }
@@ -424,8 +424,8 @@ export default function EmailEditor() {
     Object.entries(fieldValues).forEach(([field, value]) => {
       const placeholder = `{{${field}}}`;
       simulatedHtml = simulatedHtml.replace(
-        new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
-        value
+        new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
+        value,
       );
     });
     return simulatedHtml;
@@ -440,20 +440,20 @@ export default function EmailEditor() {
 
   const generateCodeSnippet = (templateId: string) => {
     const template = emailTemplates[templateId];
-    if (!template) return '';
+    if (!template) return "";
 
     const currentHtml = emailHtml || template.html;
     const currentSubject = emailSubject || template.subject;
 
     const escapeForTemplate = (str: string) => {
-      return str.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\${/g, '\\${');
+      return str.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\${/g, "\\${");
     };
 
     const escapedHtml = escapeForTemplate(currentHtml);
     const escapedSubject = escapeForTemplate(currentSubject);
 
     const codeSnippets: Record<string, string> = {
-      'password-reset': `import { Resend } from 'resend';
+      "password-reset": `import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -481,7 +481,7 @@ export const auth = betterAuth({
     },
   },
 });`,
-      'email-verification': `import { Resend } from 'resend';
+      "email-verification": `import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -510,7 +510,7 @@ export const auth = betterAuth({
     },
   },
 });`,
-      'magic-link': `import { Resend } from 'resend';
+      "magic-link": `import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -536,7 +536,7 @@ export const auth = betterAuth({
     },
   },
 });`,
-      'org-invitation': `import { Resend } from 'resend';
+      "org-invitation": `import { Resend } from 'resend';
 import { organization } from 'better-auth/plugins';
 import type { User, Organization, Invitation, Member } from 'better-auth/types';
 
@@ -579,7 +579,7 @@ export const auth = betterAuth({
     }),
   ],
 });`,
-      'email-otp': `import { Resend } from 'resend';
+      "email-otp": `import { Resend } from 'resend';
 import { emailOTP } from 'better-auth/plugins';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -626,16 +626,16 @@ export const auth = betterAuth({
 });`,
     };
 
-    return codeSnippets[templateId] || '';
+    return codeSnippets[templateId] || "";
   };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success('Copied to clipboard');
+    toast.success("Copied to clipboard");
   };
 
   const filteredTemplates = Object.values(emailTemplates).filter(
-    (template) => activeCategory === 'all' || template.category === activeCategory
+    (template) => activeCategory === "all" || template.category === activeCategory,
   );
 
   return (
@@ -660,26 +660,26 @@ export const auth = betterAuth({
               Templates
             </h2>
             <div className="flex flex-wrap gap-2">
-              {(['all', 'authentication', 'organization', 'notification'] as const).map(
+              {(["all", "authentication", "organization", "notification"] as const).map(
                 (category) => (
                   <button
                     key={category}
                     onClick={() => setActiveCategory(category)}
                     className={`px-2 py-1 text-[10px] font-mono uppercase border border-dashed rounded-none transition-colors ${
                       activeCategory === category
-                        ? 'border-white/30 bg-white/5 text-white'
-                        : 'border-white/10 bg-black/40 text-gray-300 hover:border-white/20'
+                        ? "border-white/30 bg-white/5 text-white"
+                        : "border-white/10 bg-black/40 text-gray-300 hover:border-white/20"
                     }`}
                   >
                     {category}
                   </button>
-                )
+                ),
               )}
             </div>
           </div>
           <div
             className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-2"
-            style={{ overscrollBehavior: 'contain' }}
+            style={{ overscrollBehavior: "contain" }}
           >
             {filteredTemplates.map((template) => (
               <button
@@ -687,8 +687,8 @@ export const auth = betterAuth({
                 onClick={() => handleSelectTemplate(template.id)}
                 className={`w-full text-left p-3 border border-dashed rounded-none transition-colors ${
                   selectedTemplate === template.id
-                    ? 'border-white/30 bg-white/5 text-white'
-                    : 'border-white/15 bg-black/40 text-gray-300 hover:border-white/20 hover:bg-white/5'
+                    ? "border-white/30 bg-white/5 text-white"
+                    : "border-white/15 bg-black/40 text-gray-300 hover:border-white/20 hover:bg-white/5"
                 }`}
               >
                 <div className="text-sm uppercase font-mono">{template.name}</div>
@@ -761,7 +761,7 @@ export const auth = betterAuth({
                       onClick={() => setShowFieldSimulator(!showFieldSimulator)}
                       className="h-10 border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
                     >
-                      {showFieldSimulator ? 'Hide' : 'Show'} Fields
+                      {showFieldSimulator ? "Hide" : "Show"} Fields
                     </Button>
                   </div>
                 </div>
@@ -778,7 +778,7 @@ export const auth = betterAuth({
                             {field}
                           </Label>
                           <Input
-                            value={fieldValues[field] || ''}
+                            value={fieldValues[field] || ""}
                             onChange={(e) =>
                               setFieldValues((prev) => ({ ...prev, [field]: e.target.value }))
                             }
@@ -893,7 +893,7 @@ export const auth = betterAuth({
                 disabled={isApplying}
                 className="bg-white text-black hover:bg-white/90 rounded-none font-mono uppercase text-xs px-6 py-2"
               >
-                {isApplying ? 'Applying...' : 'Apply to auth config'}
+                {isApplying ? "Applying..." : "Apply to auth config"}
               </Button>
             </div>
           </div>
@@ -948,14 +948,14 @@ export const auth = betterAuth({
                   <div className="bg-black/80 border border-dashed border-white/20 p-2 pl-3 rounded-none font-mono text-sm relative group">
                     <div className="flex items-center justify-between gap-4">
                       <code className="text-gray-200">
-                        <span className="text-white">$</span>{' '}
-                        <span className="text-blue-600">pnpm</span>{' '}
-                        <span className="text-white">install</span>{' '}
+                        <span className="text-white">$</span>{" "}
+                        <span className="text-blue-600">pnpm</span>{" "}
+                        <span className="text-white">install</span>{" "}
                         <span className="text-white">resend</span>
                       </code>
                       <button
                         onClick={() => {
-                          navigator.clipboard.writeText('pnpm install resend');
+                          navigator.clipboard.writeText("pnpm install resend");
                           setCommandCopied(true);
                           setTimeout(() => setCommandCopied(false), 2000);
                         }}
@@ -991,7 +991,7 @@ export const auth = betterAuth({
                 disabled={isApplying}
                 className="bg-white text-black hover:bg-white/90 rounded-none font-mono uppercase text-xs px-6 py-2"
               >
-                {isApplying ? 'Applying...' : 'Continue'}
+                {isApplying ? "Applying..." : "Continue"}
               </Button>
             </div>
           </div>
@@ -1035,7 +1035,7 @@ export const auth = betterAuth({
 
             <div className="flex-1 overflow-auto p-8 bg-black">
               <div className="space-y-6">
-                {resendApiKeyStatus === 'checking' && (
+                {resendApiKeyStatus === "checking" && (
                   <div className="bg-black/90 flex border p-4 rounded-none border-dashed border-white/20">
                     <p className="text-white text-sm font-sans flex items-center gap-2 leading-relaxed">
                       <Loader className="w-4 h-4 animate-spin mr-1" /> Checking for
@@ -1044,7 +1044,7 @@ export const auth = betterAuth({
                   </div>
                 )}
 
-                {resendApiKeyStatus === 'missing' && (
+                {resendApiKeyStatus === "missing" && (
                   <div className="bg-red-900/20 border border-red-500/30 border-dashed p-4 rounded-none">
                     <p className="text-red-200 text-sm font-sans leading-relaxed mb-2">
                       <strong className="font-normal uppercase font-mono">
@@ -1052,20 +1052,20 @@ export const auth = betterAuth({
                       </strong>
                     </p>
                     <p className="text-red-200 text-sm font-sans leading-relaxed">
-                      Please add{' '}
+                      Please add{" "}
                       <code className="bg-black/50 px-1 py-0.5 rounded font-mono text-xs">
                         RESEND_API_KEY
-                      </code>{' '}
-                      to your{' '}
+                      </code>{" "}
+                      to your{" "}
                       <code className="bg-black/50 px-1 py-0.5 rounded font-mono text-xs">
                         .env
-                      </code>{' '}
+                      </code>{" "}
                       file.
                     </p>
                   </div>
                 )}
 
-                {resendApiKeyStatus === 'found' && (
+                {resendApiKeyStatus === "found" && (
                   <>
                     <div>
                       <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
@@ -1094,8 +1094,8 @@ export const auth = betterAuth({
                       )}
                       <p className="text-xs text-gray-500 mt-1 font-sans">
                         {verifiedSenders.length > 0
-                          ? 'Select a verified sender email from your Resend account'
-                          : 'Enter a verified sender email address from your Resend account'}
+                          ? "Select a verified sender email from your Resend account"
+                          : "Enter a verified sender email address from your Resend account"}
                       </p>
                     </div>
 
@@ -1144,7 +1144,7 @@ export const auth = betterAuth({
                                   {field}
                                 </Label>
                                 <Input
-                                  value={testFieldValues[field] || ''}
+                                  value={testFieldValues[field] || ""}
                                   onChange={(e) =>
                                     setTestFieldValues({
                                       ...testFieldValues,
@@ -1176,14 +1176,14 @@ export const auth = betterAuth({
                 onClick={handleSendTestEmail}
                 disabled={
                   isSendingTestEmail ||
-                  resendApiKeyStatus !== 'found' ||
+                  resendApiKeyStatus !== "found" ||
                   !testEmailAddress ||
                   !fromEmail ||
                   !testSubject
                 }
                 className="bg-white text-black hover:bg-white/90 rounded-none font-mono uppercase text-xs px-6 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSendingTestEmail ? 'Sending...' : 'Send Test Email'}
+                {isSendingTestEmail ? "Sending..." : "Send Test Email"}
               </Button>
             </div>
           </div>

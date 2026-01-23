@@ -1,11 +1,11 @@
-import { Building2, Loader, Plus, Search, Users } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { AnimatedNumber } from '../components/AnimatedNumber';
-import { Badge } from '../components/ui/badge';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
+import { Building2, Loader, Plus, Search, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { AnimatedNumber } from "../components/AnimatedNumber";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 
 interface Team {
   id: string;
@@ -34,8 +34,8 @@ export default function Teams() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [pluginStatus, setPluginStatus] = useState<PluginStatus | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [teamsPerPage] = useState(20);
 
@@ -53,16 +53,16 @@ export default function Teams() {
 
   const checkPluginStatus = async () => {
     try {
-      const response = await fetch('/api/plugins');
+      const response = await fetch("/api/plugins");
       const pluginLists: any = await response.json();
       const teamsEnabled = (pluginLists?.plugins as any).find(
-        (plugin: any) => plugin.id === 'teams'
+        (plugin: any) => plugin.id === "teams",
       );
       setPluginStatus({
         enabled: !!teamsEnabled,
         availablePlugins: (pluginLists?.plugins as any).map((plugin: any) => plugin.id),
         configPath: (pluginLists as any).configPath,
-        teamsPlugin: (pluginLists?.plugins as any).find((plugin: any) => plugin.id === 'teams'),
+        teamsPlugin: (pluginLists?.plugins as any).find((plugin: any) => plugin.id === "teams"),
       });
       if (teamsEnabled) {
         await fetchTeams();
@@ -70,10 +70,10 @@ export default function Teams() {
         setLoading(false);
       }
     } catch (error) {
-      console.error('Failed to check teams plugin status:', error);
+      console.error("Failed to check teams plugin status:", error);
       setPluginStatus({
         enabled: false,
-        error: 'Failed to check plugin status',
+        error: "Failed to check plugin status",
       });
       setLoading(false);
     }
@@ -81,15 +81,15 @@ export default function Teams() {
 
   const fetchTeams = async () => {
     try {
-      const response = await fetch('/api/teams');
+      const response = await fetch("/api/teams");
       const data = await response.json();
 
       if (data.success) {
         setTeams(data.teams || []);
       }
     } catch (error) {
-      console.error('Failed to fetch teams:', error);
-      toast.error('Failed to load teams');
+      console.error("Failed to fetch teams:", error);
+      toast.error("Failed to load teams");
     } finally {
       setLoading(false);
     }
@@ -105,8 +105,8 @@ export default function Teams() {
       team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       team.organization?.name.toLowerCase().includes(searchTerm.toLowerCase());
 
-    if (filter === 'all') return matchesSearch;
-    if (filter === 'recent') {
+    if (filter === "all") return matchesSearch;
+    if (filter === "recent") {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
       return matchesSearch && new Date(team.createdAt) > weekAgo;
@@ -163,16 +163,18 @@ export default function Teams() {
 
                 <div className="mt-4 bg-black/70 border border-dashed border-white/10 rounded-none p-3 overflow-x-auto">
                   <pre className="text-sm text-gray-300">
-                    <span className="text-blue-400">import</span> {`{ betterAuth }`}{' '}
-                    <span className="text-blue-400">from</span>{' '}
+                    <span className="text-blue-400">import</span> {`{ betterAuth }`}{" "}
+                    <span className="text-blue-400">from</span>{" "}
                     <span className="text-green-400">"better-auth"</span> <br />
-                    <span className="text-blue-400">import</span> {`{ organization }`}{' '}
-                    <span className="text-blue-400">from</span>{' '}
+                    <span className="text-blue-400">import</span> {`{ organization }`}{" "}
+                    <span className="text-blue-400">from</span>{" "}
                     <span className="text-green-400">"better-auth/plugins"</span> <br />
-                    <span className="text-blue-400">export const</span>{' '}
-                    <span className="text-yellow-300">auth</span> ={' '}
+                    <span className="text-blue-400">export const</span>{" "}
+                    <span className="text-yellow-300">auth</span> ={" "}
                     <span className="text-yellow-300">betterAuth</span>({`{`} <br />
-                    <span className="text-gray-500 pl-10">// ... your existing configuration</span>{' '}
+                    <span className="text-gray-500 pl-10">
+                      // ... your existing configuration
+                    </span>{" "}
                     <br />
                     <span className="text-red-300 pl-10">plugins</span>: [ <br />
                     <span className="text-yellow-300 pl-12">organization({})</span>
@@ -197,7 +199,7 @@ export default function Teams() {
               {pluginStatus?.availablePlugins && pluginStatus.availablePlugins.length > 0 && (
                 <div className="mb-4">
                   <p className="text-gray-400 text-sm">
-                    Currently enabled plugins: {pluginStatus.availablePlugins.join(', ')}
+                    Currently enabled plugins: {pluginStatus.availablePlugins.join(", ")}
                   </p>
                 </div>
               )}
@@ -210,7 +212,7 @@ export default function Teams() {
               </Button>
 
               <div className="mt-4 text-xs text-gray-500">
-                Need help? Check the{' '}
+                Need help? Check the{" "}
                 <a
                   href="https://better-auth.com/docs/plugins/organization"
                   target="_blank"
@@ -240,7 +242,7 @@ export default function Teams() {
                 className="text-white font-mono text-sm"
                 prefix={<span className="mr-1 text-gray-500">[</span>}
                 suffix={<span className="ml-1 text-gray-500">]</span>}
-                format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                format={{ notation: "standard", maximumFractionDigits: 0 }}
               />
             </sup>
           </h1>
@@ -248,14 +250,14 @@ export default function Teams() {
             <AnimatedNumber
               value={filteredTeams.length}
               className="text-white font-mono text-sm"
-              format={{ notation: 'standard', maximumFractionDigits: 0 }}
+              format={{ notation: "standard", maximumFractionDigits: 0 }}
             />
-            <span>team{filteredTeams.length !== 1 ? 's' : ''} found</span>
+            <span>team{filteredTeams.length !== 1 ? "s" : ""} found</span>
           </p>
         </div>
         <div className="flex items-center space-x-3">
           <Button
-            onClick={() => navigate('/teams/new')}
+            onClick={() => navigate("/teams/new")}
             className="bg-white text-black hover:bg-gray-200 border-dashed"
           >
             <Plus className="w-4 h-4 mr-2" />
@@ -278,25 +280,25 @@ export default function Teams() {
         </div>
         <div className="flex items-center space-x-2">
           <Button
-            variant={filter === 'all' ? 'default' : 'outline'}
+            variant={filter === "all" ? "default" : "outline"}
             size="sm"
-            onClick={() => setFilter('all')}
+            onClick={() => setFilter("all")}
             className={
-              filter === 'all'
-                ? 'bg-white text-black'
-                : 'border-dashed border-white/20 text-white hover:bg-white/10'
+              filter === "all"
+                ? "bg-white text-black"
+                : "border-dashed border-white/20 text-white hover:bg-white/10"
             }
           >
             All
           </Button>
           <Button
-            variant={filter === 'recent' ? 'default' : 'outline'}
+            variant={filter === "recent" ? "default" : "outline"}
             size="sm"
-            onClick={() => setFilter('recent')}
+            onClick={() => setFilter("recent")}
             className={
-              filter === 'recent'
-                ? 'bg-white text-black'
-                : 'border-dashed border-white/20 text-white hover:bg-white/10'
+              filter === "recent"
+                ? "bg-white text-black"
+                : "border-dashed border-white/20 text-white hover:bg-white/10"
             }
           >
             Recent
@@ -311,12 +313,12 @@ export default function Teams() {
           <h3 className="text-lg font-light text-white mb-2">No teams found</h3>
           <p className="text-gray-400 mb-6">
             {searchTerm
-              ? 'Try adjusting your search terms'
-              : 'Get started by creating your first team'}
+              ? "Try adjusting your search terms"
+              : "Get started by creating your first team"}
           </p>
           {!searchTerm && (
             <Button
-              onClick={() => navigate('/teams/new')}
+              onClick={() => navigate("/teams/new")}
               className="bg-white text-black hover:bg-gray-200 border-dashed"
             >
               <Plus className="w-4 h-4 mr-2" />

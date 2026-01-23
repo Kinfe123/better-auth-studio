@@ -1,11 +1,11 @@
-import type { StudioConfig } from '../types/handler.js';
+import type { StudioConfig } from "../types/handler.js";
 type ApiEvent = {
-    request: Request;
-    params: Record<string, string>;
-    locals: Record<string, unknown>;
-    env: Record<string, unknown>;
-    fetch: typeof fetch;
-    url: URL;
+  request: Request;
+  params: Record<string, string>;
+  locals: Record<string, unknown>;
+  env: Record<string, unknown>;
+  fetch: typeof fetch;
+  url: URL;
 };
 /**
  * SolidStart adapter for Better Auth Studio
@@ -25,6 +25,8 @@ type ApiEvent = {
  * export const PATCH = handler;
  * ```
  */
-export declare function betterAuthStudio(config: StudioConfig): (event: ApiEvent) => Promise<Response>;
+export declare function betterAuthStudio(
+  config: StudioConfig,
+): (event: ApiEvent) => Promise<Response>;
 export {};
 //# sourceMappingURL=solid-start.d.ts.map

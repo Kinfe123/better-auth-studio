@@ -1,5 +1,5 @@
-import { betterAuthStudio } from 'better-auth-studio/svelte-kit';
-import studioConfig from '../../../../../studio.config.js';
+import { betterAuthStudio } from "better-auth-studio/svelte-kit";
+import studioConfig from "../../../../../studio.config.js";
 
 const handler = betterAuthStudio(studioConfig);
 
@@ -22,4 +22,3 @@ export async function DELETE(event) {
 export async function PATCH(event) {
   return handler(event);
 }
-

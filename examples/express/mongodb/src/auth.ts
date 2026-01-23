@@ -13,18 +13,18 @@ export const auth = betterAuth({
     github: {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-      redirectURI: `${baseURL}/api/auth/callback/github`
+      redirectURI: `${baseURL}/api/auth/callback/github`,
     },
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      redirectURI: `${baseURL}/api/auth/callback/google`
+      redirectURI: `${baseURL}/api/auth/callback/google`,
     },
     discord: {
       clientId: process.env.DISCORD_CLIENT_ID!,
       clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-      redirectURI: `${baseURL}/api/auth/callback/discord`
-    }
+      redirectURI: `${baseURL}/api/auth/callback/discord`,
+    },
   },
   emailAndPassword: {
     enabled: true,
@@ -44,7 +44,7 @@ export const auth = betterAuth({
         enabled: true,
       },
     }),
-    admin()
+    admin(),
   ],
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
@@ -65,4 +65,3 @@ export const auth = betterAuth({
   },
   trustedOrigins: ["http://localhost:3002", "http://localhost:3000"],
 });
-

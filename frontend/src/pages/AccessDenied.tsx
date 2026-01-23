@@ -1,16 +1,16 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export default function AccessDeniedPage() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      const basePath = (window as any).__STUDIO_CONFIG__?.basePath || '';
-      const studioAuthPath = basePath ? `${basePath}/auth` : '/api/auth';
-      await fetch(`${studioAuthPath}/logout`, { credentials: 'include' });
-      navigate('/login');
+      const basePath = (window as any).__STUDIO_CONFIG__?.basePath || "";
+      const studioAuthPath = basePath ? `${basePath}/auth` : "/api/auth";
+      await fetch(`${studioAuthPath}/logout`, { credentials: "include" });
+      navigate("/login");
     } catch {
-      navigate('/login');
+      navigate("/login");
     }
   };
 

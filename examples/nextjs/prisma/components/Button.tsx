@@ -3,12 +3,12 @@ export const Button = () => {
 };
 
 export const buttonConfig = {
-  size: 'large',
-  color: 'blue',
-  variant: 'primary',
+  size: "large",
+  color: "blue",
+  variant: "primary",
 };
 
 export const apiConfig = {
-  basePath: '/api/auth',
+  basePath: "/api/auth",
   timeout: 5000,
 };

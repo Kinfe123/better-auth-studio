@@ -1,5 +1,5 @@
-import React from 'react';
-import { SVGProps } from 'react';
+import React from "react";
+import { SVGProps } from "react";
 
 interface IconProps {
   className?: string;
@@ -21,7 +21,10 @@ export const MailIcon = ({ className = "w-4 h-4 mr-2 text-white/70" }: IconProps
 
 export const DatabaseIcon = ({ className = "w-4 h-4 mr-2 text-white/70" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M6 2h12v2h2v2h-2v2h2v2h-2v2h2v2h-2v2h2v2h-2v2H6v-2H4v-2h2v-2H4v-2h2v-2H4V8h2V6H4V4h2V2zm2 2v2h8V4H8zm8 4H8v2h8V8zm-8 4v2h8v-2H8zm0 4v2h8v-2H8z" fill="currentColor" />
+    <path
+      d="M6 2h12v2h2v2h-2v2h2v2h-2v2h2v2h-2v2h2v2h-2v2H6v-2H4v-2h2v-2H4v-2h2v-2H4V8h2V6H4V4h2V2zm2 2v2h8V4H8zm8 4H8v2h8V8zm-8 4v2h8v-2H8zm0 4v2h8v-2H8z"
+      fill="currentColor"
+    />
   </svg>
 );
 
@@ -114,10 +117,22 @@ export const DrizzleIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) =>
 );
 
 export const ClickHouseIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
-  <svg fill='currentColor' className={className} width="16px" height="16px" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="Clickhouse--Streamline-Simple-Icons">
-    <desc>
-    </desc>
-    <path d="M21.333 10H24v4h-2.667ZM16 1.335h2.667v21.33H16Zm-5.333 0h2.666v21.33h-2.666ZM0 22.665V1.335h2.667v21.33zm5.333 -21.33H8v21.33H5.333Z" fill="currentColor" stroke-width="1"></path>
+  <svg
+    fill="currentColor"
+    className={className}
+    width="16px"
+    height="16px"
+    role="img"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    id="Clickhouse--Streamline-Simple-Icons"
+  >
+    <desc></desc>
+    <path
+      d="M21.333 10H24v4h-2.667ZM16 1.335h2.667v21.33H16Zm-5.333 0h2.666v21.33h-2.666ZM0 22.665V1.335h2.667v21.33zm5.333 -21.33H8v21.33H5.333Z"
+      fill="currentColor"
+      stroke-width="1"
+    ></path>
   </svg>
 );
 
@@ -136,7 +151,10 @@ export const MySQLIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
 
 export const ShieldIcon = ({ className = "w-4 h-4 mr-2 text-white/70" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M12 2l-8 3v7c0 5 3.5 9.2 8 10 4.5-.8 8-5 8-10V5l-8-3zm0 2.2L18 6v5c0 3.8-2.6 7.2-6 7.9-3.4-.7-6-4.1-6-7.9V6l6-1.8z" fill="currentColor" />
+    <path
+      d="M12 2l-8 3v7c0 5 3.5 9.2 8 10 4.5-.8 8-5 8-10V5l-8-3zm0 2.2L18 6v5c0 3.8-2.6 7.2-6 7.9-3.4-.7-6-4.1-6-7.9V6l6-1.8z"
+      fill="currentColor"
+    />
   </svg>
 );
 
@@ -148,117 +166,178 @@ export const AnalyticsIcon = ({ className = "w-4 h-4 mr-2 text-white/70" }: Icon
 
 export const CommandIcon = ({ className = "w-4 h-4 mr-2 text-white/70" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M6 2h4v4H6V2zm0 6h4v4H6V8zm0 6h4v4H6v-4zm0 6h4v4H6v-4zm8-18h4v4h-4V2zm0 6h4v4h-4V8zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4z" fill="currentColor" />
+    <path
+      d="M6 2h4v4H6V2zm0 6h4v4H6V8zm0 6h4v4H6v-4zm0 6h4v4H6v-4zm8-18h4v4h-4V2zm0 6h4v4h-4V8zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const LayoutIcon = ({ className = "w-4 h-4 mr-2 text-white/70" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h10v4H7V7zm0 6h4v4H7v-4zm6 0h4v4h-4v-4z" fill="currentColor" />
+    <path
+      d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h10v4H7V7zm0 6h4v4H7v-4zm6 0h4v4h-4v-4z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const SearchIcon = ({ className = "w-4 h-4 mr-2 text-white/70" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M10 2a8 8 0 015.3 14l5.4 5.3-1.4 1.4-5.3-5.4A8 8 0 1110 2zm0 2a6 6 0 100 12 6 6 0 000-12z" fill="currentColor" />
+    <path
+      d="M10 2a8 8 0 015.3 14l5.4 5.3-1.4 1.4-5.3-5.4A8 8 0 1110 2zm0 2a6 6 0 100 12 6 6 0 000-12z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const GlobeIcon = ({ className = "w-4 h-4 mr-2 text-white/70" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 2c1.8 0 3.4.6 4.7 1.6l-1.4 1.4c-1-.6-2.1-1-3.3-1s-2.3.4-3.3 1L7.3 5.6C8.6 4.6 10.2 4 12 4zm0 16c-1.8 0-3.4-.6-4.7-1.6l1.4-1.4c1 .6 2.1 1 3.3 1s2.3-.4 3.3-1l1.4 1.4c-1.3 1-2.9 1.6-4.7 1.6z" fill="currentColor" />
+    <path
+      d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 2c1.8 0 3.4.6 4.7 1.6l-1.4 1.4c-1-.6-2.1-1-3.3-1s-2.3.4-3.3 1L7.3 5.6C8.6 4.6 10.2 4 12 4zm0 16c-1.8 0-3.4-.6-4.7-1.6l1.4-1.4c1 .6 2.1 1 3.3 1s2.3-.4 3.3-1l1.4 1.4c-1.3 1-2.9 1.6-4.7 1.6z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const SettingsIcon = ({ className = "w-4 h-4 mr-2 text-white/70" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
     <path d="M12 8a4 4 0 100 8 4 4 0 000-8zm0 2a2 2 0 110 4 2 2 0 010-4z" fill="currentColor" />
-    <path d="M11 2h2v3h-2V2zm0 17h2v3h-2v-3zM3 11h3v2H3v-2zm15 0h3v2h-3v-2zM5.6 5.6l2.1 2.1-1.4 1.4-2.1-2.1 1.4-1.4zm11.3 9.7l2.1 2.1-1.4 1.4-2.1-2.1 1.4-1.4zM7.7 16.9l-2.1 2.1-1.4-1.4 2.1-2.1 1.4 1.4zM17.6 7.1l-2.1 2.1-1.4-1.4 2.1-2.1 1.4 1.4z" fill="currentColor" />
+    <path
+      d="M11 2h2v3h-2V2zm0 17h2v3h-2v-3zM3 11h3v2H3v-2zm15 0h3v2h-3v-2zM5.6 5.6l2.1 2.1-1.4 1.4-2.1-2.1 1.4-1.4zm11.3 9.7l2.1 2.1-1.4 1.4-2.1-2.1 1.4-1.4zM7.7 16.9l-2.1 2.1-1.4-1.4 2.1-2.1 1.4 1.4zM17.6 7.1l-2.1 2.1-1.4-1.4 2.1-2.1 1.4 1.4z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const TrendingIcon = ({ className = "w-4 h-4 mr-2 text-white/70" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M16 6h6v6h-2V9.4l-4.3 4.3-4-4-5.4 5.4-1.4-1.4 6.7-6.7 4 4L19.6 8H16V6z" fill="currentColor" />
+    <path
+      d="M16 6h6v6h-2V9.4l-4.3 4.3-4-4-5.4 5.4-1.4-1.4 6.7-6.7 4 4L19.6 8H16V6z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const RocketIcon = ({ className = "w-4 h-4 mr-2 text-white/70" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M16 5v2h-2V5h2zm-4 4V7h2v2h-2zm-2 2V9h2v2h-2zm0 2H8v-2h2v2zm2 2v-2h-2v2h2zm0 0h2v2h-2v-2zm4 4v-2h-2v2h2z" fill="currentColor" />
+    <path
+      d="M16 5v2h-2V5h2zm-4 4V7h2v2h-2zm-2 2V9h2v2h-2zm0 2H8v-2h2v2zm2 2v-2h-2v2h2zm0 0h2v2h-2v-2zm4 4v-2h-2v2h2z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const ArrowRightIcon = ({ className = "w-4 h-4 mr-3 text-white/50" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M8 4h2v2H8V4zm2 2h2v2h-2V6zm2 2h2v2h-2V8zm2 2h2v2h-2v-2zm0 2v2h-2v-2h2zm-2 2v2h-2v-2h2zm-2 2v2H8v-2h2zm-2-2H6v-2h2v2zm2-2H8v-2h2v2zm2-2h-2V8h2v2z" fill="currentColor" />
+    <path
+      d="M8 4h2v2H8V4zm2 2h2v2h-2V6zm2 2h2v2h-2V8zm2 2h2v2h-2v-2zm0 2v2h-2v-2h2zm-2 2v2h-2v-2h2zm-2 2v2H8v-2h2zm-2-2H6v-2h2v2zm2-2H8v-2h2v2zm2-2h-2V8h2v2z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const ChevronIcon = ({ className = "w-3 h-3 mr-2 text-white/50" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M8 5v2h2V5H8zm4 4V7h-2v2h2zm2 2V9h-2v2h2zm0 2h2v-2h-2v2zm-2 2v-2h2v2h-2zm0 0h-2v2h2v-2zm-4 4v-2h2v2H8z" fill="currentColor" />
+    <path
+      d="M8 5v2h2V5H8zm4 4V7h-2v2h2zm2 2V9h-2v2h2zm0 2h2v-2h-2v2zm-2 2v-2h2v2h-2zm0 0h-2v2h2v-2zm-4 4v-2h2v2H8z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 // Installation Page Icons
 export const HostedIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 4c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm0 6c1.38 0 2.5-1.12 2.5-2.5S13.38 11.5 12 11.5 9.5 12.62 9.5 14 10.62 16.5 12 16.5z" fill="currentColor" />
+    <path
+      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 4c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm0 6c1.38 0 2.5-1.12 2.5-2.5S13.38 11.5 12 11.5 9.5 12.62 9.5 14 10.62 16.5 12 16.5z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const BetaIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M12 2h2v2h-2V2zm-2 4h6v2h-2v6h-2V8H8V6zm-4 8h12v2H4v-2zm0 4h12v2H4v-2z" fill="currentColor" />
+    <path
+      d="M12 2h2v2h-2V2zm-2 4h6v2h-2v6h-2V8H8V6zm-4 8h12v2H4v-2zm0 4h12v2H4v-2z"
+      fill="currentColor"
+    />
   </svg>
 );
 
-export const DownloadIcon = ({ className = "w-3 rotate-180 h-3 inline-flex hover:text-white transition-colors" }: IconProps) => (
+export const DownloadIcon = ({
+  className = "w-3 rotate-180 h-3 inline-flex hover:text-white transition-colors",
+}: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M16 5v2h-2V5h2zm-4 4V7h2v2h-2zm-2 2V9h2v2h-2zm0 2H8v-2h2v2zm2 2v-2h-2v2h2zm0 0h2v2h-2v-2zm4 4v-2h-2v2h2z" fill="currentColor" />
+    <path
+      d="M16 5v2h-2V5h2zm-4 4V7h2v2h-2zm-2 2V9h2v2h-2zm0 2H8v-2h2v2zm2 2v-2h-2v2h2zm0 0h2v2h-2v-2zm4 4v-2h-2v2h2z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const InstallIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M11 4h2v12h2v2h-2v2h-2v-2H9v-2h2V4zM7 14v2h2v-2H7zm0 0v-2H5v2h2zm10 0v2h-2v-2h2zm0 0v-2h2v2h-2z" fill="currentColor" />
+    <path
+      d="M11 4h2v12h2v2h-2v2h-2v-2H9v-2h2V4zM7 14v2h2v-2H7zm0 0v-2H5v2h2zm10 0v2h-2v-2h2zm0 0v-2h2v2h-2z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const BasicUsageIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M4 2H2v8h2V2zm16 0h2v8h-2V2zm-6 6h-4V2H4v2h4v4H4v2h4v4H4v2h4v4H4v2h6v-6h4v6h2v-6h4v-2h-4v-4h4V8h-4V2h-2v6zm-4 6v-4h4v4h-4zM20 2h-4v2h4V2zM2 14h2v8H2v-8zm14 6h4v2h-4v-2zm6-6h-2v8h2v-8z" fill="currentColor" />
+    <path
+      d="M4 2H2v8h2V2zm16 0h2v8h-2V2zm-6 6h-4V2H4v2h4v4H4v2h4v4H4v2h4v4H4v2h6v-6h4v6h2v-6h4v-2h-4v-4h4V8h-4V2h-2v6zm-4 6v-4h4v4h-4zM20 2h-4v2h4V2zM2 14h2v8H2v-8zm14 6h4v2h-4v-2zm6-6h-2v8h2v-8z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const PrerequisitesIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M18 6h2v2h-2V6zm-2 4V8h2v2h-2zm-2 2v-2h2v2h-2zm-2 2h2v-2h-2v2zm-2 2h2v-2h-2v2zm-2 0v2h2v-2H8zm-2-2h2v2H6v-2zm0 0H4v-2h2v2z" fill="currentColor" />
+    <path
+      d="M18 6h2v2h-2V6zm-2 4V8h2v2h-2zm-2 2v-2h2v2h-2zm-2 2h2v-2h-2v2zm-2 2h2v-2h-2v2zm-2 0v2h2v-2H8zm-2-2h2v2H6v-2zm0 0H4v-2h2v2z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const DataLayersIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M2 4h20v4H2V4zm18 2v2H4V6h16zm0 6H2v4h18v-4zm-2 2v2H4v-2h14zM2 16h20v4H2v-4zm18 2v2H4v-2h16z" fill="currentColor" />
+    <path
+      d="M2 4h20v4H2V4zm18 2v2H4V6h16zm0 6H2v4h18v-4zm-2 2v2H4v-2h14zM2 16h20v4H2v-4zm18 2v2H4v-2h16z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const DocumentIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M3 3h14v2h2v2h2v14H3V3zm2 2v14h14V7h-2V5H5zm2 2h8v2H7V7zm0 4h10v2H7v-2zm0 4h10v2H7v-2z" fill="currentColor" />
+    <path
+      d="M3 3h14v2h2v2h2v14H3V3zm2 2v14h14V7h-2V5H5zm2 2h8v2H7V7zm0 4h10v2H7v-2zm0 4h10v2H7v-2z"
+      fill="currentColor"
+    />
   </svg>
 );
 
-export const CalendarIcon = ({ className = "w-3 h-3 inline-flex mr-1 text-white/70" }: IconProps) => (
+export const CalendarIcon = ({
+  className = "w-3 h-3 inline-flex mr-1 text-white/70",
+}: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M19 3h-1V1h-2v2H8V1H6v2H5C3.89 3 3 3.89 3 5v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.11-.9-2-2-2zm0 16H5V8h14v11z" fill="currentColor" />
+    <path
+      d="M19 3h-1V1h-2v2H8V1H6v2H5C3.89 3 3 3.89 3 5v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.11-.9-2-2-2zm0 16H5V8h14v11z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const ServerIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M2 3h20v6H2V3zm18 2H4v2h16V5zM2 11h20v6H2v-6zm18 2H4v2h16v-2zM2 19h20v2H2v-2z" fill="currentColor" />
+    <path
+      d="M2 3h20v6H2V3zm18 2H4v2h16V5zM2 11h20v6H2v-6zm18 2H4v2h16v-2zM2 19h20v2H2v-2z"
+      fill="currentColor"
+    />
   </svg>
 );
 
@@ -286,14 +365,7 @@ export const ExpressIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) =>
     viewBox="0 0 256 256"
   >
     <g>
-      <rect
-        width="256"
-        height="256"
-        fill="currentColor"
-        rx="60"
-        className="fill-foreground"
-
-      ></rect>
+      <rect width="256" height="256" fill="currentColor" rx="60" className="fill-foreground"></rect>
       <path
         className="fill-background"
         d="M228 182.937a12.73 12.73 0 0 1-15.791-6.005c-9.063-13.567-19.071-26.522-28.69-39.755l-4.171-5.56c-11.454 15.346-22.908 30.08-33.361 45.371a12.23 12.23 0 0 1-15.012 5.894l42.98-57.659l-39.978-52.1a13.29 13.29 0 0 1 15.847 5.56c9.285 13.568 19.572 26.523 29.802 40.257c10.287-13.623 20.462-26.634 29.97-40.09a11.95 11.95 0 0 1 14.901-5.56l-15.513 20.573c-6.95 9.174-13.789 18.404-21.017 27.356a5.56 5.56 0 0 0 0 8.285c13.289 17.626 26.466 35.307 40.033 53.433M28 124.5c1.168-5.56 1.89-11.621 3.503-17.292c9.619-34.195 48.818-48.43 75.785-27.245c15.791 12.4 19.739 29.97 18.961 49.764H37.286c-1.446 35.363 24.075 56.714 56.713 45.816a33.86 33.86 0 0 0 21.518-23.965c1.724-5.56 4.504-6.505 9.786-4.893a45.15 45.15 0 0 1-21.573 32.972a52.26 52.26 0 0 1-60.884-7.784a54.77 54.77 0 0 1-13.678-32.138c0-1.89-.723-3.781-1.112-5.56A861 861 0 0 1 28 124.5m9.397-2.391h80.456c-.501-25.632-16.681-43.814-38.254-43.98c-24.02-.334-41.201 17.458-42.258 43.869z"
@@ -311,7 +383,7 @@ export const HonoIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
     viewBox="0 0 256 330"
   >
     <path
-      fill='currentColor'
+      fill="currentColor"
       className="fill-foreground"
       d="M134.129.029q1.315-.17 2.319.662a1256 1256 0 0 1 69.573 93.427q24.141 36.346 41.082 76.862q27.055 72.162-28.16 125.564q-48.313 40.83-111.318 31.805q-75.312-15.355-102.373-87.133Q-1.796 217.85.614 193.51q4.014-41.896 19.878-80.838q6.61-15.888 17.228-29.154a382 382 0 0 1 16.565 21.203q3.66 3.825 7.62 7.289Q92.138 52.013 134.13.029"
       opacity=".993"
@@ -373,12 +445,7 @@ export const ElysiaIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => 
 );
 
 export const SvelteKitIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="1.2em"
-    height="1.2em"
-    viewBox="0 0 426 512"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 426 512">
     <path
       fill="currentColor"
       d="M403.508 229.23C491.235 87.7 315.378-58.105 190.392 23.555L71.528 99.337c-57.559 37.487-82.55 109.513-47.45 183.53c-87.761 133.132 83.005 289.03 213.116 205.762l118.864-75.782c64.673-42.583 79.512-116.018 47.45-183.616m-297.592-80.886l118.69-75.739c77.973-46.679 167.756 34.942 135.388 110.992c-19.225-15.274-40.65-24.665-56.923-28.894c6.186-24.57-22.335-42.796-42.174-30.106l-118.95 75.48c-29.411 20.328 1.946 62.138 31.014 44.596l45.33-28.895c101.725-57.403 198 80.425 103.38 147.975l-118.692 75.739C131.455 485.225 34.11 411.96 67.592 328.5c17.786 13.463 36.677 23.363 56.923 28.894c-4.47 28.222 24.006 41.943 42.476 30.365L285.64 312.02c29.28-21.955-2.149-61.692-30.97-44.595l-45.504 28.894c-100.56 58.77-199.076-80.42-103.25-147.975"
@@ -387,12 +454,7 @@ export const SvelteKitIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) 
 );
 
 export const SolidStartIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="1.2em"
-    height="1.2em"
-    viewBox="0 0 128 128"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 128 128">
     <path
       fill="currentColor"
       d="M61.832 4.744c-3.205.058-6.37.395-9.45 1.07l-2.402.803c-4.806 1.603-8.813 4.005-11.216 7.21l-1.602 2.404l-12.017 20.828l.166.031c-4.785 5.823-5.007 14.07-.166 21.6c1.804 2.345 4.073 4.431 6.634 6.234l-15.445 4.982L.311 97.946s42.46 32.044 75.306 24.033l2.403-.801c5.322-1.565 9.292-4.48 11.683-8.068l.334.056l16.022-28.84c3.204-5.608 2.404-12.016-1.602-18.425a36 36 0 0 0-7.059-6.643l15.872-5.375l14.42-24.033S92.817 4.19 61.831 4.744z"
@@ -406,7 +468,7 @@ export const AstroIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
     width="1.2em"
     height="1.2em"
     viewBox="0 0 128 128"
-    fill='currentColor'
+    fill="currentColor"
   >
     <path
       className="fill-foreground"
@@ -442,12 +504,7 @@ export const RemixIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
 );
 
 export const NuxtIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="1.2em"
-    height="1.2em"
-    viewBox="0 0 24 24"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24">
     <path
       fill="currentColor"
       d="M13.2 18.666h7.4c.236 0 .462-.083.667-.2c.204-.117.415-.264.533-.466c.118-.203.2-.433.2-.667s-.082-.464-.2-.667l-5-8.6a1.2 1.2 0 0 0-.467-.466a1.6 1.6 0 0 0-.733-.2c-.236 0-.462.083-.667.2a1.2 1.2 0 0 0-.466.466l-1.267 2.2L10.667 6c-.118-.203-.262-.417-.467-.534s-.43-.133-.667-.133c-.236 0-.462.016-.666.133s-.416.33-.534.534l-6.2 10.666c-.118.203-.133.433-.133.667s.015.464.133.667c.118.202.33.35.534.466s.43.2.666.2H8c1.85 0 3.195-.83 4.133-2.4l2.267-3.933l1.2-2.067l3.667 6.267H14.4zm-5.267-2.133H4.667l4.866-8.4l2.467 4.2l-1.634 2.848c-.623 1.02-1.333 1.352-2.433 1.352"
@@ -460,7 +517,7 @@ export const TanStackStartIcon = ({ className = "w-3 h-3 inline-flex" }: IconPro
     xmlns="http://www.w3.org/2000/svg"
     width="1.2em"
     height="1.2em"
-    fill='currentColor'
+    fill="currentColor"
     viewBox="0 0 100 100"
   >
     <mask
@@ -521,13 +578,7 @@ export const TanStackStartIcon = ({ className = "w-3 h-3 inline-flex" }: IconPro
         className="fill-muted-foreground stroke-muted-foreground"
         strokeWidth="4"
       />
-      <ellipse
-        cx="49.5"
-        cy="119"
-        rx="41.5"
-        ry="51"
-        className="fill-muted-foreground"
-      />
+      <ellipse cx="49.5" cy="119" rx="41.5" ry="51" className="fill-muted-foreground" />
       <path
         d="M34 38v-9c1 1 2 4 5 6l7 30-8 2c-1-23-2-23-4-29Z"
         className="fill-foreground stroke-muted-foreground"
@@ -554,10 +605,7 @@ export const TanStackStartIcon = ({ className = "w-3 h-3 inline-flex" }: IconPro
         d="M44 18c-10 1-11 7-10 11l4-3c5-4 6-7 6-8Z"
         className="fill-foreground stroke-muted-foreground"
       />
-      <path
-        d="M34 29h7l18 4c-3-6-9-14-21-7l-4 3Z"
-        className="fill-foreground"
-      />
+      <path d="M34 29h7l18 4c-3-6-9-14-21-7l-4 3Z" className="fill-foreground" />
       <path
         d="M34 29c4-2 12-5 18-1m-18 1h7l18 4c-3-6-9-14-21-7l-4 3Z"
         className="stroke-muted-foreground"
@@ -570,10 +618,7 @@ export const TanStackStartIcon = ({ className = "w-3 h-3 inline-flex" }: IconPro
         d="M34 29c-5 1-7 5-9 9l-9 10c0-17 7-18 13-19h5Zm0 0c-5 2-11 3-14 10"
         className="stroke-muted-foreground"
       />
-      <path
-        d="M41 29c9 2 13 10 15 14a25 25 0 0 1-22-14h7Z"
-        className="fill-foreground"
-      />
+      <path d="M41 29c9 2 13 10 15 14a25 25 0 0 1-22-14h7Z" className="fill-foreground" />
       <path
         d="M34 29c3 1 11 5 15 9m-15-9h7c9 2 13 10 15 14a25 25 0 0 1-22-14Z"
         className="stroke-muted-foreground"
@@ -591,13 +636,18 @@ export const TanStackStartIcon = ({ className = "w-3 h-3 inline-flex" }: IconPro
 
 export const ConfigIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M3 3h18v2H3V3zm0 4h14v2H3V7zm0 4h18v2H3v-2zm0 4h14v2H3v-2zm0 4h18v2H3v-2z" fill="currentColor" />
+    <path
+      d="M3 3h18v2H3V3zm0 4h14v2H3V7zm0 4h18v2H3v-2zm0 4h14v2H3v-2zm0 4h18v2H3v-2z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const WarningIcon = ({ className = "w-3 h-3 inline-flex" }: IconProps) => (
   <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className}>
-    <path d="M12 2L1 21h22L12 2zm0 4l7.5 13h-15L12 6zm-1 5v4h2v-4h-2zm0 6v2h2v-2h-2z" fill="currentColor" />
+    <path
+      d="M12 2L1 21h22L12 2zm0 4l7.5 13h-15L12 6zm-1 5v4h2v-4h-2zm0 6v2h2v-2h-2z"
+      fill="currentColor"
+    />
   </svg>
 );
-

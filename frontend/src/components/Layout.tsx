@@ -11,15 +11,15 @@ import {
   User,
   Users,
   Wrench,
-} from 'lucide-react';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { assetPath } from '@/lib/utils';
-import { useCounts } from '../contexts/CountsContext';
-import { useWebSocket } from '../hooks/useWebSocket';
-import { buildApiUrl } from '../utils/api';
-import CommandPalette from './CommandPalette';
-import { LiveEventMarquee } from './LiveEventMarquee';
+} from "lucide-react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { assetPath } from "@/lib/utils";
+import { useCounts } from "../contexts/CountsContext";
+import { useWebSocket } from "../hooks/useWebSocket";
+import { buildApiUrl } from "../utils/api";
+import CommandPalette from "./CommandPalette";
+import { LiveEventMarquee } from "./LiveEventMarquee";
 
 interface UserProfile {
   id: string;
@@ -43,13 +43,13 @@ interface LayoutProps {
 }
 
 type WatchIndicatorStatus =
-  | 'connecting'
-  | 'watching'
-  | 'refreshing'
-  | 'up_to_date'
-  | 'error'
-  | 'unavailable'
-  | 'reconnecting';
+  | "connecting"
+  | "watching"
+  | "refreshing"
+  | "up_to_date"
+  | "error"
+  | "unavailable"
+  | "reconnecting";
 
 interface WatchIndicatorState {
   status: WatchIndicatorStatus;
@@ -62,57 +62,57 @@ const watchStatusMeta: Record<
   { label: string; textClass: string; dotClass: string; animate?: string }
 > = {
   connecting: {
-    label: 'Connecting',
-    textClass: 'text-amber-200 border-amber-400/40',
-    dotClass: 'bg-amber-300',
-    animate: 'animate-pulse',
+    label: "Connecting",
+    textClass: "text-amber-200 border-amber-400/40",
+    dotClass: "bg-amber-300",
+    animate: "animate-pulse",
   },
   watching: {
-    label: 'Watching',
-    textClass: 'text-emerald-200 border-emerald-400/40',
-    dotClass: 'bg-emerald-300',
+    label: "Watching",
+    textClass: "text-emerald-200 border-emerald-400/40",
+    dotClass: "bg-emerald-300",
   },
   refreshing: {
-    label: 'Refreshing',
-    textClass: 'text-amber-200 border-amber-400/40',
-    dotClass: 'bg-amber-300',
-    animate: 'animate-pulse',
+    label: "Refreshing",
+    textClass: "text-amber-200 border-amber-400/40",
+    dotClass: "bg-amber-300",
+    animate: "animate-pulse",
   },
   up_to_date: {
-    label: 'Up-to-date',
-    textClass: 'text-emerald-200 border-emerald-400/40',
-    dotClass: 'bg-emerald-300',
+    label: "Up-to-date",
+    textClass: "text-emerald-200 border-emerald-400/40",
+    dotClass: "bg-emerald-300",
   },
   error: {
-    label: 'Reload Failed',
-    textClass: 'text-red-200 border-red-500/50',
-    dotClass: 'bg-red-400',
-    animate: 'animate-pulse',
+    label: "Reload Failed",
+    textClass: "text-red-200 border-red-500/50",
+    dotClass: "bg-red-400",
+    animate: "animate-pulse",
   },
   unavailable: {
-    label: 'Watch Off',
-    textClass: 'text-gray-300 border-gray-500/40',
-    dotClass: 'bg-gray-400',
+    label: "Watch Off",
+    textClass: "text-gray-300 border-gray-500/40",
+    dotClass: "bg-gray-400",
   },
   reconnecting: {
-    label: 'Reconnecting',
-    textClass: 'text-amber-200 border-amber-400/40',
-    dotClass: 'bg-amber-300',
-    animate: 'animate-pulse',
+    label: "Reconnecting",
+    textClass: "text-amber-200 border-amber-400/40",
+    dotClass: "bg-amber-300",
+    animate: "animate-pulse",
   },
 };
 
 function normalizeStudioStatus(status?: string): WatchIndicatorStatus {
   switch (status) {
-    case 'refreshing':
-      return 'refreshing';
-    case 'error':
-      return 'error';
-    case 'up_to_date':
-    case 'watching':
-      return 'up_to_date';
+    case "refreshing":
+      return "refreshing";
+    case "error":
+      return "error";
+    case "up_to_date":
+    case "watching":
+      return "up_to_date";
     default:
-      return 'watching';
+      return "watching";
   }
 }
 
@@ -124,9 +124,9 @@ export default function Layout({ children }: LayoutProps) {
   const { counts, loading } = useCounts();
   const navigate = useNavigate();
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-  const [studioVersion, setStudioVersion] = useState('v1.0.0');
+  const [studioVersion, setStudioVersion] = useState("v1.0.0");
   const [watchState, setWatchState] = useState<WatchIndicatorState>({
-    status: 'connecting',
+    status: "connecting",
   });
   const [schemaCount, setSchemaCount] = useState<number | null>(null);
   const pendingRefreshRef = useRef(false);
@@ -155,7 +155,7 @@ export default function Layout({ children }: LayoutProps) {
       pendingRefreshRef.current = false;
       setWatchState((prev) => ({
         ...prev,
-        status: 'up_to_date',
+        status: "up_to_date",
         updatedAt: Date.now(),
       }));
     }, 4000);
@@ -163,14 +163,14 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         setIsCommandPaletteOpen(true);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   useEffect(() => {
@@ -178,8 +178,8 @@ export default function Layout({ children }: LayoutProps) {
 
     const fetchUserProfile = async () => {
       try {
-        const basePath = getStudioConfig().basePath || '';
-        const response = await fetch(`${basePath}/auth/session`, { credentials: 'include' });
+        const basePath = getStudioConfig().basePath || "";
+        const response = await fetch(`${basePath}/auth/session`, { credentials: "include" });
         const data = await response.json();
         if (data.authenticated && data.user) {
           setUserProfile(data.user);
@@ -200,40 +200,40 @@ export default function Layout({ children }: LayoutProps) {
     };
 
     if (isProfileOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isProfileOpen]);
 
   const handleLogout = async () => {
     try {
-      const basePath = getStudioConfig().basePath || '';
-      await fetch(`${basePath}/auth/logout`, { method: 'GET', credentials: 'include' });
-      navigate('/login');
+      const basePath = getStudioConfig().basePath || "";
+      await fetch(`${basePath}/auth/logout`, { method: "GET", credentials: "include" });
+      navigate("/login");
     } catch {
-      navigate('/login');
+      navigate("/login");
     }
   };
 
   const getInitials = (name?: string, email?: string): string => {
     if (name) {
       return name
-        .split(' ')
+        .split(" ")
         .map((n) => n[0])
-        .join('')
+        .join("")
         .toUpperCase()
         .slice(0, 2);
     }
     if (email) {
       return email[0].toUpperCase();
     }
-    return '?';
+    return "?";
   };
 
   useEffect(() => {
     const fetchVersion = async () => {
       try {
-        const response = await fetch('/api/config');
+        const response = await fetch("/api/config");
         const data = await response.json();
         if (data.studio?.version) {
           setStudioVersion(`v${data.studio.version}`);
@@ -243,7 +243,7 @@ export default function Layout({ children }: LayoutProps) {
 
     const fetchSchemaCount = async () => {
       try {
-        const response = await fetch('/api/database/schema');
+        const response = await fetch("/api/database/schema");
         const data = await response.json();
         if (data.success && data.schema && data.schema.tables) {
           setSchemaCount(data.schema.tables.length);
@@ -267,7 +267,7 @@ export default function Layout({ children }: LayoutProps) {
     clearRecoveryTimeout();
     setWatchState((prev) => ({
       ...prev,
-      status: 'refreshing',
+      status: "refreshing",
       updatedAt: Date.now(),
     }));
     window.location.reload();
@@ -275,9 +275,9 @@ export default function Layout({ children }: LayoutProps) {
 
   useWebSocket(
     (message) => {
-      if (message.type === 'studio_status') {
+      if (message.type === "studio_status") {
         const nextStatus = normalizeStudioStatus(message.status);
-        if (nextStatus === 'up_to_date') {
+        if (nextStatus === "up_to_date") {
           pendingRefreshRef.current = false;
           clearRecoveryTimeout();
         }
@@ -289,12 +289,12 @@ export default function Layout({ children }: LayoutProps) {
         return;
       }
 
-      if (message.type === 'config_change_detected') {
+      if (message.type === "config_change_detected") {
         pendingRefreshRef.current = true;
         scheduleRecoveryTimeout();
         setWatchState((prev) => ({
           ...prev,
-          status: 'refreshing',
+          status: "refreshing",
           fileName: message.fileName || prev.fileName,
           updatedAt: Date.now(),
         }));
@@ -307,24 +307,24 @@ export default function Layout({ children }: LayoutProps) {
         return;
       }
 
-      if (message.type === 'config_changed') {
+      if (message.type === "config_changed") {
         pendingRefreshRef.current = false;
         clearRecoveryTimeout();
         setWatchState((prev) => ({
           ...prev,
-          status: 'up_to_date',
+          status: "up_to_date",
           fileName: message.fileName || prev.fileName,
           updatedAt: message.changedAt || Date.now(),
         }));
         return;
       }
 
-      if (message.type === 'connected') {
+      if (message.type === "connected") {
         pendingRefreshRef.current = false;
         clearRecoveryTimeout();
         setWatchState((prev) => ({
           ...prev,
-          status: 'up_to_date',
+          status: "up_to_date",
           updatedAt: Date.now(),
         }));
       }
@@ -332,40 +332,40 @@ export default function Layout({ children }: LayoutProps) {
     {
       onStatusChange: (status) => {
         setWatchState((prev) => {
-          if (prev.status === 'refreshing' && status !== 'unavailable' && status !== 'open') {
+          if (prev.status === "refreshing" && status !== "unavailable" && status !== "open") {
             return prev;
           }
 
           switch (status) {
-            case 'connecting':
-              return { ...prev, status: 'connecting' };
-            case 'open':
+            case "connecting":
+              return { ...prev, status: "connecting" };
+            case "open":
               clearRecoveryTimeout();
               return pendingRefreshRef.current
                 ? prev
-                : { ...prev, status: 'watching', updatedAt: Date.now() };
-            case 'reconnecting':
-            case 'closed':
-              return { ...prev, status: 'reconnecting' };
-            case 'error':
-              return { ...prev, status: 'error' };
-            case 'unavailable':
+                : { ...prev, status: "watching", updatedAt: Date.now() };
+            case "reconnecting":
+            case "closed":
+              return { ...prev, status: "reconnecting" };
+            case "error":
+              return { ...prev, status: "error" };
+            case "unavailable":
               pendingRefreshRef.current = false;
               clearRecoveryTimeout();
-              return { ...prev, status: 'unavailable' };
+              return { ...prev, status: "unavailable" };
             default:
               return prev;
           }
         });
       },
-    }
+    },
   );
 
   const statusMeta = watchStatusMeta[watchState.status];
 
   const formatCount = (count: number): string => {
     if (count >= 1000) {
-      return `${(count / 1000).toFixed(1).replace(/\.0$/, '')}k`;
+      return `${(count / 1000).toFixed(1).replace(/\.0$/, "")}k`;
     }
     return count.toString();
   };
@@ -380,11 +380,11 @@ export default function Layout({ children }: LayoutProps) {
       }
 
       try {
-        const response = await fetch(buildApiUrl('/api/events/status'));
+        const response = await fetch(buildApiUrl("/api/events/status"));
         const data = await response.json();
         setEventsEnabled(data?.enabled === true);
       } catch (error) {
-        console.error('Failed to check events status:', error);
+        console.error("Failed to check events status:", error);
         setEventsEnabled(false);
       }
     };
@@ -393,57 +393,57 @@ export default function Layout({ children }: LayoutProps) {
   }, [isSelfHosted]);
 
   const navigation = [
-    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { name: "Dashboard", href: "/", icon: LayoutDashboard },
     {
-      name: 'Users',
-      href: '/users',
+      name: "Users",
+      href: "/users",
       icon: Users,
-      badge: loading ? '...' : formatCount(counts.users),
+      badge: loading ? "..." : formatCount(counts.users),
     },
     {
-      name: 'Organizations',
-      href: '/organizations',
+      name: "Organizations",
+      href: "/organizations",
       icon: Building2,
-      badge: loading ? '...' : formatCount(counts.organizations),
+      badge: loading ? "..." : formatCount(counts.organizations),
     },
     ...(eventsEnabled === true
       ? [
           {
-            name: 'Events',
-            href: '/events',
+            name: "Events",
+            href: "/events",
             icon: Activity,
           },
         ]
       : []),
     {
-      name: 'Database',
-      href: '/database',
+      name: "Database",
+      href: "/database",
       icon: Database,
       badge: schemaCount !== null ? formatCount(schemaCount) : undefined,
     },
     {
-      name: 'Emails',
-      href: '/emails',
+      name: "Emails",
+      href: "/emails",
       icon: Mail,
       badge: formatCount(EMAIL_TEMPLATES_COUNT),
     },
     {
-      name: 'Tools',
-      href: '/tools',
+      name: "Tools",
+      href: "/tools",
       icon: Wrench,
       badge: formatCount(TOOLS_COUNT),
     },
-    { name: 'Settings', href: '/settings', icon: Settings },
+    { name: "Settings", href: "/settings", icon: Settings },
   ];
 
   const config = getStudioConfig();
   const metadata = config?.metadata || {};
   const logoUrl = metadata.logo
-    ? metadata.logo.startsWith('http://') || metadata.logo.startsWith('https://')
+    ? metadata.logo.startsWith("http://") || metadata.logo.startsWith("https://")
       ? metadata.logo
       : assetPath(metadata.logo)
-    : assetPath('/logo.png');
-  const companyName = metadata.company?.name || 'Better-Auth Studio.';
+    : assetPath("/logo.png");
+  const companyName = metadata.company?.name || "Better-Auth Studio.";
   const companyWebsite = metadata.company?.website;
 
   return (
@@ -479,7 +479,7 @@ export default function Layout({ children }: LayoutProps) {
                         <span className="ml-1">]</span>
                       </span>
                       <span
-                        className={`inline-flex items-center rounded border px-1.5 py-0.5 font-normal uppercase tracking-wide text-[9px] ${statusMeta.textClass} ${statusMeta.animate ?? ''}`}
+                        className={`inline-flex items-center rounded border px-1.5 py-0.5 font-normal uppercase tracking-wide text-[9px] ${statusMeta.textClass} ${statusMeta.animate ?? ""}`}
                       >
                         <span
                           className={`mr-1 h-1.5 w-1.5 rounded-full ${statusMeta.dotClass}`}
@@ -501,7 +501,7 @@ export default function Layout({ children }: LayoutProps) {
                   </h1>
                 </a>
               ) : (
-                <div className="mb-0 cursor-pointer" onClick={() => navigate('/')}>
+                <div className="mb-0 cursor-pointer" onClick={() => navigate("/")}>
                   <h1 className="text-md inline-flex mb-0 items-start font-light font-mono uppercase text-white gap-2">
                     {companyName}
                     <sup className="text-xs text-gray-400 ml-1 mt-0 flex items-center space-x-2">
@@ -518,7 +518,7 @@ export default function Layout({ children }: LayoutProps) {
                         <span className="ml-1">]</span>
                       </span>
                       <span
-                        className={`inline-flex items-center rounded border px-1.5 py-0.5 font-normal uppercase tracking-wide text-[9px] ${statusMeta.textClass} ${statusMeta.animate ?? ''}`}
+                        className={`inline-flex items-center rounded border px-1.5 py-0.5 font-normal uppercase tracking-wide text-[9px] ${statusMeta.textClass} ${statusMeta.animate ?? ""}`}
                       >
                         <span
                           className={`mr-1 h-1.5 w-1.5 rounded-full ${statusMeta.dotClass}`}
@@ -619,7 +619,7 @@ export default function Layout({ children }: LayoutProps) {
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-white text-[11px] font-mono uppercase truncate">
-                            {userProfile.name || 'User'}
+                            {userProfile.name || "User"}
                             {userProfile.role && (
                               <span className="inline-flex ml-2 mt-1 text-[9px] tracking-wider font-mono uppercase text-white/60 border border-dashed border-white/20 px-1.5 py-0.5">
                                 {userProfile.role}
@@ -669,10 +669,10 @@ export default function Layout({ children }: LayoutProps) {
           <nav className="flex overflow-y-hidden overflow-x-auto">
             {navigation.map((item, index) => {
               const isActive =
-                item.href === '/'
-                  ? location.pathname === '/'
+                item.href === "/"
+                  ? location.pathname === "/"
                   : location.pathname === item.href ||
-                    location.pathname.startsWith(item.href + '/');
+                    location.pathname.startsWith(item.href + "/");
               return (
                 <div key={item.name} className="flex items-center">
                   {index === 0 && (
@@ -682,8 +682,8 @@ export default function Layout({ children }: LayoutProps) {
                     to={item.href}
                     className={`flex items-center space-x-2 border-x-0 px-8 py-4 text-sm font-medium border-b-2 transition-all duration-200 relative ${
                       isActive
-                        ? 'border-white text-white'
-                        : 'border-transparent text-gray-400 hover:text-white hover:border-gray-500/50'
+                        ? "border-white text-white"
+                        : "border-transparent text-gray-400 hover:text-white hover:border-gray-500/50"
                     }`}
                   >
                     <item.icon className="w-4 h-4" />
@@ -710,7 +710,7 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </div>
 
-      {location.pathname === '/' &&
+      {location.pathname === "/" &&
         (() => {
           const config = getStudioConfig();
           const liveMarqueeConfig = config?.liveMarquee;
@@ -720,7 +720,7 @@ export default function Layout({ children }: LayoutProps) {
           const speed = liveMarqueeConfig?.speed ?? 0.5;
           const pauseOnHover = liveMarqueeConfig?.pauseOnHover ?? true;
           const limit = liveMarqueeConfig?.limit ?? 50;
-          const sort = liveMarqueeConfig?.sort ?? 'desc';
+          const sort = liveMarqueeConfig?.sort ?? "desc";
           const colors = liveMarqueeConfig?.colors;
           return eventsEnabled === true && liveMarqueeEnabled && isSelfHosted ? (
             <LiveEventMarquee
@@ -734,7 +734,7 @@ export default function Layout({ children }: LayoutProps) {
           ) : null;
         })()}
 
-      <div className={`flex-1 ${!(config.liveMarquee) && 'mt-4'}`}>{children}</div>
+      <div className={`flex-1 ${!config.liveMarquee && "mt-4"}`}>{children}</div>
 
       <CommandPalette
         isOpen={isCommandPaletteOpen}

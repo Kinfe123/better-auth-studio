@@ -1,4 +1,4 @@
-import type { BetterAuthOptions } from 'better-auth';
+import type { BetterAuthOptions } from "better-auth";
 import {
   AlertTriangle,
   Bell,
@@ -19,12 +19,12 @@ import {
   Users,
   XCircle,
   Zap,
-} from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useWebSocket } from '../hooks/useWebSocket';
-import { getProviderIcon } from '../lib/icons';
+} from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useWebSocket } from "../hooks/useWebSocket";
+import { getProviderIcon } from "../lib/icons";
 
 interface AuthConfig {
   appName?: string;
@@ -39,11 +39,11 @@ interface AuthConfig {
     version?: string;
     casing?: string;
     debugLogs?: boolean;
-    adapterConfig?: BetterAuthOptions['database']['adapterConfig'];
+    adapterConfig?: BetterAuthOptions["database"]["adapterConfig"];
   };
-  secondaryStorage?: BetterAuthOptions['secondaryStorage'];
-  emailVerification?: BetterAuthOptions['emailVerification'];
-  emailAndPassword?: BetterAuthOptions['emailAndPassword'];
+  secondaryStorage?: BetterAuthOptions["secondaryStorage"];
+  emailVerification?: BetterAuthOptions["emailVerification"];
+  emailAndPassword?: BetterAuthOptions["emailAndPassword"];
   socialProviders?: Array<{
     type?: string;
     id?: string;
@@ -52,16 +52,16 @@ interface AuthConfig {
     clientSecret?: string;
     redirectUri?: string;
   }>;
-  user?: BetterAuthOptions['user'];
-  session?: BetterAuthOptions['session'];
-  account?: BetterAuthOptions['account'];
-  verification?: BetterAuthOptions['verification'];
-  trustedOrigins?: BetterAuthOptions['trustedOrigins'];
-  rateLimit?: BetterAuthOptions['rateLimit'];
-  advanced?: BetterAuthOptions['advanced'];
-  logger?: BetterAuthOptions['logger'];
-  disabledPaths?: BetterAuthOptions['disabledPaths'];
-  telemetry?: BetterAuthOptions['telemetry'];
+  user?: BetterAuthOptions["user"];
+  session?: BetterAuthOptions["session"];
+  account?: BetterAuthOptions["account"];
+  verification?: BetterAuthOptions["verification"];
+  trustedOrigins?: BetterAuthOptions["trustedOrigins"];
+  rateLimit?: BetterAuthOptions["rateLimit"];
+  advanced?: BetterAuthOptions["advanced"];
+  logger?: BetterAuthOptions["logger"];
+  disabledPaths?: BetterAuthOptions["disabledPaths"];
+  telemetry?: BetterAuthOptions["telemetry"];
 }
 
 interface SystemInfo {
@@ -105,7 +105,7 @@ export default function Settings() {
   const [studioVersion, setStudioVersion] = useState<string | null>(null);
 
   useWebSocket((message) => {
-    if (message.type === 'config_changed') {
+    if (message.type === "config_changed") {
       // Add a small delay to ensure the server is fully reloaded
       setTimeout(() => {
         fetchConfig();
@@ -113,13 +113,13 @@ export default function Settings() {
         fetchPlugins();
         fetchDatabaseInfo();
       }, 500);
-    } else if (message.type === 'connected') {
+    } else if (message.type === "connected") {
     }
   });
 
   const fetchConfig = useCallback(async () => {
     try {
-      const response = await fetch('/api/config');
+      const response = await fetch("/api/config");
       const data = await response.json();
       if (data.studio?.version) {
         setStudioVersion(`v${data.studio.version}`);
@@ -133,27 +133,27 @@ export default function Settings() {
 
   const fetchSystemInfo = useCallback(async () => {
     try {
-      const response = await fetch('/api/health');
+      const response = await fetch("/api/health");
       const data = await response.json();
       setSystemInfo(
         data.system || {
-          studioVersion: studioVersion || 'v1.0.0',
+          studioVersion: studioVersion || "v1.0.0",
           nodeVersion: process.version,
           platform: navigator.platform,
-        }
+        },
       );
     } catch (_error) {
       setSystemInfo({
-        studioVersion: studioVersion || 'v1.0.0',
-        nodeVersion: 'v18.0.0',
-        platform: 'macOS',
+        studioVersion: studioVersion || "v1.0.0",
+        nodeVersion: "v18.0.0",
+        platform: "macOS",
       });
     }
   }, [studioVersion]);
 
   const fetchPlugins = useCallback(async () => {
     try {
-      const response = await fetch('/api/plugins');
+      const response = await fetch("/api/plugins");
       const data = await response.json();
       setPlugins(data);
     } catch (_error) {
@@ -161,34 +161,34 @@ export default function Settings() {
         plugins: [],
         configPath: null,
         totalPlugins: 0,
-        error: 'Failed to fetch plugins',
+        error: "Failed to fetch plugins",
       });
     }
   }, []);
 
   const fetchDatabaseInfo = useCallback(async () => {
     try {
-      const response = await fetch('/api/db');
+      const response = await fetch("/api/db");
       const data = await response.json();
       setDatabaseInfo(data);
     } catch (_error) {
       setDatabaseInfo({
         success: false,
-        name: 'unknown',
-        version: 'unknown',
-        dialect: 'unknown',
-        adapter: 'unknown',
-        displayName: 'Unknown',
+        name: "unknown",
+        version: "unknown",
+        dialect: "unknown",
+        adapter: "unknown",
+        displayName: "Unknown",
         autoDetected: false,
-        message: 'Failed to fetch database info',
+        message: "Failed to fetch database info",
       });
     }
   }, []);
 
   const getConnectionStatus = (type: string) => {
     switch (type?.toLowerCase()) {
-      case 'postgresql':
-      case 'postgres':
+      case "postgresql":
+      case "postgres":
         return (
           <Badge
             variant="secondary"
@@ -198,7 +198,7 @@ export default function Settings() {
             Connected
           </Badge>
         );
-      case 'mysql':
+      case "mysql":
         return (
           <Badge
             variant="secondary"
@@ -208,7 +208,7 @@ export default function Settings() {
             Connected
           </Badge>
         );
-      case 'sqlite':
+      case "sqlite":
         return (
           <Badge
             variant="secondary"
@@ -271,11 +271,11 @@ export default function Settings() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
               >
-                {' '}
+                {" "}
                 <path
                   d="M8 5v2h2V5H8zm4 4V7h-2v2h2zm2 2V9h-2v2h2zm0 2h2v-2h-2v2zm-2 2v-2h2v2h-2zm0 0h-2v2h2v-2zm-4 4v-2h2v2H8z"
                   fill="currentColor"
-                />{' '}
+                />{" "}
               </svg>
               Basic application configuration
             </CardDescription>
@@ -297,7 +297,7 @@ export default function Settings() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-xs font-medium text-white">{config?.appName || 'Better Auth'}</p>
+                <p className="text-xs font-medium text-white">{config?.appName || "Better Auth"}</p>
               </div>
             </div>
 
@@ -313,7 +313,7 @@ export default function Settings() {
               </div>
               <div className="text-right">
                 <p className="text-xs font-mono font-light text-white">
-                  {config?.baseURL || 'http://localhost:3000'}
+                  {config?.baseURL || "http://localhost:3000"}
                 </p>
               </div>
             </div>
@@ -330,7 +330,7 @@ export default function Settings() {
               </div>
               <div className="text-right">
                 <p className="text-xs font-mono font-light text-white">
-                  {config?.basePath || '/api/auth'}
+                  {config?.basePath || "/api/auth"}
                 </p>
               </div>
             </div>
@@ -347,7 +347,7 @@ export default function Settings() {
               </div>
               <div className="text-right">
                 <p className="text-xs font-medium text-white">
-                  {config?.secret === 'Configured' ? 'Configured' : 'Not set'}
+                  {config?.secret === "Configured" ? "Configured" : "Not set"}
                 </p>
               </div>
             </div>
@@ -368,11 +368,11 @@ export default function Settings() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
               >
-                {' '}
+                {" "}
                 <path
                   d="M8 5v2h2V5H8zm4 4V7h-2v2h2zm2 2V9h-2v2h2zm0 2h2v-2h-2v2zm-2 2v-2h2v2h-2zm0 0h-2v2h2v-2zm-4 4v-2h2v2H8z"
                   fill="currentColor"
-                />{' '}
+                />{" "}
               </svg>
               Database connection and configuration
             </CardDescription>
@@ -393,7 +393,7 @@ export default function Settings() {
                       (config?.database?.type &&
                         config?.database?.type.charAt(0).toUpperCase() +
                           config?.database?.type.slice(1)) ||
-                      'Unknown'}
+                      "Unknown"}
                   </p>
                   <p className="text-[10px] font-light uppercase font-mono text-gray-400">
                     Database Type
@@ -401,11 +401,11 @@ export default function Settings() {
                 </div>
               </div>
               {(databaseInfo?.name || config?.database?.type) &&
-                getConnectionStatus(databaseInfo?.name || config?.database?.type || '')}
+                getConnectionStatus(databaseInfo?.name || config?.database?.type || "")}
             </div>
 
             {(databaseInfo?.dialect || config?.database?.dialect) &&
-              databaseInfo?.dialect !== 'unknown' && (
+              databaseInfo?.dialect !== "unknown" && (
                 <div className="flex items-center justify-between p-3 px-5 border-b border-white/15">
                   <div className="flex items-center space-x-3">
                     <Database className="w-5 h-5 text-white" />
@@ -502,7 +502,7 @@ export default function Settings() {
                   <div>
                     <p className="text-xs font-light uppercase text-white">No Database Detected</p>
                     <p className="text-[10px] font-light uppercase font-mono text-gray-400">
-                      {databaseInfo?.message || 'No supported database packages found'}
+                      {databaseInfo?.message || "No supported database packages found"}
                     </p>
                   </div>
                 </div>
@@ -531,11 +531,11 @@ export default function Settings() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
               >
-                {' '}
+                {" "}
                 <path
                   d="M8 5v2h2V5H8zm4 4V7h-2v2h2zm2 2V9h-2v2h2zm0 2h2v-2h-2v2zm-2 2v-2h2v2h-2zm0 0h-2v2h2v-2zm-4 4v-2h2v2H8z"
                   fill="currentColor"
-                />{' '}
+                />{" "}
               </svg>
               Configured authentication providers
             </CardDescription>
@@ -549,7 +549,7 @@ export default function Settings() {
             {config?.socialProviders && config.socialProviders.length > 0 ? (
               config.socialProviders.map((provider, index) => {
                 const clientId =
-                  typeof provider === 'object' && provider !== null ? provider.clientId : undefined;
+                  typeof provider === "object" && provider !== null ? provider.clientId : undefined;
                 return (
                   <div
                     key={index}
@@ -565,7 +565,7 @@ export default function Settings() {
                             String(provider.name).slice(1).toLowerCase()}
                         </p>
                         <p className="text-[10px] font-light uppercase font-mono text-gray-400">
-                          {clientId ? 'Configured' : 'Not configured'}
+                          {clientId ? "Configured" : "Not configured"}
                         </p>
                       </div>
                     </div>
@@ -611,11 +611,11 @@ export default function Settings() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
               >
-                {' '}
+                {" "}
                 <path
                   d="M8 5v2h2V5H8zm4 4V7h-2v2h2zm2 2V9h-2v2h2zm0 2h2v-2h-2v2zm-2 2v-2h2v2h-2zm0 0h-2v2h2v-2zm-4 4v-2h2v2H8z"
                   fill="currentColor"
-                />{' '}
+                />{" "}
               </svg>
               Email authentication settings
             </CardDescription>
@@ -724,7 +724,7 @@ export default function Settings() {
                   </div>
                   <div className="text-right">
                     <p className="text-xs font-medium text-white">
-                      {config?.emailAndPassword?.minPasswordLength || 8} -{' '}
+                      {config?.emailAndPassword?.minPasswordLength || 8} -{" "}
                       {config?.emailAndPassword?.maxPasswordLength || 128}
                     </p>
                   </div>
@@ -776,11 +776,11 @@ export default function Settings() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
               >
-                {' '}
+                {" "}
                 <path
                   d="M8 5v2h2V5H8zm4 4V7h-2v2h2zm2 2V9h-2v2h2zm0 2h2v-2h-2v2zm-2 2v-2h2v2h-2zm0 0h-2v2h2v-2zm-4 4v-2h2v2H8z"
                   fill="currentColor"
-                />{' '}
+                />{" "}
               </svg>
               Session management settings
             </CardDescription>
@@ -805,7 +805,7 @@ export default function Settings() {
                 <p className="text-xs font-medium text-white">
                   {config?.session?.expiresIn
                     ? `${Math.floor(config.session.expiresIn / (60 * 60 * 24))} days`
-                    : '7 days'}
+                    : "7 days"}
                 </p>
                 <p className="text-[10px] font-light uppercase font-mono text-gray-400">Default</p>
               </div>
@@ -825,7 +825,7 @@ export default function Settings() {
                 <p className="text-xs font-medium text-white">
                   {config?.session?.updateAge
                     ? `${Math.floor(config.session.updateAge / (60 * 60))} hours`
-                    : '24 hours'}
+                    : "24 hours"}
                 </p>
               </div>
             </div>
@@ -902,11 +902,11 @@ export default function Settings() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
               >
-                {' '}
+                {" "}
                 <path
                   d="M8 5v2h2V5H8zm4 4V7h-2v2h2zm2 2V9h-2v2h2zm0 2h2v-2h-2v2zm-2 2v-2h2v2h-2zm0 0h-2v2h2v-2zm-4 4v-2h2v2H8z"
                   fill="currentColor"
-                />{' '}
+                />{" "}
               </svg>
               API rate limiting configuration
             </CardDescription>
@@ -957,7 +957,7 @@ export default function Settings() {
               </div>
               <div className="text-right">
                 <p className="text-xs font-medium text-white">
-                  {config?.rateLimit?.window ? `${config.rateLimit.window} seconds` : '10 seconds'}
+                  {config?.rateLimit?.window ? `${config.rateLimit.window} seconds` : "10 seconds"}
                 </p>
                 <p className="text-[10px] font-light uppercase font-mono text-gray-400">Window</p>
               </div>
@@ -991,7 +991,7 @@ export default function Settings() {
               </div>
               <div className="text-right">
                 <p className="text-xs font-medium text-white capitalize">
-                  {config?.rateLimit?.storage || 'memory'}
+                  {config?.rateLimit?.storage || "memory"}
                 </p>
               </div>
             </div>
@@ -1012,11 +1012,11 @@ export default function Settings() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
               >
-                {' '}
+                {" "}
                 <path
                   d="M8 5v2h2V5H8zm4 4V7h-2v2h2zm2 2V9h-2v2h2zm0 2h2v-2h-2v2zm-2 2v-2h2v2h-2zm0 0h-2v2h2v-2zm-4 4v-2h2v2H8z"
                   fill="currentColor"
-                />{' '}
+                />{" "}
               </svg>
               Advanced configuration options
             </CardDescription>
@@ -1155,11 +1155,11 @@ export default function Settings() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
               >
-                {' '}
+                {" "}
                 <path
                   d="M8 5v2h2V5H8zm4 4V7h-2v2h2zm2 2V9h-2v2h2zm0 2h2v-2h-2v2zm-2 2v-2h2v2h-2zm0 0h-2v2h2v-2zm-4 4v-2h2v2H8z"
                   fill="currentColor"
-                />{' '}
+                />{" "}
               </svg>
               Better Auth Studio system information
             </CardDescription>
@@ -1181,7 +1181,7 @@ export default function Settings() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-xs font-medium text-white">{studioVersion || 'v1.0.0'}</p>
+                <p className="text-xs font-medium text-white">{studioVersion || "v1.0.0"}</p>
                 <p className="text-[10px] font-light uppercase font-mono text-gray-400">Latest</p>
               </div>
             </div>
@@ -1198,7 +1198,7 @@ export default function Settings() {
               </div>
               <div className="text-right">
                 <p className="text-xs font-medium text-white">
-                  {systemInfo?.nodeVersion || 'v18.0.0'}
+                  {systemInfo?.nodeVersion || "v18.0.0"}
                 </p>
                 <p className="text-[10px] font-light uppercase font-mono text-gray-400">Current</p>
               </div>
@@ -1215,7 +1215,7 @@ export default function Settings() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-xs font-medium text-white">{systemInfo?.platform || 'macOS'}</p>
+                <p className="text-xs font-medium text-white">{systemInfo?.platform || "macOS"}</p>
                 <p className="text-[10px] font-light uppercase font-mono text-gray-400">System</p>
               </div>
             </div>
@@ -1250,7 +1250,7 @@ export default function Settings() {
                 {plugins.plugins.map((plugin, index) => (
                   <div
                     key={plugin.id}
-                    className={`flex items-center justify-between p-4 px-5 ${index < plugins.plugins.length - 1 ? 'border-b border-white/10' : ''}`}
+                    className={`flex items-center justify-between p-4 px-5 ${index < plugins.plugins.length - 1 ? "border-b border-white/10" : ""}`}
                   >
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-black/50 border border-dashed border-white/10 flex items-center justify-center rounded-none">
@@ -1259,7 +1259,7 @@ export default function Settings() {
                       <div>
                         <p className="text-xs font-mono uppercase tracking-tight text-white/80">
                           {plugin.name.slice(0, 1).toUpperCase() +
-                            plugin.name.slice(1).replace('-', ' ')}
+                            plugin.name.slice(1).replace("-", " ")}
                         </p>
                         <p className="text-[10px] font-light text-gray-500 mt-0.5">
                           {plugin.description}
@@ -1281,7 +1281,7 @@ export default function Settings() {
                 {plugins.configPath && (
                   <div className="p-4 px-5 bg-black/30 border-t border-white/10">
                     <p className="text-xs text-gray-400">
-                      Config file:{' '}
+                      Config file:{" "}
                       <span className="text-white font-mono">{plugins.configPath}</span>
                     </p>
                   </div>
@@ -1299,7 +1299,7 @@ export default function Settings() {
                     </p>
                     <p className="text-[10px] font-light text-gray-500 mt-0.5">
                       {plugins?.error ||
-                        'No plugins are currently configured in your Better Auth setup'}
+                        "No plugins are currently configured in your Better Auth setup"}
                     </p>
                   </div>
                 </div>

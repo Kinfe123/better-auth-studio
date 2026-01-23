@@ -1,18 +1,18 @@
-import { Database, Edit, Eye, Filter, Loader, Plus, Search, Trash2, User, X } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { CopyableId } from '../components/CopyableId';
-import { Terminal } from '../components/Terminal';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
+import { Database, Edit, Eye, Filter, Loader, Plus, Search, Trash2, User, X } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { CopyableId } from "../components/CopyableId";
+import { Terminal } from "../components/Terminal";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/ui/select';
+} from "../components/ui/select";
 
 interface Session {
   id: string;
@@ -25,8 +25,8 @@ interface Session {
 export default function Sessions() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -38,17 +38,17 @@ export default function Sessions() {
   const [seedingLogs, setSeedingLogs] = useState<
     Array<{
       id: string;
-      type: 'info' | 'success' | 'error' | 'progress';
+      type: "info" | "success" | "error" | "progress";
       message: string;
       timestamp: Date;
-      status?: 'pending' | 'running' | 'completed' | 'failed';
+      status?: "pending" | "running" | "completed" | "failed";
     }>
   >([]);
   const [isSeeding, setIsSeeding] = useState(false);
 
   const fetchSessions = useCallback(async () => {
     try {
-      const response = await fetch('/api/sessions');
+      const response = await fetch("/api/sessions");
       const data = await response.json();
       setSessions(data.sessions || []);
     } catch (_error) {
@@ -67,17 +67,17 @@ export default function Sessions() {
 
     setSeedingLogs([
       {
-        id: 'start',
-        type: 'info',
+        id: "start",
+        type: "info",
         message: `Starting session seeding process for ${count} sessions...`,
         timestamp: new Date(),
       },
     ]);
 
     try {
-      const response = await fetch('/api/seed/sessions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/seed/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ count }),
       });
 
@@ -88,15 +88,15 @@ export default function Sessions() {
           if (r.success) {
             return {
               id: `session-${index}`,
-              type: 'progress' as const,
+              type: "progress" as const,
               message: `Creating session: ${r.session.id}`,
               timestamp: new Date(),
-              status: 'completed' as const,
+              status: "completed" as const,
             };
           } else {
             return {
               id: `session-${index}`,
-              type: 'error' as const,
+              type: "error" as const,
               message: `Failed to create session ${index + 1}: ${r.error}`,
               timestamp: new Date(),
             };
@@ -109,8 +109,8 @@ export default function Sessions() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'complete',
-            type: 'success',
+            id: "complete",
+            type: "success",
             message: `✅ Seeding completed! Created ${successCount}/${count} sessions successfully`,
             timestamp: new Date(),
           },
@@ -121,9 +121,9 @@ export default function Sessions() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'error',
-            type: 'error',
-            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            id: "error",
+            type: "error",
+            message: `❌ Seeding failed: ${result.error || "Unknown error"}`,
             timestamp: new Date(),
           },
         ]);
@@ -132,8 +132,8 @@ export default function Sessions() {
       setSeedingLogs((prev) => [
         ...prev,
         {
-          id: 'error',
-          type: 'error',
+          id: "error",
+          type: "error",
           message: `❌ Network error: ${error}`,
           timestamp: new Date(),
         },
@@ -149,17 +149,17 @@ export default function Sessions() {
 
     setSeedingLogs([
       {
-        id: 'start',
-        type: 'info',
+        id: "start",
+        type: "info",
         message: `Starting account seeding process for ${count} accounts...`,
         timestamp: new Date(),
       },
     ]);
 
     try {
-      const response = await fetch('/api/seed/accounts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/seed/accounts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ count }),
       });
 
@@ -170,15 +170,15 @@ export default function Sessions() {
           if (r.success) {
             return {
               id: `account-${index}`,
-              type: 'progress' as const,
+              type: "progress" as const,
               message: `Creating account: ${r.account.provider}`,
               timestamp: new Date(),
-              status: 'completed' as const,
+              status: "completed" as const,
             };
           } else {
             return {
               id: `account-${index}`,
-              type: 'error' as const,
+              type: "error" as const,
               message: `Failed to create account ${index + 1}: ${r.error}`,
               timestamp: new Date(),
             };
@@ -191,8 +191,8 @@ export default function Sessions() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'complete',
-            type: 'success',
+            id: "complete",
+            type: "success",
             message: `✅ Seeding completed! Created ${successCount}/${count} accounts successfully`,
             timestamp: new Date(),
           },
@@ -203,9 +203,9 @@ export default function Sessions() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'error',
-            type: 'error',
-            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            id: "error",
+            type: "error",
+            message: `❌ Seeding failed: ${result.error || "Unknown error"}`,
             timestamp: new Date(),
           },
         ]);
@@ -214,8 +214,8 @@ export default function Sessions() {
       setSeedingLogs((prev) => [
         ...prev,
         {
-          id: 'error',
-          type: 'error',
+          id: "error",
+          type: "error",
           message: `❌ Network error: ${error}`,
           timestamp: new Date(),
         },
@@ -242,14 +242,14 @@ export default function Sessions() {
 
   const handleCreateSession = async (_sessionData: any) => {
     setIsCreating(true);
-    const toastId = toast.loading('Creating session...');
+    const toastId = toast.loading("Creating session...");
     try {
       // TODO: Implement actual session creation
       await new Promise((resolve) => setTimeout(resolve, 500));
       setShowCreateModal(false);
-      toast.success('Session created successfully!', { id: toastId });
+      toast.success("Session created successfully!", { id: toastId });
     } catch (error) {
-      toast.error('Error creating session', { id: toastId });
+      toast.error("Error creating session", { id: toastId });
     } finally {
       setIsCreating(false);
     }
@@ -257,14 +257,14 @@ export default function Sessions() {
 
   const handleUpdateSession = async (_sessionData: any) => {
     setIsUpdating(true);
-    const toastId = toast.loading('Updating session...');
+    const toastId = toast.loading("Updating session...");
     try {
       // TODO: Implement actual session update
       await new Promise((resolve) => setTimeout(resolve, 500));
       setShowEditModal(false);
-      toast.success('Session updated successfully!', { id: toastId });
+      toast.success("Session updated successfully!", { id: toastId });
     } catch (error) {
-      toast.error('Error updating session', { id: toastId });
+      toast.error("Error updating session", { id: toastId });
     } finally {
       setIsUpdating(false);
     }
@@ -279,9 +279,9 @@ export default function Sessions() {
       session.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       session.userId.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter =
-      filter === 'all' ||
-      (filter === 'active' && new Date(session.expiresAt) > new Date()) ||
-      (filter === 'expired' && new Date(session.expiresAt) <= new Date());
+      filter === "all" ||
+      (filter === "active" && new Date(session.expiresAt) > new Date()) ||
+      (filter === "expired" && new Date(session.expiresAt) <= new Date());
     return matchesSearch && matchesFilter;
   });
 
@@ -409,7 +409,7 @@ export default function Sessions() {
                         <div className="w-2 h-2 bg-red-400 rounded-full"></div>
                       )}
                       <span className="text-sm text-gray-400">
-                        {new Date(session.expiresAt) > new Date() ? 'Active' : 'Expired'}
+                        {new Date(session.expiresAt) > new Date() ? "Active" : "Expired"}
                       </span>
                     </div>
                   </td>
@@ -490,9 +490,9 @@ export default function Sessions() {
                   <Button
                     onClick={() => {
                       const count = parseInt(
-                        (document.getElementById('session-count') as HTMLInputElement)?.value ||
-                          '5',
-                        10
+                        (document.getElementById("session-count") as HTMLInputElement)?.value ||
+                          "5",
+                        10,
                       );
                       handleSeedSessions(count);
                     }}
@@ -537,9 +537,9 @@ export default function Sessions() {
                   <Button
                     onClick={() => {
                       const count = parseInt(
-                        (document.getElementById('account-count') as HTMLInputElement)?.value ||
-                          '5',
-                        10
+                        (document.getElementById("account-count") as HTMLInputElement)?.value ||
+                          "5",
+                        10,
                       );
                       handleSeedAccounts(count);
                     }}
@@ -649,7 +649,7 @@ export default function Sessions() {
                 disabled={isCreating}
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
-                {isCreating ? 'Creating...' : 'Create'}
+                {isCreating ? "Creating..." : "Create"}
               </Button>
             </div>
           </div>
@@ -718,7 +718,7 @@ export default function Sessions() {
                 disabled={isUpdating}
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
-                {isUpdating ? 'Updating...' : 'Update'}
+                {isUpdating ? "Updating..." : "Update"}
               </Button>
             </div>
           </div>
@@ -821,19 +821,19 @@ export default function Sessions() {
               <div className="space-y-2 text-sm">
                 {[
                   {
-                    label: 'Status',
-                    value: new Date(selectedSession.expiresAt) > new Date() ? 'Active' : 'Expired',
+                    label: "Status",
+                    value: new Date(selectedSession.expiresAt) > new Date() ? "Active" : "Expired",
                   },
                   {
-                    label: 'Expires',
+                    label: "Expires",
                     value: new Date(selectedSession.expiresAt).toLocaleString(),
                   },
                   {
-                    label: 'Created',
+                    label: "Created",
                     value: new Date(selectedSession.createdAt).toLocaleString(),
                   },
                   {
-                    label: 'Updated',
+                    label: "Updated",
                     value: new Date(selectedSession.updatedAt).toLocaleString(),
                   },
                 ].map((item) => (

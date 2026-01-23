@@ -1,5 +1,5 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 export interface StudioMetadata {
   title?: string;
@@ -9,7 +9,7 @@ export interface StudioMetadata {
     name?: string;
     website?: string;
   };
-  theme?: 'light' | 'dark';
+  theme?: "light" | "dark";
   customStyles?: string;
 }
 
@@ -37,19 +37,19 @@ export interface EventColors {
 }
 
 export type TimeWindowPreset =
-  | '15m'
-  | '30m'
-  | '1h'
-  | '2h'
-  | '4h'
-  | '6h'
-  | '12h'
-  | '1d'
-  | '2d'
-  | '3d'
-  | '7d'
-  | '14d'
-  | '30d';
+  | "15m"
+  | "30m"
+  | "1h"
+  | "2h"
+  | "4h"
+  | "6h"
+  | "12h"
+  | "1d"
+  | "2d"
+  | "3d"
+  | "7d"
+  | "14d"
+  | "30d";
 
 export type TimeWindowConfig =
   | {
@@ -67,7 +67,7 @@ export interface LiveMarqueeConfig {
   speed?: number; // Animation speed in pixels per frame (default: 0.5)
   pauseOnHover?: boolean; // Pause animation when hovered (default: true)
   limit?: number; // Maximum number of events to display in marquee (default: 50)
-  sort?: 'asc' | 'desc'; // Sort order for events: 'desc' = newest first (default), 'asc' = oldest first
+  sort?: "asc" | "desc"; // Sort order for events: 'desc' = newest first (default), 'asc' = oldest first
   colors?: EventColors;
   timeWindow?: TimeWindowConfig; // Time window for fetching events
 }
@@ -79,8 +79,8 @@ export interface WindowStudioConfig {
 }
 
 export function serveIndexHtml(publicDir: string, config: Partial<StudioConfig> = {}): string {
-  const indexPath = join(publicDir, 'index.html');
-  let html = readFileSync(indexPath, 'utf-8');
+  const indexPath = join(publicDir, "index.html");
+  let html = readFileSync(indexPath, "utf-8");
 
   const frontendConfig = prepareFrontendConfig(config);
 
@@ -91,15 +91,15 @@ export function serveIndexHtml(publicDir: string, config: Partial<StudioConfig> 
 
 function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfig {
   const defaultMetadata: Required<StudioMetadata> = {
-    title: 'Better Auth Studio',
-    logo: '',
-    favicon: '',
+    title: "Better Auth Studio",
+    logo: "",
+    favicon: "",
     company: {
-      name: '',
-      website: '',
+      name: "",
+      website: "",
     },
-    theme: 'dark',
-    customStyles: '',
+    theme: "dark",
+    customStyles: "",
   };
 
   const mergedMetadata: Required<StudioMetadata> = {
@@ -123,14 +123,14 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
         speed: liveMarqueeConfig?.speed ?? 0.5, // Default: 0.5 pixels per frame
         pauseOnHover: liveMarqueeConfig?.pauseOnHover ?? true, // Default: true
         limit: liveMarqueeConfig?.limit ?? 50, // Default: 50 events in marquee
-        sort: liveMarqueeConfig?.sort ?? 'desc', // Default: 'desc' (newest first)
+        sort: liveMarqueeConfig?.sort ?? "desc", // Default: 'desc' (newest first)
         colors: liveMarqueeConfig?.colors || undefined,
         timeWindow: liveMarqueeConfig?.timeWindow || undefined, // Include timeWindow config
       }
     : undefined;
 
   return {
-    basePath: config.basePath || '',
+    basePath: config.basePath || "",
     metadata: mergedMetadata,
     liveMarquee: liveMarquee,
   };
@@ -139,17 +139,17 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
 function injectConfig(html: string, config: WindowStudioConfig): string {
   // Safely serialize (prevent XSS)
   const safeJson = JSON.stringify(config)
-    .replace(/</g, '\\u003c')
-    .replace(/>/g, '\\u003e')
-    .replace(/&/g, '\\u0026');
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
 
   // Escape title for HTML insertion
   const escapedTitle = config.metadata.title
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
   const script = `
     <script>
@@ -170,22 +170,22 @@ function injectConfig(html: string, config: WindowStudioConfig): string {
   // Replace favicon if provided
   if (config.metadata.favicon) {
     const escapedFavicon = config.metadata.favicon
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
 
     const faviconLower = config.metadata.favicon.toLowerCase();
-    let mimeType = 'image/png'; // default
-    if (faviconLower.endsWith('.ico')) {
-      mimeType = 'image/x-icon';
-    } else if (faviconLower.endsWith('.svg')) {
-      mimeType = 'image/svg+xml';
-    } else if (faviconLower.endsWith('.jpg') || faviconLower.endsWith('.jpeg')) {
-      mimeType = 'image/jpeg';
-    } else if (faviconLower.endsWith('.webp')) {
-      mimeType = 'image/webp';
+    let mimeType = "image/png"; // default
+    if (faviconLower.endsWith(".ico")) {
+      mimeType = "image/x-icon";
+    } else if (faviconLower.endsWith(".svg")) {
+      mimeType = "image/svg+xml";
+    } else if (faviconLower.endsWith(".jpg") || faviconLower.endsWith(".jpeg")) {
+      mimeType = "image/jpeg";
+    } else if (faviconLower.endsWith(".webp")) {
+      mimeType = "image/webp";
     }
 
     const faviconTag = `<link rel="icon" type="${mimeType}" href="${escapedFavicon}" />`;
@@ -193,12 +193,12 @@ function injectConfig(html: string, config: WindowStudioConfig): string {
     // Replace existing favicon/link rel="icon" tags
     modifiedHtml = modifiedHtml.replace(
       /<link[^>]*rel=["'](icon|shortcut icon)["'][^>]*>/gi,
-      faviconTag
+      faviconTag,
     );
 
     // If no existing favicon tag, add one before </head>
     if (!modifiedHtml.includes('rel="icon"') && !modifiedHtml.includes("rel='icon'")) {
-      modifiedHtml = modifiedHtml.replace('</head>', `  ${faviconTag}\n</head>`);
+      modifiedHtml = modifiedHtml.replace("</head>", `  ${faviconTag}\n</head>`);
     }
   }
 
@@ -213,5 +213,5 @@ function injectConfig(html: string, config: WindowStudioConfig): string {
       .replace(/src="\/logo\.png"/g, `src="${basePath}/logo.png"`);
   }
 
-  return modifiedHtml.replace('</head>', `${script}</head>`);
+  return modifiedHtml.replace("</head>", `${script}</head>`);
 }

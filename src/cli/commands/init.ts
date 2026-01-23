@@ -1,20 +1,20 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { join } from "path";
 
 export async function initCommand(options?: { apiDir?: string }) {
-  console.log('🚀 Initializing Better Auth Studio...\n');
+  console.log("🚀 Initializing Better Auth Studio...\n");
 
   const framework = detectFramework();
-  console.log('🔍 Detected framework:', framework);
+  console.log("🔍 Detected framework:", framework);
 
   const configPath = await createStudioConfig(framework);
-  console.log('✅ Created config:', configPath);
+  console.log("✅ Created config:", configPath);
 
-  const basePath = '/api/studio';
+  const basePath = "/api/studio";
 
-  if (framework === 'nextjs') {
+  if (framework === "nextjs") {
     await setupNextJS(basePath, options?.apiDir);
-  } else if (framework === 'sveltekit') {
+  } else if (framework === "sveltekit") {
     await setupSvelteKit(basePath);
   } else {
     showManualInstructions(framework, basePath);
@@ -22,18 +22,18 @@ export async function initCommand(options?: { apiDir?: string }) {
 }
 
 async function createStudioConfig(framework: string): Promise<string> {
-  const configPath = 'studio.config.ts';
+  const configPath = "studio.config.ts";
 
   if (existsSync(configPath)) {
-    console.log('⚠️  studio.config.ts already exists, skipping...');
+    console.log("⚠️  studio.config.ts already exists, skipping...");
     return configPath;
   }
 
-  let authImportPath = './src/auth';
-  if (framework === 'nextjs') {
-    authImportPath = '@/lib/auth';
-  } else if (framework === 'sveltekit') {
-    authImportPath = '$lib/auth';
+  let authImportPath = "./src/auth";
+  if (framework === "nextjs") {
+    authImportPath = "@/lib/auth";
+  } else if (framework === "sveltekit") {
+    authImportPath = "$lib/auth";
   }
 
   const configContent = `import type { StudioConfig } from 'better-auth-studio';
@@ -51,22 +51,22 @@ const config: StudioConfig = {
 export default config;
 `;
 
-  writeFileSync(configPath, configContent, 'utf-8');
+  writeFileSync(configPath, configContent, "utf-8");
   return configPath;
 }
 
 function detectNextJSAppDir(): string {
-  if (existsSync(join(process.cwd(), 'src', 'app'))) {
-    return 'src/app';
+  if (existsSync(join(process.cwd(), "src", "app"))) {
+    return "src/app";
   }
-  if (existsSync(join(process.cwd(), 'app'))) {
-    return 'app';
+  if (existsSync(join(process.cwd(), "app"))) {
+    return "app";
   }
-  return 'app';
+  return "app";
 }
 
 async function setupNextJS(basePath: string, customApiDir?: string) {
-  const segments = basePath.split('/').filter(Boolean);
+  const segments = basePath.split("/").filter(Boolean);
 
   let appDir: string;
   if (customApiDir) {
@@ -77,16 +77,16 @@ async function setupNextJS(basePath: string, customApiDir?: string) {
     console.log(`📂 Auto-detected app directory: ${appDir}`);
   }
 
-  const routeDir = join(process.cwd(), appDir, ...segments, '[[...path]]');
-  const routeFile = join(routeDir, 'route.ts');
+  const routeDir = join(process.cwd(), appDir, ...segments, "[[...path]]");
+  const routeFile = join(routeDir, "route.ts");
 
   if (existsSync(routeFile)) {
-    console.log('⚠️  Route file already exists:', routeFile);
+    console.log("⚠️  Route file already exists:", routeFile);
   } else {
     mkdirSync(routeDir, { recursive: true });
     const code = generateNextJSRoute();
-    writeFileSync(routeFile, code, 'utf-8');
-    console.log('✅ Generated route file:', routeFile);
+    writeFileSync(routeFile, code, "utf-8");
+    console.log("✅ Generated route file:", routeFile);
   }
 
   const relativePath = `${appDir}${basePath}/[[...path]]/route.ts`;
@@ -130,17 +130,17 @@ export {
 }
 
 async function setupSvelteKit(basePath: string) {
-  const segments = basePath.split('/').filter(Boolean);
-  const routeDir = join(process.cwd(), 'src', 'routes', ...segments, '[...path]');
-  const routeFile = join(routeDir, '+server.ts');
+  const segments = basePath.split("/").filter(Boolean);
+  const routeDir = join(process.cwd(), "src", "routes", ...segments, "[...path]");
+  const routeFile = join(routeDir, "+server.ts");
 
   if (existsSync(routeFile)) {
-    console.log('⚠️  Route file already exists:', routeFile);
+    console.log("⚠️  Route file already exists:", routeFile);
   } else {
     mkdirSync(routeDir, { recursive: true });
     const code = generateSvelteKitRoute();
-    writeFileSync(routeFile, code, 'utf-8');
-    console.log('✅ Generated route file:', routeFile);
+    writeFileSync(routeFile, code, "utf-8");
+    console.log("✅ Generated route file:", routeFile);
   }
 
   const relativePath = `src/routes${basePath}/[...path]/+server.ts`;
@@ -196,7 +196,7 @@ export async function PATCH(event) {
 }
 
 function showManualInstructions(framework: string, basePath: string) {
-  const frameworkName = framework === 'express' ? 'Express' : 'your app';
+  const frameworkName = framework === "express" ? "Express" : "your app";
 
   console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
@@ -226,17 +226,17 @@ app.use('${basePath}', betterAuthStudio(studioConfig));
 function detectFramework(): string {
   // Check for SvelteKit
   if (
-    existsSync('svelte.config.js') ||
-    existsSync('svelte.config.ts') ||
-    existsSync('src/routes') ||
-    existsSync('src/hooks.server.ts')
+    existsSync("svelte.config.js") ||
+    existsSync("svelte.config.ts") ||
+    existsSync("src/routes") ||
+    existsSync("src/hooks.server.ts")
   ) {
     try {
-      const pkgPath = join(process.cwd(), 'package.json');
+      const pkgPath = join(process.cwd(), "package.json");
       if (existsSync(pkgPath)) {
-        const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
-        if (pkg.dependencies?.['@sveltejs/kit'] || pkg.devDependencies?.['@sveltejs/kit']) {
-          return 'sveltekit';
+        const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
+        if (pkg.dependencies?.["@sveltejs/kit"] || pkg.devDependencies?.["@sveltejs/kit"]) {
+          return "sveltekit";
         }
       }
     } catch {}
@@ -244,37 +244,37 @@ function detectFramework(): string {
 
   // Check for Next.js
   if (
-    existsSync('next.config.js') ||
-    existsSync('next.config.mjs') ||
-    existsSync('next.config.ts')
+    existsSync("next.config.js") ||
+    existsSync("next.config.mjs") ||
+    existsSync("next.config.ts")
   ) {
-    return 'nextjs';
+    return "nextjs";
   }
 
   // Check for Express
-  if (existsSync('src/index.ts') || existsSync('src/app.ts') || existsSync('src/server.ts')) {
-    return 'express';
+  if (existsSync("src/index.ts") || existsSync("src/app.ts") || existsSync("src/server.ts")) {
+    return "express";
   }
-  if (existsSync('app.js') || existsSync('server.js') || existsSync('index.js')) {
-    return 'express';
+  if (existsSync("app.js") || existsSync("server.js") || existsSync("index.js")) {
+    return "express";
   }
 
   // Check package.json for framework dependencies
   try {
-    const pkgPath = join(process.cwd(), 'package.json');
+    const pkgPath = join(process.cwd(), "package.json");
     if (existsSync(pkgPath)) {
-      const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
-      if (pkg.dependencies?.['@sveltejs/kit'] || pkg.devDependencies?.['@sveltejs/kit']) {
-        return 'sveltekit';
+      const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
+      if (pkg.dependencies?.["@sveltejs/kit"] || pkg.devDependencies?.["@sveltejs/kit"]) {
+        return "sveltekit";
       }
       if (pkg.dependencies?.express || pkg.devDependencies?.express) {
-        return 'express';
+        return "express";
       }
       if (pkg.dependencies?.next || pkg.devDependencies?.next) {
-        return 'nextjs';
+        return "nextjs";
       }
     }
   } catch {}
 
-  return 'unknown';
+  return "unknown";
 }

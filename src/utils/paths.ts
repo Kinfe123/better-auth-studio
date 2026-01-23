@@ -1,4 +1,4 @@
-const basePaths = ['auth.ts', 'auth.js', 'auth.server.js', 'auth.server.ts'];
+const basePaths = ["auth.ts", "auth.js", "auth.server.js", "auth.server.ts"];
 
 export const possiblePaths = [
   ...basePaths,
@@ -10,4 +10,3 @@ export const possiblePaths = [
   ...basePaths.map((it) => `app/${it}`),
   ...basePaths.map((it) => `apps/${it}`),
 ];
-

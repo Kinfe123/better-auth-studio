@@ -20,4 +20,3 @@
   "include": ["src/**/*", "studio.config.ts"],
   "exclude": ["node_modules", "dist"]
 }
-

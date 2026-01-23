@@ -1,6 +1,6 @@
-import type { StudioConfig } from 'better-auth-studio';
-import { auth } from './src/auth';
-import { Pool } from 'pg';
+import type { StudioConfig } from "better-auth-studio";
+import { auth } from "./src/auth";
+import { Pool } from "pg";
 
 // Example using standard pg Pool
 const pgPool = new Pool({
@@ -15,25 +15,23 @@ const pgPool = new Pool({
 
 const config: StudioConfig = {
   auth,
-  basePath: '/api/studio',
+  basePath: "/api/studio",
   metadata: {
-    title: 'Better Auth Studio',
-    theme: 'dark',
+    title: "Better Auth Studio",
+    theme: "dark",
   },
   access: {
-    roles: ['admin'],
-    allowEmails: ['kinfetare83@gmail.com'],
+    roles: ["admin"],
+    allowEmails: ["kinfetare83@gmail.com"],
   },
   events: {
     enabled: true,
     client: pgPool, // Use pg Pool instead of Prisma
-    clientType: 'postgres',
-    tableName: 'auth_events',
+    clientType: "postgres",
+    tableName: "auth_events",
     batchSize: 10,
     flushInterval: 5000,
-  }
+  },
 };
 
 export default config;
-
-

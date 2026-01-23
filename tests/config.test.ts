@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { existsSync, writeFileSync, unlinkSync, mkdirSync, rmSync } from 'fs';
-import { join } from 'path';
-import { findAuthConfig } from '../src/config';
-import { getAuthAdapter } from '../src/auth-adapter';
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { existsSync, writeFileSync, unlinkSync, mkdirSync, rmSync } from "fs";
+import { join } from "path";
+import { findAuthConfig } from "../src/config";
+import { getAuthAdapter } from "../src/auth-adapter";
 
-describe('Config', () => {
-  const testDir = join(process.cwd(), '.test-temp');
+describe("Config", () => {
+  const testDir = join(process.cwd(), ".test-temp");
 
   beforeEach(() => {
     if (existsSync(testDir)) {
@@ -21,35 +21,34 @@ describe('Config', () => {
     }
   });
 
-  it('should find auth config in current directory', async () => {
+  it("should find auth config in current directory", async () => {
     const authConfigContent = `
       import { betterAuth } from "better-auth";
       export const auth = betterAuth({
         secret: "test-secret",
       });
     `;
-    const filePath = join(testDir, 'auth.ts');
+    const filePath = join(testDir, "auth.ts");
     writeFileSync(filePath, authConfigContent);
     const configAdapter = await getAuthAdapter(filePath as string);
     expect(configAdapter).toBeDefined();
-    expect(configAdapter).toHaveProperty('getSessions');
-
+    expect(configAdapter).toHaveProperty("getSessions");
   });
 
-  it('should return null for missing config file', async () => {
-    const config = await findAuthConfig(join(testDir, 'non-existent-auth.js'));
+  it("should return null for missing config file", async () => {
+    const config = await findAuthConfig(join(testDir, "non-existent-auth.js"));
     expect(config).toBeNull();
   });
 
-  it('should handle invalid config file gracefully', async () => {
-    writeFileSync(join(testDir, 'auth.js'), 'invalid syntax here');
+  it("should handle invalid config file gracefully", async () => {
+    writeFileSync(join(testDir, "auth.js"), "invalid syntax here");
 
-    const config = await findAuthConfig(join(testDir, 'auth.js'));
+    const config = await findAuthConfig(join(testDir, "auth.js"));
     expect(config).toBeNull();
   });
 
-  it('should find config in src directory', async () => {
-    mkdirSync(join(testDir, 'src'), { recursive: true });
+  it("should find config in src directory", async () => {
+    mkdirSync(join(testDir, "src"), { recursive: true });
 
     const authConfigContent = `
       import { betterAuth } from "better-auth";
@@ -58,16 +57,16 @@ describe('Config', () => {
       });
     `;
 
-    writeFileSync(join(testDir, 'src', 'auth.ts'), authConfigContent);
+    writeFileSync(join(testDir, "src", "auth.ts"), authConfigContent);
 
-    const config = await findAuthConfig(join(testDir, 'src', 'auth.ts'));
-    expect(typeof config === 'object').toBe(true);
-    expect(config).toHaveProperty("emailAndPassword")
-    expect(config?.emailAndPassword).toHaveProperty("enabled")
-    expect(config?.emailAndPassword?.enabled).toBe(false)
+    const config = await findAuthConfig(join(testDir, "src", "auth.ts"));
+    expect(typeof config === "object").toBe(true);
+    expect(config).toHaveProperty("emailAndPassword");
+    expect(config?.emailAndPassword).toHaveProperty("enabled");
+    expect(config?.emailAndPassword?.enabled).toBe(false);
   });
 
-  it('should handle config with social providers', async () => {
+  it("should handle config with social providers", async () => {
     const authConfigContent = `
       import { betterAuth } from "better-auth";
       export const auth = betterAuth({
@@ -81,11 +80,11 @@ describe('Config', () => {
       });
     `;
 
-    writeFileSync(join(testDir, 'auth.ts'), authConfigContent);
+    writeFileSync(join(testDir, "auth.ts"), authConfigContent);
 
-    const config = await findAuthConfig(join(testDir, 'auth.ts'));
-    expect(typeof config === 'object').toBe(true);
-    expect(config).toHaveProperty('socialProviders');
+    const config = await findAuthConfig(join(testDir, "auth.ts"));
+    expect(typeof config === "object").toBe(true);
+    expect(config).toHaveProperty("socialProviders");
     expect(config?.socialProviders).toHaveLength(1);
   });
 });

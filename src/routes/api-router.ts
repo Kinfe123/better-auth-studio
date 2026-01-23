@@ -1,5 +1,5 @@
-import type { StudioConfig } from '../types/handler.js';
-import type { StudioAccessConfig } from '../utils/html-injector.js';
+import type { StudioConfig } from "../types/handler.js";
+import type { StudioAccessConfig } from "../utils/html-injector.js";
 
 export type ApiContext = {
   path: string;
@@ -19,15 +19,15 @@ export type ApiResponse = {
 };
 
 export async function routeApiRequest(ctx: ApiContext): Promise<ApiResponse> {
-  const { handleStudioApiRequest } = await import('../routes.js');
+  const { handleStudioApiRequest } = await import("../routes.js");
 
   try {
     return await handleStudioApiRequest(ctx);
   } catch (error) {
-    console.error('API routing error:', error);
+    console.error("API routing error:", error);
     return {
       status: 500,
-      data: { error: 'Internal server error' },
+      data: { error: "Internal server error" },
     };
   }
 }

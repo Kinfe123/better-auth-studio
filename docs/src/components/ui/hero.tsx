@@ -2,10 +2,10 @@
 "use client";
 
 import { Canvas, useFrame, ThreeEvent } from "@react-three/fiber";
-import { Geometry, Base, Subtraction } from '@react-three/csg'
+import { Geometry, Base, Subtraction } from "@react-three/csg";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
-import { Bloom, N8AO, SMAA, EffectComposer } from '@react-three/postprocessing'
-import { OrbitControls } from '@react-three/drei';
+import { Bloom, N8AO, SMAA, EffectComposer } from "@react-three/postprocessing";
+import { OrbitControls } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import { Mesh } from "three";
 import { KernelSize } from "postprocessing";
@@ -36,12 +36,12 @@ function Shape() {
   const handlePointerOver = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     setHovered(true);
-    document.body.style.cursor = 'pointer';
+    document.body.style.cursor = "pointer";
   };
 
   const handlePointerOut = () => {
     setHovered(false);
-    document.body.style.cursor = 'auto';
+    document.body.style.cursor = "auto";
   };
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
@@ -52,7 +52,7 @@ function Shape() {
 
   return (
     <>
-      <mesh 
+      <mesh
         ref={meshRef}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
@@ -68,9 +68,7 @@ function Shape() {
 
         <Geometry>
           <Base>
-            <primitive
-              object={new RoundedBoxGeometry(2, 2, 2, 7, 0.2)}
-            />
+            <primitive object={new RoundedBoxGeometry(2, 2, 2, 7, 0.2)} />
           </Base>
 
           <Subtraction>
@@ -79,7 +77,7 @@ function Shape() {
         </Geometry>
       </mesh>
 
-      <mesh 
+      <mesh
         ref={innerSphereRef}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
@@ -99,50 +97,24 @@ function Shape() {
 function Environment() {
   return (
     <>
+      <directionalLight position={[-5, 5, -5]} intensity={0.3} color="#ffffff" />
 
-      <directionalLight
-        position={[-5, 5, -5]}
-        intensity={0.3}
-        color="#ffffff"
-      />
-
-      <directionalLight
-        position={[0, -5, 10]}
-        intensity={0.5}
-        color="#ffffff"
-      />
+      <directionalLight position={[0, -5, 10]} intensity={0.5} color="#ffffff" />
 
       <ambientLight intensity={0.6} color="#ffffff" />
 
-      <pointLight
-        position={[8, 3, 8]}
-        intensity={0.3}
-        color="#ffffff"
-        distance={20}
-      />
+      <pointLight position={[8, 3, 8]} intensity={0.3} color="#ffffff" distance={20} />
 
-      <pointLight
-        position={[-8, 3, -8]}
-        intensity={0.3}
-        color="#ffffff"
-        distance={20}
-      />
+      <pointLight position={[-8, 3, -8]} intensity={0.3} color="#ffffff" distance={20} />
 
-      <directionalLight
-        position={[0, -10, 0]}
-        intensity={0.3}
-        color="#ffffff"
-      />
+      <directionalLight position={[0, -10, 0]} intensity={0.3} color="#ffffff" />
     </>
   );
 }
 
 export function Scene() {
   return (
-    <Canvas
-      className="w-full h-full"
-      camera={{ position: [4.5, 4.5, 4.5], fov: 46 }}
-    >
+    <Canvas className="w-full h-full" camera={{ position: [4.5, 4.5, 4.5], fov: 46 }}>
       <Environment />
       <Shape />
       <OrbitControls
@@ -157,12 +129,7 @@ export function Scene() {
       />
       <EffectComposer multisampling={0}>
         <N8AO halfRes color="black" aoRadius={2} intensity={1} aoSamples={6} denoiseSamples={4} />
-        <Bloom
-          kernelSize={3}
-          luminanceThreshold={0}
-          luminanceSmoothing={0.4}
-          intensity={0.8}
-        />
+        <Bloom kernelSize={3} luminanceThreshold={0} luminanceSmoothing={0.4} intensity={0.8} />
         <Bloom
           kernelSize={KernelSize.HUGE}
           luminanceThreshold={0}
@@ -177,10 +144,7 @@ export function Scene() {
 
 export function ZoomedScene() {
   return (
-    <Canvas
-      className="w-full h-full"
-      camera={{ position: [2.0, 2.0, 2.0], fov: 60 }}
-    >
+    <Canvas className="w-full h-full" camera={{ position: [2.0, 2.0, 2.0], fov: 60 }}>
       <Environment />
       <Shape />
       <OrbitControls
@@ -192,12 +156,7 @@ export function ZoomedScene() {
       />
       <EffectComposer multisampling={0}>
         <N8AO halfRes color="black" aoRadius={2} intensity={1} aoSamples={6} denoiseSamples={4} />
-        <Bloom
-          kernelSize={3}
-          luminanceThreshold={0}
-          luminanceSmoothing={0.4}
-          intensity={0.2}
-        />
+        <Bloom kernelSize={3} luminanceThreshold={0} luminanceSmoothing={0.4} intensity={0.2} />
         <Bloom
           kernelSize={KernelSize.HUGE}
           luminanceThreshold={0}
@@ -275,21 +234,21 @@ const TERMINAL_SCRIPT: TerminalLine[] = [
   { text: "✔ health check passed! all systems operational", tone: "success" },
   { text: "$ Fetching OAuth credentials...", tone: "command" },
   { text: "✔ credentials fetched successfully for github and google", tone: "success" },
-  { text: "$ validating your configuration..." , tone: "command" },
+  { text: "$ validating your configuration...", tone: "command" },
   { text: "⌁ checking BETTER_AUTH_SECRET...", tone: "info" },
   { text: "✔ BETTER_AUTH_SECRET found and valid", tone: "success" },
   { text: "⌁ checking database connection...", tone: "info" },
   { text: "✔ database connection established", tone: "success" },
   { text: "✔ configuration validated successfully", tone: "success" },
-  { text: "$ exporting users to json..." , tone: "command" },
+  { text: "$ exporting users to json...", tone: "command" },
   { text: "✔ users exported to json successfully", tone: "success" },
-  { text: "$ hashing passwords..." , tone: "command" },
+  { text: "$ hashing passwords...", tone: "command" },
   { text: "⌁ hashing passwords with bcrypt...", tone: "info" },
   { text: "✔ passwords hashed successfully", tone: "success" },
-  { text: "$ decoding jwt..." , tone: "command" },
+  { text: "$ decoding jwt...", tone: "command" },
   { text: "⌁ decoding jwt with BETTER_AUTH_SECRET...", tone: "info" },
   { text: "✔ jwt decoded successfully", tone: "success" },
-  { text: "$ generating uuid..." , tone: "command" },
+  { text: "$ generating uuid...", tone: "command" },
   { text: "✔ uuid generated successfully", tone: "success" },
 ];
 
@@ -324,8 +283,8 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
     const handleWheel = () => {
       setShowZoomHint(false);
     };
-    window.addEventListener('wheel', handleWheel, { once: true });
-    return () => window.removeEventListener('wheel', handleWheel);
+    window.addEventListener("wheel", handleWheel, { once: true });
+    return () => window.removeEventListener("wheel", handleWheel);
   }, []);
 
   const scrollToBottom = () => {
@@ -372,7 +331,7 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
     content: string,
     setter: (value: string) => void,
     delay: number,
-    onComplete?: () => void
+    onComplete?: () => void,
   ) => {
     let index = 0;
     const interval = setInterval(() => {
@@ -409,27 +368,31 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
         <Navbar links={links} />
         <div className="absolute inset-0">
           <Scene />
-          
+
           {showZoomHint && (
             <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 hidden md:flex flex-col items-center gap-3 pointer-events-none transition-opacity duration-500">
               <span className="text-[11px] uppercase tracking-[0.3em] text-white/40 font-mono">
-               Zoom 
+                Zoom
               </span>
               <div className="w-[1px] h-12 bg-white/30 animate-scroll-line"></div>
             </div>
           )}
         </div>
         <div className="absolute bottom-4 left-4 right-4 md:bottom-10 md:left-10 md:right-auto z-20 w-[calc(100vw-2rem)] md:w-auto max-w-full md:max-w-md">
-
           <h1 className="w-full md:w-[1000px] text-xl xs:text-2xl md:text-3xl flex flex-nowrap uppercase font-mono font-light tracking-tight mb-3 text-white whitespace-nowrap overflow-x-auto scrollbar-hide md:overflow-visible md:whitespace-normal">
             {title.split("Studio")[0]}{" "}
             <LineShadowText className="font-normal ml-2" shadowColor="white">
               Studio
             </LineShadowText>
             {version && (
-              <Link href="/v/1.1.1" className="inline-flex group gap-x-1 text-[10px] md:text-[13px] ml-2 font-mono hover:opacity-100 transition-opacity cursor-pointer">
+              <Link
+                href="/v/1.1.1"
+                className="inline-flex group gap-x-1 text-[10px] md:text-[13px] ml-2 font-mono hover:opacity-100 transition-opacity cursor-pointer"
+              >
                 <span className="text-white/50 group-hover:text-white transition-colors">[</span>
-                <span className="text-white/70 group-hover:text-white text-[11px] md:text-[14px] lowercase">v {version}</span>
+                <span className="text-white/70 group-hover:text-white text-[11px] md:text-[14px] lowercase">
+                  v {version}
+                </span>
                 <span className="text-white/50 group-hover:text-white transition-colors">]</span>
               </Link>
             )}
@@ -440,9 +403,7 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
             </div>
           </h1>
 
-          <p className="font-mono uppercase text-[12.5px] text-white/50 mb-6">
-            {description}
-          </p>
+          <p className="font-mono uppercase text-[12.5px] text-white/50 mb-6">{description}</p>
           <div className="bg-black/20 backdrop-blur-sm border border-white/15 hover:border-white/20 transition-all duration-300 border-dashed rounded-none p-4 font-mono text-xs overflow-hidden">
             <div className="text-white/70 flex items-center text-[10px] uppercase font-mono mb-2">
               <svg
@@ -456,48 +417,49 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
                   fill="currentColor"
                 />
               </svg>
-              Install Better Auth Studio</div>
+              Install Better Auth Studio
+            </div>
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
               <span className="text-white/80">$</span>
-              <code className="text-white text-xs whitespace-nowrap">pnpx better-auth-studio@latest start</code>
+              <code className="text-white text-xs whitespace-nowrap">
+                pnpx better-auth-studio@latest start
+              </code>
               <button
                 onClick={() => {
-                  setCopied(true)
-                  navigator.clipboard.writeText('pnpx better-auth-studio@latest start')
+                  setCopied(true);
+                  navigator.clipboard.writeText("pnpx better-auth-studio@latest start");
                   setTimeout(() => {
-                    setCopied(false)
-                  }, 3000)
+                    setCopied(false);
+                  }, 3000);
                 }}
                 className="ml-2 text-white/50 hover:text-white transition-colors"
                 title="Copy to clipboard"
               >
-                {
-                  copied ? (
-
-                    <svg
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      className="w-4 h-4 text-white/50 hover:text-white transition-colors"
-                    >
-                      <path
-                        d="M18 6h2v2h-2V6zm-2 4V8h2v2h-2zm-2 2V9h2v2h-2zm-2 2h2v-2h-2v2zm-2 2h2v-2h-2v2zm-2 0v2h2v-2H8zm-2-2h2v2H6v-2zm0 0H4v-2h2v2z"
-                        fill="currentColor"
-                      />
-                    </svg>
-
-                  ) : (
-                    <svg
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      className="w-4 h-4 text-white/50 hover:text-white transition-colors"
-                    >
-                      <path d="M4 2h12v2H4v12H2V2h2zm4 4h12v16H8V6zm2 2v12h8V8h-8z" fill="currentColor" />
-                    </svg>
-                  )
-                }
-
+                {copied ? (
+                  <svg
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className="w-4 h-4 text-white/50 hover:text-white transition-colors"
+                  >
+                    <path
+                      d="M18 6h2v2h-2V6zm-2 4V8h2v2h-2zm-2 2V9h2v2h-2zm-2 2h2v-2h-2v2zm-2 2h2v-2h-2v2zm-2 0v2h2v-2H8zm-2-2h2v2H6v-2zm0 0H4v-2h2v2z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className="w-4 h-4 text-white/50 hover:text-white transition-colors"
+                  >
+                    <path
+                      d="M4 2h12v2H4v12H2V2h2zm4 4h12v16H8V6zm2 2v12h8V8h-8z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                )}
               </button>
             </div>
           </div>
@@ -510,7 +472,9 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
               <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.35em] text-white/60 mb-3">
                 <span className="text-white/40 text-[10px]">
                   <span>[</span>
-                  <span className="text-white/70 uppercase tracking-[0.25em] mx-1">Better Auth Studio</span>
+                  <span className="text-white/70 uppercase tracking-[0.25em] mx-1">
+                    Better Auth Studio
+                  </span>
                   <span>]</span>
                 </span>
               </div>
@@ -528,14 +492,15 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
                 {terminalLogs.map((line, idx) => (
                   <div
                     key={`${line.text}-${idx}`}
-                    className={`flex items-start gap-2 whitespace-pre-wrap leading-relaxed ${line.tone === "command"
-                      ? "text-white/90"
-                      : line.tone === "success"
-                        ? "text-emerald-400"
-                        : line.tone === "muted"
-                          ? "text-white/40"
-                          : "text-white/70"
-                      }`}
+                    className={`flex items-start gap-2 whitespace-pre-wrap leading-relaxed ${
+                      line.tone === "command"
+                        ? "text-white/90"
+                        : line.tone === "success"
+                          ? "text-emerald-400"
+                          : line.tone === "muted"
+                            ? "text-white/40"
+                            : "text-white/70"
+                    }`}
                   >
                     <span>{line.text}</span>
                   </div>
@@ -554,34 +519,35 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
         </div>
       </div>
       <style jsx global>{`
-      @keyframes terminal-pop {
-        0% {
-          transform: translateY(40px) scale(0.98);
-          opacity: 0;
+        @keyframes terminal-pop {
+          0% {
+            transform: translateY(40px) scale(0.98);
+            opacity: 0;
+          }
+          100% {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+          }
         }
-        100% {
-          transform: translateY(0) scale(1);
-          opacity: 1;
+        .animate-cursor {
+          animation: cursor-blink 0.8s steps(1) infinite;
         }
-      }
-      .animate-cursor {
-        animation: cursor-blink 0.8s steps(1) infinite;
-      }
-      .animate-scroll-line {
-        animation: scroll-line 2s ease-in-out infinite;
-      }
-      @keyframes scroll-line {
-        0%, 100% {
-          opacity: 0.3;
-          transform: scaleY(1);
+        .animate-scroll-line {
+          animation: scroll-line 2s ease-in-out infinite;
         }
-        50% {
-          opacity: 0.6;
-          transform: scaleY(0.8);
-          transform-origin: top;
+        @keyframes scroll-line {
+          0%,
+          100% {
+            opacity: 0.3;
+            transform: scaleY(1);
+          }
+          50% {
+            opacity: 0.6;
+            transform: scaleY(0.8);
+            transform-origin: top;
+          }
         }
-      }
-    `}</style>
+      `}</style>
     </>
   );
-}
+};

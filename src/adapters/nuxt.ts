@@ -1,6 +1,6 @@
-import { handleStudioRequest } from '../core/handler.js';
-import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
-import { injectEventHooks } from '../utils/hook-injector.js';
+import { handleStudioRequest } from "../core/handler.js";
+import type { StudioConfig, UniversalRequest, UniversalResponse } from "../types/handler.js";
+import { injectEventHooks } from "../utils/hook-injector.js";
 
 /**
  * Nuxt adapter for Better Auth Studio
@@ -31,19 +31,19 @@ export function betterAuthStudio(config: StudioConfig): (event: any) => Promise<
     } catch (error: any) {
       // Handle client disconnection gracefully
       if (
-        error?.code === 'EPIPE' ||
-        error?.code === 'ECONNRESET' ||
-        error?.message?.includes('aborted') ||
-        error?.message?.includes('destroyed')
+        error?.code === "EPIPE" ||
+        error?.code === "ECONNRESET" ||
+        error?.message?.includes("aborted") ||
+        error?.message?.includes("destroyed")
       ) {
         // Client disconnected, return empty response
         return new Response(null, { status: 499 });
       }
 
-      console.error('Studio handler error:', error);
-      return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      console.error("Studio handler error:", error);
+      return new Response(JSON.stringify({ error: "Internal server error" }), {
         status: 500,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     }
   };
@@ -53,7 +53,7 @@ async function convertNuxtToUniversal(event: any, config: StudioConfig): Promise
   let body: any;
   const method = event.method;
 
-  if (method !== 'GET' && method !== 'HEAD') {
+  if (method !== "GET" && method !== "HEAD") {
     // First check if body was already read by h3/Nuxt and stored on event
     if (event.body !== undefined) {
       body = event.body;
@@ -63,15 +63,15 @@ async function convertNuxtToUniversal(event: any, config: StudioConfig): Promise
       try {
         // Check if readBody is available globally (Nuxt auto-imports it)
         const readBodyFn = (globalThis as any).readBody;
-        if (typeof readBodyFn === 'function') {
+        if (typeof readBodyFn === "function") {
           body = await readBodyFn(event);
         }
       } catch (error: any) {
         // Only rethrow connection errors
         if (
-          error?.code === 'EPIPE' ||
-          error?.code === 'ECONNRESET' ||
-          error?.message?.includes('aborted')
+          error?.code === "EPIPE" ||
+          error?.code === "ECONNRESET" ||
+          error?.message?.includes("aborted")
         ) {
           throw error;
         }
@@ -85,23 +85,23 @@ async function convertNuxtToUniversal(event: any, config: StudioConfig): Promise
   const headers: Record<string, string> = {};
   if (event.headers) {
     Object.entries(event.headers).forEach(([key, value]) => {
-      if (typeof value === 'string') {
+      if (typeof value === "string") {
         headers[key] = value;
       } else if (Array.isArray(value)) {
-        headers[key] = value.join(', ');
+        headers[key] = value.join(", ");
       }
     });
   }
 
   // Extract path and query
-  const basePath = config.basePath || '/api/studio';
-  const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+  const basePath = config.basePath || "/api/studio";
+  const normalizedBasePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
 
   const url = getRequestURL(event);
   let path = url.pathname;
 
   if (path.startsWith(normalizedBasePath)) {
-    path = path.slice(normalizedBasePath.length) || '/';
+    path = path.slice(normalizedBasePath.length) || "/";
   }
 
   const pathWithQuery = path + url.search;
@@ -115,9 +115,9 @@ async function convertNuxtToUniversal(event: any, config: StudioConfig): Promise
 }
 
 function getRequestURL(event: any): URL {
-  const protocol = event.node.req.socket?.encrypted ? 'https' : 'http';
-  const host = event.headers.host || event.headers[':authority'] || 'localhost';
-  const path = (event.node.req.url || '/').replace(/[/\\]{2,}/g, '/');
+  const protocol = event.node.req.socket?.encrypted ? "https" : "http";
+  const host = event.headers.host || event.headers[":authority"] || "localhost";
+  const path = (event.node.req.url || "/").replace(/[/\\]{2,}/g, "/");
   return new URL(path, `${protocol}://${host}`);
 }
 

@@ -11,19 +11,19 @@ export type UniversalResponse = {
   body: string | Buffer;
 };
 export type TimeWindowPreset =
-  | '15m'
-  | '30m'
-  | '1h'
-  | '2h'
-  | '4h'
-  | '6h'
-  | '12h'
-  | '1d'
-  | '2d'
-  | '3d'
-  | '7d'
-  | '14d'
-  | '30d';
+  | "15m"
+  | "30m"
+  | "1h"
+  | "2h"
+  | "4h"
+  | "6h"
+  | "12h"
+  | "1d"
+  | "2d"
+  | "3d"
+  | "7d"
+  | "14d"
+  | "30d";
 
 // TimeWindowConfig is always an object with either 'since' OR 'custom' (mutually exclusive)
 export type TimeWindowConfig =
@@ -42,7 +42,7 @@ export type LiveMarqueeConfig = {
   speed?: number; // Animation speed in pixels per frame (default: 0.5)
   pauseOnHover?: boolean; // Pause animation when hovered (default: true)
   limit?: number; // Maximum number of events to display in marquee (default: 50)
-  sort?: 'asc' | 'desc'; // Sort order for events: 'desc' = newest first (default), 'asc' = oldest first
+  sort?: "asc" | "desc"; // Sort order for events: 'desc' = newest first (default), 'asc' = oldest first
   colors?: EventColors;
   timeWindow?: TimeWindowConfig; // Time window for fetching events. Default: '1h'
 };
@@ -55,7 +55,7 @@ export type StudioMetadata = {
     website?: string;
     supportEmail?: string;
   };
-  theme?: 'dark' | 'light' | 'auto';
+  theme?: "dark" | "light" | "auto";
   colors?: {
     primary?: string;
     secondary?: string;
@@ -80,7 +80,7 @@ export type StudioAccessConfig = {
   secret?: string;
 };
 
-import type { AuthEvent, AuthEventType, EventIngestionProvider } from './events.js';
+import type { AuthEvent, AuthEventType, EventIngestionProvider } from "./events.js";
 
 export type StudioConfig = {
   auth: any;
@@ -92,7 +92,7 @@ export type StudioConfig = {
     tableName?: string; // Auto-use Better Auth adapter if provided
     provider?: EventIngestionProvider; // Custom provider
     client?: any; // Client instance (Postgres pool, Prisma client, Drizzle instance, ClickHouse client, etc.)
-    clientType?: 'postgres' | 'prisma' | 'drizzle' | 'clickhouse' | 'http' | 'custom' | 'sqlite';
+    clientType?: "postgres" | "prisma" | "drizzle" | "clickhouse" | "http" | "custom" | "sqlite";
     include?: AuthEventType[];
     exclude?: AuthEventType[];
     batchSize?: number;

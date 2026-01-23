@@ -24,24 +24,34 @@ import {
   PrerequisitesIcon,
 } from "@/components/icons";
 
-type Framework = "nextjs" | "express" | "hono" | "elysia" | "sveltekit" | "solidstart" | "tanstackstart" | "astro" | "remix" | "nuxt";
+type Framework =
+  | "nextjs"
+  | "express"
+  | "hono"
+  | "elysia"
+  | "sveltekit"
+  | "solidstart"
+  | "tanstackstart"
+  | "astro"
+  | "remix"
+  | "nuxt";
 
 const frameworks: Array<{
   id: Framework;
   name: string;
   icon: React.ComponentType<{ className?: string }>;
 }> = [
-    { id: "nextjs", name: "Next.js", icon: NextJsIcon },
-    { id: "express", name: "Express", icon: ExpressIcon },
-    { id: "hono", name: "Hono", icon: HonoIcon },
-    { id: "elysia", name: "Elysia", icon: ElysiaIcon },
-    { id: "sveltekit", name: "Svelte Kit", icon: SvelteKitIcon },
-    { id: "solidstart", name: "Solid Start", icon: SolidStartIcon },
-    { id: "tanstackstart", name: "TanStack Start", icon: TanStackStartIcon },
-    { id: "astro", name: "Astro", icon: AstroIcon },
-    { id: "remix", name: "Remix", icon: RemixIcon },
-    { id: "nuxt", name: "Nuxt", icon: NuxtIcon },
-  ];
+  { id: "nextjs", name: "Next.js", icon: NextJsIcon },
+  { id: "express", name: "Express", icon: ExpressIcon },
+  { id: "hono", name: "Hono", icon: HonoIcon },
+  { id: "elysia", name: "Elysia", icon: ElysiaIcon },
+  { id: "sveltekit", name: "Svelte Kit", icon: SvelteKitIcon },
+  { id: "solidstart", name: "Solid Start", icon: SolidStartIcon },
+  { id: "tanstackstart", name: "TanStack Start", icon: TanStackStartIcon },
+  { id: "astro", name: "Astro", icon: AstroIcon },
+  { id: "remix", name: "Remix", icon: RemixIcon },
+  { id: "nuxt", name: "Nuxt", icon: NuxtIcon },
+];
 export default function SelfHosting() {
   const [activeFramework, setActiveFramework] = useState<Framework>("nextjs");
 
@@ -54,26 +64,26 @@ export default function SelfHosting() {
           if (element) {
             const yOffset = -20;
             const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-            window.scrollTo({ top: y, behavior: 'smooth' });
+            window.scrollTo({ top: y, behavior: "smooth" });
           }
         }, 100);
       }
     };
 
     scrollToHash();
-    window.addEventListener('hashchange', scrollToHash);
-    return () => window.removeEventListener('hashchange', scrollToHash);
+    window.addEventListener("hashchange", scrollToHash);
+    return () => window.removeEventListener("hashchange", scrollToHash);
   }, []);
 
   const handleSectionClick = (sectionId: string) => {
     const hash = `#${sectionId}`;
-    window.history.pushState(null, '', hash);
+    window.history.pushState(null, "", hash);
     setTimeout(() => {
       const element = document.getElementById(sectionId);
       if (element) {
         const yOffset = -20;
         const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-        window.scrollTo({ top: y, behavior: 'smooth' });
+        window.scrollTo({ top: y, behavior: "smooth" });
       }
     }, 50);
   };
@@ -87,18 +97,26 @@ export default function SelfHosting() {
       <div className="fixed top-12 right-12 text-right space-y-8 z-20 hidden md:block">
         <section>
           <h3 className="text-[10px] font-mono tracking-[0.2em] text-white/40 mb-1">■ VERSIONS</h3>
-          <Link href="/v/1.1.1" className="text-[11px] font-mono lowercase tracking-widest block hover:text-white transition-colors duration-300 text-white/70">
+          <Link
+            href="/v/1.1.1"
+            className="text-[11px] font-mono lowercase tracking-widest block hover:text-white transition-colors duration-300 text-white/70"
+          >
             v1.1.1
           </Link>
-          <Link href="/v/1.1.0" className="text-[11px] font-mono lowercase tracking-widest block hover:text-white transition-colors duration-300 text-white/70">
+          <Link
+            href="/v/1.1.0"
+            className="text-[11px] font-mono lowercase tracking-widest block hover:text-white transition-colors duration-300 text-white/70"
+          >
             v1.1.0
           </Link>
         </section>
         <section>
-          <h3 className="text-[10px] font-mono tracking-[0.2em] text-white/40 mb-1">■ CREATED BY</h3>
-          <a 
-            href="https://kinfish.dev" 
-            target="_blank" 
+          <h3 className="text-[10px] font-mono tracking-[0.2em] text-white/40 mb-1">
+            ■ CREATED BY
+          </h3>
+          <a
+            href="https://kinfish.dev"
+            target="_blank"
             rel="noopener noreferrer"
             className="text-[11px] font-mono uppercase tracking-widest block hover:text-white transition-colors duration-300 text-white/70"
           >
@@ -107,16 +125,16 @@ export default function SelfHosting() {
         </section>
         <section>
           <h3 className="text-[10px] font-mono tracking-[0.2em] text-white/40 mb-1">■ CONTACT</h3>
-          <a 
-            href="https://x.com/KinfishT" 
-            target="_blank" 
+          <a
+            href="https://x.com/KinfishT"
+            target="_blank"
             rel="noopener noreferrer"
             className="text-[11px] font-mono lowercase tracking-widest block hover:text-white transition-colors duration-300 text-white/70"
           >
             Twitter <span className="tracking-tighter"> [ X ] </span>
           </a>
-          <a 
-            href="mailto:kinfetare83@gmail.com" 
+          <a
+            href="mailto:kinfetare83@gmail.com"
             className="text-[11px] font-mono lowercase tracking-widest block hover:text-white transition-colors duration-300 text-white/70"
           >
             Email
@@ -127,8 +145,8 @@ export default function SelfHosting() {
         <section id="beta">
           <PixelCard variant="highlight" className="relative">
             <div className="absolute -top-10 left-0">
-              <h3 
-                onClick={() => handleSectionClick('beta')}
+              <h3
+                onClick={() => handleSectionClick("beta")}
                 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden cursor-pointer hover:border-white/40 hover:bg-white/15 transition-all duration-200"
               >
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
@@ -140,7 +158,18 @@ export default function SelfHosting() {
             </div>
             <div className="pt-4">
               <p className="text-sm font-light tracking-tight text-white/70">
-                Self-hosting is currently in <strong className="font-bold">beta</strong>. This feature allows you to deploy Better Auth Studio alongside your application for production use. You may encounter bugs or incomplete features. Please report any <a href="https://github.com/Kinfe123/better-auth-studio/issues" target="_blank" rel="noopener" className="underline underline-offset-2 font-bold">issues</a> on GitHub.
+                Self-hosting is currently in <strong className="font-bold">beta</strong>. This
+                feature allows you to deploy Better Auth Studio alongside your application for
+                production use. You may encounter bugs or incomplete features. Please report any{" "}
+                <a
+                  href="https://github.com/Kinfe123/better-auth-studio/issues"
+                  target="_blank"
+                  rel="noopener"
+                  className="underline underline-offset-2 font-bold"
+                >
+                  issues
+                </a>{" "}
+                on GitHub.
               </p>
             </div>
           </PixelCard>
@@ -149,8 +178,8 @@ export default function SelfHosting() {
         <section id="overview">
           <PixelCard variant="highlight" className="relative">
             <div className="absolute -top-10 left-0">
-              <h3 
-                onClick={() => handleSectionClick('overview')}
+              <h3
+                onClick={() => handleSectionClick("overview")}
                 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden cursor-pointer hover:border-white/40 hover:bg-white/15 transition-all duration-200"
               >
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
@@ -162,11 +191,12 @@ export default function SelfHosting() {
             </div>
             <div className="pt-4 space-y-3">
               <p className="text-sm font-light tracking-tight text-white/70">
-                Self-hosting Better Auth Studio allows you to embed the admin dashboard directly into your application. This enables you to access the studio at a custom route like <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code> or <code className="text-white/90 bg-white/10 px-1 py-0.5">/admin</code>.
+                Self-hosting Better Auth Studio allows you to embed the admin dashboard directly
+                into your application. This enables you to access the studio at a custom route like{" "}
+                <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code> or{" "}
+                <code className="text-white/90 bg-white/10 px-1 py-0.5">/admin</code>.
               </p>
-              <p className="text-sm font-light tracking-tight text-white/70">
-                Benefits include:
-              </p>
+              <p className="text-sm font-light tracking-tight text-white/70">Benefits include:</p>
               <ul className="text-sm font-light tracking-tight text-white/70 space-y-1 ml-4">
                 <li className="flex items-start gap-2">
                   <span className="text-white/50">→</span>
@@ -192,8 +222,8 @@ export default function SelfHosting() {
         <section id="prerequisites">
           <PixelCard variant="highlight" className="relative">
             <div className="absolute -top-10 left-0">
-              <h3 
-                onClick={() => handleSectionClick('prerequisites')}
+              <h3
+                onClick={() => handleSectionClick("prerequisites")}
                 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden cursor-pointer hover:border-white/40 hover:bg-white/15 transition-all duration-200"
               >
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
@@ -207,11 +237,19 @@ export default function SelfHosting() {
               <ul className="text-sm font-light tracking-tight text-white/70 space-y-2">
                 <li className="flex items-start gap-2">
                   <span className="text-white/50">1.</span>
-                  <span>Better Auth Studio installed as a <strong className="font-bold">regular dependency</strong> (required for production)</span>
+                  <span>
+                    Better Auth Studio installed as a{" "}
+                    <strong className="font-bold">regular dependency</strong> (required for
+                    production)
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-white/50">2.</span>
-                  <span>A Better Auth project with valid <code className="text-white/90 bg-white/10 px-1 py-0.5">auth.ts</code> configuration</span>
+                  <span>
+                    A Better Auth project with valid{" "}
+                    <code className="text-white/90 bg-white/10 px-1 py-0.5">auth.ts</code>{" "}
+                    configuration
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-white/50">3.</span>
@@ -220,12 +258,11 @@ export default function SelfHosting() {
               </ul>
               <div className="mt-4 space-y-2">
                 <p className="text-xs font-light tracking-tight text-white/60">
-                  ⚠️ <strong className="font-bold text-white/80">Important:</strong> For self-hosting, install as a regular dependency (not devDependency) since it's needed at runtime in production.
+                  ⚠️ <strong className="font-bold text-white/80">Important:</strong> For
+                  self-hosting, install as a regular dependency (not devDependency) since it's
+                  needed at runtime in production.
                 </p>
-                <CodeBlock
-                  code="pnpm add better-auth-studio"
-                  className="flex-1 min-w-0"
-                />
+                <CodeBlock code="pnpm add better-auth-studio" className="flex-1 min-w-0" />
               </div>
             </div>
           </PixelCard>
@@ -234,8 +271,8 @@ export default function SelfHosting() {
         <section id="step-1">
           <PixelCard variant="highlight" className="relative">
             <div className="absolute -top-10 left-0">
-              <h3 
-                onClick={() => handleSectionClick('step-1')}
+              <h3
+                onClick={() => handleSectionClick("step-1")}
                 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden cursor-pointer hover:border-white/40 hover:bg-white/15 transition-all duration-200"
               >
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
@@ -249,12 +286,11 @@ export default function SelfHosting() {
               <p className="text-sm font-light tracking-tight text-white/70">
                 Run the init command to generate the configuration file:
               </p>
-              <CodeBlock
-                code="pnpx better-auth-studio init"
-                className="flex-1 min-w-0"
-              />
+              <CodeBlock code="pnpx better-auth-studio init" className="flex-1 min-w-0" />
               <p className="text-sm font-light tracking-tight text-white/70">
-                This creates a <code className="text-white/90 bg-white/10 px-1 py-0.5">studio.config.ts</code> file in your project root:
+                This creates a{" "}
+                <code className="text-white/90 bg-white/10 px-1 py-0.5">studio.config.ts</code> file
+                in your project root:
               </p>
               <CodeHighlighter
                 code={`import type { StudioConfig } from "better-auth-studio";
@@ -295,9 +331,9 @@ export default config;`}
                     shadow-[0_0_0_1px_rgba(255,255,255,0.15)]"
                   style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'right 8px center',
-                    backgroundSize: '12px',
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "right 8px center",
+                    backgroundSize: "12px",
                   }}
                 >
                   {frameworks.map((framework) => (
@@ -325,9 +361,10 @@ export default config;`}
                       text-white/90 border bg-[#0a0a0a] 
                       px-2 py-[6px] overflow-hidden transition-all duration-200
                       inline-flex items-center gap-[5px] no-underline
-                      ${isActive
-                        ? "border-white/40 bg-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.15)]"
-                        : "border-white/20 hover:border-white/30 hover:bg-white/5"
+                      ${
+                        isActive
+                          ? "border-white/40 bg-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.15)]"
+                          : "border-white/20 hover:border-white/30 hover:bg-white/5"
                       }
                     `}
                   >
@@ -355,7 +392,12 @@ export default config;`}
                   <PixelCard variant="highlight" className="relative">
                     <div className="pt-4 space-y-4 relative">
                       <p className="text-sm font-light tracking-tight text-white/70">
-                        For Next.js App Router, the init command automatically creates the API route file at <code className="text-white/90 bg-white/10 px-1 py-0.5">app/api/studio/[[...path]]/route.ts</code>:
+                        For Next.js App Router, the init command automatically creates the API route
+                        file at{" "}
+                        <code className="text-white/90 bg-white/10 px-1 py-0.5">
+                          app/api/studio/[[...path]]/route.ts
+                        </code>
+                        :
                       </p>
                       <CodeHighlighter
                         code={`import { betterAuthStudio } from "better-auth-studio/nextjs";
@@ -373,7 +415,8 @@ export {
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">
-                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                        Access the studio at{" "}
+                        <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
                       </p>
                     </div>
                   </PixelCard>
@@ -405,7 +448,8 @@ app.listen(3000, () => {
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">
-                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                        Access the studio at{" "}
+                        <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
                       </p>
                     </div>
                   </PixelCard>
@@ -457,7 +501,8 @@ serve({
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">
-                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                        Access the studio at{" "}
+                        <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
                       </p>
                     </div>
                   </PixelCard>
@@ -497,14 +542,27 @@ app.listen(PORT, () => {
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">
-                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                        Access the studio at{" "}
+                        <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
                       </p>
                       <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-none">
                         <p className="text-xs font-light tracking-tight text-white/60 mb-2">
-                          <strong className="font-bold text-white/80">Note:</strong> Elysia is optimized for Bun runtime. Make sure to install the required dependencies:
+                          <strong className="font-bold text-white/80">Note:</strong> Elysia is
+                          optimized for Bun runtime. Make sure to install the required dependencies:
                         </p>
                         <p className="text-xs font-light tracking-tight text-white/50 mt-2">
-                          <strong className="font-bold text-white/70">Why two routes?</strong> Elysia's wildcard route <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio/*</code> matches sub-paths but not the exact path. We include both <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio</code> and <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio/*</code> to handle all cases.
+                          <strong className="font-bold text-white/70">Why two routes?</strong>{" "}
+                          Elysia's wildcard route{" "}
+                          <code className="text-white/70 bg-white/10 px-1 py-0.5">
+                            /api/studio/*
+                          </code>{" "}
+                          matches sub-paths but not the exact path. We include both{" "}
+                          <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio</code>{" "}
+                          and{" "}
+                          <code className="text-white/70 bg-white/10 px-1 py-0.5">
+                            /api/studio/*
+                          </code>{" "}
+                          to handle all cases.
                         </p>
                       </div>
                     </div>
@@ -546,7 +604,8 @@ export async function PATCH(event) {
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">
-                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                        Access the studio at{" "}
+                        <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
                       </p>
                     </div>
                   </PixelCard>
@@ -573,7 +632,8 @@ export const PATCH = handler;`}
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">
-                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                        Access the studio at{" "}
+                        <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
                       </p>
                     </div>
                   </PixelCard>
@@ -607,7 +667,8 @@ export const Route = createFileRoute('/api/studio/$')({
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">
-                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                        Access the studio at{" "}
+                        <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
                       </p>
                     </div>
                   </PixelCard>
@@ -633,7 +694,8 @@ export const ALL: APIRoute = async (ctx) => {
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">
-                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                        Access the studio at{" "}
+                        <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
                       </p>
                     </div>
                   </PixelCard>
@@ -663,7 +725,8 @@ export async function action({ request }: ActionFunctionArgs) {
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">
-                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                        Access the studio at{" "}
+                        <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
                       </p>
                     </div>
                   </PixelCard>
@@ -689,7 +752,8 @@ export default defineEventHandler(async (event) => {
                         language="typescript"
                       />
                       <p className="text-sm font-light tracking-tight text-white/70">
-                        Access the studio at <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
+                        Access the studio at{" "}
+                        <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
                       </p>
                     </div>
                   </PixelCard>
@@ -702,8 +766,8 @@ export default defineEventHandler(async (event) => {
         <section id="configuration">
           <PixelCard variant="highlight" className="relative">
             <div className="absolute -top-10 left-0">
-              <h3 
-                onClick={() => handleSectionClick('configuration')}
+              <h3
+                onClick={() => handleSectionClick("configuration")}
                 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden cursor-pointer hover:border-white/40 hover:bg-white/15 transition-all duration-200"
               >
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
@@ -719,21 +783,33 @@ export default defineEventHandler(async (event) => {
                   <code className="text-white/90 text-sm">auth</code>
                   <span className="text-white/50 text-xs ml-2">(required)</span>
                   <p className="text-sm font-light tracking-tight text-white/50 mt-1">
-                    Your Better Auth instance from <code className="text-white/70 bg-white/10 px-1 py-0.5">auth.ts</code>
+                    Your Better Auth instance from{" "}
+                    <code className="text-white/70 bg-white/10 px-1 py-0.5">auth.ts</code>
                   </p>
                 </div>
                 <div className="border-b border-white/10 pb-3">
                   <code className="text-white/90 text-sm">basePath</code>
                   <span className="text-white/50 text-xs ml-2">(required)</span>
                   <p className="text-sm font-light tracking-tight text-white/50 mt-1">
-                    The URL path where studio is mounted (e.g., <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio</code>)
+                    The URL path where studio is mounted (e.g.,{" "}
+                    <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/studio</code>)
                   </p>
                   <div className="mt-3 p-3 bg-white/5 border border-white/10 rounded-none">
                     <p className="text-xs font-light tracking-tight text-white/60 mb-2">
-                      <strong className="font-bold text-white/80">⚠️ Important:</strong> When adjusting the <code className="text-white/70 bg-white/10 px-1 py-0.5">basePath</code>, make sure to adjust your route structure accordingly when mounting the handler.
+                      <strong className="font-bold text-white/80">⚠️ Important:</strong> When
+                      adjusting the{" "}
+                      <code className="text-white/70 bg-white/10 px-1 py-0.5">basePath</code>, make
+                      sure to adjust your route structure accordingly when mounting the handler.
                     </p>
                     <p className="text-xs font-light tracking-tight text-white/50 mt-2">
-                      For example, if your <code className="text-white/70 bg-white/10 px-1 py-0.5">basePath</code> is <code className="text-white/70 bg-white/10 px-1 py-0.5">/admin</code>, your route file should be at <code className="text-white/70 bg-white/10 px-1 py-0.5">app/admin/[[...path]]/route.ts</code> to matching the path structure.
+                      For example, if your{" "}
+                      <code className="text-white/70 bg-white/10 px-1 py-0.5">basePath</code> is{" "}
+                      <code className="text-white/70 bg-white/10 px-1 py-0.5">/admin</code>, your
+                      route file should be at{" "}
+                      <code className="text-white/70 bg-white/10 px-1 py-0.5">
+                        app/admin/[[...path]]/route.ts
+                      </code>{" "}
+                      to matching the path structure.
                     </p>
                   </div>
                 </div>
@@ -745,7 +821,9 @@ export default defineEventHandler(async (event) => {
                   </p>
                   <div className="mt-3 p-3 bg-white/5 border border-white/10 rounded-none">
                     <p className="text-xs font-light tracking-tight text-white/60 mb-2">
-                      <strong className="font-bold text-white/80">💡 Best Practice:</strong> Use environment variables for configuration to keep sensitive data out of your codebase:
+                      <strong className="font-bold text-white/80">💡 Best Practice:</strong> Use
+                      environment variables for configuration to keep sensitive data out of your
+                      codebase:
                     </p>
                     <CodeHighlighter
                       code={`// studio.config.ts
@@ -768,7 +846,8 @@ export default config;`}
                       language="typescript"
                     />
                     <p className="text-xs font-light tracking-tight text-white/50 mt-2">
-                      Add to your <code className="text-white/70 bg-white/10 px-1 py-0.5">.env</code> file:
+                      Add to your{" "}
+                      <code className="text-white/70 bg-white/10 px-1 py-0.5">.env</code> file:
                     </p>
                     <CodeBlock
                       code={`STUDIO_BASE_PATH=/api/studio
@@ -783,7 +862,11 @@ ADMIN_EMAIL_3=admin3@example.com`}
                   <code className="text-white/90 text-sm">access.roles</code>
                   <span className="text-white/50 text-xs ml-2">(optional)</span>
                   <p className="text-sm font-light tracking-tight text-white/50 mt-1">
-                    Array of user roles allowed to access (e.g., <code className="text-white/70 bg-white/10 px-1 py-0.5">["admin", "superadmin"]</code>)
+                    Array of user roles allowed to access (e.g.,{" "}
+                    <code className="text-white/70 bg-white/10 px-1 py-0.5">
+                      ["admin", "superadmin"]
+                    </code>
+                    )
                   </p>
                 </div>
                 <div className="pb-3">
@@ -797,55 +880,73 @@ ADMIN_EMAIL_3=admin3@example.com`}
                       <code className="text-white/90 text-xs">metadata.title</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Custom title displayed in the browser tab and application header. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">"Better Auth Studio"</code>
+                        Custom title displayed in the browser tab and application header. Default:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">
+                          "Better Auth Studio"
+                        </code>
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">metadata.logo</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        URL or path to your custom logo image. Supports external URLs (http/https) or local paths. Will be displayed in the header navbar. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">"/logo.png"</code>
+                        URL or path to your custom logo image. Supports external URLs (http/https)
+                        or local paths. Will be displayed in the header navbar. Default:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">"/logo.png"</code>
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">metadata.favicon</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        URL or path to your custom favicon. Supports multiple formats: .png, .ico, .svg, .jpg, .webp. Will be displayed in browser tabs. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">"/logo.png"</code>
+                        URL or path to your custom favicon. Supports multiple formats: .png, .ico,
+                        .svg, .jpg, .webp. Will be displayed in browser tabs. Default:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">"/logo.png"</code>
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">metadata.company.name</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Your company or organization name displayed in the header navbar. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">"Better-Auth Studio."</code>
+                        Your company or organization name displayed in the header navbar. Default:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">
+                          "Better-Auth Studio."
+                        </code>
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">metadata.company.website</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Your company website URL. When provided, the company name in the header becomes a clickable link. Opens in a new tab with proper security attributes.
+                        Your company website URL. When provided, the company name in the header
+                        becomes a clickable link. Opens in a new tab with proper security
+                        attributes.
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">metadata.theme</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Theme preference for the studio interface. Options: <code className="text-white/70 bg-white/10 px-1 py-0.5">"light"</code> or <code className="text-white/70 bg-white/10 px-1 py-0.5">"dark"</code>. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">"dark"</code>
+                        Theme preference for the studio interface. Options:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">"light"</code> or{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">"dark"</code>.
+                        Default:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">"dark"</code>
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">metadata.customStyles</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Custom CSS styles to inject into the studio interface. Allows for advanced theming and customization beyond the default theme options.
+                        Custom CSS styles to inject into the studio interface. Allows for advanced
+                        theming and customization beyond the default theme options.
                       </p>
                     </div>
                   </div>
                   <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-none">
                     <p className="text-xs font-light tracking-tight text-white/60 mb-2">
-                      <strong className="font-bold text-white/80">💡 Example:</strong> Complete metadata configuration:
+                      <strong className="font-bold text-white/80">💡 Example:</strong> Complete
+                      metadata configuration:
                     </p>
                     <CodeHighlighter
                       code={`// studio.config.ts
@@ -891,8 +992,8 @@ export default config;`}
         <section id="events">
           <PixelCard variant="highlight" className="relative">
             <div className="absolute -top-10 left-0">
-              <h3 
-                onClick={() => handleSectionClick('events')}
+              <h3
+                onClick={() => handleSectionClick("events")}
                 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden cursor-pointer hover:border-white/40 hover:bg-white/15 transition-all duration-200"
               >
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
@@ -908,39 +1009,53 @@ export default config;`}
                   <code className="text-white/90 text-sm">events.enabled</code>
                   <span className="text-white/50 text-xs ml-2">(optional)</span>
                   <p className="text-sm font-light tracking-tight text-white/50 mt-1">
-                    Enable event ingestion to track authentication events. When enabled, events are automatically captured and stored in your database. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">false</code>
+                    Enable event ingestion to track authentication events. When enabled, events are
+                    automatically captured and stored in your database. Default:{" "}
+                    <code className="text-white/70 bg-white/10 px-1 py-0.5">false</code>
                   </p>
                 </div>
                 <div className="border-b border-white/10 pb-3">
                   <code className="text-white/90 text-sm">events.client</code>
                   <span className="text-white/50 text-xs ml-2">(optional)</span>
                   <p className="text-sm font-light tracking-tight text-white/50 mt-1">
-                    Database client instance (Prisma client, Drizzle instance, Postgres pool, ClickHouse client, etc.)
+                    Database client instance (Prisma client, Drizzle instance, Postgres pool,
+                    ClickHouse client, etc.)
                   </p>
                 </div>
                 <div className="border-b border-white/10 pb-3">
                   <code className="text-white/90 text-sm">events.clientType</code>
                   <span className="text-white/50 text-xs ml-2">(optional)</span>
                   <p className="text-sm font-light tracking-tight text-white/50 mt-1">
-                    Type of database client. Options: <code className="text-white/70 bg-white/10 px-1 py-0.5">"prisma"</code>, <code className="text-white/70 bg-white/10 px-1 py-0.5">"drizzle"</code>, <code className="text-white/70 bg-white/10 px-1 py-0.5">"postgres"</code>, <code className="text-white/70 bg-white/10 px-1 py-0.5">"sqlite"</code>, <code className="text-white/70 bg-white/10 px-1 py-0.5">"clickhouse"</code>, <code className="text-white/70 bg-white/10 px-1 py-0.5">"http"</code>
+                    Type of database client. Options:{" "}
+                    <code className="text-white/70 bg-white/10 px-1 py-0.5">"prisma"</code>,{" "}
+                    <code className="text-white/70 bg-white/10 px-1 py-0.5">"drizzle"</code>,{" "}
+                    <code className="text-white/70 bg-white/10 px-1 py-0.5">"postgres"</code>,{" "}
+                    <code className="text-white/70 bg-white/10 px-1 py-0.5">"sqlite"</code>,{" "}
+                    <code className="text-white/70 bg-white/10 px-1 py-0.5">"clickhouse"</code>,{" "}
+                    <code className="text-white/70 bg-white/10 px-1 py-0.5">"http"</code>
                   </p>
                 </div>
                 <div className="border-b border-white/10 pb-3">
                   <code className="text-white/90 text-sm">events.tableName</code>
                   <span className="text-white/50 text-xs ml-2">(optional)</span>
                   <p className="text-sm font-light tracking-tight text-white/50 mt-1">
-                    Name of the table to store events. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">"auth_events"</code>
+                    Name of the table to store events. Default:{" "}
+                    <code className="text-white/70 bg-white/10 px-1 py-0.5">"auth_events"</code>
                   </p>
                 </div>
                 <div className="border-b border-white/10 pb-3">
                   <code className="text-white/90 text-sm">events.onEventIngest</code>
                   <span className="text-white/50 text-xs ml-2">(optional)</span>
                   <p className="text-sm font-light tracking-tight text-white/50 mt-1">
-                    Callback function invoked when an event is ingested. Receives the complete event object with all data (type, metadata, userId, etc.) that will be sent to the database. Useful for external actions like webhooks, analytics tracking, or custom logging.
+                    Callback function invoked when an event is ingested. Receives the complete event
+                    object with all data (type, metadata, userId, etc.) that will be sent to the
+                    database. Useful for external actions like webhooks, analytics tracking, or
+                    custom logging.
                   </p>
                   <div className="mt-3 p-3 bg-white/5 border border-white/10 rounded-none">
                     <p className="text-xs font-light tracking-tight text-white/60 mb-2">
-                      <strong className="font-bold text-white/80">💡 Example:</strong> Using onEventIngest callback:
+                      <strong className="font-bold text-white/80">💡 Example:</strong> Using
+                      onEventIngest callback:
                     </p>
                     <CodeHighlighter
                       code={`// studio.config.ts
@@ -986,81 +1101,121 @@ export default config;`}
                   <code className="text-white/90 text-sm">events.liveMarquee</code>
                   <span className="text-white/50 text-xs ml-2">(optional)</span>
                   <p className="text-sm font-light tracking-tight text-white/50 mt-1">
-                    Configuration for the live event marquee displayed at the top of the studio interface
+                    Configuration for the live event marquee displayed at the top of the studio
+                    interface
                   </p>
                   <div className="mt-3 space-y-3">
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">events.liveMarquee.enabled</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Enable the live event marquee. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">true</code>
+                        Enable the live event marquee. Default:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">true</code>
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">events.liveMarquee.pollInterval</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Polling interval in milliseconds for fetching new events. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">2000</code> (2 seconds)
+                        Polling interval in milliseconds for fetching new events. Default:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">2000</code> (2
+                        seconds)
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">events.liveMarquee.speed</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Animation speed in pixels per frame for the scrolling marquee. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">0.5</code>
+                        Animation speed in pixels per frame for the scrolling marquee. Default:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">0.5</code>
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">events.liveMarquee.pauseOnHover</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Pause the marquee animation when hovered. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">true</code>
+                        Pause the marquee animation when hovered. Default:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">true</code>
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">events.liveMarquee.limit</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Maximum number of events to display in the marquee. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">50</code>
+                        Maximum number of events to display in the marquee. Default:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">50</code>
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">events.liveMarquee.sort</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Sort order for events. Options: <code className="text-white/70 bg-white/10 px-1 py-0.5">"desc"</code> (newest first) or <code className="text-white/70 bg-white/10 px-1 py-0.5">"asc"</code> (oldest first). Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">"desc"</code>
+                        Sort order for events. Options:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">"desc"</code>{" "}
+                        (newest first) or{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">"asc"</code> (oldest
+                        first). Default:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">"desc"</code>
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">events.liveMarquee.colors</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Custom colors for event severity types. Object with optional properties: <code className="text-white/70 bg-white/10 px-1 py-0.5">success</code>, <code className="text-white/70 bg-white/10 px-1 py-0.5">info</code>, <code className="text-white/70 bg-white/10 px-1 py-0.5">warning</code>, <code className="text-white/70 bg-white/10 px-1 py-0.5">error</code>, <code className="text-white/70 bg-white/10 px-1 py-0.5">failed</code>
+                        Custom colors for event severity types. Object with optional properties:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">success</code>,{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">info</code>,{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">warning</code>,{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">error</code>,{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">failed</code>
                       </p>
                     </div>
                     <div className="pl-4 border-l-2 border-white/10">
                       <code className="text-white/90 text-xs">events.liveMarquee.timeWindow</code>
                       <span className="text-white/50 text-xs ml-2">(optional)</span>
                       <p className="text-xs font-light tracking-tight text-white/50 mt-1">
-                        Time window for fetching events in the marquee. Can be a predefined preset or a custom duration in seconds. Default: <code className="text-white/70 bg-white/10 px-1 py-0.5">"1h"</code>
+                        Time window for fetching events in the marquee. Can be a predefined preset
+                        or a custom duration in seconds. Default:{" "}
+                        <code className="text-white/70 bg-white/10 px-1 py-0.5">"1h"</code>
                       </p>
                       <div className="mt-2 p-2 bg-white/5 border border-white/10 rounded-none">
                         <p className="text-xs font-light tracking-tight text-white/60 mb-2">
                           <strong className="font-bold text-white/80">Options:</strong>
                         </p>
                         <ul className="text-xs font-light tracking-tight text-white/50 space-y-1 ml-2">
-                          <li>• <code className="text-white/70 bg-white/10 px-1 py-0.5">since: "15m" | "30m" | "1h" | "2h" | "4h" | "6h" | "12h" | "1d" | "2d" | "3d" | "7d" | "14d" | "30d"</code> - Predefined time window</li>
-                          <li>• <code className="text-white/70 bg-white/10 px-1 py-0.5">custom: number</code> - Custom duration in seconds (e.g., <code className="text-white/70 bg-white/10 px-1 py-0.5">2 * 60 * 60</code> for 2 hours)</li>
+                          <li>
+                            •{" "}
+                            <code className="text-white/70 bg-white/10 px-1 py-0.5">
+                              since: "15m" | "30m" | "1h" | "2h" | "4h" | "6h" | "12h" | "1d" | "2d"
+                              | "3d" | "7d" | "14d" | "30d"
+                            </code>{" "}
+                            - Predefined time window
+                          </li>
+                          <li>
+                            •{" "}
+                            <code className="text-white/70 bg-white/10 px-1 py-0.5">
+                              custom: number
+                            </code>{" "}
+                            - Custom duration in seconds (e.g.,{" "}
+                            <code className="text-white/70 bg-white/10 px-1 py-0.5">
+                              2 * 60 * 60
+                            </code>{" "}
+                            for 2 hours)
+                          </li>
                         </ul>
                         <p className="text-xs font-light tracking-tight text-white/50 mt-2">
-                          <strong className="font-bold text-white/70">Note:</strong> Either <code className="text-white/70 bg-white/10 px-1 py-0.5">since</code> or <code className="text-white/70 bg-white/10 px-1 py-0.5">custom</code> must be provided, but not both.
+                          <strong className="font-bold text-white/70">Note:</strong> Either{" "}
+                          <code className="text-white/70 bg-white/10 px-1 py-0.5">since</code> or{" "}
+                          <code className="text-white/70 bg-white/10 px-1 py-0.5">custom</code> must
+                          be provided, but not both.
                         </p>
                       </div>
                     </div>
                   </div>
                   <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-none">
                     <p className="text-xs font-light tracking-tight text-white/60 mb-2">
-                      <strong className="font-bold text-white/80">💡 Example:</strong> Complete events configuration:
+                      <strong className="font-bold text-white/80">💡 Example:</strong> Complete
+                      events configuration:
                     </p>
                     <CodeHighlighter
                       code={`// studio.config.ts
@@ -1116,8 +1271,8 @@ export default config;`}
         <section id="security">
           <PixelCard variant="highlight" className="relative">
             <div className="absolute -top-10 left-0">
-              <h3 
-                onClick={() => handleSectionClick('security')}
+              <h3
+                onClick={() => handleSectionClick("security")}
                 className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden cursor-pointer hover:border-white/40 hover:bg-white/15 transition-all duration-200"
               >
                 <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
@@ -1131,7 +1286,12 @@ export default config;`}
               <ul className="text-sm font-light tracking-tight text-white/70 space-y-2">
                 <li className="flex items-start gap-2">
                   <span className="text-white/50">→</span>
-                  <span>Always configure <code className="text-white/90 bg-white/10 px-1 py-0.5">allowedEmails</code> or <code className="text-white/90 bg-white/10 px-1 py-0.5">allowedRoles</code> in production</span>
+                  <span>
+                    Always configure{" "}
+                    <code className="text-white/90 bg-white/10 px-1 py-0.5">allowedEmails</code> or{" "}
+                    <code className="text-white/90 bg-white/10 px-1 py-0.5">allowedRoles</code> in
+                    production
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-white/50">→</span>
@@ -1139,11 +1299,16 @@ export default config;`}
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-white/50">→</span>
-                  <span>Admin users must sign in with email/password through the studio login page</span>
+                  <span>
+                    Admin users must sign in with email/password through the studio login page
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-white/50">→</span>
-                  <span>Consider using environment-specific configurations for different deployment stages</span>
+                  <span>
+                    Consider using environment-specific configurations for different deployment
+                    stages
+                  </span>
                 </li>
               </ul>
             </div>
@@ -1153,4 +1318,3 @@ export default config;`}
     </PixelLayout>
   );
 }
-

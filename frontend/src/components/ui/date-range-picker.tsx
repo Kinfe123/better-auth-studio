@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import type { DateRange } from 'react-day-picker';
+import * as React from "react";
+import type { DateRange } from "react-day-picker";
 
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface DateRangePickerProps {
   value?: DateRange;
@@ -48,7 +48,7 @@ export function DateRangePicker({ value, onChange, className }: DateRangePickerP
                 date.from.toLocaleDateString()
               )
             ) : (
-              'Pick a date range'
+              "Pick a date range"
             )}
           </Button>
         </PopoverTrigger>

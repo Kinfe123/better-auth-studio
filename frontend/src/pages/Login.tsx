@@ -1,50 +1,50 @@
-import { AlertCircle, Loader } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { AlertCircle, Loader } from "lucide-react";
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/';
+  const redirect = searchParams.get("redirect") || "/";
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const basePath = (window as any).__STUDIO_CONFIG__?.basePath || '';
-      const studioAuthPath = basePath ? `${basePath}/auth` : '/api/auth';
+      const basePath = (window as any).__STUDIO_CONFIG__?.basePath || "";
+      const studioAuthPath = basePath ? `${basePath}/auth` : "/api/auth";
 
       const signInResponse = await fetch(`${studioAuthPath}/sign-in`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-        credentials: 'include',
+        credentials: "include",
       });
 
       const result = await signInResponse.json();
 
       if (!signInResponse.ok) {
         if (signInResponse.status === 403) {
-          navigate('/access-denied');
+          navigate("/access-denied");
           return;
         }
-        throw new Error(result.message || 'Invalid credentials');
+        throw new Error(result.message || "Invalid credentials");
       }
 
       if (result.success) {
         navigate(redirect);
       } else {
-        throw new Error(result.message || 'Login failed');
+        throw new Error(result.message || "Login failed");
       }
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      setError(err.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -70,7 +70,7 @@ export default function LoginPage() {
           <div className="mb-6">
             <div className="flex relative justify-between items-center gap-2 mb-4">
               <span className="flex w-full text-left justify-start items-center text-white text-xs font-mono uppercase tracking-wider">
-                better auth{' '}
+                better auth{" "}
                 <span className="bg-white text-black px-1 ml-1 rounded-none">studio</span>
               </span>
             </div>
@@ -131,7 +131,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full h-10 bg-white text-black text-xs font-mono uppercase tracking-wider hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
-              {loading ? <Loader className="w-3 h-3 animate-spin" /> : 'Sign In'}
+              {loading ? <Loader className="w-3 h-3 animate-spin" /> : "Sign In"}
             </button>
           </form>
 

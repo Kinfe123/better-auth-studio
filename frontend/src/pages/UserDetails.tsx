@@ -7,12 +7,12 @@ import {
   Shield,
   Trash2,
   XCircle,
-} from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'sonner';
-import { AnimatedNumber } from '../components/AnimatedNumber';
-import { CopyableId } from '../components/CopyableId';
+} from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+import { AnimatedNumber } from "../components/AnimatedNumber";
+import { CopyableId } from "../components/CopyableId";
 import {
   Ban,
   Building2,
@@ -29,20 +29,20 @@ import {
   UserMinus,
   Users,
   X,
-} from '../components/PixelIcons';
-import { Terminal } from '../components/Terminal';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
+} from "../components/PixelIcons";
+import { Terminal } from "../components/Terminal";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/ui/select';
-import { getProviderIcon } from '../lib/icons';
-import { getImageSrc } from '../lib/utils';
+} from "../components/ui/select";
+import { getProviderIcon } from "../lib/icons";
+import { getImageSrc } from "../lib/utils";
 
 interface User {
   id: string;
@@ -127,7 +127,7 @@ interface Invitation {
   id: string;
   email: string;
   role: string;
-  status: 'pending' | 'accepted' | 'rejected' | 'cancelled' | 'expired';
+  status: "pending" | "accepted" | "rejected" | "cancelled" | "expired";
   organizationId: string;
   organizationName: string;
   teamId?: string;
@@ -148,28 +148,28 @@ export default function UserDetails() {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<
-    'details' | 'organizations' | 'teams' | 'sessions' | 'accounts' | 'invitations'
-  >('details');
+    "details" | "organizations" | "teams" | "sessions" | "accounts" | "invitations"
+  >("details");
   const [showEditModal, setShowEditModal] = useState(false);
   const [showBanModal, setShowBanModal] = useState(false);
   const [showUnbanModal, setShowUnbanModal] = useState(false);
   const [showSessionSeedModal, setShowSessionSeedModal] = useState(false);
   const [showAccountSeedModal, setShowAccountSeedModal] = useState(false);
-  const [accountSeedProvider, setAccountSeedProvider] = useState<string>('random');
+  const [accountSeedProvider, setAccountSeedProvider] = useState<string>("random");
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [actionMenuOpen, setActionMenuOpen] = useState(false);
-  const [banReason, setBanReason] = useState('');
+  const [banReason, setBanReason] = useState("");
   const [banExpiresIn, setBanExpiresIn] = useState<number | undefined>();
   const [adminPluginEnabled, setAdminPluginEnabled] = useState(false);
-  const [editRole, setEditRole] = useState<string>('');
+  const [editRole, setEditRole] = useState<string>("");
   const [seedingLogs, setSeedingLogs] = useState<
     Array<{
       id: string;
-      type: 'info' | 'success' | 'error' | 'progress';
+      type: "info" | "success" | "error" | "progress";
       message: string;
       timestamp: Date;
-      status?: 'pending' | 'running' | 'completed' | 'failed';
+      status?: "pending" | "running" | "completed" | "failed";
     }>
   >([]);
   const [isSeeding, setIsSeeding] = useState(false);
@@ -190,7 +190,7 @@ export default function UserDetails() {
 
   const checkAdminPlugin = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/status');
+      const response = await fetch("/api/admin/status");
       const data = await response.json();
       setAdminPluginEnabled(data.enabled);
     } catch (_error) {
@@ -200,10 +200,10 @@ export default function UserDetails() {
 
   const resolveIPLocation = useCallback(async (ipAddress: string): Promise<LocationData | null> => {
     try {
-      const response = await fetch('/api/geo/resolve', {
-        method: 'POST',
+      const response = await fetch("/api/geo/resolve", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ ipAddress }),
       });
@@ -223,7 +223,7 @@ export default function UserDetails() {
   const resolveSessionLocations = useCallback(
     async (sessions: Session[]) => {
       const pendingSessions = sessions.filter(
-        (session) => !sessionLocationsRef.current[session.id]
+        (session) => !sessionLocationsRef.current[session.id],
       );
       if (pendingSessions.length === 0) {
         return;
@@ -236,7 +236,7 @@ export default function UserDetails() {
             return { sessionId: session.id, location };
           }
           return null;
-        })
+        }),
       );
 
       const updates: Record<string, LocationData> = {};
@@ -251,35 +251,35 @@ export default function UserDetails() {
         setSessionLocations(sessionLocationsRef.current);
       }
     },
-    [resolveIPLocation]
+    [resolveIPLocation],
   );
 
   const getCountryFlag = (countryCode: string): string => {
-    if (!countryCode) return '🌍';
+    if (!countryCode) return "🌍";
 
     // Convert country code to flag emoji
     const codePoints = countryCode
       .toUpperCase()
-      .split('')
+      .split("")
       .map((char) => 127397 + char.charCodeAt(0));
     return String.fromCodePoint(...codePoints);
   };
 
   const formatProviderName = (providerId?: string) => {
-    if (!providerId) return 'Unknown Provider';
-    return providerId.replace(/[_-]/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+    if (!providerId) return "Unknown Provider";
+    return providerId.replace(/[_-]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
   const formatDateTime = (value?: string | null) => {
-    if (!value) return 'Unknown';
+    if (!value) return "Unknown";
     const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return 'Unknown';
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    if (Number.isNaN(date.getTime())) return "Unknown";
+    return date.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -290,12 +290,12 @@ export default function UserDetails() {
         const data = await response.json();
         setUser(data.user);
       } else {
-        toast.error('Failed to fetch user details');
-        navigate('/users');
+        toast.error("Failed to fetch user details");
+        navigate("/users");
       }
     } catch (_error) {
-      toast.error('Failed to fetch user details');
-      navigate('/users');
+      toast.error("Failed to fetch user details");
+      navigate("/users");
     } finally {
       setLoading(false);
     }
@@ -352,14 +352,14 @@ export default function UserDetails() {
     file: File,
     maxWidth: number = 800,
     maxHeight: number = 800,
-    quality: number = 0.8
+    quality: number = 0.8,
   ): Promise<File> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-          const canvas = document.createElement('canvas');
+          const canvas = document.createElement("canvas");
           let width = img.width;
           let height = img.height;
 
@@ -379,9 +379,9 @@ export default function UserDetails() {
           canvas.width = width;
           canvas.height = height;
 
-          const ctx = canvas.getContext('2d');
+          const ctx = canvas.getContext("2d");
           if (!ctx) {
-            reject(new Error('Failed to get canvas context'));
+            reject(new Error("Failed to get canvas context"));
             return;
           }
 
@@ -390,7 +390,7 @@ export default function UserDetails() {
           canvas.toBlob(
             (blob) => {
               if (!blob) {
-                reject(new Error('Failed to compress image'));
+                reject(new Error("Failed to compress image"));
                 return;
               }
               const compressedFile = new File([blob], file.name, {
@@ -400,7 +400,7 @@ export default function UserDetails() {
               resolve(compressedFile);
             },
             file.type,
-            quality
+            quality,
           );
         };
         img.onerror = reject;
@@ -415,11 +415,11 @@ export default function UserDetails() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('Image size must be less than 5MB');
+        toast.error("Image size must be less than 5MB");
         return;
       }
-      if (!file.type.startsWith('image/')) {
-        toast.error('Please select a valid image file');
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please select a valid image file");
         return;
       }
 
@@ -434,8 +434,8 @@ export default function UserDetails() {
         };
         reader.readAsDataURL(compressedFile);
       } catch (error) {
-        toast.error('Failed to process image');
-        console.error('Image compression error:', error);
+        toast.error("Failed to process image");
+        console.error("Image compression error:", error);
       }
     }
   };
@@ -443,16 +443,16 @@ export default function UserDetails() {
   const handleEditUser = async () => {
     if (!user) return;
 
-    const name = (document.getElementById('edit-name') as HTMLInputElement)?.value;
-    const email = (document.getElementById('edit-email') as HTMLInputElement)?.value;
+    const name = (document.getElementById("edit-name") as HTMLInputElement)?.value;
+    const email = (document.getElementById("edit-email") as HTMLInputElement)?.value;
 
     if (!name || !email) {
-      toast.error('Please fill in all fields');
+      toast.error("Please fill in all fields");
       return;
     }
 
     setIsUpdating(true);
-    const toastId = toast.loading('Updating user...');
+    const toastId = toast.loading("Updating user...");
     try {
       const updateData: any = { name, email, role: editRole || null };
 
@@ -463,10 +463,10 @@ export default function UserDetails() {
           reader.onloadend = () => {
             // Ensure we have a proper base64 data URL
             const result = reader.result as string;
-            if (result && result.startsWith('data:image/')) {
+            if (result && result.startsWith("data:image/")) {
               resolve(result);
             } else {
-              reject(new Error('Invalid image data'));
+              reject(new Error("Invalid image data"));
             }
           };
           reader.onerror = reject;
@@ -479,8 +479,8 @@ export default function UserDetails() {
       }
 
       const response = await fetch(`/api/users/${userId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updateData),
       });
 
@@ -495,15 +495,15 @@ export default function UserDetails() {
           image: updateData.image !== undefined ? updateData.image : user.image,
         });
         setShowEditModal(false);
-        setEditRole('');
+        setEditRole("");
         setImagePreview(null);
         setSelectedImageFile(null);
-        toast.success('User updated successfully!', { id: toastId });
+        toast.success("User updated successfully!", { id: toastId });
       } else {
-        toast.error(`Error updating user: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error updating user: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (_error) {
-      toast.error('Error updating user', { id: toastId });
+      toast.error("Error updating user", { id: toastId });
     } finally {
       setIsUpdating(false);
     }
@@ -513,23 +513,23 @@ export default function UserDetails() {
     if (!user) return;
 
     setIsDeleting(true);
-    const toastId = toast.loading('Deleting user...');
+    const toastId = toast.loading("Deleting user...");
     try {
       const response = await fetch(`/api/users/${userId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       });
 
       const result = await response.json();
 
       if (result.success) {
-        toast.success('User deleted successfully!', { id: toastId });
-        navigate('/users');
+        toast.success("User deleted successfully!", { id: toastId });
+        navigate("/users");
       } else {
-        toast.error(`Error deleting user: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error deleting user: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (_error) {
-      toast.error('Error deleting user', { id: toastId });
+      toast.error("Error deleting user", { id: toastId });
     } finally {
       setIsDeleting(false);
     }
@@ -540,34 +540,34 @@ export default function UserDetails() {
 
     if (!adminPluginEnabled) {
       toast.error(
-        'Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration to use ban functionality.'
+        "Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration to use ban functionality.",
       );
       return;
     }
 
     setIsBanning(true);
-    const toastId = toast.loading('Banning user...');
+    const toastId = toast.loading("Banning user...");
     try {
-      const response = await fetch('/api/admin/ban-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/admin/ban-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: userId,
-          banReason: banReason || 'No reason provided',
+          banReason: banReason || "No reason provided",
           banExpiresIn: banExpiresIn,
         }),
       });
       const result = await response.json();
 
       if (response.ok) {
-        toast.success('User banned successfully!', { id: toastId });
+        toast.success("User banned successfully!", { id: toastId });
         setShowBanModal(false);
-        setBanReason('');
+        setBanReason("");
         setBanExpiresIn(undefined);
         fetchUserDetails();
       } else {
         if (response.status === 403) {
-          toast.error('You do not have permission to ban users. Admin role required.', {
+          toast.error("You do not have permission to ban users. Admin role required.", {
             id: toastId,
           });
         } else if (result.adminPluginEnabled && result.instructions) {
@@ -577,13 +577,13 @@ export default function UserDetails() {
             description: `Use: ${result.instructions.example}`,
           });
         } else {
-          toast.error(`Error banning user: ${result.error || result.message || 'Unknown error'}`, {
+          toast.error(`Error banning user: ${result.error || result.message || "Unknown error"}`, {
             id: toastId,
           });
         }
       }
     } catch (_error) {
-      toast.error('Error banning user', { id: toastId });
+      toast.error("Error banning user", { id: toastId });
     } finally {
       setIsBanning(false);
     }
@@ -594,17 +594,17 @@ export default function UserDetails() {
 
     if (!adminPluginEnabled) {
       toast.error(
-        'Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration to use unban functionality.'
+        "Admin plugin is not enabled. Please enable the admin plugin in your Better Auth configuration to use unban functionality.",
       );
       return;
     }
 
     setIsUnbanning(true);
-    const toastId = toast.loading('Unbanning user...');
+    const toastId = toast.loading("Unbanning user...");
     try {
-      const response = await fetch('/api/admin/unban-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/admin/unban-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: userId,
         }),
@@ -612,12 +612,12 @@ export default function UserDetails() {
       const result = await response.json();
 
       if (response.ok) {
-        toast.success('User unbanned successfully!', { id: toastId });
+        toast.success("User unbanned successfully!", { id: toastId });
         setShowUnbanModal(false);
         fetchUserDetails();
       } else {
         if (response.status === 403) {
-          toast.error('You do not have permission to unban users. Admin role required.', {
+          toast.error("You do not have permission to unban users. Admin role required.", {
             id: toastId,
           });
         } else if (result.adminPluginEnabled && result.instructions) {
@@ -628,23 +628,23 @@ export default function UserDetails() {
           });
         } else {
           toast.error(
-            `Error unbanning user: ${result.error || result.message || 'Unknown error'}`,
-            { id: toastId }
+            `Error unbanning user: ${result.error || result.message || "Unknown error"}`,
+            { id: toastId },
           );
         }
       }
     } catch (_error) {
-      toast.error('Error unbanning user', { id: toastId });
+      toast.error("Error unbanning user", { id: toastId });
     } finally {
       setIsUnbanning(false);
     }
   };
 
   const handleRemoveFromOrganization = async (membershipId: string) => {
-    const toastId = toast.loading('Removing user from organization...');
+    const toastId = toast.loading("Removing user from organization...");
     try {
       const response = await fetch(`/api/organizations/members/${membershipId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       const result = await response.json();
@@ -652,20 +652,20 @@ export default function UserDetails() {
       if (result.success) {
         setOrganizations((prev) => prev.filter((m) => m.id !== membershipId));
         fetchUserMemberships();
-        toast.success('User removed from organization!', { id: toastId });
+        toast.success("User removed from organization!", { id: toastId });
       } else {
-        toast.error(`Error removing user: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error removing user: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (_error) {
-      toast.error('Error removing user from organization', { id: toastId });
+      toast.error("Error removing user from organization", { id: toastId });
     }
   };
 
   const handleRemoveFromTeam = async (membershipId: string) => {
-    const toastId = toast.loading('Removing user from team...');
+    const toastId = toast.loading("Removing user from team...");
     try {
       const response = await fetch(`/api/teams/members/${membershipId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       const result = await response.json();
@@ -673,33 +673,33 @@ export default function UserDetails() {
       if (result.success) {
         setTeams((prev) => prev.filter((m) => m.id !== membershipId));
         fetchUserMemberships();
-        toast.success('User removed from team!', { id: toastId });
+        toast.success("User removed from team!", { id: toastId });
       } else {
-        toast.error(`Error removing user: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error removing user: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (_error) {
-      toast.error('Error removing user from team', { id: toastId });
+      toast.error("Error removing user from team", { id: toastId });
     }
   };
 
   const handleDeleteSession = async (sessionId: string) => {
     setDeletingSessions((prev) => ({ ...prev, [sessionId]: true }));
-    const toastId = toast.loading('Deleting session...');
+    const toastId = toast.loading("Deleting session...");
     try {
       const response = await fetch(`/api/sessions/${sessionId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       const result = await response.json();
 
       if (result.success) {
         setSessions((prev) => prev.filter((s) => s.id !== sessionId));
-        toast.success('Session deleted successfully!', { id: toastId });
+        toast.success("Session deleted successfully!", { id: toastId });
       } else {
-        toast.error(`Error deleting session: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error deleting session: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (_error) {
-      toast.error('Error deleting session', { id: toastId });
+      toast.error("Error deleting session", { id: toastId });
     } finally {
       setDeletingSessions((prev) => {
         const { [sessionId]: _, ...rest } = prev;
@@ -711,10 +711,10 @@ export default function UserDetails() {
   const handleUnlinkAccount = async (accountId: string) => {
     if (!userId) return;
     setUnlinkingAccounts((prev) => ({ ...prev, [accountId]: true }));
-    const toastId = toast.loading('Unlinking account...');
+    const toastId = toast.loading("Unlinking account...");
     try {
       const response = await fetch(`/api/users/${userId}/accounts/${accountId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       const data = await response.json();
       if (response.ok && data.success) {
@@ -722,12 +722,12 @@ export default function UserDetails() {
         setAccounts((prev) => prev.filter((account) => account.id !== accountId));
         // Also refresh the accounts list to ensure consistency
         await fetchUserAccounts();
-        toast.success('Account unlinked successfully', { id: toastId });
+        toast.success("Account unlinked successfully", { id: toastId });
       } else {
-        toast.error(data.error || 'Failed to unlink account', { id: toastId });
+        toast.error(data.error || "Failed to unlink account", { id: toastId });
       }
     } catch (error) {
-      toast.error('Failed to unlink account', { id: toastId });
+      toast.error("Failed to unlink account", { id: toastId });
     } finally {
       setUnlinkingAccounts((prev) => {
         const { [accountId]: _, ...rest } = prev;
@@ -739,23 +739,23 @@ export default function UserDetails() {
   const handleAcceptInvitation = async (invitationId: string) => {
     if (!userId) return;
     setAcceptingInvitations((prev) => ({ ...prev, [invitationId]: true }));
-    const toastId = toast.loading('Accepting invitation...');
+    const toastId = toast.loading("Accepting invitation...");
     try {
       const response = await fetch(`/api/invitations/${invitationId}/accept`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId }),
       });
       const data = await response.json();
       if (response.ok && data.success) {
         await fetchUserInvitations();
         await fetchUserMemberships(); // Refresh memberships
-        toast.success('Invitation accepted successfully', { id: toastId });
+        toast.success("Invitation accepted successfully", { id: toastId });
       } else {
-        toast.error(data.error || 'Failed to accept invitation', { id: toastId });
+        toast.error(data.error || "Failed to accept invitation", { id: toastId });
       }
     } catch (error) {
-      toast.error('Failed to accept invitation', { id: toastId });
+      toast.error("Failed to accept invitation", { id: toastId });
     } finally {
       setAcceptingInvitations((prev) => {
         const { [invitationId]: _, ...rest } = prev;
@@ -766,21 +766,21 @@ export default function UserDetails() {
 
   const handleRejectInvitation = async (invitationId: string) => {
     setRejectingInvitations((prev) => ({ ...prev, [invitationId]: true }));
-    const toastId = toast.loading('Rejecting invitation...');
+    const toastId = toast.loading("Rejecting invitation...");
     try {
       const response = await fetch(`/api/invitations/${invitationId}/reject`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
       });
       const data = await response.json();
       if (response.ok && data.success) {
         await fetchUserInvitations();
-        toast.success('Invitation rejected successfully', { id: toastId });
+        toast.success("Invitation rejected successfully", { id: toastId });
       } else {
-        toast.error(data.error || 'Failed to reject invitation', { id: toastId });
+        toast.error(data.error || "Failed to reject invitation", { id: toastId });
       }
     } catch (error) {
-      toast.error('Failed to reject invitation', { id: toastId });
+      toast.error("Failed to reject invitation", { id: toastId });
     } finally {
       setRejectingInvitations((prev) => {
         const { [invitationId]: _, ...rest } = prev;
@@ -791,20 +791,20 @@ export default function UserDetails() {
 
   const handleCancelInvitation = async (invitationId: string) => {
     setCancellingInvitations((prev) => ({ ...prev, [invitationId]: true }));
-    const toastId = toast.loading('Cancelling invitation...');
+    const toastId = toast.loading("Cancelling invitation...");
     try {
       const response = await fetch(`/api/invitations/${invitationId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       const data = await response.json();
       if (response.ok && data.success) {
         await fetchUserInvitations();
-        toast.success('Invitation cancelled successfully', { id: toastId });
+        toast.success("Invitation cancelled successfully", { id: toastId });
       } else {
-        toast.error(data.error || 'Failed to cancel invitation', { id: toastId });
+        toast.error(data.error || "Failed to cancel invitation", { id: toastId });
       }
     } catch (error) {
-      toast.error('Failed to cancel invitation', { id: toastId });
+      toast.error("Failed to cancel invitation", { id: toastId });
     } finally {
       setCancellingInvitations((prev) => {
         const { [invitationId]: _, ...rest } = prev;
@@ -838,8 +838,8 @@ export default function UserDetails() {
 
     setSeedingLogs([
       {
-        id: 'start',
-        type: 'info',
+        id: "start",
+        type: "info",
         message: `Starting session seeding process for ${count} sessions...`,
         timestamp: new Date(),
       },
@@ -847,8 +847,8 @@ export default function UserDetails() {
 
     try {
       const response = await fetch(`/api/users/${userId}/seed-sessions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ count }),
       });
 
@@ -859,15 +859,15 @@ export default function UserDetails() {
           if (r.success) {
             return {
               id: `session-${index}`,
-              type: 'progress' as const,
+              type: "progress" as const,
               message: `Creating session ${index + 1}: ${r.session.token.substring(0, 20)}... from ${r.session.ipAddress}`,
               timestamp: new Date(),
-              status: 'completed' as const,
+              status: "completed" as const,
             };
           } else {
             return {
               id: `session-${index}`,
-              type: 'error' as const,
+              type: "error" as const,
               message: `Failed to create session ${index + 1}: ${r.error}`,
               timestamp: new Date(),
             };
@@ -880,8 +880,8 @@ export default function UserDetails() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'complete',
-            type: 'success',
+            id: "complete",
+            type: "success",
             message: `✅ Session seeding completed! Created ${successCount}/${count} sessions successfully`,
             timestamp: new Date(),
           },
@@ -893,9 +893,9 @@ export default function UserDetails() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'error',
-            type: 'error',
-            message: `❌ Session seeding failed: ${result.error || 'Unknown error'}`,
+            id: "error",
+            type: "error",
+            message: `❌ Session seeding failed: ${result.error || "Unknown error"}`,
             timestamp: new Date(),
           },
         ]);
@@ -904,8 +904,8 @@ export default function UserDetails() {
       setSeedingLogs((prev) => [
         ...prev,
         {
-          id: 'error',
-          type: 'error',
+          id: "error",
+          type: "error",
           message: `❌ Network error: ${error}`,
           timestamp: new Date(),
         },
@@ -915,7 +915,7 @@ export default function UserDetails() {
     }
   };
 
-  const handleSeedAccounts = async (count: number = 3, providerId: string = 'random') => {
+  const handleSeedAccounts = async (count: number = 3, providerId: string = "random") => {
     if (!userId) return;
 
     setSeedingLogs([]);
@@ -923,8 +923,8 @@ export default function UserDetails() {
 
     setSeedingLogs([
       {
-        id: 'start',
-        type: 'info',
+        id: "start",
+        type: "info",
         message: `Starting account seeding process for ${count} accounts...`,
         timestamp: new Date(),
       },
@@ -932,8 +932,8 @@ export default function UserDetails() {
 
     try {
       const response = await fetch(`/api/users/${userId}/seed-accounts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ count, providerId }),
       });
 
@@ -944,15 +944,15 @@ export default function UserDetails() {
           if (r.success) {
             return {
               id: `account-${index}`,
-              type: 'progress' as const,
+              type: "progress" as const,
               message: `Creating account ${index + 1}: ${r.account.providerId || r.account.provider} (${r.account.accountId?.substring(0, 20) || r.account.id.substring(0, 20)}...)`,
               timestamp: new Date(),
-              status: 'completed' as const,
+              status: "completed" as const,
             };
           } else {
             return {
               id: `account-${index}`,
-              type: 'error' as const,
+              type: "error" as const,
               message: `Failed to create account ${index + 1}: ${r.error}`,
               timestamp: new Date(),
             };
@@ -965,8 +965,8 @@ export default function UserDetails() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'complete',
-            type: 'success',
+            id: "complete",
+            type: "success",
             message: `✅ Account seeding completed! Created ${successCount}/${count} accounts successfully`,
             timestamp: new Date(),
           },
@@ -978,9 +978,9 @@ export default function UserDetails() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'error',
-            type: 'error',
-            message: `❌ Account seeding failed: ${result.error || 'Unknown error'}`,
+            id: "error",
+            type: "error",
+            message: `❌ Account seeding failed: ${result.error || "Unknown error"}`,
             timestamp: new Date(),
           },
         ]);
@@ -989,8 +989,8 @@ export default function UserDetails() {
       setSeedingLogs((prev) => [
         ...prev,
         {
-          id: 'error',
-          type: 'error',
+          id: "error",
+          type: "error",
           message: `❌ Network error: ${error}`,
           timestamp: new Date(),
         },
@@ -1022,10 +1022,10 @@ export default function UserDetails() {
         <span className="mb-4 ml-0 flex justify-start items-start text-left border-none text-white">
           <span className="font-light">
             <span
-              onClick={() => navigate('/users')}
+              onClick={() => navigate("/users")}
               className="uppercase cursor-pointer text-white/80 font-mono text-sm"
             >
-              users /{' '}
+              users /{" "}
             </span>
             <span className="text-white font-mono text-sm">{user.id}</span>
           </span>
@@ -1040,7 +1040,7 @@ export default function UserDetails() {
                     alt={user?.name}
                     className="w-16 h-16 object-cover"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
+                      (e.target as HTMLImageElement).style.display = "none";
                     }}
                   />
                 ) : (
@@ -1103,13 +1103,13 @@ export default function UserDetails() {
                         setImagePreview(user?.image || null);
                         setSelectedImageFile(null);
                         setShowEditModal(true);
-                        setEditRole(user.role || '');
+                        setEditRole(user.role || "");
                       }}
                     >
                       <span>Edit User</span>
                       <Edit className="w-3 h-3 text-white/10 group-hover:text-white/70 transition-colors" />
                     </button>
-                    {accounts.some((acc) => acc.providerId === 'credential') ? (
+                    {accounts.some((acc) => acc.providerId === "credential") ? (
                       <button
                         className="w-full px-4 py-2 text-left border-b border-dashed border-white/20 text-[11px] text-white/70 hover:bg-white/10 flex items-center justify-between font-mono uppercase tracking-tight group"
                         onClick={(e) => {
@@ -1184,25 +1184,25 @@ export default function UserDetails() {
           <div className="border-b border-dashed border-white/20">
             <nav className="flex space-x-8 px-6">
               {[
-                { id: 'details', name: 'Details', icon: User },
+                { id: "details", name: "Details", icon: User },
                 {
-                  id: 'organizations',
-                  name: 'Organizations',
+                  id: "organizations",
+                  name: "Organizations",
                   icon: Building2,
                   count: organizations.length,
                 },
-                { id: 'teams', name: 'Teams', icon: Users, count: teams.length },
-                { id: 'accounts', name: 'Accounts', icon: Link2, count: accounts.length },
-                { id: 'sessions', name: 'Sessions', icon: Clock1, count: sessions.length },
-                { id: 'invitations', name: 'Invitations', icon: Mail, count: invitations.length },
+                { id: "teams", name: "Teams", icon: Users, count: teams.length },
+                { id: "accounts", name: "Accounts", icon: Link2, count: accounts.length },
+                { id: "sessions", name: "Sessions", icon: Clock1, count: sessions.length },
+                { id: "invitations", name: "Invitations", icon: Mail, count: invitations.length },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
                     activeTab === tab.id
-                      ? 'border-white text-white'
-                      : 'border-transparent text-gray-400 hover:text-white hover:border-white/50'
+                      ? "border-white text-white"
+                      : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
                   }`}
                 >
                   <tab.icon className="w-4 h-4 text-white/90" />
@@ -1215,7 +1215,7 @@ export default function UserDetails() {
                           className="text-white/80 font-mono text-xs"
                           prefix={<span className="mr-0.5 text-gray-500">[</span>}
                           suffix={<span className="ml-0.5 text-gray-500">]</span>}
-                          format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                          format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </sup>
                     )}
@@ -1226,7 +1226,7 @@ export default function UserDetails() {
           </div>
 
           <div className="p-6">
-            {activeTab === 'details' && (
+            {activeTab === "details" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="overflow-x-hidden bg-white/[3%] border border-white/10 p-6 rounded-none">
                   <h3 className="text-sm uppercase font-mono text-gray-400 mb-4 tracking-wider">
@@ -1277,12 +1277,12 @@ export default function UserDetails() {
                           Member Since
                         </div>
                         <div className="text-white font-mono text-sm">
-                          {new Date(user.createdAt).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
+                          {new Date(user.createdAt).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
                           })}
                         </div>
                       </div>
@@ -1306,9 +1306,9 @@ export default function UserDetails() {
                         </div>
                       </div>
                       <div
-                        className={`px-2 rounded-none border border-dashed border-white/20 uppercase py-1 text-xs font-mono ${user.emailVerified ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+                        className={`px-2 rounded-none border border-dashed border-white/20 uppercase py-1 text-xs font-mono ${user.emailVerified ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}
                       >
-                        {user.emailVerified ? 'Verified' : 'Unverified'}
+                        {user.emailVerified ? "Verified" : "Unverified"}
                       </div>
                     </div>
 
@@ -1322,16 +1322,16 @@ export default function UserDetails() {
                         </div>
                       </div>
                       <div
-                        className={`px-2 rounded-none border border-dashed border-white/20 uppercase py-1 text-xs font-mono ${user.twoFactorEnabled ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+                        className={`px-2 rounded-none border border-dashed border-white/20 uppercase py-1 text-xs font-mono ${user.twoFactorEnabled ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}
                       >
-                        {user.twoFactorEnabled ? 'Enabled' : 'Disabled'}
+                        {user.twoFactorEnabled ? "Enabled" : "Disabled"}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             )}
-            {activeTab === 'organizations' && (
+            {activeTab === "organizations" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -1404,18 +1404,18 @@ export default function UserDetails() {
                           <div className="flex flex-col items-end space-y-2">
                             <div className="flex items-center space-x-2">
                               <span className="text-gray-500 font-mono text-xs uppercase">
-                                Joined:{' '}
+                                Joined:{" "}
                               </span>
                               <span className="text-white font-mono text-xs">
-                                {new Date(membership.joinedAt).toLocaleDateString('en-US', {
-                                  year: 'numeric',
-                                  month: 'short',
-                                  day: 'numeric',
+                                {new Date(membership.joinedAt).toLocaleDateString("en-US", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
                                 })}
-                                ,{' '}
-                                {new Date(membership.joinedAt).toLocaleTimeString('en-US', {
-                                  hour: 'numeric',
-                                  minute: '2-digit',
+                                ,{" "}
+                                {new Date(membership.joinedAt).toLocaleTimeString("en-US", {
+                                  hour: "numeric",
+                                  minute: "2-digit",
                                   hour12: true,
                                 })}
                               </span>
@@ -1440,7 +1440,7 @@ export default function UserDetails() {
               </div>
             )}
 
-            {activeTab === 'teams' && (
+            {activeTab === "teams" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -1490,7 +1490,7 @@ export default function UserDetails() {
                               </h3>
                               <p className="text-gray-400 text-sm font-sans mt-1 flex items-center gap-2">
                                 <span>
-                                  in{' '}
+                                  in{" "}
                                   {membership.team.organizationSlug ||
                                     membership.team.organizationName}
                                 </span>
@@ -1499,7 +1499,7 @@ export default function UserDetails() {
                                     e.stopPropagation();
                                     if (membership.team.organizationId) {
                                       navigate(
-                                        `/organizations/${membership.team.organizationId}/teams/${membership.team.id}`
+                                        `/organizations/${membership.team.organizationId}/teams/${membership.team.id}`,
                                       );
                                     } else {
                                       navigate(`/teams/${membership.team.id}`);
@@ -1516,18 +1516,18 @@ export default function UserDetails() {
                           <div className="flex flex-col items-end space-y-2">
                             <div className="flex items-center space-x-2">
                               <span className="text-gray-500 font-mono text-xs uppercase">
-                                Joined:{' '}
+                                Joined:{" "}
                               </span>
                               <span className="text-white font-mono text-xs">
-                                {new Date(membership.joinedAt).toLocaleDateString('en-US', {
-                                  year: 'numeric',
-                                  month: 'short',
-                                  day: 'numeric',
+                                {new Date(membership.joinedAt).toLocaleDateString("en-US", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
                                 })}
-                                ,{' '}
-                                {new Date(membership.joinedAt).toLocaleTimeString('en-US', {
-                                  hour: 'numeric',
-                                  minute: '2-digit',
+                                ,{" "}
+                                {new Date(membership.joinedAt).toLocaleTimeString("en-US", {
+                                  hour: "numeric",
+                                  minute: "2-digit",
                                   hour12: true,
                                 })}
                               </span>
@@ -1552,7 +1552,7 @@ export default function UserDetails() {
               </div>
             )}
 
-            {activeTab === 'accounts' && (
+            {activeTab === "accounts" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -1642,7 +1642,7 @@ export default function UserDetails() {
               </div>
             )}
 
-            {activeTab === 'sessions' && (
+            {activeTab === "sessions" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -1703,8 +1703,8 @@ export default function UserDetails() {
                               <div className="flex items-center space-x-2 mt-2">
                                 <Globe className="w-3.5 h-3.5 text-gray-400" />
                                 <span className="text-gray-400 uppercase font-mono text-xs">
-                                  {sessionLocations[session.id]?.city || '...'},{' '}
-                                  {sessionLocations[session.id]?.country || '...'}
+                                  {sessionLocations[session.id]?.city || "..."},{" "}
+                                  {sessionLocations[session.id]?.country || "..."}
                                 </span>
                                 {sessionLocations[session.id]?.countryCode && (
                                   <span className="text-xs ml-1">
@@ -1717,36 +1717,36 @@ export default function UserDetails() {
                           <div className="flex flex-col items-start space-y-1">
                             <div className="flex items-center space-x-2">
                               <span className="text-gray-500 font-mono text-xs uppercase">
-                                Expires:{' '}
+                                Expires:{" "}
                               </span>
                               <span className="text-white font-mono text-xs">
-                                {new Date(session.expiresAt).toLocaleDateString('en-US', {
-                                  year: 'numeric',
-                                  month: 'short',
-                                  day: 'numeric',
+                                {new Date(session.expiresAt).toLocaleDateString("en-US", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
                                 })}
-                                ,{' '}
-                                {new Date(session.expiresAt).toLocaleTimeString('en-US', {
-                                  hour: 'numeric',
-                                  minute: '2-digit',
+                                ,{" "}
+                                {new Date(session.expiresAt).toLocaleTimeString("en-US", {
+                                  hour: "numeric",
+                                  minute: "2-digit",
                                   hour12: true,
                                 })}
                               </span>
                             </div>
                             <div className="flex items-center space-x-2">
                               <span className="text-gray-500 font-mono text-xs uppercase">
-                                Created:{' '}
+                                Created:{" "}
                               </span>
                               <span className="text-white font-mono text-xs">
-                                {new Date(session.createdAt).toLocaleDateString('en-US', {
-                                  year: 'numeric',
-                                  month: 'short',
-                                  day: 'numeric',
+                                {new Date(session.createdAt).toLocaleDateString("en-US", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
                                 })}
-                                ,{' '}
-                                {new Date(session.createdAt).toLocaleTimeString('en-US', {
-                                  hour: 'numeric',
-                                  minute: '2-digit',
+                                ,{" "}
+                                {new Date(session.createdAt).toLocaleTimeString("en-US", {
+                                  hour: "numeric",
+                                  minute: "2-digit",
                                   hour12: true,
                                 })}
                               </span>
@@ -1772,7 +1772,7 @@ export default function UserDetails() {
               </div>
             )}
 
-            {activeTab === 'invitations' && (
+            {activeTab === "invitations" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -1856,7 +1856,7 @@ export default function UserDetails() {
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         navigate(
-                                          `/organizations/${invitation.organizationId}/teams/${invitation.teamId}`
+                                          `/organizations/${invitation.organizationId}/teams/${invitation.teamId}`,
                                         );
                                       }}
                                       className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
@@ -1878,14 +1878,14 @@ export default function UserDetails() {
                             <td className="py-4 px-4">
                               <span
                                 className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${
-                                  invitation.status === 'accepted'
-                                    ? 'bg-green-900/50 text-green-400 border border-green-500/30'
-                                    : invitation.status === 'rejected' ||
-                                        invitation.status === 'cancelled'
-                                      ? 'bg-red-900/50 text-red-400 border border-red-500/30'
-                                      : invitation.status === 'expired'
-                                        ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-500/30'
-                                        : 'bg-blue-900/50 text-blue-400 border border-blue-500/30'
+                                  invitation.status === "accepted"
+                                    ? "bg-green-900/50 text-green-400 border border-green-500/30"
+                                    : invitation.status === "rejected" ||
+                                        invitation.status === "cancelled"
+                                      ? "bg-red-900/50 text-red-400 border border-red-500/30"
+                                      : invitation.status === "expired"
+                                        ? "bg-yellow-900/50 text-yellow-400 border border-yellow-500/30"
+                                        : "bg-blue-900/50 text-blue-400 border border-blue-500/30"
                                 }`}
                               >
                                 {invitation.status}
@@ -1893,16 +1893,16 @@ export default function UserDetails() {
                             </td>
                             <td className="py-4 px-4">
                               <span className="text-gray-400 text-sm font-mono">
-                                {new Date(invitation.expiresAt).toLocaleDateString('en-US', {
-                                  month: 'short',
-                                  day: 'numeric',
-                                  year: 'numeric',
+                                {new Date(invitation.expiresAt).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
                                 })}
                               </span>
                             </td>
                             <td className="py-4 px-4">
                               <div className="flex items-center justify-end space-x-2">
-                                {invitation.status === 'pending' && (
+                                {invitation.status === "pending" && (
                                   <>
                                     <Button
                                       variant="outline"
@@ -1936,10 +1936,10 @@ export default function UserDetails() {
                                     </Button>
                                   </>
                                 )}
-                                {(invitation.status === 'accepted' ||
-                                  invitation.status === 'rejected' ||
-                                  invitation.status === 'cancelled' ||
-                                  invitation.status === 'expired') && (
+                                {(invitation.status === "accepted" ||
+                                  invitation.status === "rejected" ||
+                                  invitation.status === "cancelled" ||
+                                  invitation.status === "expired") && (
                                   <span className="text-gray-500 text-xs font-mono uppercase">
                                     No actions available
                                   </span>
@@ -1968,7 +1968,7 @@ export default function UserDetails() {
                 size="sm"
                 onClick={() => {
                   setShowEditModal(false);
-                  setEditRole('');
+                  setEditRole("");
                   setImagePreview(null);
                   setSelectedImageFile(null);
                 }}
@@ -2028,7 +2028,7 @@ export default function UserDetails() {
                 <div className="space-y-1 flex-1">
                   <div className="text-white font-medium leading-tight flex items-center gap-2">
                     <span>{user?.name}</span>
-                    <CopyableId id={user?.id || ''} variant="subscript" nonSliced={true} />
+                    <CopyableId id={user?.id || ""} variant="subscript" nonSliced={true} />
                   </div>
                   <div className="text-sm text-gray-400">{user?.email}</div>
                   {selectedImageFile && (
@@ -2042,7 +2042,7 @@ export default function UserDetails() {
                 </Label>
                 <Input
                   id="edit-name"
-                  defaultValue={user?.name || ''}
+                  defaultValue={user?.name || ""}
                   placeholder="e.g. John Doe"
                   disabled={isUpdating}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
@@ -2055,7 +2055,7 @@ export default function UserDetails() {
                 <Input
                   id="edit-email"
                   type="email"
-                  defaultValue={user?.email || ''}
+                  defaultValue={user?.email || ""}
                   placeholder="e.g. john@example.com"
                   disabled={isUpdating}
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
@@ -2086,7 +2086,7 @@ export default function UserDetails() {
                 variant="outline"
                 onClick={() => {
                   setShowEditModal(false);
-                  setEditRole('');
+                  setEditRole("");
                   setImagePreview(null);
                   setSelectedImageFile(null);
                 }}
@@ -2100,7 +2100,7 @@ export default function UserDetails() {
                 disabled={isUpdating}
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {isUpdating ? 'Updating...' : 'Update'}
+                {isUpdating ? "Updating..." : "Update"}
               </Button>
             </div>
           </div>
@@ -2117,7 +2117,7 @@ export default function UserDetails() {
                 size="sm"
                 onClick={() => {
                   setShowBanModal(false);
-                  setBanReason('');
+                  setBanReason("");
                   setBanExpiresIn(undefined);
                 }}
                 disabled={isBanning}
@@ -2142,7 +2142,7 @@ export default function UserDetails() {
                       alt={user?.name}
                       className="w-14 h-14 object-cover"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
+                        (e.target as HTMLImageElement).style.display = "none";
                       }}
                     />
                   ) : (
@@ -2177,7 +2177,7 @@ export default function UserDetails() {
                 <Input
                   id="banExpires"
                   type="number"
-                  value={banExpiresIn || ''}
+                  value={banExpiresIn || ""}
                   onChange={(e) =>
                     setBanExpiresIn(e.target.value ? Number(e.target.value) : undefined)
                   }
@@ -2196,7 +2196,7 @@ export default function UserDetails() {
                 variant="outline"
                 onClick={() => {
                   setShowBanModal(false);
-                  setBanReason('');
+                  setBanReason("");
                   setBanExpiresIn(undefined);
                 }}
                 disabled={isBanning}
@@ -2209,7 +2209,7 @@ export default function UserDetails() {
                 disabled={isBanning}
                 className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {isBanning ? 'Banning...' : 'Ban User'}
+                {isBanning ? "Banning..." : "Ban User"}
               </Button>
             </div>
           </div>
@@ -2247,7 +2247,7 @@ export default function UserDetails() {
                       alt={user?.name}
                       className="w-14 h-14 object-cover"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
+                        (e.target as HTMLImageElement).style.display = "none";
                       }}
                     />
                   ) : (
@@ -2282,7 +2282,7 @@ export default function UserDetails() {
                 disabled={isUnbanning}
                 className="bg-green-400 hover:bg-green-500 text-white border border-green-400 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {isUnbanning ? 'Unbanning...' : 'Unban User'}
+                {isUnbanning ? "Unbanning..." : "Unban User"}
               </Button>
             </div>
           </div>
@@ -2320,7 +2320,7 @@ export default function UserDetails() {
                       alt={user?.name}
                       className="w-14 h-14 object-cover"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
+                        (e.target as HTMLImageElement).style.display = "none";
                       }}
                     />
                   ) : (
@@ -2353,7 +2353,7 @@ export default function UserDetails() {
                 disabled={isDeleting}
                 className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {isDeleting ? 'Deleting...' : 'Delete'}
+                {isDeleting ? "Deleting..." : "Delete"}
               </Button>
             </div>
           </div>
@@ -2392,7 +2392,7 @@ export default function UserDetails() {
                       alt={user?.name}
                       className="w-14 h-14 object-cover"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
+                        (e.target as HTMLImageElement).style.display = "none";
                       }}
                     />
                   ) : (
@@ -2430,33 +2430,33 @@ export default function UserDetails() {
               </Button>
               <Button
                 onClick={async () => {
-                  const password = (document.getElementById('new-password') as HTMLInputElement)
+                  const password = (document.getElementById("new-password") as HTMLInputElement)
                     ?.value;
                   if (!password) {
-                    toast.error('Please enter a password');
+                    toast.error("Please enter a password");
                     return;
                   }
                   setIsUpdatingPassword(true);
-                  const toastId = toast.loading('Updating password...');
+                  const toastId = toast.loading("Updating password...");
                   try {
                     const response = await fetch(`/api/users/${userId}/password`, {
-                      method: 'PUT',
-                      headers: { 'Content-Type': 'application/json' },
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({ password }),
                     });
                     const result = await response.json();
                     if (result.success) {
                       setShowPasswordModal(false);
-                      (document.getElementById('new-password') as HTMLInputElement).value = '';
-                      toast.success('Password updated successfully!', { id: toastId });
+                      (document.getElementById("new-password") as HTMLInputElement).value = "";
+                      toast.success("Password updated successfully!", { id: toastId });
                     } else {
-                      const errorMessage = result.message || result.error || 'Unknown error';
+                      const errorMessage = result.message || result.error || "Unknown error";
                       toast.error(`Error updating password: ${errorMessage}`, {
                         id: toastId,
                       });
                     }
                   } catch (_error) {
-                    toast.error('Error updating password', { id: toastId });
+                    toast.error("Error updating password", { id: toastId });
                   } finally {
                     setIsUpdatingPassword(false);
                   }
@@ -2464,7 +2464,7 @@ export default function UserDetails() {
                 disabled={isUpdatingPassword}
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {isUpdatingPassword ? 'Updating...' : 'Update Password'}
+                {isUpdatingPassword ? "Updating..." : "Update Password"}
               </Button>
             </div>
           </div>
@@ -2503,7 +2503,7 @@ export default function UserDetails() {
                       alt={user?.name}
                       className="w-14 h-14 object-cover"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
+                        (e.target as HTMLImageElement).style.display = "none";
                       }}
                     />
                   ) : (
@@ -2560,8 +2560,8 @@ export default function UserDetails() {
               <Button
                 onClick={() => {
                   const count = parseInt(
-                    (document.getElementById('session-count') as HTMLInputElement)?.value || '3',
-                    10
+                    (document.getElementById("session-count") as HTMLInputElement)?.value || "3",
+                    10,
                   );
                   handleSeedSessions(count);
                 }}
@@ -2615,7 +2615,7 @@ export default function UserDetails() {
                       alt={user?.name}
                       className="w-14 h-14 object-cover"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
+                        (e.target as HTMLImageElement).style.display = "none";
                       }}
                     />
                   ) : (
@@ -2711,8 +2711,8 @@ export default function UserDetails() {
               <Button
                 onClick={() => {
                   const count = parseInt(
-                    (document.getElementById('account-count') as HTMLInputElement)?.value || '3',
-                    10
+                    (document.getElementById("account-count") as HTMLInputElement)?.value || "3",
+                    10,
                   );
                   handleSeedAccounts(count, accountSeedProvider);
                 }}

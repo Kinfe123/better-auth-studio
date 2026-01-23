@@ -4,7 +4,6 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [sveltekit()],
   ssr: {
-   external: ["@prisma/client"],
+    external: ["@prisma/client"],
   },
 });
-

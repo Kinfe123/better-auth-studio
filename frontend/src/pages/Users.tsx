@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import {
   Ban,
   Calendar as CalendarIcon,
@@ -16,30 +16,30 @@ import {
   UserPlus,
   Users as UsersIcon,
   X,
-} from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
-import type { DateRange } from 'react-day-picker';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { AnimatedNumber } from '../components/AnimatedNumber';
-import { CopyableId } from '../components/CopyableId';
-import { Check, Mail } from '../components/PixelIcons';
-import { Terminal } from '../components/Terminal';
-import { Button } from '../components/ui/button';
-import { Calendar } from '../components/ui/calendar';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Pagination } from '../components/ui/pagination';
-import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
+} from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import type { DateRange } from "react-day-picker";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { AnimatedNumber } from "../components/AnimatedNumber";
+import { CopyableId } from "../components/CopyableId";
+import { Check, Mail } from "../components/PixelIcons";
+import { Terminal } from "../components/Terminal";
+import { Button } from "../components/ui/button";
+import { Calendar } from "../components/ui/calendar";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Pagination } from "../components/ui/pagination";
+import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/ui/select';
-import { useCounts } from '../contexts/CountsContext';
-import { getImageSrc } from '../lib/utils';
+} from "../components/ui/select";
+import { useCounts } from "../contexts/CountsContext";
+import { getImageSrc } from "../lib/utils";
 
 interface User {
   id: string;
@@ -56,10 +56,10 @@ interface User {
 }
 
 const formatDateTime = (value?: string) => {
-  if (!value) return '—';
+  if (!value) return "—";
   const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return '—';
-  return format(d, 'dd MMM yyyy; HH:mm');
+  if (Number.isNaN(d.getTime())) return "—";
+  return format(d, "dd MMM yyyy; HH:mm");
 };
 
 export default function Users() {
@@ -73,7 +73,7 @@ export default function Users() {
 
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [activeFilters, setActiveFilters] = useState<FilterConfig[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(20);
@@ -86,7 +86,7 @@ export default function Users() {
   const [showUnbanModal, setShowUnbanModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null);
-  const [banReason, setBanReason] = useState('');
+  const [banReason, setBanReason] = useState("");
   const [banExpiresIn, setBanExpiresIn] = useState<number | undefined>();
   const [adminPluginEnabled, setAdminPluginEnabled] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -94,25 +94,25 @@ export default function Users() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isBanning, setIsBanning] = useState(false);
   const [isUnbanning, setIsUnbanning] = useState(false);
-  const [editRole, setEditRole] = useState<string>('');
+  const [editRole, setEditRole] = useState<string>("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
-  const [seedRole, setSeedRole] = useState<string>('');
-  const [createRole, setCreateRole] = useState<string>('');
+  const [seedRole, setSeedRole] = useState<string>("");
+  const [createRole, setCreateRole] = useState<string>("");
   const [seedingLogs, setSeedingLogs] = useState<
     Array<{
       id: string;
-      type: 'info' | 'success' | 'error' | 'progress';
+      type: "info" | "success" | "error" | "progress";
       message: string;
       timestamp: Date;
-      status?: 'pending' | 'running' | 'completed' | 'failed';
+      status?: "pending" | "running" | "completed" | "failed";
     }>
   >([]);
   const [isSeeding, setIsSeeding] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     try {
-      const response = await fetch('/api/users?limit=10000');
+      const response = await fetch("/api/users?limit=10000");
       const data = await response.json();
       setUsers(data.users || []);
     } catch (_error) {
@@ -123,7 +123,7 @@ export default function Users() {
 
   const checkAdminPlugin = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/status');
+      const response = await fetch("/api/admin/status");
       const data = await response.json();
       setAdminPluginEnabled(data.enabled);
     } catch (_error) {
@@ -140,17 +140,17 @@ export default function Users() {
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, [actionMenuOpen, checkAdminPlugin, fetchUsers]);
   useEffect(() => {
     if (showViewModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showViewModal, selectedUser]);
   const handleSeedUsers = async (count: number, role?: string) => {
@@ -159,17 +159,17 @@ export default function Users() {
 
     setSeedingLogs([
       {
-        id: 'start',
-        type: 'info',
+        id: "start",
+        type: "info",
         message: `Starting user seeding process for ${count} users...`,
         timestamp: new Date(),
       },
     ]);
 
     try {
-      const response = await fetch('/api/seed/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/seed/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ count, role: role || undefined }),
       });
 
@@ -180,15 +180,15 @@ export default function Users() {
           if (r.success) {
             return {
               id: `user-${index}`,
-              type: 'progress' as const,
+              type: "progress" as const,
               message: `Creating user: ${r.user.name} (${r.user.email})`,
               timestamp: new Date(),
-              status: 'completed' as const,
+              status: "completed" as const,
             };
           } else {
             return {
               id: `user-${index}`,
-              type: 'error' as const,
+              type: "error" as const,
               message: `Failed to create user ${index + 1}: ${r.error}`,
               timestamp: new Date(),
             };
@@ -201,8 +201,8 @@ export default function Users() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'complete',
-            type: 'success',
+            id: "complete",
+            type: "success",
             message: `✅ Seeding completed! Created ${successCount}/${count} users successfully`,
             timestamp: new Date(),
           },
@@ -214,9 +214,9 @@ export default function Users() {
         setSeedingLogs((prev) => [
           ...prev,
           {
-            id: 'error',
-            type: 'error',
-            message: `❌ Seeding failed: ${result.error || 'Unknown error'}`,
+            id: "error",
+            type: "error",
+            message: `❌ Seeding failed: ${result.error || "Unknown error"}`,
             timestamp: new Date(),
           },
         ]);
@@ -225,8 +225,8 @@ export default function Users() {
       setSeedingLogs((prev) => [
         ...prev,
         {
-          id: 'error',
-          type: 'error',
+          id: "error",
+          type: "error",
           message: `❌ Network error: ${error}`,
           timestamp: new Date(),
         },
@@ -243,7 +243,7 @@ export default function Users() {
 
   const openEditModal = (user: User) => {
     setSelectedUser(user);
-    setEditRole(user.role || '');
+    setEditRole(user.role || "");
     setImagePreview(user.image || null);
     setSelectedImageFile(null);
     setShowEditModal(true);
@@ -255,21 +255,21 @@ export default function Users() {
   };
 
   const handleCreateUser = async () => {
-    const name = (document.getElementById('create-name') as HTMLInputElement)?.value;
-    const email = (document.getElementById('create-email') as HTMLInputElement)?.value;
-    const password = (document.getElementById('create-password') as HTMLInputElement)?.value;
+    const name = (document.getElementById("create-name") as HTMLInputElement)?.value;
+    const email = (document.getElementById("create-email") as HTMLInputElement)?.value;
+    const password = (document.getElementById("create-password") as HTMLInputElement)?.value;
 
     if (!name || !email || !password) {
-      toast.error('Please fill in all fields');
+      toast.error("Please fill in all fields");
       return;
     }
     setIsCreating(true);
-    const toastId = toast.loading('Creating user...');
+    const toastId = toast.loading("Creating user...");
 
     try {
-      const response = await fetch('/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password, role: createRole || null }),
       });
 
@@ -278,16 +278,16 @@ export default function Users() {
       if (result.success) {
         await fetchUsers();
         setShowCreateModal(false);
-        setCreateRole('');
-        (document.getElementById('create-name') as HTMLInputElement).value = '';
-        (document.getElementById('create-email') as HTMLInputElement).value = '';
-        (document.getElementById('create-password') as HTMLInputElement).value = '';
-        toast.success('User created successfully!', { id: toastId });
+        setCreateRole("");
+        (document.getElementById("create-name") as HTMLInputElement).value = "";
+        (document.getElementById("create-email") as HTMLInputElement).value = "";
+        (document.getElementById("create-password") as HTMLInputElement).value = "";
+        toast.success("User created successfully!", { id: toastId });
       } else {
-        toast.error(`Error creating user: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error creating user: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (_error) {
-      toast.error('Error creating user', { id: toastId });
+      toast.error("Error creating user", { id: toastId });
     } finally {
       setIsCreating(false);
     }
@@ -297,14 +297,14 @@ export default function Users() {
     file: File,
     maxWidth: number = 800,
     maxHeight: number = 800,
-    quality: number = 0.8
+    quality: number = 0.8,
   ): Promise<File> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-          const canvas = document.createElement('canvas');
+          const canvas = document.createElement("canvas");
           let width = img.width;
           let height = img.height;
 
@@ -324,9 +324,9 @@ export default function Users() {
           canvas.width = width;
           canvas.height = height;
 
-          const ctx = canvas.getContext('2d');
+          const ctx = canvas.getContext("2d");
           if (!ctx) {
-            reject(new Error('Failed to get canvas context'));
+            reject(new Error("Failed to get canvas context"));
             return;
           }
 
@@ -335,7 +335,7 @@ export default function Users() {
           canvas.toBlob(
             (blob) => {
               if (!blob) {
-                reject(new Error('Failed to compress image'));
+                reject(new Error("Failed to compress image"));
                 return;
               }
               const compressedFile = new File([blob], file.name, {
@@ -345,7 +345,7 @@ export default function Users() {
               resolve(compressedFile);
             },
             file.type,
-            quality
+            quality,
           );
         };
         img.onerror = reject;
@@ -360,11 +360,11 @@ export default function Users() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('Image size must be less than 5MB');
+        toast.error("Image size must be less than 5MB");
         return;
       }
-      if (!file.type.startsWith('image/')) {
-        toast.error('Please select a valid image file');
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please select a valid image file");
         return;
       }
 
@@ -379,28 +379,28 @@ export default function Users() {
         };
         reader.readAsDataURL(compressedFile);
       } catch (error) {
-        toast.error('Failed to process image');
-        console.error('Image compression error:', error);
+        toast.error("Failed to process image");
+        console.error("Image compression error:", error);
       }
     }
   };
 
   const handleUpdateUser = async () => {
     if (!selectedUser) {
-      toast.error('No user selected');
+      toast.error("No user selected");
       return;
     }
 
-    const name = (document.getElementById('edit-name') as HTMLInputElement)?.value;
-    const email = (document.getElementById('edit-email') as HTMLInputElement)?.value;
+    const name = (document.getElementById("edit-name") as HTMLInputElement)?.value;
+    const email = (document.getElementById("edit-email") as HTMLInputElement)?.value;
 
     if (!name || !email) {
-      toast.error('Please fill in all fields');
+      toast.error("Please fill in all fields");
       return;
     }
 
     setIsUpdating(true);
-    const toastId = toast.loading('Updating user...');
+    const toastId = toast.loading("Updating user...");
 
     try {
       const updateData: any = { name, email, role: editRole || null };
@@ -410,10 +410,10 @@ export default function Users() {
         const imageData = await new Promise<string>((resolve, reject) => {
           reader.onloadend = () => {
             const result = reader.result as string;
-            if (result && result.startsWith('data:image/')) {
+            if (result && result.startsWith("data:image/")) {
               resolve(result);
             } else {
-              reject(new Error('Invalid image data'));
+              reject(new Error("Invalid image data"));
             }
           };
           reader.onerror = reject;
@@ -425,8 +425,8 @@ export default function Users() {
       }
 
       const response = await fetch(`/api/users/${selectedUser.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updateData),
       });
 
@@ -436,15 +436,15 @@ export default function Users() {
         await fetchUsers();
         setShowEditModal(false);
         setSelectedUser(null);
-        setEditRole('');
+        setEditRole("");
         setImagePreview(null);
         setSelectedImageFile(null);
-        toast.success('User updated successfully!', { id: toastId });
+        toast.success("User updated successfully!", { id: toastId });
       } else {
-        toast.error(`Error updating user: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error updating user: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (_error) {
-      toast.error('Error updating user', { id: toastId });
+      toast.error("Error updating user", { id: toastId });
     } finally {
       setIsUpdating(false);
     }
@@ -452,17 +452,17 @@ export default function Users() {
 
   const handleDeleteUser = async () => {
     if (!selectedUser) {
-      toast.error('No user selected');
+      toast.error("No user selected");
       return;
     }
 
     setIsDeleting(true);
-    const toastId = toast.loading('Deleting user...');
+    const toastId = toast.loading("Deleting user...");
 
     try {
       const response = await fetch(`/api/users/${selectedUser.id}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       });
 
       const result = await response.json();
@@ -472,12 +472,12 @@ export default function Users() {
         await refetchCounts();
         setShowDeleteModal(false);
         setSelectedUser(null);
-        toast.success('User deleted successfully!', { id: toastId });
+        toast.success("User deleted successfully!", { id: toastId });
       } else {
-        toast.error(`Error deleting user: ${result.error || 'Unknown error'}`, { id: toastId });
+        toast.error(`Error deleting user: ${result.error || "Unknown error"}`, { id: toastId });
       }
     } catch (_error) {
-      toast.error('Error deleting user', { id: toastId });
+      toast.error("Error deleting user", { id: toastId });
     } finally {
       setIsDeleting(false);
     }
@@ -487,39 +487,39 @@ export default function Users() {
     if (!selectedUser) return;
 
     if (!adminPluginEnabled) {
-      toast.error('Admin plugin is not enabled');
+      toast.error("Admin plugin is not enabled");
       return;
     }
 
     setIsBanning(true);
-    const toastId = toast.loading('Banning user...');
+    const toastId = toast.loading("Banning user...");
     try {
-      const response = await fetch('/api/admin/ban-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/admin/ban-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: selectedUser.id,
-          banReason: banReason || 'No reason provided',
+          banReason: banReason || "No reason provided",
           banExpiresIn: banExpiresIn,
         }),
       });
       const result = await response.json();
 
       if (response.ok) {
-        toast.success('User banned successfully!', { id: toastId });
+        toast.success("User banned successfully!", { id: toastId });
         setShowBanModal(false);
-        setBanReason('');
+        setBanReason("");
         setBanExpiresIn(undefined);
         setSelectedUser(null);
         setActionMenuOpen(null);
         fetchUsers();
       } else {
-        toast.error(`Error banning user: ${result.error || result.message || 'Unknown error'}`, {
+        toast.error(`Error banning user: ${result.error || result.message || "Unknown error"}`, {
           id: toastId,
         });
       }
     } catch (_error) {
-      toast.error('Error banning user', { id: toastId });
+      toast.error("Error banning user", { id: toastId });
     } finally {
       setIsBanning(false);
     }
@@ -529,16 +529,16 @@ export default function Users() {
     if (!selectedUser) return;
 
     if (!adminPluginEnabled) {
-      toast.error('Admin plugin is not enabled');
+      toast.error("Admin plugin is not enabled");
       return;
     }
 
     setIsUnbanning(true);
-    const toastId = toast.loading('Unbanning user...');
+    const toastId = toast.loading("Unbanning user...");
     try {
-      const response = await fetch('/api/admin/unban-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/admin/unban-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: selectedUser.id,
         }),
@@ -546,18 +546,18 @@ export default function Users() {
       const result = await response.json();
 
       if (response.ok) {
-        toast.success('User unbanned successfully!', { id: toastId });
+        toast.success("User unbanned successfully!", { id: toastId });
         setShowUnbanModal(false);
         setSelectedUser(null);
         setActionMenuOpen(null);
         fetchUsers();
       } else {
-        toast.error(`Error unbanning user: ${result.error || result.message || 'Unknown error'}`, {
+        toast.error(`Error unbanning user: ${result.error || result.message || "Unknown error"}`, {
           id: toastId,
         });
       }
     } catch (_error) {
-      toast.error('Error unbanning user', { id: toastId });
+      toast.error("Error unbanning user", { id: toastId });
     } finally {
       setIsUnbanning(false);
     }
@@ -565,31 +565,31 @@ export default function Users() {
 
   const exportUsersToCSV = () => {
     if (users.length === 0) {
-      toast.error('No users to export');
+      toast.error("No users to export");
       return;
     }
 
-    const csvHeaders = ['ID', 'Name', 'Email', 'Email Verified', 'Created At', 'Updated At'];
+    const csvHeaders = ["ID", "Name", "Email", "Email Verified", "Created At", "Updated At"];
     const csvData = users.map((user) => [
       user.id,
-      user.name || '',
-      user.email || '',
+      user.name || "",
+      user.email || "",
       !!user.emailVerified,
       new Date(user.createdAt).toLocaleString(),
       new Date(user.updatedAt).toLocaleString(),
     ]);
 
     const csvContent = [
-      csvHeaders.join(','),
-      ...csvData.map((row) => row.map((field) => `"${field}"`).join(',')),
-    ].join('\n');
+      csvHeaders.join(","),
+      ...csvData.map((row) => row.map((field) => `"${field}"`).join(",")),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `users-export-${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
+    link.setAttribute("href", url);
+    link.setAttribute("download", `users-export-${new Date().toISOString().split("T")[0]}.csv`);
+    link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -629,22 +629,22 @@ export default function Users() {
 
     const matchesFilters = activeFilters.every((filter) => {
       switch (filter.type) {
-        case 'emailVerified':
+        case "emailVerified":
           if (filter.value === undefined) return true;
-          return user.emailVerified === (filter.value === 'true');
-        case 'banned':
+          return user.emailVerified === (filter.value === "true");
+        case "banned":
           if (filter.value === undefined) return true;
-          return user.banned === (filter.value === 'true');
-        case 'active':
+          return user.banned === (filter.value === "true");
+        case "active":
           return user.banned !== true;
-        case 'createdAt': {
+        case "createdAt": {
           if (!filter.dateRange?.from && !filter.dateRange?.to) return true;
           const userDate = new Date(user.createdAt);
           if (filter.dateRange?.from && filter.dateRange.from > userDate) return false;
           if (filter.dateRange?.to && filter.dateRange.to < userDate) return false;
           return true;
         }
-        case 'role':
+        case "role":
           if (!filter.value) return true;
           return user.role?.toLowerCase().includes(filter.value.toLowerCase());
         default:
@@ -688,7 +688,7 @@ export default function Users() {
                 className="text-white font-mono text-sm"
                 prefix={<span className="mr-1 text-gray-500">[</span>}
                 suffix={<span className="ml-1 text-gray-500">]</span>}
-                format={{ notation: 'standard', maximumFractionDigits: 0 }}
+                format={{ notation: "standard", maximumFractionDigits: 0 }}
               />
             </sup>
           </h1>
@@ -751,16 +751,16 @@ export default function Users() {
                 </div>
               </SelectTrigger>
               <SelectContent>
-                {!activeFilters.some((f) => f.type === 'emailVerified') && (
+                {!activeFilters.some((f) => f.type === "emailVerified") && (
                   <SelectItem value="emailVerified">Email Verified</SelectItem>
                 )}
-                {!activeFilters.some((f) => f.type === 'banned') && (
+                {!activeFilters.some((f) => f.type === "banned") && (
                   <SelectItem value="banned">Banned Status</SelectItem>
                 )}
-                {!activeFilters.some((f) => f.type === 'createdAt') && (
+                {!activeFilters.some((f) => f.type === "createdAt") && (
                   <SelectItem value="createdAt">Created Date</SelectItem>
                 )}
-                {!activeFilters.some((f) => f.type === 'role') && (
+                {!activeFilters.some((f) => f.type === "role") && (
                   <SelectItem value="role">Role</SelectItem>
                 )}
               </SelectContent>
@@ -786,20 +786,20 @@ export default function Users() {
                 >
                   <Filter className="w-3 h-3 text-white" />
 
-                  {filter.type === 'emailVerified' && (
+                  {filter.type === "emailVerified" && (
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-white">Email Verified:</span>
                       <Select
-                        value={filter.value || ''}
-                        onValueChange={(val) => updateFilterValue('emailVerified', val)}
+                        value={filter.value || ""}
+                        onValueChange={(val) => updateFilterValue("emailVerified", val)}
                       >
                         <SelectTrigger className="h-7 w-24 text-xs">
                           <span>
-                            {filter.value === 'true'
-                              ? 'True'
-                              : filter.value === 'false'
-                                ? 'False'
-                                : 'Select'}
+                            {filter.value === "true"
+                              ? "True"
+                              : filter.value === "false"
+                                ? "False"
+                                : "Select"}
                           </span>
                         </SelectTrigger>
                         <SelectContent>
@@ -810,20 +810,20 @@ export default function Users() {
                     </div>
                   )}
 
-                  {filter.type === 'banned' && (
+                  {filter.type === "banned" && (
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-white">Banned:</span>
                       <Select
-                        value={filter.value || ''}
-                        onValueChange={(val) => updateFilterValue('banned', val)}
+                        value={filter.value || ""}
+                        onValueChange={(val) => updateFilterValue("banned", val)}
                       >
                         <SelectTrigger className="h-7 w-24 text-xs">
                           <span>
-                            {filter.value === 'true'
-                              ? 'Yes'
-                              : filter.value === 'false'
-                                ? 'No'
-                                : 'Select'}
+                            {filter.value === "true"
+                              ? "Yes"
+                              : filter.value === "false"
+                                ? "No"
+                                : "Select"}
                           </span>
                         </SelectTrigger>
                         <SelectContent>
@@ -834,7 +834,7 @@ export default function Users() {
                     </div>
                   )}
 
-                  {filter.type === 'createdAt' && (
+                  {filter.type === "createdAt" && (
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-white">Created:</span>
                       <Popover>
@@ -845,8 +845,8 @@ export default function Users() {
                           >
                             <CalendarIcon className="mr-1 h-3 w-3" />
                             {filter.dateRange?.from
-                              ? format(filter.dateRange.from, 'MMM dd yyyy')
-                              : 'From'}
+                              ? format(filter.dateRange.from, "MMM dd yyyy")
+                              : "From"}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0 bg-black border-white/10">
@@ -854,7 +854,7 @@ export default function Users() {
                             mode="single"
                             selected={filter.dateRange?.from}
                             onSelect={(date) =>
-                              updateFilterDateRange('createdAt', {
+                              updateFilterDateRange("createdAt", {
                                 from: date,
                                 to: filter.dateRange?.to,
                               })
@@ -873,8 +873,8 @@ export default function Users() {
                           >
                             <CalendarIcon className="mr-1 h-3 w-3" />
                             {filter.dateRange?.to
-                              ? format(filter.dateRange.to, 'MMM dd yyyy')
-                              : 'To'}
+                              ? format(filter.dateRange.to, "MMM dd yyyy")
+                              : "To"}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0 bg-black border-white/10">
@@ -882,7 +882,7 @@ export default function Users() {
                             mode="single"
                             selected={filter.dateRange?.to}
                             onSelect={(date) =>
-                              updateFilterDateRange('createdAt', {
+                              updateFilterDateRange("createdAt", {
                                 from: filter.dateRange?.from,
                                 to: date,
                               })
@@ -898,13 +898,13 @@ export default function Users() {
                     </div>
                   )}
 
-                  {filter.type === 'role' && (
+                  {filter.type === "role" && (
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-white">Role:</span>
                       <Input
                         type="text"
-                        value={filter.value || ''}
-                        onChange={(e) => updateFilterValue('role', e.target.value)}
+                        value={filter.value || ""}
+                        onChange={(e) => updateFilterValue("role", e.target.value)}
                         className="h-7 w-32 text-xs bg-black border-white/20 text-white"
                         placeholder="Enter role..."
                       />
@@ -954,8 +954,8 @@ export default function Users() {
                         <h3 className="text-white font-medium text-lg">No users found</h3>
                         <p className="text-gray-400 text-sm mt-1">
                           {searchTerm || activeFilters.length > 0
-                            ? 'Try adjusting your search or filter criteria'
-                            : 'Get started by creating your first user or seeding some data'}
+                            ? "Try adjusting your search or filter criteria"
+                            : "Get started by creating your first user or seeding some data"}
                         </p>
                       </div>
                       {!searchTerm && activeFilters.length === 0 && (
@@ -984,7 +984,7 @@ export default function Users() {
                   <tr
                     key={user.id}
                     className={`border-b border-dashed hover:bg-white/5 cursor-pointer ${
-                      user.banned ? 'border-red-500/30 bg-red-500/5' : 'border-white/5'
+                      user.banned ? "border-red-500/30 bg-red-500/5" : "border-white/5"
                     }`}
                     onClick={() => navigate(`/users/${user.id}`)}
                   >
@@ -994,11 +994,11 @@ export default function Users() {
                           <img
                             src={getImageSrc(
                               user.image,
-                              `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`
+                              `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`,
                             )}
                             alt={user.name}
                             className={`w-10 h-10 rounded-none border border-dashed object-cover ${
-                              user.banned ? 'border-red-400/50 opacity-60' : 'border-white/20'
+                              user.banned ? "border-red-400/50 opacity-60" : "border-white/20"
                             }`}
                             onError={(e) => {
                               // Fallback to default avatar if image fails to load
@@ -1041,7 +1041,7 @@ export default function Users() {
                           <Mail className="w-4 h-4 text-yellow-400/60" />
                         )}
                         <span className="text-sm text-gray-400">
-                          {user.emailVerified ? 'Verified' : 'Not Verified'}
+                          {user.emailVerified ? "Verified" : "Not Verified"}
                         </span>
                       </div>
                     </td>
@@ -1058,10 +1058,10 @@ export default function Users() {
                       <div className="flex flex-col">
                         {new Date(user.createdAt).toLocaleDateString()}
                         <p className="text-xs">
-                          {new Date(user.createdAt).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
+                          {new Date(user.createdAt).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
                           })}
                         </p>
                       </div>
@@ -1189,7 +1189,7 @@ export default function Users() {
                 size="sm"
                 onClick={() => {
                   setShowSeedModal(false);
-                  setSeedRole('');
+                  setSeedRole("");
                 }}
                 className="text-gray-400 hover:text-white rounded-none"
               >
@@ -1245,8 +1245,8 @@ export default function Users() {
                   <Button
                     onClick={() => {
                       const count = parseInt(
-                        (document.getElementById('user-count') as HTMLInputElement)?.value || '5',
-                        10
+                        (document.getElementById("user-count") as HTMLInputElement)?.value || "5",
+                        10,
                       );
                       handleSeedUsers(count, seedRole || undefined);
                     }}
@@ -1286,7 +1286,7 @@ export default function Users() {
                 variant="outline"
                 onClick={() => {
                   setShowSeedModal(false);
-                  setSeedRole('');
+                  setSeedRole("");
                 }}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
@@ -1307,7 +1307,7 @@ export default function Users() {
                 size="sm"
                 onClick={() => {
                   setShowCreateModal(false);
-                  setCreateRole('');
+                  setCreateRole("");
                 }}
                 className="text-gray-400 -mt-2 hover:text-white rounded-none"
               >
@@ -1378,7 +1378,7 @@ export default function Users() {
                 variant="outline"
                 onClick={() => {
                   setShowCreateModal(false);
-                  setCreateRole('');
+                  setCreateRole("");
                 }}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
@@ -1389,7 +1389,7 @@ export default function Users() {
                 disabled={isCreating}
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50"
               >
-                {isCreating ? 'Creating...' : 'Create'}
+                {isCreating ? "Creating..." : "Create"}
               </Button>
             </div>
           </div>
@@ -1407,7 +1407,7 @@ export default function Users() {
                 size="sm"
                 onClick={() => {
                   setShowEditModal(false);
-                  setEditRole('');
+                  setEditRole("");
                   setImagePreview(null);
                   setSelectedImageFile(null);
                 }}
@@ -1526,7 +1526,7 @@ export default function Users() {
                 variant="outline"
                 onClick={() => {
                   setShowEditModal(false);
-                  setEditRole('');
+                  setEditRole("");
                   setImagePreview(null);
                   setSelectedImageFile(null);
                 }}
@@ -1540,7 +1540,7 @@ export default function Users() {
                 disabled={isUpdating}
                 className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {isUpdating ? 'Updating...' : 'Update'}
+                {isUpdating ? "Updating..." : "Update"}
               </Button>
             </div>
           </div>
@@ -1607,7 +1607,7 @@ export default function Users() {
                 disabled={isDeleting}
                 className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {isDeleting ? 'Deleting...' : 'Delete'}
+                {isDeleting ? "Deleting..." : "Delete"}
               </Button>
             </div>
           </div>
@@ -1659,13 +1659,13 @@ export default function Users() {
 
               <div className="space-y-2 text-sm">
                 {[
-                  { label: 'Email Verified', value: selectedUser.emailVerified ? 'Yes' : 'No' },
-                  { label: 'Role', value: selectedUser.role || '—' },
-                  { label: 'Banned', value: selectedUser.banned ? 'Yes' : 'No' },
-                  { label: 'Ban Reason', value: selectedUser.banReason || '—' },
-                  { label: 'Ban Expires', value: formatDateTime(selectedUser.banExpires) },
-                  { label: 'Created', value: formatDateTime(selectedUser.createdAt) },
-                  { label: 'Updated', value: formatDateTime(selectedUser.updatedAt) },
+                  { label: "Email Verified", value: selectedUser.emailVerified ? "Yes" : "No" },
+                  { label: "Role", value: selectedUser.role || "—" },
+                  { label: "Banned", value: selectedUser.banned ? "Yes" : "No" },
+                  { label: "Ban Reason", value: selectedUser.banReason || "—" },
+                  { label: "Ban Expires", value: formatDateTime(selectedUser.banExpires) },
+                  { label: "Created", value: formatDateTime(selectedUser.createdAt) },
+                  { label: "Updated", value: formatDateTime(selectedUser.updatedAt) },
                 ].map((item) => (
                   <div
                     key={item.label}
@@ -1714,7 +1714,7 @@ export default function Users() {
                 size="sm"
                 onClick={() => {
                   setShowBanModal(false);
-                  setBanReason('');
+                  setBanReason("");
                   setBanExpiresIn(undefined);
                   setSelectedUser(null);
                 }}
@@ -1772,7 +1772,7 @@ export default function Users() {
                 <Input
                   id="banExpires"
                   type="number"
-                  value={banExpiresIn || ''}
+                  value={banExpiresIn || ""}
                   onChange={(e) =>
                     setBanExpiresIn(e.target.value ? Number(e.target.value) : undefined)
                   }
@@ -1791,7 +1791,7 @@ export default function Users() {
                 variant="outline"
                 onClick={() => {
                   setShowBanModal(false);
-                  setBanReason('');
+                  setBanReason("");
                   setBanExpiresIn(undefined);
                   setSelectedUser(null);
                 }}
@@ -1805,7 +1805,7 @@ export default function Users() {
                 disabled={isBanning}
                 className="bg-red-600 hover:bg-red-700 text-white border border-red-600 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {isBanning ? 'Banning...' : 'Ban User'}
+                {isBanning ? "Banning..." : "Ban User"}
               </Button>
             </div>
           </div>
@@ -1882,7 +1882,7 @@ export default function Users() {
                 disabled={isUnbanning}
                 className="bg-green-400 hover:bg-green-500 text-white border border-green-400 rounded-none disabled:opacity-50 font-mono uppercase text-xs tracking-tight"
               >
-                {isUnbanning ? 'Unbanning...' : 'Unban User'}
+                {isUnbanning ? "Unbanning..." : "Unban User"}
               </Button>
             </div>
           </div>

@@ -1,27 +1,27 @@
-import { getSessionFromCtx } from 'better-auth/api';
-import { createAuthMiddleware } from 'better-auth/plugins';
+import { getSessionFromCtx } from "better-auth/api";
+import { createAuthMiddleware } from "better-auth/plugins";
 import {
   createClickHouseProvider,
   createHttpProvider,
   createPostgresProvider,
   createSqliteProvider,
-} from '../providers/events/helpers.js';
-import type { StudioConfig } from '../types/handler.js';
-import { wrapAuthCallbacks } from './auth-callbacks-injector.js';
+} from "../providers/events/helpers.js";
+import type { StudioConfig } from "../types/handler.js";
+import { wrapAuthCallbacks } from "./auth-callbacks-injector.js";
 import {
   emitEvent,
   initializeEventIngestion,
   isEventIngestionInitialized,
-} from './event-ingestion.js';
-import { wrapOrganizationPluginHooks } from './org-hooks-injector.js';
+} from "./event-ingestion.js";
+import { wrapOrganizationPluginHooks } from "./org-hooks-injector.js";
 
-const INJECTED_HOOKS_MARKER = '__better_auth_studio_events_injected__';
+const INJECTED_HOOKS_MARKER = "__better_auth_studio_events_injected__";
 
 /**
  * Create a Better Auth plugin for event ingestion
  */
 let beforeSession: any = null;
-function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
+function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
   const capturedConfig = eventsConfig;
 
   const eventMiddleware = createAuthMiddleware(async (ctx: any) => {
@@ -30,13 +30,13 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
     }
     setTimeout(() => {
       try {
-        const path = ctx?.path || ctx?.context?.path || '';
+        const path = ctx?.path || ctx?.context?.path || "";
         if (!path) return;
 
         const returned = ctx?.context?.returned;
         if (!returned) return;
 
-        if (typeof returned === 'object' && returned !== null) {
+        if (typeof returned === "object" && returned !== null) {
           try {
             const _ = returned.statusCode;
           } catch (e) {
@@ -51,72 +51,72 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
         const headersObj: Record<string, string> = {};
 
         try {
-          if (ctx.headers && typeof ctx.headers === 'object') {
-            if (typeof ctx.headers.get === 'function') {
+          if (ctx.headers && typeof ctx.headers === "object") {
+            if (typeof ctx.headers.get === "function") {
               try {
-                ip = ctx.headers.get('x-forwarded-for') || ctx.headers.get('x-real-ip') || null;
+                ip = ctx.headers.get("x-forwarded-for") || ctx.headers.get("x-real-ip") || null;
               } catch (e) {}
             } else {
-              ip = ctx.headers['x-forwarded-for'] || ctx.headers['x-real-ip'] || null;
+              ip = ctx.headers["x-forwarded-for"] || ctx.headers["x-real-ip"] || null;
             }
           }
         } catch (e) {}
 
-        if (path === '/sign-up' || path === '/sign-up/email') {
+        if (path === "/sign-up" || path === "/sign-up/email") {
           const body = ctx.body || {};
           const user = returned || ctx.context.returned;
           if (!isError) {
             emitEvent(
-              'user.joined',
+              "user.joined",
               {
-                status: 'success',
+                status: "success",
                 userId: returned.user.id,
-                sessionId: '',
+                sessionId: "",
                 metadata: {
-                  email: body.email || returned.user.email || '',
-                  name: body.name || returned.user.name || '',
+                  email: body.email || returned.user.email || "",
+                  name: body.name || returned.user.name || "",
                 },
                 request: {
                   headers: headersObj,
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           } else if (isError) {
             emitEvent(
-              'user.joined',
+              "user.joined",
               {
-                status: 'failed',
+                status: "failed",
                 metadata: {
                   email: body.email,
                   name: body.name,
                   reason:
                     returned.statusCode === 400
-                      ? 'validation_failed'
+                      ? "validation_failed"
                       : returned.statusCode === 409
-                        ? 'user_already_exists'
-                        : returned.body?.code || returned.body?.message || 'unknown',
+                        ? "user_already_exists"
+                        : returned.body?.code || returned.body?.message || "unknown",
                 },
                 request: {
                   headers: headersObj,
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/sign-in' || path === '/sign-in/email') {
+        if (path === "/sign-in" || path === "/sign-in/email") {
           const body = ctx.body || {};
           const user = returned.user || ctx.context?.returned;
           const session = returned.newSession || ctx.context?.newSession;
           if (!isError) {
             emitEvent(
-              'user.logged_in',
+              "user.logged_in",
               {
-                status: 'success',
+                status: "success",
                 userId: user.id,
                 sessionId: session?.id,
                 metadata: {
@@ -128,15 +128,15 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
 
             // Also emit session.created
             if (session) {
               emitEvent(
-                'session.created',
+                "session.created",
                 {
-                  status: 'success',
+                  status: "success",
                   userId: user.id,
                   sessionId: session.id,
                   metadata: {
@@ -149,39 +149,39 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     ip: ip || undefined,
                   },
                 },
-                capturedConfig
+                capturedConfig,
               ).catch(() => {});
             }
           } else if (isError) {
             emitEvent(
-              'user.logged_in',
+              "user.logged_in",
               {
-                status: 'failed',
+                status: "failed",
                 metadata: {
                   email: body.email,
                   reason:
                     returned.statusCode === 401
-                      ? 'invalid_credentials'
-                      : returned.body?.code || 'unknown',
+                      ? "invalid_credentials"
+                      : returned.body?.code || "unknown",
                 },
                 request: {
                   headers: headersObj,
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/sign-out') {
+        if (path === "/sign-out") {
           const session = beforeSession as any;
           const { user, session: sessionData } = session || {};
           if (!isError && user) {
             emitEvent(
-              'user.logged_out',
+              "user.logged_out",
               {
-                status: 'success',
+                status: "success",
                 userId: user.id,
                 sessionId: sessionData?.id,
                 metadata: {
@@ -193,13 +193,13 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
         // OAuth unlinked
-        if (path === '/unlink-account') {
+        if (path === "/unlink-account") {
           const session = ctx.context?.session;
           const unlinkReturned = ctx.context?.returned || returned;
           const body = ctx.body || {};
@@ -208,13 +208,13 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             !isError &&
             session &&
             unlinkReturned &&
-            typeof unlinkReturned === 'object' &&
-            'status' in unlinkReturned
+            typeof unlinkReturned === "object" &&
+            "status" in unlinkReturned
           ) {
             emitEvent(
-              'oauth.unlinked',
+              "oauth.unlinked",
               {
-                status: 'success',
+                status: "success",
                 userId: session.user.id,
                 metadata: {
                   provider: body.providerId || body.provider,
@@ -226,35 +226,35 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           } else if (isError) {
             emitEvent(
-              'oauth.unlinked',
+              "oauth.unlinked",
               {
-                status: 'failed',
+                status: "failed",
                 metadata: {
                   provider: body.providerId || body.provider,
                   reason:
                     returned.statusCode === 400
-                      ? 'invalid_request'
-                      : returned.body?.code || returned.body?.message || 'unknown',
+                      ? "invalid_request"
+                      : returned.body?.code || returned.body?.message || "unknown",
                 },
                 request: {
                   headers: headersObj,
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
         const isCallbackPath =
-          path.startsWith('/callback/') ||
-          path.startsWith('/callback') ||
-          path.startsWith('/oauth2/callback/') ||
-          path.startsWith('/oauth2/callback');
+          path.startsWith("/callback/") ||
+          path.startsWith("/callback") ||
+          path.startsWith("/oauth2/callback/") ||
+          path.startsWith("/oauth2/callback");
 
         if (isCallbackPath) {
           try {
@@ -265,26 +265,26 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
               returned?.data?.user ||
               ctx.context?.user ||
               ctx.user ||
-              (returned?.data && typeof returned.data === 'object' && 'user' in returned.data
+              (returned?.data && typeof returned.data === "object" && "user" in returned.data
                 ? returned.data.user
                 : null);
             const existingUser = ctx.context?.existingUser;
             const params = ctx.params;
             if (user) {
-              const provider = path.includes('/callback/')
-                ? path.split('/callback/')[1]?.split('/')[0]
-                : path.includes('/oauth2/callback/')
-                  ? path.split('/oauth2/callback/')[1]?.split('/')[0]
-                  : path.includes('/callback')
-                    ? path.split('/callback')[1]?.split('/')[1] ||
-                      path.split('/callback')[1]?.split('?')[0]
+              const provider = path.includes("/callback/")
+                ? path.split("/callback/")[1]?.split("/")[0]
+                : path.includes("/oauth2/callback/")
+                  ? path.split("/oauth2/callback/")[1]?.split("/")[0]
+                  : path.includes("/callback")
+                    ? path.split("/callback")[1]?.split("/")[1] ||
+                      path.split("/callback")[1]?.split("?")[0]
                     : undefined;
 
               if (existingUser) {
                 emitEvent(
-                  'oauth.linked',
+                  "oauth.linked",
                   {
-                    status: 'success',
+                    status: "success",
                     userId: user.id,
                     metadata: {
                       provider: params.id,
@@ -296,14 +296,14 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                       ip: ip || undefined,
                     },
                   },
-                  capturedConfig
+                  capturedConfig,
                 ).catch(() => {});
               } else {
                 // New user signing in via OAuth
                 emitEvent(
-                  'oauth.sign_in',
+                  "oauth.sign_in",
                   {
-                    status: 'success',
+                    status: "success",
                     userId: user.id,
                     sessionId: newSession?.session?.id || newSession?.id,
                     metadata: {
@@ -319,14 +319,14 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                       ip: ip || undefined,
                     },
                   },
-                  capturedConfig
+                  capturedConfig,
                 )
                   .then(() => {
                     if (!isError && newSession && user) {
                       emitEvent(
-                        'session.created',
+                        "session.created",
                         {
-                          status: 'success',
+                          status: "success",
                           userId: user.id,
                           sessionId: newSession.session?.id || newSession.id,
                           metadata: {
@@ -339,20 +339,20 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                             ip: ip || undefined,
                           },
                         },
-                        capturedConfig
+                        capturedConfig,
                       ).catch(() => {});
                     } else if (isError) {
                       emitEvent(
-                        'session.created',
+                        "session.created",
                         {
-                          status: 'failed',
+                          status: "failed",
                           metadata: {
                             reason:
                               returned.statusCode === 401
-                                ? 'authentication_failed'
-                                : returned.body?.code || 'unknown',
-                            provider: path.includes('/callback/')
-                              ? path.split('/callback/')[1]?.split('/')[0]
+                                ? "authentication_failed"
+                                : returned.body?.code || "unknown",
+                            provider: path.includes("/callback/")
+                              ? path.split("/callback/")[1]?.split("/")[0]
                               : undefined,
                           },
                           request: {
@@ -360,7 +360,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                             ip: ip || undefined,
                           },
                         },
-                        capturedConfig
+                        capturedConfig,
                       ).catch(() => {});
                     }
                   })
@@ -368,23 +368,23 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
               }
             }
           } catch (callbackError: any) {
-            const errorMessage = callbackError?.message || String(callbackError || '');
+            const errorMessage = callbackError?.message || String(callbackError || "");
             if (
-              !errorMessage.includes('reloadNavigation') &&
-              !errorMessage.includes('Cannot read properties of undefined')
+              !errorMessage.includes("reloadNavigation") &&
+              !errorMessage.includes("Cannot read properties of undefined")
             ) {
-              console.error('[OAuth Callback] Error:', errorMessage);
+              console.error("[OAuth Callback] Error:", errorMessage);
             }
           }
         }
-        if (path === '/admin/ban-user') {
+        if (path === "/admin/ban-user") {
           const body = ctx.body || {};
           const user = returned?.user || ctx.context?.returned?.user || ctx.context?.user;
           if (!isError && user) {
             emitEvent(
-              'user.banned',
+              "user.banned",
               {
-                status: 'success',
+                status: "success",
                 userId: user.id,
                 metadata: {
                   email: user.email,
@@ -395,33 +395,33 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           } else if (isError) {
             emitEvent(
-              'user.banned',
+              "user.banned",
               {
-                status: 'failed',
+                status: "failed",
                 metadata: {
-                  reason: returned.body?.code || returned.body?.message || 'unknown',
+                  reason: returned.body?.code || returned.body?.message || "unknown",
                 },
                 request: {
                   headers: headersObj,
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
-        if (path === '/admin/unban-user') {
+        if (path === "/admin/unban-user") {
           const body = ctx.body || {};
           const user = returned?.user || ctx.context?.returned?.user || ctx.context?.user;
           if (!isError && user) {
             emitEvent(
-              'user.unbanned',
+              "user.unbanned",
               {
-                status: 'success',
+                status: "success",
                 userId: user.id,
                 metadata: {
                   email: user.email,
@@ -432,27 +432,27 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           } else if (isError) {
             emitEvent(
-              'user.unbanned',
+              "user.unbanned",
               {
-                status: 'failed',
+                status: "failed",
                 metadata: {
-                  reason: returned.body?.code || returned.body?.message || 'unknown',
+                  reason: returned.body?.code || returned.body?.message || "unknown",
                 },
                 request: {
                   headers: headersObj,
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/update-user') {
+        if (path === "/update-user") {
           const updateReturned = ctx.context?.returned || returned;
           const session = ctx.context?.session;
           const oldData = (ctx.context as any)?._oldUserData;
@@ -475,9 +475,9 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             }
             if (Object.keys(updatedFields).length > 0) {
               emitEvent(
-                'user.updated',
+                "user.updated",
                 {
-                  status: 'success',
+                  status: "success",
                   userId: session.user.id,
                   metadata: {
                     email: session.user.email,
@@ -491,48 +491,48 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     ip: ip || undefined,
                   },
                 },
-                capturedConfig
+                capturedConfig,
               ).catch(() => {});
             }
           } else if (isError) {
             emitEvent(
-              'user.updated',
+              "user.updated",
               {
-                status: 'failed',
+                status: "failed",
                 metadata: {
                   reason:
                     returned.statusCode === 400
-                      ? 'validation_failed'
+                      ? "validation_failed"
                       : returned.statusCode === 401
-                        ? 'unauthorized'
+                        ? "unauthorized"
                         : returned.statusCode === 403
-                          ? 'forbidden'
-                          : returned.body?.code || returned.body?.message || 'unknown',
+                          ? "forbidden"
+                          : returned.body?.code || returned.body?.message || "unknown",
                 },
                 request: {
                   headers: headersObj,
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
         // Organization operation
-        if (path === '/organization/create') {
+        if (path === "/organization/create") {
           const body = ctx.body || {};
           const organization = returned?.organization || ctx.context?.returned?.organization;
           const session = ctx.context?.session;
           if (!isError && organization && session) {
           } else if (isError) {
             emitEvent(
-              'organization.created',
+              "organization.created",
               {
-                status: 'failed',
+                status: "failed",
                 userId: session?.user?.id,
                 metadata: {
-                  organizationName: body.name || organization?.name || 'Unknown',
+                  organizationName: body.name || organization?.name || "Unknown",
                   reason: returned.body?.message || returned.body.code,
                 },
                 request: {
@@ -540,12 +540,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/organization/update') {
+        if (path === "/organization/update") {
           const body = ctx.body || {};
           const organization = returned?.organization || ctx.context?.returned?.organization;
           const session = ctx.context?.session;
@@ -554,13 +554,13 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             // Success is handled by hooks
           } else if (isError) {
             emitEvent(
-              'organization.updated',
+              "organization.updated",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: body.id || body.organizationId,
                 userId: session?.user?.id,
                 metadata: {
-                  organizationName: body.name || organization?.name || 'Unknown',
+                  organizationName: body.name || organization?.name || "Unknown",
                   reason: returned.body?.message || returned.body.code,
                 },
                 request: {
@@ -568,12 +568,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/organization/delete') {
+        if (path === "/organization/delete") {
           const body = ctx.body || {};
           const organization = returned?.organization || ctx.context?.returned?.organization;
           const session = ctx.context?.session;
@@ -582,13 +582,13 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             // Success is handled by hooks
           } else if (isError) {
             emitEvent(
-              'organization.deleted',
+              "organization.deleted",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: body.id || body.organizationId,
                 userId: session?.user?.id,
                 metadata: {
-                  organizationName: organization?.name || 'Unknown',
+                  organizationName: organization?.name || "Unknown",
                   reason: returned.body?.message || returned.body.code,
                 },
                 request: {
@@ -596,13 +596,13 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
         // Member operations
-        if (path === '/organization/add-member' || path === '/member/add') {
+        if (path === "/organization/add-member" || path === "/member/add") {
           const body = ctx.body || {};
           const member = returned?.member || ctx.context?.returned?.member;
           const session = ctx.context?.session;
@@ -610,9 +610,9 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
           if (!isError && member && session) {
           } else if (isError) {
             emitEvent(
-              'member.added',
+              "member.added",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: body.organizationId,
                 userId: body.userId || member?.userId,
                 metadata: {
@@ -623,40 +623,40 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/organization/remove-member' || path === '/member/remove') {
+        if (path === "/organization/remove-member" || path === "/member/remove") {
           const body = ctx.body || {};
           const session = ctx.context?.session;
 
           if (!isError && session) {
           } else if (isError) {
             emitEvent(
-              'member.removed',
+              "member.removed",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: body.organizationId,
                 userId: body.userId,
                 metadata: {
                   reason:
                     returned.statusCode === 404
-                      ? 'member_not_found'
-                      : returned.body?.code || returned.body?.message || 'unknown',
+                      ? "member_not_found"
+                      : returned.body?.code || returned.body?.message || "unknown",
                 },
                 request: {
                   headers: headersObj,
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/organization/update-member-role' || path === '/member/update-role') {
+        if (path === "/organization/update-member-role" || path === "/member/update-role") {
           const body = ctx.body || {};
           const member = returned?.member || ctx.context?.returned?.member;
           const session = ctx.context?.session;
@@ -665,9 +665,9 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             // Success is handled by hooks
           } else if (isError) {
             emitEvent(
-              'member.role_changed',
+              "member.role_changed",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: body.organizationId,
                 userId: body.userId || member?.userId,
                 metadata: {
@@ -675,21 +675,21 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   newRole: body.role || body.newRole,
                   reason:
                     returned.statusCode === 404
-                      ? 'member_not_found'
-                      : returned.body?.code || returned.body?.message || 'unknown',
+                      ? "member_not_found"
+                      : returned.body?.code || returned.body?.message || "unknown",
                 },
                 request: {
                   headers: headersObj,
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
         // Team operations
-        if (path === '/team/create' || path.startsWith('/team/create')) {
+        if (path === "/team/create" || path.startsWith("/team/create")) {
           const body = ctx.body || {};
           const team = returned?.team || ctx.context?.returned?.team;
           const session = ctx.context?.session;
@@ -698,29 +698,29 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             // Success is handled by hooks
           } else if (isError) {
             emitEvent(
-              'team.created',
+              "team.created",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: body.organizationId,
                 userId: session?.user?.id,
                 metadata: {
-                  teamName: body.name || 'Unknown',
+                  teamName: body.name || "Unknown",
                   reason:
                     returned.statusCode === 400
-                      ? 'validation_failed'
-                      : returned.body?.code || returned.body?.message || 'unknown',
+                      ? "validation_failed"
+                      : returned.body?.code || returned.body?.message || "unknown",
                 },
                 request: {
                   headers: headersObj,
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/team/update' || path.startsWith('/team/update')) {
+        if (path === "/team/update" || path.startsWith("/team/update")) {
           const body = ctx.body || {};
           const team = returned?.team || ctx.context?.returned?.team;
           const session = ctx.context?.session;
@@ -729,14 +729,14 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             // Success is handled by hooks
           } else if (isError) {
             emitEvent(
-              'team.updated',
+              "team.updated",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: body.organizationId || team?.organizationId,
                 userId: session?.user?.id,
                 metadata: {
                   teamId: body.id || body.teamId,
-                  teamName: body.name || team?.name || 'Unknown',
+                  teamName: body.name || team?.name || "Unknown",
                   reason: returned.body?.message || returned.body.code,
                 },
                 request: {
@@ -744,12 +744,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/team/delete' || path.startsWith('/team/delete')) {
+        if (path === "/team/delete" || path.startsWith("/team/delete")) {
           const body = ctx.body || {};
           const session = ctx.context?.session;
 
@@ -757,9 +757,9 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             // Success is handled by hooks
           } else if (isError) {
             emitEvent(
-              'team.deleted',
+              "team.deleted",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: body.organizationId,
                 userId: session?.user?.id,
                 metadata: {
@@ -771,12 +771,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/team/add-member' || path.startsWith('/team/add-member')) {
+        if (path === "/team/add-member" || path.startsWith("/team/add-member")) {
           const body = ctx.body || {};
           const teamMember = returned?.teamMember || ctx.context?.returned?.teamMember;
           const session = ctx.context?.session;
@@ -785,9 +785,9 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             // Success is handled by hooks
           } else if (isError) {
             emitEvent(
-              'team.member.added',
+              "team.member.added",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: body.organizationId,
                 userId: body.userId || teamMember?.userId,
                 metadata: {
@@ -799,12 +799,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/team/remove-member' || path.startsWith('/team/remove-member')) {
+        if (path === "/team/remove-member" || path.startsWith("/team/remove-member")) {
           const body = ctx.body || {};
           const session = ctx.context?.session;
 
@@ -812,9 +812,9 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             // Success is handled by hooks
           } else if (isError) {
             emitEvent(
-              'team.member.removed',
+              "team.member.removed",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: body.organizationId,
                 userId: body.userId,
                 metadata: {
@@ -826,13 +826,13 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
         // Invitation operations
-        if (path === '/invitation/create' || path.startsWith('/invitation/create')) {
+        if (path === "/invitation/create" || path.startsWith("/invitation/create")) {
           const body = ctx.body || {};
           const invitation = returned?.invitation || ctx.context?.returned?.invitation;
           const session = ctx.context?.session;
@@ -841,13 +841,13 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             // Success is handled by hooks
           } else if (isError) {
             emitEvent(
-              'invitation.created',
+              "invitation.created",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: body.organizationId,
                 metadata: {
-                  email: body.email || 'Unknown',
-                  role: body.role || 'member',
+                  email: body.email || "Unknown",
+                  role: body.role || "member",
                   reason: returned.body?.message || returned.body.code,
                 },
                 request: {
@@ -855,12 +855,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/invitation/accept' || path.startsWith('/invitation/accept')) {
+        if (path === "/invitation/accept" || path.startsWith("/invitation/accept")) {
           const body = ctx.body || {};
           const invitation = returned?.invitation || ctx.context?.returned?.invitation;
           const session = ctx.context?.session;
@@ -869,14 +869,14 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             // Success is handled by hooks
           } else if (isError) {
             emitEvent(
-              'invitation.accepted',
+              "invitation.accepted",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: invitation?.organizationId || body.organizationId,
                 userId: session?.user?.id || body.userId,
                 metadata: {
                   invitationId: body.id || body.invitationId,
-                  email: invitation?.email || body.email || 'Unknown',
+                  email: invitation?.email || body.email || "Unknown",
                   reason: returned.body?.message || returned.body.code,
                 },
                 request: {
@@ -884,12 +884,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/invitation/reject' || path.startsWith('/invitation/reject')) {
+        if (path === "/invitation/reject" || path.startsWith("/invitation/reject")) {
           const body = ctx.body || {};
           const invitation = returned?.invitation || ctx.context?.returned?.invitation;
           const session = ctx.context?.session;
@@ -898,14 +898,14 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             // Success is handled by hooks
           } else if (isError) {
             emitEvent(
-              'invitation.rejected',
+              "invitation.rejected",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: invitation?.organizationId || body.organizationId,
                 userId: session?.user?.id || body.userId,
                 metadata: {
                   invitationId: body.id || body.invitationId,
-                  email: invitation?.email || body.email || 'Unknown',
+                  email: invitation?.email || body.email || "Unknown",
                   reason: returned.body?.message || returned.body.code,
                 },
                 request: {
@@ -913,12 +913,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
 
-        if (path === '/invitation/cancel' || path.startsWith('/invitation/cancel')) {
+        if (path === "/invitation/cancel" || path.startsWith("/invitation/cancel")) {
           const body = ctx.body || {};
           const invitation = returned?.invitation || ctx.context?.returned?.invitation;
           const session = ctx.context?.session;
@@ -927,14 +927,14 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
             // Success is handled by hooks
           } else if (isError) {
             emitEvent(
-              'invitation.cancelled',
+              "invitation.cancelled",
               {
-                status: 'failed',
+                status: "failed",
                 organizationId: invitation?.organizationId || body.organizationId,
                 userId: session?.user?.id || body.userId,
                 metadata: {
                   invitationId: body.id || body.invitationId,
-                  email: invitation?.email || body.email || 'Unknown',
+                  email: invitation?.email || body.email || "Unknown",
                   reason: returned.body?.message || returned.body.code,
                 },
                 request: {
@@ -942,19 +942,19 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   ip: ip || undefined,
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
       } catch (error: any) {
-        const errorMessage = error?.message || String(error || '');
+        const errorMessage = error?.message || String(error || "");
         if (
-          errorMessage.includes('reloadNavigation') ||
-          errorMessage.includes('Cannot read properties of undefined')
+          errorMessage.includes("reloadNavigation") ||
+          errorMessage.includes("Cannot read properties of undefined")
         ) {
           return;
         }
-        console.error('[Event Hook] Error:', errorMessage);
+        console.error("[Event Hook] Error:", errorMessage);
       }
     }, 0);
   });
@@ -968,11 +968,11 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
       return;
     }
 
-    if (account.providerId !== 'credential') {
+    if (account.providerId !== "credential") {
       try {
         if (
-          typeof context.internalAdapter.findUserById !== 'function' ||
-          typeof context.internalAdapter.findAccounts !== 'function'
+          typeof context.internalAdapter.findUserById !== "function" ||
+          typeof context.internalAdapter.findAccounts !== "function"
         ) {
           return;
         }
@@ -985,9 +985,9 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
 
           if (isLinking) {
             await emitEvent(
-              'oauth.linked',
+              "oauth.linked",
               {
-                status: 'success',
+                status: "success",
                 userId: account.userId,
                 metadata: {
                   provider: account.providerId,
@@ -999,13 +999,13 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                   linkedAt: new Date().toISOString(),
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           } else {
             await emitEvent(
-              'oauth.sign_in',
+              "oauth.sign_in",
               {
-                status: 'success',
+                status: "success",
                 userId: account.userId,
                 metadata: {
                   provider: account.providerId,
@@ -1020,12 +1020,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
                     : new Date().toISOString(),
                 },
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
       } catch (error) {
-        console.error('[OAuth DB Hook] Error:', error);
+        console.error("[OAuth DB Hook] Error:", error);
       }
     }
   };
@@ -1036,35 +1036,35 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
 
         if (
           capturedConfig.provider &&
-          typeof capturedConfig.provider === 'object' &&
-          typeof capturedConfig.provider.ingest === 'function'
+          typeof capturedConfig.provider === "object" &&
+          typeof capturedConfig.provider.ingest === "function"
         ) {
           provider = capturedConfig.provider;
         } else if (capturedConfig.client && capturedConfig.clientType) {
           try {
             switch (capturedConfig.clientType) {
-              case 'postgres':
-              case 'prisma':
-              case 'drizzle':
+              case "postgres":
+              case "prisma":
+              case "drizzle":
                 provider = createPostgresProvider({
                   client: capturedConfig.client,
                   tableName: capturedConfig.tableName,
                   clientType: capturedConfig.clientType,
                 });
                 break;
-              case 'sqlite':
+              case "sqlite":
                 provider = createSqliteProvider({
                   client: capturedConfig.client,
                   tableName: capturedConfig.tableName,
                 });
                 break;
-              case 'clickhouse':
+              case "clickhouse":
                 provider = createClickHouseProvider({
                   client: capturedConfig.client,
                   table: capturedConfig.tableName,
                 });
                 break;
-              case 'http':
+              case "http":
                 provider = createHttpProvider({
                   url: capturedConfig.client,
                   headers: (capturedConfig as any).headers || {},
@@ -1092,7 +1092,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
   };
 
   return {
-    id: 'better-auth-studio-events',
+    id: "better-auth-studio-events",
     init: async (ctx: any) => {
       initializeEventIngestion(ctx);
     },
@@ -1101,7 +1101,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
         initBeforeHook,
         {
           matcher: (context: any) => {
-            return context.path === '/sign-out';
+            return context.path === "/sign-out";
           },
           handler: async (context: any) => {
             const body = context.body || {};
@@ -1110,7 +1110,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
         },
         {
           matcher: (context: any) => {
-            return context.path === '/update-user';
+            return context.path === "/update-user";
           },
           handler: async (context: any) => {
             const session = context.context?.session;
@@ -1128,28 +1128,28 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
       after: [
         {
           matcher: (context: any) => {
-            const path = context?.path || context?.context?.path || '';
+            const path = context?.path || context?.context?.path || "";
 
             const shouldMatch =
-              path === '/sign-up' ||
-              path === '/sign-up/email' ||
-              path === '/sign-in' ||
-              path === '/sign-in/email' ||
-              path.startsWith('/sign-in/social') ||
-              path === '/sign-out' ||
-              path === '/update-password' ||
-              path === '/change-password' ||
-              path === '/verify-email' ||
-              path === '/forget-password' ||
-              path === '/delete-user' ||
-              path === '/unlink-account' ||
-              path.startsWith('/callback') ||
-              path.startsWith('/oauth2/callback') ||
-              path === '/organization/create' ||
-              path === '/organization/update' ||
-              path === '/organization/delete' ||
-              path === '/update-user' ||
-              path.startsWith('/admin/');
+              path === "/sign-up" ||
+              path === "/sign-up/email" ||
+              path === "/sign-in" ||
+              path === "/sign-in/email" ||
+              path.startsWith("/sign-in/social") ||
+              path === "/sign-out" ||
+              path === "/update-password" ||
+              path === "/change-password" ||
+              path === "/verify-email" ||
+              path === "/forget-password" ||
+              path === "/delete-user" ||
+              path === "/unlink-account" ||
+              path.startsWith("/callback") ||
+              path.startsWith("/oauth2/callback") ||
+              path === "/organization/create" ||
+              path === "/organization/update" ||
+              path === "/organization/delete" ||
+              path === "/update-user" ||
+              path.startsWith("/admin/");
 
             return shouldMatch;
           },
@@ -1171,7 +1171,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig['events']): any {
 /**
  * Inject middleware hooks into Better Auth using plugins
  */
-export function injectEventHooks(auth: any, eventsConfig: StudioConfig['events']): void {
+export function injectEventHooks(auth: any, eventsConfig: StudioConfig["events"]): void {
   if (!auth || !eventsConfig?.enabled) {
     return;
   }
@@ -1192,7 +1192,7 @@ export function injectEventHooks(auth: any, eventsConfig: StudioConfig['events']
     }
 
     const existingPlugin = auth.options.plugins.find(
-      (p: any) => p?.id === 'better-auth-studio-events'
+      (p: any) => p?.id === "better-auth-studio-events",
     );
     if (!existingPlugin) {
       auth.options.plugins.push(eventPlugin);
@@ -1202,6 +1202,6 @@ export function injectEventHooks(auth: any, eventsConfig: StudioConfig['events']
     wrapOrganizationPluginHooks(auth, eventsConfig);
     wrapAuthCallbacks(auth, eventsConfig);
   } catch (error) {
-    console.error('[Event Hooks] Failed to inject:', error);
+    console.error("[Event Hooks] Failed to inject:", error);
   }
 }

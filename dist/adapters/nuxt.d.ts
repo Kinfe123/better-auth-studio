@@ -1,4 +1,4 @@
-import type { StudioConfig } from '../types/handler.js';
+import type { StudioConfig } from "../types/handler.js";
 /**
  * Nuxt adapter for Better Auth Studio
  *
@@ -15,5 +15,7 @@ import type { StudioConfig } from '../types/handler.js';
  * if available. If readBody is not accessible, make sure your Nuxt setup has
  * auto-imports enabled for h3 utilities.
  */
-export declare function betterAuthStudio(config: StudioConfig): (event: any) => Promise<Response | any>;
+export declare function betterAuthStudio(
+  config: StudioConfig,
+): (event: any) => Promise<Response | any>;
 //# sourceMappingURL=nuxt.d.ts.map

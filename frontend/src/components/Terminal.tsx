@@ -5,15 +5,15 @@ import {
   Loader,
   Terminal as TerminalIcon,
   XCircle,
-} from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface TerminalLine {
   id: string;
-  type: 'info' | 'success' | 'error' | 'progress';
+  type: "info" | "success" | "error" | "progress";
   message: string;
   timestamp: Date;
-  status?: 'pending' | 'running' | 'completed' | 'failed';
+  status?: "pending" | "running" | "completed" | "failed";
 }
 
 interface TerminalProps {
@@ -25,10 +25,10 @@ interface TerminalProps {
 }
 
 export function Terminal({
-  title = 'Seeding Terminal',
+  title = "Seeding Terminal",
   lines,
   isRunning = false,
-  className = '',
+  className = "",
   defaultCollapsed = false,
 }: TerminalProps) {
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
@@ -42,22 +42,22 @@ export function Terminal({
 
     container.scrollTo({
       top: container.scrollHeight,
-      behavior: 'smooth',
+      behavior: "smooth",
     });
   }, [isCollapsed]);
 
   const getLineIcon = (line: TerminalLine) => {
     switch (line.type) {
-      case 'success':
+      case "success":
         return <CheckCircle className="w-3 h-3 text-green-400" />;
-      case 'error':
+      case "error":
         return <XCircle className="w-3 h-3 text-red-400" />;
-      case 'progress':
-        return line.status === 'running' ? (
+      case "progress":
+        return line.status === "running" ? (
           <Loader className="w-3 h-3 text-blue-400 animate-spin" />
-        ) : line.status === 'completed' ? (
+        ) : line.status === "completed" ? (
           <CheckCircle className="w-3 h-3 text-green-400" />
-        ) : line.status === 'failed' ? (
+        ) : line.status === "failed" ? (
           <XCircle className="w-3 h-3 text-red-400" />
         ) : (
           <div className="w-3 h-3 border border-gray-500 rounded-full" />
@@ -69,33 +69,33 @@ export function Terminal({
 
   const getLineColor = (line: TerminalLine) => {
     switch (line.type) {
-      case 'success':
-        return 'text-green-400';
-      case 'error':
-        return 'text-red-400';
-      case 'progress':
-        return line.status === 'running'
-          ? 'text-blue-400'
-          : line.status === 'completed'
-            ? 'text-green-400'
-            : line.status === 'failed'
-              ? 'text-red-400'
-              : 'text-gray-400';
+      case "success":
+        return "text-green-400";
+      case "error":
+        return "text-red-400";
+      case "progress":
+        return line.status === "running"
+          ? "text-blue-400"
+          : line.status === "completed"
+            ? "text-green-400"
+            : line.status === "failed"
+              ? "text-red-400"
+              : "text-gray-400";
       default:
-        return 'text-gray-300';
+        return "text-gray-300";
     }
   };
 
   const formatTime = (date: Date) => {
     return (
-      date.toLocaleTimeString('en-US', {
+      date.toLocaleTimeString("en-US", {
         hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
       }) +
-      '.' +
-      date.getMilliseconds().toString().padStart(3, '0')
+      "." +
+      date.getMilliseconds().toString().padStart(3, "0")
     );
   };
 
@@ -171,7 +171,7 @@ export function Terminal({
         <div className="px-3 py-1.5 border-t border-dashed border-white/10 bg-black/50">
           <div className="flex items-center justify-between text-xs text-gray-400">
             <div className="flex items-center space-x-3">
-              <span>Status: {isRunning ? 'Active' : 'Idle'}</span>
+              <span>Status: {isRunning ? "Active" : "Idle"}</span>
               <span>Lines: {lines.length}</span>
             </div>
             <div className="flex items-center space-x-1">
@@ -185,7 +185,7 @@ export function Terminal({
   );
 }
 
-const style = document.createElement('style');
+const style = document.createElement("style");
 style.textContent = `
   @keyframes fadeIn {
     from {

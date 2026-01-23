@@ -1,5 +1,5 @@
-import { ChevronDown } from 'lucide-react';
-import * as React from 'react';
+import { ChevronDown } from "lucide-react";
+import * as React from "react";
 
 export interface SelectProps {
   value?: string;
@@ -29,9 +29,9 @@ const Select = React.forwardRef<HTMLDivElement, SelectProps>(
         </div>
       </SelectContext.Provider>
     );
-  }
+  },
 );
-Select.displayName = 'Select';
+Select.displayName = "Select";
 
 const SelectTrigger = React.forwardRef<
   HTMLButtonElement,
@@ -49,12 +49,12 @@ const SelectTrigger = React.forwardRef<
     >
       {children}
       <ChevronDown
-        className={`h-4 w-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+        className={`h-4 w-4 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
       />
     </button>
   );
 });
-SelectTrigger.displayName = 'SelectTrigger';
+SelectTrigger.displayName = "SelectTrigger";
 
 const SelectValue = React.forwardRef<
   HTMLSpanElement,
@@ -68,7 +68,7 @@ const SelectValue = React.forwardRef<
     </span>
   );
 });
-SelectValue.displayName = 'SelectValue';
+SelectValue.displayName = "SelectValue";
 
 const SelectContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => {
@@ -85,9 +85,9 @@ const SelectContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
         {children}
       </div>
     );
-  }
+  },
 );
-SelectContent.displayName = 'SelectContent';
+SelectContent.displayName = "SelectContent";
 
 const SelectItem = React.forwardRef<
   HTMLDivElement,
@@ -109,6 +109,6 @@ const SelectItem = React.forwardRef<
     </div>
   );
 });
-SelectItem.displayName = 'SelectItem';
+SelectItem.displayName = "SelectItem";
 
 export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue };

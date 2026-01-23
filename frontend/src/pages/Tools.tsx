@@ -1,4 +1,4 @@
-import { createHash } from '@better-auth/utils/hash';
+import { createHash } from "@better-auth/utils/hash";
 import {
   AlertCircle,
   Code,
@@ -14,12 +14,12 @@ import {
   TestTube,
   XCircle,
   Zap,
-} from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { toast } from 'sonner';
-import { CodeBlock } from '../components/CodeBlock';
-import { CodeEditor } from '../components/CodeEditor';
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
+import { CodeBlock } from "../components/CodeBlock";
+import { CodeEditor } from "../components/CodeEditor";
 import {
   ArrowRight,
   Check,
@@ -30,27 +30,27 @@ import {
   Loader,
   Settings,
   X,
-} from '../components/PixelIcons';
-import { Terminal } from '../components/Terminal';
-import { Button } from '../components/ui/button';
-import { Checkbox } from '../components/ui/checkbox';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
+} from "../components/PixelIcons";
+import { Terminal } from "../components/Terminal";
+import { Button } from "../components/ui/button";
+import { Checkbox } from "../components/ui/checkbox";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/ui/select';
+} from "../components/ui/select";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '../components/ui/tooltip-docs';
-import { getProviderIcon } from '../lib/icons';
+} from "../components/ui/tooltip-docs";
+import { getProviderIcon } from "../lib/icons";
 
 interface Tool {
   id: string;
@@ -58,7 +58,7 @@ interface Tool {
   description: string;
   icon: any;
   action: () => Promise<void> | void;
-  category: 'oauth' | 'database' | 'testing' | 'utilities';
+  category: "oauth" | "database" | "testing" | "utilities";
 }
 
 interface OAuthProvider {
@@ -108,10 +108,10 @@ run().then(console.log).catch(console.error);`;
 
 const MIGRATION_PROVIDERS: MigrationProvider[] = [
   {
-    id: 'clerk',
-    name: 'Clerk',
-    description: 'Clerk Migration guide',
-    docs: 'https://better-auth.com/docs/migrations/clerk',
+    id: "clerk",
+    name: "Clerk",
+    description: "Clerk Migration guide",
+    docs: "https://better-auth.com/docs/migrations/clerk",
     logo: (
       <svg
         width="1em"
@@ -131,9 +131,9 @@ const MIGRATION_PROVIDERS: MigrationProvider[] = [
       </svg>
     ),
     highlights: [
-      'Downloads Clerk CSV export and REST API data.',
-      'Migrates passwords, totp secrets, and external accounts.',
-      'Respects Better Auth plugins (admin, username, phone-number, two-factor).',
+      "Downloads Clerk CSV export and REST API data.",
+      "Migrates passwords, totp secrets, and external accounts.",
+      "Respects Better Auth plugins (admin, username, phone-number, two-factor).",
     ],
     script: `import 'dotenv/config';
 import { generateRandomString, symmetricEncrypt } from "better-auth/crypto";
@@ -319,53 +319,53 @@ migrateFromClerk()
   });`,
   },
   {
-    id: 'supabase',
-    name: 'Supabase',
-    description: 'Supabase Migration guide',
-    docs: 'https://better-auth.com/docs/migrations/supabase',
+    id: "supabase",
+    name: "Supabase",
+    description: "Supabase Migration guide",
+    docs: "https://better-auth.com/docs/migrations/supabase",
     logo: ``,
     highlights: [
-      'Exports Supabase auth.users and auth.identities.',
-      'Preserves password hashes and metadata fields.',
-      'Supports incremental re-runs with idempotent operations.',
+      "Exports Supabase auth.users and auth.identities.",
+      "Preserves password hashes and metadata fields.",
+      "Supports incremental re-runs with idempotent operations.",
     ],
     disabled: true,
   },
   {
-    id: 'auth0',
-    name: 'Auth0',
-    description: 'Auth0 Migration guide',
-    docs: 'https://better-auth.com/docs/migrations/auth0',
+    id: "auth0",
+    name: "Auth0",
+    description: "Auth0 Migration guide",
+    docs: "https://better-auth.com/docs/migrations/auth0",
     logo: ``,
     highlights: [
-      'Uses Auth0 Management API bulk exports.',
-      'Keeps password hashes compatible with Better Auth adapters.',
-      'Migrates applications and roles to Better Auth format.',
+      "Uses Auth0 Management API bulk exports.",
+      "Keeps password hashes compatible with Better Auth adapters.",
+      "Migrates applications and roles to Better Auth format.",
     ],
     disabled: true,
   },
   {
-    id: 'nextauth',
-    name: 'NextAuth.js',
-    description: 'NextAuth.js Migration guide',
-    docs: 'https://better-auth.com/docs/migrations/nextauth',
+    id: "nextauth",
+    name: "NextAuth.js",
+    description: "NextAuth.js Migration guide",
+    docs: "https://better-auth.com/docs/migrations/nextauth",
     logo: ``,
     highlights: [
-      'Reads users/accounts from your existing NextAuth database.',
-      'Moves refresh tokens and OAuth profiles into Better Auth.',
-      'Supports Prisma, MySQL, and Postgres NextAuth adapters.',
+      "Reads users/accounts from your existing NextAuth database.",
+      "Moves refresh tokens and OAuth profiles into Better Auth.",
+      "Supports Prisma, MySQL, and Postgres NextAuth adapters.",
     ],
     disabled: true,
   },
   {
-    id: 'custom',
-    name: 'Custom Script',
-    description: 'Custom Migration guide',
-    docs: 'https://better-auth.com/docs/migrations/custom',
+    id: "custom",
+    name: "Custom Script",
+    description: "Custom Migration guide",
+    docs: "https://better-auth.com/docs/migrations/custom",
     highlights: [
-      'Use Better Auth SDK helpers to insert users safely.',
-      'Supports dry-run mode to validate before committing.',
-      'Perfect for bespoke data sources or ETL pipelines.',
+      "Use Better Auth SDK helpers to insert users safely.",
+      "Supports dry-run mode to validate before committing.",
+      "Perfect for bespoke data sources or ETL pipelines.",
     ],
     custom: true,
   },
@@ -379,24 +379,24 @@ export default function Tools() {
   const [toolLogs, setToolLogs] = useState<
     Array<{
       id: string;
-      type: 'info' | 'success' | 'error' | 'progress';
+      type: "info" | "success" | "error" | "progress";
       message: string;
       timestamp: Date;
-      status?: 'pending' | 'running' | 'completed' | 'failed';
+      status?: "pending" | "running" | "completed" | "failed";
     }>
   >([]);
   const [showLogs, setShowLogs] = useState(false);
   const [showOAuthModal, setShowOAuthModal] = useState(false);
   const [oauthProviders, setOauthProviders] = useState<OAuthProvider[]>([]);
-  const [selectedProvider, setSelectedProvider] = useState<string>('');
+  const [selectedProvider, setSelectedProvider] = useState<string>("");
   const [showMigrationModal, setShowMigrationModal] = useState(false);
-  const [selectedMigration, setSelectedMigration] = useState<string>('');
+  const [selectedMigration, setSelectedMigration] = useState<string>("");
   const [customMigrationCode, setCustomMigrationCode] = useState<string>(DEFAULT_CUSTOM_MIGRATION);
   const [showPasswordHasher, setShowPasswordHasher] = useState(false);
-  const [hashInput, setHashInput] = useState('');
-  const [hashSalt, setHashSalt] = useState('');
-  const [hashAlgorithm, setHashAlgorithm] = useState<'SHA-256' | 'SHA-384' | 'SHA-512'>('SHA-256');
-  const [hashEncoding, setHashEncoding] = useState<'hex' | 'base64' | 'base64url'>('hex');
+  const [hashInput, setHashInput] = useState("");
+  const [hashSalt, setHashSalt] = useState("");
+  const [hashAlgorithm, setHashAlgorithm] = useState<"SHA-256" | "SHA-384" | "SHA-512">("SHA-256");
+  const [hashEncoding, setHashEncoding] = useState<"hex" | "base64" | "base64url">("hex");
   const [hashOutput, setHashOutput] = useState<string | null>(null);
   const [hashingPassword, setHashingPassword] = useState(false);
   const [showPlainPassword, setShowPlainPassword] = useState(false);
@@ -413,10 +413,10 @@ export default function Tools() {
     results: Array<{
       category: string;
       check: string;
-      status: 'pass' | 'fail' | 'warning';
+      status: "pass" | "fail" | "warning";
       message: string;
       suggestion?: string;
-      severity: 'error' | 'warning' | 'info';
+      severity: "error" | "warning" | "info";
     }>;
   } | null>(null);
   const [expandedProviders, setExpandedProviders] = useState<Set<string>>(new Set());
@@ -425,38 +425,38 @@ export default function Tools() {
     Array<{ name: string; displayName: string }>
   >([]);
   const [selectedTables, setSelectedTables] = useState<Set<string>>(new Set());
-  const [exportFormat, setExportFormat] = useState<'json' | 'csv'>('json');
-  const [exportLimit, setExportLimit] = useState<string>('1000');
+  const [exportFormat, setExportFormat] = useState<"json" | "csv">("json");
+  const [exportLimit, setExportLimit] = useState<string>("1000");
   const [isExporting, setIsExporting] = useState(false);
   const [showJwtModal, setShowJwtModal] = useState(false);
-  const [jwtInput, setJwtInput] = useState('');
-  const [jwtSecret, setJwtSecret] = useState('');
+  const [jwtInput, setJwtInput] = useState("");
+  const [jwtSecret, setJwtSecret] = useState("");
   const [jwtResult, setJwtResult] = useState<any>(null);
   const [isDecodingJwt, setIsDecodingJwt] = useState(false);
   const [jwtError, setJwtError] = useState<string | null>(null);
   const [showTokenGeneratorModal, setShowTokenGeneratorModal] = useState(false);
-  const [tokenType, setTokenType] = useState<'api_key' | 'jwt'>('api_key');
-  const [tokenSubject, setTokenSubject] = useState('');
-  const [tokenAudience, setTokenAudience] = useState('');
-  const [tokenExpiresIn, setTokenExpiresIn] = useState('15');
-  const [tokenSecret, setTokenSecret] = useState('');
-  const [tokenCustomClaims, setTokenCustomClaims] = useState('{\n  \n}');
+  const [tokenType, setTokenType] = useState<"api_key" | "jwt">("api_key");
+  const [tokenSubject, setTokenSubject] = useState("");
+  const [tokenAudience, setTokenAudience] = useState("");
+  const [tokenExpiresIn, setTokenExpiresIn] = useState("15");
+  const [tokenSecret, setTokenSecret] = useState("");
+  const [tokenCustomClaims, setTokenCustomClaims] = useState("{\n  \n}");
   const [tokenResult, setTokenResult] = useState<any>(null);
   const [isGeneratingToken, setIsGeneratingToken] = useState(false);
   const [showUuidModal, setShowUuidModal] = useState(false);
-  const [uuidCount, setUuidCount] = useState<string>('1');
+  const [uuidCount, setUuidCount] = useState<string>("1");
   const [uuidResults, setUuidResults] = useState<string[]>([]);
-  const [uuidInput, setUuidInput] = useState('');
+  const [uuidInput, setUuidInput] = useState("");
   const [uuidValidation, setUuidValidation] = useState<{
     isValid: boolean;
     version?: string;
     variant?: string;
   } | null>(null);
   const [showPasswordStrengthModal, setShowPasswordStrengthModal] = useState(false);
-  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState("");
   const [passwordStrength, setPasswordStrength] = useState<{
     score: number;
-    strength: 'weak' | 'fair' | 'good' | 'strong' | 'very-strong';
+    strength: "weak" | "fair" | "good" | "strong" | "very-strong";
     checks: Array<{ name: string; passed: boolean; message: string }>;
     meetsConfig: boolean;
     configRequirements: {
@@ -467,8 +467,8 @@ export default function Tools() {
   const [isCheckingPassword, setIsCheckingPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showOAuthCredentialsModal, setShowOAuthCredentialsModal] = useState(false);
-  const [oauthOrigin, setOauthOrigin] = useState('');
-  const [baseUrl, setBaseUrl] = useState('localhost:3000');
+  const [oauthOrigin, setOauthOrigin] = useState("");
+  const [baseUrl, setBaseUrl] = useState("localhost:3000");
   const [oauthCredentials, setOauthCredentials] = useState<{
     clientId: string;
     clientSecret: string;
@@ -506,10 +506,10 @@ export default function Tools() {
   } | null>(null);
   const [isGeneratingSecret, setIsGeneratingSecret] = useState(false);
   const [secretLength, setSecretLength] = useState(32);
-  const [secretFormat, setSecretFormat] = useState<'hex' | 'base64'>('hex');
+  const [secretFormat, setSecretFormat] = useState<"hex" | "base64">("hex");
   const [showPluginGeneratorModal, setShowPluginGeneratorModal] = useState(false);
-  const [pluginName, setPluginName] = useState('');
-  const [pluginDescription, setPluginDescription] = useState('');
+  const [pluginName, setPluginName] = useState("");
+  const [pluginDescription, setPluginDescription] = useState("");
   const [pluginTables, setPluginTables] = useState<
     Array<{
       name: string;
@@ -530,8 +530,8 @@ export default function Tools() {
   const [pluginHooks, setPluginHooks] = useState<
     Array<{
       name: string;
-      timing: 'before' | 'after';
-      action: 'sign-up' | 'sign-in' | 'custom';
+      timing: "before" | "after";
+      action: "sign-up" | "sign-in" | "custom";
       customPath?: string;
       customMatcher?: string;
       hookLogic: string;
@@ -542,7 +542,7 @@ export default function Tools() {
     Array<{
       name: string;
       path: string;
-      pathType: 'exact' | 'prefix' | 'regex';
+      pathType: "exact" | "prefix" | "regex";
       middlewareLogic: string;
       expanded?: boolean;
     }>
@@ -551,7 +551,7 @@ export default function Tools() {
     Array<{
       name: string;
       path: string;
-      method: 'GET' | 'POST';
+      method: "GET" | "POST";
       handlerLogic: string;
       expanded?: boolean;
     }>
@@ -559,12 +559,12 @@ export default function Tools() {
   const [pluginRateLimitEnabled, setPluginRateLimitEnabled] = useState(false);
   const [pluginRateLimit, setPluginRateLimit] = useState<{
     path: string;
-    pathType: 'exact' | 'prefix' | 'regex';
+    pathType: "exact" | "prefix" | "regex";
     window: number;
     max: number;
   }>({
-    path: '/my-plugin/*',
-    pathType: 'prefix',
+    path: "/my-plugin/*",
+    pathType: "prefix",
     window: 15 * 60 * 1000,
     max: 100,
   });
@@ -573,151 +573,151 @@ export default function Tools() {
   const [isGeneratingPlugin, setIsGeneratingPlugin] = useState(false);
   const [pluginError, setPluginError] = useState<string | null>(null);
   const [activeCodeTab, setActiveCodeTab] = useState<
-    'server' | 'client' | 'serverSetup' | 'clientSetup'
-  >('server');
+    "server" | "client" | "serverSetup" | "clientSetup"
+  >("server");
   const [clientFramework, setClientFramework] = useState<
-    'react' | 'svelte' | 'solid' | 'vue' | 'client'
-  >('client');
+    "react" | "svelte" | "solid" | "vue" | "client"
+  >("client");
   useEffect(() => {
     if (showConfigValidator) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showConfigValidator]);
   useEffect(() => {
     if (showExportModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showExportModal]);
   useEffect(() => {
     if (showOAuthCredentialsModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showOAuthCredentialsModal]);
   useEffect(() => {
     if (showEnvConfirmModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showEnvConfirmModal]);
   useEffect(() => {
     if (showPasswordStrengthModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showPasswordStrengthModal]);
 
   useEffect(() => {
     if (showOAuthCredentialsModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showOAuthCredentialsModal]);
 
   useEffect(() => {
     if (showEnvConfirmModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showEnvConfirmModal]);
 
   useEffect(() => {
     if (showSecretGeneratorModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showSecretGeneratorModal]);
 
   useEffect(() => {
     if (showUuidModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showUuidModal]);
   useEffect(() => {
     if (showJwtModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showJwtModal]);
   useEffect(() => {
     if (showPasswordHasher) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showPasswordHasher]);
   useEffect(() => {
     if (showTokenGeneratorModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showTokenGeneratorModal]);
   useEffect(() => {
     if (showPluginGeneratorModal) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showPluginGeneratorModal]);
 
   const addLog = (
-    type: 'info' | 'success' | 'error' | 'progress',
+    type: "info" | "success" | "error" | "progress",
     message: string,
-    status?: 'pending' | 'running' | 'completed' | 'failed',
-    customId?: string
+    status?: "pending" | "running" | "completed" | "failed",
+    customId?: string,
   ) => {
     setToolLogs((prev) => [
       ...prev,
@@ -745,31 +745,31 @@ export default function Tools() {
 
   useEffect(() => {
     if (showMigrationModal) {
-      setSelectedMigration((current) => current || getDefaultMigrationProvider()?.id || '');
+      setSelectedMigration((current) => current || getDefaultMigrationProvider()?.id || "");
     } else {
-      setSelectedMigration('');
+      setSelectedMigration("");
     }
   }, [showMigrationModal, getDefaultMigrationProvider]);
 
   const handleSelectMigration = (providerId: string) => {
     setSelectedMigration(providerId);
-    if (providerId !== 'custom') {
+    if (providerId !== "custom") {
       setCustomMigrationCode(DEFAULT_CUSTOM_MIGRATION);
     }
   };
 
   const openPasswordHasher = () => {
-    setHashInput('');
-    setHashSalt('');
+    setHashInput("");
+    setHashSalt("");
     setHashOutput(null);
-    setHashAlgorithm('SHA-256');
-    setHashEncoding('hex');
+    setHashAlgorithm("SHA-256");
+    setHashEncoding("hex");
     setShowPasswordHasher(true);
   };
 
   const handleHashPassword = async () => {
     if (!hashInput.trim()) {
-      toast.error('Enter a password to hash');
+      toast.error("Enter a password to hash");
       return;
     }
 
@@ -779,9 +779,9 @@ export default function Tools() {
       const hasher = createHash(hashAlgorithm, hashEncoding);
       const hashedValue = (await hasher.digest(payload)) as string;
       setHashOutput(hashedValue);
-      toast.success('Password hashed successfully');
+      toast.success("Password hashed successfully");
     } catch (error) {
-      toast.error('Failed to hash password');
+      toast.error("Failed to hash password");
       console.error(error);
     } finally {
       setHashingPassword(false);
@@ -791,9 +791,9 @@ export default function Tools() {
   const copyToClipboard = async (value: string) => {
     try {
       await navigator.clipboard.writeText(value);
-      toast.success('Copied to clipboard');
+      toast.success("Copied to clipboard");
     } catch (_error) {
-      toast.error('Failed to copy to clipboard');
+      toast.error("Failed to copy to clipboard");
     }
   };
 
@@ -806,10 +806,10 @@ export default function Tools() {
 
   const logSessionMessage = (
     sessionId: string,
-    type: 'info' | 'success' | 'error' | 'progress',
+    type: "info" | "success" | "error" | "progress",
     key: string,
     message: string,
-    status?: 'pending' | 'running' | 'completed' | 'failed'
+    status?: "pending" | "running" | "completed" | "failed",
   ) => {
     let keyMap = sessionLogKeys.current.get(sessionId);
     if (!keyMap) {
@@ -829,8 +829,8 @@ export default function Tools() {
                 status,
                 timestamp: new Date(),
               }
-            : line
-        )
+            : line,
+        ),
       );
       return;
     }
@@ -860,14 +860,14 @@ export default function Tools() {
           activePolls.current.delete(sessionId);
           logSessionMessage(
             sessionId,
-            'error',
-            'timeout',
-            '⌛ Timed out waiting for account creation. Check Better Auth logs.',
-            'failed'
+            "error",
+            "timeout",
+            "⌛ Timed out waiting for account creation. Check Better Auth logs.",
+            "failed",
           );
           closeOAuthWindow();
           setRunningTool(null);
-          toast.error('OAuth test timed out waiting for account creation');
+          toast.error("OAuth test timed out waiting for account creation");
           return;
         }
 
@@ -880,14 +880,14 @@ export default function Tools() {
           activePolls.current.delete(sessionId);
           logSessionMessage(
             sessionId,
-            'error',
-            'poll-error',
+            "error",
+            "poll-error",
             `⚠️ Failed to check OAuth status: ${error}`,
-            'failed'
+            "failed",
           );
           closeOAuthWindow();
           setRunningTool(null);
-          toast.error('Failed to check OAuth status');
+          toast.error("Failed to check OAuth status");
         }
       });
   };
@@ -904,10 +904,10 @@ export default function Tools() {
 
       logSessionMessage(
         sessionId,
-        'success',
-        'waiting',
-        '✅ Verified with Better Auth.',
-        'completed'
+        "success",
+        "waiting",
+        "✅ Verified with Better Auth.",
+        "completed",
       );
 
       if (result.userInfo) {
@@ -917,12 +917,12 @@ export default function Tools() {
           result.userInfo.email ? `✉️ ${result.userInfo.email}` : null,
         ]
           .filter(Boolean)
-          .join('   |   ');
+          .join("   |   ");
 
         const successMessage = userDetails
           ? `✅ ${result.provider} OAuth succeeded — ${userDetails}`
           : `✅ ${result.provider} OAuth succeeded!`;
-        logSessionMessage(sessionId, 'success', 'completed', successMessage, 'completed');
+        logSessionMessage(sessionId, "success", "completed", successMessage, "completed");
         toast.success(`OAuth test for ${result.provider} passed!`);
         closeOAuthWindow();
         setRunningTool(null);
@@ -930,10 +930,10 @@ export default function Tools() {
       } else {
         logSessionMessage(
           sessionId,
-          'progress',
-          'await-finalize',
-          '⌛ OAuth flow finished. Waiting for Better Auth to finalize account...',
-          'running'
+          "progress",
+          "await-finalize",
+          "⌛ OAuth flow finished. Waiting for Better Auth to finalize account...",
+          "running",
         );
         if (!activePolls.current.has(sessionId)) {
           activePolls.current.add(sessionId);
@@ -947,18 +947,18 @@ export default function Tools() {
 
       logSessionMessage(
         sessionId,
-        'error',
-        'waiting',
-        '❌ Verification failed with Better Auth.',
-        'failed'
+        "error",
+        "waiting",
+        "❌ Verification failed with Better Auth.",
+        "failed",
       );
-      const errorSummary = result.error ? ` — ${result.error}` : '';
+      const errorSummary = result.error ? ` — ${result.error}` : "";
       logSessionMessage(
         sessionId,
-        'error',
-        'failed',
+        "error",
+        "failed",
         `❌ ${result.provider} OAuth failed${errorSummary}`,
-        'failed'
+        "failed",
       );
 
       toast.error(`OAuth test for ${result.provider} failed`);
@@ -972,12 +972,12 @@ export default function Tools() {
       sessionLogKeys.current.delete(sessionId);
     }
 
-    sessionStorage.removeItem('oauth_test_session');
+    sessionStorage.removeItem("oauth_test_session");
     sessionStorage.removeItem(`oauth_test_result_${sessionId}`);
   };
 
   useEffect(() => {
-    const oauthResult = searchParams.get('oauth_test_result');
+    const oauthResult = searchParams.get("oauth_test_result");
     if (oauthResult) {
       try {
         const result = JSON.parse(decodeURIComponent(oauthResult));
@@ -994,7 +994,7 @@ export default function Tools() {
   useEffect(() => {
     const fetchProviders = async () => {
       try {
-        const response = await fetch('/api/tools/oauth/providers');
+        const response = await fetch("/api/tools/oauth/providers");
         const result = await response.json();
         if (result.success && result.providers) {
           setOauthProviders(result.providers.filter((p: OAuthProvider) => p.enabled));
@@ -1006,12 +1006,12 @@ export default function Tools() {
 
   const handleTestOAuth = async () => {
     if (oauthProviders.length === 0) {
-      toast.error('No OAuth providers configured');
-      addLog('error', '❌ No OAuth providers found in configuration', 'failed');
+      toast.error("No OAuth providers configured");
+      addLog("error", "❌ No OAuth providers found in configuration", "failed");
       addLog(
-        'info',
-        '💡 Please configure at least one OAuth provider in your Better Auth config',
-        'failed'
+        "info",
+        "💡 Please configure at least one OAuth provider in your Better Auth config",
+        "failed",
       );
       return;
     }
@@ -1020,20 +1020,20 @@ export default function Tools() {
 
   const startOAuthTest = async (providerId: string) => {
     setShowOAuthModal(false);
-    setSelectedProvider('');
+    setSelectedProvider("");
 
-    setRunningTool('test-oauth');
+    setRunningTool("test-oauth");
     setShowLogs(true);
     setToolLogs([]);
 
-    addLog('info', `🔍 Testing ${providerId} OAuth...`, 'running');
+    addLog("info", `🔍 Testing ${providerId} OAuth...`, "running");
     const sessionTimestamp = new Date().toISOString();
 
     try {
-      addLog('progress', '📡 Contacting Better Auth...', 'running');
-      const response = await fetch('/api/tools/oauth/test', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      addLog("progress", "📡 Contacting Better Auth...", "running");
+      const response = await fetch("/api/tools/oauth/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ provider: providerId }),
       });
 
@@ -1043,10 +1043,10 @@ export default function Tools() {
         sessionLogKeys.current.delete(result.testSessionId);
         logSessionMessage(
           result.testSessionId,
-          'progress',
-          'popup-open',
+          "progress",
+          "popup-open",
           `🌐 Opening ${result.provider} OAuth popup...`,
-          'running'
+          "running",
         );
 
         // Store test session info
@@ -1057,7 +1057,7 @@ export default function Tools() {
           startTime: sessionTimestamp,
         };
         handledSessions.current.delete(result.testSessionId);
-        sessionStorage.setItem('oauth_test_session', JSON.stringify(testSession));
+        sessionStorage.setItem("oauth_test_session", JSON.stringify(testSession));
 
         // Open popup window with GitHub OAuth URL
         const width = 600;
@@ -1067,18 +1067,18 @@ export default function Tools() {
 
         const oauthWindow = window.open(
           result.startUrl,
-          'oauth-test',
-          `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+          "oauth-test",
+          `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`,
         );
 
         if (!oauthWindow) {
           addLog(
-            'error',
-            '❌ Failed to open OAuth window. Please allow popups for this site.',
-            'failed'
+            "error",
+            "❌ Failed to open OAuth window. Please allow popups for this site.",
+            "failed",
           );
-          addLog('error', '💡 Check your browser popup blocker settings', 'failed');
-          toast.error('Failed to open OAuth window. Please allow popups.');
+          addLog("error", "💡 Check your browser popup blocker settings", "failed");
+          toast.error("Failed to open OAuth window. Please allow popups.");
           setRunningTool(null);
           return;
         }
@@ -1094,14 +1094,14 @@ export default function Tools() {
             return;
           }
 
-          if (event.data && event.data.type === 'oauth_test_state') {
-            if (event.data.status === 'redirect') {
+          if (event.data && event.data.type === "oauth_test_state") {
+            if (event.data.status === "redirect") {
               if (!activePolls.current.has(testSession.testSessionId)) {
                 pollOAuthStatus(testSession.testSessionId, testSession.provider);
               }
-            } else if (event.data.status === 'error') {
+            } else if (event.data.status === "error") {
               completionHandled = true;
-              const storedSession = sessionStorage.getItem('oauth_test_session');
+              const storedSession = sessionStorage.getItem("oauth_test_session");
               let providerName = result.provider;
               if (storedSession) {
                 try {
@@ -1112,9 +1112,9 @@ export default function Tools() {
                 success: false,
                 provider: providerName,
                 testSessionId: event.data.testSessionId,
-                error: event.data.error || 'Failed to start OAuth test',
+                error: event.data.error || "Failed to start OAuth test",
               });
-              window.removeEventListener('message', messageHandler);
+              window.removeEventListener("message", messageHandler);
               clearInterval(checkInterval);
               clearTimeout(timeoutId);
               closeOAuthWindow();
@@ -1122,8 +1122,8 @@ export default function Tools() {
             return;
           }
 
-          if (event.data && event.data.type === 'oauth_test_result') {
-            window.removeEventListener('message', messageHandler);
+          if (event.data && event.data.type === "oauth_test_result") {
+            window.removeEventListener("message", messageHandler);
             clearInterval(checkInterval);
             clearTimeout(timeoutId);
 
@@ -1138,17 +1138,17 @@ export default function Tools() {
           }
         };
 
-        window.addEventListener('message', messageHandler);
+        window.addEventListener("message", messageHandler);
 
         // Poll for window closure
         const checkInterval = setInterval(() => {
           if (oauthWindow.closed) {
             clearInterval(checkInterval);
             clearTimeout(timeoutId);
-            window.removeEventListener('message', messageHandler);
+            window.removeEventListener("message", messageHandler);
 
             const storedResult = sessionStorage.getItem(
-              `oauth_test_result_${testSession.testSessionId}`
+              `oauth_test_result_${testSession.testSessionId}`,
             );
             if (!storedResult && !completionHandled) {
               completionHandled = true;
@@ -1161,40 +1161,40 @@ export default function Tools() {
           () => {
             if (!oauthWindow.closed) {
               clearInterval(checkInterval);
-              window.removeEventListener('message', messageHandler);
+              window.removeEventListener("message", messageHandler);
               closeOAuthWindow();
               if (!completionHandled) {
                 completionHandled = true;
               }
-              addLog('error', '❌ OAuth test timed out after 5 minutes', 'failed');
-              addLog('error', '💡 Possible reasons:', 'failed');
-              addLog('error', '   • Authentication took too long', 'failed');
-              addLog('error', '   • Provider is not responding', 'failed');
-              addLog('error', '   • Network connectivity issues', 'failed');
-              toast.error('OAuth test timed out');
+              addLog("error", "❌ OAuth test timed out after 5 minutes", "failed");
+              addLog("error", "💡 Possible reasons:", "failed");
+              addLog("error", "   • Authentication took too long", "failed");
+              addLog("error", "   • Provider is not responding", "failed");
+              addLog("error", "   • Network connectivity issues", "failed");
+              toast.error("OAuth test timed out");
               setRunningTool(null);
             }
           },
-          5 * 60 * 1000
+          5 * 60 * 1000,
         );
       } else {
         addLog(
-          'error',
-          `❌ Failed to initiate OAuth test: ${result.error || 'Unknown error'}`,
-          'failed'
+          "error",
+          `❌ Failed to initiate OAuth test: ${result.error || "Unknown error"}`,
+          "failed",
         );
         if (result.details) {
-          addLog('error', `💡 Details: ${JSON.stringify(result.details)}`, 'failed');
+          addLog("error", `💡 Details: ${JSON.stringify(result.details)}`, "failed");
         }
         if (result.cause) {
-          addLog('error', `💡 Cause: ${result.cause}`, 'failed');
+          addLog("error", `💡 Cause: ${result.cause}`, "failed");
         }
-        toast.error(result.error || 'Failed to start OAuth test');
+        toast.error(result.error || "Failed to start OAuth test");
         setRunningTool(null);
       }
     } catch (error) {
-      addLog('error', `❌ Network error: ${error}`, 'failed');
-      toast.error('Failed to start OAuth test');
+      addLog("error", `❌ Network error: ${error}`, "failed");
+      toast.error("Failed to start OAuth test");
       setRunningTool(null);
     }
   };
@@ -1206,7 +1206,7 @@ export default function Tools() {
   const executeMigrationProvider = async (providerId: string, script?: string) => {
     const provider = MIGRATION_PROVIDERS.find((item) => item.id === providerId);
     if (!provider) {
-      toast.error('Unknown migration provider');
+      toast.error("Unknown migration provider");
       return;
     }
 
@@ -1216,26 +1216,26 @@ export default function Tools() {
     }
 
     setShowMigrationModal(false);
-    setRunningTool('run-migration');
+    setRunningTool("run-migration");
     setShowLogs(true);
     setToolLogs([]);
 
     const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
     try {
-      addLog('info', `🚀 Preparing ${provider.name} migration...`, 'running');
+      addLog("info", `🚀 Preparing ${provider.name} migration...`, "running");
 
       if (provider.highlights) {
         for (const item of provider.highlights) {
           await wait(350);
-          addLog('progress', item, 'running');
+          addLog("progress", item, "running");
         }
       }
 
-      addLog('progress', '📡 Sending migration payload to server...', 'running');
-      const response = await fetch('/api/tools/migrations/run', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      addLog("progress", "📡 Sending migration payload to server...", "running");
+      const response = await fetch("/api/tools/migrations/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           provider: provider.id,
           script: provider.custom ? script : provider.script,
@@ -1246,38 +1246,38 @@ export default function Tools() {
 
       if (data.success) {
         addLog(
-          'progress',
-          '🚀 Migration job acknowledged. Follow server logs for live progress.',
-          'running'
+          "progress",
+          "🚀 Migration job acknowledged. Follow server logs for live progress.",
+          "running",
         );
-        addLog('success', `✅ ${provider.name} migration request accepted.`, 'completed');
+        addLog("success", `✅ ${provider.name} migration request accepted.`, "completed");
         if (data.message) {
-          addLog('info', data.message, 'completed');
+          addLog("info", data.message, "completed");
         }
         toast.success(`${provider.name} migration flow completed`);
       } else {
-        throw new Error(data.error || 'Migration request failed');
+        throw new Error(data.error || "Migration request failed");
       }
     } catch (error) {
-      addLog('error', `❌ Migration failed: ${error}`, 'failed');
-      toast.error('Migration failed');
+      addLog("error", `❌ Migration failed: ${error}`, "failed");
+      toast.error("Migration failed");
     } finally {
       setRunningTool(null);
     }
   };
   const handleValidateConfig = async () => {
-    setRunningTool('validate-config');
+    setRunningTool("validate-config");
     setShowLogs(true);
     setToolLogs([]);
     setConfigValidationResults(null);
     setShowConfigValidator(true);
 
-    addLog('info', 'Validating Better Auth configuration...', 'running');
+    addLog("info", "Validating Better Auth configuration...", "running");
 
     try {
-      const response = await fetch('/api/tools/validate-config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/tools/validate-config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
       });
 
       const result = await response.json();
@@ -1285,78 +1285,78 @@ export default function Tools() {
       if (result.success !== undefined) {
         setConfigValidationResults(result);
 
-        addLog('info', `Found ${result.summary.total} validation checks`, 'completed');
+        addLog("info", `Found ${result.summary.total} validation checks`, "completed");
         if (result.summary.errors > 0) {
-          addLog('error', `❌ ${result.summary.errors} error(s) found`, 'failed');
+          addLog("error", `❌ ${result.summary.errors} error(s) found`, "failed");
         }
         if (result.summary.warnings > 0) {
-          addLog('progress', `⚠️ ${result.summary.warnings} warning(s) found`, 'completed');
+          addLog("progress", `⚠️ ${result.summary.warnings} warning(s) found`, "completed");
         }
         if (result.summary.passes > 0) {
-          addLog('success', `✅ ${result.summary.passes} check(s) passed`, 'completed');
+          addLog("success", `✅ ${result.summary.passes} check(s) passed`, "completed");
         }
 
         if (result.success) {
-          toast.success('Configuration validation completed successfully');
+          toast.success("Configuration validation completed successfully");
         } else {
           toast.error(`Configuration validation found ${result.summary.errors} error(s)`);
         }
       } else {
-        throw new Error(result.error || 'Failed to validate configuration');
+        throw new Error(result.error || "Failed to validate configuration");
       }
     } catch (error) {
-      addLog('error', `❌ Configuration validation failed: ${error}`, 'failed');
-      toast.error('Configuration validation failed');
+      addLog("error", `❌ Configuration validation failed: ${error}`, "failed");
+      toast.error("Configuration validation failed");
     } finally {
       setRunningTool(null);
     }
   };
 
   const handleTestDatabaseConnection = async () => {
-    setRunningTool('test-db');
+    setRunningTool("test-db");
     setShowLogs(true);
     setToolLogs([]);
 
-    addLog('info', 'Testing database connection...', 'running');
+    addLog("info", "Testing database connection...", "running");
 
     try {
-      const response = await fetch('/api/database/test');
+      const response = await fetch("/api/database/test");
       const result = await response.json();
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      addLog('progress', 'Checking on database con!', 'running');
+      addLog("progress", "Checking on database con!", "running");
       if (result.success) {
-        addLog('success', '✅ Database connection successful!', 'completed');
+        addLog("success", "✅ Database connection successful!", "completed");
         if (result.result && Array.isArray(result.result) && result.result.length > 0) {
-          addLog('info', '📄 Sample user record (first row):', 'completed');
-          addLog('info', JSON.stringify(result.result[0], null, 2), 'completed');
+          addLog("info", "📄 Sample user record (first row):", "completed");
+          addLog("info", JSON.stringify(result.result[0], null, 2), "completed");
         }
-        toast.success('Database connection test successful');
+        toast.success("Database connection test successful");
       } else {
         addLog(
-          'error',
-          `❌ Database connection failed: ${result.error || 'Unknown error'}`,
-          'failed'
+          "error",
+          `❌ Database connection failed: ${result.error || "Unknown error"}`,
+          "failed",
         );
-        toast.error('Database connection test failed');
+        toast.error("Database connection test failed");
       }
     } catch (error) {
-      addLog('error', `❌ Network error: ${error}`, 'failed');
-      toast.error('Failed to test database connection');
+      addLog("error", `❌ Network error: ${error}`, "failed");
+      toast.error("Failed to test database connection");
     } finally {
       setRunningTool(null);
     }
   };
   const formatDateTime = (value?: string) => {
-    if (!value) return 'N/A';
+    if (!value) return "N/A";
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return value;
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
+    return date.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     });
   };
 
@@ -1365,31 +1365,31 @@ export default function Tools() {
   };
 
   const handleOpenJwtDecoder = () => {
-    setJwtInput('');
-    setJwtSecret('');
+    setJwtInput("");
+    setJwtSecret("");
     setJwtResult(null);
     setJwtError(null);
     setShowJwtModal(true);
   };
 
   const handleOpenUuidGenerator = () => {
-    setUuidCount('1');
+    setUuidCount("1");
     setUuidResults([]);
-    setUuidInput('');
+    setUuidInput("");
     setUuidValidation(null);
     setShowUuidModal(true);
   };
 
   const handleOpenPasswordStrengthChecker = () => {
     setShowPasswordStrengthModal(true);
-    setPasswordInput('');
+    setPasswordInput("");
     setPasswordStrength(null);
     setShowPassword(false);
   };
 
   const handleCheckPasswordStrength = async () => {
     if (!passwordInput.trim()) {
-      toast.error('Please enter a password to check');
+      toast.error("Please enter a password to check");
       return;
     }
 
@@ -1397,9 +1397,9 @@ export default function Tools() {
     setPasswordStrength(null);
 
     try {
-      const response = await fetch('/api/tools/password-strength', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/tools/password-strength", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           password: passwordInput,
         }),
@@ -1408,12 +1408,12 @@ export default function Tools() {
       const result = await response.json();
       if (result.success) {
         setPasswordStrength(result);
-        toast.success('Password strength checked');
+        toast.success("Password strength checked");
       } else {
-        toast.error(result.error || 'Failed to check password strength');
+        toast.error(result.error || "Failed to check password strength");
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to check password strength';
+      const message = error instanceof Error ? error.message : "Failed to check password strength";
       toast.error(message);
     } finally {
       setIsCheckingPassword(false);
@@ -1424,7 +1424,7 @@ export default function Tools() {
     setShowSecretGeneratorModal(true);
     setSecretResult(null);
     setSecretLength(32);
-    setSecretFormat('hex');
+    setSecretFormat("hex");
   };
 
   const handleGenerateSecret = async () => {
@@ -1432,10 +1432,10 @@ export default function Tools() {
     setSecretResult(null);
 
     try {
-      const response = await fetch('/api/tools/generate-secret', {
-        method: 'POST',
+      const response = await fetch("/api/tools/generate-secret", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           length: secretLength,
@@ -1444,18 +1444,18 @@ export default function Tools() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate secret');
+        throw new Error("Failed to generate secret");
       }
 
       const data = await response.json();
       if (data.success) {
         setSecretResult(data);
-        toast.success('Secret generated successfully');
+        toast.success("Secret generated successfully");
       } else {
-        throw new Error(data.message || 'Failed to generate secret');
+        throw new Error(data.message || "Failed to generate secret");
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to generate secret');
+      toast.error(error instanceof Error ? error.message : "Failed to generate secret");
       console.error(error);
     } finally {
       setIsGeneratingSecret(false);
@@ -1464,7 +1464,7 @@ export default function Tools() {
 
   const handleWriteSecretToEnv = async () => {
     if (!secretResult) {
-      toast.error('Please generate a secret first');
+      toast.error("Please generate a secret first");
       return;
     }
 
@@ -1472,10 +1472,10 @@ export default function Tools() {
     setExistingSecret(null);
 
     try {
-      const checkResponse = await fetch('/api/tools/check-env-secret', {
-        method: 'POST',
+      const checkResponse = await fetch("/api/tools/check-env-secret", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -1492,15 +1492,15 @@ export default function Tools() {
         return;
       }
 
-      await writeSecretToEnv('override');
+      await writeSecretToEnv("override");
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to check secret';
+      const message = error instanceof Error ? error.message : "Failed to check secret";
       toast.error(message);
       setIsCheckingSecret(false);
     }
   };
 
-  const writeSecretToEnv = async (action: 'override' | 'append') => {
+  const writeSecretToEnv = async (action: "override" | "append") => {
     if (!secretResult) {
       return;
     }
@@ -1509,10 +1509,10 @@ export default function Tools() {
     setShowSecretConfirmModal(false);
 
     try {
-      const response = await fetch('/api/tools/write-env-secret', {
-        method: 'POST',
+      const response = await fetch("/api/tools/write-env-secret", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           secret: secretResult.secret,
@@ -1526,10 +1526,10 @@ export default function Tools() {
         toast.success(`Secret written to ${data.path}`);
         setExistingSecret(null);
       } else {
-        throw new Error(data.message || 'Failed to write secret');
+        throw new Error(data.message || "Failed to write secret");
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to write secret to .env';
+      const message = error instanceof Error ? error.message : "Failed to write secret to .env";
       toast.error(message);
     } finally {
       setIsWritingSecret(false);
@@ -1539,40 +1539,40 @@ export default function Tools() {
 
   const handleOpenOAuthCredentials = async () => {
     setShowOAuthCredentialsModal(true);
-    setSelectedProvider('google');
+    setSelectedProvider("google");
     setOauthCredentials(null);
     setShowOAuthSecret(false);
 
     try {
-      const response = await fetch('/api/config');
+      const response = await fetch("/api/config");
       const data = await response.json();
       if (data.baseURL) {
-        const url = data.baseURL.replace(/^https?:\/\//, '');
+        const url = data.baseURL.replace(/^https?:\/\//, "");
         setBaseUrl(url);
         setOauthOrigin(url);
       } else {
-        setBaseUrl('localhost:3000');
-        setOauthOrigin('localhost:3000');
+        setBaseUrl("localhost:3000");
+        setOauthOrigin("localhost:3000");
       }
     } catch (error) {
-      setBaseUrl('localhost:3000');
-      setOauthOrigin('localhost:3000');
+      setBaseUrl("localhost:3000");
+      setOauthOrigin("localhost:3000");
     }
   };
 
   const handleFetchOAuthCredentials = async () => {
     if (!selectedProvider) {
-      toast.error('Please select a provider');
+      toast.error("Please select a provider");
       return;
     }
 
     const originToUse = oauthOrigin.trim() || baseUrl;
     if (!originToUse) {
-      toast.error('Please enter an origin');
+      toast.error("Please enter an origin");
       return;
     }
 
-    const cleanOrigin = originToUse.replace(/^https?:\/\//, '');
+    const cleanOrigin = originToUse.replace(/^https?:\/\//, "");
 
     setIsFetchingCredentials(true);
     setOauthCredentials(null);
@@ -1580,7 +1580,7 @@ export default function Tools() {
 
     try {
       const response = await fetch(
-        `https://studio-backend-0.vercel.app/oauth/${selectedProvider}?origin=${encodeURIComponent(cleanOrigin)}`
+        `https://studio-backend-0.vercel.app/oauth/${selectedProvider}?origin=${encodeURIComponent(cleanOrigin)}`,
       );
 
       if (!response.ok) {
@@ -1594,12 +1594,12 @@ export default function Tools() {
           clientId: data.clientId,
           clientSecret: data.clientSecret,
         });
-        toast.success('OAuth credentials fetched successfully');
+        toast.success("OAuth credentials fetched successfully");
       } else {
-        throw new Error('Invalid response format');
+        throw new Error("Invalid response format");
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to fetch OAuth credentials';
+      const message = error instanceof Error ? error.message : "Failed to fetch OAuth credentials";
       toast.error(message);
     } finally {
       setIsFetchingCredentials(false);
@@ -1608,7 +1608,7 @@ export default function Tools() {
 
   const handleWriteToEnv = async () => {
     if (!selectedProvider || !oauthCredentials) {
-      toast.error('Please fetch credentials first');
+      toast.error("Please fetch credentials first");
       return;
     }
 
@@ -1617,10 +1617,10 @@ export default function Tools() {
     setEnvWriteResult(null);
 
     try {
-      const checkResponse = await fetch('/api/tools/check-env-credentials', {
-        method: 'POST',
+      const checkResponse = await fetch("/api/tools/check-env-credentials", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           provider: selectedProvider,
@@ -1642,15 +1642,15 @@ export default function Tools() {
       }
 
       // No existing credentials, write directly
-      await writeCredentialsToEnv('override');
+      await writeCredentialsToEnv("override");
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to check credentials';
+      const message = error instanceof Error ? error.message : "Failed to check credentials";
       toast.error(message);
       setIsCheckingEnv(false);
     }
   };
 
-  const writeCredentialsToEnv = async (action: 'override' | 'append') => {
+  const writeCredentialsToEnv = async (action: "override" | "append") => {
     if (!selectedProvider || !oauthCredentials) {
       return;
     }
@@ -1660,10 +1660,10 @@ export default function Tools() {
     setShowEnvConfirmModal(false);
 
     try {
-      const response = await fetch('/api/tools/write-env-credentials', {
-        method: 'POST',
+      const response = await fetch("/api/tools/write-env-credentials", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           provider: selectedProvider,
@@ -1684,11 +1684,11 @@ export default function Tools() {
         toast.success(`Credentials written to ${data.path}`);
         setExistingEnvCredentials(null);
       } else {
-        throw new Error(data.message || 'Failed to write credentials');
+        throw new Error(data.message || "Failed to write credentials");
       }
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Failed to write credentials to .env';
+        error instanceof Error ? error.message : "Failed to write credentials to .env";
       setEnvWriteResult({
         success: false,
         message,
@@ -1708,7 +1708,7 @@ export default function Tools() {
         const uuid = crypto.randomUUID();
         results.push(uuid);
       } catch (error) {
-        toast.error('Failed to generate UUID');
+        toast.error("Failed to generate UUID");
         return;
       }
     }
@@ -1731,7 +1731,7 @@ export default function Tools() {
       return;
     }
 
-    const parts = trimmed.split('-');
+    const parts = trimmed.split("-");
     const versionHex = parts[2]?.[0];
     const variantHex = parts[3]?.[0];
 
@@ -1743,18 +1743,18 @@ export default function Tools() {
       if (versionNum >= 1 && versionNum <= 5) {
         version = `v${versionNum}`;
       } else if (versionNum === 0) {
-        version = 'v1 (time-based)';
+        version = "v1 (time-based)";
       }
     }
 
     if (variantHex) {
       const variantNum = parseInt(variantHex, 16);
       if (variantNum >= 8 && variantNum <= 11) {
-        variant = 'RFC 4122';
+        variant = "RFC 4122";
       } else if (variantNum >= 12 && variantNum <= 15) {
-        variant = 'Microsoft';
+        variant = "Microsoft";
       } else if (variantNum >= 0 && variantNum <= 7) {
-        variant = 'Reserved';
+        variant = "Reserved";
       }
     }
 
@@ -1762,19 +1762,19 @@ export default function Tools() {
   };
 
   const handleOpenTokenGenerator = () => {
-    setTokenType('api_key');
-    setTokenSubject('');
-    setTokenAudience('');
-    setTokenExpiresIn('15');
-    setTokenSecret('');
-    setTokenCustomClaims('{\n  \n}');
+    setTokenType("api_key");
+    setTokenSubject("");
+    setTokenAudience("");
+    setTokenExpiresIn("15");
+    setTokenSecret("");
+    setTokenCustomClaims("{\n  \n}");
     setTokenResult(null);
     setShowTokenGeneratorModal(true);
   };
 
   const fetchAvailableTablesForExtension = async () => {
     try {
-      const response = await fetch('/api/database/schema');
+      const response = await fetch("/api/database/schema");
       const result = await response.json();
       if (result.success && result.schema && result.schema.tables) {
         const tables = result.schema.tables.map((table: any) => ({
@@ -1789,22 +1789,22 @@ export default function Tools() {
   };
 
   const handleOpenPluginGenerator = () => {
-    setPluginName('');
-    setPluginDescription('');
-    setClientFramework('react');
+    setPluginName("");
+    setPluginDescription("");
+    setClientFramework("react");
     setPluginTables([]);
     setPluginHooks([]);
     setPluginMiddleware([]);
     setPluginRateLimitEnabled(false);
     setPluginRateLimit({
-      path: '/my-plugin/*',
-      pathType: 'prefix',
+      path: "/my-plugin/*",
+      pathType: "prefix",
       window: 15 * 60 * 1000,
       max: 100,
     });
     setPluginResult(null);
     setPluginError(null);
-    setActiveCodeTab('server');
+    setActiveCodeTab("server");
     fetchAvailableTablesForExtension();
     setShowPluginGeneratorModal(true);
   };
@@ -1831,12 +1831,12 @@ export default function Tools() {
     if (!pluginResult) return;
 
     const frameworkImportMap: Record<string, string> = {
-      react: 'better-auth/react',
-      svelte: 'better-auth/svelte',
-      solid: 'better-auth/solid',
-      vue: 'better-auth/vue',
+      react: "better-auth/react",
+      svelte: "better-auth/svelte",
+      solid: "better-auth/solid",
+      vue: "better-auth/vue",
     };
-    const frameworkImport = frameworkImportMap[framework] || 'better-auth/react';
+    const frameworkImport = frameworkImportMap[framework] || "better-auth/react";
 
     const camelCaseName = pluginResult.name.charAt(0).toLowerCase() + pluginResult.name.slice(1);
     const baseURLMap: Record<string, string> = {
@@ -1865,30 +1865,30 @@ export const authClient = createAuthClient({
   };
 
   const pathToCamelCase = (path: string): string => {
-    if (!path) return '';
+    if (!path) return "";
     const segments = path
-      .replace(/^\/+|\/+$/g, '')
-      .split('/')
+      .replace(/^\/+|\/+$/g, "")
+      .split("/")
       .filter(Boolean);
-    if (segments.length === 0) return '';
+    if (segments.length === 0) return "";
 
     const camelSegments = segments.map((segment, index) => {
-      const parts = segment.split('-');
+      const parts = segment.split("-");
       const camelParts = parts.map((part, partIndex) => {
         if (index === 0 && partIndex === 0) {
           return part.toLowerCase();
         }
         return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
       });
-      return camelParts.join('');
+      return camelParts.join("");
     });
 
-    return camelSegments.join('');
+    return camelSegments.join("");
   };
 
   const handleGeneratePlugin = async () => {
     if (!pluginName.trim()) {
-      toast.error('Please enter a plugin name');
+      toast.error("Please enter a plugin name");
       return;
     }
 
@@ -1898,16 +1898,16 @@ export const authClient = createAuthClient({
 
     try {
       const validTables = pluginTables.filter(
-        (table) => table.name.trim() && table.fields.some((f) => f.name.trim())
+        (table) => table.name.trim() && table.fields.some((f) => f.name.trim()),
       );
       const validHooks = pluginHooks.filter((hook) => hook.name.trim() && hook.hookLogic.trim());
       const validMiddleware = pluginMiddleware.filter(
-        (mw) => mw.name.trim() && mw.middlewareLogic.trim()
+        (mw) => mw.name.trim() && mw.middlewareLogic.trim(),
       );
 
-      const response = await fetch('/api/tools/plugin-generator', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/tools/plugin-generator", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           pluginName: pluginName.trim(),
           description: pluginDescription.trim() || undefined,
@@ -1954,17 +1954,17 @@ export const authClient = createAuthClient({
       const result = await response.json();
       if (result.success) {
         setPluginResult(result.plugin);
-        toast.success('Plugin generated successfully');
+        toast.success("Plugin generated successfully");
         setTimeout(() => {
-          codeGenerationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          codeGenerationRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 100);
       } else {
-        const message = result.error || 'Failed to generate plugin';
+        const message = result.error || "Failed to generate plugin";
         setPluginError(message);
         toast.error(message);
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to generate plugin';
+      const message = error instanceof Error ? error.message : "Failed to generate plugin";
       setPluginError(message);
       toast.error(message);
     } finally {
@@ -1974,7 +1974,7 @@ export const authClient = createAuthClient({
 
   const fetchAvailableTables = async () => {
     try {
-      const response = await fetch('/api/database/schema');
+      const response = await fetch("/api/database/schema");
       const result = await response.json();
       if (result.success && result.schema && result.schema.tables) {
         const tables = result.schema.tables.map((table: any) => ({
@@ -1984,7 +1984,7 @@ export const authClient = createAuthClient({
         setAvailableTables(tables);
       }
     } catch (_error) {
-      toast.error('Failed to fetch available tables');
+      toast.error("Failed to fetch available tables");
     }
   };
 
@@ -2017,7 +2017,7 @@ export const authClient = createAuthClient({
 
   const handleDecodeJwt = async () => {
     if (!jwtInput.trim()) {
-      toast.error('Please paste a JWT to decode');
+      toast.error("Please paste a JWT to decode");
       return;
     }
 
@@ -2026,9 +2026,9 @@ export const authClient = createAuthClient({
     setJwtResult(null);
 
     try {
-      const response = await fetch('/api/tools/jwt/decode', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/tools/jwt/decode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           token: jwtInput.trim(),
           secret: jwtSecret.trim() || undefined,
@@ -2038,14 +2038,14 @@ export const authClient = createAuthClient({
       const result = await response.json();
       if (result.success) {
         setJwtResult(result);
-        toast.success('JWT decoded successfully');
+        toast.success("JWT decoded successfully");
       } else {
-        const message = result.error || 'Failed to decode JWT';
+        const message = result.error || "Failed to decode JWT";
         setJwtError(message);
         toast.error(message);
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to decode JWT';
+      const message = error instanceof Error ? error.message : "Failed to decode JWT";
       setJwtError(message);
       toast.error(message);
     } finally {
@@ -2056,18 +2056,18 @@ export const authClient = createAuthClient({
   const handleGenerateToken = async () => {
     const expires = parseInt(tokenExpiresIn, 10);
     if (isNaN(expires) || expires <= 0) {
-      toast.error('Please provide a valid expiration (minutes)');
+      toast.error("Please provide a valid expiration (minutes)");
       return;
     }
 
     let parsedClaims: Record<string, any> | undefined;
-    if (tokenType === 'jwt') {
+    if (tokenType === "jwt") {
       const trimmed = tokenCustomClaims.trim();
-      if (trimmed.length > 0 && trimmed !== '{' && trimmed !== '}') {
+      if (trimmed.length > 0 && trimmed !== "{" && trimmed !== "}") {
         try {
           parsedClaims = JSON.parse(trimmed);
         } catch (_error) {
-          toast.error('Custom claims must be valid JSON');
+          toast.error("Custom claims must be valid JSON");
           return;
         }
       }
@@ -2077,9 +2077,9 @@ export const authClient = createAuthClient({
     setTokenResult(null);
 
     try {
-      const response = await fetch('/api/tools/token-generator', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/tools/token-generator", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type: tokenType,
           subject: tokenSubject || undefined,
@@ -2093,14 +2093,14 @@ export const authClient = createAuthClient({
       const result = await response.json();
       if (result.success) {
         setTokenResult(result);
-        addLog('success', `✅ Generated ${tokenType.replace('_', ' ')} token`, 'completed');
-        toast.success('Token generated successfully');
+        addLog("success", `✅ Generated ${tokenType.replace("_", " ")} token`, "completed");
+        toast.success("Token generated successfully");
       } else {
-        throw new Error(result.error || 'Failed to generate token');
+        throw new Error(result.error || "Failed to generate token");
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to generate token';
-      addLog('error', `❌ ${message}`, 'failed');
+      const message = error instanceof Error ? error.message : "Failed to generate token";
+      addLog("error", `❌ ${message}`, "failed");
       toast.error(message);
     } finally {
       setIsGeneratingToken(false);
@@ -2109,37 +2109,37 @@ export const authClient = createAuthClient({
 
   const handleExecuteExport = async () => {
     if (selectedTables.size === 0) {
-      toast.error('Please select at least one table to export');
+      toast.error("Please select at least one table to export");
       return;
     }
 
     const limit = parseInt(exportLimit, 10);
     if (isNaN(limit) || limit <= 0) {
-      toast.error('Please enter a valid limit (greater than 0)');
+      toast.error("Please enter a valid limit (greater than 0)");
       return;
     }
 
     if (limit > 10000) {
-      toast.error('Limit cannot exceed 10,000 rows per table');
+      toast.error("Limit cannot exceed 10,000 rows per table");
       return;
     }
 
     setIsExporting(true);
-    setRunningTool('export-data');
+    setRunningTool("export-data");
     setShowLogs(true);
     setToolLogs([]);
 
     try {
-      addLog('info', `📦 Starting export of ${selectedTables.size} table(s)...`, 'running');
+      addLog("info", `📦 Starting export of ${selectedTables.size} table(s)...`, "running");
       addLog(
-        'progress',
+        "progress",
         `Format: ${exportFormat.toUpperCase()} | Limit: ${limit} rows per table`,
-        'running'
+        "running",
       );
 
-      const response = await fetch('/api/tools/export', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/tools/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tables: Array.from(selectedTables),
           format: exportFormat,
@@ -2150,21 +2150,21 @@ export const authClient = createAuthClient({
       const result = await response.json();
 
       if (result.success) {
-        addLog('success', '✅ Export completed successfully!', 'completed');
+        addLog("success", "✅ Export completed successfully!", "completed");
 
         if (result.rowCounts) {
           Object.entries(result.rowCounts).forEach(([table, count]) => {
-            addLog('info', `  • ${table}: ${count} rows`, 'completed');
+            addLog("info", `  • ${table}: ${count} rows`, "completed");
           });
         }
 
-        addLog('info', `Downloading ${result.filename}...`, 'completed');
+        addLog("info", `Downloading ${result.filename}...`, "completed");
 
         const blob = new Blob([result.data], {
-          type: result.contentType || (exportFormat === 'json' ? 'application/json' : 'text/csv'),
+          type: result.contentType || (exportFormat === "json" ? "application/json" : "text/csv"),
         });
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = result.filename;
         document.body.appendChild(a);
@@ -2172,18 +2172,18 @@ export const authClient = createAuthClient({
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
 
-        toast.success('Export downloaded successfully');
+        toast.success("Export downloaded successfully");
         setShowExportModal(false);
       } else {
-        throw new Error(result.error || 'Export failed');
+        throw new Error(result.error || "Export failed");
       }
     } catch (error) {
       addLog(
-        'error',
+        "error",
         `❌ Export failed: ${error instanceof Error ? error.message : error}`,
-        'failed'
+        "failed",
       );
-      toast.error('Export failed');
+      toast.error("Export failed");
     } finally {
       setIsExporting(false);
       setRunningTool(null);
@@ -2191,193 +2191,193 @@ export const authClient = createAuthClient({
   };
 
   const handleHealthCheck = async () => {
-    setRunningTool('health-check');
+    setRunningTool("health-check");
     setShowLogs(true);
     setToolLogs([]);
 
-    addLog('info', 'Running Better Auth health check...', 'running');
+    addLog("info", "Running Better Auth health check...", "running");
 
     try {
-      addLog('progress', 'Testing Better Auth endpoints...', 'running');
-      const response = await fetch('/api/tools/health-check', {
-        method: 'POST',
+      addLog("progress", "Testing Better Auth endpoints...", "running");
+      const response = await fetch("/api/tools/health-check", {
+        method: "POST",
       });
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || data.message || 'Health check failed');
+        throw new Error(data.error || data.message || "Health check failed");
       }
 
       if (data.success) {
-        addLog('success', '✅ Better Auth health check passed', 'completed');
-        toast.success('Health check passed');
+        addLog("success", "✅ Better Auth health check passed", "completed");
+        toast.success("Health check passed");
       } else {
-        addLog('error', '❌ Better Auth health check failed', 'failed');
+        addLog("error", "❌ Better Auth health check failed", "failed");
 
         if (data.failedEndpoints && data.failedEndpoints.length > 0) {
           data.failedEndpoints.forEach(
             (failed: { endpoint: string; status?: number | null; error?: string }) => {
-              const statusInfo = failed.status ? ` (Status: ${failed.status})` : '';
-              const errorInfo = failed.error ? ` - ${failed.error}` : '';
+              const statusInfo = failed.status ? ` (Status: ${failed.status})` : "";
+              const errorInfo = failed.error ? ` - ${failed.error}` : "";
               addLog(
-                'error',
+                "error",
                 `   • Endpoint ${failed.endpoint}${statusInfo}${errorInfo}`,
-                'failed'
+                "failed",
               );
-            }
+            },
           );
         }
 
-        toast.error('Health check failed');
+        toast.error("Health check failed");
       }
     } catch (error) {
       addLog(
-        'error',
+        "error",
         `❌ Health check failed: ${error instanceof Error ? error.message : error}`,
-        'failed'
+        "failed",
       );
-      toast.error('Health check failed');
+      toast.error("Health check failed");
     } finally {
       setRunningTool(null);
     }
   };
 
   const enabledToolIds = new Set([
-    'test-oauth',
-    'test-db',
-    'hash-password',
-    'health-check',
-    'export-data',
-    'jwt-decoder',
-    'token-generator',
-    'validate-config',
-    'uuid-generator',
-    'password-strength',
-    'oauth-credentials',
-    'secret-generator',
-    'plugin-generator',
+    "test-oauth",
+    "test-db",
+    "hash-password",
+    "health-check",
+    "export-data",
+    "jwt-decoder",
+    "token-generator",
+    "validate-config",
+    "uuid-generator",
+    "password-strength",
+    "oauth-credentials",
+    "secret-generator",
+    "plugin-generator",
   ]);
 
   const tools: Tool[] = [
     {
-      id: 'test-oauth',
-      name: 'Test OAuth',
-      description: 'Test OAuth provider connections',
+      id: "test-oauth",
+      name: "Test OAuth",
+      description: "Test OAuth provider connections",
       icon: Globe,
       action: handleTestOAuth,
-      category: 'oauth',
+      category: "oauth",
     },
     {
-      id: 'hash-password',
-      name: 'Hash Password',
-      description: 'Generate SHA hashes',
+      id: "hash-password",
+      name: "Hash Password",
+      description: "Generate SHA hashes",
       icon: Key,
       action: openPasswordHasher,
-      category: 'utilities',
+      category: "utilities",
     },
     {
-      id: 'run-migration',
-      name: 'Migrate to Better Auth',
-      description: 'Migrate to Better Auth',
+      id: "run-migration",
+      name: "Migrate to Better Auth",
+      description: "Migrate to Better Auth",
       icon: Database,
       action: handleRunMigration,
-      category: 'database',
+      category: "database",
     },
     {
-      id: 'test-db',
-      name: 'Test Database',
-      description: 'Test database connection',
+      id: "test-db",
+      name: "Test Database",
+      description: "Test database connection",
       icon: Database,
       action: handleTestDatabaseConnection,
-      category: 'database',
+      category: "database",
     },
     {
-      id: 'validate-config',
-      name: 'Validate Config',
-      description: 'Validate Better Auth configuration',
+      id: "validate-config",
+      name: "Validate Config",
+      description: "Validate Better Auth configuration",
       icon: CheckCircle,
       action: handleValidateConfig,
-      category: 'utilities',
+      category: "utilities",
     },
     {
-      id: 'health-check',
-      name: 'Health Check',
-      description: 'Run system health check',
+      id: "health-check",
+      name: "Health Check",
+      description: "Run system health check",
       icon: TestTube,
       action: handleHealthCheck,
-      category: 'testing',
+      category: "testing",
     },
     {
-      id: 'export-data',
-      name: 'Export Data',
-      description: 'Export database tables to JSON or CSV',
+      id: "export-data",
+      name: "Export Data",
+      description: "Export database tables to JSON or CSV",
       icon: Download,
       action: handleExportData,
-      category: 'database',
+      category: "database",
     },
     {
-      id: 'jwt-decoder',
-      name: 'JWT Decoder',
-      description: 'Inspect tokens and verify claims',
+      id: "jwt-decoder",
+      name: "JWT Decoder",
+      description: "Inspect tokens and verify claims",
       icon: Shield,
       action: handleOpenJwtDecoder,
-      category: 'utilities',
+      category: "utilities",
     },
     {
-      id: 'token-generator',
-      name: 'Token Generator',
-      description: 'Mint short-lived test tokens',
+      id: "token-generator",
+      name: "Token Generator",
+      description: "Mint short-lived test tokens",
       icon: Zap,
       action: handleOpenTokenGenerator,
-      category: 'utilities',
+      category: "utilities",
     },
     {
-      id: 'plugin-generator',
-      name: 'Plugin Generator',
-      description: 'Generate Better Auth plugins',
+      id: "plugin-generator",
+      name: "Plugin Generator",
+      description: "Generate Better Auth plugins",
       icon: Code,
       action: handleOpenPluginGenerator,
-      category: 'utilities',
+      category: "utilities",
     },
     {
-      id: 'uuid-generator',
-      name: 'UUID Generator',
-      description: 'Generate and validate UUIDs',
+      id: "uuid-generator",
+      name: "UUID Generator",
+      description: "Generate and validate UUIDs",
       icon: FileText,
       action: handleOpenUuidGenerator,
-      category: 'utilities',
+      category: "utilities",
     },
     {
-      id: 'password-strength',
-      name: 'Password Strength Checker',
-      description: 'Validate passwords against your config',
+      id: "password-strength",
+      name: "Password Strength Checker",
+      description: "Validate passwords against your config",
       icon: Lock,
       action: handleOpenPasswordStrengthChecker,
-      category: 'utilities',
+      category: "utilities",
     },
     {
-      id: 'oauth-credentials',
-      name: 'OAuth Credentials',
-      description: 'View and test OAuth provider credentials',
+      id: "oauth-credentials",
+      name: "OAuth Credentials",
+      description: "View and test OAuth provider credentials",
       icon: Globe,
       action: handleOpenOAuthCredentials,
-      category: 'oauth',
+      category: "oauth",
     },
     {
-      id: 'secret-generator',
-      name: 'Secret Generator',
-      description: 'Generate secure AUTH_SECRET for Better Auth',
+      id: "secret-generator",
+      name: "Secret Generator",
+      description: "Generate secure AUTH_SECRET for Better Auth",
       icon: Key,
       action: handleOpenSecretGenerator,
-      category: 'utilities',
+      category: "utilities",
     },
   ];
 
   const categories = [
-    { id: 'oauth', name: 'OAuth', icon: Globe },
-    { id: 'database', name: 'Database', icon: Database },
-    { id: 'testing', name: 'Testing', icon: TestTube },
-    { id: 'utilities', name: 'Utilities', icon: Settings },
+    { id: "oauth", name: "OAuth", icon: Globe },
+    { id: "database", name: "Database", icon: Database },
+    { id: "testing", name: "Testing", icon: TestTube },
+    { id: "utilities", name: "Utilities", icon: Settings },
   ];
 
   const groupedTools = categories.map((category) => ({
@@ -2448,8 +2448,8 @@ export const authClient = createAuthClient({
                       disabled={isDisabled}
                       className={`relative flex items-center space-x-4 p-4 bg-black/30 border border-dashed border-white/20 rounded-none transition-colors text-left group ${
                         isEnabled
-                          ? 'hover:bg-black/50 disabled:opacity-50 disabled:cursor-not-allowed'
-                          : 'opacity-60 cursor-not-allowed'
+                          ? "hover:bg-black/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                          : "opacity-60 cursor-not-allowed"
                       }`}
                     >
                       <div className="p-2 bg-white/10 rounded-none group-hover:bg-white/20 transition-colors">
@@ -2506,7 +2506,7 @@ export const authClient = createAuthClient({
                   <select
                     value={hashAlgorithm}
                     onChange={(event) =>
-                      setHashAlgorithm(event.target.value as 'SHA-256' | 'SHA-384' | 'SHA-512')
+                      setHashAlgorithm(event.target.value as "SHA-256" | "SHA-384" | "SHA-512")
                     }
                     className="mt-2 w-full bg-black border border-dashed border-white/20 text-white px-3 py-2 text-sm focus:outline-none"
                   >
@@ -2520,7 +2520,7 @@ export const authClient = createAuthClient({
                   <select
                     value={hashEncoding}
                     onChange={(event) =>
-                      setHashEncoding(event.target.value as 'hex' | 'base64' | 'base64url')
+                      setHashEncoding(event.target.value as "hex" | "base64" | "base64url")
                     }
                     className="mt-2 w-full bg-black border border-dashed border-white/20 text-white px-3 py-2 text-sm focus:outline-none"
                   >
@@ -2549,7 +2549,7 @@ export const authClient = createAuthClient({
                   <Label className="text-xs uppercase font-mono text-gray-400">Password</Label>
                   <div className="relative mt-2">
                     <Input
-                      type={showPlainPassword ? 'text' : 'password'}
+                      type={showPlainPassword ? "text" : "password"}
                       value={hashInput}
                       onChange={(event) => setHashInput(event.target.value)}
                       placeholder="Enter password"
@@ -2559,7 +2559,7 @@ export const authClient = createAuthClient({
                       type="button"
                       onClick={() => setShowPlainPassword((prev) => !prev)}
                       className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white"
-                      aria-label={showPlainPassword ? 'Hide password' : 'Show password'}
+                      aria-label={showPlainPassword ? "Hide password" : "Show password"}
                     >
                       {showPlainPassword ? (
                         <EyeOff className="w-4 h-4" />
@@ -2610,7 +2610,7 @@ export const authClient = createAuthClient({
                     Hashing...
                   </>
                 ) : (
-                  'Hash Password'
+                  "Hash Password"
                 )}
               </Button>
             </div>
@@ -2630,7 +2630,7 @@ export const authClient = createAuthClient({
                 size="sm"
                 onClick={() => {
                   setShowOAuthModal(false);
-                  setSelectedProvider('');
+                  setSelectedProvider("");
                 }}
                 className="text-gray-400 hover:text-white rounded-none"
               >
@@ -2664,8 +2664,8 @@ export const authClient = createAuthClient({
                         }}
                         className={`w-full flex items-center space-x-4 p-4 border rounded-none transition-all text-left group ${
                           selectedProvider === provider.id
-                            ? 'border-white/50 bg-white/10'
-                            : 'border-dashed border-white/20 hover:bg-white/5 hover:border-white/30'
+                            ? "border-white/50 bg-white/10"
+                            : "border-dashed border-white/20 hover:bg-white/5 hover:border-white/30"
                         }`}
                       >
                         <div className="flex-shrink-0">{getProviderIcon(provider.id)}</div>
@@ -2677,8 +2677,8 @@ export const authClient = createAuthClient({
                         <ArrowRight
                           className={`w-5 h-5 transition-colors flex-shrink-0 ${
                             selectedProvider === provider.id
-                              ? 'text-white'
-                              : 'text-gray-400 group-hover:text-white'
+                              ? "text-white"
+                              : "text-gray-400 group-hover:text-white"
                           }`}
                         />
                       </button>
@@ -2695,7 +2695,7 @@ export const authClient = createAuthClient({
                 variant="outline"
                 onClick={() => {
                   setShowOAuthModal(false);
-                  setSelectedProvider('');
+                  setSelectedProvider("");
                 }}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
               >
@@ -2735,10 +2735,10 @@ export const authClient = createAuthClient({
                       disabled={provider.disabled}
                       className={`w-full flex items-center space-x-3 p-4 border transition-colors rounded-none text-left ${
                         provider.disabled
-                          ? 'border-dashed border-white/10 bg-black/30 cursor-not-allowed opacity-60'
+                          ? "border-dashed border-white/10 bg-black/30 cursor-not-allowed opacity-60"
                           : isActive
-                            ? 'border-white/60 bg-white/10'
-                            : 'border-dashed border-white/20 hover:bg-white/5 hover:border-white/40'
+                            ? "border-white/60 bg-white/10"
+                            : "border-dashed border-white/20 hover:bg-white/5 hover:border-white/40"
                       }`}
                     >
                       <div className="flex-shrink-0 w-10 h-10 bg-white/10 flex items-center justify-center">
@@ -2805,7 +2805,7 @@ export const authClient = createAuthClient({
                   <div className="space-y-4 text-gray-400 font-mono text-xs">
                     <p>This migration provider is coming soon.</p>
                     <p>
-                      Subscribe to updates at{' '}
+                      Subscribe to updates at{" "}
                       <a
                         href="https://better-auth.com"
                         target="_blank"
@@ -2847,7 +2847,7 @@ export const authClient = createAuthClient({
                       </Button>
                       <Button
                         className="rounded-none"
-                        onClick={() => executeMigrationProvider('custom', customMigrationCode)}
+                        onClick={() => executeMigrationProvider("custom", customMigrationCode)}
                       >
                         Run Custom Script
                       </Button>
@@ -2916,21 +2916,21 @@ export const authClient = createAuthClient({
                 </Label>
                 <div className="flex space-x-4">
                   <button
-                    onClick={() => setExportFormat('json')}
+                    onClick={() => setExportFormat("json")}
                     className={`px-4 py-2 border rounded-none transition-colors ${
-                      exportFormat === 'json'
-                        ? 'border-white/50 bg-white/10 text-white'
-                        : 'border-dashed border-white/20 text-gray-400 hover:border-white/30'
+                      exportFormat === "json"
+                        ? "border-white/50 bg-white/10 text-white"
+                        : "border-dashed border-white/20 text-gray-400 hover:border-white/30"
                     }`}
                   >
                     JSON
                   </button>
                   <button
-                    onClick={() => setExportFormat('csv')}
+                    onClick={() => setExportFormat("csv")}
                     className={`px-4 py-2 border rounded-none transition-colors ${
-                      exportFormat === 'csv'
-                        ? 'border-white/50 bg-white/10 text-white'
-                        : 'border-dashed border-white/20 text-gray-400 hover:border-white/30'
+                      exportFormat === "csv"
+                        ? "border-white/50 bg-white/10 text-white"
+                        : "border-dashed border-white/20 text-gray-400 hover:border-white/30"
                     }`}
                   >
                     CSV
@@ -2995,7 +2995,7 @@ export const authClient = createAuthClient({
                             key={table.name}
                             onClick={() => toggleTableSelection(table.name)}
                             className={`w-full text-left p-3 border-b border-dashed border-white/10 last:border-b-0 transition-colors ${
-                              isSelected ? 'bg-white/10 border-white/30' : 'hover:bg-white/5'
+                              isSelected ? "bg-white/10 border-white/30" : "hover:bg-white/5"
                             }`}
                           >
                             <div className="flex items-center justify-between">
@@ -3095,8 +3095,8 @@ export const authClient = createAuthClient({
                   <Button
                     variant="outline"
                     onClick={() => {
-                      setJwtInput('');
-                      setJwtSecret('');
+                      setJwtInput("");
+                      setJwtSecret("");
                       setJwtResult(null);
                       setJwtError(null);
                     }}
@@ -3115,7 +3115,7 @@ export const authClient = createAuthClient({
                         Decoding...
                       </>
                     ) : (
-                      'Decode JWT'
+                      "Decode JWT"
                     )}
                   </Button>
                 </div>
@@ -3131,23 +3131,23 @@ export const authClient = createAuthClient({
                     <div className="border border-dashed border-white/10 p-3 space-y-2">
                       <div className="text-gray-400 uppercase tracking-wider">Signature</div>
                       <p
-                        className={`text-sm ${jwtResult.verified ? 'text-green-400' : 'text-yellow-300'}`}
+                        className={`text-sm ${jwtResult.verified ? "text-green-400" : "text-yellow-300"}`}
                       >
-                        {jwtResult.verified ? 'Verified (HS256)' : 'Not verified'}
+                        {jwtResult.verified ? "Verified (HS256)" : "Not verified"}
                       </p>
-                      <p className="text-gray-400 break-all">{jwtResult.signature || 'None'}</p>
+                      <p className="text-gray-400 break-all">{jwtResult.signature || "None"}</p>
                     </div>
                     <div className="border border-dashed border-white/10 p-3 space-y-2">
                       <div className="text-gray-400 uppercase tracking-wider">Issued</div>
-                      <p className="text-white">{jwtResult.issuedAtFormatted || 'Unknown'}</p>
-                      <p className="text-gray-500">{jwtResult.issuedAgo || ''}</p>
+                      <p className="text-white">{jwtResult.issuedAtFormatted || "Unknown"}</p>
+                      <p className="text-gray-500">{jwtResult.issuedAgo || ""}</p>
                     </div>
                     <div className="border border-dashed border-white/10 p-3 space-y-2">
                       <div className="text-gray-400 uppercase tracking-wider">Expires</div>
-                      <p className={`text-white ${jwtResult.expired ? 'text-red-300' : ''}`}>
-                        {jwtResult.expiresAtFormatted || 'No expiry'}
+                      <p className={`text-white ${jwtResult.expired ? "text-red-300" : ""}`}>
+                        {jwtResult.expiresAtFormatted || "No expiry"}
                       </p>
-                      <p className="text-gray-500">{jwtResult.expiresIn || ''}</p>
+                      <p className="text-gray-500">{jwtResult.expiresIn || ""}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -3229,16 +3229,16 @@ export const authClient = createAuthClient({
                 </Label>
                 <div className="flex flex-wrap gap-3">
                   {[
-                    { id: 'api_key', label: 'API Key' },
-                    { id: 'jwt', label: 'JWT' },
+                    { id: "api_key", label: "API Key" },
+                    { id: "jwt", label: "JWT" },
                   ].map((option) => (
                     <button
                       key={option.id}
-                      onClick={() => setTokenType(option.id as 'api_key' | 'jwt')}
+                      onClick={() => setTokenType(option.id as "api_key" | "jwt")}
                       className={`px-4 py-2 border rounded-none text-sm uppercase font-mono transition-colors ${
                         tokenType === option.id
-                          ? 'border-white/60 bg-white/10 text-white'
-                          : 'border-dashed border-white/20 text-gray-400 hover:border-white/40'
+                          ? "border-white/60 bg-white/10 text-white"
+                          : "border-dashed border-white/20 text-gray-400 hover:border-white/40"
                       }`}
                     >
                       {option.label}
@@ -3283,7 +3283,7 @@ export const authClient = createAuthClient({
                     className="bg-black border border-dashed border-white/20 text-white rounded-none"
                   />
                 </div>
-                {tokenType === 'jwt' && (
+                {tokenType === "jwt" && (
                   <div>
                     <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                       Override Secret (optional)
@@ -3298,7 +3298,7 @@ export const authClient = createAuthClient({
                 )}
               </div>
 
-              {tokenType === 'jwt' && (
+              {tokenType === "jwt" && (
                 <div>
                   <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                     Custom Claims (JSON)
@@ -3320,9 +3320,9 @@ export const authClient = createAuthClient({
                   variant="outline"
                   onClick={() => {
                     setTokenResult(null);
-                    setTokenSubject('');
-                    setTokenAudience('');
-                    setTokenCustomClaims('{\n  \n}');
+                    setTokenSubject("");
+                    setTokenAudience("");
+                    setTokenCustomClaims("{\n  \n}");
                   }}
                   className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
                 >
@@ -3339,7 +3339,7 @@ export const authClient = createAuthClient({
                       Generating...
                     </>
                   ) : (
-                    'Generate Token'
+                    "Generate Token"
                   )}
                 </Button>
               </div>
@@ -3366,7 +3366,7 @@ export const authClient = createAuthClient({
                     <div>
                       <p className="text-gray-400 uppercase tracking-wider">Type</p>
                       <p className="text-white mt-1 capitalize">
-                        {tokenResult.type.replace('_', ' ')}
+                        {tokenResult.type.replace("_", " ")}
                       </p>
                     </div>
                     <div>
@@ -3459,9 +3459,9 @@ export const authClient = createAuthClient({
                         setPluginTables([
                           ...pluginTables,
                           {
-                            name: '',
+                            name: "",
                             isExtending: false,
-                            fields: [{ name: '', type: 'string', required: false, unique: false }],
+                            fields: [{ name: "", type: "string", required: false, unique: false }],
                           },
                         ])
                       }
@@ -3476,10 +3476,10 @@ export const authClient = createAuthClient({
                         setPluginTables([
                           ...pluginTables,
                           {
-                            name: '',
+                            name: "",
                             isExtending: true,
-                            extendedTableName: '',
-                            fields: [{ name: '', type: 'string', required: false, unique: false }],
+                            extendedTableName: "",
+                            fields: [{ name: "", type: "string", required: false, unique: false }],
                           },
                         ])
                       }
@@ -3502,7 +3502,7 @@ export const authClient = createAuthClient({
                           {table.isExtending ? (
                             <>
                               <Select
-                                value={table.extendedTableName || ''}
+                                value={table.extendedTableName || ""}
                                 onValueChange={(value) => {
                                   const newTables = [...pluginTables];
                                   newTables[tableIndex].extendedTableName = value;
@@ -3561,14 +3561,14 @@ export const authClient = createAuthClient({
                             <div
                               className="absolute border border-dashed w-px border-white/30"
                               style={{
-                                left: '7px',
-                                top: '31px',
-                                bottom: '12px',
+                                left: "7px",
+                                top: "31px",
+                                bottom: "12px",
                               }}
                             />
                             <div
                               className="absolute border border-dashed h-px w-[11px] border-white/30"
-                              style={{ left: '9px', top: '31px', bottom: '12px' }}
+                              style={{ left: "9px", top: "31px", bottom: "12px" }}
                             />
 
                             <div className="mt-3 relative">
@@ -3580,8 +3580,8 @@ export const authClient = createAuthClient({
                                       <div
                                         className="absolute border border-dashed h-px border-white/30 top-1/2 -translate-y-1/2"
                                         style={{
-                                          left: '-36px',
-                                          width: '36px',
+                                          left: "-36px",
+                                          width: "36px",
                                         }}
                                       />
                                       <div className="flex items-center space-x-2 py-1">
@@ -3636,9 +3636,9 @@ export const authClient = createAuthClient({
                                         </Select>
                                         {field.required && (
                                           <div className="flex items-center">
-                                            {field.type === 'string' && (
+                                            {field.type === "string" && (
                                               <Input
-                                                value={field.defaultValue || ''}
+                                                value={field.defaultValue || ""}
                                                 onChange={(e) => {
                                                   const newTables = [...pluginTables];
                                                   newTables[tableIndex].fields[
@@ -3650,9 +3650,9 @@ export const authClient = createAuthClient({
                                                 className="sm:h-10 sm:w-56 border px-0 border-dashed border-white/20 text-white/90 text-xs rounded-none py-1 font-mono uppercase text-[10px]"
                                               />
                                             )}
-                                            {field.type === 'boolean' && (
+                                            {field.type === "boolean" && (
                                               <Select
-                                                value={field.defaultValue || ''}
+                                                value={field.defaultValue || ""}
                                                 onValueChange={(value: string) => {
                                                   const newTables = [...pluginTables];
                                                   newTables[tableIndex].fields[
@@ -3683,46 +3683,46 @@ export const authClient = createAuthClient({
                                                 </SelectContent>
                                               </Select>
                                             )}
-                                            {field.type === 'date' && (
+                                            {field.type === "date" && (
                                               <div className="flex items-center space-x-2">
                                                 <Select
                                                   value={
-                                                    field.defaultValue === 'now()'
-                                                      ? 'now()'
+                                                    field.defaultValue === "now()"
+                                                      ? "now()"
                                                       : field.defaultValue &&
-                                                          field.defaultValue !== 'now()'
-                                                        ? 'custom'
-                                                        : ''
+                                                          field.defaultValue !== "now()"
+                                                        ? "custom"
+                                                        : ""
                                                   }
                                                   onValueChange={(value: string) => {
                                                     const newTables = [...pluginTables];
-                                                    if (value === 'now()') {
+                                                    if (value === "now()") {
                                                       newTables[tableIndex].fields[
                                                         fieldIndex
-                                                      ].defaultValue = 'now()';
-                                                    } else if (value === 'custom') {
+                                                      ].defaultValue = "now()";
+                                                    } else if (value === "custom") {
                                                       // Set a default date if empty, or keep existing custom date
                                                       if (
                                                         !newTables[tableIndex].fields[fieldIndex]
                                                           .defaultValue ||
                                                         newTables[tableIndex].fields[fieldIndex]
-                                                          .defaultValue === 'now()'
+                                                          .defaultValue === "now()"
                                                       ) {
                                                         const now = new Date();
                                                         const year = now.getFullYear();
                                                         const month = String(
-                                                          now.getMonth() + 1
-                                                        ).padStart(2, '0');
+                                                          now.getMonth() + 1,
+                                                        ).padStart(2, "0");
                                                         const day = String(now.getDate()).padStart(
                                                           2,
-                                                          '0'
+                                                          "0",
                                                         );
                                                         const hours = String(
-                                                          now.getHours()
-                                                        ).padStart(2, '0');
+                                                          now.getHours(),
+                                                        ).padStart(2, "0");
                                                         const minutes = String(
-                                                          now.getMinutes()
-                                                        ).padStart(2, '0');
+                                                          now.getMinutes(),
+                                                        ).padStart(2, "0");
                                                         newTables[tableIndex].fields[
                                                           fieldIndex
                                                         ].defaultValue =
@@ -3758,7 +3758,7 @@ export const authClient = createAuthClient({
                                                   </SelectContent>
                                                 </Select>
                                                 {field.defaultValue &&
-                                                  field.defaultValue !== 'now()' && (
+                                                  field.defaultValue !== "now()" && (
                                                     <Input
                                                       type="datetime-local"
                                                       value={field.defaultValue}
@@ -3774,10 +3774,10 @@ export const authClient = createAuthClient({
                                                   )}
                                               </div>
                                             )}
-                                            {field.type === 'number' && (
+                                            {field.type === "number" && (
                                               <Input
                                                 type="number"
-                                                value={field.defaultValue || ''}
+                                                value={field.defaultValue || ""}
                                                 onChange={(e) => {
                                                   const newTables = [...pluginTables];
                                                   newTables[tableIndex].fields[
@@ -3854,9 +3854,9 @@ export const authClient = createAuthClient({
                                   <div
                                     className="absolute border border-dashed h-px border-white/30"
                                     style={{
-                                      left: '-35px',
-                                      width: '36px',
-                                      top: '25px',
+                                      left: "-35px",
+                                      width: "36px",
+                                      top: "25px",
                                     }}
                                   />
                                   <Button
@@ -3865,8 +3865,8 @@ export const authClient = createAuthClient({
                                     onClick={() => {
                                       const newTables = [...pluginTables];
                                       newTables[tableIndex].fields.push({
-                                        name: '',
-                                        type: 'string',
+                                        name: "",
+                                        type: "string",
                                         required: false,
                                         unique: false,
                                         defaultValue: undefined,
@@ -3891,8 +3891,8 @@ export const authClient = createAuthClient({
                               onClick={() => {
                                 const newTables = [...pluginTables];
                                 newTables[tableIndex].fields.push({
-                                  name: '',
-                                  type: 'string',
+                                  name: "",
+                                  type: "string",
                                   required: false,
                                   unique: false,
                                   defaultValue: undefined,
@@ -3924,10 +3924,10 @@ export const authClient = createAuthClient({
                       setPluginHooks([
                         ...pluginHooks,
                         {
-                          name: '',
-                          timing: 'before',
-                          action: 'sign-up',
-                          hookLogic: 'const context = ctx;',
+                          name: "",
+                          timing: "before",
+                          action: "sign-up",
+                          hookLogic: "const context = ctx;",
                           expanded: true,
                         },
                       ])
@@ -3942,7 +3942,7 @@ export const authClient = createAuthClient({
                 ) : (
                   <div className="space-y-2">
                     {pluginHooks.map((hook, index) => {
-                      const hookLabel = `${hook.timing} ${hook.action === 'custom' ? 'custom' : hook.action}: ${hook.name || `Hook ${index + 1}`}`;
+                      const hookLabel = `${hook.timing} ${hook.action === "custom" ? "custom" : hook.action}: ${hook.name || `Hook ${index + 1}`}`;
                       return (
                         <div key={index} className="border border-dashed border-white/10">
                           <button
@@ -3954,7 +3954,7 @@ export const authClient = createAuthClient({
                             </span>
                             <ChevronRight
                               className={`w-4 h-4 text-white/60 transition-transform ${
-                                hook.expanded ? 'rotate-90' : ''
+                                hook.expanded ? "rotate-90" : ""
                               }`}
                             />
                           </button>
@@ -3982,7 +3982,7 @@ export const authClient = createAuthClient({
                                   </Label>
                                   <RadioGroup
                                     value={hook.timing}
-                                    onValueChange={(value: 'before' | 'after') => {
+                                    onValueChange={(value: "before" | "after") => {
                                       const newHooks = [...pluginHooks];
                                       newHooks[index].timing = value;
                                       setPluginHooks(newHooks);
@@ -4021,7 +4021,7 @@ export const authClient = createAuthClient({
                                   </Label>
                                   <RadioGroup
                                     value={hook.action}
-                                    onValueChange={(value: 'sign-up' | 'sign-in' | 'custom') => {
+                                    onValueChange={(value: "sign-up" | "sign-in" | "custom") => {
                                       const newHooks = [...pluginHooks];
                                       newHooks[index].action = value;
                                       setPluginHooks(newHooks);
@@ -4067,13 +4067,13 @@ export const authClient = createAuthClient({
                                   </RadioGroup>
                                 </div>
                               </div>
-                              {hook.action === 'custom' && (
+                              {hook.action === "custom" && (
                                 <div>
                                   <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
                                     Custom Path
                                   </Label>
                                   <Input
-                                    value={hook.customPath || ''}
+                                    value={hook.customPath || ""}
                                     onChange={(e) => {
                                       const newHooks = [...pluginHooks];
                                       newHooks[index].customPath = e.target.value;
@@ -4089,7 +4089,7 @@ export const authClient = createAuthClient({
                                   Custom Matcher (optional)
                                 </Label>
                                 <Input
-                                  value={hook.customMatcher || ''}
+                                  value={hook.customMatcher || ""}
                                   onChange={(e) => {
                                     const newHooks = [...pluginHooks];
                                     newHooks[index].customMatcher = e.target.value;
@@ -4159,10 +4159,10 @@ export const authClient = createAuthClient({
                       setPluginMiddleware([
                         ...pluginMiddleware,
                         {
-                          name: '',
-                          path: '/my-plugin/protected',
-                          pathType: 'exact',
-                          middlewareLogic: 'const context = ctx;',
+                          name: "",
+                          path: "/my-plugin/protected",
+                          pathType: "exact",
+                          middlewareLogic: "const context = ctx;",
                           expanded: true,
                         },
                       ])
@@ -4189,7 +4189,7 @@ export const authClient = createAuthClient({
                             </span>
                             <ChevronRight
                               className={`w-4 h-4 text-white/60 transition-transform ${
-                                mw.expanded ? 'rotate-90' : ''
+                                mw.expanded ? "rotate-90" : ""
                               }`}
                             />
                           </button>
@@ -4233,7 +4233,7 @@ export const authClient = createAuthClient({
                                   value={mw.pathType}
                                   onValueChange={(value: string) => {
                                     const newMw = [...pluginMiddleware];
-                                    newMw[index].pathType = value as 'exact' | 'prefix' | 'regex';
+                                    newMw[index].pathType = value as "exact" | "prefix" | "regex";
                                     setPluginMiddleware(newMw);
                                   }}
                                 >
@@ -4275,7 +4275,7 @@ export const authClient = createAuthClient({
                                 variant="outline"
                                 onClick={() => {
                                   setPluginMiddleware(
-                                    pluginMiddleware.filter((_, i) => i !== index)
+                                    pluginMiddleware.filter((_, i) => i !== index),
                                   );
                                 }}
                                 className="w-full border border-dashed border-red-500/50 text-red-400 hover:bg-red-500/10 rounded-none"
@@ -4302,16 +4302,16 @@ export const authClient = createAuthClient({
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      const defaultPath = '/my-plugin/endpoint';
+                      const defaultPath = "/my-plugin/endpoint";
                       const defaultName = pathToCamelCase(defaultPath);
                       setPluginEndpoints([
                         ...pluginEndpoints,
                         {
                           name: defaultName,
                           path: defaultPath,
-                          method: 'POST',
+                          method: "POST",
                           handlerLogic:
-                            '// Endpoint handler logic here\nreturn ctx.json({ success: true });',
+                            "// Endpoint handler logic here\nreturn ctx.json({ success: true });",
                           expanded: true,
                         },
                       ]);
@@ -4337,7 +4337,7 @@ export const authClient = createAuthClient({
                               {endpointLabel}
                             </span>
                             <ChevronRight
-                              className={`w-4 h-4 text-white/60 transition-transform ${endpoint.expanded ? 'rotate-90' : ''}`}
+                              className={`w-4 h-4 text-white/60 transition-transform ${endpoint.expanded ? "rotate-90" : ""}`}
                             />
                           </button>
                           {endpoint.expanded && (
@@ -4382,7 +4382,7 @@ export const authClient = createAuthClient({
                                     value={endpoint.method}
                                     onValueChange={(value: string) => {
                                       const newEndpoints = [...pluginEndpoints];
-                                      newEndpoints[index].method = value as 'GET' | 'POST';
+                                      newEndpoints[index].method = value as "GET" | "POST";
                                       setPluginEndpoints(newEndpoints);
                                     }}
                                   >
@@ -4479,7 +4479,7 @@ export const authClient = createAuthClient({
                         onValueChange={(value: string) => {
                           setPluginRateLimit({
                             ...pluginRateLimit,
-                            pathType: value as 'exact' | 'prefix' | 'regex',
+                            pathType: value as "exact" | "prefix" | "regex",
                           });
                         }}
                       >
@@ -4500,12 +4500,12 @@ export const authClient = createAuthClient({
                         </Label>
                         <Input
                           type="number"
-                          value={pluginRateLimit.window || ''}
+                          value={pluginRateLimit.window || ""}
                           onChange={(e) => {
                             const value = e.target.value;
                             setPluginRateLimit({
                               ...pluginRateLimit,
-                              window: value === '' ? 0 : parseInt(value, 10) || 0,
+                              window: value === "" ? 0 : parseInt(value, 10) || 0,
                             });
                           }}
                           onBlur={(e) => {
@@ -4529,12 +4529,12 @@ export const authClient = createAuthClient({
                         </Label>
                         <Input
                           type="number"
-                          value={pluginRateLimit.max || ''}
+                          value={pluginRateLimit.max || ""}
                           onChange={(e) => {
                             const value = e.target.value;
                             setPluginRateLimit({
                               ...pluginRateLimit,
-                              max: value === '' ? 0 : parseInt(value, 10) || 0,
+                              max: value === "" ? 0 : parseInt(value, 10) || 0,
                             });
                           }}
                           onBlur={(e) => {
@@ -4561,17 +4561,17 @@ export const authClient = createAuthClient({
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setPluginName('');
-                    setPluginDescription('');
-                    setClientFramework('react');
+                    setPluginName("");
+                    setPluginDescription("");
+                    setClientFramework("react");
                     setPluginTables([]);
                     setPluginHooks([]);
                     setPluginMiddleware([]);
                     setPluginEndpoints([]);
                     setPluginRateLimitEnabled(false);
                     setPluginRateLimit({
-                      path: '/my-plugin/*',
-                      pathType: 'prefix',
+                      path: "/my-plugin/*",
+                      pathType: "prefix",
                       window: 15 * 60 * 1000,
                       max: 100,
                     });
@@ -4593,7 +4593,7 @@ export const authClient = createAuthClient({
                       Generating...
                     </>
                   ) : (
-                    'Generate Plugin'
+                    "Generate Plugin"
                   )}
                 </Button>
               </div>
@@ -4612,7 +4612,7 @@ export const authClient = createAuthClient({
                   <div className="flex items-center justify-between mb-4">
                     <p className="text-xs uppercase font-mono text-gray-400">Generated Code</p>
                     <div className="flex items-center space-x-2">
-                      {activeCodeTab === 'clientSetup' && (
+                      {activeCodeTab === "clientSetup" && (
                         <div className="flex items-center space-x-2 mr-2">
                           <Label className="text-xs uppercase font-mono text-gray-400 whitespace-nowrap">
                             Framework:
@@ -4632,28 +4632,28 @@ export const authClient = createAuthClient({
                                 value="react"
                                 className="sm:text-[11px] text-white/90 border-b border-dashed last:border-b-0"
                               >
-                                {' '}
+                                {" "}
                                 React
                               </SelectItem>
                               <SelectItem
                                 value="svelte"
                                 className="sm:text-[11px] text-white/90 border-b border-dashed last:border-b-0"
                               >
-                                {' '}
+                                {" "}
                                 Svelte
                               </SelectItem>
                               <SelectItem
                                 value="solid"
                                 className="sm:text-[11px] text-white/90 border-b border-dashed last:border-b-0"
                               >
-                                {' '}
+                                {" "}
                                 Solid
                               </SelectItem>
                               <SelectItem
                                 value="vue"
                                 className="sm:text-[11px] text-white/90 border-b border-dashed last:border-b-0"
                               >
-                                {' '}
+                                {" "}
                                 Vue
                               </SelectItem>
                             </SelectContent>
@@ -4668,32 +4668,32 @@ export const authClient = createAuthClient({
                           const filePath =
                             [
                               {
-                                id: 'server',
+                                id: "server",
                                 path:
                                   pluginResult.filePaths?.server ||
                                   `plugin/${pluginResult.name}/index.ts`,
                               },
                               {
-                                id: 'client',
+                                id: "client",
                                 path:
                                   pluginResult.filePaths?.client ||
                                   `plugin/${pluginResult.name}/client/index.ts`,
                               },
                               {
-                                id: 'serverSetup',
-                                path: pluginResult.filePaths?.serverSetup || 'auth.ts',
+                                id: "serverSetup",
+                                path: pluginResult.filePaths?.serverSetup || "auth.ts",
                               },
                               {
-                                id: 'clientSetup',
-                                path: pluginResult.filePaths?.clientSetup || 'auth-client.ts',
+                                id: "clientSetup",
+                                path: pluginResult.filePaths?.clientSetup || "auth-client.ts",
                               },
                             ].find((t) => t.id === activeCodeTab)?.path ||
                             `${pluginResult.name}-${activeCodeTab}.ts`;
-                          const blob = new Blob([code], { type: 'text/plain' });
+                          const blob = new Blob([code], { type: "text/plain" });
                           const url = window.URL.createObjectURL(blob);
-                          const a = document.createElement('a');
+                          const a = document.createElement("a");
                           a.href = url;
-                          const fileName = filePath.split('/').pop() || filePath;
+                          const fileName = filePath.split("/").pop() || filePath;
                           a.download = fileName;
                           document.body.appendChild(a);
                           a.click();
@@ -4711,27 +4711,27 @@ export const authClient = createAuthClient({
                   <div className="flex space-x-2 border-b border-dashed border-white/10">
                     {[
                       {
-                        id: 'server',
-                        label: 'Server Plugin',
+                        id: "server",
+                        label: "Server Plugin",
                         path:
                           pluginResult.filePaths?.server || `plugin/${pluginResult.name}/index.ts`,
                       },
                       {
-                        id: 'client',
-                        label: 'Client Plugin',
+                        id: "client",
+                        label: "Client Plugin",
                         path:
                           pluginResult.filePaths?.client ||
                           `plugin/${pluginResult.name}/client/index.ts`,
                       },
                       {
-                        id: 'serverSetup',
-                        label: 'Server Setup',
-                        path: pluginResult.filePaths?.serverSetup || 'auth.ts',
+                        id: "serverSetup",
+                        label: "Server Setup",
+                        path: pluginResult.filePaths?.serverSetup || "auth.ts",
                       },
                       {
-                        id: 'clientSetup',
-                        label: 'Client Setup',
-                        path: pluginResult.filePaths?.clientSetup || 'auth-client.ts',
+                        id: "clientSetup",
+                        label: "Client Setup",
+                        path: pluginResult.filePaths?.clientSetup || "auth-client.ts",
                       },
                     ].map((tab) => (
                       <button
@@ -4739,8 +4739,8 @@ export const authClient = createAuthClient({
                         onClick={() => setActiveCodeTab(tab.id as any)}
                         className={`px-3 py-2 text-xs uppercase font-mono border-b-2 transition-colors ${
                           activeCodeTab === tab.id
-                            ? 'border-white text-white'
-                            : 'border-transparent text-gray-400 hover:text-white'
+                            ? "border-white text-white"
+                            : "border-transparent text-gray-400 hover:text-white"
                         }`}
                         title={tab.path}
                       >
@@ -4756,24 +4756,24 @@ export const authClient = createAuthClient({
                       fileName={
                         [
                           {
-                            id: 'server',
+                            id: "server",
                             path:
                               pluginResult.filePaths?.server ||
                               `plugin/${pluginResult.name}/index.ts`,
                           },
                           {
-                            id: 'client',
+                            id: "client",
                             path:
                               pluginResult.filePaths?.client ||
                               `plugin/${pluginResult.name}/client/index.ts`,
                           },
                           {
-                            id: 'serverSetup',
-                            path: pluginResult.filePaths?.serverSetup || 'auth.ts',
+                            id: "serverSetup",
+                            path: pluginResult.filePaths?.serverSetup || "auth.ts",
                           },
                           {
-                            id: 'clientSetup',
-                            path: pluginResult.filePaths?.clientSetup || 'auth-client.ts',
+                            id: "clientSetup",
+                            path: pluginResult.filePaths?.clientSetup || "auth-client.ts",
                           },
                         ].find((t) => t.id === activeCodeTab)?.path ||
                         `${pluginResult.name}-${activeCodeTab}.ts`
@@ -4863,10 +4863,10 @@ export const authClient = createAuthClient({
                     acc[result.category].push(result);
                     return acc;
                   },
-                  {} as Record<string, typeof configValidationResults.results>
-                )
+                  {} as Record<string, typeof configValidationResults.results>,
+                ),
               ).map(([category, results]) => {
-                if (category === 'OAuth Providers') {
+                if (category === "OAuth Providers") {
                   const providerGroups = results.reduce(
                     (acc, result) => {
                       const match = result.check.match(/^(.+?)\s*-\s*(.+)$/);
@@ -4878,14 +4878,14 @@ export const authClient = createAuthClient({
                         }
                         acc[providerName].push({ ...result, check: checkType });
                       } else {
-                        if (!acc['General']) {
-                          acc['General'] = [];
+                        if (!acc["General"]) {
+                          acc["General"] = [];
                         }
-                        acc['General'].push(result);
+                        acc["General"].push(result);
                       }
                       return acc;
                     },
-                    {} as Record<string, typeof results>
+                    {} as Record<string, typeof results>,
                   );
 
                   return (
@@ -4893,15 +4893,15 @@ export const authClient = createAuthClient({
                       <h4 className="text-white font-mono uppercase text-xs mb-4 text-left">
                         {category}
                         <span className="text-gray-500 font-normal ml-2">
-                          ({results.length} check{results.length !== 1 ? 's' : ''})
+                          ({results.length} check{results.length !== 1 ? "s" : ""})
                         </span>
                       </h4>
                       <div className="space-y-2">
                         {Object.entries(providerGroups).map(([providerName, providerResults]) => {
                           const isExpanded = expandedProviders.has(providerName);
-                          const hasErrors = providerResults.some((r) => r.severity === 'error');
-                          const hasWarnings = providerResults.some((r) => r.severity === 'warning');
-                          const allPassed = providerResults.every((r) => r.status === 'pass');
+                          const hasErrors = providerResults.some((r) => r.severity === "error");
+                          const hasWarnings = providerResults.some((r) => r.severity === "warning");
+                          const allPassed = providerResults.every((r) => r.status === "pass");
 
                           return (
                             <div
@@ -4925,7 +4925,7 @@ export const authClient = createAuthClient({
                                 <div className="flex items-center space-x-2">
                                   <ChevronRight
                                     className={`w-4 h-4 text-white/60 transition-transform ${
-                                      isExpanded ? 'rotate-90' : ''
+                                      isExpanded ? "rotate-90" : ""
                                     }`}
                                   />
                                   <span className="text-white font-mono text-sm">
@@ -4933,7 +4933,7 @@ export const authClient = createAuthClient({
                                   </span>
                                   <span className="text-xs text-gray-500 font-mono">
                                     ({providerResults.length} check
-                                    {providerResults.length !== 1 ? 's' : ''})
+                                    {providerResults.length !== 1 ? "s" : ""})
                                   </span>
                                 </div>
                                 <div className="flex items-center space-x-2">
@@ -4954,18 +4954,18 @@ export const authClient = createAuthClient({
                                     <div
                                       key={`${providerName}-${result.check}-${index}`}
                                       className={`p-3 border-l border-dashed border-white/15 ${
-                                        result.status === 'pass'
-                                          ? 'bg-green-600/[8%]'
-                                          : 'bg-red-600/[8%]'
+                                        result.status === "pass"
+                                          ? "bg-green-600/[8%]"
+                                          : "bg-red-600/[8%]"
                                       }`}
                                     >
                                       <div className="flex items-start space-x-3">
                                         <div className="mt-0.5">
-                                          {result.severity === 'error' ? (
+                                          {result.severity === "error" ? (
                                             <XCircle className="w-4 h-4 text-white/60" />
-                                          ) : result.severity === 'warning' ? (
+                                          ) : result.severity === "warning" ? (
                                             <AlertCircle className="w-4 h-4 text-white/60" />
-                                          ) : result.status === 'pass' ? (
+                                          ) : result.status === "pass" ? (
                                             <Check className="w-4 h-4 text-white/60" />
                                           ) : (
                                             <Info className="w-4 h-4 text-white/40" />
@@ -5010,7 +5010,7 @@ export const authClient = createAuthClient({
                     <h4 className="text-white font-mono uppercase text-xs mb-4 text-left">
                       {category}
                       <span className="text-gray-500 font-normal ml-2">
-                        ({results.length} check{results.length !== 1 ? 's' : ''})
+                        ({results.length} check{results.length !== 1 ? "s" : ""})
                       </span>
                     </h4>
                     <div className="space-y-3">
@@ -5018,16 +5018,16 @@ export const authClient = createAuthClient({
                         <div
                           key={`${result.category}-${result.check}-${index}`}
                           className={`p-3 border-l border-dashed border-white/15 ${
-                            result.status === 'pass' ? 'bg-green-600/[8%]' : 'bg-red-600/[8%]'
+                            result.status === "pass" ? "bg-green-600/[8%]" : "bg-red-600/[8%]"
                           }`}
                         >
                           <div className="flex items-start space-x-3">
                             <div className="mt-0.5">
-                              {result.severity === 'error' ? (
+                              {result.severity === "error" ? (
                                 <XCircle className="w-4 h-4 text-white/60" />
-                              ) : result.severity === 'warning' ? (
+                              ) : result.severity === "warning" ? (
                                 <AlertCircle className="w-4 h-4 text-white/60" />
-                              ) : result.status === 'pass' ? (
+                              ) : result.status === "pass" ? (
                                 <Check className="w-4 h-4 text-white/60" />
                               ) : (
                                 <Info className="w-4 h-4 text-white/40" />
@@ -5122,8 +5122,8 @@ export const authClient = createAuthClient({
                       value={uuidCount}
                       onChange={(event) => {
                         const value = event.target.value;
-                        if (value === '') {
-                          setUuidCount('');
+                        if (value === "") {
+                          setUuidCount("");
                           return;
                         }
                         const num = parseInt(value);
@@ -5135,9 +5135,9 @@ export const authClient = createAuthClient({
                         const value = event.target.value;
                         const num = parseInt(value);
                         if (isNaN(num) || num < 1) {
-                          setUuidCount('1');
+                          setUuidCount("1");
                         } else if (num > 100) {
-                          setUuidCount('100');
+                          setUuidCount("100");
                         } else {
                           setUuidCount(String(num));
                         }
@@ -5151,7 +5151,7 @@ export const authClient = createAuthClient({
                     <Button
                       variant="outline"
                       onClick={() => {
-                        setUuidCount('1');
+                        setUuidCount("1");
                         setUuidResults([]);
                       }}
                       className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
@@ -5186,7 +5186,7 @@ export const authClient = createAuthClient({
                     <Button
                       variant="outline"
                       onClick={() => {
-                        setUuidInput('');
+                        setUuidInput("");
                         setUuidValidation(null);
                       }}
                       className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
@@ -5199,15 +5199,15 @@ export const authClient = createAuthClient({
                   <div
                     className={`mt-2 border border-dashed p-3 rounded-none ${
                       uuidValidation.isValid
-                        ? 'border-white/10 bg-black/40'
-                        : 'border-red-500/30 bg-red-500/10'
+                        ? "border-white/10 bg-black/40"
+                        : "border-red-500/30 bg-red-500/10"
                     }`}
                   >
                     <div className="text-xs font-mono space-y-1">
                       <div
-                        className={`${uuidValidation.isValid ? 'text-green-400' : 'text-red-300'}`}
+                        className={`${uuidValidation.isValid ? "text-green-400" : "text-red-300"}`}
                       >
-                        {uuidValidation.isValid ? '✓ Valid UUID' : '✗ Invalid UUID'}
+                        {uuidValidation.isValid ? "✓ Valid UUID" : "✗ Invalid UUID"}
                       </div>
                       {uuidValidation.isValid && uuidValidation.version && (
                         <div className="text-gray-400">Version: {uuidValidation.version}</div>
@@ -5230,7 +5230,7 @@ export const authClient = createAuthClient({
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => copyToClipboard(uuidResults.join('\n'))}
+                      onClick={() => copyToClipboard(uuidResults.join("\n"))}
                       className="text-gray-400 hover:text-white rounded-none"
                     >
                       <Copy className="w-4 h-4 mr-1" />
@@ -5310,7 +5310,7 @@ export const authClient = createAuthClient({
                 </Label>
                 <div className="relative">
                   <Input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     value={passwordInput}
                     onChange={(event) => setPasswordInput(event.target.value)}
                     placeholder="Enter password to check"
@@ -5330,7 +5330,7 @@ export const authClient = createAuthClient({
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setPasswordInput('');
+                    setPasswordInput("");
                     setPasswordStrength(null);
                     setShowPassword(false);
                   }}
@@ -5349,7 +5349,7 @@ export const authClient = createAuthClient({
                       Checking...
                     </>
                   ) : (
-                    'Check Strength'
+                    "Check Strength"
                   )}
                 </Button>
               </div>
@@ -5361,34 +5361,34 @@ export const authClient = createAuthClient({
                       <div className="text-gray-400 uppercase tracking-wider">Strength</div>
                       <p
                         className={`text-sm font-medium ${
-                          passwordStrength.strength === 'very-strong'
-                            ? 'text-green-400'
-                            : passwordStrength.strength === 'strong'
-                              ? 'text-green-300'
-                              : passwordStrength.strength === 'good'
-                                ? 'text-yellow-300'
-                                : passwordStrength.strength === 'fair'
-                                  ? 'text-orange-300'
-                                  : 'text-red-300'
+                          passwordStrength.strength === "very-strong"
+                            ? "text-green-400"
+                            : passwordStrength.strength === "strong"
+                              ? "text-green-300"
+                              : passwordStrength.strength === "good"
+                                ? "text-yellow-300"
+                                : passwordStrength.strength === "fair"
+                                  ? "text-orange-300"
+                                  : "text-red-300"
                         }`}
                       >
                         {passwordStrength.strength
-                          .split('-')
+                          .split("-")
                           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                          .join(' ')}
+                          .join(" ")}
                       </p>
                       <div className="w-full bg-black/40 h-2 rounded-none">
                         <div
                           className={`h-full transition-all ${
-                            passwordStrength.strength === 'very-strong'
-                              ? 'bg-green-400 w-full'
-                              : passwordStrength.strength === 'strong'
-                                ? 'bg-green-300 w-4/5'
-                                : passwordStrength.strength === 'good'
-                                  ? 'bg-yellow-300 w-3/5'
-                                  : passwordStrength.strength === 'fair'
-                                    ? 'bg-orange-300 w-2/5'
-                                    : 'bg-red-300 w-1/5'
+                            passwordStrength.strength === "very-strong"
+                              ? "bg-green-400 w-full"
+                              : passwordStrength.strength === "strong"
+                                ? "bg-green-300 w-4/5"
+                                : passwordStrength.strength === "good"
+                                  ? "bg-yellow-300 w-3/5"
+                                  : passwordStrength.strength === "fair"
+                                    ? "bg-orange-300 w-2/5"
+                                    : "bg-red-300 w-1/5"
                           }`}
                         />
                       </div>
@@ -5398,29 +5398,29 @@ export const authClient = createAuthClient({
                       <p className="text-white text-sm">{passwordStrength.score} / 5</p>
                       <p className="text-gray-500 text-xs">
                         {passwordStrength.score === 5
-                          ? 'Excellent'
+                          ? "Excellent"
                           : passwordStrength.score === 4
-                            ? 'Very Good'
+                            ? "Very Good"
                             : passwordStrength.score === 3
-                              ? 'Good'
+                              ? "Good"
                               : passwordStrength.score === 2
-                                ? 'Fair'
-                                : 'Weak'}
+                                ? "Fair"
+                                : "Weak"}
                       </p>
                     </div>
                     <div className="border border-dashed border-white/10 p-3 space-y-2">
                       <div className="text-gray-400 uppercase tracking-wider">Config Match</div>
                       <p
                         className={`text-sm ${
-                          passwordStrength.meetsConfig ? 'text-green-400' : 'text-red-300'
+                          passwordStrength.meetsConfig ? "text-green-400" : "text-red-300"
                         }`}
                       >
                         {passwordStrength.meetsConfig
-                          ? '✓ Meets Requirements'
-                          : '✗ Fails Requirements'}
+                          ? "✓ Meets Requirements"
+                          : "✗ Fails Requirements"}
                       </p>
                       <p className="text-gray-500 text-xs">
-                        {passwordStrength.configRequirements.minLength} -{' '}
+                        {passwordStrength.configRequirements.minLength} -{" "}
                         {passwordStrength.configRequirements.maxLength} chars
                       </p>
                     </div>
@@ -5438,10 +5438,10 @@ export const authClient = createAuthClient({
                           <div className="flex items-center space-x-2">
                             <span
                               className={`text-xs font-mono ${
-                                check.passed ? 'text-green-400' : 'text-red-300'
+                                check.passed ? "text-green-400" : "text-red-300"
                               }`}
                             >
-                              {check.passed ? '✓' : '✗'}
+                              {check.passed ? "✓" : "✗"}
                             </span>
                             <span className="text-xs text-gray-400 font-mono">{check.message}</span>
                           </div>
@@ -5482,7 +5482,7 @@ export const authClient = createAuthClient({
                   Select Provider
                 </Label>
                 <div className="flex flex-wrap gap-3">
-                  {['google', 'github'].map((providerId) => {
+                  {["google", "github"].map((providerId) => {
                     const isSelected = selectedProvider === providerId;
                     return (
                       <button
@@ -5490,8 +5490,8 @@ export const authClient = createAuthClient({
                         onClick={() => setSelectedProvider(providerId)}
                         className={`px-4 py-2 border rounded-none text-sm uppercase font-mono transition-colors ${
                           isSelected
-                            ? 'border-white/60 bg-white/10 text-white'
-                            : 'border-dashed border-white/20 text-gray-400 hover:border-white/40'
+                            ? "border-white/60 bg-white/10 text-white"
+                            : "border-dashed border-white/20 text-gray-400 hover:border-white/40"
                         }`}
                       >
                         {providerId.charAt(0).toUpperCase() + providerId.slice(1)}
@@ -5540,7 +5540,7 @@ export const authClient = createAuthClient({
                       Fetching...
                     </>
                   ) : (
-                    'Fetch Credentials'
+                    "Fetch Credentials"
                   )}
                 </Button>
               </div>
@@ -5574,7 +5574,7 @@ export const authClient = createAuthClient({
                       </Label>
                       <div className="relative">
                         <Input
-                          type={showOAuthSecret ? 'text' : 'password'}
+                          type={showOAuthSecret ? "text" : "password"}
                           value={oauthCredentials.clientSecret}
                           readOnly
                           className="bg-black border border-dashed border-white/20 text-white font-mono text-xs pr-20 rounded-none"
@@ -5613,7 +5613,7 @@ export const authClient = createAuthClient({
                             <span className="text-green-400 uppercase">
                               ✓ {envWriteResult.message.toLowerCase()}
                               <span className="block normal-case text-gray-400">
-                                <span className="text-gray-400 mr-1">{'>'}</span>{' '}
+                                <span className="text-gray-400 mr-1">{">"}</span>{" "}
                                 {envWriteResult.path}
                               </span>
                             </span>
@@ -5696,10 +5696,10 @@ export const authClient = createAuthClient({
                   </Label>
                   <Input
                     type="number"
-                    value={secretLength === 0 ? '' : secretLength}
+                    value={secretLength === 0 ? "" : secretLength}
                     onChange={(e) => {
                       const val = e.target.value;
-                      if (val === '') {
+                      if (val === "") {
                         setSecretLength(0);
                         return;
                       }
@@ -5732,16 +5732,16 @@ export const authClient = createAuthClient({
                   </Label>
                   <div className="flex gap-3">
                     {[
-                      { id: 'hex', label: 'Hex' },
-                      { id: 'base64', label: 'Base64' },
+                      { id: "hex", label: "Hex" },
+                      { id: "base64", label: "Base64" },
                     ].map((option) => (
                       <button
                         key={option.id}
-                        onClick={() => setSecretFormat(option.id as 'hex' | 'base64')}
+                        onClick={() => setSecretFormat(option.id as "hex" | "base64")}
                         className={`px-4 py-2 border rounded-none text-sm uppercase font-mono transition-colors flex-1 ${
                           secretFormat === option.id
-                            ? 'border-white/60 bg-white/10 text-white'
-                            : 'border-dashed border-white/20 text-gray-400 hover:border-white/40'
+                            ? "border-white/60 bg-white/10 text-white"
+                            : "border-dashed border-white/20 text-gray-400 hover:border-white/40"
                         }`}
                       >
                         {option.label}
@@ -5757,7 +5757,7 @@ export const authClient = createAuthClient({
                   onClick={() => {
                     setSecretResult(null);
                     setSecretLength(32);
-                    setSecretFormat('hex');
+                    setSecretFormat("hex");
                   }}
                   className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
                 >
@@ -5774,7 +5774,7 @@ export const authClient = createAuthClient({
                       Generating...
                     </>
                   ) : (
-                    'Generate Secret'
+                    "Generate Secret"
                   )}
                 </Button>
               </div>
@@ -5856,10 +5856,10 @@ export const authClient = createAuthClient({
                               {isCheckingSecret || isWritingSecret ? (
                                 <>
                                   <Loader className="w-4 h-4 mr-2 animate-spin" />
-                                  {isWritingSecret ? 'Writing...' : 'Checking...'}
+                                  {isWritingSecret ? "Writing..." : "Checking..."}
                                 </>
                               ) : (
-                                'Write to .env'
+                                "Write to .env"
                               )}
                             </Button>
                           </span>
@@ -5922,11 +5922,11 @@ export const authClient = createAuthClient({
             <div className="space-y-4">
               <div className="border border-dashed border-white/20 p-4">
                 <p className="text-sm border-b border-dashed border-white/20 pb-5 text-gray-300 font-mono mb-3">
-                  The following{' '}
+                  The following{" "}
                   <span className="text-white uppercase">
                     {selectedProvider?.charAt(0).toUpperCase() + selectedProvider?.slice(1)}
-                  </span>{' '}
-                  credentials already exist in{' '}
+                  </span>{" "}
+                  credentials already exist in{" "}
                   <span className="text-gray-400 normal-case">{existingEnvCredentials.path}</span>:
                 </p>
                 <div className="space-y-2 pt-2">
@@ -5959,7 +5959,7 @@ export const authClient = createAuthClient({
                       <span>
                         <Button
                           variant="outline"
-                          onClick={() => writeCredentialsToEnv('append')}
+                          onClick={() => writeCredentialsToEnv("append")}
                           disabled={isWritingToEnv || isSelfHosted}
                           className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
                         >
@@ -5979,7 +5979,7 @@ export const authClient = createAuthClient({
                     <TooltipTrigger asChild>
                       <span>
                         <Button
-                          onClick={() => writeCredentialsToEnv('override')}
+                          onClick={() => writeCredentialsToEnv("override")}
                           disabled={isWritingToEnv || isSelfHosted}
                           className="rounded-none"
                         >
@@ -5989,7 +5989,7 @@ export const authClient = createAuthClient({
                               Writing...
                             </>
                           ) : (
-                            'Yes, Overwrite'
+                            "Yes, Overwrite"
                           )}
                         </Button>
                       </span>
@@ -6035,7 +6035,7 @@ export const authClient = createAuthClient({
             <div className="space-y-4">
               <div className="border border-dashed border-white/20 p-4">
                 <p className="text-sm border-b border-dashed border-white/20 pb-5 text-gray-300 font-mono mb-3">
-                  <span className="text-white uppercase">BETTER_AUTH_SECRET</span> already exists in{' '}
+                  <span className="text-white uppercase">BETTER_AUTH_SECRET</span> already exists in{" "}
                   <span className="text-gray-400 normal-case">{existingSecret.path}</span>:
                 </p>
                 <div className="space-y-2 pt-2">
@@ -6044,7 +6044,7 @@ export const authClient = createAuthClient({
                     <span className="text-gray-500">
                       {existingSecret.secret && existingSecret.secret.length > 20
                         ? `${existingSecret.secret.substring(0, 20)}...`
-                        : existingSecret.secret || '***'}
+                        : existingSecret.secret || "***"}
                     </span>
                   </div>
                 </div>
@@ -6067,7 +6067,7 @@ export const authClient = createAuthClient({
                     <TooltipTrigger asChild>
                       <span>
                         <Button
-                          onClick={() => writeSecretToEnv('override')}
+                          onClick={() => writeSecretToEnv("override")}
                           disabled={isWritingSecret || isSelfHosted}
                           className="rounded-none"
                         >
@@ -6077,7 +6077,7 @@ export const authClient = createAuthClient({
                               Writing...
                             </>
                           ) : (
-                            'Yes, Overwrite'
+                            "Yes, Overwrite"
                           )}
                         </Button>
                       </span>

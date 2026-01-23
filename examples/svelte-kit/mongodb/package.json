@@ -2,6 +2,7 @@
   "name": "better-auth-svelte-mongodb-example",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -12,6 +13,11 @@
     "format": "prettier --write .",
     "studio": "pnpm exec better-auth-studio start",
     "studio:dev": "pnpm exec better-auth-studio start --port 3002 --config ./src/lib/auth.ts"
+  },
+  "dependencies": {
+    "better-auth": "^1.3.34",
+    "better-auth-studio": "file:../../../../..",
+    "mongodb": "^6.3.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",
@@ -33,12 +39,5 @@
     "tslib": "^2.4.1",
     "typescript": "^5.0.0",
     "vite": "^5.0.3"
-  },
-  "dependencies": {
-    "better-auth": "^1.3.34",
-    "better-auth-studio": "file:../../../../..",
-    "mongodb": "^6.3.0"
-  },
-  "type": "module"
+  }
 }
-

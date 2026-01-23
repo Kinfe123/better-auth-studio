@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react";
 
 interface Counts {
   users: number;
@@ -32,7 +32,7 @@ export function CountsProvider({ children }: CountsProviderProps) {
 
   const fetchCounts = useCallback(async () => {
     try {
-      const response = await fetch('/api/counts');
+      const response = await fetch("/api/counts");
       const data = await response.json();
       setCounts(data);
     } catch (_error) {
@@ -60,7 +60,7 @@ export function CountsProvider({ children }: CountsProviderProps) {
 export function useCounts() {
   const context = useContext(CountsContext);
   if (context === undefined) {
-    throw new Error('useCounts must be used within a CountsProvider');
+    throw new Error("useCounts must be used within a CountsProvider");
   }
   return context;
 }

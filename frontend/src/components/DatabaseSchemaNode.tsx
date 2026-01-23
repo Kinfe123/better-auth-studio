@@ -1,4 +1,4 @@
-import { Handle, type NodeProps } from '@xyflow/react';
+import { Handle, type NodeProps } from "@xyflow/react";
 import {
   ChevronDown,
   ChevronRight,
@@ -9,10 +9,10 @@ import {
   Focus,
   Hash,
   Key,
-} from 'lucide-react';
-import { useState } from 'react';
-import { cn } from '../lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip-docs';
+} from "lucide-react";
+import { useState } from "react";
+import { cn } from "../lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip-docs";
 
 const SCHEMA_NODE_WIDTH = 320;
 const SCHEMA_NODE_ROW_HEIGHT = 32;
@@ -37,7 +37,7 @@ export type DatabaseSchemaNodeData = {
     description?: string;
   }[];
   relationships?: {
-    type: 'one-to-many' | 'many-to-one' | 'one-to-one';
+    type: "one-to-many" | "many-to-one" | "one-to-one";
     target: string;
     field: string;
   }[];
@@ -57,14 +57,14 @@ export type DatabaseSchemaNodeData = {
 
 const getPluginTextColor = (plugin: string): string => {
   const colors: Record<string, string> = {
-    core: 'text-slate-300',
-    organization: 'text-blue-300',
-    teams: 'text-green-300',
-    twoFactor: 'text-purple-300',
-    apiKey: 'text-orange-300',
-    passkey: 'text-pink-300',
+    core: "text-slate-300",
+    organization: "text-blue-300",
+    teams: "text-green-300",
+    twoFactor: "text-purple-300",
+    apiKey: "text-orange-300",
+    passkey: "text-pink-300",
   };
-  return colors[plugin] || 'text-gray-300';
+  return colors[plugin] || "text-gray-300";
 };
 
 const DatabaseSchemaNode = ({
@@ -77,8 +77,8 @@ const DatabaseSchemaNode = ({
   const [showDetails, setShowDetails] = useState(false);
 
   const hiddenNodeConnector =
-    '!h-2 !w-2 !min-w-0 !min-h-0 !cursor-grab !border-0 opacity-0 hover:opacity-100 transition-opacity';
-  const pluginTextColor = getPluginTextColor(data.plugin || 'core');
+    "!h-2 !w-2 !min-w-0 !min-h-0 !cursor-grab !border-0 opacity-0 hover:opacity-100 transition-opacity";
+  const pluginTextColor = getPluginTextColor(data.plugin || "core");
 
   if (data.isForeign) {
     return (
@@ -109,26 +109,26 @@ const DatabaseSchemaNode = ({
     <div className="relative">
       <div
         className={cn(
-          'border overflow-hidden shadow-xl bg-gray-900 rounded-lg',
-          'transition-all duration-200',
+          "border overflow-hidden shadow-xl bg-gray-900 rounded-lg",
+          "transition-all duration-200",
           isHighlighted
-            ? 'border-blue-500 shadow-blue-500/20 shadow-2xl ring-2 ring-blue-500/30'
+            ? "border-blue-500 shadow-blue-500/20 shadow-2xl ring-2 ring-blue-500/30"
             : isConnected
-              ? 'border-blue-400/50 shadow-blue-400/10'
-              : 'border-gray-700 hover:border-gray-600'
+              ? "border-blue-400/50 shadow-blue-400/10"
+              : "border-gray-700 hover:border-gray-600",
         )}
         style={{ width: SCHEMA_NODE_WIDTH }}
         id={`${data.name}-schema-node`}
       >
         <div
           className={cn(
-            'px-4 py-3 border-b flex items-center justify-between',
-            'cursor-pointer select-none transition-colors',
+            "px-4 py-3 border-b flex items-center justify-between",
+            "cursor-pointer select-none transition-colors",
             isHighlighted
-              ? 'bg-blue-500/10 border-blue-500/30'
+              ? "bg-blue-500/10 border-blue-500/30"
               : isConnected
-                ? 'bg-blue-500/5 border-blue-400/20'
-                : 'bg-black border-gray-700'
+                ? "bg-blue-500/5 border-blue-400/20"
+                : "bg-black border-gray-700",
           )}
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
@@ -145,7 +145,7 @@ const DatabaseSchemaNode = ({
                 setShowDetails(!showDetails);
               }}
               className="p-1 hover:bg-gray-800 rounded transition-colors"
-              title={showDetails ? 'Hide field descriptions' : 'Show field descriptions'}
+              title={showDetails ? "Hide field descriptions" : "Show field descriptions"}
             >
               {showDetails ? (
                 <EyeOff size={12} className="text-gray-400" />
@@ -157,19 +157,19 @@ const DatabaseSchemaNode = ({
               onClick={(e) => {
                 e.stopPropagation();
                 // Dispatch custom event to parent to handle highlighting
-                const event = new CustomEvent('highlightTable', {
+                const event = new CustomEvent("highlightTable", {
                   detail: { tableName: data.name },
                   bubbles: true,
                 });
                 e.currentTarget.dispatchEvent(event);
               }}
               className={cn(
-                'p-1 hover:bg-gray-800 rounded transition-colors',
-                isHighlighted && 'bg-blue-500/20'
+                "p-1 hover:bg-gray-800 rounded transition-colors",
+                isHighlighted && "bg-blue-500/20",
               )}
-              title={isHighlighted ? 'Clear connection highlight' : 'Highlight connections'}
+              title={isHighlighted ? "Clear connection highlight" : "Highlight connections"}
             >
-              <Focus size={12} className={isHighlighted ? 'text-blue-400' : 'text-gray-400'} />
+              <Focus size={12} className={isHighlighted ? "text-blue-400" : "text-gray-400"} />
             </button>
             {isCollapsed ? (
               <ChevronRight size={14} className="text-gray-400" />
@@ -185,9 +185,9 @@ const DatabaseSchemaNode = ({
               <div
                 key={column.id}
                 className={cn(
-                  'relative flex items-center overflow-x-hidden px-3 py-2 text-xs',
-                  'bg-black/30 hover:bg-black/40 transition-colors duration-150',
-                  'border-b border-white/20 last:border-b-0'
+                  "relative flex items-center overflow-x-hidden px-3 py-2 text-xs",
+                  "bg-black/30 hover:bg-black/40 transition-colors duration-150",
+                  "border-b border-white/20 last:border-b-0",
                 )}
                 style={{ minHeight: SCHEMA_NODE_ROW_HEIGHT }}
               >
@@ -248,7 +248,7 @@ const DatabaseSchemaNode = ({
 
                 {/* Plugin Badge */}
                 <div className="ml-2">
-                  <span className={cn('px-2 py-1 rounded text-xs font-medium', pluginTextColor)}>
+                  <span className={cn("px-2 py-1 rounded text-xs font-medium", pluginTextColor)}>
                     {column.plugin}
                   </span>
                 </div>
@@ -257,35 +257,35 @@ const DatabaseSchemaNode = ({
                 <Handle
                   type="target"
                   id={column.id}
-                  position={targetPosition || ('left' as any)}
+                  position={targetPosition || ("left" as any)}
                   className={cn(
                     hiddenNodeConnector,
-                    '!left-[-8px] !top-1/2 !transform !-translate-y-1/2'
+                    "!left-[-8px] !top-1/2 !transform !-translate-y-1/2",
                   )}
                   style={{
-                    background: '#1f2937',
-                    border: '2px solid #374151',
-                    left: '-8px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    boxShadow: '0 0 0 2px rgba(0, 0, 0, 0.3)',
+                    background: "#1f2937",
+                    border: "2px solid #374151",
+                    left: "-8px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    boxShadow: "0 0 0 2px rgba(0, 0, 0, 0.3)",
                   }}
                 />
                 <Handle
                   type="source"
                   id={column.id}
-                  position={sourcePosition || ('right' as any)}
+                  position={sourcePosition || ("right" as any)}
                   className={cn(
                     hiddenNodeConnector,
-                    '!right-[-8px] !top-1/2 !transform !-translate-y-1/2'
+                    "!right-[-8px] !top-1/2 !transform !-translate-y-1/2",
                   )}
                   style={{
-                    background: '#1f2937',
-                    border: '2px solid #374151',
-                    right: '-8px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    boxShadow: '0 0 0 2px rgba(0, 0, 0, 0.3)',
+                    background: "#1f2937",
+                    border: "2px solid #374151",
+                    right: "-8px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    boxShadow: "0 0 0 2px rgba(0, 0, 0, 0.3)",
                   }}
                 />
               </div>
@@ -297,7 +297,7 @@ const DatabaseSchemaNode = ({
         {data.relationships && data.relationships.length > 0 && (
           <div className="px-4 py-2 bg-gray-800 border-t border-gray-700">
             <span className="text-xs text-gray-400">
-              {data.relationships.length} relationship{data.relationships.length !== 1 ? 's' : ''}
+              {data.relationships.length} relationship{data.relationships.length !== 1 ? "s" : ""}
             </span>
           </div>
         )}

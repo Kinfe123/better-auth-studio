@@ -1,4 +1,4 @@
 export function defineStudioConfig(config) {
-    return config;
+  return config;
 }
 //# sourceMappingURL=handler.js.map

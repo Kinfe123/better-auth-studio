@@ -1,5 +1,5 @@
-import type { StudioConfig } from '../types/handler.js';
-import { emitEvent } from './event-ingestion.js';
+import type { StudioConfig } from "../types/handler.js";
+import { emitEvent } from "./event-ingestion.js";
 
 /**
  * Helper to extract request info from Better Auth request object
@@ -15,16 +15,16 @@ function getRequestInfo(request?: Request | any): { headers: Record<string, stri
           headersObj[key] = value;
         });
         ip =
-          request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
+          request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || undefined;
       } else if (request.headers) {
-        if (typeof request.headers.get === 'function') {
+        if (typeof request.headers.get === "function") {
           ip =
-            request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined;
+            request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || undefined;
           request.headers.forEach?.((value: string, key: string) => {
             headersObj[key] = value;
           });
         } else {
-          ip = request.headers['x-forwarded-for'] || request.headers['x-real-ip'] || undefined;
+          ip = request.headers["x-forwarded-for"] || request.headers["x-real-ip"] || undefined;
           Object.entries(request.headers).forEach(([key, value]) => {
             headersObj[key] = String(value);
           });
@@ -40,9 +40,9 @@ function getRequestInfo(request?: Request | any): { headers: Record<string, stri
  * Wraps Better Auth callbacks to automatically emit events
  * This should be called during Better Auth initialization
  */
-const passwordResetMethod = new Map<string, 'otp' | 'token'>();
+const passwordResetMethod = new Map<string, "otp" | "token">();
 
-export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events']): void {
+export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig["events"]): void {
   if (!auth || !eventsConfig?.enabled) {
     return;
   }
@@ -53,7 +53,7 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
     const wrapCallback = <T extends (...args: any[]) => any>(
       originalCallback: T | undefined,
       eventType: string,
-      eventData: (args: Parameters<T>) => any
+      eventData: (args: Parameters<T>) => any,
     ): T => {
       return (async (...args: Parameters<T>) => {
         if (originalCallback) {
@@ -66,11 +66,11 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
         emitEvent(
           eventType as any,
           {
-            status: 'success',
+            status: "success",
             ...data,
             request: requestInfo,
           },
-          capturedConfig
+          capturedConfig,
         ).catch(() => {});
       }) as T;
     };
@@ -81,7 +81,7 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
 
       deleteUserConfig.sendDeleteAccountVerification = wrapCallback(
         originalSendDeleteVerification,
-        'user.delete_verification_requested',
+        "user.delete_verification_requested",
         (args) => {
           const data = args[0] as any;
           const user = data?.user;
@@ -93,13 +93,13 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
               token: data?.token,
             },
           };
-        }
+        },
       );
 
       // Wrap afterDelete callback
       const originalAfterDelete = deleteUserConfig.afterDelete;
 
-      deleteUserConfig.afterDelete = wrapCallback(originalAfterDelete, 'user.deleted', (args) => {
+      deleteUserConfig.afterDelete = wrapCallback(originalAfterDelete, "user.deleted", (args) => {
         const user = args[0] as any;
         return {
           userId: user?.id,
@@ -119,7 +119,7 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
 
       emailVerificationConfig.onEmailVerification = wrapCallback(
         originalOnEmailVerification,
-        'user.email_verified',
+        "user.email_verified",
         (args) => {
           const user = args[0] as any;
           return {
@@ -130,7 +130,7 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
               verifiedAt: new Date().toISOString(),
             },
           };
-        }
+        },
       );
 
       emailVerificationConfig.__studio_wrapped = true;
@@ -143,7 +143,7 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
 
       emailAndPasswordConfig.onPasswordChange = wrapCallback(
         originalOnPasswordChange,
-        'user.password_changed',
+        "user.password_changed",
         (args) => {
           const data = args[0] as any;
           return {
@@ -155,7 +155,7 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
               changedAt: new Date().toISOString(),
             },
           };
-        }
+        },
       );
 
       // Wrap sendResetPassword to track password.reset_requested
@@ -172,23 +172,23 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
           // Mark this email as using token-based reset
           const email = data?.user?.email?.toLowerCase();
           if (email) {
-            passwordResetMethod.set(email, 'token');
+            passwordResetMethod.set(email, "token");
           }
 
           const originalPromise = originalSendResetPassword(...args);
           const eventPromise = emitEvent(
-            'password.reset_requested',
+            "password.reset_requested",
             {
-              status: 'success',
+              status: "success",
               userId: data?.user?.id,
               metadata: {
                 email: data?.user?.email,
-                name: data?.user?.name || data?.user?.email || 'Someone',
+                name: data?.user?.name || data?.user?.email || "Someone",
                 requestedAt: new Date().toISOString(),
               },
               request: requestInfo,
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
 
           await originalPromise;
@@ -211,35 +211,35 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
 
         const userEmail = data?.user?.email?.toLowerCase();
         const method = userEmail ? passwordResetMethod.get(userEmail) : undefined;
-        const isOtpReset = method === 'otp';
+        const isOtpReset = method === "otp";
 
         if (userEmail) {
           passwordResetMethod.delete(userEmail);
         }
 
-        const eventType = isOtpReset ? 'password.reset_completed_otp' : 'password.reset_completed';
+        const eventType = isOtpReset ? "password.reset_completed_otp" : "password.reset_completed";
 
         emitEvent(
           eventType as any,
           {
-            status: 'success',
+            status: "success",
             userId: data?.user?.id,
             metadata: {
               email: data?.user?.email,
-              name: data?.user?.name || data?.user?.email || 'Someone',
+              name: data?.user?.name || data?.user?.email || "Someone",
               resetAt: new Date().toISOString(),
-              method: isOtpReset ? 'email_otp' : 'token',
+              method: isOtpReset ? "email_otp" : "token",
             },
             request: requestInfo,
           },
-          capturedConfig
+          capturedConfig,
         ).catch(() => {});
       };
 
       emailAndPasswordConfig.__studio_wrapped = true;
     }
 
-    const emailOtpPlugin = auth.options?.plugins?.find((p: any) => p?.id === 'email-otp');
+    const emailOtpPlugin = auth.options?.plugins?.find((p: any) => p?.id === "email-otp");
 
     // TODO: Fix email-otp sendVerificationOTP callback wrapping because of plugin closure
     if (emailOtpPlugin && !emailOtpPlugin.__studio_wrapped) {
@@ -250,32 +250,32 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
           data: {
             email: string;
             otp: string;
-            type: 'sign-in' | 'email-verification' | 'forget-password';
+            type: "sign-in" | "email-verification" | "forget-password";
           },
-          ctx?: any
+          ctx?: any,
         ) => {
           const requestInfo = getRequestInfo(ctx?.request || ctx);
 
-          if (data.type === 'forget-password') {
+          if (data.type === "forget-password") {
             const email = data.email.toLowerCase();
-            passwordResetMethod.set(email, 'otp');
+            passwordResetMethod.set(email, "otp");
           }
 
           const originalPromise = originalSendVerificationOTP(data, ctx);
 
-          if (data.type === 'forget-password') {
+          if (data.type === "forget-password") {
             const eventPromise = emitEvent(
-              'password.reset_requested_otp',
+              "password.reset_requested_otp",
               {
-                status: 'success',
+                status: "success",
                 metadata: {
                   email: data.email,
-                  type: 'forget-password',
+                  type: "forget-password",
                   requestedAt: new Date().toISOString(),
                 },
                 request: requestInfo,
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
 
             await originalPromise;
@@ -288,7 +288,7 @@ export function wrapAuthCallbacks(auth: any, eventsConfig: StudioConfig['events'
         emailOtpPlugin.options.sendVerificationOTP = wrappedSendVerificationOTP;
 
         const originalInit = emailOtpPlugin.init;
-        if (originalInit && typeof originalInit === 'function') {
+        if (originalInit && typeof originalInit === "function") {
           emailOtpPlugin.init = async (authInstance: any) => {
             emailOtpPlugin.options.sendVerificationOTP = wrappedSendVerificationOTP;
 

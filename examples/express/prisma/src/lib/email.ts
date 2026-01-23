@@ -5,6 +5,5 @@ export const sendTestEmail = async (to: string, subject: string) => {
 
 export const emailConfig = {
   from: "noreply@example.com",
-  provider: "test"
+  provider: "test",
 };
-

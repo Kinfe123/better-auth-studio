@@ -1,6 +1,6 @@
-import { handleStudioRequest } from '../core/handler.js';
-import type { StudioConfig, UniversalRequest, UniversalResponse } from '../types/handler.js';
-import { injectEventHooks } from '../utils/hook-injector.js';
+import { handleStudioRequest } from "../core/handler.js";
+import type { StudioConfig, UniversalRequest, UniversalResponse } from "../types/handler.js";
+import { injectEventHooks } from "../utils/hook-injector.js";
 
 // TanStack Start server route handler context
 type TanStackStartHandlerContext = {
@@ -43,10 +43,10 @@ export function betterAuthStudio(config: StudioConfig) {
       const universalRes = await handleStudioRequest(universalReq, config);
       return universalToResponse(universalRes);
     } catch (error) {
-      console.error('Studio handler error:', error);
-      return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      console.error("Studio handler error:", error);
+      return new Response(JSON.stringify({ error: "Internal server error" }), {
         status: 500,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     }
   };
@@ -54,20 +54,20 @@ export function betterAuthStudio(config: StudioConfig) {
 
 async function convertTanStackStartToUniversal(
   request: Request,
-  config: StudioConfig
+  config: StudioConfig,
 ): Promise<UniversalRequest> {
   let body: any;
   const method = request.method;
 
-  if (method !== 'GET' && method !== 'HEAD') {
-    const contentType = request.headers.get('content-type') || '';
-    if (contentType.includes('application/json')) {
+  if (method !== "GET" && method !== "HEAD") {
+    const contentType = request.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
       try {
         body = await request.json();
       } catch {}
     } else if (
-      contentType.includes('application/x-www-form-urlencoded') ||
-      contentType.includes('multipart/form-data')
+      contentType.includes("application/x-www-form-urlencoded") ||
+      contentType.includes("multipart/form-data")
     ) {
       try {
         const formData = await request.formData();
@@ -92,14 +92,14 @@ async function convertTanStackStartToUniversal(
     headers[key] = value;
   });
 
-  const basePath = config.basePath || '/api/studio';
-  const normalizedBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+  const basePath = config.basePath || "/api/studio";
+  const normalizedBasePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
 
   const url = new URL(request.url);
   let path = url.pathname;
 
   if (path.startsWith(normalizedBasePath)) {
-    path = path.slice(normalizedBasePath.length) || '/';
+    path = path.slice(normalizedBasePath.length) || "/";
   }
 
   const pathWithQuery = path + url.search;

@@ -1,7 +1,7 @@
-import { Handle, type NodeProps } from '@xyflow/react';
-import { Fingerprint, Hash, Key, Table2 } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip-docs';
+import { Handle, type NodeProps } from "@xyflow/react";
+import { Fingerprint, Hash, Key, Table2 } from "lucide-react";
+import { cn } from "../lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip-docs";
 
 const TABLE_NODE_WIDTH = 420;
 const TABLE_NODE_ROW_HEIGHT = 40;
@@ -28,9 +28,9 @@ const TableNode = ({
   sourcePosition,
 }: NodeProps & { placeholder?: boolean }) => {
   const data = data_ as TableNodeData;
-  const hiddenNodeConnector = '!h-1.5 !w-1.5 !min-w-0 !min-h-0 !cursor-grab !border-0 opacity-100';
+  const hiddenNodeConnector = "!h-1.5 !w-1.5 !min-w-0 !min-h-0 !cursor-grab !border-0 opacity-100";
 
-  const itemHeight = 'h-[22px]';
+  const itemHeight = "h-[22px]";
 
   return (
     <>
@@ -52,15 +52,15 @@ const TableNode = ({
       ) : (
         <div
           className={cn(
-            'border border-gray-200 dark:border-gray-700 overflow-hidden shadow-lg bg-white dark:bg-gray-900 rounded-none'
+            "border border-gray-200 dark:border-gray-700 overflow-hidden shadow-lg bg-white dark:bg-gray-900 rounded-none",
           )}
           style={{ width: TABLE_NODE_WIDTH / 2 }}
           id={`${data.name}-table-node`}
         >
           <header
             className={cn(
-              'text-[0.55rem] pl-3 pr-2 bg-black text-white flex items-center justify-between border-b border-gray-300',
-              itemHeight
+              "text-[0.55rem] pl-3 pr-2 bg-black text-white flex items-center justify-between border-b border-gray-300",
+              itemHeight,
             )}
           >
             <div className="flex items-center gap-x-1">
@@ -72,17 +72,17 @@ const TableNode = ({
           {data.columns.map((column) => (
             <div
               className={cn(
-                'text-[8px] leading-5 relative flex flex-row justify-items-start',
-                'bg-white dark:bg-gray-900',
-                'border-t',
-                'border-t-gray-200 dark:border-t-gray-700',
-                'hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-default',
-                itemHeight
+                "text-[8px] leading-5 relative flex flex-row justify-items-start",
+                "bg-white dark:bg-gray-900",
+                "border-t",
+                "border-t-gray-200 dark:border-t-gray-700",
+                "hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-default",
+                itemHeight,
               )}
               key={column.id}
             >
               <div
-                className={cn('gap-[0.24rem] flex ml-2 align-middle items-center justify-start')}
+                className={cn("gap-[0.24rem] flex ml-2 align-middle items-center justify-start")}
               >
                 {column.isPrimary && (
                   <TooltipProvider delayDuration={10}>
@@ -91,7 +91,7 @@ const TableNode = ({
                         <Key
                           size={8}
                           strokeWidth={1}
-                          className={cn('flex-shrink-0', 'text-yellow-400 mr-2')}
+                          className={cn("flex-shrink-0", "text-yellow-400 mr-2")}
                         />
                       </TooltipTrigger>
                       <TooltipContent className="pointer-events-none" sideOffset={0}>
@@ -127,7 +127,7 @@ const TableNode = ({
               <div className="flex justify-between w-full">
                 <div className="relative flex justify-center whitespace-nowrap">
                   {column.isNullable ? (
-                    ''
+                    ""
                   ) : (
                     <TooltipProvider delayDuration={10}>
                       <Tooltip>
@@ -141,7 +141,7 @@ const TableNode = ({
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                  )}{' '}
+                  )}{" "}
                   <div className="max-w-[100px] w-fit text-ellipsis overflow-hidden text-gray-900 dark:text-white">
                     {column.name}
                   </div>
@@ -156,35 +156,35 @@ const TableNode = ({
               <Handle
                 type="target"
                 id={column.id}
-                position={targetPosition || ('left' as any)}
+                position={targetPosition || ("left" as any)}
                 className={cn(
                   hiddenNodeConnector,
-                  '!left-[-6px] !top-1/2 !transform !-translate-y-1/2'
+                  "!left-[-6px] !top-1/2 !transform !-translate-y-1/2",
                 )}
                 style={{
-                  background: '#000000',
-                  border: '1px solid #ffffff',
-                  left: '-6px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  boxShadow: '0 0 0 2px rgba(0, 0, 0, 0.1)',
+                  background: "#000000",
+                  border: "1px solid #ffffff",
+                  left: "-6px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  boxShadow: "0 0 0 2px rgba(0, 0, 0, 0.1)",
                 }}
               />
               <Handle
                 type="source"
                 id={column.id}
-                position={sourcePosition || ('right' as any)}
+                position={sourcePosition || ("right" as any)}
                 className={cn(
                   hiddenNodeConnector,
-                  '!right-[-6px] !top-1/2 !transform !-translate-y-1/2'
+                  "!right-[-6px] !top-1/2 !transform !-translate-y-1/2",
                 )}
                 style={{
-                  background: '#000000',
-                  border: '1px solid #ffffff',
-                  right: '-6px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  boxShadow: '0 0 0 2px rgba(0, 0, 0, 0.1)',
+                  background: "#000000",
+                  border: "1px solid #ffffff",
+                  right: "-6px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  boxShadow: "0 0 0 2px rgba(0, 0, 0, 0.1)",
                 }}
               />
             </div>

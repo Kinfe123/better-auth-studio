@@ -1,12 +1,12 @@
-import type { StudioConfig } from '../types/handler.js';
-import { emitEvent } from './event-ingestion.js';
+import type { StudioConfig } from "../types/handler.js";
+import { emitEvent } from "./event-ingestion.js";
 
 /**
  * Wraps organization hooks to automatically emit events
  * This should be used in the organization plugin's organizationHooks option
  */
 export function createOrganizationHooksWithEvents(
-  eventsConfig: StudioConfig['events'],
+  eventsConfig: StudioConfig["events"],
   userHooks?: {
     beforeCreateOrganization?: any;
     afterCreateOrganization?: any;
@@ -38,7 +38,7 @@ export function createOrganizationHooksWithEvents(
     afterRejectInvitation?: any;
     beforeCancelInvitation?: any;
     afterCancelInvitation?: any;
-  }
+  },
 ) {
   if (!eventsConfig?.enabled) {
     return userHooks || {};
@@ -63,9 +63,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterCreateOrganization(data);
           emitEvent(
-            'organization.created',
+            "organization.created",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.user.id,
               metadata: {
@@ -76,14 +76,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'organization.created',
+            "organization.created",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.user.id,
               metadata: {
@@ -94,7 +94,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
 
@@ -110,9 +110,9 @@ export function createOrganizationHooksWithEvents(
           await userHooks.afterUpdateOrganization?.(data);
           if (data.organization) {
             emitEvent(
-              'organization.updated',
+              "organization.updated",
               {
-                status: 'success',
+                status: "success",
                 organizationId: data.organization.id,
                 userId: data.user.id,
                 metadata: {
@@ -123,16 +123,16 @@ export function createOrganizationHooksWithEvents(
                 },
                 request: getRequestInfo(),
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
       : async (data: any) => {
           if (data.organization) {
             emitEvent(
-              'organization.updated',
+              "organization.updated",
               {
-                status: 'success',
+                status: "success",
                 organizationId: data.organization.id,
                 userId: data.user.id,
                 metadata: {
@@ -143,7 +143,7 @@ export function createOrganizationHooksWithEvents(
                 },
                 request: getRequestInfo(),
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         },
@@ -158,9 +158,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterDeleteOrganization?.(data);
           emitEvent(
-            'organization.deleted',
+            "organization.deleted",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.user.id,
               metadata: {
@@ -171,14 +171,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'organization.deleted',
+            "organization.deleted",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.user.id,
               metadata: {
@@ -189,7 +189,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
 
@@ -205,9 +205,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterAddMember?.(data);
           emitEvent(
-            'member.added',
+            "member.added",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.member.userId,
               metadata: {
@@ -221,14 +221,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'member.added',
+            "member.added",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.member.userId,
               metadata: {
@@ -242,7 +242,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
 
@@ -256,9 +256,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterRemoveMember?.(data);
           emitEvent(
-            'member.removed',
+            "member.removed",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.member.userId,
               metadata: {
@@ -269,14 +269,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'member.removed',
+            "member.removed",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.member.userId,
               metadata: {
@@ -287,7 +287,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
 
@@ -302,9 +302,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterUpdateMemberRole?.(data);
           emitEvent(
-            'member.role_changed',
+            "member.role_changed",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.member.userId,
               metadata: {
@@ -317,14 +317,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'member.role_changed',
+            "member.role_changed",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.member.userId,
               metadata: {
@@ -337,7 +337,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
 
@@ -353,9 +353,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterCreateTeam?.(data);
           emitEvent(
-            'team.created',
+            "team.created",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.user?.id,
               metadata: {
@@ -368,14 +368,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'team.created',
+            "team.created",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.user?.id,
               metadata: {
@@ -388,7 +388,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
 
@@ -404,9 +404,9 @@ export function createOrganizationHooksWithEvents(
           await userHooks.afterUpdateTeam?.(data);
           if (data.team) {
             emitEvent(
-              'team.updated',
+              "team.updated",
               {
-                status: 'success',
+                status: "success",
                 organizationId: data.organization.id,
                 userId: data.user.id,
                 metadata: {
@@ -419,16 +419,16 @@ export function createOrganizationHooksWithEvents(
                 },
                 request: getRequestInfo(),
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         }
       : async (data: any) => {
           if (data.team) {
             emitEvent(
-              'team.updated',
+              "team.updated",
               {
-                status: 'success',
+                status: "success",
                 organizationId: data.organization.id,
                 userId: data.user.id,
                 metadata: {
@@ -441,7 +441,7 @@ export function createOrganizationHooksWithEvents(
                 },
                 request: getRequestInfo(),
               },
-              capturedConfig
+              capturedConfig,
             ).catch(() => {});
           }
         },
@@ -456,9 +456,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterDeleteTeam?.(data);
           emitEvent(
-            'team.deleted',
+            "team.deleted",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.user?.id,
               metadata: {
@@ -471,14 +471,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'team.deleted',
+            "team.deleted",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.user?.id,
               metadata: {
@@ -491,7 +491,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
 
@@ -507,9 +507,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterAddTeamMember?.(data);
           emitEvent(
-            'team.member.added',
+            "team.member.added",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.teamMember.userId,
               metadata: {
@@ -525,14 +525,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'team.member.added',
+            "team.member.added",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.teamMember.userId,
               metadata: {
@@ -548,7 +548,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
 
@@ -562,9 +562,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterRemoveTeamMember?.(data);
           emitEvent(
-            'team.member.removed',
+            "team.member.removed",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.teamMember.userId,
               metadata: {
@@ -578,14 +578,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'team.member.removed',
+            "team.member.removed",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.teamMember.userId,
               metadata: {
@@ -599,7 +599,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
 
@@ -615,9 +615,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterCreateInvitation?.(data);
           emitEvent(
-            'invitation.created',
+            "invitation.created",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               metadata: {
                 invitationId: data.invitation.id,
@@ -632,14 +632,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'invitation.created',
+            "invitation.created",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               metadata: {
                 invitationId: data.invitation.id,
@@ -654,7 +654,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
 
@@ -668,9 +668,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterAcceptInvitation?.(data);
           emitEvent(
-            'invitation.accepted',
+            "invitation.accepted",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.user.id,
               metadata: {
@@ -683,14 +683,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'invitation.accepted',
+            "invitation.accepted",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.user.id,
               metadata: {
@@ -703,7 +703,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
 
@@ -717,9 +717,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterRejectInvitation?.(data);
           emitEvent(
-            'invitation.rejected',
+            "invitation.rejected",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.user.id,
               metadata: {
@@ -731,14 +731,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'invitation.rejected',
+            "invitation.rejected",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.user.id,
               metadata: {
@@ -750,7 +750,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
 
@@ -764,9 +764,9 @@ export function createOrganizationHooksWithEvents(
       ? async (data: any) => {
           await userHooks.afterCancelInvitation?.(data);
           emitEvent(
-            'invitation.cancelled',
+            "invitation.cancelled",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.cancelledBy.id,
               metadata: {
@@ -779,14 +779,14 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         }
       : async (data: any) => {
           emitEvent(
-            'invitation.cancelled',
+            "invitation.cancelled",
             {
-              status: 'success',
+              status: "success",
               organizationId: data.organization.id,
               userId: data.cancelledBy.id,
               metadata: {
@@ -799,7 +799,7 @@ export function createOrganizationHooksWithEvents(
               },
               request: getRequestInfo(),
             },
-            capturedConfig
+            capturedConfig,
           ).catch(() => {});
         },
   };
@@ -809,14 +809,14 @@ export function createOrganizationHooksWithEvents(
  * Automatically wraps organization plugin hooks to emit events
  * This should be called during Better Auth initialization
  */
-export function wrapOrganizationPluginHooks(auth: any, eventsConfig: StudioConfig['events']): void {
+export function wrapOrganizationPluginHooks(auth: any, eventsConfig: StudioConfig["events"]): void {
   if (!auth || !eventsConfig?.enabled) {
     return;
   }
 
   try {
     const plugins = auth.options?.plugins || [];
-    const orgPlugin = plugins.find((p: any) => p?.id === 'organization');
+    const orgPlugin = plugins.find((p: any) => p?.id === "organization");
 
     if (!orgPlugin) {
       return;
@@ -836,6 +836,6 @@ export function wrapOrganizationPluginHooks(auth: any, eventsConfig: StudioConfi
     orgPlugin.options.organizationHooks = wrappedHooks;
     orgPlugin.organizationHooks = wrappedHooks;
   } catch (error) {
-    console.error('[Organization Hooks] Failed to wrap hooks:', error);
+    console.error("[Organization Hooks] Failed to wrap hooks:", error);
   }
 }

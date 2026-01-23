@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,10 +15,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Better Auth Studio",
-  description: "An admin dashboard for Better Auth. Manage users, sessions, organizations, and more with an intuitive interface.",
+  description:
+    "An admin dashboard for Better Auth. Manage users, sessions, organizations, and more with an intuitive interface.",
   openGraph: {
     title: "Better Auth Studio",
-    description: "An admin dashboard for Better Auth. Manage users, sessions, organizations, and more with an intuitive interface.",
+    description:
+      "An admin dashboard for Better Auth. Manage users, sessions, organizations, and more with an intuitive interface.",
     images: [
       {
         url: "/og.png",
@@ -41,9 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
         <Analytics />
       </body>

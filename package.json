@@ -2,11 +2,28 @@
   "name": "better-auth-studio",
   "version": "1.1.2-beta.15",
   "description": "Studio for Better Auth",
-  "main": "dist/index.js",
-  "type": "module",
+  "keywords": [
+    "admin",
+    "authentication",
+    "better-auth",
+    "dashboard",
+    "gui",
+    "studio"
+  ],
+  "license": "MIT",
+  "author": "kinfish",
   "bin": {
     "better-auth-studio": "./dist/cli.js"
   },
+  "files": [
+    "README.md",
+    "data/default-geo.json",
+    "dist/",
+    "public/",
+    "scripts/"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
   "exports": {
     ".": "./dist/index.js",
     "./express": "./dist/adapters/express.js",
@@ -33,9 +50,9 @@
     "frontend:dev": "cd frontend && pnpm run dev",
     "frontend:build": "cd frontend && pnpm run build",
     "frontend:preview": "cd frontend && pnpm run preview",
-    "lint": "biome check . --max-diagnostics=1000",
-    "lint:fix": "biome check --write .",
-    "format": "biome format --write .",
+    "lint": "oxfmt --check .",
+    "lint:fix": "oxfmt .",
+    "format": "oxfmt format --write .",
     "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:watch": "vitest --watch",
@@ -47,16 +64,6 @@
     "release:canary": "pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks",
     "bump": "bumpp"
   },
-  "keywords": [
-    "better-auth",
-    "studio",
-    "dashboard",
-    "authentication",
-    "gui",
-    "admin"
-  ],
-  "author": "kinfish",
-  "license": "MIT",
   "dependencies": {
     "@babel/preset-react": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
@@ -81,12 +88,12 @@
     "ws": "^8.14.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.4",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.0",
     "@types/supertest": "^6.0.2",
     "@types/ws": "^8.5.10",
+    "oxfmt": "^0.26.0",
     "supertest": "^7.1.4",
     "tsx": "^4.6.0",
     "typescript": "^5.3.2",
@@ -102,12 +109,5 @@
       "devalue": ">=5.6.2",
       "@sveltejs/kit": ">=2.49.5"
     }
-  },
-  "files": [
-    "dist/",
-    "public/",
-    "data/default-geo.json",
-    "scripts/",
-    "README.md"
-  ]
+  }
 }

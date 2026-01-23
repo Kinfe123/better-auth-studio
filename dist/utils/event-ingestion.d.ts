@@ -1,23 +1,27 @@
-import type { AuthEventType, EventIngestionProvider } from '../types/events.js';
-import type { StudioConfig } from '../types/handler.js';
+import type { AuthEventType, EventIngestionProvider } from "../types/events.js";
+import type { StudioConfig } from "../types/handler.js";
 /**
  * Initialize event ingestion
  */
-export declare function initializeEventIngestion(eventsConfig: StudioConfig['events']): void;
+export declare function initializeEventIngestion(eventsConfig: StudioConfig["events"]): void;
 /**
  * Emit an event
  */
-export declare function emitEvent(type: AuthEventType, data: {
-    status: 'success' | 'failed';
+export declare function emitEvent(
+  type: AuthEventType,
+  data: {
+    status: "success" | "failed";
     userId?: string;
     sessionId?: string;
     organizationId?: string;
     metadata?: Record<string, any>;
     request?: {
-        headers: Record<string, string>;
-        ip?: string;
+      headers: Record<string, string>;
+      ip?: string;
     };
-}, eventsConfig?: StudioConfig['events']): Promise<void>;
+  },
+  eventsConfig?: StudioConfig["events"],
+): Promise<void>;
 export declare function shutdownEventIngestion(): Promise<void>;
 /**
  * Health check

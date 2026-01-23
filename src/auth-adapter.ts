@@ -1,17 +1,17 @@
-import { randomBytes } from 'node:crypto';
-import { existsSync } from 'node:fs';
-import { dirname, join, parse, resolve } from 'node:path';
+import { randomBytes } from "node:crypto";
+import { existsSync } from "node:fs";
+import { dirname, join, parse, resolve } from "node:path";
 // @ts-expect-error - No types available
-import babelPresetReact from '@babel/preset-react';
+import babelPresetReact from "@babel/preset-react";
 // @ts-expect-error - No types available
-import babelPresetTypeScript from '@babel/preset-typescript';
+import babelPresetTypeScript from "@babel/preset-typescript";
 // @ts-expect-error - No types available for current moduleResolution and bundler mode
-import { hex } from '@better-auth/utils/hex';
-import { scryptAsync } from '@noble/hashes/scrypt.js';
-import type { InternalAdapter } from 'better-auth';
-import { createJiti } from 'jiti';
-import { getPathAliases } from './config.js';
-import { possibleConfigFiles } from './utils.js';
+import { hex } from "@better-auth/utils/hex";
+import { scryptAsync } from "@noble/hashes/scrypt.js";
+import type { InternalAdapter } from "better-auth";
+import { createJiti } from "jiti";
+import { getPathAliases } from "./config.js";
+import { possibleConfigFiles } from "./utils.js";
 
 type OptionalFields<T> = { [K in keyof T]?: T[K] };
 
@@ -44,7 +44,7 @@ function findTsconfigPath(startDir: string): string | null {
   const root = parse(currentDir).root;
 
   while (currentDir !== root) {
-    const tsconfigPath = join(currentDir, 'tsconfig.json');
+    const tsconfigPath = join(currentDir, "tsconfig.json");
     if (existsSync(tsconfigPath)) {
       return currentDir;
     }
@@ -65,7 +65,7 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
     let authModule: any;
     try {
       let importPath = authConfigPath;
-      if (!authConfigPath.startsWith('/')) {
+      if (!authConfigPath.startsWith("/")) {
         importPath = join(process.cwd(), authConfigPath);
       }
 
@@ -89,11 +89,11 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
                   allExtensions: true,
                 },
               ],
-              [babelPresetReact, { runtime: 'automatic' }],
+              [babelPresetReact, { runtime: "automatic" }],
             ],
           },
         },
-        extensions: ['.ts', '.js', '.tsx', '.jsx', '.mjs', '.cjs'],
+        extensions: [".ts", ".js", ".tsx", ".jsx", ".mjs", ".cjs"],
       });
       authModule = await jitiInstance.import(importPath);
     } catch (_error: any) {
@@ -124,7 +124,7 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
     authAdapter = {
       createUser: async (data: any) => {
         const user = await adapter.create({
-          model: 'user',
+          model: "user",
           data: {
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -139,10 +139,10 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
         if (data.password) {
           try {
             await adapter.create({
-              model: 'account',
+              model: "account",
               data: {
                 userId: user.id,
-                providerId: 'credential',
+                providerId: "credential",
                 accountId: user.id,
                 password: hashedPassword,
                 createdAt: new Date(),
@@ -156,7 +156,7 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
       },
       createSession: async (data: any) => {
         return await adapter.create({
-          model: 'session',
+          model: "session",
           data: {
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -166,7 +166,7 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
       },
       createAccount: async (data: any) => {
         return await adapter.create({
-          model: 'account',
+          model: "account",
           data: {
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -176,7 +176,7 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
       },
       createVerification: async (data: any) => {
         return await adapter.create({
-          model: 'verification',
+          model: "verification",
           data: {
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -186,7 +186,7 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
       },
       createOrganization: async (data: any) => {
         return await adapter.create({
-          model: 'organization',
+          model: "organization",
           data: {
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -196,11 +196,11 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
       },
       getUsers: async () => {
         try {
-          if (typeof adapter.findMany === 'function') {
-            const users = await adapter.findMany({ model: 'user' });
+          if (typeof adapter.findMany === "function") {
+            const users = await adapter.findMany({ model: "user" });
             return users || [];
           }
-          if (typeof adapter.getUsers === 'function') {
+          if (typeof adapter.getUsers === "function") {
             const users = await adapter.getUsers();
             return users || [];
           }
@@ -211,11 +211,11 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
       },
       getSessions: async () => {
         try {
-          if (typeof adapter.findMany === 'function') {
-            const sessions = await adapter.findMany({ model: 'session' });
+          if (typeof adapter.findMany === "function") {
+            const sessions = await adapter.findMany({ model: "session" });
             return sessions || [];
           }
-          if (typeof adapter.getSessions === 'function') {
+          if (typeof adapter.getSessions === "function") {
             const sessions = await adapter.getSessions();
             return sessions || [];
           }
@@ -231,7 +231,7 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
         offset?: number;
       }) => {
         try {
-          if (typeof adapter.findMany === 'function') {
+          if (typeof adapter.findMany === "function") {
             return await adapter.findMany(options);
           }
           return [];
@@ -280,7 +280,7 @@ async function hashPassword(password: string): Promise<string> {
     dkLen: 64,
   };
   const salt = hex.encode(randomBytes(16));
-  const key = await scryptAsync(password.normalize('NFKC'), salt, {
+  const key = await scryptAsync(password.normalize("NFKC"), salt, {
     N: config.N,
     p: config.p,
     r: config.r,
@@ -315,9 +315,9 @@ export async function createMockUser(adapter: AuthAdapter, index: number, role?:
 const _countryIPRanges = [
   // United States
   {
-    country: 'United States',
-    city: 'New York',
-    region: 'NY',
+    country: "United States",
+    city: "New York",
+    region: "NY",
     ranges: [
       { min: 8, max: 8 },
       { min: 24, max: 24 },
@@ -327,9 +327,9 @@ const _countryIPRanges = [
   },
   // United Kingdom
   {
-    country: 'United Kingdom',
-    city: 'London',
-    region: 'England',
+    country: "United Kingdom",
+    city: "London",
+    region: "England",
     ranges: [
       { min: 51, max: 51 },
       { min: 77, max: 77 },
@@ -339,9 +339,9 @@ const _countryIPRanges = [
   },
   // Germany
   {
-    country: 'Germany',
-    city: 'Berlin',
-    region: 'Berlin',
+    country: "Germany",
+    city: "Berlin",
+    region: "Berlin",
     ranges: [
       { min: 46, max: 46 },
       { min: 78, max: 78 },
@@ -351,9 +351,9 @@ const _countryIPRanges = [
   },
   // Japan
   {
-    country: 'Japan',
-    city: 'Tokyo',
-    region: 'Tokyo',
+    country: "Japan",
+    city: "Tokyo",
+    region: "Tokyo",
     ranges: [
       { min: 126, max: 126 },
       { min: 157, max: 157 },
@@ -363,9 +363,9 @@ const _countryIPRanges = [
   },
   // Australia
   {
-    country: 'Australia',
-    city: 'Sydney',
-    region: 'NSW',
+    country: "Australia",
+    city: "Sydney",
+    region: "NSW",
     ranges: [
       { min: 101, max: 101 },
       { min: 118, max: 118 },
@@ -375,9 +375,9 @@ const _countryIPRanges = [
   },
   // Canada
   {
-    country: 'Canada',
-    city: 'Toronto',
-    region: 'ON',
+    country: "Canada",
+    city: "Toronto",
+    region: "ON",
     ranges: [
       { min: 24, max: 24 },
       { min: 70, max: 70 },
@@ -387,9 +387,9 @@ const _countryIPRanges = [
   },
   // France
   {
-    country: 'France',
-    city: 'Paris',
-    region: 'Île-de-France',
+    country: "France",
+    city: "Paris",
+    region: "Île-de-France",
     ranges: [
       { min: 37, max: 37 },
       { min: 51, max: 51 },
@@ -399,9 +399,9 @@ const _countryIPRanges = [
   },
   // Brazil
   {
-    country: 'Brazil',
-    city: 'São Paulo',
-    region: 'SP',
+    country: "Brazil",
+    city: "São Paulo",
+    region: "SP",
     ranges: [
       { min: 177, max: 177 },
       { min: 179, max: 179 },
@@ -411,9 +411,9 @@ const _countryIPRanges = [
   },
   // India
   {
-    country: 'India',
-    city: 'Mumbai',
-    region: 'Maharashtra',
+    country: "India",
+    city: "Mumbai",
+    region: "Maharashtra",
     ranges: [
       { min: 103, max: 103 },
       { min: 117, max: 117 },
@@ -423,9 +423,9 @@ const _countryIPRanges = [
   },
   // South Korea
   {
-    country: 'South Korea',
-    city: 'Seoul',
-    region: 'Seoul',
+    country: "South Korea",
+    city: "Seoul",
+    region: "Seoul",
     ranges: [
       { min: 112, max: 112 },
       { min: 114, max: 114 },
@@ -438,21 +438,21 @@ const _countryIPRanges = [
 function generateRandomIP(): string {
   // Generate a random IP address from common ranges
   const commonRanges = [
-    { min: '8.0.0.0', max: '8.255.255.255' }, // US
-    { min: '24.0.0.0', max: '24.255.255.255' }, // US
-    { min: '2.0.0.0', max: '2.255.255.255' }, // UK
-    { min: '5.0.0.0', max: '5.255.255.255' }, // UK
-    { min: '46.0.0.0', max: '46.255.255.255' }, // Germany
-    { min: '62.0.0.0', max: '62.255.255.255' }, // Germany
-    { min: '37.0.0.0', max: '37.255.255.255' }, // France
-    { min: '126.0.0.0', max: '126.255.255.255' }, // Japan
-    { min: '210.0.0.0', max: '210.255.255.255' }, // Japan
-    { min: '1.0.0.0', max: '1.255.255.255' }, // Australia
-    { min: '27.0.0.0', max: '27.255.255.255' }, // Australia
-    { min: '177.0.0.0', max: '177.255.255.255' }, // Brazil
-    { min: '201.0.0.0', max: '201.255.255.255' }, // Brazil
-    { min: '103.0.0.0', max: '103.255.255.255' }, // India
-    { min: '117.0.0.0', max: '117.255.255.255' }, // India
+    { min: "8.0.0.0", max: "8.255.255.255" }, // US
+    { min: "24.0.0.0", max: "24.255.255.255" }, // US
+    { min: "2.0.0.0", max: "2.255.255.255" }, // UK
+    { min: "5.0.0.0", max: "5.255.255.255" }, // UK
+    { min: "46.0.0.0", max: "46.255.255.255" }, // Germany
+    { min: "62.0.0.0", max: "62.255.255.255" }, // Germany
+    { min: "37.0.0.0", max: "37.255.255.255" }, // France
+    { min: "126.0.0.0", max: "126.255.255.255" }, // Japan
+    { min: "210.0.0.0", max: "210.255.255.255" }, // Japan
+    { min: "1.0.0.0", max: "1.255.255.255" }, // Australia
+    { min: "27.0.0.0", max: "27.255.255.255" }, // Australia
+    { min: "177.0.0.0", max: "177.255.255.255" }, // Brazil
+    { min: "201.0.0.0", max: "201.255.255.255" }, // Brazil
+    { min: "103.0.0.0", max: "103.255.255.255" }, // India
+    { min: "117.0.0.0", max: "117.255.255.255" }, // India
   ];
 
   const range = commonRanges[Math.floor(Math.random() * commonRanges.length)];
@@ -460,7 +460,7 @@ function generateRandomIP(): string {
   const thirdOctet = Math.floor(Math.random() * 256);
   const fourthOctet = Math.floor(Math.random() * 255) + 1;
 
-  return `${range.min.split('.')[0]}.${secondOctet}.${thirdOctet}.${fourthOctet}`;
+  return `${range.min.split(".")[0]}.${secondOctet}.${thirdOctet}.${fourthOctet}`;
 }
 
 export async function createMockSession(adapter: AuthAdapter, userId: string, index: number) {
@@ -487,45 +487,45 @@ export async function createMockAccount(
   adapter: AuthAdapter,
   userId: string,
   index: number,
-  providerId?: string
+  providerId?: string,
 ) {
   // List of common OAuth providers
   const providers = [
-    'github',
-    'google',
-    'discord',
-    'facebook',
-    'twitter',
-    'linkedin',
-    'apple',
-    'microsoft',
-    'gitlab',
-    'bitbucket',
-    'spotify',
-    'twitch',
-    'reddit',
-    'slack',
-    'notion',
-    'tiktok',
-    'zoom',
+    "github",
+    "google",
+    "discord",
+    "facebook",
+    "twitter",
+    "linkedin",
+    "apple",
+    "microsoft",
+    "gitlab",
+    "bitbucket",
+    "spotify",
+    "twitch",
+    "reddit",
+    "slack",
+    "notion",
+    "tiktok",
+    "zoom",
   ];
 
   const selectedProvider =
-    providerId && providerId !== 'random'
+    providerId && providerId !== "random"
       ? providerId
       : providers[Math.floor(Math.random() * providers.length)];
 
   const accountData = {
     userId: userId,
-    type: 'oauth',
+    type: "oauth",
     provider: selectedProvider,
     providerId: selectedProvider,
     accountId: `${selectedProvider}_${index}_${Date.now()}`,
     refresh_token: `refresh_token_${index}_${Date.now()}`,
     access_token: `access_token_${index}_${Date.now()}`,
     expires_at: Math.floor(Date.now() / 1000) + 3600,
-    token_type: 'bearer',
-    scope: 'read:user',
+    token_type: "bearer",
+    scope: "read:user",
     id_token: `id_token_${index}_${Date.now()}`,
     session_state: `session_state_${index}_${Date.now()}`,
     createdAt: new Date(),

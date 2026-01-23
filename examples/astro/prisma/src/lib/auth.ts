@@ -1,14 +1,14 @@
-import { betterAuth } from 'better-auth';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { prisma } from './db';
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { prisma } from "./db";
 
-const baseURL = process.env.BETTER_AUTH_URL || process.env.BASE_URL || 'http://localhost:4321';
+const baseURL = process.env.BETTER_AUTH_URL || process.env.BASE_URL || "http://localhost:4321";
 
 export const auth = betterAuth({
-  secret: process.env.AUTH_SECRET || 'your-secret-key-change-in-production',
-  database: prismaAdapter(prisma, { provider: 'sqlite' }),
+  secret: process.env.AUTH_SECRET || "your-secret-key-change-in-production",
+  database: prismaAdapter(prisma, { provider: "sqlite" }),
   baseURL,
-  basePath: '/api/auth',
+  basePath: "/api/auth",
   emailAndPassword: {
     enabled: true,
     disableSignUp: false,
@@ -33,6 +33,5 @@ export const auth = betterAuth({
   telemetry: {
     enabled: false,
   },
-  trustedOrigins: [baseURL, 'http://localhost:4321', 'http://localhost:3002'],
+  trustedOrigins: [baseURL, "http://localhost:4321", "http://localhost:3002"],
 });
-

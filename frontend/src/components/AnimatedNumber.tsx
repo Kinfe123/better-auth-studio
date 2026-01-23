@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import NumberFlow from '@number-flow/react';
-import clsx from 'clsx';
-import { type ComponentType, type ReactNode, useMemo } from 'react';
+import NumberFlow from "@number-flow/react";
+import clsx from "clsx";
+import { type ComponentType, type ReactNode, useMemo } from "react";
 
 interface AnimatedNumberProps {
   value: number | null | undefined;
@@ -16,7 +16,7 @@ interface AnimatedNumberProps {
 }
 
 const defaultFormat: Intl.NumberFormatOptions = {
-  notation: 'compact',
+  notation: "compact",
   maximumFractionDigits: 1,
 };
 
@@ -28,7 +28,7 @@ export function AnimatedNumber({
   suffix,
   format,
   trend,
-  fallback = '…',
+  fallback = "…",
 }: AnimatedNumberProps) {
   const numericValue = useMemo(() => {
     if (value === null || value === undefined) {
@@ -41,7 +41,7 @@ export function AnimatedNumber({
 
   if (loading) {
     return (
-      <span className={clsx('inline-flex items-baseline', className)}>
+      <span className={clsx("inline-flex items-baseline", className)}>
         {prefix}
         {fallback}
         {suffix}
@@ -56,10 +56,10 @@ export function AnimatedNumber({
     trend?: number | boolean;
   }>;
 
-  const resolvedTrend = typeof trend === 'boolean' ? (trend ? 1 : 0) : trend;
+  const resolvedTrend = typeof trend === "boolean" ? (trend ? 1 : 0) : trend;
 
   return (
-    <span className={clsx('inline-flex', className)}>
+    <span className={clsx("inline-flex", className)}>
       {prefix}
       <NumberFlowComponent
         value={numericValue}
