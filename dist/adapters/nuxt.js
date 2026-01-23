@@ -17,102 +17,102 @@ import { injectEventHooks } from "../utils/hook-injector.js";
  * auto-imports enabled for h3 utilities.
  */
 export function betterAuthStudio(config) {
-  if (config.events?.enabled && config.auth) {
-    injectEventHooks(config.auth, config.events);
-  }
-  return async (event) => {
-    try {
-      const universalReq = await convertNuxtToUniversal(event, config);
-      const universalRes = await handleStudioRequest(universalReq, config);
-      return universalToResponse(universalRes);
-    } catch (error) {
-      // Handle client disconnection gracefully
-      if (
-        error?.code === "EPIPE" ||
-        error?.code === "ECONNRESET" ||
-        error?.message?.includes("aborted") ||
-        error?.message?.includes("destroyed")
-      ) {
-        // Client disconnected, return empty response
-        return new Response(null, { status: 499 });
-      }
-      console.error("Studio handler error:", error);
-      return new Response(JSON.stringify({ error: "Internal server error" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+    if (config.events?.enabled && config.auth) {
+        injectEventHooks(config.auth, config.events);
     }
-  };
+    return async (event) => {
+        try {
+            const universalReq = await convertNuxtToUniversal(event, config);
+            const universalRes = await handleStudioRequest(universalReq, config);
+            return universalToResponse(universalRes);
+        }
+        catch (error) {
+            // Handle client disconnection gracefully
+            if (error?.code === "EPIPE" ||
+                error?.code === "ECONNRESET" ||
+                error?.message?.includes("aborted") ||
+                error?.message?.includes("destroyed")) {
+                // Client disconnected, return empty response
+                return new Response(null, { status: 499 });
+            }
+            console.error("Studio handler error:", error);
+            return new Response(JSON.stringify({ error: "Internal server error" }), {
+                status: 500,
+                headers: { "Content-Type": "application/json" },
+            });
+        }
+    };
 }
 async function convertNuxtToUniversal(event, config) {
-  let body;
-  const method = event.method;
-  if (method !== "GET" && method !== "HEAD") {
-    // First check if body was already read by h3/Nuxt and stored on event
-    if (event.body !== undefined) {
-      body = event.body;
-    } else {
-      // Try to use readBody if it's available (auto-imported in Nuxt)
-      // Access it safely without throwing errors
-      try {
-        // Check if readBody is available globally (Nuxt auto-imports it)
-        const readBodyFn = globalThis.readBody;
-        if (typeof readBodyFn === "function") {
-          body = await readBodyFn(event);
+    let body;
+    const method = event.method;
+    if (method !== "GET" && method !== "HEAD") {
+        // First check if body was already read by h3/Nuxt and stored on event
+        if (event.body !== undefined) {
+            body = event.body;
         }
-      } catch (error) {
-        // Only rethrow connection errors
-        if (
-          error?.code === "EPIPE" ||
-          error?.code === "ECONNRESET" ||
-          error?.message?.includes("aborted")
-        ) {
-          throw error;
+        else {
+            // Try to use readBody if it's available (auto-imported in Nuxt)
+            // Access it safely without throwing errors
+            try {
+                // Check if readBody is available globally (Nuxt auto-imports it)
+                const readBodyFn = globalThis.readBody;
+                if (typeof readBodyFn === "function") {
+                    body = await readBodyFn(event);
+                }
+            }
+            catch (error) {
+                // Only rethrow connection errors
+                if (error?.code === "EPIPE" ||
+                    error?.code === "ECONNRESET" ||
+                    error?.message?.includes("aborted")) {
+                    throw error;
+                }
+                // For other errors (like readBody not found), silently continue
+                // body will remain undefined
+            }
         }
-        // For other errors (like readBody not found), silently continue
-        // body will remain undefined
-      }
     }
-  }
-  // Get headers from event
-  const headers = {};
-  if (event.headers) {
-    Object.entries(event.headers).forEach(([key, value]) => {
-      if (typeof value === "string") {
-        headers[key] = value;
-      } else if (Array.isArray(value)) {
-        headers[key] = value.join(", ");
-      }
-    });
-  }
-  // Extract path and query
-  const basePath = config.basePath || "/api/studio";
-  const normalizedBasePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
-  const url = getRequestURL(event);
-  let path = url.pathname;
-  if (path.startsWith(normalizedBasePath)) {
-    path = path.slice(normalizedBasePath.length) || "/";
-  }
-  const pathWithQuery = path + url.search;
-  return {
-    url: pathWithQuery,
-    method: method,
-    headers,
-    body,
-  };
+    // Get headers from event
+    const headers = {};
+    if (event.headers) {
+        Object.entries(event.headers).forEach(([key, value]) => {
+            if (typeof value === "string") {
+                headers[key] = value;
+            }
+            else if (Array.isArray(value)) {
+                headers[key] = value.join(", ");
+            }
+        });
+    }
+    // Extract path and query
+    const basePath = config.basePath || "/api/studio";
+    const normalizedBasePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+    const url = getRequestURL(event);
+    let path = url.pathname;
+    if (path.startsWith(normalizedBasePath)) {
+        path = path.slice(normalizedBasePath.length) || "/";
+    }
+    const pathWithQuery = path + url.search;
+    return {
+        url: pathWithQuery,
+        method: method,
+        headers,
+        body,
+    };
 }
 function getRequestURL(event) {
-  const protocol = event.node.req.socket?.encrypted ? "https" : "http";
-  const host = event.headers.host || event.headers[":authority"] || "localhost";
-  const path = (event.node.req.url || "/").replace(/[/\\]{2,}/g, "/");
-  return new URL(path, `${protocol}://${host}`);
+    const protocol = event.node.req.socket?.encrypted ? "https" : "http";
+    const host = event.headers.host || event.headers[":authority"] || "localhost";
+    const path = (event.node.req.url || "/").replace(/[/\\]{2,}/g, "/");
+    return new URL(path, `${protocol}://${host}`);
 }
 function universalToResponse(res) {
-  // Simply return a Response object - Nuxt/h3 will handle it properly
-  // Nuxt will handle client disconnections automatically
-  return new Response(res.body, {
-    status: res.status,
-    headers: res.headers,
-  });
+    // Simply return a Response object - Nuxt/h3 will handle it properly
+    // Nuxt will handle client disconnections automatically
+    return new Response(res.body, {
+        status: res.status,
+        headers: res.headers,
+    });
 }
 //# sourceMappingURL=nuxt.js.map

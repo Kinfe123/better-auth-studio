@@ -32,7 +32,5 @@ import type { StudioConfig } from "../types/handler.js";
  * }
  * ```
  */
-export declare function betterAuthStudio(
-  config: StudioConfig,
-): (event: RequestEvent) => Promise<Response>;
+export declare function betterAuthStudio(config: StudioConfig): (event: RequestEvent) => Promise<Response>;
 //# sourceMappingURL=svelte-kit.d.ts.map
