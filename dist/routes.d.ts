@@ -2,25 +2,37 @@ import { Router } from "express";
 import type { AuthConfig } from "./config.js";
 import type { StudioConfig } from "./types/handler.js";
 import type { StudioAccessConfig } from "./utils/html-injector.js";
-export declare function safeImportAuthConfig(authConfigPath: string, noCache?: boolean): Promise<any>;
-export declare function createRoutes(authConfig: AuthConfig, configPath?: string, geoDbPath?: string, preloadedAdapter?: any, preloadedAuthOptions?: any, accessConfig?: StudioAccessConfig, authInstance?: any, studioConfig?: StudioConfig): Router;
+export declare function safeImportAuthConfig(
+  authConfigPath: string,
+  noCache?: boolean,
+): Promise<any>;
+export declare function createRoutes(
+  authConfig: AuthConfig,
+  configPath?: string,
+  geoDbPath?: string,
+  preloadedAdapter?: any,
+  preloadedAuthOptions?: any,
+  accessConfig?: StudioAccessConfig,
+  authInstance?: any,
+  studioConfig?: StudioConfig,
+): Router;
 export declare function handleStudioApiRequest(ctx: {
-    path: string;
-    method: string;
-    headers: Record<string, string>;
-    body?: any;
-    auth: any;
-    basePath?: string;
-    configPath?: string;
-    accessConfig?: StudioAccessConfig;
-    studioConfig?: StudioConfig;
+  path: string;
+  method: string;
+  headers: Record<string, string>;
+  body?: any;
+  auth: any;
+  basePath?: string;
+  configPath?: string;
+  accessConfig?: StudioAccessConfig;
+  studioConfig?: StudioConfig;
 }): Promise<{
-    status: number;
-    data: any;
-    cookies?: Array<{
-        name: string;
-        value: string;
-        options: any;
-    }>;
+  status: number;
+  data: any;
+  cookies?: Array<{
+    name: string;
+    value: string;
+    options: any;
+  }>;
 }>;
 //# sourceMappingURL=routes.d.ts.map

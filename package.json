@@ -50,9 +50,9 @@
     "frontend:dev": "cd frontend && pnpm run dev",
     "frontend:build": "cd frontend && pnpm run build",
     "frontend:preview": "cd frontend && pnpm run preview",
-    "lint": "oxfmt --check .",
-    "lint:fix": "oxfmt .",
-    "format": "oxfmt format --write .",
+    "lint": "oxlint . && oxfmt --check .",
+    "format": "oxlint --fix . && oxfmt .",
+    "lint:fix": "oxlint --fix . && oxfmt .",
     "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:watch": "vitest --watch",
@@ -85,6 +85,7 @@
     "jiti": "^2.5.1",
     "maxmind": "^5.0.0",
     "open": "^10.0.2",
+    "oxlint": "^1.41.0",
     "ws": "^8.14.2"
   },
   "devDependencies": {

@@ -104,10 +104,10 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
 
   const mergedMetadata: Required<StudioMetadata> = {
     ...defaultMetadata,
-    ...(config.metadata || {}),
+    ...config.metadata,
     company: {
       ...defaultMetadata.company,
-      ...(config.metadata?.company || {}),
+      ...config.metadata?.company,
     },
   };
 

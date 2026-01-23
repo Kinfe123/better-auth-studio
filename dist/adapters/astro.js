@@ -18,82 +18,77 @@ import { injectEventHooks } from "../utils/hook-injector.js";
  * ```
  */
 export function betterAuthStudio(config) {
-    if (config.events?.enabled && config.auth) {
-        injectEventHooks(config.auth, config.events);
+  if (config.events?.enabled && config.auth) {
+    injectEventHooks(config.auth, config.events);
+  }
+  return async (ctx) => {
+    try {
+      const universalReq = await convertAstroToUniversal(ctx, config);
+      const universalRes = await handleStudioRequest(universalReq, config);
+      return universalToResponse(universalRes);
+    } catch (error) {
+      console.error("Studio handler error:", error);
+      return new Response(JSON.stringify({ error: "Internal server error" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
     }
-    return async (ctx) => {
-        try {
-            const universalReq = await convertAstroToUniversal(ctx, config);
-            const universalRes = await handleStudioRequest(universalReq, config);
-            return universalToResponse(universalRes);
-        }
-        catch (error) {
-            console.error("Studio handler error:", error);
-            return new Response(JSON.stringify({ error: "Internal server error" }), {
-                status: 500,
-                headers: { "Content-Type": "application/json" },
-            });
-        }
-    };
+  };
 }
 async function convertAstroToUniversal(ctx, config) {
-    const request = ctx.request;
-    let body;
-    const method = request.method;
-    if (method !== "GET" && method !== "HEAD") {
-        const contentType = request.headers.get("content-type") || "";
-        if (contentType.includes("application/json")) {
-            try {
-                body = await request.json();
-            }
-            catch { }
+  const request = ctx.request;
+  let body;
+  const method = request.method;
+  if (method !== "GET" && method !== "HEAD") {
+    const contentType = request.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      try {
+        body = await request.json();
+      } catch {}
+    } else if (
+      contentType.includes("application/x-www-form-urlencoded") ||
+      contentType.includes("multipart/form-data")
+    ) {
+      try {
+        const formData = await request.formData();
+        body = Object.fromEntries(formData.entries());
+      } catch {}
+    } else {
+      try {
+        const text = await request.text();
+        if (text && text.trim()) {
+          try {
+            body = JSON.parse(text);
+          } catch {
+            body = text;
+          }
         }
-        else if (contentType.includes("application/x-www-form-urlencoded") ||
-            contentType.includes("multipart/form-data")) {
-            try {
-                const formData = await request.formData();
-                body = Object.fromEntries(formData.entries());
-            }
-            catch { }
-        }
-        else {
-            try {
-                const text = await request.text();
-                if (text && text.trim()) {
-                    try {
-                        body = JSON.parse(text);
-                    }
-                    catch {
-                        body = text;
-                    }
-                }
-            }
-            catch { }
-        }
+      } catch {}
     }
-    const headers = {};
-    request.headers.forEach((value, key) => {
-        headers[key] = value;
-    });
-    const basePath = config.basePath || "/api/studio";
-    const normalizedBasePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
-    const url = new URL(request.url);
-    let path = url.pathname;
-    if (path.startsWith(normalizedBasePath)) {
-        path = path.slice(normalizedBasePath.length) || "/";
-    }
-    const pathWithQuery = path + url.search;
-    return {
-        url: pathWithQuery,
-        method: method,
-        headers,
-        body,
-    };
+  }
+  const headers = {};
+  request.headers.forEach((value, key) => {
+    headers[key] = value;
+  });
+  const basePath = config.basePath || "/api/studio";
+  const normalizedBasePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+  const url = new URL(request.url);
+  let path = url.pathname;
+  if (path.startsWith(normalizedBasePath)) {
+    path = path.slice(normalizedBasePath.length) || "/";
+  }
+  const pathWithQuery = path + url.search;
+  return {
+    url: pathWithQuery,
+    method: method,
+    headers,
+    body,
+  };
 }
 function universalToResponse(res) {
-    return new Response(res.body, {
-        status: res.status,
-        headers: res.headers,
-    });
+  return new Response(res.body, {
+    status: res.status,
+    headers: res.headers,
+  });
 }
 //# sourceMappingURL=astro.js.map
