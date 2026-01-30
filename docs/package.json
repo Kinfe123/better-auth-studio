@@ -20,7 +20,7 @@
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.544.0",
     "motion": "^12.23.24",
-    "next": "^15.5.9",
+    "next": "^15.5.10",
     "postprocessing": "^6.37.8",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -35,7 +35,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.5.3",
+    "eslint-config-next": "15.5.10",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
