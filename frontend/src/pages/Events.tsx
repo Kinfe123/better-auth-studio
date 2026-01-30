@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Computer, Eye, Filter, Loader, Search, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { useNavigate } from "react-router-dom";
 import { CodeBlock } from "../components/CodeBlock";
@@ -63,6 +63,34 @@ const EVENT_TYPES = [
   "invitation.rejected",
   "invitation.cancelled",
 ] as const;
+
+/** Category is the first segment of event type (e.g. "user.joined" -> "user"). */
+const getEventCategory = (eventType: string): string => {
+  const dot = eventType.indexOf(".");
+  return dot === -1 ? eventType : eventType.slice(0, dot);
+};
+
+const EVENT_CATEGORY_ORDER = [
+  "user",
+  "organization",
+  "member",
+  "session",
+  "password",
+  "oauth",
+  "team",
+  "invitation",
+] as const;
+
+const EVENT_CATEGORY_LABELS: Record<string, string> = {
+  user: "User",
+  organization: "Organization",
+  member: "Member",
+  session: "Session",
+  password: "Password",
+  oauth: "OAuth",
+  team: "Team",
+  invitation: "Invitation",
+};
 
 interface AuthEvent {
   id: string;
@@ -452,6 +480,37 @@ export default function Events() {
 
     return matchesSearch && matchesFilter;
   });
+
+  const groupedEventsByCategory = useMemo(() => {
+    const groups = new Map<string, AuthEvent[]>();
+    for (const event of filteredEvents) {
+      const category = getEventCategory(event.type);
+      if (!groups.has(category)) groups.set(category, []);
+      groups.get(category)!.push(event);
+    }
+    const ordered: { category: string; label: string; events: AuthEvent[] }[] = [];
+    for (const category of EVENT_CATEGORY_ORDER) {
+      const events = groups.get(category);
+      if (events?.length) {
+        ordered.push({
+          category,
+          label: EVENT_CATEGORY_LABELS[category] ?? category,
+          events,
+        });
+      }
+    }
+    const known = new Set(EVENT_CATEGORY_ORDER);
+    for (const [category, events] of groups) {
+      if (!known.has(category as (typeof EVENT_CATEGORY_ORDER)[number])) {
+        ordered.push({
+          category,
+          label: EVENT_CATEGORY_LABELS[category] ?? category,
+          events,
+        });
+      }
+    }
+    return ordered;
+  }, [filteredEvents]);
 
   if (checkingEvents) {
     return (
@@ -1211,23 +1270,77 @@ export const auth = betterAuth({
                           <div className="text-xs font-mono uppercase text-gray-400 mb-2 px-2">
                             Select Event Types
                           </div>
-                          <div className="space-y-1">
-                            {EVENT_TYPES.map((eventType) => {
-                              const isSelected = filter.eventTypes?.includes(eventType) || false;
+                          <div className="space-y-3">
+                            {EVENT_CATEGORY_ORDER.map((category) => {
+                              const typesInCategory = EVENT_TYPES.filter(
+                                (t) => getEventCategory(t) === category,
+                              );
+                              if (typesInCategory.length === 0) return null;
+                              const label = EVENT_CATEGORY_LABELS[category] ?? category;
                               return (
-                                <label
-                                  key={eventType}
-                                  className="flex items-center gap-2 px-2 py-1.5 hover:bg-white/5 cursor-pointer rounded-none"
-                                >
-                                  <Checkbox
-                                    checked={isSelected}
-                                    onCheckedChange={() => toggleEventType("eventType", eventType)}
-                                    className="border-white/20 data-[state=checked]:bg-white data-[state=checked]:border-white"
-                                  />
-                                  <span className="text-xs font-mono text-white">{eventType}</span>
-                                </label>
+                                <div key={category} className="space-y-1">
+                                  <div className="text-[10px] font-mono uppercase tracking-widest text-white/50 px-2 py-1 border-b border-dashed border-white/10">
+                                    {label}
+                                  </div>
+                                  {typesInCategory.map((eventType) => {
+                                    const isSelected =
+                                      filter.eventTypes?.includes(eventType) || false;
+                                    return (
+                                      <label
+                                        key={eventType}
+                                        className="flex items-center gap-2 px-2 py-1.5 hover:bg-white/5 cursor-pointer rounded-none"
+                                      >
+                                        <Checkbox
+                                          checked={isSelected}
+                                          onCheckedChange={() =>
+                                            toggleEventType("eventType", eventType)
+                                          }
+                                          className="border-white/20 data-[state=checked]:bg-white data-[state=checked]:border-white"
+                                        />
+                                        <span className="text-xs font-mono text-white">
+                                          {eventType}
+                                        </span>
+                                      </label>
+                                    );
+                                  })}
+                                </div>
                               );
                             })}
+                            {EVENT_TYPES.filter(
+                              (t) => !EVENT_CATEGORY_ORDER.includes(getEventCategory(t) as (typeof EVENT_CATEGORY_ORDER)[number]),
+                            ).length > 0 && (
+                              <div className="space-y-1">
+                                <div className="text-[10px] font-mono uppercase tracking-widest text-white/50 px-2 py-1 border-b border-dashed border-white/10">
+                                  Other
+                                </div>
+                                {EVENT_TYPES.filter(
+                                  (t) =>
+                                    !EVENT_CATEGORY_ORDER.includes(
+                                      getEventCategory(t) as (typeof EVENT_CATEGORY_ORDER)[number],
+                                    ),
+                                ).map((eventType) => {
+                                  const isSelected =
+                                    filter.eventTypes?.includes(eventType) || false;
+                                  return (
+                                    <label
+                                      key={eventType}
+                                      className="flex items-center gap-2 px-2 py-1.5 hover:bg-white/5 cursor-pointer rounded-none"
+                                    >
+                                      <Checkbox
+                                        checked={isSelected}
+                                        onCheckedChange={() =>
+                                          toggleEventType("eventType", eventType)
+                                        }
+                                        className="border-white/20 data-[state=checked]:bg-white data-[state=checked]:border-white"
+                                      />
+                                      <span className="text-xs font-mono text-white">
+                                        {eventType}
+                                      </span>
+                                    </label>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </PopoverContent>
@@ -1276,19 +1389,29 @@ export const auth = betterAuth({
                   </td>
                 </tr>
               ) : (
-                filteredEvents.map((event) => {
-                  const isNew = newEventIds.has(event.id);
-                  const severity = event.display?.severity || "info";
-                  const status = event.status || "success";
-                  const isSuccess = status === "success" && severity !== "failed";
-                  const isFailed = status === "failed" || severity === "failed";
+                groupedEventsByCategory.map(({ category, label, events }) => (
+                  <Fragment key={category}>
+                    <tr className="border-b border-dashed border-white/10 bg-white/5">
+                      <td
+                        colSpan={6}
+                        className="py-2.5 px-4 text-[10px] font-mono uppercase tracking-widest text-white/50"
+                      >
+                        {label}
+                      </td>
+                    </tr>
+                    {events.map((event) => {
+                      const isNew = newEventIds.has(event.id);
+                      const severity = event.display?.severity || "info";
+                      const status = event.status || "success";
+                      const isSuccess = status === "success" && severity !== "failed";
+                      const isFailed = status === "failed" || severity === "failed";
 
-                  return (
-                    <tr
-                      key={event.id}
-                      onClick={() => openViewModal(event)}
-                      className={`border-b border-dashed border-white/5 hover:bg-white/5 transition-all cursor-pointer ${isNew ? (isSuccess ? "new-event-row bg-green-400/10 border-green-400/20" : isFailed ? "new-event-row bg-red-400/10 border-red-400/20" : "") : ""}`}
-                    >
+                      return (
+                        <tr
+                          key={event.id}
+                          onClick={() => openViewModal(event)}
+                          className={`border-b border-dashed border-white/5 hover:bg-white/5 transition-all cursor-pointer ${isNew ? (isSuccess ? "new-event-row bg-green-400/10 border-green-400/20" : isFailed ? "new-event-row bg-red-400/10 border-red-400/20" : "") : ""}`}
+                        >
                       <td className="py-4 px-4">
                         <div className="flex items-center space-x-3">
                           <div
@@ -1389,8 +1512,10 @@ export const auth = betterAuth({
                         </Button>
                       </td>
                     </tr>
-                  );
-                })
+                      );
+                    })}
+                  </Fragment>
+                ))
               )}
             </tbody>
           </table>

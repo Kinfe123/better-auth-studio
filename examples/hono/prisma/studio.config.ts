@@ -22,8 +22,8 @@ const config: StudioConfig = {
   },
   events: {
     enabled: true,
-    client: "https://events.betterauth.com",
-    clientType: "http",
+    client: new Database("./db.sqlite"),
+    clientType: "sqlite",
     tableName: "auth_events",
     onEventIngest: (event) => {
       console.log("event ingested ", event);
