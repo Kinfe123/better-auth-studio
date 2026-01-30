@@ -1307,7 +1307,10 @@ export const auth = betterAuth({
                               );
                             })}
                             {EVENT_TYPES.filter(
-                              (t) => !EVENT_CATEGORY_ORDER.includes(getEventCategory(t) as (typeof EVENT_CATEGORY_ORDER)[number]),
+                              (t) =>
+                                !EVENT_CATEGORY_ORDER.includes(
+                                  getEventCategory(t) as (typeof EVENT_CATEGORY_ORDER)[number],
+                                ),
                             ).length > 0 && (
                               <div className="space-y-1">
                                 <div className="text-[10px] font-mono uppercase tracking-widest text-white/50 px-2 py-1 border-b border-dashed border-white/10">
@@ -1412,106 +1415,106 @@ export const auth = betterAuth({
                           onClick={() => openViewModal(event)}
                           className={`border-b border-dashed border-white/5 hover:bg-white/5 transition-all cursor-pointer ${isNew ? (isSuccess ? "new-event-row bg-green-400/10 border-green-400/20" : isFailed ? "new-event-row bg-red-400/10 border-red-400/20" : "") : ""}`}
                         >
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-3">
-                          <div
-                            className={`w-10 h-10 rounded-none border border-dashed flex items-center justify-center relative overflow-hidden group ${getSeverityColor(
-                              severity,
-                              status,
-                            )}`}
-                          >
-                            {/* Horizontal pattern overlay for success - only on icon, show on hover */}
-                            {isSuccess && (
+                          <td className="py-4 px-4">
+                            <div className="flex items-center space-x-3">
                               <div
-                                className="absolute inset-0 pointer-events-none opacity-5 group-hover:opacity-[8%] transition-opacity"
-                                style={{
-                                  backgroundImage: `repeating-linear-gradient(0deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.3) 1px, transparent 1px, transparent 4px)`,
-                                }}
-                              />
-                            )}
-                            {/* Horizontal pattern overlay for failed - only on icon, show on hover */}
-                            {isFailed && (
+                                className={`w-10 h-10 rounded-none border border-dashed flex items-center justify-center relative overflow-hidden group ${getSeverityColor(
+                                  severity,
+                                  status,
+                                )}`}
+                              >
+                                {/* Horizontal pattern overlay for success - only on icon, show on hover */}
+                                {isSuccess && (
+                                  <div
+                                    className="absolute inset-0 pointer-events-none opacity-5 group-hover:opacity-[8%] transition-opacity"
+                                    style={{
+                                      backgroundImage: `repeating-linear-gradient(0deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.3) 1px, transparent 1px, transparent 4px)`,
+                                    }}
+                                  />
+                                )}
+                                {/* Horizontal pattern overlay for failed - only on icon, show on hover */}
+                                {isFailed && (
+                                  <div
+                                    className="absolute inset-0 pointer-events-none opacity-5 group-hover:opacity-[8%] transition-opacity"
+                                    style={{
+                                      backgroundImage: `repeating-linear-gradient(0deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.3) 1px, transparent 1px, transparent 4px)`,
+                                    }}
+                                  />
+                                )}
+                                <div className="relative z-10">
+                                  {getEventIcon(event.type, severity, status)}
+                                </div>
+                              </div>
+                              <div>
+                                <div className="text-white font-light">
+                                  {event.display?.message || event.type}
+                                </div>
+                                <CopyableId id={event.id} />
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            <span className="text-xs font-mono text-gray-400 uppercase">
+                              {event.type}
+                            </span>
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex items-center space-x-2">
                               <div
-                                className="absolute inset-0 pointer-events-none opacity-5 group-hover:opacity-[8%] transition-opacity"
-                                style={{
-                                  backgroundImage: `repeating-linear-gradient(0deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.3) 1px, transparent 1px, transparent 4px)`,
-                                }}
+                                className={`w-px h-5 rounded-none ${
+                                  status === "success" ? "bg-green-400" : "bg-red-400"
+                                }`}
                               />
+                              <span className="text-xs font-mono uppercase text-gray-400">
+                                {status}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            {event.userId ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/users/${event.userId}`);
+                                }}
+                                className="underline underline-offset-4 decoration-dashed hover:underline font-mono text-xs cursor-pointer transition-colors"
+                              >
+                                {event.userId.slice(0, 8)}...
+                              </button>
+                            ) : (
+                              <span className="text-gray-500">—</span>
                             )}
-                            <div className="relative z-10">
-                              {getEventIcon(event.type, severity, status)}
+                          </td>
+                          <td className="py-4 px-4 text-xs text-gray-400">
+                            <div className="flex font-mono uppercase flex-col">
+                              {new Date(event.timestamp).toLocaleString()}
+                              <p className="text-xs">
+                                {new Date(event.timestamp).toLocaleString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  second: "2-digit",
+                                  hour12: false,
+                                })}
+                              </p>
                             </div>
-                          </div>
-                          <div>
-                            <div className="text-white font-light">
-                              {event.display?.message || event.type}
-                            </div>
-                            <CopyableId id={event.id} />
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <span className="text-xs font-mono text-gray-400 uppercase">
-                          {event.type}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-2">
-                          <div
-                            className={`w-px h-5 rounded-none ${
-                              status === "success" ? "bg-green-400" : "bg-red-400"
-                            }`}
-                          />
-                          <span className="text-xs font-mono uppercase text-gray-400">
-                            {status}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        {event.userId ? (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/users/${event.userId}`);
-                            }}
-                            className="underline underline-offset-4 decoration-dashed hover:underline font-mono text-xs cursor-pointer transition-colors"
-                          >
-                            {event.userId.slice(0, 8)}...
-                          </button>
-                        ) : (
-                          <span className="text-gray-500">—</span>
-                        )}
-                      </td>
-                      <td className="py-4 px-4 text-xs text-gray-400">
-                        <div className="flex font-mono uppercase flex-col">
-                          {new Date(event.timestamp).toLocaleString()}
-                          <p className="text-xs">
-                            {new Date(event.timestamp).toLocaleString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                              hour12: false,
-                            })}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4 text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-gray-400 hover:text-white rounded-none"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openViewModal(event);
-                          }}
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                      </td>
-                    </tr>
+                          </td>
+                          <td className="py-4 px-4 text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-gray-400 hover:text-white rounded-none"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openViewModal(event);
+                              }}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                          </td>
+                        </tr>
                       );
                     })}
                   </Fragment>
