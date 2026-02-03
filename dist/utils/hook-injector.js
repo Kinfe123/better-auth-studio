@@ -771,6 +771,71 @@ function createEventIngestionPlugin(eventsConfig) {
                         }, capturedConfig).catch(() => { });
                     }
                 }
+                if (path === "/phone-number/send-otp") {
+                    const body = ctx.body || {};
+                    const phoneNumber = body.phoneNumber || "";
+                    if (!isError) {
+                        emitEvent("phone_number.otp_requested", {
+                            status: "success",
+                            userId: ctx.context?.session?.user?.id,
+                            metadata: {
+                                phoneNumber,
+                                name: ctx.context?.session?.user?.name,
+                                email: ctx.context?.session?.user?.email,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                    else {
+                        emitEvent("phone_number.otp_requested", {
+                            status: "failed",
+                            metadata: {
+                                phoneNumber,
+                                reason: returned?.body?.message || returned?.body?.code || "unknown",
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
+                if (path === "/phone-number/verify") {
+                    const body = ctx.body || {};
+                    const phoneNumber = body.phoneNumber || "";
+                    const user = returned?.user ?? ctx.context?.returned?.user;
+                    if (!isError && user) {
+                        emitEvent("phone_number.verification", {
+                            status: "success",
+                            userId: user.id,
+                            metadata: {
+                                phoneNumber,
+                                name: user.name,
+                                email: user.email,
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                    else if (isError) {
+                        emitEvent("phone_number.verification", {
+                            status: "failed",
+                            metadata: {
+                                phoneNumber,
+                                reason: returned?.body?.message || returned?.body?.code || "invalid_otp",
+                            },
+                            request: {
+                                headers: headersObj,
+                                ip: ip || undefined,
+                            },
+                        }, capturedConfig).catch(() => { });
+                    }
+                }
             }
             catch (error) {
                 const errorMessage = error?.message || String(error || "");
@@ -954,7 +1019,9 @@ function createEventIngestionPlugin(eventsConfig) {
                             path === "/organization/update" ||
                             path === "/organization/delete" ||
                             path === "/update-user" ||
-                            path.startsWith("/admin/");
+                            path.startsWith("/admin/") ||
+                            path === "/phone-number/send-otp" ||
+                            path === "/phone-number/verify";
                         return shouldMatch;
                     },
                     handler: eventMiddleware,

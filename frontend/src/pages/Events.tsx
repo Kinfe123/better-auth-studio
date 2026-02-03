@@ -73,6 +73,8 @@ const EVENT_TYPES = [
   "invitation.accepted",
   "invitation.rejected",
   "invitation.cancelled",
+  "phone_number.otp_requested",
+  "phone_number.verification",
 ] as const;
 
 /** Category is the first segment of event type (e.g. "user.joined" -> "user"). */
@@ -90,6 +92,7 @@ const EVENT_CATEGORY_ORDER = [
   "oauth",
   "team",
   "invitation",
+  "phone_number",
 ] as const;
 
 const EVENT_CATEGORY_LABELS: Record<string, string> = {
@@ -101,6 +104,7 @@ const EVENT_CATEGORY_LABELS: Record<string, string> = {
   oauth: "OAuth",
   team: "Team",
   invitation: "Invitation",
+  phone_number: "Phone number",
 };
 
 interface AuthEvent {

@@ -32,7 +32,9 @@ export type AuthEventType =
   | "invitation.created"
   | "invitation.accepted"
   | "invitation.rejected"
-  | "invitation.cancelled";
+  | "invitation.cancelled"
+  | "phone_number.otp_requested"
+  | "phone_number.verification";
 
 export interface AuthEvent {
   id: string;
@@ -351,6 +353,22 @@ export const EVENT_TEMPLATES: Record<AuthEventType, (event: AuthEvent) => string
     }
     return `Invitation cancelled for ${email} to join ${orgName}`;
   },
+  "phone_number.otp_requested": (event) => {
+    const phoneNumber = event.metadata?.phoneNumber || "phone number";
+    const name = event.metadata?.name || event.metadata?.email || event.userId || "User";
+    if (event.status === "failed") {
+      return `Failed to send OTP to ${phoneNumber}`;
+    }
+    return `Phone number OTP requested for ${phoneNumber}`;
+  },
+  "phone_number.verification": (event) => {
+    const phoneNumber = event.metadata?.phoneNumber || "phone number";
+    const name = event.metadata?.name || event.metadata?.email || event.userId || "User";
+    if (event.status === "failed") {
+      return `Phone number verification failed for ${phoneNumber}`;
+    }
+    return `Phone number ${phoneNumber} verified for ${name}`;
+  },
 };
 
 export function getEventSeverity(
@@ -372,6 +390,7 @@ export function getEventSeverity(
     type.includes("joined") ||
     type.includes("created") ||
     type.includes("verified") ||
+    type === "phone_number.verification" ||
     type.includes("accepted") ||
     type.includes("added") ||
     type.includes("sign_in") ||

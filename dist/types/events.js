@@ -274,6 +274,22 @@ export const EVENT_TEMPLATES = {
         }
         return `Invitation cancelled for ${email} to join ${orgName}`;
     },
+    "phone_number.otp_requested": (event) => {
+        const phoneNumber = event.metadata?.phoneNumber || "phone number";
+        const name = event.metadata?.name || event.metadata?.email || event.userId || "User";
+        if (event.status === "failed") {
+            return `Failed to send OTP to ${phoneNumber}`;
+        }
+        return `Phone number OTP requested for ${phoneNumber}`;
+    },
+    "phone_number.verification": (event) => {
+        const phoneNumber = event.metadata?.phoneNumber || "phone number";
+        const name = event.metadata?.name || event.metadata?.email || event.userId || "User";
+        if (event.status === "failed") {
+            return `Phone number verification failed for ${phoneNumber}`;
+        }
+        return `Phone number ${phoneNumber} verified for ${name}`;
+    },
 };
 export function getEventSeverity(event, status) {
     // Use the status parameter if provided, otherwise use event.status
@@ -286,6 +302,7 @@ export function getEventSeverity(event, status) {
     if (type.includes("joined") ||
         type.includes("created") ||
         type.includes("verified") ||
+        type === "phone_number.verification" ||
         type.includes("accepted") ||
         type.includes("added") ||
         type.includes("sign_in") ||

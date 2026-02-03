@@ -1,6 +1,6 @@
 import { betterAuth, url } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { organization, admin, createAuthMiddleware, emailOTP } from "better-auth/plugins";
+import { organization, admin, createAuthMiddleware, emailOTP, phoneNumber } from "better-auth/plugins";
 import prisma from "./prisma";
 
 const baseURL = process.env.BETTER_AUTH_URL || "http://localhost:3000";
@@ -56,6 +56,14 @@ export const auth = betterAuth({
     },
   },
   plugins: [
+    phoneNumber({
+      sendOTP(data, ctx) {
+        console.log("sendOTP", data, ctx);
+      },
+      callbackOnVerification(data, ctx) {
+        console.log("callbackOnVerification", data, ctx);
+      }
+    }),
     organization({
       teams: {
         enabled: true,

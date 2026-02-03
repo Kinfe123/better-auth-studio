@@ -29,8 +29,12 @@ model User {
   invitations   Invitation[]
   teammembers   TeamMember[]
 
+  phoneNumber         String?
+  phoneNumberVerified Boolean?
+
   @@unique([email])
   @@map("user")
+  @@unique([phoneNumber])
 }
 
 model Session {
@@ -110,12 +114,14 @@ model Member {
   createdAt      DateTime
 
   @@map("member")
+  @@index([organizationId])
+  @@index([userId])
 }
 
 model Invitation {
   id             String       @id
   organizationId String
-  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   email          String
   role           String?
   teamId         String?
@@ -127,6 +133,8 @@ model Invitation {
   user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 
   @@map("invitation")
+  @@index([organizationId])
+  @@index([email])
 }
 
 model Team {
@@ -139,6 +147,7 @@ model Team {
   teammembers    TeamMember[]
 
   @@map("team")
+  @@index([organizationId])
 }
 
 model TeamMember {
@@ -150,12 +159,13 @@ model TeamMember {
   createdAt DateTime?
 
   @@map("teamMember")
+  @@index([teamId])
+  @@index([userId])
 }
 
-
 model codeOtp {
-  id String @id @default(cuid())
-  code String
+  id        String   @id @default(cuid())
+  code      String
   expiresAt DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
