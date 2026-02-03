@@ -673,321 +673,381 @@ export const auth = betterAuth({
       </div>
 
       {/* Event activity grid (GitHub-style, full year) */}
-      {events.length > 0 && (() => {
-        const WEEKS = 53;
-        const DAYS = 7;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const weekStart = startOfWeek(today, { weekStartsOn: 0 });
-        const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      {events.length > 0 &&
+        (() => {
+          const WEEKS = 53;
+          const DAYS = 7;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const weekStart = startOfWeek(today, { weekStartsOn: 0 });
+          const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+          const monthNames = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
 
-        type CellData = { dateKey: string; dateLabel: string; success: number; failed: number; warning: number; info: number };
-        const cells: CellData[] = [];
-        const byDate: Record<string, { success: number; failed: number; warning: number; info: number }> = {};
-
-        // Week start dates for each column: col 0 = 52 weeks ago, col 52 = this week
-        const weekStartsByCol: Date[] = [];
-        for (let col = 0; col < WEEKS; col++) {
-          weekStartsByCol.push(subWeeks(weekStart, WEEKS - 1 - col));
-        }
-
-        // Month labels: show month at first column where that month appears
-        const monthLabelsByCol: string[] = [];
-        let lastMonth = -1;
-        for (let col = 0; col < WEEKS; col++) {
-          const d = weekStartsByCol[col];
-          const month = d.getMonth();
-          monthLabelsByCol.push(month !== lastMonth ? monthNames[month] : "");
-          lastMonth = month;
-        }
-
-        const leftYear = weekStartsByCol[0].getFullYear();
-        const rightYear = today.getFullYear();
-
-        const safeDateLabel = (d: Date) => {
-          if (Number.isNaN(d.getTime())) return "Invalid date";
-          return format(d, "EEE, MMM d, yyyy");
-        };
-
-        // Build grid row-major: row = day (Sun–Sat), col = week
-        for (let row = 0; row < DAYS; row++) {
-          for (let col = 0; col < WEEKS; col++) {
-            const weekStartDate = weekStartsByCol[col];
-            const d = addDays(weekStartDate, row);
-            const dateKey = Number.isNaN(d.getTime()) ? "" : format(d, "yyyy-MM-dd");
-            if (dateKey && !byDate[dateKey] && d <= today) {
-              byDate[dateKey] = { success: 0, failed: 0, warning: 0, info: 0 };
-            }
-            cells.push({
-              dateKey,
-              dateLabel: safeDateLabel(d),
-              success: 0,
-              failed: 0,
-              warning: 0,
-              info: 0,
-            });
-          }
-        }
-
-        events.forEach((event) => {
-          const eventDate = new Date(event.timestamp);
-          eventDate.setHours(0, 0, 0, 0);
-          const key = format(eventDate, "yyyy-MM-dd");
-          if (!byDate[key]) return;
-          const status = event.status || "success";
-          const severity = event.display?.severity;
-          const isFailed = status === "failed" || severity === "failed";
-          const isWarning = severity === "warning";
-          const isInfo = severity === "info" || (!severity && status !== "failed");
-          const isSuccess = status === "success" && !isFailed && !isWarning && !isInfo;
-          if (isFailed) byDate[key].failed++;
-          else if (isWarning) byDate[key].warning++;
-          else if (isInfo) byDate[key].info++;
-          else if (isSuccess) byDate[key].success++;
-        });
-
-        cells.forEach((cell) => {
-          const d = byDate[cell.dateKey];
-          if (d) {
-            cell.success = d.success;
-            cell.failed = d.failed;
-            cell.warning = d.warning;
-            cell.info = d.info;
-          }
-        });
-
-        const maxTotal = Math.max(
-          ...cells.map((c) => c.success + c.failed + c.warning + c.info),
-          1,
-        );
-
-        const getCellIntensity = (cell: CellData) => {
-          const total = cell.success + cell.failed + cell.warning + cell.info;
-          if (total === 0) return "bg-white/5";
-          const ratio = total / maxTotal;
-          if (ratio <= 0.25) return "bg-white/15";
-          if (ratio <= 0.5) return "bg-white/25";
-          if (ratio <= 0.75) return "bg-white/35";
-          return "bg-white/50";
-        };
-
-        const cellGap = 4;
-        const cellSize = 10;
-        const monthRowHeight = 22;
-        const gridWidth = WEEKS * cellSize + (WEEKS - 1) * cellGap;
-
-        const eventsForDate = selectedActivityDateKey
-          ? events.filter((e) => {
-              const d = new Date(e.timestamp);
-              d.setHours(0, 0, 0, 0);
-              return format(d, "yyyy-MM-dd") === selectedActivityDateKey;
-            })
-          : [];
-        const byCategoryForDate = (() => {
-          const acc: Record<
+          type CellData = {
+            dateKey: string;
+            dateLabel: string;
+            success: number;
+            failed: number;
+            warning: number;
+            info: number;
+          };
+          const cells: CellData[] = [];
+          const byDate: Record<
             string,
-            { success: number; failed: number; warning: number; info: number; total: number }
+            { success: number; failed: number; warning: number; info: number }
           > = {};
-          for (const e of eventsForDate) {
-            const cat = getEventCategory(e.type);
-            const label = EVENT_CATEGORY_LABELS[cat] || cat;
-            if (!acc[label]) acc[label] = { success: 0, failed: 0, warning: 0, info: 0, total: 0 };
-            acc[label].total++;
-            const status = e.status || "success";
-            const severity = e.display?.severity;
+
+          // Week start dates for each column: col 0 = 52 weeks ago, col 52 = this week
+          const weekStartsByCol: Date[] = [];
+          for (let col = 0; col < WEEKS; col++) {
+            weekStartsByCol.push(subWeeks(weekStart, WEEKS - 1 - col));
+          }
+
+          // Month labels: show month at first column where that month appears
+          const monthLabelsByCol: string[] = [];
+          let lastMonth = -1;
+          for (let col = 0; col < WEEKS; col++) {
+            const d = weekStartsByCol[col];
+            const month = d.getMonth();
+            monthLabelsByCol.push(month !== lastMonth ? monthNames[month] : "");
+            lastMonth = month;
+          }
+
+          const leftYear = weekStartsByCol[0].getFullYear();
+          const rightYear = today.getFullYear();
+
+          const safeDateLabel = (d: Date) => {
+            if (Number.isNaN(d.getTime())) return "Invalid date";
+            return format(d, "EEE, MMM d, yyyy");
+          };
+
+          // Build grid row-major: row = day (Sun–Sat), col = week
+          for (let row = 0; row < DAYS; row++) {
+            for (let col = 0; col < WEEKS; col++) {
+              const weekStartDate = weekStartsByCol[col];
+              const d = addDays(weekStartDate, row);
+              const dateKey = Number.isNaN(d.getTime()) ? "" : format(d, "yyyy-MM-dd");
+              if (dateKey && !byDate[dateKey] && d <= today) {
+                byDate[dateKey] = { success: 0, failed: 0, warning: 0, info: 0 };
+              }
+              cells.push({
+                dateKey,
+                dateLabel: safeDateLabel(d),
+                success: 0,
+                failed: 0,
+                warning: 0,
+                info: 0,
+              });
+            }
+          }
+
+          events.forEach((event) => {
+            const eventDate = new Date(event.timestamp);
+            eventDate.setHours(0, 0, 0, 0);
+            const key = format(eventDate, "yyyy-MM-dd");
+            if (!byDate[key]) return;
+            const status = event.status || "success";
+            const severity = event.display?.severity;
             const isFailed = status === "failed" || severity === "failed";
             const isWarning = severity === "warning";
             const isInfo = severity === "info" || (!severity && status !== "failed");
             const isSuccess = status === "success" && !isFailed && !isWarning && !isInfo;
-            if (isFailed) acc[label].failed++;
-            else if (isWarning) acc[label].warning++;
-            else if (isInfo) acc[label].info++;
-            else if (isSuccess) acc[label].success++;
-          }
-          return acc;
-        })();
-        const selectedCell = cells.find((c) => c.dateKey === selectedActivityDateKey);
+            if (isFailed) byDate[key].failed++;
+            else if (isWarning) byDate[key].warning++;
+            else if (isInfo) byDate[key].info++;
+            else if (isSuccess) byDate[key].success++;
+          });
 
-        return (
-          <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-6 relative w-full max-w-full">
-            <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-            <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-            <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-            <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-            <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-            <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-            <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-            <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+          cells.forEach((cell) => {
+            const d = byDate[cell.dateKey];
+            if (d) {
+              cell.success = d.success;
+              cell.failed = d.failed;
+              cell.warning = d.warning;
+              cell.info = d.info;
+            }
+          });
 
-            <div className="flex w-full min-w-0 items-start">
-              <div className="shrink-0 flex flex-col pr-6 border-r border-white/15">
-                <h3 className="text-sm text-white uppercase font-light mb-2">Event activity</h3>
-                <p className="text-xs text-gray-500 font-mono uppercase mb-4">Click a cell to see more details</p>
+          const maxTotal = Math.max(
+            ...cells.map((c) => c.success + c.failed + c.warning + c.info),
+            1,
+          );
 
-            <div className="flex items-start gap-4 min-w-0">
-              <div
-                className="flex flex-col shrink-0 text-[10px] text-gray-500 font-mono"
-                style={{ width: 28 }}
-              >
-                <div style={{ height: monthRowHeight, minHeight: monthRowHeight }} aria-hidden />
-                {dayNames.map((name) => (
-                  <div
-                    key={name}
-                    className="flex items-center justify-start leading-none"
-                    style={{ height: cellSize, marginBottom: name !== "Sat" ? cellGap : 0 }}
-                  >
-                    {name}
-                  </div>
-                ))}
-              </div>
-              <div className="shrink-0" style={{ width: gridWidth }}>
-                {/* Month labels - GitHub style: Jan, Feb, Mar ... aligned with first week of each month */}
-                <div
-                  className="grid mb-2"
-                  style={{
-                    gridTemplateColumns: `repeat(${WEEKS}, ${cellSize}px)`,
-                    gap: `0 ${cellGap}px`,
-                    width: gridWidth,
-                  }}
-                >
-                  {monthLabelsByCol.map((label, col) => (
-                    <span
-                      key={col}
-                      className="text-[10px] text-gray-500 font-mono text-left"
-                      style={{ gridColumn: col + 1 }}
-                    >
-                      {label}
-                    </span>
-                  ))}
-                </div>
-                <div
-                  className="grid relative"
-                  style={{
-                    gridTemplateRows: `repeat(${DAYS}, ${cellSize}px)`,
-                    gridTemplateColumns: `repeat(${WEEKS}, ${cellSize}px)`,
-                    gap: cellGap,
-                    width: gridWidth,
-                  }}
-                >
-                  {cells.map((cell, index) => {
-                    const isFuture = cell.dateKey && cell.dateKey > format(today, "yyyy-MM-dd");
-                    const isSelected = cell.dateKey === selectedActivityDateKey;
-                    return (
-                      <div
-                        key={`${cell.dateKey}-${index}`}
-                        className={`rounded-[2px] border border-white/10 transition-all duration-150 cursor-pointer hover:ring-1 hover:ring-white/40 size-full min-w-0 min-h-0 ${getCellIntensity(cell)} ${isFuture ? "opacity-40" : ""} ${isSelected ? "ring-2 ring-white/60" : ""}`}
-                        onClick={() => setSelectedActivityDateKey(cell.dateKey)}
-                      />
-                    );
-                  })}
-                </div>
-                {/* Year labels: last year (left), current year (right) — GitHub style */}
-                <div className="flex justify-between text-[10px] text-gray-500 font-mono mt-2 px-0.5">
-                  <span>{leftYear}</span>
-                  <span>{leftYear !== rightYear ? rightYear : "Today"}</span>
-                </div>
-              </div>
-            </div>
-              </div>
+          const getCellIntensity = (cell: CellData) => {
+            const total = cell.success + cell.failed + cell.warning + cell.info;
+            if (total === 0) return "bg-white/5";
+            const ratio = total / maxTotal;
+            if (ratio <= 0.25) return "bg-white/15";
+            if (ratio <= 0.5) return "bg-white/25";
+            if (ratio <= 0.75) return "bg-white/35";
+            return "bg-white/50";
+          };
 
-              {/* Activity details panel — height matches activity map, no stretch */}
-              <div className="flex-1 min-w-0 flex flex-col pl-5 min-h-0 overflow-hidden max-h-[200px]">
-                {selectedActivityDateKey ? (
-                  <p className="text-sm text-white font-light font-mono uppercase shrink-0 mb-3">
-                    {selectedCell?.dateLabel ?? selectedActivityDateKey}
-                  </p>
-                ) : (
-                  <p className="text-xs font-mono uppercase text-gray-500 shrink-0 mb-3">
+          const cellGap = 4;
+          const cellSize = 10;
+          const monthRowHeight = 22;
+          const gridWidth = WEEKS * cellSize + (WEEKS - 1) * cellGap;
+
+          const eventsForDate = selectedActivityDateKey
+            ? events.filter((e) => {
+                const d = new Date(e.timestamp);
+                d.setHours(0, 0, 0, 0);
+                return format(d, "yyyy-MM-dd") === selectedActivityDateKey;
+              })
+            : [];
+          const byCategoryForDate = (() => {
+            const acc: Record<
+              string,
+              { success: number; failed: number; warning: number; info: number; total: number }
+            > = {};
+            for (const e of eventsForDate) {
+              const cat = getEventCategory(e.type);
+              const label = EVENT_CATEGORY_LABELS[cat] || cat;
+              if (!acc[label])
+                acc[label] = { success: 0, failed: 0, warning: 0, info: 0, total: 0 };
+              acc[label].total++;
+              const status = e.status || "success";
+              const severity = e.display?.severity;
+              const isFailed = status === "failed" || severity === "failed";
+              const isWarning = severity === "warning";
+              const isInfo = severity === "info" || (!severity && status !== "failed");
+              const isSuccess = status === "success" && !isFailed && !isWarning && !isInfo;
+              if (isFailed) acc[label].failed++;
+              else if (isWarning) acc[label].warning++;
+              else if (isInfo) acc[label].info++;
+              else if (isSuccess) acc[label].success++;
+            }
+            return acc;
+          })();
+          const selectedCell = cells.find((c) => c.dateKey === selectedActivityDateKey);
+
+          return (
+            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-6 relative w-full max-w-full">
+              <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+              <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+              <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+              <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+              <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+              <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+              <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+              <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+
+              <div className="flex w-full min-w-0 items-start">
+                <div className="shrink-0 flex flex-col pr-6 border-r border-white/15">
+                  <h3 className="text-sm text-white uppercase font-light mb-2">Event activity</h3>
+                  <p className="text-xs text-gray-500 font-mono uppercase mb-4">
                     Click a cell to see more details
                   </p>
-                )}
-                <div className="flex-1 overflow-y-auto min-h-0 overscroll-contain">
-                  {!selectedActivityDateKey ? (
-                    <p className="text-xs font-mono text-gray-500">Select a day from the grid to view events by category and status.</p>
-                  ) : eventsForDate.length === 0 ? (
-                    <p className="text-xs font-mono text-gray-500">No events on this day</p>
-                  ) : (
-                    <>
-                      <div className="flex items-center justify-between py-2 border-b border-white/10">
-                        <div className="flex items-center space-x-3">
-                          <Info className="w-4 h-4 text-white shrink-0" />
-                          <div>
-                            <p className="text-xs font-light uppercase text-white">Total events</p>
-                            <p className="text-[10px] font-light uppercase font-mono text-gray-400">This day</p>
-                          </div>
+
+                  <div className="flex items-start gap-4 min-w-0">
+                    <div
+                      className="flex flex-col shrink-0 text-[10px] text-gray-500 font-mono"
+                      style={{ width: 28 }}
+                    >
+                      <div
+                        style={{ height: monthRowHeight, minHeight: monthRowHeight }}
+                        aria-hidden
+                      />
+                      {dayNames.map((name) => (
+                        <div
+                          key={name}
+                          className="flex items-center justify-start leading-none"
+                          style={{ height: cellSize, marginBottom: name !== "Sat" ? cellGap : 0 }}
+                        >
+                          {name}
                         </div>
-                        <span className="text-xs font-medium text-white">{eventsForDate.length}</span>
+                      ))}
+                    </div>
+                    <div className="shrink-0" style={{ width: gridWidth }}>
+                      {/* Month labels - GitHub style: Jan, Feb, Mar ... aligned with first week of each month */}
+                      <div
+                        className="grid mb-2"
+                        style={{
+                          gridTemplateColumns: `repeat(${WEEKS}, ${cellSize}px)`,
+                          gap: `0 ${cellGap}px`,
+                          width: gridWidth,
+                        }}
+                      >
+                        {monthLabelsByCol.map((label, col) => (
+                          <span
+                            key={col}
+                            className="text-[10px] text-gray-500 font-mono text-left"
+                            style={{ gridColumn: col + 1 }}
+                          >
+                            {label}
+                          </span>
+                        ))}
                       </div>
-                      {selectedCell && (
-                        <>
-                          {selectedCell.success > 0 && (
-                            <div className="flex items-center justify-between py-2 border-b border-white/10">
-                              <span className="text-xs font-mono uppercase text-gray-400">Success</span>
-                              <span className="text-xs font-mono text-green-400">{selectedCell.success}</span>
-                            </div>
-                          )}
-                          {selectedCell.failed > 0 && (
-                            <div className="flex items-center justify-between py-2 border-b border-white/10">
-                              <span className="text-xs font-mono uppercase text-gray-400">Failed</span>
-                              <span className="text-xs font-mono text-red-400">{selectedCell.failed}</span>
-                            </div>
-                          )}
-                          {selectedCell.warning > 0 && (
-                            <div className="flex items-center justify-between py-2 border-b border-white/10">
-                              <span className="text-xs font-mono uppercase text-gray-400">Warning</span>
-                              <span className="text-xs font-mono text-yellow-400">{selectedCell.warning}</span>
-                            </div>
-                          )}
-                          {selectedCell.info > 0 && (
-                            <div className="flex items-center justify-between py-2 border-b border-white/10">
-                              <span className="text-xs font-mono uppercase text-gray-400">Info</span>
-                              <span className="text-xs font-mono text-blue-400">{selectedCell.info}</span>
-                            </div>
-                          )}
-                        </>
-                      )}
-                      <div className="pt-2 mt-2">
-                        <p className="text-[10px] font-light uppercase font-mono text-gray-500 mb-2">By category</p>
-                        {[
-                          ...EVENT_CATEGORY_ORDER.filter((cat) => byCategoryForDate[EVENT_CATEGORY_LABELS[cat]]),
-                          ...Object.keys(byCategoryForDate).filter(
-                            (k) => !EVENT_CATEGORY_ORDER.some((c) => EVENT_CATEGORY_LABELS[c] === k),
-                          ),
-                        ].map((catOrKey) => {
-                          const label =
-                            typeof catOrKey === "string" && EVENT_CATEGORY_LABELS[catOrKey]
-                              ? EVENT_CATEGORY_LABELS[catOrKey]
-                              : catOrKey;
-                          const stats = byCategoryForDate[label];
-                          if (!stats || stats.total === 0) return null;
+                      <div
+                        className="grid relative"
+                        style={{
+                          gridTemplateRows: `repeat(${DAYS}, ${cellSize}px)`,
+                          gridTemplateColumns: `repeat(${WEEKS}, ${cellSize}px)`,
+                          gap: cellGap,
+                          width: gridWidth,
+                        }}
+                      >
+                        {cells.map((cell, index) => {
+                          const isFuture =
+                            cell.dateKey && cell.dateKey > format(today, "yyyy-MM-dd");
+                          const isSelected = cell.dateKey === selectedActivityDateKey;
                           return (
                             <div
-                              key={label}
-                              className="flex items-center justify-between py-2 border-b border-white/10 last:border-0"
-                            >
-                              <div>
-                                <p className="text-xs font-light uppercase text-white">{label}</p>
-                                <p className="text-[10px] font-mono text-gray-400">
-                                  Success {stats.success}
-                                  {stats.failed > 0 && ` · Failed ${stats.failed}`}
-                                  {stats.warning > 0 && ` · Warning ${stats.warning}`}
-                                  {stats.info > 0 && ` · Info ${stats.info}`}
-                                </p>
-                              </div>
-                              <span className="text-xs font-mono text-white">{stats.total}</span>
-                            </div>
+                              key={`${cell.dateKey}-${index}`}
+                              className={`rounded-[2px] border border-white/10 transition-all duration-150 cursor-pointer hover:ring-1 hover:ring-white/40 size-full min-w-0 min-h-0 ${getCellIntensity(cell)} ${isFuture ? "opacity-40" : ""} ${isSelected ? "ring-2 ring-white/60" : ""}`}
+                              onClick={() => setSelectedActivityDateKey(cell.dateKey)}
+                            />
                           );
                         })}
                       </div>
-                    </>
+                      {/* Year labels: last year (left), current year (right) — GitHub style */}
+                      <div className="flex justify-between text-[10px] text-gray-500 font-mono mt-2 px-0.5">
+                        <span>{leftYear}</span>
+                        <span>{leftYear !== rightYear ? rightYear : "Today"}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Activity details panel — height matches activity map, no stretch */}
+                <div className="flex-1 min-w-0 flex flex-col pl-5 min-h-0 overflow-hidden max-h-[200px]">
+                  {selectedActivityDateKey ? (
+                    <p className="text-sm text-white/80 font-light font-mono uppercase shrink-0 mb-3">
+                      {selectedCell?.dateLabel ?? selectedActivityDateKey}
+                    </p>
+                  ) : (
+                    <p className="text-xs font-mono uppercase text-gray-500 shrink-0 mb-3">
+                      Click a cell to see more details
+                    </p>
                   )}
+                  <div className="flex-1 overflow-y-auto min-h-0 overscroll-contain">
+                    {!selectedActivityDateKey ? (
+                      <p className="text-xs font-mono text-gray-500">
+                        Select a day from the grid to view events by category and status.
+                      </p>
+                    ) : eventsForDate.length === 0 ? (
+                      <p className="text-xs font-mono text-gray-500">No events on this day</p>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between py-2 border-b border-white/10">
+                          <div className="flex items-center space-x-3">
+                            <Info className="w-4 h-4 text-white shrink-0" />
+                            <div>
+                              <p className="text-xs font-light uppercase text-white">
+                                Total events
+                              </p>
+                              <p className="text-[10px] font-light uppercase font-mono text-gray-400">
+                                This day
+                              </p>
+                            </div>
+                          </div>
+                          <span className="text-xs font-medium text-white">
+                            {eventsForDate.length}
+                          </span>
+                        </div>
+                        {selectedCell && (
+                          <>
+                            {selectedCell.success > 0 && (
+                              <div className="flex items-center justify-between py-2 border-b border-white/10">
+                                <span className="text-xs font-mono uppercase text-gray-400">
+                                  Success
+                                </span>
+                                <span className="text-xs font-mono text-green-400">
+                                  {selectedCell.success}
+                                </span>
+                              </div>
+                            )}
+                            {selectedCell.failed > 0 && (
+                              <div className="flex items-center justify-between py-2 border-b border-white/10">
+                                <span className="text-xs font-mono uppercase text-gray-400">
+                                  Failed
+                                </span>
+                                <span className="text-xs font-mono text-red-400">
+                                  {selectedCell.failed}
+                                </span>
+                              </div>
+                            )}
+                            {selectedCell.warning > 0 && (
+                              <div className="flex items-center justify-between py-2 border-b border-white/10">
+                                <span className="text-xs font-mono uppercase text-gray-400">
+                                  Warning
+                                </span>
+                                <span className="text-xs font-mono text-yellow-400">
+                                  {selectedCell.warning}
+                                </span>
+                              </div>
+                            )}
+                            {selectedCell.info > 0 && (
+                              <div className="flex items-center justify-between py-2 border-b border-white/10">
+                                <span className="text-xs font-mono uppercase text-gray-400">
+                                  Info
+                                </span>
+                                <span className="text-xs font-mono text-blue-400">
+                                  {selectedCell.info}
+                                </span>
+                              </div>
+                            )}
+                          </>
+                        )}
+                        <div className="pt-2 mt-2">
+                          <p className="text-[10px] font-light uppercase font-mono text-gray-500 mb-2">
+                            By category
+                          </p>
+                          {[
+                            ...EVENT_CATEGORY_ORDER.filter(
+                              (cat) => byCategoryForDate[EVENT_CATEGORY_LABELS[cat]],
+                            ),
+                            ...Object.keys(byCategoryForDate).filter(
+                              (k) =>
+                                !EVENT_CATEGORY_ORDER.some((c) => EVENT_CATEGORY_LABELS[c] === k),
+                            ),
+                          ].map((catOrKey) => {
+                            const label =
+                              typeof catOrKey === "string" && EVENT_CATEGORY_LABELS[catOrKey]
+                                ? EVENT_CATEGORY_LABELS[catOrKey]
+                                : catOrKey;
+                            const stats = byCategoryForDate[label];
+                            if (!stats || stats.total === 0) return null;
+                            return (
+                              <div
+                                key={label}
+                                className="flex items-center justify-between py-2 border-b border-white/10 last:border-0"
+                              >
+                                <div>
+                                  <p className="text-xs font-light uppercase text-white">{label}</p>
+                                  <p className="text-[10px] font-mono text-gray-400">
+                                    Success {stats.success}
+                                    {stats.failed > 0 && ` · Failed ${stats.failed}`}
+                                    {stats.warning > 0 && ` · Warning ${stats.warning}`}
+                                    {stats.info > 0 && ` · Info ${stats.info}`}
+                                  </p>
+                                </div>
+                                <span className="text-xs font-mono text-white">{stats.total}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        );
-      })()}
+          );
+        })()}
 
       <div className="space-y-3">
         <div className="flex items-center space-x-4">
@@ -1233,7 +1293,9 @@ export const auth = betterAuth({
                 <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
                   <button
                     type="button"
-                    onClick={() => setEventSort((prev) => (prev === "newest" ? "oldest" : "newest"))}
+                    onClick={() =>
+                      setEventSort((prev) => (prev === "newest" ? "oldest" : "newest"))
+                    }
                     className="flex items-center gap-1.5 font-mono uppercase hover:text-white/90 transition-colors"
                   >
                     Timestamp
