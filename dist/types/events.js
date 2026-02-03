@@ -288,6 +288,9 @@ export const EVENT_TEMPLATES = {
         if (event.status === "failed") {
             return `Phone number verification failed for ${phoneNumber}`;
         }
+        if (event.status === "success" && !name) {
+            return `Phone number verification succeeded for ${phoneNumber}`;
+        }
         return `Phone number ${phoneNumber} verified for ${name}`;
     },
 };

@@ -478,6 +478,19 @@ export default function Events() {
     updateEventTypes(filterType, newTypes);
   };
 
+  const applyCategoryFilter = (categoryKey: string) => {
+    const eventTypesInCategory = EVENT_TYPES.filter((t) => getEventCategory(t) === categoryKey);
+    setActiveFilters((prev) => {
+      const hasEventType = prev.some((f) => f.type === "eventType");
+      if (!hasEventType) {
+        return [...prev, { type: "eventType", eventTypes: eventTypesInCategory }];
+      }
+      return prev.map((f) =>
+        f.type === "eventType" ? { ...f, eventTypes: eventTypesInCategory } : f,
+      );
+    });
+  };
+
   const filteredEvents = events.filter((event) => {
     const matchesSearch =
       event.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -1056,10 +1069,20 @@ export const auth = betterAuth({
                                 : catOrKey;
                             const stats = byCategoryForDate[label];
                             if (!stats || stats.total === 0) return null;
+                            const categoryKey = EVENT_CATEGORY_ORDER.includes(
+                              catOrKey as (typeof EVENT_CATEGORY_ORDER)[number],
+                            )
+                              ? (catOrKey as string)
+                              : (Object.entries(EVENT_CATEGORY_LABELS).find(
+                                  ([, v]) => v === label,
+                                )?.[0] ??
+                                  (label as string).toLowerCase().replace(/\s+/g, "_"));
                             return (
-                              <div
+                              <button
+                                type="button"
                                 key={label}
-                                className="flex items-center justify-between py-2 border-b border-white/10 last:border-0"
+                                onClick={() => applyCategoryFilter(categoryKey)}
+                                className="flex w-full items-center justify-between py-2 border-b border-white/10 last:border-0 text-left hover:bg-white/5 transition-colors cursor-pointer rounded px-2 -mx-1"
                               >
                                 <div>
                                   <p className="text-xs font-light uppercase text-white">{label}</p>
@@ -1071,7 +1094,7 @@ export const auth = betterAuth({
                                   </p>
                                 </div>
                                 <span className="text-xs font-mono text-white">{stats.total}</span>
-                              </div>
+                              </button>
                             );
                           })}
                         </div>
