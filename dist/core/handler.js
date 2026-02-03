@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, realpathSync, statSync } from "fs";
 import { dirname, extname, join, resolve } from "path";
 import { fileURLToPath } from "url";
-import { createClickHouseProvider, createHttpProvider, createPostgresProvider, createSqliteProvider, createStorageProvider, } from "../providers/events/helpers.js";
+import { createClickHouseProvider, createHttpProvider, createNodeSqliteProvider, createPostgresProvider, createSqliteProvider, createStorageProvider, } from "../providers/events/helpers.js";
 import { initializeEventIngestion, isEventIngestionInitialized } from "../utils/event-ingestion.js";
 import { injectEventHooks } from "../utils/hook-injector.js";
 import { serveIndexHtml as getIndexHtml } from "../utils/html-injector.js";
@@ -46,6 +46,17 @@ export async function initializeEventIngestionAndHooks(config) {
                 case "sqlite":
                     try {
                         provider = createSqliteProvider({
+                            client: config.events.client,
+                            tableName: config.events.tableName,
+                        });
+                    }
+                    catch (error) {
+                        throw error;
+                    }
+                    break;
+                case "node-sqlite":
+                    try {
+                        provider = createNodeSqliteProvider({
                             client: config.events.client,
                             tableName: config.events.tableName,
                         });

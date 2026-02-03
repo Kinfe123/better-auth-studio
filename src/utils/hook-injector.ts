@@ -3,6 +3,7 @@ import { createAuthMiddleware } from "better-auth/plugins";
 import {
   createClickHouseProvider,
   createHttpProvider,
+  createNodeSqliteProvider,
   createPostgresProvider,
   createSqliteProvider,
 } from "../providers/events/helpers.js";
@@ -1135,6 +1136,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 break;
               case "sqlite":
                 provider = createSqliteProvider({
+                  client: capturedConfig.client,
+                  tableName: capturedConfig.tableName,
+                });
+                break;
+              case "node-sqlite":
+                provider = createNodeSqliteProvider({
                   client: capturedConfig.client,
                   tableName: capturedConfig.tableName,
                 });

@@ -2,7 +2,9 @@ export { handleStudioRequest } from "./core/handler.js";
 export {
   createClickHouseProvider,
   createHttpProvider,
+  createNodeSqliteProvider,
   createPostgresProvider,
+  createSqliteProvider,
   createStorageProvider,
 } from "./providers/events/helpers.js";
 // Event ingestion exports

@@ -1,5 +1,5 @@
 export { handleStudioRequest } from "./core/handler.js";
-export { createClickHouseProvider, createHttpProvider, createPostgresProvider, createStorageProvider, } from "./providers/events/helpers.js";
+export { createClickHouseProvider, createHttpProvider, createNodeSqliteProvider, createPostgresProvider, createSqliteProvider, createStorageProvider, } from "./providers/events/helpers.js";
 export type { AuthEvent, AuthEventType, EventIngestionProvider } from "./types/events.js";
 export { EVENT_TEMPLATES, getEventSeverity } from "./types/events.js";
 export type { StudioConfig, StudioMetadata, WindowStudioConfig } from "./types/handler.js";

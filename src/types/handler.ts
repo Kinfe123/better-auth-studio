@@ -92,7 +92,7 @@ export type StudioConfig = {
     tableName?: string; // Auto-use Better Auth adapter if provided
     provider?: EventIngestionProvider; // Custom provider
     client?: any; // Client instance (Postgres pool, Prisma client, Drizzle instance, ClickHouse client, etc.)
-    clientType?: "postgres" | "prisma" | "drizzle" | "clickhouse" | "https" | "custom" | "sqlite";
+    clientType?: "postgres" | "prisma" | "drizzle" | "clickhouse" | "https" | "custom" | "sqlite" | "node-sqlite";
     include?: AuthEventType[];
     exclude?: AuthEventType[];
     batchSize?: number;

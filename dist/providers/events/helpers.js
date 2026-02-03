@@ -761,6 +761,212 @@ export function createSqliteProvider(options) {
         },
     };
 }
+/**
+ * Event ingestion provider for Node.js built-in SQLite (node:sqlite).
+ * Uses the same table schema as better-sqlite3; node:sqlite has exec, prepare, stmt.run, stmt.all
+ * but no .transaction() — we use BEGIN/COMMIT for batch.
+ */
+export function createNodeSqliteProvider(options) {
+    const { client, tableName = "auth_events" } = options;
+    if (!client) {
+        throw new Error("Node SQLite client is required. Provide a DatabaseSync instance from node:sqlite (e.g. new DatabaseSync(':memory:') or new DatabaseSync('path/to/db.sqlite')).");
+    }
+    const actualClient = typeof client === "function" ? client() : client;
+    if (!actualClient) {
+        throw new Error("Node SQLite client initialization failed. Ensure you pass a node:sqlite DatabaseSync instance (Node.js 22.5+).");
+    }
+    const hasExec = typeof actualClient.exec === "function";
+    const hasPrepare = typeof actualClient.prepare === "function";
+    if (!hasExec || !hasPrepare) {
+        throw new Error("Invalid Node SQLite client. Client must have `exec` and `prepare` methods (node:sqlite DatabaseSync). " +
+            "Import: import { DatabaseSync } from 'node:sqlite'; const db = new DatabaseSync(':memory:');");
+    }
+    const ensureTable = () => {
+        try {
+            const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS ${tableName} (
+          id TEXT PRIMARY KEY,
+          type TEXT NOT NULL,
+          timestamp TEXT NOT NULL DEFAULT (datetime('now')),
+          status TEXT NOT NULL DEFAULT 'success',
+          user_id TEXT,
+          session_id TEXT,
+          organization_id TEXT,
+          metadata TEXT DEFAULT '{}',
+          ip_address TEXT,
+          user_agent TEXT,
+          source TEXT DEFAULT 'app',
+          display_message TEXT,
+          display_severity TEXT,
+          created_at TEXT DEFAULT (datetime('now'))
+        );
+      `;
+            actualClient.exec(createTableQuery);
+            const indexQueries = [
+                `CREATE INDEX IF NOT EXISTS idx_${tableName}_user_id ON ${tableName}(user_id)`,
+                `CREATE INDEX IF NOT EXISTS idx_${tableName}_type ON ${tableName}(type)`,
+                `CREATE INDEX IF NOT EXISTS idx_${tableName}_timestamp ON ${tableName}(timestamp DESC)`,
+                `CREATE INDEX IF NOT EXISTS idx_${tableName}_id_timestamp ON ${tableName}(id, timestamp DESC)`,
+            ];
+            for (const indexQuery of indexQueries) {
+                try {
+                    actualClient.exec(indexQuery);
+                }
+                catch {
+                    // Index may already exist
+                }
+            }
+        }
+        catch (error) {
+            if (error?.message?.includes("already exists"))
+                return;
+            console.error(`Failed to ensure ${tableName} table (node:sqlite):`, error);
+        }
+    };
+    let tableEnsured = false;
+    let tableEnsuringPromise = null;
+    const ensureTableSync = async () => {
+        if (tableEnsured)
+            return;
+        if (tableEnsuringPromise)
+            return tableEnsuringPromise;
+        tableEnsuringPromise = (async () => {
+            try {
+                ensureTable();
+                tableEnsured = true;
+            }
+            finally {
+                tableEnsuringPromise = null;
+            }
+        })();
+        return tableEnsuringPromise;
+    };
+    ensureTableSync().catch(console.error);
+    const insertStmtSql = `
+    INSERT INTO ${tableName}
+    (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+    return {
+        async ingest(event) {
+            await ensureTableSync();
+            try {
+                const stmt = actualClient.prepare(insertStmtSql);
+                stmt.run(event.id, event.type, event.timestamp instanceof Date ? event.timestamp.toISOString() : String(event.timestamp), event.status || "success", event.userId ?? null, event.sessionId ?? null, event.organizationId ?? null, JSON.stringify(event.metadata || {}), event.ipAddress ?? null, event.userAgent ?? null, event.source ?? "app", event.display?.message ?? null, event.display?.severity ?? null);
+            }
+            catch (error) {
+                if (error?.message?.includes("no such table")) {
+                    tableEnsured = false;
+                    await ensureTableSync();
+                    const stmt = actualClient.prepare(insertStmtSql);
+                    stmt.run(event.id, event.type, event.timestamp instanceof Date ? event.timestamp.toISOString() : String(event.timestamp), event.status || "success", event.userId ?? null, event.sessionId ?? null, event.organizationId ?? null, JSON.stringify(event.metadata || {}), event.ipAddress ?? null, event.userAgent ?? null, event.source ?? "app", event.display?.message ?? null, event.display?.severity ?? null);
+                    return;
+                }
+                console.error(`Failed to insert event (${event.type}) into ${tableName} (node:sqlite):`, error);
+                throw error;
+            }
+        },
+        async ingestBatch(events) {
+            if (events.length === 0)
+                return;
+            await ensureTableSync();
+            try {
+                actualClient.exec("BEGIN");
+                try {
+                    const stmt = actualClient.prepare(insertStmtSql);
+                    for (const event of events) {
+                        stmt.run(event.id, event.type, event.timestamp instanceof Date ? event.timestamp.toISOString() : String(event.timestamp), event.status || "success", event.userId ?? null, event.sessionId ?? null, event.organizationId ?? null, JSON.stringify(event.metadata || {}), event.ipAddress ?? null, event.userAgent ?? null, event.source ?? "app", event.display?.message ?? null, event.display?.severity ?? null);
+                    }
+                    actualClient.exec("COMMIT");
+                }
+                catch (txError) {
+                    actualClient.exec("ROLLBACK");
+                    throw txError;
+                }
+            }
+            catch (error) {
+                if (error?.message?.includes("no such table")) {
+                    tableEnsured = false;
+                    await ensureTableSync();
+                    try {
+                        actualClient.exec("BEGIN");
+                        const stmt = actualClient.prepare(insertStmtSql);
+                        for (const event of events) {
+                            stmt.run(event.id, event.type, event.timestamp instanceof Date ? event.timestamp.toISOString() : String(event.timestamp), event.status || "success", event.userId ?? null, event.sessionId ?? null, event.organizationId ?? null, JSON.stringify(event.metadata || {}), event.ipAddress ?? null, event.userAgent ?? null, event.source ?? "app", event.display?.message ?? null, event.display?.severity ?? null);
+                        }
+                        actualClient.exec("COMMIT");
+                    }
+                    catch (txError) {
+                        actualClient.exec("ROLLBACK");
+                        throw txError;
+                    }
+                    return;
+                }
+                console.error(`Failed to insert batch (${events.length} events) into ${tableName} (node:sqlite):`, error);
+                throw error;
+            }
+        },
+        async query(options) {
+            const { limit = 20, after, sort = "desc", type, userId, since } = options;
+            await ensureTableSync();
+            try {
+                let query = `SELECT * FROM ${tableName} WHERE 1=1`;
+                const params = [];
+                if (type) {
+                    query += ` AND type = ?`;
+                    params.push(type);
+                }
+                if (userId) {
+                    query += ` AND user_id = ?`;
+                    params.push(userId);
+                }
+                if (since) {
+                    query += ` AND timestamp >= ?`;
+                    params.push(since instanceof Date ? since.toISOString() : since);
+                }
+                if (after) {
+                    query += ` AND id > ?`;
+                    params.push(after);
+                }
+                query += ` ORDER BY timestamp ${sort === "desc" ? "DESC" : "ASC"}`;
+                query += ` LIMIT ?`;
+                params.push(limit + 1);
+                const stmt = actualClient.prepare(query);
+                const rows = (stmt.all(...params) ?? []);
+                const hasMore = rows.length > limit;
+                const events = (hasMore ? rows.slice(0, limit) : rows).map((row) => ({
+                    id: row.id,
+                    type: row.type,
+                    timestamp: new Date(row.timestamp),
+                    status: row.status,
+                    userId: row.user_id || undefined,
+                    sessionId: row.session_id || undefined,
+                    organizationId: row.organization_id || undefined,
+                    metadata: typeof row.metadata === "string" ? JSON.parse(row.metadata) : row.metadata || {},
+                    ipAddress: row.ip_address || undefined,
+                    userAgent: row.user_agent || undefined,
+                    source: row.source || "app",
+                    display: row.display_message || row.display_severity
+                        ? { message: row.display_message || undefined, severity: row.display_severity || undefined }
+                        : undefined,
+                }));
+                return {
+                    events,
+                    hasMore,
+                    nextCursor: hasMore && events.length > 0 ? events[events.length - 1].id : null,
+                };
+            }
+            catch (error) {
+                if (error?.message?.includes("no such table")) {
+                    await ensureTableSync();
+                    return { events: [], hasMore: false, nextCursor: null };
+                }
+                console.error(`Failed to query events from ${tableName} (node:sqlite):`, error);
+                throw error;
+            }
+        },
+    };
+}
 export function createClickHouseProvider(options) {
     const { client, table = "auth_events", database } = options;
     const ensureTable = async () => {

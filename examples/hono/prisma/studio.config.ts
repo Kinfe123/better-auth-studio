@@ -1,8 +1,8 @@
 import type { StudioConfig } from "better-auth-studio";
 import { auth } from "./src/auth";
 import { createClient } from "@clickhouse/client";
+import { DatabaseSync } from "node:sqlite";
 
-import Database from "better-sqlite3";
 const clickhouseClient = createClient({
   host: process.env.CLICKHOUSE_HOST,
   username: process.env.CLICKHOUSE_USERNAME || "default",
@@ -22,7 +22,7 @@ const config: StudioConfig = {
   },
   events: {
     enabled: true,
-    client: new Database("./db.sqlite"),
+    client: new DatabaseSync("./db.sqlite"),
     clientType: "sqlite",
     tableName: "auth_events",
     onEventIngest: (event) => {

@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import {
   createClickHouseProvider,
   createHttpProvider,
+  createNodeSqliteProvider,
   createPostgresProvider,
   createSqliteProvider,
   createStorageProvider,
@@ -62,6 +63,16 @@ export async function initializeEventIngestionAndHooks(config: StudioConfig): Pr
         case "sqlite":
           try {
             provider = createSqliteProvider({
+              client: config.events.client,
+              tableName: config.events.tableName,
+            });
+          } catch (error) {
+            throw error;
+          }
+          break;
+        case "node-sqlite":
+          try {
+            provider = createNodeSqliteProvider({
               client: config.events.client,
               tableName: config.events.tableName,
             });

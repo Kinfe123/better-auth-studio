@@ -9,6 +9,15 @@ export declare function createSqliteProvider(options: {
     client: any;
     tableName?: string;
 }): EventIngestionProvider;
+/**
+ * Event ingestion provider for Node.js built-in SQLite (node:sqlite).
+ * Uses the same table schema as better-sqlite3; node:sqlite has exec, prepare, stmt.run, stmt.all
+ * but no .transaction() — we use BEGIN/COMMIT for batch.
+ */
+export declare function createNodeSqliteProvider(options: {
+    client: any;
+    tableName?: string;
+}): EventIngestionProvider;
 export declare function createClickHouseProvider(options: {
     client: any;
     table?: string;

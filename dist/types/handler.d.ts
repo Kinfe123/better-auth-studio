@@ -73,7 +73,7 @@ export type StudioConfig = {
         tableName?: string;
         provider?: EventIngestionProvider;
         client?: any;
-        clientType?: "postgres" | "prisma" | "drizzle" | "clickhouse" | "https" | "custom" | "sqlite";
+        clientType?: "postgres" | "prisma" | "drizzle" | "clickhouse" | "https" | "custom" | "sqlite" | "node-sqlite";
         include?: AuthEventType[];
         exclude?: AuthEventType[];
         batchSize?: number;
