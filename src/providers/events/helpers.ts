@@ -1060,7 +1060,9 @@ export function createNodeSqliteProvider(options: {
           stmt.run(
             event.id,
             event.type,
-            event.timestamp instanceof Date ? event.timestamp.toISOString() : String(event.timestamp),
+            event.timestamp instanceof Date
+              ? event.timestamp.toISOString()
+              : String(event.timestamp),
             event.status || "success",
             event.userId ?? null,
             event.sessionId ?? null,
@@ -1074,7 +1076,10 @@ export function createNodeSqliteProvider(options: {
           );
           return;
         }
-        console.error(`Failed to insert event (${event.type}) into ${tableName} (node:sqlite):`, error);
+        console.error(
+          `Failed to insert event (${event.type}) into ${tableName} (node:sqlite):`,
+          error,
+        );
         throw error;
       }
     },
@@ -1090,7 +1095,9 @@ export function createNodeSqliteProvider(options: {
             stmt.run(
               event.id,
               event.type,
-              event.timestamp instanceof Date ? event.timestamp.toISOString() : String(event.timestamp),
+              event.timestamp instanceof Date
+                ? event.timestamp.toISOString()
+                : String(event.timestamp),
               event.status || "success",
               event.userId ?? null,
               event.sessionId ?? null,
@@ -1119,7 +1126,9 @@ export function createNodeSqliteProvider(options: {
               stmt.run(
                 event.id,
                 event.type,
-                event.timestamp instanceof Date ? event.timestamp.toISOString() : String(event.timestamp),
+                event.timestamp instanceof Date
+                  ? event.timestamp.toISOString()
+                  : String(event.timestamp),
                 event.status || "success",
                 event.userId ?? null,
                 event.sessionId ?? null,
@@ -1139,7 +1148,10 @@ export function createNodeSqliteProvider(options: {
           }
           return;
         }
-        console.error(`Failed to insert batch (${events.length} events) into ${tableName} (node:sqlite):`, error);
+        console.error(
+          `Failed to insert batch (${events.length} events) into ${tableName} (node:sqlite):`,
+          error,
+        );
         throw error;
       }
     },
@@ -1192,7 +1204,10 @@ export function createNodeSqliteProvider(options: {
           source: row.source || "app",
           display:
             row.display_message || row.display_severity
-              ? { message: row.display_message || undefined, severity: row.display_severity || undefined }
+              ? {
+                  message: row.display_message || undefined,
+                  severity: row.display_severity || undefined,
+                }
               : undefined,
         }));
 
