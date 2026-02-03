@@ -1482,9 +1482,7 @@ export default function Dashboard() {
                   {resolvedActivityLabels.map((label, index) => {
                     const bucketTotal = activityBuckets[index] || 0;
                     const barHeightFraction =
-                      maxActivityValue === 0
-                        ? 0
-                        : Math.min(1, bucketTotal / maxActivityValue);
+                      maxActivityValue === 0 ? 0 : Math.min(1, bucketTotal / maxActivityValue);
                     return (
                       <div
                         key={`${label}-${index}`}
