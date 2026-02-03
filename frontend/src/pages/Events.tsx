@@ -18,6 +18,7 @@ import { CopyableId } from "../components/CopyableId";
 import {
   AlertInfo,
   AlertTriangle,
+  Analytics,
   Building2,
   Check,
   ErrorInfo,
@@ -213,6 +214,8 @@ export default function Events() {
   const [selectedActivityDateKey, setSelectedActivityDateKey] = useState<string | null>(() =>
     format(new Date(), "yyyy-MM-dd"),
   );
+  const activityDetailsScrollRef = useRef<HTMLDivElement>(null);
+  const [activityDetailsCanScroll, setActivityDetailsCanScroll] = useState(false);
 
   interface FilterConfig {
     type: string;
@@ -405,6 +408,31 @@ export default function Events() {
       }
     };
   }, [eventsEnabled, isSelfHosted, checkingEvents, fetchEvents]);
+
+  useEffect(() => {
+    if (!selectedActivityDateKey || events.length === 0) {
+      setActivityDetailsCanScroll(false);
+      return;
+    }
+    const el = activityDetailsScrollRef.current;
+    if (!el) return;
+    const check = () => {
+      setActivityDetailsCanScroll(el.scrollHeight > el.clientHeight);
+    };
+    const raf = requestAnimationFrame(() => check());
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    const onScroll = () => {
+      const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 4;
+      setActivityDetailsCanScroll(!atBottom && el.scrollHeight > el.clientHeight);
+    };
+    el.addEventListener("scroll", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      el.removeEventListener("scroll", onScroll);
+    };
+  }, [selectedActivityDateKey, events.length]);
 
   const openViewModal = (event: AuthEvent) => {
     setSelectedEvent(event);
@@ -923,7 +951,7 @@ export const auth = betterAuth({
                 </div>
 
                 {/* Activity details panel — height matches activity map, no stretch */}
-                <div className="flex-1 min-w-0 flex flex-col pl-5 min-h-0 overflow-hidden max-h-[200px]">
+                <div className="flex-1 min-w-0 flex flex-col pl-5 min-h-0 overflow-hidden max-h-[200px] relative">
                   {selectedActivityDateKey ? (
                     <p className="text-sm text-white/80 font-light font-mono uppercase shrink-0 mb-3">
                       {selectedCell?.dateLabel ?? selectedActivityDateKey}
@@ -933,7 +961,10 @@ export const auth = betterAuth({
                       Click a cell to see more details
                     </p>
                   )}
-                  <div className="flex-1 overflow-y-auto min-h-0 overscroll-contain">
+                  <div
+                    ref={activityDetailsScrollRef}
+                    className="activity-details-scroll flex-1 overflow-y-auto min-h-0 overscroll-contain"
+                  >
                     {!selectedActivityDateKey ? (
                       <p className="text-xs font-mono text-gray-500">
                         Select a day from the grid to view events by category and status.
@@ -944,7 +975,7 @@ export const auth = betterAuth({
                       <>
                         <div className="flex items-center justify-between py-2 border-b border-white/10">
                           <div className="flex items-center space-x-3">
-                            <Info className="w-4 h-4 text-white shrink-0" />
+                            <Analytics className="w-4 h-4 text-white shrink-0" />
                             <div>
                               <p className="text-xs font-light uppercase text-white">
                                 Total events
@@ -1043,6 +1074,15 @@ export const auth = betterAuth({
                       </>
                     )}
                   </div>
+                  {activityDetailsCanScroll && (
+                    <div
+                      className="absolute bottom-2 right-2 flex items-center gap-1.5 px-2 py-1 rounded bg-black/80 border border-white/20 text-[10px] font-mono uppercase text-white/80 pointer-events-none"
+                      aria-hidden
+                    >
+                      <ArrowDown className="w-3 h-3 shrink-0" />
+                      <span>Scroll for more</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1603,6 +1643,13 @@ export const auth = betterAuth({
 
         .new-event-row {
           animation: slideInFromTop 0.5s ease-out;
+        }
+
+        .activity-details-scroll {
+          scrollbar-width: none;
+        }
+        .activity-details-scroll::-webkit-scrollbar {
+          display: none;
         }
       `}</style>
     </div>
