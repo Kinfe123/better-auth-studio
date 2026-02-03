@@ -1075,8 +1075,7 @@ export const auth = betterAuth({
                               ? (catOrKey as string)
                               : (Object.entries(EVENT_CATEGORY_LABELS).find(
                                   ([, v]) => v === label,
-                                )?.[0] ??
-                                  (label as string).toLowerCase().replace(/\s+/g, "_"));
+                                )?.[0] ?? (label as string).toLowerCase().replace(/\s+/g, "_"));
                             return (
                               <button
                                 type="button"
