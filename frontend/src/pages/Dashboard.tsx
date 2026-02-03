@@ -201,13 +201,28 @@ export default function Dashboard() {
     [activityTotals],
   );
 
-  const handleActivityHover = (event: MouseEvent<HTMLDivElement>, index: number) => {
+  const handleActivityHover = (
+    event: MouseEvent<HTMLDivElement>,
+    index: number,
+    barHeightFraction: number,
+  ) => {
     const rect = event.currentTarget.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const barTopY = rect.bottom - barHeightFraction * rect.height;
+    const elevatedY = barTopY - 8;
+    const tooltipWidth = 200;
+    const tooltipHeight = 140;
+    const padding = 12;
+    const constrainedX = Math.max(
+      tooltipWidth / 2 + padding,
+      Math.min(window.innerWidth - tooltipWidth / 2 - padding, x),
+    );
+    const constrainedY = Math.max(
+      tooltipHeight + padding,
+      Math.min(window.innerHeight - padding, elevatedY),
+    );
     setHoveredAreaIndex(index);
-    setHoveredAreaPosition({
-      x: rect.left + rect.width / 2,
-      y: rect.top,
-    });
+    setHoveredAreaPosition({ x: constrainedX, y: constrainedY - 15 });
   };
 
   // Security insights data - better-auth specific
@@ -1466,11 +1481,17 @@ export default function Dashboard() {
                 <div className="h-40 flex items-end gap-1">
                   {resolvedActivityLabels.map((label, index) => {
                     const bucketTotal = activityBuckets[index] || 0;
+                    const barHeightFraction =
+                      maxActivityValue === 0
+                        ? 0
+                        : Math.min(1, bucketTotal / maxActivityValue);
                     return (
                       <div
                         key={`${label}-${index}`}
                         className="flex-1 flex flex-col justify-end gap-[1px] h-full cursor-pointer"
-                        onMouseEnter={(event) => handleActivityHover(event, index)}
+                        onMouseEnter={(event) =>
+                          handleActivityHover(event, index, barHeightFraction)
+                        }
                         onMouseLeave={() => {
                           setHoveredAreaIndex(null);
                           setHoveredAreaPosition(null);
