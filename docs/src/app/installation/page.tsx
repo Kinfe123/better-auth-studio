@@ -602,7 +602,47 @@ export const auth = betterAuth({
                   <span className="text-white/50 mr-3">•</span>
                   <strong>User details</strong> - View user profiles, and accounts
                 </li>
+                <li className="flex items-start">
+                  <span className="text-white/50 mr-3">•</span>
+                  <strong>Last seen</strong> - Optional per-user “last seen” timestamp, updated on sign-in/sign-up; enable via Studio config and add the column to your user table (no Better Auth plugin required).
+                </li>
               </ul>
+            </PixelCard>
+          </div>
+
+          <div id="last-seen">
+            <PixelCard variant="highlight" className="mb-8 relative">
+              <div className="absolute -top-10 left-0">
+                <h3
+                  onClick={() => handleSectionClick("last-seen")}
+                  className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden cursor-pointer hover:border-white/40 hover:bg-white/15 transition-all duration-200"
+                >
+                  <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
+                  <span className="relative z-10 inline-flex gap-[5px] items-center">
+                    <svg
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      className="w-3 h-3 inline-flex mr-1 text-white/50"
+                    >
+                      <path
+                        d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 2a8 8 0 110 16 8 8 0 010-16zm-1 3v5.4l4.2 2.5.8-1.3-3.5-2V7h-1.5z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    Last seen (optional)
+                  </span>
+                </h3>
+              </div>
+              <div className="pt-4 space-y-3">
+                <p className="text-sm font-light tracking-tight text-white/70">
+                  When enabled, Studio tracks when each user was last active (sign-in or sign-up). The value is shown in the Users list and on the user details page. <strong className="text-white/90">No Better Auth plugin</strong> is required—Studio injects the field and updates it automatically.
+                </p>
+                <p className="text-sm font-light tracking-tight text-white/70">
+                  <strong className="text-white/90">Setup:</strong> In your Studio config (e.g. <code className="bg-white/10 px-1 text-white/90">studio.config.ts</code>), set{" "}
+                  <code className="bg-white/10 px-1 text-white/90">lastSeenAt: &#123; enabled: true &#125;</code>. Add a <code className="bg-white/10 px-1 text-white/90">lastSeenAt</code> column (or your chosen <code className="bg-white/10 px-1 text-white/90">columnName</code>) to your user table and run your migration (e.g. <code className="bg-white/10 px-1 text-white/90">prisma migrate dev</code>, <code className="bg-white/10 px-1 text-white/90">drizzle-kit push</code>). A tooltip on the Users page explains this when the feature is enabled.
+                </p>
+              </div>
             </PixelCard>
           </div>
 
