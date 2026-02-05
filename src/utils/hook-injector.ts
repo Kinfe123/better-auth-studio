@@ -20,7 +20,7 @@ const INJECTED_HOOKS_MARKER = "__better_auth_studio_events_injected__";
 const LAST_SEEN_INJECTED_MARKER = "__better_auth_studio_last_seen_injected__";
 
 const COLUMN_NAME_DEFAULT = "lastSeenAt";
-
+// This can be compressed into one internal plugin that will have all this injections
 /**
  * Build plugin schema for lastSeenAt (same shape as phoneNumber plugin: user.fields with returned: true).
  * So the adapter includes this field when fetching users, like phoneNumber / phoneNumberVerified.
