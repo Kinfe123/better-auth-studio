@@ -1061,10 +1061,14 @@ export default function UserDetails() {
                       user.lastSeenAt ?? (user as any)[lastSeenAtColumnName];
                     return lastSeen ? (
                       <sup
-                        className="ml-2 px-2 pt-2 pb-2 -mt-1 py-0.5 text-[10px] font-mono uppercase border border-dashed border-white/15 bg-white/5 text-white/80 rounded-none select-none cursor-default"
+                        className="text-xs text-gray-500 ml-2 cursor-default select-none inline-flex items-center gap-1 hover:text-white/80 transition-colors"
                         title={formatDateTime(lastSeen)}
                       >
-                        Last seen {formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}
+                        <span className="mr-1">[</span>
+                        <span className="text-white/80 font-mono text-xs">
+                          Last seen {formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}
+                        </span>
+                        <span className="ml-1">]</span>
                       </sup>
                     ) : null;
                   })()}
