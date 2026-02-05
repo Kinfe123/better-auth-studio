@@ -61,7 +61,7 @@ async function updateUserLastSeenAt(
         })
         .catch(() => {});
     } else if (typeof (adapter as any).updateUser === "function") {
-      (adapter as any).updateUser(userId, { [key]: now }).catch(() => { });
+      (adapter as any).updateUser(userId, { [key]: now }).catch(() => {});
     }
   } catch {
     // ignore
@@ -106,12 +106,12 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
             if (typeof ctx.headers.get === "function") {
               try {
                 ip = ctx.headers.get("x-forwarded-for") || ctx.headers.get("x-real-ip") || null;
-              } catch (e) { }
+              } catch (e) {}
             } else {
               ip = ctx.headers["x-forwarded-for"] || ctx.headers["x-real-ip"] || null;
             }
           }
-        } catch (e) { }
+        } catch (e) {}
 
         if (path === "/sign-up" || path === "/sign-up/email") {
           const body = ctx.body || {};
@@ -133,7 +133,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           } else if (isError) {
             emitEvent(
               "user.joined",
@@ -155,7 +155,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -180,7 +180,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
 
             // Also emit session.created
             if (session) {
@@ -201,7 +201,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                   },
                 },
                 capturedConfig,
-              ).catch(() => { });
+              ).catch(() => {});
             }
           } else if (isError) {
             emitEvent(
@@ -221,7 +221,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -245,7 +245,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -278,7 +278,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           } else if (isError) {
             emitEvent(
               "oauth.unlinked",
@@ -297,7 +297,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -328,7 +328,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                   ? path.split("/oauth2/callback/")[1]?.split("/")[0]
                   : path.includes("/callback")
                     ? path.split("/callback")[1]?.split("/")[1] ||
-                    path.split("/callback")[1]?.split("?")[0]
+                      path.split("/callback")[1]?.split("?")[0]
                     : undefined;
 
               if (existingUser) {
@@ -348,7 +348,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                     },
                   },
                   capturedConfig,
-                ).catch(() => { });
+                ).catch(() => {});
               } else {
                 // New user signing in via OAuth
                 emitEvent(
@@ -391,7 +391,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                           },
                         },
                         capturedConfig,
-                      ).catch(() => { });
+                      ).catch(() => {});
                     } else if (isError) {
                       emitEvent(
                         "session.created",
@@ -412,10 +412,10 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                           },
                         },
                         capturedConfig,
-                      ).catch(() => { });
+                      ).catch(() => {});
                     }
                   })
-                  .catch(() => { });
+                  .catch(() => {});
               }
             }
           } catch (callbackError: any) {
@@ -447,7 +447,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           } else if (isError) {
             emitEvent(
               "user.banned",
@@ -462,7 +462,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
         if (path === "/admin/unban-user") {
@@ -484,7 +484,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           } else if (isError) {
             emitEvent(
               "user.unbanned",
@@ -499,7 +499,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -543,7 +543,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                   },
                 },
                 capturedConfig,
-              ).catch(() => { });
+              ).catch(() => {});
             }
           } else if (isError) {
             emitEvent(
@@ -566,7 +566,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -592,7 +592,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -620,7 +620,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -648,7 +648,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -675,7 +675,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -703,7 +703,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -735,7 +735,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -767,7 +767,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -796,7 +796,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -823,7 +823,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -851,7 +851,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -878,7 +878,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -907,7 +907,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -936,7 +936,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -965,7 +965,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -994,7 +994,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -1018,7 +1018,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           } else {
             emitEvent(
               "phone_number.otp_requested",
@@ -1034,7 +1034,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
 
@@ -1059,7 +1059,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           } else if (isError) {
             emitEvent(
               "phone_number.verification",
@@ -1075,7 +1075,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
       } catch (error: any) {
@@ -1132,7 +1132,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           } else {
             await emitEvent(
               "oauth.sign_in",
@@ -1153,7 +1153,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 },
               },
               capturedConfig,
-            ).catch(() => { });
+            ).catch(() => {});
           }
         }
       } catch (error) {
@@ -1216,7 +1216,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
                 provider,
               });
             }
-          } catch (error) { }
+          } catch (error) {}
         }
       }
       return context;
@@ -1348,7 +1348,7 @@ function createLastSeenAtPlugin(columnName: string): any {
             ...opts,
             plugins: [...(opts.plugins || [])],
             user: opts.user
-              ? { ...opts.user, additionalFields: { ...(opts.user.additionalFields || {}) } }
+              ? { ...opts.user, additionalFields: { ...opts.user.additionalFields } }
               : undefined,
           };
           const dbResult = await opts.database(freshOpts);
@@ -1421,9 +1421,7 @@ export function injectLastSeenAtHooks(
     if (auth.options?.[LAST_SEEN_INJECTED_MARKER]) return;
     if (!auth.options) auth.options = {};
     if (!auth.options.plugins) auth.options.plugins = [];
-    const exists = auth.options.plugins.some(
-      (p: any) => p?.id === "better-auth-studio-last-seen",
-    );
+    const exists = auth.options.plugins.some((p: any) => p?.id === "better-auth-studio-last-seen");
     const columnName = config.lastSeenAt.columnName || COLUMN_NAME_DEFAULT;
     if (!exists) auth.options.plugins.push(createLastSeenAtPlugin(columnName));
     mergeLastSeenAtIntoUserAdditionalFields(auth, columnName);

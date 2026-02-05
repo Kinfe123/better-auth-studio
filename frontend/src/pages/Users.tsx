@@ -32,7 +32,12 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Pagination } from "../components/ui/pagination";
 import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../components/ui/tooltip-docs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../components/ui/tooltip-docs";
 import {
   Select,
   SelectContent,
@@ -965,8 +970,15 @@ export default function Users() {
                             side="top"
                             className="max-w-xs lowercase border border-white/20 bg-black/95 text-white text-xs font-normal shadow-xl rounded-none px-3 py-2"
                           >
-                            Last seen is set when users sign in or sign up (no plugin needed). Add the column{" "}
-                            <code className="px-1 py-0.5 bg-white/10 rounded font-mono">{lastSeenAtColumnName}</code> to your user table and run migrations (e.g. Prisma: <code className="font-mono">prisma migrate dev</code>, Drizzle: <code className="font-mono">drizzle-kit push</code>) so values are saved and shown here.
+                            Last seen is set when users sign in or sign up (no plugin needed). Add
+                            the column{" "}
+                            <code className="px-1 py-0.5 bg-white/10 rounded font-mono">
+                              {lastSeenAtColumnName}
+                            </code>{" "}
+                            to your user table and run migrations (e.g. Prisma:{" "}
+                            <code className="font-mono">prisma migrate dev</code>, Drizzle:{" "}
+                            <code className="font-mono">drizzle-kit push</code>) so values are saved
+                            and shown here.
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -1105,17 +1117,11 @@ export default function Users() {
                     {lastSeenAtEnabled && (
                       <td className="py-4 px-4 text-sm text-gray-400">
                         {(() => {
-                          const lastSeen =
-                            user.lastSeenAt ??
-                            (user as any)[lastSeenAtColumnName];
+                          const lastSeen = user.lastSeenAt ?? (user as any)[lastSeenAtColumnName];
                           return lastSeen ? (
                             <div className="flex uppercase font-mono flex-col">
-                              <span>
-                                {format(new Date(lastSeen), "dd MMM yyyy, HH:mm")}
-                              </span>
-                              <p className="text-xs text-gray-500">
-                                {formatTimeAgo(lastSeen)}
-                              </p>
+                              <span>{format(new Date(lastSeen), "dd MMM yyyy, HH:mm")}</span>
+                              <p className="text-xs text-gray-500">{formatTimeAgo(lastSeen)}</p>
                             </div>
                           ) : (
                             <span className="text-gray-500">—</span>

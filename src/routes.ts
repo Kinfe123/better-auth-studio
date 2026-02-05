@@ -413,7 +413,7 @@ export function createRoutes(
         ...opts,
         plugins: [...(opts.plugins || [])],
         user: opts.user
-          ? { ...opts.user, additionalFields: { ...(opts.user.additionalFields || {}) } }
+          ? { ...opts.user, additionalFields: { ...opts.user.additionalFields } }
           : undefined,
       };
       const adapter = await db(freshOpts);
@@ -2214,8 +2214,7 @@ export function createRoutes(
             paginatedUsers = filteredUsers;
           }
 
-          const lastSeenCol =
-            studioConfig?.lastSeenAt?.columnName || "lastSeenAt";
+          const lastSeenCol = studioConfig?.lastSeenAt?.columnName || "lastSeenAt";
           const transformedUsers = paginatedUsers.map((user: any) => {
             const lastSeenVal = user.lastSeenAt ?? user[lastSeenCol];
             return {
@@ -2249,8 +2248,7 @@ export function createRoutes(
         preloadedAdapter,
       );
 
-      const lastSeenCol =
-        studioConfig?.lastSeenAt?.columnName || "lastSeenAt";
+      const lastSeenCol = studioConfig?.lastSeenAt?.columnName || "lastSeenAt";
       const transformedUsers = (result.data || []).map((user: any) => {
         const lastSeenVal = user.lastSeenAt ?? user[lastSeenCol];
         return {
