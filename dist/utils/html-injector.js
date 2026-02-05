@@ -42,10 +42,14 @@ function prepareFrontendConfig(config) {
             timeWindow: liveMarqueeConfig?.timeWindow || undefined, // Include timeWindow config
         }
         : undefined;
+    const lastSeenAt = config.lastSeenAt;
     return {
         basePath: config.basePath || "",
         metadata: mergedMetadata,
         liveMarquee: liveMarquee,
+        lastSeenAt: lastSeenAt && typeof lastSeenAt === "object"
+            ? { enabled: !!lastSeenAt.enabled, columnName: lastSeenAt.columnName }
+            : undefined,
     };
 }
 function injectConfig(html, config) {

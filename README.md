@@ -154,6 +154,7 @@ export const auth = betterAuth({
 - **Delete users** - Remove users from the system
 - **Bulk operations** - Seed multiple test users
 - **User details** - View user profiles, and accounts
+- **Last seen** - When events are enabled, the studio injects an optional `lastSeenAt` field on the user model and updates it on each sign-in or session creation. Run your database migration (e.g. `prisma migrate dev` or Drizzle push) to add the `lastSeenAt` column to the user table.
 
 ### 🏢 Organization Management
 

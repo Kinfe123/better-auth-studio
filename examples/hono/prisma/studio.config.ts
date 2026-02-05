@@ -12,6 +12,10 @@ const clickhouseClient = createClient({
 const config: StudioConfig = {
   auth,
   basePath: "/api/studio",
+  lastSeenAt: {
+    enabled: true,
+    columnName: "lastSeenAt",
+  },
   metadata: {
     title: "Better Auth Studio",
     theme: "dark",
@@ -23,7 +27,7 @@ const config: StudioConfig = {
   events: {
     enabled: true,
     client: new DatabaseSync("./db.sqlite"),
-    clientType: "sqlite",
+    clientType: "node-sqlite",
     tableName: "auth_events",
     onEventIngest: (event) => {
       console.log("event ingested ", event);

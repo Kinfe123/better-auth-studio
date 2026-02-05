@@ -1,6 +1,6 @@
 import { handleStudioRequest } from "../core/handler.js";
 import type { StudioConfig, UniversalRequest, UniversalResponse } from "../types/handler.js";
-import { injectEventHooks } from "../utils/hook-injector.js";
+import { injectEventHooks, injectLastSeenAtHooks } from "../utils/hook-injector.js";
 
 /**
  * Remix adapter for Better Auth Studio
@@ -24,8 +24,9 @@ import { injectEventHooks } from "../utils/hook-injector.js";
  * ```
  */
 export function betterAuthStudio(config: StudioConfig) {
-  if (config.events?.enabled && config.auth) {
-    injectEventHooks(config.auth, config.events);
+  if (config.auth) {
+    injectLastSeenAtHooks(config.auth, config);
+    if (config.events?.enabled) injectEventHooks(config.auth, config.events);
   }
 
   return async ({ request }: { request: Request }): Promise<Response> => {

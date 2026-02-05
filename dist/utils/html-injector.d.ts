@@ -47,10 +47,16 @@ export interface LiveMarqueeConfig {
     colors?: EventColors;
     timeWindow?: TimeWindowConfig;
 }
+export interface LastSeenAtConfig {
+    enabled?: boolean;
+    /** Column/field name (e.g. "lastSeenAt", "last_seen_at"). Default "lastSeenAt". */
+    columnName?: string;
+}
 export interface WindowStudioConfig {
     basePath: string;
     metadata: Required<StudioMetadata>;
     liveMarquee?: LiveMarqueeConfig;
+    lastSeenAt?: LastSeenAtConfig;
 }
 export declare function serveIndexHtml(publicDir: string, config?: Partial<StudioConfig>): string;
 //# sourceMappingURL=html-injector.d.ts.map

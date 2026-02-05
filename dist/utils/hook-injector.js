@@ -4,6 +4,52 @@ import { wrapAuthCallbacks } from "./auth-callbacks-injector.js";
 import { emitEvent, isEventIngestionInitialized, } from "./event-ingestion.js";
 import { wrapOrganizationPluginHooks } from "./org-hooks-injector.js";
 const INJECTED_HOOKS_MARKER = "__better_auth_studio_events_injected__";
+const LAST_SEEN_INJECTED_MARKER = "__better_auth_studio_last_seen_injected__";
+const COLUMN_NAME_DEFAULT = "lastSeenAt";
+/**
+ * Build plugin schema for lastSeenAt (same shape as phoneNumber plugin: user.fields with returned: true).
+ * So the adapter includes this field when fetching users, like phoneNumber / phoneNumberVerified.
+ */
+function buildLastSeenSchema(columnName) {
+    return {
+        user: {
+            fields: {
+                [columnName]: {
+                    type: "date",
+                    required: false,
+                    input: false,
+                    returned: true,
+                },
+            },
+        },
+    };
+}
+/**
+ * Update user's last-seen column using the adapter only. Column name is configurable (e.g. lastSeenAt, last_seen_at).
+ */
+async function updateUserLastSeenAt(adapter, userId, columnName) {
+    if (!adapter || !userId)
+        return;
+    const now = new Date();
+    const key = columnName || COLUMN_NAME_DEFAULT;
+    try {
+        if (typeof adapter.update === "function") {
+            await adapter
+                .update({
+                model: "user",
+                where: [{ field: "id", value: userId }],
+                update: { [key]: now },
+            })
+                .catch(() => { });
+        }
+        else if (typeof adapter.updateUser === "function") {
+            adapter.updateUser(userId, { [key]: now }).catch(() => { });
+        }
+    }
+    catch {
+        // ignore
+    }
+}
 /**
  * Create a Better Auth plugin for event ingestion
  */
@@ -1043,6 +1089,134 @@ function createEventIngestionPlugin(eventsConfig) {
         //   },
         // },
     };
+}
+/**
+ * Create a Better Auth plugin that updates the last-seen column on sign-up, sign-in, and OAuth callback.
+ * Uses internal adapter only. Column name is configurable (e.g. lastSeenAt, last_seen_at).
+ */
+function createLastSeenAtPlugin(columnName) {
+    const col = columnName || COLUMN_NAME_DEFAULT;
+    const schema = buildLastSeenSchema(col);
+    const lastSeenMiddleware = createAuthMiddleware(async (ctx) => {
+        try {
+            const path = (ctx?.path ?? ctx?.context?.path ?? "").replace(/^\/+/, "");
+            const returned = ctx?.context?.returned;
+            if (!returned)
+                return;
+            let userId;
+            if (path === "sign-up" || path === "sign-up/email" || path.includes("sign-up")) {
+                userId = returned?.user?.id;
+            }
+            else if (path === "sign-in" || path === "sign-in/email" || path.includes("sign-in")) {
+                const user = returned?.user ?? ctx?.context?.returned?.user;
+                userId = user?.id;
+            }
+            else if (path.includes("callback") || path.includes("oauth2/callback")) {
+                const newSession = ctx?.context?.newSession ?? returned?.newSession;
+                const user = newSession?.user ??
+                    returned?.user ??
+                    returned?.data?.user ??
+                    ctx?.context?.user ??
+                    (returned?.data && typeof returned.data === "object" && "user" in returned.data
+                        ? returned.data.user
+                        : null);
+                userId = user?.id;
+            }
+            if (!userId)
+                return;
+            const opts = ctx?.context?.options;
+            let adapter = ctx?.context?.adapter;
+            if (opts?.database && typeof opts.database === "function") {
+                try {
+                    const freshOpts = {
+                        ...opts,
+                        plugins: [...(opts.plugins || [])],
+                        user: opts.user
+                            ? { ...opts.user, additionalFields: { ...(opts.user.additionalFields || {}) } }
+                            : undefined,
+                    };
+                    const dbResult = await opts.database(freshOpts);
+                    if (dbResult && typeof dbResult.update === "function")
+                        adapter = dbResult;
+                }
+                catch {
+                    // use context adapter
+                }
+            }
+            if (adapter)
+                await updateUserLastSeenAt(adapter, userId, col);
+        }
+        catch {
+            // ignore
+        }
+    });
+    return {
+        id: "better-auth-studio-last-seen",
+        schema,
+        hooks: {
+            after: [
+                {
+                    matcher: (context) => {
+                        const path = (context?.path ?? context?.context?.path ?? "").replace(/^\/+/, "");
+                        return (path === "sign-up" ||
+                            path === "sign-up/email" ||
+                            path.includes("sign-up") ||
+                            path === "sign-in" ||
+                            path === "sign-in/email" ||
+                            path.includes("sign-in") ||
+                            path.includes("callback") ||
+                            path.includes("oauth2/callback"));
+                    },
+                    handler: lastSeenMiddleware,
+                },
+            ],
+        },
+    };
+}
+/**
+ * Inject lastSeenAt plugin when config.lastSeenAt.enabled is true. Uses adapter only.
+ */
+/**
+ * Merge lastSeenAt into auth.options.user.additionalFields so the adapter selects/returns the field.
+ */
+function mergeLastSeenAtIntoUserAdditionalFields(auth, columnName) {
+    if (!auth?.options)
+        return;
+    if (!auth.options.user)
+        auth.options.user = {};
+    const existing = auth.options.user.additionalFields;
+    if (typeof existing === "object" && existing !== null && columnName in existing) {
+        return; // user already defined this field; do not override
+    }
+    if (typeof existing !== "object" || existing === null) {
+        auth.options.user.additionalFields = {};
+    }
+    auth.options.user.additionalFields[columnName] = {
+        type: "date",
+        required: false,
+        input: false,
+    };
+}
+export function injectLastSeenAtHooks(auth, config) {
+    if (!auth || !config?.lastSeenAt?.enabled)
+        return;
+    try {
+        if (auth.options?.[LAST_SEEN_INJECTED_MARKER])
+            return;
+        if (!auth.options)
+            auth.options = {};
+        if (!auth.options.plugins)
+            auth.options.plugins = [];
+        const exists = auth.options.plugins.some((p) => p?.id === "better-auth-studio-last-seen");
+        const columnName = config.lastSeenAt.columnName || COLUMN_NAME_DEFAULT;
+        if (!exists)
+            auth.options.plugins.push(createLastSeenAtPlugin(columnName));
+        mergeLastSeenAtIntoUserAdditionalFields(auth, columnName);
+        auth.options[LAST_SEEN_INJECTED_MARKER] = true;
+    }
+    catch (error) {
+        console.error("[LastSeenAt Hooks] Failed to inject:", error);
+    }
 }
 /**
  * Inject middleware hooks into Better Auth using plugins

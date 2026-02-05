@@ -1,6 +1,6 @@
 import { handleStudioRequest } from "../core/handler.js";
 import type { StudioConfig, UniversalRequest, UniversalResponse } from "../types/handler.js";
-import { injectEventHooks } from "../utils/hook-injector.js";
+import { injectEventHooks, injectLastSeenAtHooks } from "../utils/hook-injector.js";
 
 /**
  * Nuxt adapter for Better Auth Studio
@@ -19,8 +19,9 @@ import { injectEventHooks } from "../utils/hook-injector.js";
  * auto-imports enabled for h3 utilities.
  */
 export function betterAuthStudio(config: StudioConfig): (event: any) => Promise<Response | any> {
-  if (config.events?.enabled && config.auth) {
-    injectEventHooks(config.auth, config.events);
+  if (config.auth) {
+    injectLastSeenAtHooks(config.auth, config);
+    if (config.events?.enabled) injectEventHooks(config.auth, config.events);
   }
 
   return async (event: any) => {

@@ -72,10 +72,17 @@ export interface LiveMarqueeConfig {
   timeWindow?: TimeWindowConfig; // Time window for fetching events
 }
 
+export interface LastSeenAtConfig {
+  enabled?: boolean;
+  /** Column/field name (e.g. "lastSeenAt", "last_seen_at"). Default "lastSeenAt". */
+  columnName?: string;
+}
+
 export interface WindowStudioConfig {
   basePath: string;
   metadata: Required<StudioMetadata>;
   liveMarquee?: LiveMarqueeConfig;
+  lastSeenAt?: LastSeenAtConfig;
 }
 
 export function serveIndexHtml(publicDir: string, config: Partial<StudioConfig> = {}): string {
@@ -129,10 +136,16 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
       }
     : undefined;
 
+  const lastSeenAt = (config as any).lastSeenAt;
+
   return {
     basePath: config.basePath || "",
     metadata: mergedMetadata,
     liveMarquee: liveMarquee,
+    lastSeenAt:
+      lastSeenAt && typeof lastSeenAt === "object"
+        ? { enabled: !!lastSeenAt.enabled, columnName: lastSeenAt.columnName }
+        : undefined,
   };
 }
 

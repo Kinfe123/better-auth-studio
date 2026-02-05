@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import {
   Ban,
   Calendar as CalendarIcon,
@@ -7,6 +7,7 @@ import {
   Edit,
   Eye,
   Filter,
+  HelpCircle,
   Loader,
   MoreVertical,
   Plus,
@@ -31,6 +32,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Pagination } from "../components/ui/pagination";
 import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../components/ui/tooltip-docs";
 import {
   Select,
   SelectContent,
@@ -49,6 +51,7 @@ interface User {
   image?: string;
   createdAt: string;
   updatedAt: string;
+  lastSeenAt?: string | null;
   banned?: boolean;
   banReason?: string;
   banExpires?: string;
@@ -60,6 +63,13 @@ const formatDateTime = (value?: string) => {
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return "—";
   return format(d, "dd MMM yyyy; HH:mm");
+};
+
+const formatTimeAgo = (value?: string | null): string => {
+  if (!value) return "—";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "—";
+  return formatDistanceToNow(d, { addSuffix: true });
 };
 
 export default function Users() {
@@ -99,6 +109,9 @@ export default function Users() {
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [seedRole, setSeedRole] = useState<string>("");
   const [createRole, setCreateRole] = useState<string>("");
+  const lastSeenAtEnabled = !!(window as any).__STUDIO_CONFIG__?.lastSeenAt?.enabled;
+  const lastSeenAtColumnName =
+    (window as any).__STUDIO_CONFIG__?.lastSeenAt?.columnName || "lastSeenAt";
   const [seedingLogs, setSeedingLogs] = useState<
     Array<{
       id: string;
@@ -937,6 +950,29 @@ export default function Users() {
                 <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
                   Created
                 </th>
+                {lastSeenAtEnabled && (
+                  <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                    <span className="inline-flex items-center gap-1.5">
+                      Last seen
+                      <TooltipProvider delayDuration={200}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="inline-flex text-white/50 hover:text-white/80 cursor-help">
+                              <HelpCircle className="w-3.5 h-3.5" />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="top"
+                            className="max-w-xs lowercase border border-white/20 bg-black/95 text-white text-xs font-normal shadow-xl rounded-none px-3 py-2"
+                          >
+                            Last seen is set when users sign in or sign up (no plugin needed). Add the column{" "}
+                            <code className="px-1 py-0.5 bg-white/10 rounded font-mono">{lastSeenAtColumnName}</code> to your user table and run migrations (e.g. Prisma: <code className="font-mono">prisma migrate dev</code>, Drizzle: <code className="font-mono">drizzle-kit push</code>) so values are saved and shown here.
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </span>
+                  </th>
+                )}
                 <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
                   Actions
                 </th>
@@ -945,7 +981,7 @@ export default function Users() {
             <tbody>
               {currentUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 px-4 text-center">
+                  <td colSpan={lastSeenAtEnabled ? 6 : 5} className="py-12 px-4 text-center">
                     <div className="flex flex-col items-center space-y-4">
                       <div className="w-16 h-16 rounded-none border border-dashed border-white/20 bg-white/10 flex items-center justify-center">
                         <UsersIcon className="w-8 h-8 text-white/50" />
@@ -1055,7 +1091,7 @@ export default function Users() {
                       )}
                     </td>
                     <td className="py-4 px-4 text-sm text-gray-400">
-                      <div className="flex flex-col">
+                      <div className="flex uppercase font-mono flex-col">
                         {new Date(user.createdAt).toLocaleDateString()}
                         <p className="text-xs">
                           {new Date(user.createdAt).toLocaleDateString("en-US", {
@@ -1066,6 +1102,27 @@ export default function Users() {
                         </p>
                       </div>
                     </td>
+                    {lastSeenAtEnabled && (
+                      <td className="py-4 px-4 text-sm text-gray-400">
+                        {(() => {
+                          const lastSeen =
+                            user.lastSeenAt ??
+                            (user as any)[lastSeenAtColumnName];
+                          return lastSeen ? (
+                            <div className="flex uppercase font-mono flex-col">
+                              <span>
+                                {format(new Date(lastSeen), "dd MMM yyyy, HH:mm")}
+                              </span>
+                              <p className="text-xs text-gray-500">
+                                {formatTimeAgo(lastSeen)}
+                              </p>
+                            </div>
+                          ) : (
+                            <span className="text-gray-500">—</span>
+                          );
+                        })()}
+                      </td>
+                    )}
                     <td className="py-4 px-4 text-right">
                       <div className="relative flex items-center justify-end">
                         <Button
@@ -1666,6 +1723,30 @@ export default function Users() {
                   { label: "Ban Expires", value: formatDateTime(selectedUser.banExpires) },
                   { label: "Created", value: formatDateTime(selectedUser.createdAt) },
                   { label: "Updated", value: formatDateTime(selectedUser.updatedAt) },
+                  ...(lastSeenAtEnabled
+                    ? [
+                        {
+                          label: "Last seen",
+                          value: (() => {
+                            const lastSeen =
+                              selectedUser.lastSeenAt ??
+                              (selectedUser as any)[lastSeenAtColumnName];
+                            return lastSeen ? (
+                              <span className="block text-right max-w-[60%]">
+                                <span className="block text-[10px] font-mono uppercase text-white">
+                                  {formatDateTime(lastSeen)}
+                                </span>
+                                <span className="block text-[9px] font-mono text-gray-500 mt-0.5">
+                                  {formatTimeAgo(lastSeen)}
+                                </span>
+                              </span>
+                            ) : (
+                              "—"
+                            );
+                          })(),
+                        },
+                      ]
+                    : []),
                 ].map((item) => (
                   <div
                     key={item.label}

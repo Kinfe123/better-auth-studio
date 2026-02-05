@@ -10,8 +10,14 @@ export {
 // Event ingestion exports
 export type { AuthEvent, AuthEventType, EventIngestionProvider } from "./types/events.js";
 export { EVENT_TEMPLATES, getEventSeverity } from "./types/events.js";
-export type { StudioConfig, StudioMetadata, WindowStudioConfig } from "./types/handler.js";
+export type {
+  StudioConfig,
+  StudioLastSeenAtConfig,
+  StudioMetadata,
+  WindowStudioConfig,
+} from "./types/handler.js";
 export { defineStudioConfig } from "./types/handler.js";
+export { injectLastSeenAtHooks } from "./utils/hook-injector.js";
 export {
   checkEventIngestionHealth,
   emitEvent,

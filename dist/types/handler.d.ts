@@ -63,11 +63,21 @@ export type StudioAccessConfig = {
     secret?: string;
 };
 import type { AuthEvent, AuthEventType, EventIngestionProvider } from "./events.js";
+/**
+ * Last-seen tracking: no plugin or additionalFields needed in your Better Auth config.
+ * When enabled, Studio injects the field into the user schema and updates it on sign-in/sign-up; add the column to your user table and run migrations.
+ */
+export type StudioLastSeenAtConfig = {
+    enabled?: boolean;
+    /** Column/field name (e.g. "lastSeenAt", "last_seen_at"). Default "lastSeenAt". Must exist on your user table. */
+    columnName?: string;
+};
 export type StudioConfig = {
     auth: any;
     basePath?: string;
     access?: StudioAccessConfig;
     metadata?: StudioMetadata;
+    lastSeenAt?: StudioLastSeenAtConfig;
     events?: {
         enabled?: boolean;
         tableName?: string;

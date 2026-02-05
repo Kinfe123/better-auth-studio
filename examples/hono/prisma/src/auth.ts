@@ -36,7 +36,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     disableSignUp: false,
-    requireEmailVerification: true,
+    // requireEmailVerification: true,
     minPasswordLength: 8,
     maxPasswordLength: 128,
     autoSignIn: true,
@@ -106,3 +106,9 @@ export const auth = betterAuth({
   },
   trustedOrigins: ["http://localhost:3002", "http://localhost:3000"],
 });
+const r = await auth.$context
+const r2 = await r.adapter.findMany({
+  model: "user",
+  where: [{ field: "id", value: "uejbaQIvNAGmz2sJSJwhweFfngqXvfWh" }],
+})
+console.log(r2)

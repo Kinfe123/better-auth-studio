@@ -1,1 +1,1 @@
-{"version":3,"file":"nextjs.d.ts","sourceRoot":"","sources":["../../src/adapters/nextjs.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,YAAY,EAAuC,MAAM,qBAAqB,CAAC;AAY7F,wBAAgB,gBAAgB,CAAC,MAAM,EAAE,YAAY,IAKrC,SAAS,OAAO,KAAG,OAAO,CAAC,QAAQ,CAAC,CAanD"}
+{"version":3,"file":"nextjs.d.ts","sourceRoot":"","sources":["../../src/adapters/nextjs.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,YAAY,EAAuC,MAAM,qBAAqB,CAAC;AAY7F,wBAAgB,gBAAgB,CAAC,MAAM,EAAE,YAAY,IAMrC,SAAS,OAAO,KAAG,OAAO,CAAC,QAAQ,CAAC,CAanD"}

@@ -28,10 +28,9 @@ model User {
   members       Member[]
   invitations   Invitation[]
   teammembers   TeamMember[]
-
+  lastSeenAt    DateTime?
   phoneNumber         String?
   phoneNumberVerified Boolean?
-
   @@unique([email])
   @@map("user")
   @@unique([phoneNumber])

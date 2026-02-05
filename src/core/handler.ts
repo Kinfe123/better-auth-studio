@@ -18,7 +18,7 @@ import type {
   WindowStudioConfig,
 } from "../types/handler.js";
 import { initializeEventIngestion, isEventIngestionInitialized } from "../utils/event-ingestion.js";
-import { injectEventHooks } from "../utils/hook-injector.js";
+import { injectEventHooks, injectLastSeenAtHooks } from "../utils/hook-injector.js";
 import { serveIndexHtml as getIndexHtml } from "../utils/html-injector.js";
 import { decryptSession, isSessionValid, STUDIO_COOKIE_NAME } from "../utils/session.js";
 
@@ -113,6 +113,9 @@ export async function initializeEventIngestionAndHooks(config: StudioConfig): Pr
         injectEventHooks(config.auth, config.events);
       }
     }
+  }
+  if (config.auth) {
+    injectLastSeenAtHooks(config.auth, config);
   }
 }
 

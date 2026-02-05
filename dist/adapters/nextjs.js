@@ -1,5 +1,5 @@
 import { handleStudioRequest } from "../core/handler.js";
-import { injectEventHooks } from "../utils/hook-injector.js";
+import { injectEventHooks, injectLastSeenAtHooks } from "../utils/hook-injector.js";
 function getUrlFromRequest(req) {
     const nextUrl = req.nextUrl;
     if (nextUrl && typeof nextUrl.pathname === "string") {
@@ -9,8 +9,10 @@ function getUrlFromRequest(req) {
     return url.pathname + url.search;
 }
 export function betterAuthStudio(config) {
-    if (config.events?.enabled && config.auth) {
-        injectEventHooks(config.auth, config.events);
+    if (config.auth) {
+        injectLastSeenAtHooks(config.auth, config);
+        if (config.events?.enabled)
+            injectEventHooks(config.auth, config.events);
     }
     return async (request) => {
         try {
