@@ -1294,10 +1294,10 @@ export default config;`}
             </div>
             <div className="pt-4 space-y-3">
               <p className="text-sm font-light tracking-tight text-white/70">
-                When enabled, Studio tracks when each user was last active (sign-in or sign-up).
-                The value is shown in the Users list and on the user details page.{" "}
-                <strong className="text-white/90">No Better Auth plugin</strong> is
-                required—Studio injects the field and updates it automatically.
+                When enabled, Studio tracks when each user was last active (sign-in or sign-up). The
+                value is shown in the Users list and on the user details page.{" "}
+                <strong className="text-white/90">No Better Auth plugin</strong> is required—Studio
+                injects the field and updates it automatically.
               </p>
               <p className="text-sm font-light tracking-tight text-white/70">
                 <strong className="text-white/90">Setup:</strong> In your Studio config (e.g.{" "}
@@ -1306,8 +1306,8 @@ export default config;`}
                   lastSeenAt: &#123; enabled: true &#125;
                 </code>
                 . Add a <code className="bg-white/10 px-1 text-white/90">lastSeenAt</code> column
-                (or your chosen <code className="bg-white/10 px-1 text-white/90">columnName</code>
-                ) to your user table and run your migration (e.g.{" "}
+                (or your chosen <code className="bg-white/10 px-1 text-white/90">columnName</code>)
+                to your user table and run your migration (e.g.{" "}
                 <code className="bg-white/10 px-1 text-white/90">prisma migrate dev</code>,{" "}
                 <code className="bg-white/10 px-1 text-white/90">drizzle-kit push</code>)
               </p>
