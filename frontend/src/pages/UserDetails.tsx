@@ -1065,8 +1065,8 @@ export default function UserDetails() {
                           title={formatDateTime(lastSeen)}
                         >
                           <span className="mr-1">[</span>
-                          <span className="text-white/80 font-mono text-xs">
-                            Last seen {formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}
+                          <span className="text-white/80 font-mono uppercase text-xs">
+                            Last seen <span className="font-semibold">{formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}</span>
                           </span>
                           <span className="ml-1">]</span>
                         </sup>

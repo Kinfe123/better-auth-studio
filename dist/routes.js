@@ -331,7 +331,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 ...opts,
                 plugins: [...(opts.plugins || [])],
                 user: opts.user
-                    ? { ...opts.user, additionalFields: { ...(opts.user.additionalFields || {}) } }
+                    ? { ...opts.user, additionalFields: { ...opts.user.additionalFields } }
                     : undefined,
             };
             const adapter = await db(freshOpts);
