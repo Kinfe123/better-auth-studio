@@ -41,6 +41,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import { formatDistanceToNow } from "date-fns";
 import { getProviderIcon } from "../lib/icons";
 import { getImageSrc } from "../lib/utils";
 
@@ -59,6 +60,7 @@ interface User {
   phoneNumber?: string;
   username?: string;
   role?: string;
+  lastSeenAt?: string | null;
 }
 
 interface Organization {
@@ -140,6 +142,9 @@ interface Invitation {
 export default function UserDetails() {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
+  const lastSeenAtEnabled = !!(window as any).__STUDIO_CONFIG__?.lastSeenAt?.enabled;
+  const lastSeenAtColumnName =
+    (window as any).__STUDIO_CONFIG__?.lastSeenAt?.columnName || "lastSeenAt";
   const [user, setUser] = useState<User | null>(null);
   const [organizations, setOrganizations] = useState<OrganizationMembership[]>([]);
   const [teams, setTeams] = useState<TeamMembership[]>([]);
@@ -1051,6 +1056,18 @@ export default function UserDetails() {
                 <h1 className="text-3xl font-light text-white inline-flex items-center">
                   {user.name}
                   <CopyableId id={user.id} nonSliced={true} variant="subscript" />
+                  {lastSeenAtEnabled && (() => {
+                    const lastSeen =
+                      user.lastSeenAt ?? (user as any)[lastSeenAtColumnName];
+                    return lastSeen ? (
+                      <sup
+                        className="ml-2 px-2 pt-2 pb-2 -mt-1 py-0.5 text-[10px] font-mono uppercase border border-dashed border-white/15 bg-white/5 text-white/80 rounded-none select-none cursor-default"
+                        title={formatDateTime(lastSeen)}
+                      >
+                        Last seen {formatDistanceToNow(new Date(lastSeen), { addSuffix: true })}
+                      </sup>
+                    ) : null;
+                  })()}
                   {user.role && (
                     <sup className="ml-2 px-2 pt-2 pb-2 -mt-1 py-0.5 text-[10px] font-mono uppercase border border-dashed border-white/15 bg-white/5 text-white/80 rounded-none">
                       {user.role}

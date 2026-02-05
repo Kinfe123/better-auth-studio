@@ -1423,7 +1423,11 @@ export function createRoutes(
   router.get("/api/users/:userId", async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
-      const adapter = await getAuthAdapterWithConfig();
+      let adapter =
+        studioConfig?.lastSeenAt?.enabled && authInstance
+          ? await getAdapterWithLastSeenAtSchema()
+          : null;
+      if (!adapter) adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.findMany) {
         return res.status(500).json({ error: "Auth adapter not available" });
       }
