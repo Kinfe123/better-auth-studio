@@ -1931,7 +1931,8 @@ export function createRoutes(
     try {
       const limit = parseInt(req.query.limit as string, 10) || 20;
       const offsetParam = req.query.offset as string;
-      const offset = offsetParam != null && offsetParam !== "" ? parseInt(offsetParam, 10) : undefined;
+      const offset =
+        offsetParam != null && offsetParam !== "" ? parseInt(offsetParam, 10) : undefined;
       const after = req.query.after as string; // Cursor (used when offset not provided)
       const sort = (req.query.sort as string) || "desc"; // Default: 'desc' = newest first
       const type = req.query.type as string;

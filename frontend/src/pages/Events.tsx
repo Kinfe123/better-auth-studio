@@ -438,10 +438,7 @@ export default function Events() {
                 });
               }
               if (prev.length > 50) {
-                const merged = [
-                  ...list.filter((e: AuthEvent) => !existingIds.has(e.id)),
-                  ...prev,
-                ];
+                const merged = [...list.filter((e: AuthEvent) => !existingIds.has(e.id)), ...prev];
                 const deduped = merged.filter(
                   (e, i, arr) => arr.findIndex((x) => x.id === e.id) === i,
                 );
