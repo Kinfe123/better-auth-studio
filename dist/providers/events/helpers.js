@@ -716,7 +716,7 @@ export function createSqliteProvider(options) {
                     params.push(since instanceof Date ? since.toISOString() : since);
                 }
                 if (after) {
-                    query += ` AND id > ?`;
+                    query += sort === "desc" ? ` AND id < ?` : ` AND id > ?`;
                     params.push(after);
                 }
                 query += ` ORDER BY timestamp ${sort === "desc" ? "DESC" : "ASC"}`;
@@ -931,7 +931,7 @@ export function createNodeSqliteProvider(options) {
                     params.push(since instanceof Date ? since.toISOString() : since);
                 }
                 if (after) {
-                    query += ` AND id > ?`;
+                    query += sort === "desc" ? ` AND id < ?` : ` AND id > ?`;
                     params.push(after);
                 }
                 query += ` ORDER BY timestamp ${sort === "desc" ? "DESC" : "ASC"}`;
@@ -971,6 +971,46 @@ export function createNodeSqliteProvider(options) {
                     return { events: [], hasMore: false, nextCursor: null };
                 }
                 console.error(`Failed to query events from ${tableName} (node:sqlite):`, error);
+                throw error;
+            }
+        },
+        async count() {
+            await ensureTableSync();
+            try {
+                const row = actualClient.prepare(`SELECT COUNT(*) as total FROM ${tableName}`).get();
+                return row?.total ?? 0;
+            }
+            catch (error) {
+                if (error?.message?.includes("no such table")) {
+                    return 0;
+                }
+                throw error;
+            }
+        },
+        async getStats() {
+            await ensureTableSync();
+            try {
+                const totalRow = actualClient.prepare(`SELECT COUNT(*) as total FROM ${tableName}`).get();
+                const total = totalRow?.total ?? 0;
+                const failedRow = actualClient
+                    .prepare(`SELECT COUNT(*) as c FROM ${tableName} WHERE status = 'failed' OR display_severity = 'failed'`)
+                    .get();
+                const failed = failedRow?.c ?? 0;
+                const warningRow = actualClient
+                    .prepare(`SELECT COUNT(*) as c FROM ${tableName} WHERE display_severity = 'warning'`)
+                    .get();
+                const warning = warningRow?.c ?? 0;
+                const infoRow = actualClient
+                    .prepare(`SELECT COUNT(*) as c FROM ${tableName} WHERE display_severity = 'info' OR (display_severity IS NULL AND status != 'failed')`)
+                    .get();
+                const info = infoRow?.c ?? 0;
+                const success = Math.max(0, total - failed - warning - info);
+                return { total, success, failed, warning, info };
+            }
+            catch (error) {
+                if (error?.message?.includes("no such table")) {
+                    return { total: 0, success: 0, failed: 0, warning: 0, info: 0 };
+                }
                 throw error;
             }
         },

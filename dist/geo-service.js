@@ -1,7 +1,6 @@
 /**
- * IP geolocation: primary via iplocation (ipapi.co) for accuracy;
- * fallback to maxmind (GeoLite2-City.mmdb), then data/default-geo.json, then hardcoded ranges.
- * Optional: run `pnpm geo:update` to keep GeoLite2-City.mmdb current for fallback.
+ * IP geolocation using maxmind (GeoLite2-City.mmdb), then data/default-geo.json, then hardcoded ranges.
+ * Run `pnpm geo:update` to download the latest GeoLite2-City.mmdb for fallback.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -38,36 +37,7 @@ export async function initializeGeoService() {
         loadDefaultDatabase();
     }
 }
-/**
- * Resolve IP to location. Uses iplocation (ipapi.co) first for accuracy;
- * on failure or reserved IP, falls back to maxmind → default-geo.json → hardcoded ranges.
- */
-export async function resolveIPLocation(ipAddress) {
-    if (!ipAddress || typeof ipAddress !== "string") {
-        return null;
-    }
-    try {
-        // @ts-expect-error - iplocation has no type export for default
-        const ipLocation = (await import("iplocation")).default;
-        const result = await ipLocation(ipAddress);
-        if (result && "reserved" in result && result.reserved) {
-            return resolveIPLocationFallback(ipAddress);
-        }
-        if (result && "country" in result && result.country) {
-            return {
-                country: result.country.name || "Unknown",
-                countryCode: result.country.code || "",
-                city: result.city || "Unknown",
-                region: result.region?.name || "Unknown",
-            };
-        }
-    }
-    catch (_error) {
-        // ipapi.co failed (network, rate limit, etc.) – use fallback
-    }
-    return resolveIPLocationFallback(ipAddress);
-}
-function resolveIPLocationFallback(ipAddress) {
+export function resolveIPLocation(ipAddress) {
     if (lookup) {
         try {
             const result = lookup.get(ipAddress);
@@ -203,7 +173,11 @@ function resolveIPFromRanges(ipAddress) {
             countryCode: "ET",
             city: "Addis Ababa",
             region: "Addis Ababa",
-            ranges: [{ min: "102.213.0.0", max: "102.213.255.255" }],
+            ranges: [
+                { min: "102.208.97.0", max: "102.208.97.255" },
+                { min: "102.208.99.0", max: "102.208.99.255" },
+                { min: "102.213.68.0", max: "102.213.68.255" },
+            ],
         },
         {
             country: "India",

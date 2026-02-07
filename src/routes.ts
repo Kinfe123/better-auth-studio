@@ -2177,6 +2177,113 @@ export function createRoutes(
     }
   });
 
+  router.get("/api/events/count", async (_req: Request, res: Response) => {
+    try {
+      const { getEventIngestionProvider, isEventIngestionInitialized } =
+        await import("./utils/event-ingestion.js");
+
+      if (!isEventIngestionInitialized()) {
+        try {
+          const { initializeEventIngestionAndHooks } = await import("./core/handler.js");
+          const { existsSync } = await import("node:fs");
+          const { join } = await import("node:path");
+          const possibleFiles = [
+            "studio.config.ts",
+            "studio.config.js",
+            "studio.config.mjs",
+            "studio.config.cjs",
+          ];
+          let studioConfigPath: string | null = null;
+          for (const file of possibleFiles) {
+            const path = join(process.cwd(), file);
+            if (existsSync(path)) {
+              studioConfigPath = path;
+              break;
+            }
+          }
+          if (studioConfigPath) {
+            const { loadConfig } = await import("c12");
+            const { getPathAliases } = await import("./config.js");
+            // @ts-expect-error - No types available
+            const babelPresetTypeScript = (await import("@babel/preset-typescript")).default;
+            // @ts-expect-error - No types available
+            const babelPresetReact = (await import("@babel/preset-react")).default;
+            const alias = getPathAliases(process.cwd()) || {};
+            const jitiOptions = {
+              debug: false,
+              transformOptions: {
+                babel: {
+                  presets: [
+                    [babelPresetTypeScript, { isTSX: true, allExtensions: true }],
+                    [babelPresetReact, { runtime: "automatic" }],
+                  ],
+                },
+              },
+              extensions: [".ts", ".js", ".tsx", ".jsx"],
+              alias,
+              interopDefault: true,
+            };
+            const { config } = await loadConfig<{ default?: any; config?: any }>({
+              configFile: studioConfigPath,
+              cwd: process.cwd(),
+              dotenv: true,
+              jitiOptions,
+            });
+            const studioConfig = config?.default || config?.config || (config as any);
+            if (studioConfig?.events?.enabled) {
+              await initializeEventIngestionAndHooks(studioConfig);
+            }
+          }
+        } catch (_initError) {
+          return res.json({ total: 0, success: 0, failed: 0, warning: 0, info: 0 });
+        }
+      }
+
+      const eventProvider = getEventIngestionProvider();
+      if (eventProvider?.getStats) {
+        const stats = await eventProvider.getStats();
+        return res.json(stats);
+      }
+      if (eventProvider?.count) {
+        const total = await eventProvider.count();
+        return res.json({ total, success: null, failed: null, warning: null, info: null });
+      }
+      if (eventProvider?.query) {
+        const result = await eventProvider.query({ limit: 100000, sort: "desc" });
+        const events = result.events ?? [];
+        const total = events.length;
+        const failed = events.filter((e: any) => e.status === "failed" || e.display?.severity === "failed").length;
+        const warning = events.filter((e: any) => e.display?.severity === "warning").length;
+        const info = events.filter((e: any) => e.display?.severity === "info" || (!e.display?.severity && e.status !== "failed")).length;
+        const success = total - failed - warning - info;
+        return res.json({ total, success, failed, warning, info });
+      }
+
+      const adapter = await getAuthAdapterWithConfig();
+      if (adapter?.findMany) {
+        const events = await adapter.findMany({
+          model: "auth_events",
+          limit: 100000,
+        });
+        const list = Array.isArray(events) ? events : [];
+        const total = list.length;
+        const failed = list.filter((e: any) => e.status === "failed" || e.displaySeverity === "failed" || e.display_severity === "failed").length;
+        const warning = list.filter((e: any) => (e.displaySeverity || e.display_severity) === "warning").length;
+        const info = list.filter((e: any) => (e.displaySeverity || e.display_severity) === "info" || (!(e.displaySeverity || e.display_severity) && e.status !== "failed")).length;
+        const success = total - failed - warning - info;
+        return res.json({ total, success, failed, warning, info });
+      }
+
+      return res.json({ total: 0, success: 0, failed: 0, warning: 0, info: 0 });
+    } catch (error) {
+      console.error("Failed to get events count:", error);
+      res.status(500).json({
+        error: "Failed to get events count",
+        details: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
   router.get("/api/users", async (req: Request, res: Response) => {
     try {
       const page = parseInt(req.query.page as string, 10) || 1;

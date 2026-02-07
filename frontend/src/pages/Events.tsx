@@ -232,6 +232,19 @@ export default function Events() {
   );
   const activityDetailsScrollRef = useRef<HTMLDivElement>(null);
   const [activityDetailsCanScroll, setActivityDetailsCanScroll] = useState(false);
+  const [_lastPollAt, setLastPollAt] = useState<number | null>(null);
+  const [totalEventCount, setTotalEventCount] = useState<number | null>(null);
+  const [serverEventStats, setServerEventStats] = useState<{
+    success: number;
+    failed: number;
+    warning: number;
+    info: number;
+  } | null>(null);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const nextCursorRef = useRef<string | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  nextCursorRef.current = nextCursor;
 
   interface FilterConfig {
     type: string;
@@ -291,25 +304,18 @@ export default function Events() {
     };
   }, [showViewModal, selectedEvent?.id, selectedEvent?.ipAddress, resolveIPLocation]);
 
-  const eventStats = useMemo(() => {
-    // Use the same categorization logic as the chart
+  const eventStatsFromLoaded = useMemo(() => {
     const failed = events.filter((e) => {
       const status = e.status || "success";
       const severity = e.display?.severity;
       return status === "failed" || severity === "failed";
     }).length;
-
-    const warning = events.filter((e) => {
-      const severity = e.display?.severity;
-      return severity === "warning";
-    }).length;
-
+    const warning = events.filter((e) => e.display?.severity === "warning").length;
     const info = events.filter((e) => {
       const status = e.status || "success";
       const severity = e.display?.severity;
       return severity === "info" || (!severity && status !== "failed");
     }).length;
-
     const success = events.filter((e) => {
       const status = e.status || "success";
       const severity = e.display?.severity;
@@ -318,9 +324,39 @@ export default function Events() {
       const isInfo = severity === "info" || (!severity && status !== "failed");
       return status === "success" && !isFailed && !isWarning && !isInfo;
     }).length;
-
     return { success, failed, warning, info };
   }, [events]);
+
+  const eventStats = serverEventStats ?? eventStatsFromLoaded;
+
+  const fetchEventCount = useCallback(async () => {
+    try {
+      const apiPath = buildApiUrl("/api/events/count");
+      const response = await fetch(apiPath);
+      if (response.ok) {
+        const data = await response.json();
+        setTotalEventCount(typeof data.total === "number" ? data.total : null);
+        if (
+          typeof data.success === "number" &&
+          typeof data.failed === "number" &&
+          typeof data.warning === "number" &&
+          typeof data.info === "number"
+        ) {
+          setServerEventStats({
+            success: data.success,
+            failed: data.failed,
+            warning: data.warning,
+            info: data.info,
+          });
+        } else {
+          setServerEventStats(null);
+        }
+      }
+    } catch {
+      setTotalEventCount(null);
+      setServerEventStats(null);
+    }
+  }, []);
 
   const fetchEvents = useCallback(async (isInitial = false) => {
     if (isPollingRef.current && !isInitial) return;
@@ -359,13 +395,23 @@ export default function Events() {
       setIsConnected(true);
 
       if (data.events && Array.isArray(data.events)) {
+        const hasMoreFromApi = Boolean(data.hasMore);
+        const nextCursorFromApi = data.nextCursor ?? null;
+
         if (data.events.length === 0 && isInitial) {
           setEvents([]);
+          setTotalEventCount(0);
+          setNextCursor(null);
+          setHasMore(false);
           setLoading(false);
           return;
         }
         if (isInitial) {
           setEvents(data.events);
+          setNextCursor(nextCursorFromApi);
+          setHasMore(hasMoreFromApi);
+          setLastPollAt(Date.now());
+          fetchEventCount();
           if (data.events.length > 0) {
             lastEventIdRef.current = data.events[0].id;
           }
@@ -373,7 +419,6 @@ export default function Events() {
           setEvents((prev) => {
             const existingIds = new Set(prev.map((e) => e.id));
             const newEvents = data.events.filter((event: AuthEvent) => !existingIds.has(event.id));
-
             if (newEvents.length > 0) {
               const newIds = new Set<string>(newEvents.map((e: AuthEvent) => e.id));
               setNewEventIds((prevIds) => {
@@ -387,14 +432,18 @@ export default function Events() {
                 }, 3000);
                 return combined;
               });
-
-              const updated = [...newEvents, ...prev];
-              return updated.slice(0, 100);
             }
-
-            return prev;
+            if (prev.length > 50) {
+              const merged = [...data.events.filter((e: AuthEvent) => !existingIds.has(e.id)), ...prev];
+              const deduped = merged.filter((e, i, arr) => arr.findIndex((x) => x.id === e.id) === i);
+              return deduped.slice(0, 500);
+            }
+            return [...data.events];
           });
-
+          setNextCursor(nextCursorFromApi);
+          setHasMore(hasMoreFromApi);
+          setLastPollAt(Date.now());
+          fetchEventCount();
           if (data.events.length > 0) {
             lastEventIdRef.current = data.events[0].id;
           }
@@ -407,7 +456,7 @@ export default function Events() {
       isPollingRef.current = false;
       setLoading(false);
     }
-  }, []);
+  }, [fetchEventCount]);
 
   useEffect(() => {
     const checkConfig = async () => {
@@ -503,6 +552,39 @@ export default function Events() {
     setSelectedEvent(event);
     setShowViewModal(true);
   };
+
+  const loadMoreEvents = useCallback(async () => {
+    const cursor = nextCursorRef.current;
+    if (!cursor || loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    try {
+      const params = new URLSearchParams({
+        limit: "50",
+        sort: "desc",
+        after: cursor,
+      });
+      const apiPath = buildApiUrl("/api/events");
+      const response = await fetch(`${apiPath}?${params.toString()}`);
+      if (!response.ok) {
+        setLoadingMore(false);
+        return;
+      }
+      const data = await response.json();
+      if (data.events && Array.isArray(data.events)) {
+        setEvents((prev) => {
+          const existingIds = new Set(prev.map((e) => e.id));
+          const appended = data.events.filter((e: AuthEvent) => !existingIds.has(e.id));
+          return [...prev, ...appended];
+        });
+        setNextCursor(data.nextCursor ?? null);
+        setHasMore(Boolean(data.hasMore));
+      }
+    } catch (e) {
+      console.error("Load more events failed:", e);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loadingMore, hasMore]);
 
   const addFilter = (filterType: string) => {
     const exists = activeFilters.some((f) => f.type === filterType);
@@ -705,11 +787,13 @@ export const auth = betterAuth({
     <div className="space-y-6 p-6 w-full max-w-full min-w-0">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl relative text-white font-light inline-flex items-start">
+          <h1 className="text-2xl relative text-white font-light inline-flex items-center gap-2">
             Events
-            <sup className="text-xs text-gray-500 ml-1 mt-0">
+            <sup className="text-xs text-gray-500 mt-0">
               <span className="mr-1">[</span>
-              <span className="text-white font-mono text-sm">{events.length}</span>
+              <span className="text-white font-mono text-sm">
+                {totalEventCount != null ? totalEventCount : events.length}
+              </span>
               <span className="ml-1">]</span>
             </sup>
           </h1>
@@ -1583,6 +1667,25 @@ export const auth = betterAuth({
               )}
             </tbody>
           </table>
+          {hasMore && (
+            <div className="flex justify-center py-6 border-t border-dashed border-white/10">
+              <button
+                type="button"
+                onClick={loadMoreEvents}
+                disabled={loadingMore}
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 font-mono text-sm uppercase border border-dashed border-white/20 text-white/90 hover:bg-white/10 hover:border-white/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[10rem]"
+              >
+                {loadingMore ? (
+                  <>
+                    <Loader className="w-4 h-4 animate-spin shrink-0" />
+                    Loading more
+                  </>
+                ) : (
+                  "Load more"
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
