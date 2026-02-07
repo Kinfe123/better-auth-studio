@@ -1037,7 +1037,7 @@ export default function Users() {
                         )
                       ) : null}
                     </button>
-                                      </th>
+                  </th>
                 )}
                 <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
                   Actions
