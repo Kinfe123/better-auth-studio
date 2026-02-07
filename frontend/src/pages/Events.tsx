@@ -240,11 +240,11 @@ export default function Events() {
     warning: number;
     info: number;
   } | null>(null);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const nextCursorRef = useRef<string | null>(null);
+  const [nextOffset, setNextOffset] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
-  nextCursorRef.current = nextCursor;
+  const eventsLengthRef = useRef(0);
+  eventsLengthRef.current = events.length;
 
   interface FilterConfig {
     type: string;
@@ -367,6 +367,7 @@ export default function Events() {
         const params = new URLSearchParams({
           limit: "50",
           sort: "desc",
+          offset: "0",
         });
 
         const apiPath = buildApiUrl("/api/events");
@@ -396,32 +397,32 @@ export default function Events() {
         setIsConnected(true);
 
         if (data.events && Array.isArray(data.events)) {
+          const list = data.events;
           const hasMoreFromApi = Boolean(data.hasMore);
-          const nextCursorFromApi = data.nextCursor ?? null;
+          const pageFull = list.length >= 50;
 
-          if (data.events.length === 0 && isInitial) {
+          if (list.length === 0 && isInitial) {
             setEvents([]);
             setTotalEventCount(0);
-            setNextCursor(null);
+            setNextOffset(0);
             setHasMore(false);
             setLoading(false);
             return;
           }
           if (isInitial) {
-            setEvents(data.events);
-            setNextCursor(nextCursorFromApi);
-            setHasMore(hasMoreFromApi);
+            setEvents(list);
+            setNextOffset(list.length);
+            setHasMore(pageFull && hasMoreFromApi);
             setLastPollAt(Date.now());
             fetchEventCount();
-            if (data.events.length > 0) {
-              lastEventIdRef.current = data.events[0].id;
+            if (list.length > 0) {
+              lastEventIdRef.current = list[0].id;
             }
           } else {
+            const hadMoreThan50 = eventsLengthRef.current > 50;
             setEvents((prev) => {
               const existingIds = new Set(prev.map((e) => e.id));
-              const newEvents = data.events.filter(
-                (event: AuthEvent) => !existingIds.has(event.id),
-              );
+              const newEvents = list.filter((e: AuthEvent) => !existingIds.has(e.id));
               if (newEvents.length > 0) {
                 const newIds = new Set<string>(newEvents.map((e: AuthEvent) => e.id));
                 setNewEventIds((prevIds) => {
@@ -438,7 +439,7 @@ export default function Events() {
               }
               if (prev.length > 50) {
                 const merged = [
-                  ...data.events.filter((e: AuthEvent) => !existingIds.has(e.id)),
+                  ...list.filter((e: AuthEvent) => !existingIds.has(e.id)),
                   ...prev,
                 ];
                 const deduped = merged.filter(
@@ -446,14 +447,16 @@ export default function Events() {
                 );
                 return deduped.slice(0, 500);
               }
-              return [...data.events];
+              return [...list];
             });
-            setNextCursor(nextCursorFromApi);
-            setHasMore(hasMoreFromApi);
             setLastPollAt(Date.now());
             fetchEventCount();
-            if (data.events.length > 0) {
-              lastEventIdRef.current = data.events[0].id;
+            if (list.length > 0) {
+              lastEventIdRef.current = list[0].id;
+            }
+            if (!hadMoreThan50) {
+              setNextOffset(list.length);
+              setHasMore(pageFull && hasMoreFromApi);
             }
           }
         }
@@ -564,14 +567,14 @@ export default function Events() {
   };
 
   const loadMoreEvents = useCallback(async () => {
-    const cursor = nextCursorRef.current;
-    if (!cursor || loadingMore || !hasMore) return;
+    if (loadingMore || !hasMore) return;
+    const offset = nextOffset;
     setLoadingMore(true);
     try {
       const params = new URLSearchParams({
         limit: "50",
         sort: "desc",
-        after: cursor,
+        offset: String(offset),
       });
       const apiPath = buildApiUrl("/api/events");
       const response = await fetch(`${apiPath}?${params.toString()}`);
@@ -580,21 +583,21 @@ export default function Events() {
         return;
       }
       const data = await response.json();
-      if (data.events && Array.isArray(data.events)) {
-        setEvents((prev) => {
-          const existingIds = new Set(prev.map((e) => e.id));
-          const appended = data.events.filter((e: AuthEvent) => !existingIds.has(e.id));
-          return [...prev, ...appended];
-        });
-        setNextCursor(data.nextCursor ?? null);
-        setHasMore(Boolean(data.hasMore));
-      }
+      const list = data.events && Array.isArray(data.events) ? data.events : [];
+      const added = list.length;
+      setEvents((prev) => {
+        const existingIds = new Set(prev.map((e) => e.id));
+        const appended = list.filter((e: AuthEvent) => !existingIds.has(e.id));
+        return appended.length > 0 ? [...prev, ...appended] : prev;
+      });
+      setNextOffset(offset + added);
+      setHasMore(added >= 50 && Boolean(data.hasMore));
     } catch (e) {
       console.error("Load more events failed:", e);
     } finally {
       setLoadingMore(false);
     }
-  }, [loadingMore, hasMore]);
+  }, [loadingMore, hasMore, nextOffset]);
 
   const addFilter = (filterType: string) => {
     const exists = activeFilters.some((f) => f.type === filterType);
@@ -1677,7 +1680,7 @@ export const auth = betterAuth({
               )}
             </tbody>
           </table>
-          {hasMore && (
+          {hasMore ? (
             <div className="flex justify-center py-6 border-t border-dashed border-white/10">
               <button
                 type="button"
@@ -1695,6 +1698,14 @@ export const auth = betterAuth({
                 )}
               </button>
             </div>
+          ) : (
+            events.length > 0 && (
+              <div className="flex justify-center py-6 border-t border-dashed border-white/10">
+                <p className="text-gray-500 font-mono text-sm uppercase">
+                  You&apos;ve reached the end
+                </p>
+              </div>
+            )
           )}
         </div>
       </div>

@@ -1157,7 +1157,7 @@ export function createNodeSqliteProvider(options: {
     },
 
     async query(options: EventQueryOptions): Promise<EventQueryResult> {
-      const { limit = 20, after, sort = "desc", type, userId, since } = options;
+      const { limit = 20, offset, after, sort = "desc", type, userId, since } = options;
       await ensureTableSync();
 
       try {
@@ -1176,14 +1176,19 @@ export function createNodeSqliteProvider(options: {
           query += ` AND timestamp >= ?`;
           params.push(since instanceof Date ? since.toISOString() : since);
         }
-        if (after) {
-          query += sort === "desc" ? ` AND id < ?` : ` AND id > ?`;
-          params.push(after);
+        if (offset != null && offset !== undefined && !after) {
+          query += ` ORDER BY timestamp ${sort === "desc" ? "DESC" : "ASC"}`;
+          query += ` LIMIT ? OFFSET ?`;
+          params.push(limit + 1, offset);
+        } else {
+          if (after) {
+            query += sort === "desc" ? ` AND id < ?` : ` AND id > ?`;
+            params.push(after);
+          }
+          query += ` ORDER BY timestamp ${sort === "desc" ? "DESC" : "ASC"}`;
+          query += ` LIMIT ?`;
+          params.push(limit + 1);
         }
-
-        query += ` ORDER BY timestamp ${sort === "desc" ? "DESC" : "ASC"}`;
-        query += ` LIMIT ?`;
-        params.push(limit + 1);
 
         const stmt = actualClient.prepare(query);
         const rows = (stmt.all(...params) ?? []) as any[];

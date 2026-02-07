@@ -18,6 +18,7 @@ export interface AuthEvent {
 }
 export interface EventQueryOptions {
     limit?: number;
+    offset?: number;
     after?: string;
     sort?: "asc" | "desc";
     type?: string;

@@ -913,7 +913,7 @@ export function createNodeSqliteProvider(options) {
             }
         },
         async query(options) {
-            const { limit = 20, after, sort = "desc", type, userId, since } = options;
+            const { limit = 20, offset, after, sort = "desc", type, userId, since } = options;
             await ensureTableSync();
             try {
                 let query = `SELECT * FROM ${tableName} WHERE 1=1`;
@@ -930,13 +930,20 @@ export function createNodeSqliteProvider(options) {
                     query += ` AND timestamp >= ?`;
                     params.push(since instanceof Date ? since.toISOString() : since);
                 }
-                if (after) {
-                    query += sort === "desc" ? ` AND id < ?` : ` AND id > ?`;
-                    params.push(after);
+                if (offset != null && offset !== undefined && !after) {
+                    query += ` ORDER BY timestamp ${sort === "desc" ? "DESC" : "ASC"}`;
+                    query += ` LIMIT ? OFFSET ?`;
+                    params.push(limit + 1, offset);
                 }
-                query += ` ORDER BY timestamp ${sort === "desc" ? "DESC" : "ASC"}`;
-                query += ` LIMIT ?`;
-                params.push(limit + 1);
+                else {
+                    if (after) {
+                        query += sort === "desc" ? ` AND id < ?` : ` AND id > ?`;
+                        params.push(after);
+                    }
+                    query += ` ORDER BY timestamp ${sort === "desc" ? "DESC" : "ASC"}`;
+                    query += ` LIMIT ?`;
+                    params.push(limit + 1);
+                }
                 const stmt = actualClient.prepare(query);
                 const rows = (stmt.all(...params) ?? []);
                 const hasMore = rows.length > limit;
@@ -990,7 +997,9 @@ export function createNodeSqliteProvider(options) {
         async getStats() {
             await ensureTableSync();
             try {
-                const totalRow = actualClient.prepare(`SELECT COUNT(*) as total FROM ${tableName}`).get();
+                const totalRow = actualClient
+                    .prepare(`SELECT COUNT(*) as total FROM ${tableName}`)
+                    .get();
                 const total = totalRow?.total ?? 0;
                 const failedRow = actualClient
                     .prepare(`SELECT COUNT(*) as c FROM ${tableName} WHERE status = 'failed' OR display_severity = 'failed'`)

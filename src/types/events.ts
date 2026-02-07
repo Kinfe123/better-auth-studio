@@ -56,7 +56,8 @@ export interface AuthEvent {
 
 export interface EventQueryOptions {
   limit?: number;
-  after?: string; // Cursor for pagination
+  offset?: number; // Offset for pagination (fetch from N)
+  after?: string; // Cursor for pagination (used when offset not provided)
   sort?: "asc" | "desc"; // 'desc' = newest first (default), 'asc' = oldest first
   type?: string;
   userId?: string;

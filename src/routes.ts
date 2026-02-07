@@ -1930,7 +1930,9 @@ export function createRoutes(
   router.get("/api/events", async (req: Request, res: Response) => {
     try {
       const limit = parseInt(req.query.limit as string, 10) || 20;
-      const after = req.query.after as string; // Cursor
+      const offsetParam = req.query.offset as string;
+      const offset = offsetParam != null && offsetParam !== "" ? parseInt(offsetParam, 10) : undefined;
+      const after = req.query.after as string; // Cursor (used when offset not provided)
       const sort = (req.query.sort as string) || "desc"; // Default: 'desc' = newest first
       const type = req.query.type as string;
       const userId = req.query.userId as string;
@@ -2012,7 +2014,8 @@ export function createRoutes(
         try {
           const result = await eventProvider.query({
             limit,
-            after,
+            offset,
+            after: offset == null ? after : undefined,
             sort: sort as "asc" | "desc",
             type,
             userId,

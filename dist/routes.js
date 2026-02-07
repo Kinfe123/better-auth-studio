@@ -1701,7 +1701,9 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
     router.get("/api/events", async (req, res) => {
         try {
             const limit = parseInt(req.query.limit, 10) || 20;
-            const after = req.query.after; // Cursor
+            const offsetParam = req.query.offset;
+            const offset = offsetParam != null && offsetParam !== "" ? parseInt(offsetParam, 10) : undefined;
+            const after = req.query.after; // Cursor (used when offset not provided)
             const sort = req.query.sort || "desc"; // Default: 'desc' = newest first
             const type = req.query.type;
             const userId = req.query.userId;
@@ -1773,7 +1775,8 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 try {
                     const result = await eventProvider.query({
                         limit,
-                        after,
+                        offset,
+                        after: offset == null ? after : undefined,
                         sort: sort,
                         type,
                         userId,
@@ -2009,9 +2012,12 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 });
                 const list = Array.isArray(events) ? events : [];
                 const total = list.length;
-                const failed = list.filter((e) => e.status === "failed" || e.displaySeverity === "failed" || e.display_severity === "failed").length;
+                const failed = list.filter((e) => e.status === "failed" ||
+                    e.displaySeverity === "failed" ||
+                    e.display_severity === "failed").length;
                 const warning = list.filter((e) => (e.displaySeverity || e.display_severity) === "warning").length;
-                const info = list.filter((e) => (e.displaySeverity || e.display_severity) === "info" || (!(e.displaySeverity || e.display_severity) && e.status !== "failed")).length;
+                const info = list.filter((e) => (e.displaySeverity || e.display_severity) === "info" ||
+                    (!(e.displaySeverity || e.display_severity) && e.status !== "failed")).length;
                 const success = total - failed - warning - info;
                 return res.json({ total, success, failed, warning, info });
             }
