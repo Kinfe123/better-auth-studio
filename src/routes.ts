@@ -2252,9 +2252,14 @@ export function createRoutes(
         const result = await eventProvider.query({ limit: 100000, sort: "desc" });
         const events = result.events ?? [];
         const total = events.length;
-        const failed = events.filter((e: any) => e.status === "failed" || e.display?.severity === "failed").length;
+        const failed = events.filter(
+          (e: any) => e.status === "failed" || e.display?.severity === "failed",
+        ).length;
         const warning = events.filter((e: any) => e.display?.severity === "warning").length;
-        const info = events.filter((e: any) => e.display?.severity === "info" || (!e.display?.severity && e.status !== "failed")).length;
+        const info = events.filter(
+          (e: any) =>
+            e.display?.severity === "info" || (!e.display?.severity && e.status !== "failed"),
+        ).length;
         const success = total - failed - warning - info;
         return res.json({ total, success, failed, warning, info });
       }
@@ -2267,9 +2272,20 @@ export function createRoutes(
         });
         const list = Array.isArray(events) ? events : [];
         const total = list.length;
-        const failed = list.filter((e: any) => e.status === "failed" || e.displaySeverity === "failed" || e.display_severity === "failed").length;
-        const warning = list.filter((e: any) => (e.displaySeverity || e.display_severity) === "warning").length;
-        const info = list.filter((e: any) => (e.displaySeverity || e.display_severity) === "info" || (!(e.displaySeverity || e.display_severity) && e.status !== "failed")).length;
+        const failed = list.filter(
+          (e: any) =>
+            e.status === "failed" ||
+            e.displaySeverity === "failed" ||
+            e.display_severity === "failed",
+        ).length;
+        const warning = list.filter(
+          (e: any) => (e.displaySeverity || e.display_severity) === "warning",
+        ).length;
+        const info = list.filter(
+          (e: any) =>
+            (e.displaySeverity || e.display_severity) === "info" ||
+            (!(e.displaySeverity || e.display_severity) && e.status !== "failed"),
+        ).length;
         const success = total - failed - warning - info;
         return res.json({ total, success, failed, warning, info });
       }

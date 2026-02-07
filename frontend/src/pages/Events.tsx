@@ -358,105 +358,115 @@ export default function Events() {
     }
   }, []);
 
-  const fetchEvents = useCallback(async (isInitial = false) => {
-    if (isPollingRef.current && !isInitial) return;
-    isPollingRef.current = true;
+  const fetchEvents = useCallback(
+    async (isInitial = false) => {
+      if (isPollingRef.current && !isInitial) return;
+      isPollingRef.current = true;
 
-    try {
-      const params = new URLSearchParams({
-        limit: "50",
-        sort: "desc",
-      });
+      try {
+        const params = new URLSearchParams({
+          limit: "50",
+          sort: "desc",
+        });
 
-      const apiPath = buildApiUrl("/api/events");
-      const response = await fetch(`${apiPath}?${params.toString()}`);
+        const apiPath = buildApiUrl("/api/events");
+        const response = await fetch(`${apiPath}?${params.toString()}`);
 
-      if (!response.ok) {
-        if (response.status === 500) {
-          try {
-            const errorData = await response.json();
-            if (
-              errorData.details?.includes("not found in schema") ||
-              errorData.details?.includes("Model")
-            ) {
-              setIsConnected(true);
-              if (isInitial) {
-                setEvents([]);
-                setLoading(false);
+        if (!response.ok) {
+          if (response.status === 500) {
+            try {
+              const errorData = await response.json();
+              if (
+                errorData.details?.includes("not found in schema") ||
+                errorData.details?.includes("Model")
+              ) {
+                setIsConnected(true);
+                if (isInitial) {
+                  setEvents([]);
+                  setLoading(false);
+                }
+                return;
               }
-              return;
-            }
-          } catch {}
-        }
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      setIsConnected(true);
-
-      if (data.events && Array.isArray(data.events)) {
-        const hasMoreFromApi = Boolean(data.hasMore);
-        const nextCursorFromApi = data.nextCursor ?? null;
-
-        if (data.events.length === 0 && isInitial) {
-          setEvents([]);
-          setTotalEventCount(0);
-          setNextCursor(null);
-          setHasMore(false);
-          setLoading(false);
-          return;
-        }
-        if (isInitial) {
-          setEvents(data.events);
-          setNextCursor(nextCursorFromApi);
-          setHasMore(hasMoreFromApi);
-          setLastPollAt(Date.now());
-          fetchEventCount();
-          if (data.events.length > 0) {
-            lastEventIdRef.current = data.events[0].id;
+            } catch {}
           }
-        } else {
-          setEvents((prev) => {
-            const existingIds = new Set(prev.map((e) => e.id));
-            const newEvents = data.events.filter((event: AuthEvent) => !existingIds.has(event.id));
-            if (newEvents.length > 0) {
-              const newIds = new Set<string>(newEvents.map((e: AuthEvent) => e.id));
-              setNewEventIds((prevIds) => {
-                const combined = new Set<string>([...prevIds, ...newIds]);
-                setTimeout(() => {
-                  setNewEventIds((prevSet) => {
-                    const updated = new Set<string>(prevSet);
-                    newIds.forEach((id: string) => updated.delete(id));
-                    return updated;
-                  });
-                }, 3000);
-                return combined;
-              });
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setIsConnected(true);
+
+        if (data.events && Array.isArray(data.events)) {
+          const hasMoreFromApi = Boolean(data.hasMore);
+          const nextCursorFromApi = data.nextCursor ?? null;
+
+          if (data.events.length === 0 && isInitial) {
+            setEvents([]);
+            setTotalEventCount(0);
+            setNextCursor(null);
+            setHasMore(false);
+            setLoading(false);
+            return;
+          }
+          if (isInitial) {
+            setEvents(data.events);
+            setNextCursor(nextCursorFromApi);
+            setHasMore(hasMoreFromApi);
+            setLastPollAt(Date.now());
+            fetchEventCount();
+            if (data.events.length > 0) {
+              lastEventIdRef.current = data.events[0].id;
             }
-            if (prev.length > 50) {
-              const merged = [...data.events.filter((e: AuthEvent) => !existingIds.has(e.id)), ...prev];
-              const deduped = merged.filter((e, i, arr) => arr.findIndex((x) => x.id === e.id) === i);
-              return deduped.slice(0, 500);
+          } else {
+            setEvents((prev) => {
+              const existingIds = new Set(prev.map((e) => e.id));
+              const newEvents = data.events.filter(
+                (event: AuthEvent) => !existingIds.has(event.id),
+              );
+              if (newEvents.length > 0) {
+                const newIds = new Set<string>(newEvents.map((e: AuthEvent) => e.id));
+                setNewEventIds((prevIds) => {
+                  const combined = new Set<string>([...prevIds, ...newIds]);
+                  setTimeout(() => {
+                    setNewEventIds((prevSet) => {
+                      const updated = new Set<string>(prevSet);
+                      newIds.forEach((id: string) => updated.delete(id));
+                      return updated;
+                    });
+                  }, 3000);
+                  return combined;
+                });
+              }
+              if (prev.length > 50) {
+                const merged = [
+                  ...data.events.filter((e: AuthEvent) => !existingIds.has(e.id)),
+                  ...prev,
+                ];
+                const deduped = merged.filter(
+                  (e, i, arr) => arr.findIndex((x) => x.id === e.id) === i,
+                );
+                return deduped.slice(0, 500);
+              }
+              return [...data.events];
+            });
+            setNextCursor(nextCursorFromApi);
+            setHasMore(hasMoreFromApi);
+            setLastPollAt(Date.now());
+            fetchEventCount();
+            if (data.events.length > 0) {
+              lastEventIdRef.current = data.events[0].id;
             }
-            return [...data.events];
-          });
-          setNextCursor(nextCursorFromApi);
-          setHasMore(hasMoreFromApi);
-          setLastPollAt(Date.now());
-          fetchEventCount();
-          if (data.events.length > 0) {
-            lastEventIdRef.current = data.events[0].id;
           }
         }
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+        setIsConnected(false);
+      } finally {
+        isPollingRef.current = false;
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Failed to fetch events:", error);
-      setIsConnected(false);
-    } finally {
-      isPollingRef.current = false;
-      setLoading(false);
-    }
-  }, [fetchEventCount]);
+    },
+    [fetchEventCount],
+  );
 
   useEffect(() => {
     const checkConfig = async () => {

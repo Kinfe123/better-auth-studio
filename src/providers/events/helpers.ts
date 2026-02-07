@@ -1229,7 +1229,9 @@ export function createNodeSqliteProvider(options: {
     async count(): Promise<number> {
       await ensureTableSync();
       try {
-        const row = actualClient.prepare(`SELECT COUNT(*) as total FROM ${tableName}`).get() as { total: number };
+        const row = actualClient.prepare(`SELECT COUNT(*) as total FROM ${tableName}`).get() as {
+          total: number;
+        };
         return row?.total ?? 0;
       } catch (error: any) {
         if (error?.message?.includes("no such table")) {
@@ -1239,10 +1241,18 @@ export function createNodeSqliteProvider(options: {
       }
     },
 
-    async getStats(): Promise<{ total: number; success: number; failed: number; warning: number; info: number }> {
+    async getStats(): Promise<{
+      total: number;
+      success: number;
+      failed: number;
+      warning: number;
+      info: number;
+    }> {
       await ensureTableSync();
       try {
-        const totalRow = actualClient.prepare(`SELECT COUNT(*) as total FROM ${tableName}`).get() as { total: number };
+        const totalRow = actualClient
+          .prepare(`SELECT COUNT(*) as total FROM ${tableName}`)
+          .get() as { total: number };
         const total = totalRow?.total ?? 0;
         const failedRow = actualClient
           .prepare(
