@@ -31,7 +31,7 @@ export default function CodeHighlighter({
   };
 
   return (
-    <div className={`relative group w-full ${className}`}>
+    <div className={`relative group w-full max-w-full overflow-x-auto thin-scrollbar ${className}`}>
       <SyntaxHighlighter
         language={language}
         style={oneDark}
@@ -43,7 +43,9 @@ export default function CodeHighlighter({
           fontFamily: "var(--font-geist-mono)",
           lineHeight: "1.5",
           maxHeight: "100%",
-          overflow: "visible",
+          maxWidth: "100%",
+          overflowX: "auto",
+          overflowY: "hidden",
         }}
         codeTagProps={{
           style: {
