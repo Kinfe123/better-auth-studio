@@ -1,5 +1,7 @@
 import { format, formatDistanceToNow } from "date-fns";
 import {
+  ArrowDown,
+  ArrowUp,
   Ban,
   Calendar as CalendarIcon,
   Database,
@@ -18,7 +20,7 @@ import {
   Users as UsersIcon,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -127,6 +129,9 @@ export default function Users() {
     }>
   >([]);
   const [isSeeding, setIsSeeding] = useState(false);
+  type UserSortColumn = "createdAt" | "lastSeenAt";
+  const [userSortColumn, setUserSortColumn] = useState<UserSortColumn>("createdAt");
+  const [userSortOrder, setUserSortOrder] = useState<"newest" | "oldest">("newest");
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -675,10 +680,32 @@ export default function Users() {
 
   const bannedCount = users.filter((u) => u.banned).length;
 
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const sortedUsers = useMemo(() => {
+    const list = [...filteredUsers];
+    list.sort((a, b) => {
+      const getCreatedAt = (u: User) => new Date(u.createdAt).getTime();
+      const getLastSeenAt = (u: User) => {
+        const v = u.lastSeenAt ?? (u as any)[lastSeenAtColumnName];
+        return v ? new Date(v).getTime() : 0;
+      };
+      const aVal = userSortColumn === "createdAt" ? getCreatedAt(a) : getLastSeenAt(a);
+      const bVal = userSortColumn === "createdAt" ? getCreatedAt(b) : getLastSeenAt(b);
+      if (userSortColumn === "lastSeenAt") {
+        const aHas = a.lastSeenAt ?? (a as any)[lastSeenAtColumnName];
+        const bHas = b.lastSeenAt ?? (b as any)[lastSeenAtColumnName];
+        if (!aHas && !bHas) return 0;
+        if (!aHas) return 1;
+        if (!bHas) return -1;
+      }
+      return userSortOrder === "newest" ? bVal - aVal : aVal - bVal;
+    });
+    return list;
+  }, [filteredUsers, userSortColumn, userSortOrder, lastSeenAtColumnName]);
+
+  const totalPages = Math.ceil(sortedUsers.length / usersPerPage);
   const startIndex = (currentPage - 1) * usersPerPage;
   const endIndex = startIndex + usersPerPage;
-  const currentUsers = filteredUsers.slice(startIndex, endIndex);
+  const currentUsers = sortedUsers.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -953,29 +980,64 @@ export default function Users() {
                 </th>
                 <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">Role</th>
                 <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
-                  Created
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserSortColumn("createdAt");
+                      setUserSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"));
+                    }}
+                    className="flex items-center gap-1.5 font-mono uppercase hover:text-white/90 transition-colors"
+                  >
+                    Created
+                    {userSortColumn === "createdAt" ? (
+                      userSortOrder === "newest" ? (
+                        <ArrowDown className="w-3.5 h-3.5 text-white/70" />
+                      ) : (
+                        <ArrowUp className="w-3.5 h-3.5 text-white/70" />
+                      )
+                    ) : null}
+                  </button>
                 </th>
                 {lastSeenAtEnabled && (
                   <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
-                    <span className="inline-flex items-center gap-1.5">
-                      Last seen
-                      <TooltipProvider delayDuration={200}>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="inline-flex text-white/50 hover:text-white/80 cursor-help">
-                              <HelpCircle className="w-3.5 h-3.5" />
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent
-                            side="top"
-                            className="max-w-xs lowercase border border-white/20 bg-black/95 text-white text-xs font-normal shadow-xl rounded-none px-3 py-2"
-                          >
-                            Last seen is last time the user was active.
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </span>
-                  </th>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserSortColumn("lastSeenAt");
+                        setUserSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"));
+                      }}
+                      className="flex items-center gap-1.5 font-mono uppercase hover:text-white/90 transition-colors"
+                    >
+                      <span className="inline-flex items-center gap-1.5">
+                        Last seen
+                        <TooltipProvider delayDuration={200}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span
+                                className="inline-flex text-white/50 hover:text-white/80 cursor-help"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <HelpCircle className="w-3.5 h-3.5" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              side="top"
+                              className="max-w-xs lowercase border border-white/20 bg-black/95 text-white text-xs font-normal shadow-xl rounded-none px-3 py-2"
+                            >
+                              Last seen is last time the user was active.
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </span>
+                      {userSortColumn === "lastSeenAt" ? (
+                        userSortOrder === "newest" ? (
+                          <ArrowDown className="w-3.5 h-3.5 text-white/70" />
+                        ) : (
+                          <ArrowUp className="w-3.5 h-3.5 text-white/70" />
+                        )
+                      ) : null}
+                    </button>
+                                      </th>
                 )}
                 <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
                   Actions
@@ -1095,15 +1157,9 @@ export default function Users() {
                       )}
                     </td>
                     <td className="py-4 px-4 text-sm text-gray-400">
-                      <div className="flex uppercase font-mono flex-col">
-                        {new Date(user.createdAt).toLocaleDateString()}
-                        <p className="text-xs">
-                          {new Date(user.createdAt).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
-                        </p>
+                      <div className="flex uppercase font-mono flex-col text-xs">
+                        <span>{format(new Date(user.createdAt), "dd MMM yyyy, HH:mm")}</span>
+                        <p className="text-xs text-gray-500">{formatTimeAgo(user.createdAt)}</p>
                       </div>
                     </td>
                     {lastSeenAtEnabled && (
@@ -1111,7 +1167,7 @@ export default function Users() {
                         {(() => {
                           const lastSeen = user.lastSeenAt ?? (user as any)[lastSeenAtColumnName];
                           return lastSeen ? (
-                            <div className="flex uppercase font-mono flex-col">
+                            <div className="flex uppercase font-mono text-xs flex-col">
                               <span>{format(new Date(lastSeen), "dd MMM yyyy, HH:mm")}</span>
                               <p className="text-xs text-gray-500">{formatTimeAgo(lastSeen)}</p>
                             </div>
@@ -1222,7 +1278,7 @@ export default function Users() {
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}
-          totalItems={filteredUsers.length}
+          totalItems={sortedUsers.length}
           startIndex={startIndex}
           endIndex={endIndex}
         />

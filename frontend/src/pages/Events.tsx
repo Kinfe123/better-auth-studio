@@ -126,6 +126,13 @@ interface AuthEvent {
   };
 }
 
+interface LocationData {
+  country: string;
+  countryCode: string;
+  city: string;
+  region: string;
+}
+
 const formatDateTime = (value?: string | Date) => {
   if (!value) return "—";
   const d = typeof value === "string" ? new Date(value) : value;
@@ -233,6 +240,55 @@ export default function Events() {
 
   const [activeFilters, setActiveFilters] = useState<FilterConfig[]>([]);
   const [eventSort, setEventSort] = useState<"newest" | "oldest">("newest");
+  const [eventLocation, setEventLocation] = useState<LocationData | null>(null);
+  const [eventLocationLoading, setEventLocationLoading] = useState(false);
+
+  const resolveIPLocation = useCallback(async (ipAddress: string): Promise<LocationData | null> => {
+    try {
+      const apiPath = buildApiUrl("/api/geo/resolve");
+      const response = await fetch(apiPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ipAddress }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.location) return data.location;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const getCountryFlag = useCallback((countryCode: string): string => {
+    if (!countryCode) return "🌍";
+    const codePoints = countryCode
+      .toUpperCase()
+      .split("")
+      .map((char) => 127397 + char.charCodeAt(0));
+    return String.fromCodePoint(...codePoints);
+  }, []);
+
+  useEffect(() => {
+    if (!showViewModal || !selectedEvent?.ipAddress) {
+      setEventLocation(null);
+      setEventLocationLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setEventLocationLoading(true);
+    setEventLocation(null);
+    resolveIPLocation(selectedEvent.ipAddress).then((loc) => {
+      if (!cancelled) {
+        setEventLocation(loc);
+        setEventLocationLoading(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [showViewModal, selectedEvent?.id, selectedEvent?.ipAddress, resolveIPLocation]);
 
   const eventStats = useMemo(() => {
     // Use the same categorization logic as the chart
@@ -1633,6 +1689,14 @@ export const auth = betterAuth({
                   selectedEvent.ipAddress && {
                     label: "IP Address",
                     value: selectedEvent.ipAddress,
+                  },
+                  selectedEvent.ipAddress && {
+                    label: "Location",
+                    value: eventLocationLoading
+                      ? "Resolving..."
+                      : eventLocation
+                        ? `${getCountryFlag(eventLocation.countryCode)} ${eventLocation.city}, ${eventLocation.country}`
+                        : "—",
                   },
                   selectedEvent.userAgent && {
                     label: "User Agent",

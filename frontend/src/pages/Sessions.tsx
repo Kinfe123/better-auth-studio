@@ -1,5 +1,18 @@
-import { Database, Edit, Eye, Filter, Loader, Plus, Search, Trash2, User, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Database,
+  Edit,
+  Eye,
+  Filter,
+  Loader,
+  Plus,
+  Search,
+  Trash2,
+  User,
+  X,
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CopyableId } from "../components/CopyableId";
 import { Terminal } from "../components/Terminal";
@@ -45,6 +58,7 @@ export default function Sessions() {
     }>
   >([]);
   const [isSeeding, setIsSeeding] = useState(false);
+  const [sessionSortOrder, setSessionSortOrder] = useState<"newest" | "oldest">("newest");
 
   const fetchSessions = useCallback(async () => {
     try {
@@ -285,6 +299,16 @@ export default function Sessions() {
     return matchesSearch && matchesFilter;
   });
 
+  const sortedSessions = useMemo(() => {
+    const list = [...filteredSessions];
+    list.sort((a, b) => {
+      const ta = new Date(a.expiresAt).getTime();
+      const tb = new Date(b.expiresAt).getTime();
+      return sessionSortOrder === "newest" ? tb - ta : ta - tb;
+    });
+    return list;
+  }, [filteredSessions, sessionSortOrder]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-32">
@@ -374,7 +398,20 @@ export default function Sessions() {
                   Status
                 </th>
                 <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
-                  Expires
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSessionSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"))
+                    }
+                    className="flex items-center gap-1.5 font-mono uppercase hover:text-white/90 transition-colors"
+                  >
+                    Expires
+                    {sessionSortOrder === "newest" ? (
+                      <ArrowDown className="w-3.5 h-3.5 text-white/70" />
+                    ) : (
+                      <ArrowUp className="w-3.5 h-3.5 text-white/70" />
+                    )}
+                  </button>
                 </th>
                 <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
                   Actions
@@ -382,7 +419,7 @@ export default function Sessions() {
               </tr>
             </thead>
             <tbody>
-              {filteredSessions.map((session) => (
+              {sortedSessions.map((session) => (
                 <tr
                   key={session.id}
                   className="border-b border-dashed border-white/5 hover:bg-white/5"

@@ -1,5 +1,7 @@
 import { format } from "date-fns";
 import {
+  ArrowDown,
+  ArrowUp,
   Building2,
   Calendar as CalendarIcon,
   Database,
@@ -13,7 +15,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -93,6 +95,7 @@ export default function Organizations() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [createFormData, setCreateFormData] = useState({ name: "", slug: "" });
   const [editFormData, setEditFormData] = useState({ name: "", slug: "" });
+  const [orgSortOrder, setOrgSortOrder] = useState<"newest" | "oldest">("newest");
 
   useEffect(() => {
     checkPluginStatus();
@@ -467,10 +470,20 @@ export default function Organizations() {
     return matchesSearch && matchesFilters;
   });
 
-  const totalPages = Math.ceil(filteredOrganizations.length / organizationsPerPage);
+  const sortedOrganizations = useMemo(() => {
+    const list = [...filteredOrganizations];
+    list.sort((a, b) => {
+      const ta = new Date(a.createdAt).getTime();
+      const tb = new Date(b.createdAt).getTime();
+      return orgSortOrder === "newest" ? tb - ta : ta - tb;
+    });
+    return list;
+  }, [filteredOrganizations, orgSortOrder]);
+
+  const totalPages = Math.ceil(sortedOrganizations.length / organizationsPerPage);
   const startIndex = (currentPage - 1) * organizationsPerPage;
   const endIndex = startIndex + organizationsPerPage;
-  const currentOrganizations = filteredOrganizations.slice(startIndex, endIndex);
+  const currentOrganizations = sortedOrganizations.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -776,7 +789,20 @@ export default function Organizations() {
                 </th>
                 <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">Slug</th>
                 <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">
-                  Created
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOrgSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"))
+                    }
+                    className="flex items-center gap-1.5 font-mono uppercase hover:text-white/90 transition-colors text-white"
+                  >
+                    Created
+                    {orgSortOrder === "newest" ? (
+                      <ArrowDown className="w-3.5 h-3.5 text-white/70" />
+                    ) : (
+                      <ArrowUp className="w-3.5 h-3.5 text-white/70" />
+                    )}
+                  </button>
                 </th>
                 <th className="text-right py-4 px-4 font-mono uppercase text-xs text-white">
                   Actions
@@ -900,7 +926,7 @@ export default function Organizations() {
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}
-          totalItems={filteredOrganizations.length}
+          totalItems={sortedOrganizations.length}
           startIndex={startIndex}
           endIndex={endIndex}
         />
