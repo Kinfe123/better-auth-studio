@@ -846,7 +846,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                     error: "IP address is required",
                 });
             }
-            const location = await resolveIPLocationAsync(ipAddress);
+            const location = await resolveIPLocationAsync(ipAddress, studioConfig?.ipAddress);
             if (!location) {
                 return res.status(404).json({
                     success: false,

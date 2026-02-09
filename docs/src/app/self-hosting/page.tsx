@@ -1317,6 +1317,44 @@ export default config;`}
           </PixelCard>
         </section>
 
+        <section id="ip-address">
+          <PixelCard variant="highlight" className="mb-8 relative">
+            <div className="absolute -top-10 left-0">
+              <h3
+                onClick={() => handleSectionClick("ip-address")}
+                className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden cursor-pointer hover:border-white/40 hover:bg-white/15 transition-all duration-200"
+              >
+                <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
+                  IP address / geolocation (optional)
+                </span>
+              </h3>
+            </div>
+            <div className="pt-4 space-y-3">
+              <p className="text-sm font-light tracking-tight text-white/70">
+                To show IP geolocation (city, country) for Events and Sessions, set{" "}
+                <code className="bg-white/10 px-1 text-white/90">ipAddress</code> in your Studio
+                config. Supported providers: <strong className="text-white/90">ipinfo</strong> (ipinfo.io) and{" "}
+                <strong className="text-white/90">ipapi</strong> (ipapi.co). Token is passed as a query param for ipinfo; ipapi uses the path.
+              </p>
+              <p className="text-sm font-light tracking-tight text-white/70">
+                <strong className="text-white/90">Example (ipinfo.io):</strong>{" "}
+                <code className="bg-white/10 px-1 text-white/90 block mt-1 text-xs overflow-x-auto">
+                  ipAddress: &#123; provider: &quot;ipinfo&quot;, apiToken: process.env.IPINFO_TOKEN, baseUrl: &quot;https://api.ipinfo.io&quot;, endpoint: &quot;lookup&quot; &#125;
+                </code>
+                Use <code className="bg-white/10 px-1 text-white/90">endpoint: &quot;lite&quot;</code> for the free plan (country/continent only); <code className="bg-white/10 px-1 text-white/90">endpoint: &quot;lookup&quot;</code> (default) for core/plus (city, region).
+              </p>
+              <p className="text-sm font-light tracking-tight text-white/70">
+                <strong className="text-white/90">Example (ipapi.co):</strong>{" "}
+                <code className="bg-white/10 px-1 text-white/90 block mt-1 text-xs overflow-x-auto">
+                  ipAddress: &#123; provider: &quot;ipapi&quot;, baseUrl: &quot;https://ipapi.co&quot; &#125;
+                </code>
+                If unset, Studio falls back to local GeoLite2/default-geo/hardcoded ranges when available.
+              </p>
+            </div>
+          </PixelCard>
+        </section>
+
         <section id="security">
           <PixelCard variant="highlight" className="relative">
             <div className="absolute -top-10 left-0">

@@ -1004,7 +1004,7 @@ export function createRoutes(
         });
       }
 
-      const location = await resolveIPLocationAsync(ipAddress);
+      const location = await resolveIPLocationAsync(ipAddress, studioConfig?.ipAddress);
 
       if (!location) {
         return res.status(404).json({

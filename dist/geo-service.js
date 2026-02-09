@@ -1,5 +1,6 @@
 /**
- * IP geolocation: tries ipapi.co first, then maxmind (GeoLite2-City.mmdb), data/default-geo.json, then hardcoded ranges.
+ * IP geolocation: when studio config ipAddress is set, uses that provider (ipinfo.io or ipapi.co);
+ * otherwise falls back to maxmind (GeoLite2-City.mmdb), data/default-geo.json, then hardcoded ranges.
  * Run `pnpm geo:update` to download the latest GeoLite2-City.mmdb for fallback.
  */
 import { existsSync, readFileSync } from "node:fs";
@@ -37,34 +38,80 @@ export async function initializeGeoService() {
         loadDefaultDatabase();
     }
 }
-const IPAPI_CO_BASE = "https://ipapi.co";
-/**
- * Resolve IP location using ipapi.co first, then fallback to local DB/ranges.
- * Use this for API handlers (async).
- */
-export async function resolveIPLocationAsync(ipAddress) {
-    const trimmed = ipAddress.trim();
-    if (!trimmed)
-        return null;
-    try {
-        const url = `${IPAPI_CO_BASE}/${encodeURIComponent(trimmed)}/json/`;
-        const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
-        if (!res.ok)
-            throw new Error(`ipapi.co ${res.status}`);
-        const data = (await res.json());
-        if (data.error || !data.country_code) {
-            throw new Error(data.reason || "Invalid response");
-        }
+const DEFAULT_IPINFO_BASE = "https://api.ipinfo.io";
+const DEFAULT_IPAPI_BASE = "https://ipapi.co";
+function parseIpInfoResponse(data) {
+    const lookup = data;
+    if (lookup.geo && (lookup.geo.country_code ?? lookup.geo.country)) {
         return {
-            country: data.country_name || "Unknown",
-            countryCode: data.country_code || "",
-            city: data.city ?? "Unknown",
-            region: data.region ?? data.region_code ?? "Unknown",
+            country: lookup.geo.country || "Unknown",
+            countryCode: lookup.geo.country_code || "",
+            city: lookup.geo.city ?? "Unknown",
+            region: lookup.geo.region ?? lookup.geo.region_code ?? "Unknown",
         };
     }
-    catch (_error) {
-        return resolveIPLocation(trimmed);
+    const flat = data;
+    const lite = data;
+    if (flat.country != null || lite.country_code != null) {
+        const countryCode = lite.country_code ?? (typeof flat.country === "string" && flat.country.length === 2 ? flat.country : "");
+        const countryName = lite.country ?? (typeof flat.country === "string" && flat.country.length > 2 ? flat.country : "Unknown");
+        return {
+            country: countryName || "Unknown",
+            countryCode: countryCode || "",
+            city: flat.city ?? "Unknown",
+            region: flat.region ?? "Unknown",
+        };
     }
+    return null;
+}
+/**
+ * Resolve IP location: if ipConfig is set, use that provider (ipinfo or ipapi); else fallback to local DB/ranges.
+ * Use this for API handlers (async).
+ */
+export async function resolveIPLocationAsync(ipAddress, ipConfig) {
+    const trimmed = ipAddress.trim();
+    if (!trimmed || trimmed === "Unknown")
+        return null;
+    if (ipConfig?.provider === "ipinfo" && ipConfig.apiToken) {
+        try {
+            const base = (ipConfig.baseUrl || DEFAULT_IPINFO_BASE).replace(/\/$/, "");
+            const path = (ipConfig.endpoint || "lookup") === "lite" ? "lite" : "lookup";
+            const url = `${base}/${path}/${encodeURIComponent(trimmed)}?token=${encodeURIComponent(ipConfig.apiToken)}`;
+            const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+            if (!res.ok)
+                throw new Error(`ipinfo ${res.status}`);
+            const data = (await res.json());
+            const location = parseIpInfoResponse(data);
+            if (location)
+                return location;
+            throw new Error("Invalid ipinfo response");
+        }
+        catch (_error) {
+            return resolveIPLocation(trimmed);
+        }
+    }
+    if (ipConfig?.provider === "ipapi") {
+        try {
+            const base = (ipConfig.baseUrl || DEFAULT_IPAPI_BASE).replace(/\/$/, "");
+            const url = `${base}/${encodeURIComponent(trimmed)}/json/`;
+            const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+            if (!res.ok)
+                throw new Error(`ipapi ${res.status}`);
+            const data = (await res.json());
+            if (data.error || !data.country_code)
+                throw new Error(data.reason || "Invalid response");
+            return {
+                country: data.country_name || data.country || "Unknown",
+                countryCode: data.country_code || "",
+                city: data.city ?? "Unknown",
+                region: data.region ?? data.region_code ?? "Unknown",
+            };
+        }
+        catch (_error) {
+            return resolveIPLocation(trimmed);
+        }
+    }
+    return resolveIPLocation(trimmed);
 }
 export function resolveIPLocation(ipAddress) {
     if (lookup) {

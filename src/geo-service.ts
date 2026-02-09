@@ -1,5 +1,6 @@
 /**
- * IP geolocation: tries ipapi.co first, then maxmind (GeoLite2-City.mmdb), data/default-geo.json, then hardcoded ranges.
+ * IP geolocation: when studio config ipAddress is set, uses that provider (ipinfo.io or ipapi.co);
+ * otherwise falls back to maxmind (GeoLite2-City.mmdb), data/default-geo.json, then hardcoded ranges.
  * Run `pnpm geo:update` to download the latest GeoLite2-City.mmdb for fallback.
  */
 import { existsSync, readFileSync } from "node:fs";
@@ -17,6 +18,15 @@ export interface LocationData {
   region: string;
 }
 
+/** Config passed from studio config ipAddress (avoids importing handler types). */
+export interface IpAddressProviderConfig {
+  provider: "ipinfo" | "ipapi";
+  apiToken?: string;
+  baseUrl?: string;
+  /** ipinfo only: "lite" | "lookup". Default "lookup". */
+  endpoint?: "lite" | "lookup";
+}
+
 /** ipapi.co JSON response (subset we use) */
 interface IpApiCoResponse {
   ip?: string;
@@ -28,6 +38,43 @@ interface IpApiCoResponse {
   country_code?: string | null;
   error?: boolean;
   reason?: string;
+}
+
+/** ipinfo.io lite: flat country/continent only */
+interface IpInfoLiteResponse {
+  ip?: string;
+  country_code?: string;
+  country?: string;
+  continent_code?: string;
+  continent?: string;
+  asn?: string;
+  as_name?: string;
+  as_domain?: string;
+}
+
+/** ipinfo.io lookup (core/plus): nested geo */
+interface IpInfoLookupResponse {
+  ip?: string;
+  geo?: {
+    city?: string;
+    region?: string;
+    region_code?: string;
+    country?: string;
+    country_code?: string;
+    continent?: string;
+    continent_code?: string;
+  };
+  as?: { asn?: string; name?: string; domain?: string };
+}
+
+/** ipinfo.io business-style: flat with city, region, country */
+interface IpInfoFlatResponse {
+  ip?: string;
+  city?: string;
+  region?: string;
+  country?: string;
+  loc?: string;
+  timezone?: string;
 }
 
 interface DefaultGeoDatabase {
@@ -77,35 +124,81 @@ export async function initializeGeoService(): Promise<void> {
   }
 }
 
-const IPAPI_CO_BASE = "https://ipapi.co";
+const DEFAULT_IPINFO_BASE = "https://api.ipinfo.io";
+const DEFAULT_IPAPI_BASE = "https://ipapi.co";
+
+function parseIpInfoResponse(data: IpInfoLiteResponse | IpInfoLookupResponse | IpInfoFlatResponse): LocationData | null {
+  const lookup = data as IpInfoLookupResponse;
+  if (lookup.geo && (lookup.geo.country_code ?? lookup.geo.country)) {
+    return {
+      country: lookup.geo.country || "Unknown",
+      countryCode: lookup.geo.country_code || "",
+      city: lookup.geo.city ?? "Unknown",
+      region: lookup.geo.region ?? lookup.geo.region_code ?? "Unknown",
+    };
+  }
+  const flat = data as IpInfoFlatResponse;
+  const lite = data as IpInfoLiteResponse;
+  if (flat.country != null || lite.country_code != null) {
+    const countryCode = lite.country_code ?? (typeof flat.country === "string" && flat.country.length === 2 ? flat.country : "");
+    const countryName = lite.country ?? (typeof flat.country === "string" && flat.country.length > 2 ? flat.country : "Unknown");
+    return {
+      country: countryName || "Unknown",
+      countryCode: countryCode || "",
+      city: flat.city ?? "Unknown",
+      region: flat.region ?? "Unknown",
+    };
+  }
+  return null;
+}
 
 /**
- * Resolve IP location using ipapi.co first, then fallback to local DB/ranges.
+ * Resolve IP location: if ipConfig is set, use that provider (ipinfo or ipapi); else fallback to local DB/ranges.
  * Use this for API handlers (async).
  */
-export async function resolveIPLocationAsync(ipAddress: string): Promise<LocationData | null> {
+export async function resolveIPLocationAsync(
+  ipAddress: string,
+  ipConfig?: IpAddressProviderConfig | null,
+): Promise<LocationData | null> {
   const trimmed = ipAddress.trim();
-  if (!trimmed) return null;
+  if (!trimmed || trimmed === "Unknown") return null;
 
-  try {
-    const url = `${IPAPI_CO_BASE}/${encodeURIComponent(trimmed)}/json/`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
-    if (!res.ok) throw new Error(`ipapi.co ${res.status}`);
-
-    const data = (await res.json()) as IpApiCoResponse;
-    if (data.error || !data.country_code) {
-      throw new Error(data.reason || "Invalid response");
+  if (ipConfig?.provider === "ipinfo" && ipConfig.apiToken) {
+    try {
+      const base = (ipConfig.baseUrl || DEFAULT_IPINFO_BASE).replace(/\/$/, "");
+      const path = (ipConfig.endpoint || "lookup") === "lite" ? "lite" : "lookup";
+      const url = `${base}/${path}/${encodeURIComponent(trimmed)}?token=${encodeURIComponent(ipConfig.apiToken)}`;
+      const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+      if (!res.ok) throw new Error(`ipinfo ${res.status}`);
+      const data = (await res.json()) as IpInfoLookupResponse | IpInfoLiteResponse | IpInfoFlatResponse;
+      const location = parseIpInfoResponse(data);
+      if (location) return location;
+      throw new Error("Invalid ipinfo response");
+    } catch (_error) {
+      return resolveIPLocation(trimmed);
     }
-
-    return {
-      country: data.country_name || "Unknown",
-      countryCode: data.country_code || "",
-      city: data.city ?? "Unknown",
-      region: data.region ?? data.region_code ?? "Unknown",
-    };
-  } catch (_error) {
-    return resolveIPLocation(trimmed);
   }
+
+  if (ipConfig?.provider === "ipapi") {
+    try {
+      const base = (ipConfig.baseUrl || DEFAULT_IPAPI_BASE).replace(/\/$/, "");
+      const url = `${base}/${encodeURIComponent(trimmed)}/json/`;
+      const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+      if (!res.ok) throw new Error(`ipapi ${res.status}`);
+      const data = (await res.json()) as IpApiCoResponse;
+      if (data.error || !data.country_code) throw new Error(data.reason || "Invalid response");
+      return {
+        country: data.country_name || data.country || "Unknown",
+        countryCode: data.country_code || "",
+        city: data.city ?? "Unknown",
+        region: data.region ?? data.region_code ?? "Unknown",
+      };
+    } catch (_error) {
+      return resolveIPLocation(trimmed);
+    }
+  }
+
+  return resolveIPLocation(trimmed);
 }
 
 export function resolveIPLocation(ipAddress: string): LocationData | null {

@@ -92,12 +92,26 @@ export type StudioLastSeenAtConfig = {
   columnName?: string;
 };
 
+/** IP geolocation provider. When set, Studio uses this for Events and Sessions IP resolution instead of local DB. */
+export type StudioIpAddressConfig = {
+  /** Provider: "ipinfo" (ipinfo.io) or "ipapi" (ipapi.co). */
+  provider: "ipinfo" | "ipapi";
+  /** API token (required for ipinfo; optional for ipapi free tier). */
+  apiToken?: string;
+  /** Optional base URL (e.g. "https://api.ipinfo.io"). Defaults per provider. */
+  baseUrl?: string;
+  /** For ipinfo only: "lite" (free, country/continent only) or "lookup" (core/plus, includes city/region). Default "lookup". */
+  endpoint?: "lite" | "lookup";
+};
+
 export type StudioConfig = {
   auth: any;
   basePath?: string;
   access?: StudioAccessConfig;
   metadata?: StudioMetadata;
   lastSeenAt?: StudioLastSeenAtConfig;
+  /** Optional IP geolocation config (ipinfo.io or ipapi.co). When set, used for Events/Sessions location. */
+  ipAddress?: StudioIpAddressConfig;
   events?: {
     enabled?: boolean;
     tableName?: string; // Auto-use Better Auth adapter if provided
