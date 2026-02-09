@@ -16,6 +16,11 @@ const config: StudioConfig = {
     enabled: true,
     columnName: "lastSeenAt",
   },
+  ipAddress: {
+    provider: "ipinfo",
+    apiToken: process.env.IPINFO_TOKEN,
+    endpoint: "lite",
+  },
   metadata: {
     title: "Better Auth Studio",
     theme: "dark",

@@ -162,7 +162,6 @@ export async function resolveIPLocationAsync(
 ): Promise<LocationData | null> {
   const trimmed = ipAddress.trim();
   if (!trimmed || trimmed === "Unknown") return null;
-
   if (ipConfig?.provider === "ipinfo" && ipConfig.apiToken) {
     try {
       const base = (ipConfig.baseUrl || DEFAULT_IPINFO_BASE).replace(/\/$/, "");
