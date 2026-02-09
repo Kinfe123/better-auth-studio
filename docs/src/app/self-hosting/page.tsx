@@ -1307,8 +1307,9 @@ export default config;`}
                 </code>
                 . Add a <code className="bg-white/10 px-1 text-white/90">lastSeenAt</code> column
                 (or your chosen <code className="bg-white/10 px-1 text-white/90">columnName</code>)
-                to your user table as an <strong className="text-white/90">optional datetime</strong>{" "}
-                (nullable timestamp) field, then run your migration (e.g.{" "}
+                to your user table as an{" "}
+                <strong className="text-white/90">optional datetime</strong> (nullable timestamp)
+                field, then run your migration (e.g.{" "}
                 <code className="bg-white/10 px-1 text-white/90">prisma migrate dev</code>,{" "}
                 <code className="bg-white/10 px-1 text-white/90">drizzle-kit push</code>) or with
                 your database client of choice.
@@ -1334,22 +1335,31 @@ export default config;`}
               <p className="text-sm font-light tracking-tight text-white/70">
                 To show IP geolocation (city, country) for Events and Sessions, set{" "}
                 <code className="bg-white/10 px-1 text-white/90">ipAddress</code> in your Studio
-                config. Supported providers: <strong className="text-white/90">ipinfo</strong> (ipinfo.io) and{" "}
-                <strong className="text-white/90">ipapi</strong> (ipapi.co). Token is passed as a query param for ipinfo; ipapi uses the path.
+                config. Supported providers: <strong className="text-white/90">ipinfo</strong>{" "}
+                (ipinfo.io) and <strong className="text-white/90">ipapi</strong> (ipapi.co). Token
+                is passed as a query param for ipinfo; ipapi uses the path.
               </p>
               <p className="text-sm font-light tracking-tight text-white/70">
                 <strong className="text-white/90">Example (ipinfo.io):</strong>{" "}
                 <code className="bg-white/10 px-1 text-white/90 block mt-1 text-xs overflow-x-auto">
-                  ipAddress: &#123; provider: &quot;ipinfo&quot;, apiToken: process.env.IPINFO_TOKEN, baseUrl: &quot;https://api.ipinfo.io&quot;, endpoint: &quot;lookup&quot; &#125;
+                  ipAddress: &#123; provider: &quot;ipinfo&quot;, apiToken:
+                  process.env.IPINFO_TOKEN, baseUrl: &quot;https://api.ipinfo.io&quot;, endpoint:
+                  &quot;lookup&quot; &#125;
                 </code>
-                Use <code className="bg-white/10 px-1 text-white/90">endpoint: &quot;lite&quot;</code> for the free plan (country/continent only); <code className="bg-white/10 px-1 text-white/90">endpoint: &quot;lookup&quot;</code> (default) for core/plus (city, region).
+                Use{" "}
+                <code className="bg-white/10 px-1 text-white/90">endpoint: &quot;lite&quot;</code>{" "}
+                for the free plan (country/continent only);{" "}
+                <code className="bg-white/10 px-1 text-white/90">endpoint: &quot;lookup&quot;</code>{" "}
+                (default) for core/plus (city, region).
               </p>
               <p className="text-sm font-light tracking-tight text-white/70">
                 <strong className="text-white/90">Example (ipapi.co):</strong>{" "}
                 <code className="bg-white/10 px-1 text-white/90 block mt-1 text-xs overflow-x-auto">
-                  ipAddress: &#123; provider: &quot;ipapi&quot;, baseUrl: &quot;https://ipapi.co&quot; &#125;
+                  ipAddress: &#123; provider: &quot;ipapi&quot;, baseUrl:
+                  &quot;https://ipapi.co&quot; &#125;
                 </code>
-                If unset, Studio falls back to local GeoLite2/default-geo/hardcoded ranges when available.
+                If unset, Studio falls back to local GeoLite2/default-geo/hardcoded ranges when
+                available.
               </p>
             </div>
           </PixelCard>

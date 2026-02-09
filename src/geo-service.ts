@@ -127,7 +127,9 @@ export async function initializeGeoService(): Promise<void> {
 const DEFAULT_IPINFO_BASE = "https://api.ipinfo.io";
 const DEFAULT_IPAPI_BASE = "https://ipapi.co";
 
-function parseIpInfoResponse(data: IpInfoLiteResponse | IpInfoLookupResponse | IpInfoFlatResponse): LocationData | null {
+function parseIpInfoResponse(
+  data: IpInfoLiteResponse | IpInfoLookupResponse | IpInfoFlatResponse,
+): LocationData | null {
   const lookup = data as IpInfoLookupResponse;
   if (lookup.geo && (lookup.geo.country_code ?? lookup.geo.country)) {
     return {
@@ -140,8 +142,12 @@ function parseIpInfoResponse(data: IpInfoLiteResponse | IpInfoLookupResponse | I
   const flat = data as IpInfoFlatResponse;
   const lite = data as IpInfoLiteResponse;
   if (flat.country != null || lite.country_code != null) {
-    const countryCode = lite.country_code ?? (typeof flat.country === "string" && flat.country.length === 2 ? flat.country : "");
-    const countryName = lite.country ?? (typeof flat.country === "string" && flat.country.length > 2 ? flat.country : "Unknown");
+    const countryCode =
+      lite.country_code ??
+      (typeof flat.country === "string" && flat.country.length === 2 ? flat.country : "");
+    const countryName =
+      lite.country ??
+      (typeof flat.country === "string" && flat.country.length > 2 ? flat.country : "Unknown");
     return {
       country: countryName || "Unknown",
       countryCode: countryCode || "",
@@ -169,7 +175,10 @@ export async function resolveIPLocationAsync(
       const url = `${base}/${path}/${encodeURIComponent(trimmed)}?token=${encodeURIComponent(ipConfig.apiToken)}`;
       const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
       if (!res.ok) throw new Error(`ipinfo ${res.status}`);
-      const data = (await res.json()) as IpInfoLookupResponse | IpInfoLiteResponse | IpInfoFlatResponse;
+      const data = (await res.json()) as
+        | IpInfoLookupResponse
+        | IpInfoLiteResponse
+        | IpInfoFlatResponse;
       const location = parseIpInfoResponse(data);
       if (location) return location;
       throw new Error("Invalid ipinfo response");
