@@ -46,7 +46,11 @@ export type GlobeConfig = {
 
 export type GlobeCountries = {
   type: string;
-  features: Array<{ type?: string; properties?: Record<string, unknown>; geometry?: { type: string; coordinates: unknown } }>;
+  features: Array<{
+    type?: string;
+    properties?: Record<string, unknown>;
+    geometry?: { type: string; coordinates: unknown };
+  }>;
 };
 
 interface WorldProps {
@@ -99,7 +103,13 @@ function Globe({ globeConfig, data, countries }: WorldProps) {
     globeMaterial.emissive = new Color(globeConfig.emissive ?? props.emissive);
     globeMaterial.emissiveIntensity = globeConfig.emissiveIntensity ?? 0.1;
     globeMaterial.shininess = globeConfig.shininess ?? 0.9;
-  }, [isInitialized, globeConfig.globeColor, globeConfig.emissive, globeConfig.emissiveIntensity, globeConfig.shininess]);
+  }, [
+    isInitialized,
+    globeConfig.globeColor,
+    globeConfig.emissive,
+    globeConfig.emissiveIntensity,
+    globeConfig.shininess,
+  ]);
 
   useEffect(() => {
     if (!globeRef.current || !isInitialized) return;
@@ -121,7 +131,8 @@ function Globe({ globeConfig, data, countries }: WorldProps) {
     }
 
     const arcs = data;
-    const points: Array<{ size: number; order: number; color: string; lat: number; lng: number }> = [];
+    const points: Array<{ size: number; order: number; color: string; lat: number; lng: number }> =
+      [];
     for (let i = 0; i < arcs.length; i++) {
       const arc = arcs[i];
       points.push({
@@ -141,8 +152,7 @@ function Globe({ globeConfig, data, countries }: WorldProps) {
     }
 
     const filteredPoints = points.filter(
-      (v, i, a) =>
-        a.findIndex((v2) => v2.lat === v.lat && v2.lng === v.lng) === i
+      (v, i, a) => a.findIndex((v2) => v2.lat === v.lat && v2.lng === v.lng) === i,
     );
 
     globeRef.current
@@ -214,10 +224,7 @@ export function World(props: WorldProps) {
       gl={{ alpha: true, antialias: true }}
     >
       <WebGLRendererConfig />
-      <ambientLight
-        color={globeConfig.ambientLight ?? "#ffffff"}
-        intensity={0.85}
-      />
+      <ambientLight color={globeConfig.ambientLight ?? "#ffffff"} intensity={0.85} />
       <directionalLight
         color={globeConfig.directionalLeftLight ?? "#ffffff"}
         position={[-400, 100, 400]}
