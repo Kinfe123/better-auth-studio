@@ -98,6 +98,12 @@ export default function SelfHosting() {
         <section>
           <h3 className="text-[10px] font-mono tracking-[0.2em] text-white/40 mb-1">■ VERSIONS</h3>
           <Link
+            href="/v/1.1.2"
+            className="text-[11px] font-mono lowercase tracking-widest block hover:text-white transition-colors duration-300 text-white/70"
+          >
+            v1.1.2
+          </Link>
+          <Link
             href="/v/1.1.1"
             className="text-[11px] font-mono lowercase tracking-widest block hover:text-white transition-colors duration-300 text-white/70"
           >
