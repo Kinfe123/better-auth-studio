@@ -145,7 +145,11 @@ const globeConfig: GlobeConfig = {
   autoRotateSpeed: 0.5,
 };
 
-export function GlobeDemo() {
+interface GlobeDemoProps {
+  compact?: boolean;
+}
+
+export function GlobeDemo({ compact = false }: GlobeDemoProps) {
   const [countries, setCountries] = useState<GlobeCountries | null>(null);
 
   useEffect(() => {
@@ -162,8 +166,8 @@ export function GlobeDemo() {
 
   return (
     <div
-      className="w-full h-full min-h-[380px] relative bg-[#0a0a0a]"
-      style={{ minHeight: "55vh" }}
+      className={`w-full h-full relative bg-[#0a0a0a] ${compact ? "min-h-0" : "min-h-[380px]"}`}
+      style={compact ? undefined : { minHeight: "55vh" }}
     >
       <div className="absolute inset-0 w-full h-full">
         <motion.div

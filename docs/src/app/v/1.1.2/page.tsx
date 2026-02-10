@@ -11,6 +11,65 @@ const GlobeDemo = dynamic(() => import("@/components/ui/globe-demo").then((m) =>
   ssr: false,
 });
 
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/** Stable hash so the same index always gets the same "random" value (no flicker on re-render). */
+function hashTo01(index: number): number {
+  const x = Math.sin(index * 12.9898 + 43758.5453) * 10000;
+  return x - Math.floor(x);
+}
+
+function buildActivityGridFakeData() {
+  const WEEKS = 53;
+  const DAYS = 7;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dayOfWeek = today.getDay();
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - dayOfWeek);
+  const weekStartsByCol: Date[] = [];
+  for (let col = 0; col < WEEKS; col++) {
+    const w = new Date(weekStart);
+    w.setDate(weekStart.getDate() - (WEEKS - 1 - col) * 7);
+    weekStartsByCol.push(w);
+  }
+  let lastMonth = -1;
+  const monthLabelsByCol: string[] = [];
+  for (let col = 0; col < WEEKS; col++) {
+    const m = weekStartsByCol[col].getMonth();
+    monthLabelsByCol.push(m !== lastMonth ? MONTH_NAMES[m] : "");
+    lastMonth = m;
+  }
+  const cells: { intensity: number }[] = [];
+  for (let row = 0; row < DAYS; row++) {
+    for (let col = 0; col < WEEKS; col++) {
+      const d = new Date(weekStartsByCol[col]);
+      d.setDate(d.getDate() + row);
+      const isFuture = d > today;
+      const index = row * WEEKS + col;
+      const r = hashTo01(index);
+      const intensity = isFuture
+        ? 0
+        : r < 0.35
+          ? 0
+          : r < 0.58
+            ? 1
+            : r < 0.78
+              ? 2
+              : r < 0.92
+                ? 3
+                : 4;
+      cells.push({ intensity });
+    }
+  }
+  const leftYear = weekStartsByCol[0].getFullYear();
+  const rightYear = today.getFullYear();
+  return { cells, monthLabelsByCol, leftYear, rightYear, WEEKS, DAYS };
+}
+
+const INTENSITY_CLASSES = ["bg-white/5", "bg-white/15", "bg-white/25", "bg-white/35", "bg-white/50"] as const;
+
 const ipAddressCodeExamples = {
   ipinfo: `ipAddress: {
   provider: "ipinfo",
@@ -49,15 +108,15 @@ export default function Version112Page() {
   }, []);
 
   return (
-    <div className="bg-[#0a0a0a] text-white h-screen overflow-hidden overflow-x-hidden font-sans selection:bg-white selection:text-black relative">
-      <header className="hidden md:absolute top-0 lg:-top-4 right-0 p-4 lg:p-8 z-50">
-        <span className="font-mono text-[10px] lg:text-[11px] tracking-widest uppercase text-white/50">
+    <div className="bg-[#0a0a0a] text-white h-screen min-h-dvh overflow-hidden overflow-x-hidden font-sans selection:bg-white selection:text-black relative">
+      <header className="absolute top-0 right-0 p-3 sm:p-4 lg:p-8 z-50 lg:-top-4">
+        <span className="font-mono text-[9px] sm:text-[10px] lg:text-[11px] tracking-widest uppercase text-white/50">
           Better Auth Studio v1.1.2
         </span>
       </header>
 
       <main className="grid grid-cols-1 lg:grid-cols-2 h-full overflow-hidden overflow-x-hidden">
-        <section className="overflow-x-hidden flex flex-col p-4 sm:p-6 lg:p-10 border-r-0 lg:border-r border-white/20 h-full relative bg-black/50 backdrop-blur-sm">
+        <section className="overflow-x-hidden flex flex-col p-4 sm:p-6 lg:p-10 pt-[max(3rem,env(safe-area-inset-top,0)+2rem)] sm:pt-14 lg:pt-10 border-r-0 lg:border-r border-white/20 h-full relative bg-black/50 backdrop-blur-sm min-h-0">
           <div
             className="absolute inset-0 pointer-events-none opacity-70 md:opacity-100 mix-blend-overlay"
             style={{
@@ -187,8 +246,8 @@ export default function Version112Page() {
                                 }
                                 className="relative z-10 text-[11px] sm:text-[12px] font-light uppercase tracking-tight
                                 text-white/90 border border-white/40 bg-white/5
-                                px-2 py-[6px] pr-8 overflow-hidden transition-all duration-200
-                                appearance-none cursor-pointer w-full
+                                px-3 py-3 sm:py-[6px] pr-10 sm:pr-8 overflow-hidden transition-all duration-200
+                                appearance-none cursor-pointer w-full min-h-[44px] sm:min-h-0
                                 focus:border-white/40 focus:bg-white/10 focus:outline-none
                                 shadow-[0_0_0_1px_rgba(255,255,255,0.15)] font-mono"
                                 style={{
@@ -212,11 +271,11 @@ export default function Version112Page() {
                               variant="highlight"
                               className="border-white/15 p-0 overflow-hidden"
                             >
-                              <div className="relative px-3 pb-2 max-h-[220px] overflow-y-auto overflow-x-hidden thin-scrollbar">
+                              <div className="relative px-3 pb-2 max-h-[220px] min-w-0 overflow-y-auto overflow-x-auto thin-scrollbar">
                                 <CodeHighlighter
                                   code={ipAddressCodeExamples[activeIpTab]}
                                   language="typescript"
-                                  className="text-xs"
+                                  className="text-[11px] sm:text-xs"
                                 />
                               </div>
                             </PixelCard>
@@ -227,7 +286,7 @@ export default function Version112Page() {
                             variant="highlight"
                             className="border-white/15 overflow-hidden"
                           >
-                            <div className="relative px-3 pt-2 max-h-[200px] overflow-y-auto overflow-x-hidden thin-scrollbar">
+                            <div className="relative px-3 pt-2 max-h-[200px] min-w-0 overflow-y-auto overflow-x-auto thin-scrollbar">
                               <CodeHighlighter
                                 code={ipAddressCodeExamples[activeIpTab]}
                                 language="typescript"
@@ -251,7 +310,7 @@ export default function Version112Page() {
                         </strong>{" "}
                         A dedicated events section on the user details tab shows all events for that
                         user in one place, with filters and timestamps.
-                      </p>
+                    </p>
                     </div>
                     <div className="w-full mb-3 sm:mb-4 lg:hidden">
                       <hr className="w-full border-white/15 h-px" />
@@ -286,15 +345,15 @@ export default function Version112Page() {
                         Enable in studio config:
                       </p>
                       <div className="pt-2">
-                        <PixelCard variant="highlight" className="border-white/15 overflow-hidden">
-                          <div className="relative max-h-[180px] overflow-y-auto overflow-x-hidden thin-scrollbar">
+                        <PixelCard variant="highlight" className="border-white/15 overflow-hidden min-w-0">
+                          <div className="relative max-h-[180px] min-w-0 overflow-y-auto overflow-x-auto thin-scrollbar">
                             <CodeHighlighter
                               code={`lastSeenAt: {
   enabled: true,
   columnName: "lastSeenAt", // or "last_seen_at"
 },`}
                               language="typescript"
-                              className="text-xs"
+                              className="text-[11px] sm:text-xs"
                             />
                           </div>
                         </PixelCard>
@@ -315,7 +374,7 @@ export default function Version112Page() {
                   </div>
                 </div>
 
-                <div className="lg:hidden relative bg-[#0A0A0A] border-t border-white/15 -mx-4 sm:-mx-6 lg:mx-0 mt-4">
+                <div className="lg:hidden relative bg-[#0A0A0A] border-t border-white/15 -mx-4 sm:-mx-6 lg:mx-0 mt-4 pb-[env(safe-area-inset-bottom,0)]">
                   <div className="px-4 sm:px-6 py-3 border-b border-white/15">
                     <p className="text-xs sm:text-sm font-medium leading-tight font-mono uppercase tracking-tight text-white">
                       <span className="text-white/50">{"> "}</span>
@@ -329,10 +388,10 @@ export default function Version112Page() {
                         Studio
                       </span>{" "}
                       today. <br className="hidden sm:block" />
-                      <div className="h-1"></div>
+                      <div className="h-2"></div>
                       <a
                         href="/installation"
-                        className="text-white/70 cursor-pointer hover:text-white underline decoration-white/30 hover:decoration-white/70 transition-all duration-300 font-normal underline-offset-4 text-[10px] sm:text-[11px]"
+                        className="inline-block py-2 -my-2 text-white/70 cursor-pointer hover:text-white underline decoration-white/30 hover:decoration-white/70 transition-all duration-300 font-normal underline-offset-4 text-[10px] sm:text-[11px] touch-manipulation"
                       >
                         Get started in minutes{" "}
                         <svg
@@ -382,10 +441,101 @@ export default function Version112Page() {
         </section>
 
         <section className="hidden lg:flex flex-col justify-between relative overflow-hidden h-full min-h-0">
-          <div className="flex-[1_1_60%] min-h-[380px] flex items-stretch justify-center relative z-10 overflow-hidden">
-            <div className="relative w-full h-full min-h-[380px]" style={{ minHeight: "55vh" }}>
+          <div className="flex-[1_1_70%] min-h-[420px] flex items-stretch justify-center relative z-10 overflow-hidden w-full">
+            <div className="relative w-full h-full min-h-[400px]" style={{ minHeight: "60vh" }}>
               <GlobeDemo />
             </div>
+          </div>
+
+          <div className="shrink-0 relative z-10 w-full pb-2">
+            {(() => {
+              const { cells, monthLabelsByCol, leftYear, rightYear, WEEKS, DAYS } =
+                buildActivityGridFakeData();
+              const cellGap = 3;
+              const monthRowHeight = 18;
+              return (
+                <div className="w-full border border-white/10 bg-black/40 opacity-75 backdrop-blur-sm">
+                  <div className="px-4 lg:px-6 py-1.5 border-b border-white/10">
+                    <p className="text-[9px] font-mono uppercase tracking-wider text-white/50">
+                      Event activity
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-2 p-2 lg:p-3 w-full min-w-0">
+                    <div
+                      className="flex flex-col shrink-0 text-[9px] text-white/40 font-mono"
+                      style={{ width: 22 }}
+                    >
+                      <div style={{ height: monthRowHeight, minHeight: monthRowHeight }} aria-hidden />
+                      {DAY_NAMES.map((name) => (
+                        <div
+                          key={name}
+                          className="flex items-center justify-start leading-none"
+                          style={{
+                            height: 10,
+                            marginBottom: name !== "Sat" ? cellGap : 0,
+                          }}
+                        >
+                          {name}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex-1 min-w-0 w-full">
+                      <div
+                        className="grid mb-1 w-full"
+                        style={{
+                          gridTemplateColumns: `repeat(${WEEKS}, 1fr)`,
+                          gap: `0 ${cellGap}px`,
+                        }}
+                      >
+                        {monthLabelsByCol.map((label, col) => (
+                          <span
+                            key={col}
+                            className="text-[9px] text-white/40 font-mono text-left"
+                            style={{ gridColumn: col + 1 }}
+                          >
+                            {label}
+                          </span>
+                        ))}
+                      </div>
+                      <div
+                        className="grid w-full relative"
+                        style={{
+                          gridTemplateRows: `repeat(${DAYS}, auto)`,
+                          gridTemplateColumns: `repeat(${WEEKS}, 1fr)`,
+                          gap: cellGap,
+                        }}
+                      >
+                        {cells.map((cell, index) => (
+                          <div
+                            key={index}
+                            className={`rounded-[1px] border border-white/10 min-w-0 w-full ${INTENSITY_CLASSES[cell.intensity]}`}
+                            style={{ aspectRatio: "1" }}
+                          />
+                        ))}
+                      </div>
+                      <div className="flex justify-between text-[8px] text-white/40 font-mono mt-1 px-0.5">
+                        <span>{leftYear}</span>
+                        <span>{leftYear !== rightYear ? rightYear : "Today"}</span>
+                      </div>
+                      <div className="flex items-center justify-end gap-1 mt-1.5">
+                        <span className="text-[8px] text-white/40 font-mono">Less</span>
+                        <div className="flex items-center gap-0.5">
+                          {INTENSITY_CLASSES.map((bg) => (
+                            <div
+                              key={bg}
+                              className={`rounded-[1px] border border-white/10 ${bg}`}
+                              style={{ width: 10, height: 10 }}
+                              aria-hidden
+                            />
+                          ))}
+                        </div>
+                        <span className="text-[8px] text-white/40 font-mono">More</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           <div className="shrink-0 relative z-10">
