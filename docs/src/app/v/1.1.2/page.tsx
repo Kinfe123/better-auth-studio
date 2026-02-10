@@ -242,21 +242,6 @@ export default function Version112Page() {
               </p>
             </div>
             <div className="grid grid-cols-3 border-t border-white/15 divide-x divide-white/15">
-              <div className="p-3 lg:p-4 flex flex-col items-center justify-center gap-1.5 text-center">
-                <span className="font-mono text-[10px] lg:text-xs font-medium uppercase tracking-tight text-white/80">
-                  IP → Location
-                </span>
-              </div>
-              <div className="p-3 lg:p-4 flex flex-col items-center justify-center gap-1.5 text-center">
-                <span className="font-mono text-[10px] lg:text-xs font-medium uppercase tracking-tight text-white/80">
-                  Event log
-                </span>
-              </div>
-              <div className="p-3 lg:p-4 flex flex-col items-center justify-center gap-1.5 text-center">
-                <span className="font-mono text-[10px] lg:text-xs font-medium uppercase tracking-tight text-white/80">
-                  Last seen
-                </span>
-              </div>
             </div>
           </div>
         </section>
