@@ -1,17 +1,44 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import PixelCard from "@/components/PixelCard";
 import CodeBlock from "@/components/CodeBlock";
-import { InstallIcon } from "@/components/icons";
+import CodeHighlighter from "@/components/SyntaxHighlighter";
+import { InstallIcon, ConfigIcon } from "@/components/icons";
 
 const GlobeDemo = dynamic(
   () => import("@/components/ui/globe-demo").then((m) => m.GlobeDemo),
   { ssr: false }
 );
 
+const ipAddressCodeExamples = {
+  ipinfo: `ipAddress: {
+  provider: "ipinfo",
+  apiToken: process.env.IPINFO_TOKEN,
+  baseUrl: "https://api.ipinfo.io",
+  endpoint: "lookup", // "lite" for free plan
+},`,
+  ipapi: `ipAddress: {
+  provider: "ipapi",
+  baseUrl: "https://ipapi.co",
+  apiToken: process.env.IPAPI_TOKEN, // optional
+},`,
+  static: `ipAddress: {
+  provider: "static",
+  path: "./data/GeoLite2-City.mmdb",
+},`,
+} as const;
+
+const ipTabs = [
+  { id: "ipinfo", name: "ipinfo" },
+  { id: "ipapi", name: "ipapi" },
+  { id: "static", name: "static" },
+] as const;
+
 export default function Version112Page() {
+  const [activeIpTab, setActiveIpTab] = useState<keyof typeof ipAddressCodeExamples>("ipinfo");
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
@@ -31,7 +58,7 @@ export default function Version112Page() {
       </header>
 
       <main className="grid grid-cols-1 lg:grid-cols-2 h-full overflow-hidden overflow-x-hidden">
-        <section className="overflow-x-hidden flex flex-col justify-start md:justify-between p-4 sm:p-6 lg:p-10 border-r-0 lg:border-r border-white/20 overflow-y-auto relative bg-black/50 backdrop-blur-sm">
+        <section className="overflow-x-hidden flex flex-col p-4 sm:p-6 lg:p-10 border-r-0 lg:border-r border-white/20 h-full relative bg-black/50 backdrop-blur-sm">
           <div
             className="absolute inset-0 pointer-events-none opacity-70 md:opacity-100 mix-blend-overlay"
             style={{
@@ -40,7 +67,8 @@ export default function Version112Page() {
               backgroundSize: "auto",
             }}
           />
-          <div className="relative z-10 flex flex-col justify-start md:justify-between h-full scrollbar-hide">
+          <div className="relative z-10 flex flex-col h-full min-h-0">
+            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide">
             <div className="space-y-6 sm:space-y-8">
               <div>
                 <h1 className="text-base sm:text-lg lg:text-xl font-light tracking-tighter uppercase font-mono mb-2 sm:mb-3">
@@ -103,6 +131,99 @@ export default function Version112Page() {
                       Sessions and events now resolve user activity location from IP address, so you
                       can see where sign-ins and events occur on the globe and in lists.
                     </p>
+                    <p className="text-[10px] sm:text-[11px] font-mono uppercase text-white/60 mb-1.5 mt-2">
+                      Enable in studio config:
+                    </p>
+                    <div className="space-y-2">
+                      <div className="relative min-h-0">
+                        <div className="absolute top-6 pb-8 left-4 hidden md:flex gap-2 flex-wrap z-10">
+                          {ipTabs.map((tab) => {
+                            const isActive = activeIpTab === tab.id;
+                            return (
+                              <button
+                                key={tab.id}
+                                onClick={() => setActiveIpTab(tab.id)}
+                                className={`
+                                  relative font-mono text-[10px] sm:text-[11px] font-light z-10 uppercase tracking-tight
+                                  text-white/90 border bg-[#0a0a0a]
+                                  px-1.5 sm:px-2 py-0.5 sm:py-1 overflow-hidden transition-all duration-200
+                                  inline-flex items-center gap-[5px] no-underline
+                                  ${
+                                    isActive
+                                      ? "border-white/40 bg-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.15)]"
+                                      : "border-white/20 hover:border-white/30 hover:bg-white/5"
+                                  }
+                                `}
+                              >
+                                {isActive && <div className="absolute -z-1 inset-0 bg-black" />}
+                                {isActive && <div className="absolute z-10 inset-0 bg-white/10" />}
+                                {isActive ? (
+                                  <>
+                                    <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[8%]" />
+                                    <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_8px)] opacity-[4%]" />
+                                  </>
+                                ) : (
+                                  <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
+                                )}
+                                <span className="relative z-10 inline-flex gap-[5px] items-center">
+                                  <ConfigIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                                  {tab.name}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <div className="md:hidden pt-3 sm:pt-4">
+                          <div className="relative mb-2">
+                            <select
+                              value={activeIpTab}
+                              onChange={(e) => setActiveIpTab(e.target.value as keyof typeof ipAddressCodeExamples)}
+                              className="relative z-10 text-[11px] sm:text-[12px] font-light uppercase tracking-tight
+                                text-white/90 border border-white/40 bg-white/5
+                                px-2 py-[6px] pr-8 overflow-hidden transition-all duration-200
+                                appearance-none cursor-pointer w-full
+                                focus:border-white/40 focus:bg-white/10 focus:outline-none
+                                shadow-[0_0_0_1px_rgba(255,255,255,0.15)] font-mono"
+                              style={{
+                                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                                backgroundRepeat: "no-repeat",
+                                backgroundPosition: "right 8px center",
+                                backgroundSize: "12px",
+                              }}
+                            >
+                              {ipTabs.map((tab) => (
+                                <option key={tab.id} value={tab.id}>
+                                  {tab.name}
+                                </option>
+                              ))}
+                            </select>
+                            <div className="absolute -z-1 inset-0 bg-black pointer-events-none" />
+                            <div className="absolute z-0 inset-0 bg-white/5 pointer-events-none" />
+                            <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[4%] pointer-events-none" />
+                          </div>
+                          <PixelCard variant="highlight" className="border-white/15 p-0 overflow-hidden">
+                            <div className="relative px-3 pb-2 max-h-[220px] overflow-y-auto overflow-x-hidden thin-scrollbar">
+                              <CodeHighlighter
+                                code={ipAddressCodeExamples[activeIpTab]}
+                                language="typescript"
+                                className="text-xs"
+                              />
+                            </div>
+                          </PixelCard>
+                        </div>
+                      </div>
+                      <div className="pt-10 sm:pt-10 hidden md:block">
+                        <PixelCard variant="highlight" className="border-white/15 overflow-hidden">
+                          <div className="relative px-3 pt-2 max-h-[200px] overflow-y-auto overflow-x-hidden thin-scrollbar">
+                            <CodeHighlighter
+                              code={ipAddressCodeExamples[activeIpTab]}
+                              language="typescript"
+                              className="text-sm"
+                            />
+                          </div>
+                        </PixelCard>
+                      </div>
+                    </div>
                   </div>
                   <div className="w-full mb-3 sm:mb-4 lg:hidden">
                     <hr className="w-full border-white/15 h-px" />
@@ -148,6 +269,23 @@ export default function Version112Page() {
                       User and session views now show &quot;last seen&quot; and last active time for
                       clearer audit trails and support workflows.
                     </p>
+                    <p className="text-[10px] sm:text-[11px] font-mono uppercase text-white/60 mb-1.5 mt-2">
+                      Enable in studio config:
+                    </p>
+                    <div className="pt-2">
+                      <PixelCard variant="highlight" className="border-white/15 overflow-hidden">
+                        <div className="relative max-h-[180px] overflow-y-auto overflow-x-hidden thin-scrollbar">
+                          <CodeHighlighter
+                            code={`lastSeenAt: {
+  enabled: true,
+  columnName: "lastSeenAt", // or "last_seen_at"
+},`}
+                            language="typescript"
+                            className="text-xs"
+                          />
+                        </div>
+                      </PixelCard>
+                    </div>
                   </div>
                   <div className="w-full mb-3 sm:mb-4 lg:hidden">
                     <hr className="w-full border-white/15 h-px" />
@@ -198,8 +336,9 @@ export default function Version112Page() {
                 </div>
               </div>
             </div>
+            </div>
 
-            <div className="hidden lg:block mt-4 sm:mt-6">
+            <div className="shrink-0 hidden lg:block pt-4 border-t border-white/10 mt-4">
               <p className="text-[10px] sm:text-xs lg:text-sm font-semibold leading-snug font-mono uppercase text-white">
                 Start using Better Auth{" "}
                 <span className="bg-white text-black px-1 py-0 rounded-none">Studio</span> today.{" "}
