@@ -11,7 +11,20 @@ const GlobeDemo = dynamic(() => import("@/components/ui/globe-demo").then((m) =>
   ssr: false,
 });
 
-const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH_NAMES = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 /** Stable hash so the same index always gets the same "random" value (no flicker on re-render). */
@@ -68,7 +81,13 @@ function buildActivityGridFakeData() {
   return { cells, monthLabelsByCol, leftYear, rightYear, WEEKS, DAYS };
 }
 
-const INTENSITY_CLASSES = ["bg-white/5", "bg-white/15", "bg-white/25", "bg-white/35", "bg-white/50"] as const;
+const INTENSITY_CLASSES = [
+  "bg-white/5",
+  "bg-white/15",
+  "bg-white/25",
+  "bg-white/35",
+  "bg-white/50",
+] as const;
 
 const ipAddressCodeExamples = {
   ipinfo: `ipAddress: {
@@ -109,7 +128,6 @@ export default function Version112Page() {
 
   return (
     <div className="bg-transparent text-white h-screen min-h-dvh overflow-hidden overflow-x-hidden font-sans selection:bg-white selection:text-black relative">
-
       <main className="grid grid-cols-1 lg:grid-cols-2 h-full overflow-hidden overflow-x-hidden">
         <section className="overflow-x-hidden flex flex-col p-4 sm:p-6 lg:p-10 pt-[max(3rem,env(safe-area-inset-top,0)+2rem)] sm:pt-14 lg:pt-10 border-r-0 lg:border-r border-white/20 h-full relative bg-black/50 backdrop-blur-sm min-h-0">
           <div
@@ -305,7 +323,7 @@ export default function Version112Page() {
                         </strong>{" "}
                         A dedicated events section on the user details tab shows all events for that
                         user in one place, with filters and timestamps.
-                    </p>
+                      </p>
                     </div>
                     <div className="w-full mb-3 sm:mb-4 lg:hidden">
                       <hr className="w-full border-white/15 h-px" />
@@ -340,7 +358,10 @@ export default function Version112Page() {
                         Enable in studio config:
                       </p>
                       <div className="pt-2">
-                        <PixelCard variant="highlight" className="border-white/15 overflow-hidden min-w-0">
+                        <PixelCard
+                          variant="highlight"
+                          className="border-white/15 overflow-hidden min-w-0"
+                        >
                           <div className="relative max-h-[180px] min-w-0 overflow-y-auto overflow-x-auto thin-scrollbar">
                             <CodeHighlighter
                               code={`lastSeenAt: {
