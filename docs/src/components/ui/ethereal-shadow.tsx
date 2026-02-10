@@ -34,6 +34,8 @@ interface ShadowOverlayProps {
   noise?: NoiseConfig;
   style?: CSSProperties;
   className?: string;
+  /** When true, only the wave/background effect is shown (no text). */
+  backgroundOnly?: boolean;
 }
 
 function mapRange(
@@ -64,6 +66,7 @@ export function Component({
   noise,
   style,
   className,
+  backgroundOnly = false,
 }: ShadowOverlayProps) {
   const id = useInstanceId();
   const animationEnabled = animation && animation.scale > 0;
@@ -174,27 +177,29 @@ export function Component({
         />
       </div>
 
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          textAlign: "center",
-          zIndex: 10,
-        }}
-      >
-        <h1 className="md:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-white to-white/90 font-mono uppercase text-left text-6xl lg:text-8xl font-light relative z-20">
-          Auth_ <br />
-          <LineShadowText shadowColor="white" className="text-white">
-            Events.
-          </LineShadowText>
-        </h1>
-        <p className="ml-2 mt-4 text-left text-lg md:text-xl text-white/70 font-mono uppercase tracking-wider">
-          {"// "} Real-time
-          <span className="bg-white text-black mx-1 px-1 py-0 rounded-none">Ingestion</span>
-        </p>
-      </div>
+      {!backgroundOnly && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+            zIndex: 10,
+          }}
+        >
+          <h1 className="md:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-white to-white/90 font-mono uppercase text-left text-6xl lg:text-8xl font-light relative z-20">
+            Auth_ <br />
+            <LineShadowText shadowColor="white" className="text-white">
+              Events.
+            </LineShadowText>
+          </h1>
+          <p className="ml-2 mt-4 text-left text-lg md:text-xl text-white/70 font-mono uppercase tracking-wider">
+            {"// "} Real-time
+            <span className="bg-white text-black mx-1 px-1 py-0 rounded-none">Ingestion</span>
+          </p>
+        </div>
+      )}
 
       {noise && noise.opacity > 0 && (
         <div

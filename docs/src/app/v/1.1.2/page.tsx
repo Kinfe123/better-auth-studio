@@ -108,12 +108,7 @@ export default function Version112Page() {
   }, []);
 
   return (
-    <div className="bg-[#0a0a0a] text-white h-screen min-h-dvh overflow-hidden overflow-x-hidden font-sans selection:bg-white selection:text-black relative">
-      <header className="absolute top-0 right-0 p-3 sm:p-4 lg:p-8 z-50 lg:-top-4">
-        <span className="font-mono text-[9px] sm:text-[10px] lg:text-[11px] tracking-widest uppercase text-white/50">
-          Better Auth Studio v1.1.2
-        </span>
-      </header>
+    <div className="bg-transparent text-white h-screen min-h-dvh overflow-hidden overflow-x-hidden font-sans selection:bg-white selection:text-black relative">
 
       <main className="grid grid-cols-1 lg:grid-cols-2 h-full overflow-hidden overflow-x-hidden">
         <section className="overflow-x-hidden flex flex-col p-4 sm:p-6 lg:p-10 pt-[max(3rem,env(safe-area-inset-top,0)+2rem)] sm:pt-14 lg:pt-10 border-r-0 lg:border-r border-white/20 h-full relative bg-black/50 backdrop-blur-sm min-h-0">
@@ -440,97 +435,101 @@ export default function Version112Page() {
           </div>
         </section>
 
-        <section className="hidden lg:flex flex-col justify-between relative overflow-hidden h-full min-h-0">
+        <section className="hidden lg:flex flex-col justify-between relative overflow-hidden h-full min-h-0 bg-[#0A0A0A]">
           <div className="flex-[1_1_70%] min-h-[420px] flex items-stretch justify-center relative z-10 overflow-hidden w-full">
             <div className="relative w-full h-full min-h-[400px]" style={{ minHeight: "60vh" }}>
               <GlobeDemo />
             </div>
           </div>
 
-          <div className="shrink-0 relative z-10 w-full pb-2">
+          <div className="shrink-0 relative z-10 w-full pb-2 overflow-hidden">
             {(() => {
               const { cells, monthLabelsByCol, leftYear, rightYear, WEEKS, DAYS } =
                 buildActivityGridFakeData();
               const cellGap = 3;
               const monthRowHeight = 18;
+              const dayColWidth = 16;
               return (
-                <div className="w-full border border-white/10 bg-black/40 opacity-75 backdrop-blur-sm">
+                <div className="relative z-10 w-full border border-white/10 bg-black/40 opacity-75 backdrop-blur-sm">
                   <div className="px-4 lg:px-6 py-1.5 border-b border-white/10">
                     <p className="text-[9px] font-mono uppercase tracking-wider text-white/50">
                       Event activity
                     </p>
                   </div>
-                  <div className="flex items-start gap-2 p-2 lg:p-3 w-full min-w-0">
+                  <div className="p-2 lg:p-3 w-full min-w-0">
                     <div
-                      className="flex flex-col shrink-0 text-[9px] text-white/40 font-mono"
-                      style={{ width: 22 }}
+                      className="grid w-full min-w-0"
+                      style={{
+                        gridTemplateColumns: `${dayColWidth}px repeat(${WEEKS}, minmax(0, 1fr))`,
+                        gridTemplateRows: `${monthRowHeight}px repeat(${DAYS}, auto)`,
+                        gap: `${cellGap}px ${cellGap}px`,
+                        alignItems: "center",
+                      }}
                     >
-                      <div style={{ height: monthRowHeight, minHeight: monthRowHeight }} aria-hidden />
-                      {DAY_NAMES.map((name) => (
-                        <div
-                          key={name}
-                          className="flex items-center justify-start leading-none"
-                          style={{
-                            height: 10,
-                            marginBottom: name !== "Sat" ? cellGap : 0,
-                          }}
-                        >
-                          {name}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex-1 min-w-0 w-full">
-                      <div
-                        className="grid mb-1 w-full"
-                        style={{
-                          gridTemplateColumns: `repeat(${WEEKS}, 1fr)`,
-                          gap: `0 ${cellGap}px`,
-                        }}
-                      >
-                        {monthLabelsByCol.map((label, col) => (
+                      <div style={{ gridColumn: 1, gridRow: 1 }} aria-hidden />
+                      {monthLabelsByCol.map((label, col) =>
+                        label ? (
                           <span
                             key={col}
-                            className="text-[9px] text-white/40 font-mono text-left"
-                            style={{ gridColumn: col + 1 }}
+                            className="text-[9px] text-white/40 font-mono text-left whitespace-nowrap"
+                            style={{
+                              gridColumn: `${col + 2} / span 4`,
+                              gridRow: 1,
+                            }}
                           >
                             {label}
                           </span>
-                        ))}
-                      </div>
-                      <div
-                        className="grid w-full relative"
-                        style={{
-                          gridTemplateRows: `repeat(${DAYS}, auto)`,
-                          gridTemplateColumns: `repeat(${WEEKS}, 1fr)`,
-                          gap: cellGap,
-                        }}
-                      >
-                        {cells.map((cell, index) => (
+                        ) : (
+                          <div key={col} style={{ gridColumn: col + 2, gridRow: 1 }} aria-hidden />
+                        ),
+                      )}
+                      {DAY_NAMES.map((name, row) => (
+                        <span
+                          key={name}
+                          className="text-[8px] text-white/40 font-mono flex items-center truncate overflow-hidden"
+                          style={{
+                            gridColumn: 1,
+                            gridRow: row + 2,
+                            alignSelf: "stretch",
+                            maxWidth: dayColWidth,
+                          }}
+                        >
+                          {name}
+                        </span>
+                      ))}
+                      {cells.map((cell, index) => {
+                        const row = Math.floor(index / WEEKS);
+                        const col = index % WEEKS;
+                        return (
                           <div
                             key={index}
                             className={`rounded-[1px] border border-white/10 min-w-0 w-full ${INTENSITY_CLASSES[cell.intensity]}`}
-                            style={{ aspectRatio: "1" }}
+                            style={{
+                              aspectRatio: "1",
+                              gridColumn: col + 2,
+                              gridRow: row + 2,
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                    <div className="flex justify-between text-[8px] text-white/40 font-mono mt-1 px-0.5">
+                      <span>{leftYear}</span>
+                      <span>{leftYear !== rightYear ? rightYear : "Today"}</span>
+                    </div>
+                    <div className="flex items-center justify-end gap-1 mt-1.5">
+                      <span className="text-[8px] text-white/40 font-mono">Less</span>
+                      <div className="flex items-center gap-0.5">
+                        {INTENSITY_CLASSES.map((bg) => (
+                          <div
+                            key={bg}
+                            className={`rounded-[1px] border border-white/10 ${bg}`}
+                            style={{ width: 10, height: 10 }}
+                            aria-hidden
                           />
                         ))}
                       </div>
-                      <div className="flex justify-between text-[8px] text-white/40 font-mono mt-1 px-0.5">
-                        <span>{leftYear}</span>
-                        <span>{leftYear !== rightYear ? rightYear : "Today"}</span>
-                      </div>
-                      <div className="flex items-center justify-end gap-1 mt-1.5">
-                        <span className="text-[8px] text-white/40 font-mono">Less</span>
-                        <div className="flex items-center gap-0.5">
-                          {INTENSITY_CLASSES.map((bg) => (
-                            <div
-                              key={bg}
-                              className={`rounded-[1px] border border-white/10 ${bg}`}
-                              style={{ width: 10, height: 10 }}
-                              aria-hidden
-                            />
-                          ))}
-                        </div>
-                        <span className="text-[8px] text-white/40 font-mono">More</span>
-                      </div>
+                      <span className="text-[8px] text-white/40 font-mono">More</span>
                     </div>
                   </div>
                 </div>

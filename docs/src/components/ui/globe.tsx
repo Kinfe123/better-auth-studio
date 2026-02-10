@@ -220,6 +220,7 @@ export function World(props: WorldProps) {
   const { globeConfig } = props;
   return (
     <Canvas
+    className="bg-transparent"
       camera={{ position: [0, 0, cameraZ], fov: 50, near: 180, far: 1800 }}
       gl={{ alpha: true, antialias: true }}
     >

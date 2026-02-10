@@ -147,9 +147,11 @@ const globeConfig: GlobeConfig = {
 
 interface GlobeDemoProps {
   compact?: boolean;
+  /** When true, use transparent background so a wave/pattern behind shows through. */
+  transparentBg?: boolean;
 }
 
-export function GlobeDemo({ compact = false }: GlobeDemoProps) {
+export function GlobeDemo({ compact = false, transparentBg = false }: GlobeDemoProps) {
   const [countries, setCountries] = useState<GlobeCountries | null>(null);
 
   useEffect(() => {
@@ -166,7 +168,7 @@ export function GlobeDemo({ compact = false }: GlobeDemoProps) {
 
   return (
     <div
-      className={`w-full h-full relative bg-[#0a0a0a] ${compact ? "min-h-0" : "min-h-[380px]"}`}
+      className={`w-full h-full relative ${transparentBg ? "bg-transparent" : "bg-[#0a0a0a]"} ${compact ? "min-h-0" : "min-h-[380px]"}`}
       style={compact ? undefined : { minHeight: "55vh" }}
     >
       <div className="absolute inset-0 w-full h-full">
