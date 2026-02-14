@@ -14,9 +14,10 @@ export type {
   StudioConfig,
   StudioLastSeenAtConfig,
   StudioMetadata,
+  StudioToolId,
   WindowStudioConfig,
 } from "./types/handler.js";
-export { defineStudioConfig } from "./types/handler.js";
+export { defineStudioConfig, STUDIO_TOOL_IDS } from "./types/handler.js";
 export { injectLastSeenAtHooks } from "./utils/hook-injector.js";
 export {
   checkEventIngestionHealth,

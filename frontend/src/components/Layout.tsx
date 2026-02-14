@@ -15,6 +15,7 @@ import {
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { assetPath } from "@/lib/utils";
+import { getVisibleToolsCount } from "@/lib/studio-tools";
 import { useCounts } from "../contexts/CountsContext";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { buildApiUrl } from "../utils/api";
@@ -117,7 +118,6 @@ function normalizeStudioStatus(status?: string): WatchIndicatorStatus {
 }
 
 const EMAIL_TEMPLATES_COUNT = 6;
-const TOOLS_COUNT = 14;
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
@@ -431,7 +431,7 @@ export default function Layout({ children }: LayoutProps) {
       name: "Tools",
       href: "/tools",
       icon: Wrench,
-      badge: formatCount(TOOLS_COUNT),
+      badge: formatCount(getVisibleToolsCount(getStudioConfig())),
     },
     { name: "Settings", href: "/settings", icon: Settings },
   ];

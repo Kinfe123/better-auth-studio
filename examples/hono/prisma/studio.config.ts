@@ -21,6 +21,9 @@ const config: StudioConfig = {
     apiToken: process.env.IPINFO_TOKEN,
     endpoint: "lite",
   },
+  tools: {
+    exclude: ["test-oauth", "health-check"],
+  },
   metadata: {
     title: "Better Auth Studio",
     theme: "dark",

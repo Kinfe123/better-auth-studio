@@ -51,6 +51,7 @@ import {
   TooltipTrigger,
 } from "../components/ui/tooltip-docs";
 import { getProviderIcon } from "../lib/icons";
+import { getExcludedToolIds } from "../lib/studio-tools";
 
 interface Tool {
   id: string;
@@ -2373,6 +2374,9 @@ export const authClient = createAuthClient({
     },
   ];
 
+  const excludedIds = getExcludedToolIds((window as any).__STUDIO_CONFIG__);
+  const visibleTools = tools.filter((t) => !excludedIds.has(t.id));
+
   const categories = [
     { id: "oauth", name: "OAuth", icon: Globe },
     { id: "database", name: "Database", icon: Database },
@@ -2382,7 +2386,7 @@ export const authClient = createAuthClient({
 
   const groupedTools = categories.map((category) => ({
     ...category,
-    tools: tools.filter((tool) => tool.category === category.id),
+    tools: visibleTools.filter((tool) => tool.category === category.id),
   }));
 
   return (

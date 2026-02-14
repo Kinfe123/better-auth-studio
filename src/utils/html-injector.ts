@@ -83,6 +83,8 @@ export interface WindowStudioConfig {
   metadata: Required<StudioMetadata>;
   liveMarquee?: LiveMarqueeConfig;
   lastSeenAt?: LastSeenAtConfig;
+  /** Tool ids to exclude from the Tools page (from self-host config). */
+  tools?: { exclude?: string[] };
 }
 
 export function serveIndexHtml(publicDir: string, config: Partial<StudioConfig> = {}): string {
@@ -137,6 +139,7 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
     : undefined;
 
   const lastSeenAt = (config as any).lastSeenAt;
+  const toolsConfig = (config as any).tools;
 
   return {
     basePath: config.basePath || "",
@@ -145,6 +148,10 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
     lastSeenAt:
       lastSeenAt && typeof lastSeenAt === "object"
         ? { enabled: !!lastSeenAt.enabled, columnName: lastSeenAt.columnName }
+        : undefined,
+    tools:
+      toolsConfig && Array.isArray(toolsConfig.exclude) && toolsConfig.exclude.length > 0
+        ? { exclude: toolsConfig.exclude }
         : undefined,
   };
 }

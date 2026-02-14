@@ -57,6 +57,10 @@ export interface WindowStudioConfig {
     metadata: Required<StudioMetadata>;
     liveMarquee?: LiveMarqueeConfig;
     lastSeenAt?: LastSeenAtConfig;
+    /** Tool ids to exclude from the Tools page (from self-host config). */
+    tools?: {
+        exclude?: string[];
+    };
 }
 export declare function serveIndexHtml(publicDir: string, config?: Partial<StudioConfig>): string;
 //# sourceMappingURL=html-injector.d.ts.map

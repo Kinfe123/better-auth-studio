@@ -43,12 +43,16 @@ function prepareFrontendConfig(config) {
         }
         : undefined;
     const lastSeenAt = config.lastSeenAt;
+    const toolsConfig = config.tools;
     return {
         basePath: config.basePath || "",
         metadata: mergedMetadata,
         liveMarquee: liveMarquee,
         lastSeenAt: lastSeenAt && typeof lastSeenAt === "object"
             ? { enabled: !!lastSeenAt.enabled, columnName: lastSeenAt.columnName }
+            : undefined,
+        tools: toolsConfig && Array.isArray(toolsConfig.exclude) && toolsConfig.exclude.length > 0
+            ? { exclude: toolsConfig.exclude }
             : undefined,
     };
 }
