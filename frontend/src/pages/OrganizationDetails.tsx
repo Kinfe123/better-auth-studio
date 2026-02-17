@@ -1174,9 +1174,12 @@ export default function OrganizationDetails() {
                               <Users className="w-4 h-4 text-white" />
                             </div>
                             <div className="min-w-0">
-                              <div className="text-white font-light text-xs truncate">{team.name}</div>
+                              <div className="text-white font-light text-xs truncate">
+                                {team.name}
+                              </div>
                               <div className="text-[10px] text-gray-400 font-mono uppercase">
-                                {team.memberCount || 0} members · {formatDistanceToNow(new Date(team.createdAt), { addSuffix: true })}
+                                {team.memberCount || 0} members ·{" "}
+                                {formatDistanceToNow(new Date(team.createdAt), { addSuffix: true })}
                               </div>
                             </div>
                           </div>
@@ -1358,7 +1361,9 @@ export default function OrganizationDetails() {
                               className="w-8 h-8 rounded-none border border-dashed border-white/20 flex-shrink-0"
                             />
                             <div className="min-w-0">
-                              <div className="text-white font-light text-xs truncate">{member.user.name}</div>
+                              <div className="text-white font-light text-xs truncate">
+                                {member.user.name}
+                              </div>
                               <div className="text-[10px] text-gray-400 font-mono uppercase truncate">
                                 {member.role} · {new Date(member.joinedAt).toLocaleDateString()}
                               </div>
@@ -1446,9 +1451,7 @@ export default function OrganizationDetails() {
                                   </div>
                                 </div>
                               </td>
-                              <td className="py-4 px-4 text-white text-sm">
-                                {member.user.email}
-                              </td>
+                              <td className="py-4 px-4 text-white text-sm">{member.user.email}</td>
                               <td className="py-4 px-4">
                                 <span className="text-white/80 text-sm font-mono uppercase">
                                   {member.role}
@@ -1543,7 +1546,9 @@ export default function OrganizationDetails() {
                               <Mail className="w-4 h-4 text-white" />
                             </div>
                             <div className="min-w-0">
-                              <div className="text-white font-light text-xs truncate">{invitation.email}</div>
+                              <div className="text-white font-light text-xs truncate">
+                                {invitation.email}
+                              </div>
                               <div className="flex items-center gap-1.5 mt-0.5">
                                 <span
                                   className={`text-[9px] font-mono uppercase px-1 py-0.5 rounded-none ${
@@ -1559,7 +1564,9 @@ export default function OrganizationDetails() {
                                 >
                                   {invitation.status}
                                 </span>
-                                <span className="text-[10px] text-gray-400 font-mono uppercase">{invitation.role}</span>
+                                <span className="text-[10px] text-gray-400 font-mono uppercase">
+                                  {invitation.role}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -1568,7 +1575,9 @@ export default function OrganizationDetails() {
                               variant="ghost"
                               size="sm"
                               className="text-white/60 hover:text-white rounded-none h-7 w-7 p-0"
-                              onClick={() => handleResendInvitation(invitation.id, invitation.email)}
+                              onClick={() =>
+                                handleResendInvitation(invitation.id, invitation.email)
+                              }
                               disabled={resendingInvitations[invitation.id]}
                               title="Resend"
                             >
@@ -1632,11 +1641,14 @@ export default function OrganizationDetails() {
                                     <div className="text-[11px] font-mono uppercase text-gray-400">
                                       Expires on{" "}
                                       <span className="text-white">
-                                        {new Date(invitation.expiresAt).toLocaleDateString("en-US", {
-                                          month: "short",
-                                          year: "numeric",
-                                          day: "numeric",
-                                        })}
+                                        {new Date(invitation.expiresAt).toLocaleDateString(
+                                          "en-US",
+                                          {
+                                            month: "short",
+                                            year: "numeric",
+                                            day: "numeric",
+                                          },
+                                        )}
                                       </span>
                                     </div>
                                   </div>
@@ -1647,7 +1659,8 @@ export default function OrganizationDetails() {
                                   <div className="flex items-center space-x-2">
                                     <Users className="w-4 h-4 text-gray-400" />
                                     <span className="text-white text-sm">
-                                      {teams.find((t) => t.id === invitation.teamId)?.name || "Team"}
+                                      {teams.find((t) => t.id === invitation.teamId)?.name ||
+                                        "Team"}
                                     </span>
                                     <button
                                       onClick={(e) => {
