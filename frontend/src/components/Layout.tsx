@@ -455,7 +455,11 @@ export default function Layout({ children }: LayoutProps) {
         <div className="flex items-center justify-between px-3 py-3 md:px-6 md:py-4">
           <div className="flex items-center space-x-4 min-w-0">
             <div className="flex items-center justify-end space-x-2 min-w-0">
-              <img src={logoUrl} alt="Logo" className="w-8 h-8 md:w-10 md:h-10 object-contain flex-shrink-0" />
+              <img
+                src={logoUrl}
+                alt="Logo"
+                className="w-8 h-8 md:w-10 md:h-10 object-contain flex-shrink-0"
+              />
               {companyWebsite ? (
                 <a
                   href={companyWebsite}
@@ -707,9 +711,7 @@ export default function Layout({ children }: LayoutProps) {
                   }`}
                 >
                   <item.icon className="w-4 h-4 flex-shrink-0" />
-                  <span className="font-mono uppercase font-light text-xs">
-                    {item.name}
-                  </span>
+                  <span className="font-mono uppercase font-light text-xs">{item.name}</span>
                   {item.badge && (
                     <span className="text-xs text-gray-500 ml-auto">
                       <span className="mr-0.5">[</span>

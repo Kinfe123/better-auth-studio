@@ -857,7 +857,9 @@ export default function OrganizationDetails() {
         <div>
           <h1 className="text-xl md:text-2xl text-white font-light inline-flex items-center">
             <span className="truncate">{organization.name}</span>
-            <span className="hidden sm:inline-flex"><CopyableId id={organization.slug} nonSliced={true} variant="subscript" /></span>
+            <span className="hidden sm:inline-flex">
+              <CopyableId id={organization.slug} nonSliced={true} variant="subscript" />
+            </span>
           </h1>
         </div>
       </div>
@@ -1189,12 +1191,18 @@ export default function OrganizationDetails() {
                                   <Users className="w-4 h-4 md:w-5 md:h-5 text-white" />
                                 </div>
                                 <div className="min-w-0">
-                                  <div className="text-white font-light text-xs md:text-sm truncate">{team.name}</div>
-                                  <span className="hidden sm:block"><CopyableId id={team.id} label="Team ID" /></span>
+                                  <div className="text-white font-light text-xs md:text-sm truncate">
+                                    {team.name}
+                                  </div>
+                                  <span className="hidden sm:block">
+                                    <CopyableId id={team.id} label="Team ID" />
+                                  </span>
                                 </div>
                               </div>
                             </td>
-                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-white text-sm">{team.memberCount || 0}</td>
+                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-white text-sm">
+                              {team.memberCount || 0}
+                            </td>
                             <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-sm text-gray-400">
                               <div className="flex flex-col uppercase font-mono text-[10px] md:text-xs">
                                 <span>
@@ -1335,11 +1343,15 @@ export default function OrganizationDetails() {
                                       <ArrowUpRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
                                     </button>
                                   </div>
-                                  <span className="hidden sm:block"><CopyableId id={member.user.id} /></span>
+                                  <span className="hidden sm:block">
+                                    <CopyableId id={member.user.id} />
+                                  </span>
                                 </div>
                               </div>
                             </td>
-                            <td className="hidden md:table-cell py-4 px-4 text-white text-sm">{member.user.email}</td>
+                            <td className="hidden md:table-cell py-4 px-4 text-white text-sm">
+                              {member.user.email}
+                            </td>
                             <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4">
                               <span className="text-white/80 text-[10px] md:text-sm font-mono uppercase">
                                 {member.role}
@@ -1456,7 +1468,9 @@ export default function OrganizationDetails() {
                                   <Mail className="w-4 h-4 md:w-5 md:h-5 text-white" />
                                 </div>
                                 <div className="min-w-0">
-                                  <div className="text-white font-light text-xs md:text-sm truncate">{invitation.email}</div>
+                                  <div className="text-white font-light text-xs md:text-sm truncate">
+                                    {invitation.email}
+                                  </div>
                                   <div className="text-[10px] md:text-[11px] font-mono uppercase text-gray-400">
                                     Expires{" "}
                                     <span className="text-white">
@@ -1585,7 +1599,9 @@ export default function OrganizationDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Invite User</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Invite User
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1700,7 +1716,9 @@ export default function OrganizationDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Create Team</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Create Team
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1763,7 +1781,9 @@ export default function OrganizationDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Edit Team</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Edit Team
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1842,7 +1862,9 @@ export default function OrganizationDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Delete Team</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Delete Team
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1902,7 +1924,9 @@ export default function OrganizationDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Seed Members</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Seed Members
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -2015,7 +2039,9 @@ export default function OrganizationDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Seed Teams</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Seed Teams
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"

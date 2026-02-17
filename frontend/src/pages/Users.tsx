@@ -974,11 +974,15 @@ export default function Users() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-dashed border-white/10">
-                <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">User</th>
+                <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
+                  User
+                </th>
                 <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                   Email Status
                 </th>
-                <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">Role</th>
+                <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
+                  Role
+                </th>
                 <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   <button
                     type="button"
@@ -1115,7 +1119,9 @@ export default function Users() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1 md:gap-2">
-                            <div className="text-white font-light text-xs md:text-sm truncate">{user.name}</div>
+                            <div className="text-white font-light text-xs md:text-sm truncate">
+                              {user.name}
+                            </div>
                             {user.banned && (
                               <span className="relative group inline-block">
                                 <span className="px-2 py-0.5 text-[10px] font-semibold bg-red-500/20 border border-red-500/50 text-red-400 rounded-sm uppercase tracking-wide cursor-help">
@@ -1130,7 +1136,9 @@ export default function Users() {
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] md:text-sm text-gray-400 mt-0.5 truncate">{user.email}</div>
+                          <div className="text-[10px] md:text-sm text-gray-400 mt-0.5 truncate">
+                            {user.email}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -1158,7 +1166,9 @@ export default function Users() {
                     <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-sm text-gray-400">
                       <div className="flex uppercase font-mono flex-col text-[10px] md:text-xs">
                         <span>{format(new Date(user.createdAt), "dd MMM yyyy, HH:mm")}</span>
-                        <p className="text-[10px] md:text-xs text-gray-500">{formatTimeAgo(user.createdAt)}</p>
+                        <p className="text-[10px] md:text-xs text-gray-500">
+                          {formatTimeAgo(user.createdAt)}
+                        </p>
                       </div>
                     </td>
                     {lastSeenAtEnabled && (

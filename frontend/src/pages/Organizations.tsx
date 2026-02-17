@@ -794,7 +794,9 @@ export default function Organizations() {
                 <th className="text-left py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
                   Organization
                 </th>
-                <th className="hidden md:table-cell text-left py-4 px-4 font-mono uppercase text-xs text-white">Slug</th>
+                <th className="hidden md:table-cell text-left py-4 px-4 font-mono uppercase text-xs text-white">
+                  Slug
+                </th>
                 <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
                   <button
                     type="button"
@@ -866,12 +868,18 @@ export default function Organizations() {
                           <Building2 className="w-4 h-4 md:w-5 md:h-5 text-white" />
                         </div>
                         <div className="min-w-0">
-                          <div className="text-white font-light text-xs md:text-sm truncate">{organization.name}</div>
-                          <span className="hidden sm:block"><CopyableId id={organization.id} /></span>
+                          <div className="text-white font-light text-xs md:text-sm truncate">
+                            {organization.name}
+                          </div>
+                          <span className="hidden sm:block">
+                            <CopyableId id={organization.id} />
+                          </span>
                         </div>
                       </div>
                     </td>
-                    <td className="hidden md:table-cell py-4 px-4 text-white text-sm">{organization.slug}</td>
+                    <td className="hidden md:table-cell py-4 px-4 text-white text-sm">
+                      {organization.slug}
+                    </td>
                     <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-sm text-gray-400">
                       <div className="flex flex-col uppercase font-mono text-[10px] md:text-xs">
                         <span>

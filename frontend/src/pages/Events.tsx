@@ -905,8 +905,12 @@ export const auth = betterAuth({
             <Check className="w-4 h-4 md:w-5 md:h-5 text-green-400" />
           </div>
           <div className="flex items-center gap-1.5 md:gap-2">
-            <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Success</span>
-            <span className="text-white text-base md:text-lg font-medium">{eventStats.success}</span>
+            <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">
+              Success
+            </span>
+            <span className="text-white text-base md:text-lg font-medium">
+              {eventStats.success}
+            </span>
           </div>
         </div>
 
@@ -929,8 +933,12 @@ export const auth = betterAuth({
             <AlertInfo className="w-4 h-4 md:w-5 md:h-5 text-yellow-400" />
           </div>
           <div className="flex items-center gap-1.5 md:gap-2">
-            <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Warning</span>
-            <span className="text-white text-base md:text-lg font-medium">{eventStats.warning}</span>
+            <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">
+              Warning
+            </span>
+            <span className="text-white text-base md:text-lg font-medium">
+              {eventStats.warning}
+            </span>
           </div>
         </div>
 
@@ -1605,11 +1613,15 @@ export const auth = betterAuth({
                 <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   Event
                 </th>
-                <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">Type</th>
+                <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                  Type
+                </th>
                 <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   Status
                 </th>
-                <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">User</th>
+                <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                  User
+                </th>
                 <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   <button
                     type="button"
@@ -1684,7 +1696,9 @@ export const auth = betterAuth({
                             <div className="text-white font-light text-xs md:text-sm truncate max-w-[120px] sm:max-w-none">
                               {event.display?.message || event.type}
                             </div>
-                            <span className="hidden sm:block"><CopyableId id={event.id} /></span>
+                            <span className="hidden sm:block">
+                              <CopyableId id={event.id} />
+                            </span>
                           </div>
                         </div>
                       </td>

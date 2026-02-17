@@ -58,7 +58,9 @@ export function CopyableId({
         title="Click to copy User ID"
       >
         <span className="mr-1 flex-shrink-0">[</span>
-        <span className="text-white/80 font-mono text-xs truncate">{nonSliced ? id : id.slice(0, 8)}</span>
+        <span className="text-white/80 font-mono text-xs truncate">
+          {nonSliced ? id : id.slice(0, 8)}
+        </span>
         <span className="ml-1 flex-shrink-0">]</span>
       </sup>
     );

@@ -340,7 +340,9 @@ export default function Teams() {
                     <Users className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-white font-medium text-sm md:text-base truncate">{team.name}</h3>
+                    <h3 className="text-white font-medium text-sm md:text-base truncate">
+                      {team.name}
+                    </h3>
                     <p className="text-gray-400 text-[10px] md:text-sm truncate">
                       {team.organization?.name} • {team.memberCount || 0} members
                     </p>

@@ -1279,7 +1279,9 @@ export default function UserDetails() {
               <div className="min-w-0">
                 <h1 className="text-lg md:text-3xl font-light text-white flex items-center flex-wrap gap-1">
                   <span className="truncate max-w-[150px] md:max-w-none">{user.name}</span>
-                  <span className="hidden md:inline-flex"><CopyableId id={user.id} nonSliced={true} variant="subscript" /></span>
+                  <span className="hidden md:inline-flex">
+                    <CopyableId id={user.id} nonSliced={true} variant="subscript" />
+                  </span>
                   {lastSeenAtEnabled &&
                     (() => {
                       const lastSeen = user.lastSeenAt ?? (user as any)[lastSeenAtColumnName];
@@ -1461,7 +1463,9 @@ export default function UserDetails() {
                 >
                   <tab.icon className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90 flex-shrink-0" />
                   <span className="inline-flex items-start">
-                    <span className="font-mono uppercase text-[10px] md:text-xs font-normal">{tab.name}</span>
+                    <span className="font-mono uppercase text-[10px] md:text-xs font-normal">
+                      {tab.name}
+                    </span>
                     {tab.count !== undefined && (
                       <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
                         <AnimatedNumber
@@ -1840,11 +1844,13 @@ export default function UserDetails() {
                             <div className="flex-1 min-w-0">
                               <h3 className="text-white text-sm md:text-base font-light inline-flex items-start">
                                 {formatProviderName(account.providerId)}
-                                <span className="hidden sm:inline-flex"><CopyableId
-                                  id={account.accountId}
-                                  variant="subscript"
-                                  nonSliced={account.email || user.email ? true : false}
-                                /></span>
+                                <span className="hidden sm:inline-flex">
+                                  <CopyableId
+                                    id={account.accountId}
+                                    variant="subscript"
+                                    nonSliced={account.email || user.email ? true : false}
+                                  />
+                                </span>
                               </h3>
                               <p className="text-gray-400 tracking-tight uppercase text-[10px] md:text-xs font-mono mt-1 truncate">
                                 {`ID: ${account.id}`}
@@ -2026,157 +2032,159 @@ export default function UserDetails() {
                 ) : (
                   <div className="border border-white/10 rounded-none overflow-hidden">
                     <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-white/10 bg-black/50">
-                          <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
-                            Organization
-                          </th>
-                          <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
-                            Team
-                          </th>
-                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
-                            Role
-                          </th>
-                          <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
-                            Status
-                          </th>
-                          <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
-                            Expires
-                          </th>
-                          <th className="text-right py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {invitations.map((invitation) => (
-                          <tr
-                            key={invitation.id}
-                            className="border-b border-white/10 hover:bg-white/5 transition-colors"
-                          >
-                            <td className="py-3 px-2 md:py-4 md:px-4">
-                              <div className="flex items-center space-x-2 group">
-                                <Building2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400 flex-shrink-0" />
-                                <span className="text-white text-xs md:text-sm truncate max-w-[100px] md:max-w-none">
-                                  {invitation.organizationName}
-                                </span>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(`/organizations/${invitation.organizationId}`);
-                                  }}
-                                  className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all flex-shrink-0"
-                                  title="View organization details"
-                                >
-                                  <ArrowUpRight className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-                            </td>
-                            <td className="hidden md:table-cell py-4 px-4">
-                              {invitation.teamName ? (
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-white/10 bg-black/50">
+                            <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
+                              Organization
+                            </th>
+                            <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                              Team
+                            </th>
+                            <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
+                              Role
+                            </th>
+                            <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
+                              Status
+                            </th>
+                            <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                              Expires
+                            </th>
+                            <th className="text-right py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {invitations.map((invitation) => (
+                            <tr
+                              key={invitation.id}
+                              className="border-b border-white/10 hover:bg-white/5 transition-colors"
+                            >
+                              <td className="py-3 px-2 md:py-4 md:px-4">
                                 <div className="flex items-center space-x-2 group">
-                                  <Users className="w-4 h-4 text-gray-400" />
-                                  <span className="text-white text-sm">{invitation.teamName}</span>
-                                  {invitation.teamId && (
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate(
-                                          `/organizations/${invitation.organizationId}/teams/${invitation.teamId}`,
-                                        );
-                                      }}
-                                      className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
-                                      title="View team details"
-                                    >
-                                      <ArrowUpRight className="w-4 h-4" />
-                                    </button>
+                                  <Building2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400 flex-shrink-0" />
+                                  <span className="text-white text-xs md:text-sm truncate max-w-[100px] md:max-w-none">
+                                    {invitation.organizationName}
+                                  </span>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      navigate(`/organizations/${invitation.organizationId}`);
+                                    }}
+                                    className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all flex-shrink-0"
+                                    title="View organization details"
+                                  >
+                                    <ArrowUpRight className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </td>
+                              <td className="hidden md:table-cell py-4 px-4">
+                                {invitation.teamName ? (
+                                  <div className="flex items-center space-x-2 group">
+                                    <Users className="w-4 h-4 text-gray-400" />
+                                    <span className="text-white text-sm">
+                                      {invitation.teamName}
+                                    </span>
+                                    {invitation.teamId && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          navigate(
+                                            `/organizations/${invitation.organizationId}/teams/${invitation.teamId}`,
+                                          );
+                                        }}
+                                        className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
+                                        title="View team details"
+                                      >
+                                        <ArrowUpRight className="w-4 h-4" />
+                                      </button>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="text-gray-500 text-sm">—</span>
+                                )}
+                              </td>
+                              <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4">
+                                <span className="text-white/80 text-xs md:text-sm font-mono uppercase">
+                                  {invitation.role}
+                                </span>
+                              </td>
+                              <td className="py-3 px-2 md:py-4 md:px-4">
+                                <span
+                                  className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${
+                                    invitation.status === "accepted"
+                                      ? "bg-green-900/50 text-green-400 border border-green-500/30"
+                                      : invitation.status === "rejected" ||
+                                          invitation.status === "cancelled"
+                                        ? "bg-red-900/50 text-red-400 border border-red-500/30"
+                                        : invitation.status === "expired"
+                                          ? "bg-yellow-900/50 text-yellow-400 border border-yellow-500/30"
+                                          : "bg-blue-900/50 text-blue-400 border border-blue-500/30"
+                                  }`}
+                                >
+                                  {invitation.status}
+                                </span>
+                              </td>
+                              <td className="hidden md:table-cell py-4 px-4">
+                                <span className="text-gray-400 text-sm font-mono">
+                                  {new Date(invitation.expiresAt).toLocaleDateString("en-US", {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  })}
+                                </span>
+                              </td>
+                              <td className="py-3 px-2 md:py-4 md:px-4">
+                                <div className="flex items-center justify-end space-x-1 md:space-x-2">
+                                  {invitation.status === "pending" && (
+                                    <>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handleAcceptInvitation(invitation.id)}
+                                        disabled={acceptingInvitations[invitation.id]}
+                                        className="border border-dashed border-green-400/20 text-white hover:bg-green-400/10 hover:text-green-400  rounded-none font-mono uppercase font-medium text-xs tracking-tight"
+                                      >
+                                        <Check className="w-3.5 h-3.5 mr-1" />
+                                        Accept
+                                      </Button>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handleRejectInvitation(invitation.id)}
+                                        disabled={rejectingInvitations[invitation.id]}
+                                        className="border border-dashed border-red-400/20 text-red-400 hover:text-red-400 hover:bg-red-400/10 rounded-none font-mono uppercase font-medium text-xs tracking-tight"
+                                      >
+                                        <XCircle className="w-3.5 h-3.5 mr-1" />
+                                        Reject
+                                      </Button>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handleCancelInvitation(invitation.id)}
+                                        disabled={cancellingInvitations[invitation.id]}
+                                        className="border border-dashed border-yellow-400/20 text-white hover:text-yellow-400 hover:bg-yellow-400/10 rounded-none font-mono uppercase font-medium text-xs tracking-tight"
+                                      >
+                                        <X className="w-3.5 h-3.5 mr-1" />
+                                        Cancel
+                                      </Button>
+                                    </>
+                                  )}
+                                  {(invitation.status === "accepted" ||
+                                    invitation.status === "rejected" ||
+                                    invitation.status === "cancelled" ||
+                                    invitation.status === "expired") && (
+                                    <span className="text-gray-500 text-xs font-mono uppercase">
+                                      No actions available
+                                    </span>
                                   )}
                                 </div>
-                              ) : (
-                                <span className="text-gray-500 text-sm">—</span>
-                              )}
-                            </td>
-                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4">
-                              <span className="text-white/80 text-xs md:text-sm font-mono uppercase">
-                                {invitation.role}
-                              </span>
-                            </td>
-                            <td className="py-3 px-2 md:py-4 md:px-4">
-                              <span
-                                className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${
-                                  invitation.status === "accepted"
-                                    ? "bg-green-900/50 text-green-400 border border-green-500/30"
-                                    : invitation.status === "rejected" ||
-                                        invitation.status === "cancelled"
-                                      ? "bg-red-900/50 text-red-400 border border-red-500/30"
-                                      : invitation.status === "expired"
-                                        ? "bg-yellow-900/50 text-yellow-400 border border-yellow-500/30"
-                                        : "bg-blue-900/50 text-blue-400 border border-blue-500/30"
-                                }`}
-                              >
-                                {invitation.status}
-                              </span>
-                            </td>
-                            <td className="hidden md:table-cell py-4 px-4">
-                              <span className="text-gray-400 text-sm font-mono">
-                                {new Date(invitation.expiresAt).toLocaleDateString("en-US", {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                })}
-                              </span>
-                            </td>
-                            <td className="py-3 px-2 md:py-4 md:px-4">
-                              <div className="flex items-center justify-end space-x-1 md:space-x-2">
-                                {invitation.status === "pending" && (
-                                  <>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => handleAcceptInvitation(invitation.id)}
-                                      disabled={acceptingInvitations[invitation.id]}
-                                      className="border border-dashed border-green-400/20 text-white hover:bg-green-400/10 hover:text-green-400  rounded-none font-mono uppercase font-medium text-xs tracking-tight"
-                                    >
-                                      <Check className="w-3.5 h-3.5 mr-1" />
-                                      Accept
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => handleRejectInvitation(invitation.id)}
-                                      disabled={rejectingInvitations[invitation.id]}
-                                      className="border border-dashed border-red-400/20 text-red-400 hover:text-red-400 hover:bg-red-400/10 rounded-none font-mono uppercase font-medium text-xs tracking-tight"
-                                    >
-                                      <XCircle className="w-3.5 h-3.5 mr-1" />
-                                      Reject
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => handleCancelInvitation(invitation.id)}
-                                      disabled={cancellingInvitations[invitation.id]}
-                                      className="border border-dashed border-yellow-400/20 text-white hover:text-yellow-400 hover:bg-yellow-400/10 rounded-none font-mono uppercase font-medium text-xs tracking-tight"
-                                    >
-                                      <X className="w-3.5 h-3.5 mr-1" />
-                                      Cancel
-                                    </Button>
-                                  </>
-                                )}
-                                {(invitation.status === "accepted" ||
-                                  invitation.status === "rejected" ||
-                                  invitation.status === "cancelled" ||
-                                  invitation.status === "expired") && (
-                                  <span className="text-gray-500 text-xs font-mono uppercase">
-                                    No actions available
-                                  </span>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 )}
@@ -2300,7 +2308,9 @@ export default function UserDetails() {
                                         <div className="text-white font-light text-xs md:text-sm truncate max-w-[120px] sm:max-w-none">
                                           {event.display?.message || event.type}
                                         </div>
-                                        <span className="hidden sm:block"><CopyableId id={event.id} /></span>
+                                        <span className="hidden sm:block">
+                                          <CopyableId id={event.id} />
+                                        </span>
                                       </div>
                                     </div>
                                   </td>
@@ -2517,7 +2527,9 @@ export default function UserDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Edit User</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Edit User
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -2666,7 +2678,9 @@ export default function UserDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Ban User</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Ban User
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -2775,7 +2789,9 @@ export default function UserDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Unban User</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Unban User
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -2849,7 +2865,9 @@ export default function UserDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Delete User</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Delete User
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -2920,7 +2938,9 @@ export default function UserDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Update Password</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Update Password
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -3031,7 +3051,9 @@ export default function UserDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Seed Sessions</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Seed Sessions
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -3143,7 +3165,9 @@ export default function UserDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
           <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Seed Accounts</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Seed Accounts
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"

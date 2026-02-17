@@ -305,7 +305,9 @@ export default function TeamDetails() {
             <div className="min-w-0">
               <h1 className="text-lg md:text-2xl text-white font-light inline-flex items-center gap-1">
                 <span className="truncate max-w-[150px] md:max-w-none">{team.name}</span>
-                <span className="hidden md:inline-flex"><CopyableId id={teamId!} variant="subscript" nonSliced={true} /></span>
+                <span className="hidden md:inline-flex">
+                  <CopyableId id={teamId!} variant="subscript" nonSliced={true} />
+                </span>
               </h1>
               <div className="flex items-center space-x-2 mt-0.5 md:mt-1">
                 {team.organization && (
@@ -355,7 +357,9 @@ export default function TeamDetails() {
               }`}
             >
               <Users className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90" />
-              <span className="font-mono uppercase text-[10px] md:text-xs font-normal">Details</span>
+              <span className="font-mono uppercase text-[10px] md:text-xs font-normal">
+                Details
+              </span>
             </button>
             <button
               onClick={() => setActiveTab("members")}
@@ -394,7 +398,9 @@ export default function TeamDetails() {
                 <hr className="border-white/15 -mx-10 border-dashed my-4" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
-                    <label className="text-xs md:text-sm text-gray-400 font-mono uppercase">Name</label>
+                    <label className="text-xs md:text-sm text-gray-400 font-mono uppercase">
+                      Name
+                    </label>
                     <p className="text-white font-sans text-sm md:text-base mt-1">{team.name}</p>
                   </div>
                   <div>
@@ -406,8 +412,12 @@ export default function TeamDetails() {
                     </p>
                   </div>
                   <div>
-                    <label className="text-xs md:text-sm text-gray-400 font-mono uppercase">Created</label>
-                    <p className="text-white font-sans text-xs md:text-base mt-1">{formatDateTime(team.createdAt)}</p>
+                    <label className="text-xs md:text-sm text-gray-400 font-mono uppercase">
+                      Created
+                    </label>
+                    <p className="text-white font-sans text-xs md:text-base mt-1">
+                      {formatDateTime(team.createdAt)}
+                    </p>
                   </div>
                   <div>
                     <label className="text-xs md:text-sm text-gray-400 font-mono uppercase">
@@ -432,7 +442,9 @@ export default function TeamDetails() {
                           format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </p>
-                      <p className="text-xs md:text-sm text-gray-400 font-mono uppercase">Members</p>
+                      <p className="text-xs md:text-sm text-gray-400 font-mono uppercase">
+                        Members
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -449,7 +461,9 @@ export default function TeamDetails() {
                           format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </p>
-                      <p className="text-xs md:text-sm text-gray-400 font-mono uppercase">Days Active</p>
+                      <p className="text-xs md:text-sm text-gray-400 font-mono uppercase">
+                        Days Active
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -545,11 +559,15 @@ export default function TeamDetails() {
                                       <ArrowUpRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
                                     </button>
                                   </div>
-                                  <span className="hidden sm:block"><CopyableId id={member.user.id} /></span>
+                                  <span className="hidden sm:block">
+                                    <CopyableId id={member.user.id} />
+                                  </span>
                                 </div>
                               </div>
                             </td>
-                            <td className="hidden md:table-cell py-4 px-4 text-white text-sm">{member.user.email}</td>
+                            <td className="hidden md:table-cell py-4 px-4 text-white text-sm">
+                              {member.user.email}
+                            </td>
                             <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4">
                               <span className="text-white/80 text-[10px] md:text-sm font-mono uppercase">
                                 {member.role}
@@ -669,8 +687,12 @@ export default function TeamDetails() {
                           className="w-8 h-8 md:w-10 md:h-10 rounded-none border border-dashed border-white/20 flex-shrink-0"
                         />
                         <div className="flex-1 min-w-0">
-                          <div className="text-white font-light text-xs md:text-sm truncate">{user.name}</div>
-                          <div className="text-[10px] md:text-sm text-gray-400 truncate">{user.email}</div>
+                          <div className="text-white font-light text-xs md:text-sm truncate">
+                            {user.name}
+                          </div>
+                          <div className="text-[10px] md:text-sm text-gray-400 truncate">
+                            {user.email}
+                          </div>
                         </div>
                       </div>
                     ))}

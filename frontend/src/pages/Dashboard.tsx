@@ -1095,7 +1095,9 @@ export default function Dashboard() {
                 <Users className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
               <div className="flex items-center gap-1.5 md:gap-2">
-                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Users</span>
+                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">
+                  Users
+                </span>
                 <span className="text-white text-base md:text-lg font-medium">
                   {loading ? "..." : formatCompactNumber(counts.users)}
                 </span>
@@ -1125,7 +1127,9 @@ export default function Dashboard() {
                 <Building2 className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
               <div className="flex items-center gap-1.5 md:gap-2">
-                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Orgs</span>
+                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">
+                  Orgs
+                </span>
                 <span className="text-white text-base md:text-lg font-medium">
                   {loading ? "..." : formatCompactNumber(counts.organizations)}
                 </span>
@@ -1153,7 +1157,9 @@ export default function Dashboard() {
                 <Zap className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
               <div className="flex items-center gap-1.5 md:gap-2">
-                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Sessions</span>
+                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">
+                  Sessions
+                </span>
                 <span className="text-white text-base md:text-lg font-medium">
                   {loading ? "..." : formatCompactNumber(counts.sessions)}
                 </span>
@@ -1183,7 +1189,9 @@ export default function Dashboard() {
                 <BarChart3 className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
               <div className="flex items-center gap-1.5 md:gap-2">
-                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Hits</span>
+                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">
+                  Hits
+                </span>
                 <span className="text-white text-base md:text-lg font-medium">
                   {loading ? "..." : formatCompactNumber(activityHitsDailyTotal ?? 0)}
                 </span>
@@ -1213,7 +1221,9 @@ export default function Dashboard() {
                 <Users className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
               <div className="flex items-center gap-1.5 md:gap-2">
-                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">New</span>
+                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">
+                  New
+                </span>
                 <span className="text-white text-base md:text-lg font-medium">
                   {loading ? "..." : formatCompactNumber(newUsersDaily ?? 0)}
                 </span>
@@ -2185,10 +2195,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div
-      className="min-h-screen bg-black text-white flex flex-col"
-      style={{ overflowX: "hidden" }}
-    >
+    <div className="min-h-screen bg-black text-white flex flex-col" style={{ overflowX: "hidden" }}>
       {/* Tab Content */}
       <div className="flex-1">
         {activeTab === "overview" ? (

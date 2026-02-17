@@ -522,11 +522,15 @@ export default function Sessions() {
                         <div className="text-white font-light text-xs md:text-sm truncate">
                           Session {session.id.slice(0, 8)}...
                         </div>
-                        <span className="hidden sm:block"><CopyableId id={session.id} /></span>
+                        <span className="hidden sm:block">
+                          <CopyableId id={session.id} />
+                        </span>
                       </div>
                     </div>
                   </td>
-                  <td className="hidden md:table-cell py-4 px-4 text-white text-sm">{session.userId}</td>
+                  <td className="hidden md:table-cell py-4 px-4 text-white text-sm">
+                    {session.userId}
+                  </td>
                   <td className="hidden lg:table-cell py-4 px-4 text-sm text-gray-400">
                     {session.ipAddress ? (
                       <div className="flex flex-col font-mono text-xs">
