@@ -722,10 +722,10 @@ export default function Users() {
     );
   }
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 p-3 md:p-6">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl relative text-white font-light inline-flex items-start">
+          <h1 className="text-xl md:text-2xl relative text-white font-light inline-flex items-start">
             Users
             <sup className="text-xs text-gray-500 ml-1 mt-0 inline-flex items-baseline">
               <AnimatedNumber
@@ -737,7 +737,7 @@ export default function Users() {
               />
             </sup>
           </h1>
-          <p className="text-gray-400 font-light text-sm mt-1 uppercase font-mono">
+          <p className="text-gray-400 font-light text-xs md:text-sm mt-1 uppercase font-mono">
             Manage your application users
           </p>
           <div className="flex items-center space-x-4 mt-2">
@@ -749,7 +749,7 @@ export default function Users() {
             )}
           </div>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-wrap items-center gap-2 md:space-x-3">
           <Button
             className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
             onClick={exportUsersToCSV}
@@ -776,7 +776,7 @@ export default function Users() {
 
       {/* Filters */}
       <div className="space-y-3">
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
@@ -789,7 +789,7 @@ export default function Users() {
 
           <div className="flex items-center space-x-2">
             <Select value="" onValueChange={addFilter}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px]">
                 <div className="flex mr-3 items-center space-x-2">
                   <Plus className="w-4 h-4" />
                   <span>Add Filter</span>
@@ -812,7 +812,7 @@ export default function Users() {
             </Select>
           </div>
           {activeFilters.length > 0 && (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2 md:space-x-2">
               <Button onClick={() => setActiveFilters([])} className="">
                 Clear all
               </Button>
@@ -974,12 +974,12 @@ export default function Users() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-dashed border-white/10">
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">User</th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">User</th>
+                <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                   Email Status
                 </th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">Role</th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">Role</th>
+                <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   <button
                     type="button"
                     onClick={() => {
@@ -999,7 +999,7 @@ export default function Users() {
                   </button>
                 </th>
                 {lastSeenAtEnabled && (
-                  <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                  <th className="hidden lg:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                     <button
                       type="button"
                       onClick={() => {
@@ -1039,7 +1039,7 @@ export default function Users() {
                     </button>
                   </th>
                 )}
-                <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="text-right py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   Actions
                 </th>
               </tr>
@@ -1061,7 +1061,7 @@ export default function Users() {
                         </p>
                       </div>
                       {!searchTerm && activeFilters.length === 0 && (
-                        <div className="flex items-center space-x-3">
+                        <div className="flex flex-wrap items-center gap-2 md:space-x-3">
                           <Button
                             onClick={() => setShowCreateModal(true)}
                             className="bg-white text-black hover:bg-gray-200 rounded-none"
@@ -1090,33 +1090,32 @@ export default function Users() {
                     }`}
                     onClick={() => navigate(`/users/${user.id}`)}
                   >
-                    <td className="py-4 px-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="relative">
+                    <td className="py-3 px-2 md:py-4 md:px-4">
+                      <div className="flex items-center space-x-2 md:space-x-3">
+                        <div className="relative flex-shrink-0">
                           <img
                             src={getImageSrc(
                               user.image,
                               `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`,
                             )}
                             alt={user.name}
-                            className={`w-10 h-10 rounded-none border border-dashed object-cover ${
+                            className={`w-8 h-8 md:w-10 md:h-10 rounded-none border border-dashed object-cover ${
                               user.banned ? "border-red-400/50 opacity-60" : "border-white/20"
                             }`}
                             onError={(e) => {
-                              // Fallback to default avatar if image fails to load
                               (e.target as HTMLImageElement).src =
                                 `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`;
                             }}
                           />
                           {user.banned && (
                             <div className="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5">
-                              <Ban className="w-3 h-3 text-white" />
+                              <Ban className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" />
                             </div>
                           )}
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <div className="text-white font-light">{user.name}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1 md:gap-2">
+                            <div className="text-white font-light text-xs md:text-sm truncate">{user.name}</div>
                             {user.banned && (
                               <span className="relative group inline-block">
                                 <span className="px-2 py-0.5 text-[10px] font-semibold bg-red-500/20 border border-red-500/50 text-red-400 rounded-sm uppercase tracking-wide cursor-help">
@@ -1131,11 +1130,11 @@ export default function Users() {
                               </span>
                             )}
                           </div>
-                          <div className="text-sm text-gray-400 mt-0.5">{user.email}</div>
+                          <div className="text-[10px] md:text-sm text-gray-400 mt-0.5 truncate">{user.email}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="hidden md:table-cell py-4 px-4">
                       <div className="flex items-center space-x-2">
                         {user.emailVerified ? (
                           <Check className="w-4 h-4 text-green-400/60" />
@@ -1147,23 +1146,23 @@ export default function Users() {
                         </span>
                       </div>
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4">
                       {user.role ? (
-                        <span className="px-2 py-1 text-xs font-mono uppercase bg-white/5 border border-dashed border-white/15 text-white/80 rounded-sm tracking-wide">
+                        <span className="px-1.5 md:px-2 py-0.5 md:py-1 text-[10px] md:text-xs font-mono uppercase bg-white/5 border border-dashed border-white/15 text-white/80 rounded-sm tracking-wide">
                           {user.role}
                         </span>
                       ) : (
                         <span className="text-sm text-gray-500">—</span>
                       )}
                     </td>
-                    <td className="py-4 px-4 text-sm text-gray-400">
-                      <div className="flex uppercase font-mono flex-col text-xs">
+                    <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-sm text-gray-400">
+                      <div className="flex uppercase font-mono flex-col text-[10px] md:text-xs">
                         <span>{format(new Date(user.createdAt), "dd MMM yyyy, HH:mm")}</span>
-                        <p className="text-xs text-gray-500">{formatTimeAgo(user.createdAt)}</p>
+                        <p className="text-[10px] md:text-xs text-gray-500">{formatTimeAgo(user.createdAt)}</p>
                       </div>
                     </td>
                     {lastSeenAtEnabled && (
-                      <td className="py-4 px-4 text-sm text-gray-400">
+                      <td className="hidden lg:table-cell py-4 px-4 text-sm text-gray-400">
                         {(() => {
                           const lastSeen = user.lastSeenAt ?? (user as any)[lastSeenAtColumnName];
                           return lastSeen ? (
@@ -1177,7 +1176,7 @@ export default function Users() {
                         })()}
                       </td>
                     )}
-                    <td className="py-4 px-4 text-right">
+                    <td className="py-3 px-2 md:py-4 md:px-4 text-right">
                       <div className="relative flex items-center justify-end">
                         <Button
                           variant="ghost"
@@ -1286,8 +1285,8 @@ export default function Users() {
 
       {/* Seed Modal */}
       {showSeedModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="overflow-x-hidden bg-black/90 border border-white/10 p-6 w-full pt-4 max-w-2xl rounded-none">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="overflow-x-hidden bg-black/90 border border-white/10 p-3 md:p-6 w-full pt-4 max-w-2xl rounded-none max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-sm text-white flex items-center justify-center font-light uppercase">
                 <span className="text-white/50 mr-2">[</span>
@@ -1315,7 +1314,7 @@ export default function Users() {
                   {/* <h4 className="text-white font-light">Seed Users</h4> */}
                 </div>
                 <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-3">
                     <div className="flex-1">
                       <Label htmlFor="user-count" className="text-sm text-gray-400 font-light">
                         Number of users
@@ -1392,7 +1391,7 @@ export default function Users() {
               )}
             </div>
             <hr className="border-white/10 -mx-10 border-dashed mt-10" />
-            <div className="flex justify-end mt-6 pt-6">
+            <div className="flex flex-wrap justify-end gap-2 md:space-x-3 mt-6 pt-6">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1409,8 +1408,8 @@ export default function Users() {
       )}
 
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg text-white font-light uppercase font-mono">Create User</h3>
               <Button
@@ -1484,7 +1483,7 @@ export default function Users() {
                 </Select>
               </div>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-wrap justify-end gap-2 md:space-x-3 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1509,8 +1508,8 @@ export default function Users() {
 
       {/* Edit User Modal */}
       {showEditModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 p-6 w-full max-w-lg rounded-none shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 p-3 md:p-6 w-full max-w-lg rounded-none shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg text-white font-light uppercase font-mono">Edit User</h3>
               <Button
@@ -1632,7 +1631,7 @@ export default function Users() {
                 </Select>
               </div>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-wrap justify-end gap-2 md:space-x-3 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1659,8 +1658,8 @@ export default function Users() {
       )}
       {/* Delete User Modal */}
       {showDeleteModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg text-white font-light uppercase font-mono">Delete User</h3>
               <Button
@@ -1704,7 +1703,7 @@ export default function Users() {
                 Are you sure you want to delete this user? This action cannot be undone.
               </p>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-wrap justify-end gap-2 md:space-x-3 mt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowDeleteModal(false)}
@@ -1727,8 +1726,8 @@ export default function Users() {
 
       {/* View User Modal */}
       {showViewModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none w-full max-w-lg p-6 shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none w-full max-w-lg p-3 md:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <div className="flex flex-col gap-2">
                 <h3 className="text-lg text-white font-light uppercase font-mono">User Details</h3>
@@ -1806,7 +1805,7 @@ export default function Users() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 mt-8">
+            <div className="flex flex-wrap justify-end gap-2 md:gap-3 mt-8">
               <Button
                 onClick={() => setShowViewModal(false)}
                 className="border border-white/20 bg-white/5 text-white hover:bg-white/10 rounded-none font-mono uppercase font-medium text-xs tracking-tight"
@@ -1829,8 +1828,8 @@ export default function Users() {
 
       {/* Ban User Modal */}
       {showBanModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg text-white font-light uppercase font-mono">Ban User</h3>
               <Button
@@ -1910,7 +1909,7 @@ export default function Users() {
               </div>
             </div>
 
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-wrap justify-end gap-2 md:space-x-3 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1938,8 +1937,8 @@ export default function Users() {
 
       {/* Unban User Modal */}
       {showUnbanModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg text-white font-light uppercase font-mono">Unban User</h3>
               <Button
@@ -1989,7 +1988,7 @@ export default function Users() {
               </p>
             </div>
 
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-wrap justify-end gap-2 md:space-x-3 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {

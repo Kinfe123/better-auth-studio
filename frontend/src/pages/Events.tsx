@@ -808,8 +808,8 @@ export const auth = betterAuth({
 });`;
 
     return (
-      <div className="space-y-6 p-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-6 p-3 md:p-6">
+        <div className="flex flex-col gap-3 md:flex-row md:gap-0 items-center justify-between">
           <div>
             <h1 className="text-2xl relative text-white font-light inline-flex items-start">
               Events
@@ -820,7 +820,7 @@ export const auth = betterAuth({
           </div>
         </div>
 
-        <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-8">
+        <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-3 md:p-8">
           <div className="flex flex-col items-center justify-center space-y-6">
             <div className="flex items-center space-x-3">
               <div className="text-left">
@@ -869,27 +869,27 @@ export const auth = betterAuth({
   }
 
   return (
-    <div className="space-y-6 p-6 w-full max-w-full min-w-0">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 p-3 md:p-6 w-full max-w-full min-w-0">
+      <div className="flex flex-col gap-2 md:gap-3 md:flex-row items-start md:items-center justify-between">
         <div>
-          <h1 className="text-2xl relative text-white font-light inline-flex items-center gap-2">
+          <h1 className="text-xl md:text-2xl relative text-white font-light inline-flex items-center gap-2">
             Events
             <sup className="text-xs text-gray-500 mt-0">
               <span className="mr-1">[</span>
-              <span className="text-white font-mono text-sm">
+              <span className="text-white font-mono text-xs md:text-sm">
                 {totalEventCount != null ? totalEventCount : events.length}
               </span>
               <span className="ml-1">]</span>
             </sup>
           </h1>
-          <p className="text-gray-400 mt-1 uppercase font-mono text-sm font-light">
+          <p className="text-gray-400 mt-1 uppercase font-mono text-xs md:text-sm font-light">
             Real-time authentication events and activity
           </p>
         </div>
       </div>
 
       <div
-        className={`flex items-center justify-between gap-8 py-4 px-6 bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none overflow-x-auto relative`}
+        className={`flex flex-col md:flex-row md:flex-wrap items-start md:items-center justify-between gap-3 md:gap-8 py-4 px-3 md:px-6 bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none overflow-x-auto relative`}
       >
         <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
         <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -900,54 +900,54 @@ export const auth = betterAuth({
         <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
         <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
 
-        <div className="flex items-center gap-3 min-w-fit">
-          <div className="w-10 h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0 ">
-            <Check className="w-5 h-5 text-green-400" />
+        <div className="flex items-center gap-2 md:gap-3 min-w-fit">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
+            <Check className="w-4 h-4 md:w-5 md:h-5 text-green-400" />
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-gray-400 text-sm uppercase tracking-wide">Success</span>
-            <span className="text-white text-lg font-medium">{eventStats.success}</span>
-          </div>
-        </div>
-
-        <div className="h-8 w-[1px] bg-white/10" />
-
-        <div className="flex items-center gap-3 min-w-fit">
-          <div className="w-10 h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
-            <ErrorInfo className="w-5 h-5 text-red-400" />
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-gray-400 text-sm uppercase tracking-wide">Failed</span>
-            <span className="text-white text-lg font-medium">{eventStats.failed}</span>
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Success</span>
+            <span className="text-white text-base md:text-lg font-medium">{eventStats.success}</span>
           </div>
         </div>
 
-        <div className="h-8 w-[1px] bg-white/10" />
+        <div className="hidden md:block h-8 w-[1px] bg-white/10" />
 
-        <div className="flex items-center gap-3 min-w-fit">
-          <div className="w-10 h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
-            <AlertInfo className="w-5 h-5 text-yellow-400" />
+        <div className="flex items-center gap-2 md:gap-3 min-w-fit">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
+            <ErrorInfo className="w-4 h-4 md:w-5 md:h-5 text-red-400" />
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-gray-400 text-sm uppercase tracking-wide">Warning</span>
-            <span className="text-white text-lg font-medium">{eventStats.warning}</span>
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Failed</span>
+            <span className="text-white text-base md:text-lg font-medium">{eventStats.failed}</span>
           </div>
         </div>
 
-        <div className="h-8 w-[1px] bg-white/10" />
+        <div className="hidden md:block h-8 w-[1px] bg-white/10" />
 
-        <div className="flex items-center gap-3 min-w-fit">
-          <div className="w-10 h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
-            <Info className="w-5 h-5 text-blue-400" />
+        <div className="flex items-center gap-2 md:gap-3 min-w-fit">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
+            <AlertInfo className="w-4 h-4 md:w-5 md:h-5 text-yellow-400" />
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-gray-400 text-sm uppercase tracking-wide">Info</span>
-            <span className="text-white text-lg font-medium">{eventStats.info}</span>
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Warning</span>
+            <span className="text-white text-base md:text-lg font-medium">{eventStats.warning}</span>
+          </div>
+        </div>
+
+        <div className="hidden md:block h-8 w-[1px] bg-white/10" />
+
+        <div className="flex items-center gap-2 md:gap-3 min-w-fit">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
+            <Info className="w-4 h-4 md:w-5 md:h-5 text-blue-400" />
+          </div>
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Info</span>
+            <span className="text-white text-base md:text-lg font-medium">{eventStats.info}</span>
           </div>
         </div>
       </div>
 
-      {/* Event activity grid (GitHub-style, full year) */}
+      {/* Event activity grid (GitHub-style, full year) - hidden on mobile */}
       {events.length > 0 &&
         (() => {
           const WEEKS = 53;
@@ -1111,7 +1111,7 @@ export const auth = betterAuth({
           const selectedCell = cells.find((c) => c.dateKey === selectedActivityDateKey);
 
           return (
-            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-6 relative w-full max-w-full">
+            <div className="hidden md:block bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 relative w-full max-w-full">
               <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
               <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
               <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
@@ -1121,14 +1121,14 @@ export const auth = betterAuth({
               <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
               <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
 
-              <div className="flex w-full min-w-0 items-start">
-                <div className="shrink-0 flex flex-col pr-6 border-r border-white/15">
+              <div className="flex flex-col md:flex-row w-full min-w-0 items-start">
+                <div className="shrink-0 flex flex-col pr-0 md:pr-6 border-r-0 md:border-r border-white/15">
                   <h3 className="text-sm text-white uppercase font-light mb-2">Event activity</h3>
                   <p className="text-xs text-gray-500 font-mono uppercase mb-4">
                     Click a cell to see more details
                   </p>
 
-                  <div className="flex items-start gap-4 min-w-0">
+                  <div className="flex items-start gap-4 min-w-0 overflow-x-auto">
                     <div
                       className="flex flex-col shrink-0 text-[10px] text-gray-500 font-mono"
                       style={{ width: 28 }}
@@ -1220,7 +1220,7 @@ export const auth = betterAuth({
                 </div>
 
                 {/* Activity details panel — height matches activity map, no stretch */}
-                <div className="flex-1 min-w-0 flex flex-col pl-5 min-h-0 overflow-hidden max-h-[200px] relative">
+                <div className="flex-1 min-w-0 flex flex-col pl-0 md:pl-5 min-h-0 overflow-hidden max-h-[200px] relative">
                   {selectedActivityDateKey ? (
                     <p className="text-sm text-white/80 font-light font-mono uppercase shrink-0 mb-3">
                       {selectedCell?.dateLabel ?? selectedActivityDateKey}
@@ -1368,49 +1368,51 @@ export const auth = betterAuth({
         })()}
 
       <div className="space-y-3">
-        <div className="flex items-center space-x-4">
-          <div className="flex-1 relative">
+        <div className="flex flex-col gap-3 sm:flex-row sm:space-x-4 sm:items-center">
+          <div className="flex-1 relative w-full">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
               placeholder="Search events..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+              className="pl-10 border border-dashed border-white/20 bg-black/30 text-white rounded-none w-full"
             />
           </div>
 
-          <div className="flex w-[130px] items-center space-x-2">
-            <Select value={filter} className="w-full" onValueChange={setFilter}>
-              <SelectTrigger className="w-full font-mono uppercase sm:text-[11px] border border-dashed border-white/20 bg-black/30 text-white rounded-none">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="font-mono uppercase text-[11px]">
-                <SelectItem value="all">All Events</SelectItem>
-                <SelectItem value="success">Success</SelectItem>
-                <SelectItem value="failed">Failed</SelectItem>
-                <SelectItem value="info">Info</SelectItem>
-                <SelectItem value="warning">Warning</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <div className="flex w-full sm:w-auto items-center gap-3 sm:gap-2">
+            <div className="flex-1 sm:flex-none sm:w-[130px]">
+              <Select value={filter} onValueChange={setFilter}>
+                <SelectTrigger className="w-full font-mono uppercase sm:text-[11px] border border-dashed border-white/20 bg-black/30 text-white rounded-none">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="font-mono uppercase text-[11px]">
+                  <SelectItem value="all">All Events</SelectItem>
+                  <SelectItem value="success">Success</SelectItem>
+                  <SelectItem value="failed">Failed</SelectItem>
+                  <SelectItem value="info">Info</SelectItem>
+                  <SelectItem value="warning">Warning</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="flex items-center space-x-2">
-            <Select value="" onValueChange={addFilter}>
-              <SelectTrigger className="w-[120px] font-mono uppercase sm:text-[11px] border border-dashed border-white/20 bg-black/30 text-white rounded-none">
-                <div className="flex items-center space-x-2">
-                  <Filter className="w-4 h-4 text-gray-400" />
-                  <SelectValue placeholder="Add Filter" className="pr-2" />
-                </div>
-              </SelectTrigger>
-              <SelectContent className="font-mono uppercase text-[11px]">
-                {!activeFilters.some((f) => f.type === "timestamp") && (
-                  <SelectItem value="timestamp">Date Range</SelectItem>
-                )}
-                {!activeFilters.some((f) => f.type === "eventType") && (
-                  <SelectItem value="eventType">Event Type</SelectItem>
-                )}
-              </SelectContent>
-            </Select>
+            <div className="flex-1 sm:flex-none sm:w-[120px]">
+              <Select value="" onValueChange={addFilter}>
+                <SelectTrigger className="w-full font-mono uppercase sm:text-[11px] border border-dashed border-white/20 bg-black/30 text-white rounded-none">
+                  <div className="flex items-center space-x-2">
+                    <Filter className="w-4 h-4 text-gray-400" />
+                    <SelectValue placeholder="Add Filter" className="pr-2" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="font-mono uppercase text-[11px]">
+                  {!activeFilters.some((f) => f.type === "timestamp") && (
+                    <SelectItem value="timestamp">Date Range</SelectItem>
+                  )}
+                  {!activeFilters.some((f) => f.type === "eventType") && (
+                    <SelectItem value="eventType">Event Type</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
@@ -1600,15 +1602,15 @@ export const auth = betterAuth({
           <table className="w-full">
             <thead>
               <tr className="border-b border-dashed border-white/10">
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   Event
                 </th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">Type</th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">Type</th>
+                <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   Status
                 </th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">User</th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">User</th>
+                <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   <button
                     type="button"
                     onClick={() =>
@@ -1624,7 +1626,7 @@ export const auth = betterAuth({
                     )}
                   </button>
                 </th>
-                <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="text-right py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   Actions
                 </th>
               </tr>
@@ -1650,10 +1652,10 @@ export const auth = betterAuth({
                       onClick={() => openViewModal(event)}
                       className={`border-b border-dashed border-white/5 hover:bg-white/5 transition-all cursor-pointer ${isNew ? (isSuccess ? "new-event-row bg-green-400/10 border-green-400/20" : isFailed ? "new-event-row bg-red-400/10 border-red-400/20" : "") : ""}`}
                     >
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-3">
+                      <td className="py-3 px-2 md:py-4 md:px-4">
+                        <div className="flex items-center space-x-2 md:space-x-3">
                           <div
-                            className={`w-10 h-10 rounded-none border border-dashed flex items-center justify-center relative overflow-hidden group ${getSeverityColor(
+                            className={`w-8 h-8 md:w-10 md:h-10 rounded-none border border-dashed flex items-center justify-center relative overflow-hidden group flex-shrink-0 ${getSeverityColor(
                               severity,
                               status,
                             )}`}
@@ -1678,32 +1680,32 @@ export const auth = betterAuth({
                               {getEventIcon(event.type, severity, status)}
                             </div>
                           </div>
-                          <div>
-                            <div className="text-white font-light">
+                          <div className="min-w-0">
+                            <div className="text-white font-light text-xs md:text-sm truncate max-w-[120px] sm:max-w-none">
                               {event.display?.message || event.type}
                             </div>
-                            <CopyableId id={event.id} />
+                            <span className="hidden sm:block"><CopyableId id={event.id} /></span>
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 px-4">
+                      <td className="hidden md:table-cell py-4 px-4">
                         <span className="text-xs font-mono text-gray-400 uppercase">
                           {event.type}
                         </span>
                       </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-2">
+                      <td className="py-3 px-2 md:py-4 md:px-4">
+                        <div className="flex items-center space-x-1.5 md:space-x-2">
                           <div
-                            className={`w-px h-5 rounded-none ${
+                            className={`w-px h-4 md:h-5 rounded-none ${
                               status === "success" ? "bg-green-400" : "bg-red-400"
                             }`}
                           />
-                          <span className="text-xs font-mono uppercase text-gray-400">
+                          <span className="text-[10px] md:text-xs font-mono uppercase text-gray-400">
                             {status}
                           </span>
                         </div>
                       </td>
-                      <td className="py-4 px-4">
+                      <td className="hidden md:table-cell py-4 px-4">
                         {event.userId ? (
                           <button
                             onClick={(e) => {
@@ -1718,10 +1720,10 @@ export const auth = betterAuth({
                           <span className="text-gray-500">—</span>
                         )}
                       </td>
-                      <td className="py-4 px-4 text-xs text-gray-400">
+                      <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-[10px] md:text-xs text-gray-400">
                         <div className="flex font-mono uppercase flex-col">
                           {new Date(event.timestamp).toLocaleString()}
-                          <p className="text-xs">
+                          <p className="text-[10px] md:text-xs">
                             {new Date(event.timestamp).toLocaleString("en-US", {
                               month: "short",
                               day: "numeric",
@@ -1734,7 +1736,7 @@ export const auth = betterAuth({
                           </p>
                         </div>
                       </td>
-                      <td className="py-4 px-4 text-right">
+                      <td className="py-3 px-2 md:py-4 md:px-4 text-right">
                         <Button
                           variant="ghost"
                           size="sm"
@@ -1754,12 +1756,12 @@ export const auth = betterAuth({
             </tbody>
           </table>
           {hasMore ? (
-            <div className="flex justify-center py-6 border-t border-dashed border-white/10">
+            <div className="flex justify-center py-4 md:py-6 border-t border-dashed border-white/10">
               <button
                 type="button"
                 onClick={loadMoreEvents}
                 disabled={loadingMore}
-                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 font-mono text-sm uppercase border border-dashed border-white/20 text-white/90 hover:bg-white/10 hover:border-white/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[10rem]"
+                className="inline-flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-2.5 font-mono text-xs md:text-sm uppercase border border-dashed border-white/20 text-white/90 hover:bg-white/10 hover:border-white/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[8rem] md:min-w-[10rem]"
               >
                 {loadingMore ? (
                   <>
@@ -1786,8 +1788,8 @@ export const auth = betterAuth({
       {/* View Event Modal */}
       {showViewModal && selectedEvent && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none w-full max-w-2xl p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-black border border-white/15 rounded-none w-full max-w-2xl p-3 md:p-6 shadow-2xl">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 items-center justify-between mb-4">
               <div className="flex flex-col gap-2">
                 <h3 className="text-lg text-white font-light font-mono">
                   <span className="uppercase">Event Details</span>

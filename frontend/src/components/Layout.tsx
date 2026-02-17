@@ -5,12 +5,14 @@ import {
   LayoutDashboard,
   LogOut,
   Mail,
+  Menu,
   RefreshCw,
   Search,
   Settings,
   User,
   Users,
   Wrench,
+  X,
 } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -135,6 +137,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSelfHosted, setIsSelfHosted] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -449,23 +452,23 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-black">
       <div className="bg-black/70 border-b border-white/15">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center justify-end space-x-2">
-              <img src={logoUrl} alt="Logo" className="w-10 h-10 object-contain" />
+        <div className="flex items-center justify-between px-3 py-3 md:px-6 md:py-4">
+          <div className="flex items-center space-x-4 min-w-0">
+            <div className="flex items-center justify-end space-x-2 min-w-0">
+              <img src={logoUrl} alt="Logo" className="w-8 h-8 md:w-10 md:h-10 object-contain flex-shrink-0" />
               {companyWebsite ? (
                 <a
                   href={companyWebsite}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mb-0 cursor-pointer hover:opacity-80 transition-opacity"
+                  className="mb-0 cursor-pointer hover:opacity-80 transition-opacity min-w-0"
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
                 >
-                  <h1 className="text-md inline-flex mb-0 items-start font-light font-mono uppercase text-white gap-2">
-                    {companyName}
-                    <sup className="text-xs text-gray-400 ml-1 mt-0 flex items-center space-x-2">
+                  <h1 className="text-sm md:text-md inline-flex mb-0 items-start font-light font-mono uppercase text-white gap-2 truncate">
+                    <span className="truncate">{companyName}</span>
+                    <sup className="text-xs text-gray-400 ml-1 mt-0 hidden md:flex items-center space-x-2">
                       <span className="inline-flex items-center">
                         <span className="mr-1">[</span>
                         <span className="text-white/80 lowercase font-mono text-xs">
@@ -501,10 +504,10 @@ export default function Layout({ children }: LayoutProps) {
                   </h1>
                 </a>
               ) : (
-                <div className="mb-0 cursor-pointer" onClick={() => navigate("/")}>
-                  <h1 className="text-md inline-flex mb-0 items-start font-light font-mono uppercase text-white gap-2">
-                    {companyName}
-                    <sup className="text-xs text-gray-400 ml-1 mt-0 flex items-center space-x-2">
+                <div className="mb-0 cursor-pointer min-w-0" onClick={() => navigate("/")}>
+                  <h1 className="text-sm md:text-md inline-flex mb-0 items-start font-light font-mono uppercase text-white gap-2 truncate">
+                    <span className="truncate">{companyName}</span>
+                    <sup className="text-xs text-gray-400 ml-1 mt-0 hidden md:flex items-center space-x-2">
                       <span className="inline-flex items-center">
                         <span className="mr-1">[</span>
                         <span className="text-white/80 lowercase font-mono text-xs">
@@ -539,12 +542,12 @@ export default function Layout({ children }: LayoutProps) {
               )}
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3 md:space-x-4 flex-shrink-0">
             <a
               href="https://better-auth-studio.vercel.app/docs"
               target="_blank"
               rel="noopener"
-              className="group flex items-center"
+              className="group hidden md:flex items-center"
             >
               <span className="text-white/70 text-xs mr-2 transition-colors duration-150 group-hover:text-white group-hover:bg-gray-500/20 rounded px-0.5">
                 [
@@ -558,7 +561,7 @@ export default function Layout({ children }: LayoutProps) {
               href="https://better-auth.com/docs"
               target="_blank"
               rel="noopener"
-              className="group flex items-center"
+              className="group hidden md:flex items-center"
             >
               <span className="text-white/70 text-xs mr-2 transition-colors duration-150 group-hover:text-white group-hover:bg-gray-500/20 rounded px-0.5">
                 [
@@ -568,7 +571,7 @@ export default function Layout({ children }: LayoutProps) {
                 ]
               </span>
             </a>
-            <div className="relative font-mono uppercase text-xs">
+            <div className="relative font-mono uppercase text-xs hidden sm:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3" />
               <input
                 type="text"
@@ -582,12 +585,21 @@ export default function Layout({ children }: LayoutProps) {
               </kbd>
             </div>
 
+            <button
+              type="button"
+              onClick={() => setIsCommandPaletteOpen(true)}
+              className="sm:hidden w-9 h-9 border border-dashed border-white/20 bg-black flex items-center justify-center text-white/70 hover:text-white hover:border-white/50 transition-colors"
+              aria-label="Search"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+
             {isSelfHosted && userProfile && (
               <div className="relative h-full" ref={profileRef}>
                 <button
                   type="button"
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="w-10 h-10 border border-dashed border-white/30 bg-black flex items-center justify-center hover:border-white/50 transition-colors overflow-hidden"
+                  className="w-9 h-9 md:w-10 md:h-10 border border-dashed border-white/30 bg-black flex items-center justify-center hover:border-white/50 transition-colors overflow-hidden"
                 >
                   {userProfile.image ? (
                     <img
@@ -661,10 +673,78 @@ export default function Layout({ children }: LayoutProps) {
                 )}
               </div>
             )}
+
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden w-9 h-9 border border-dashed border-white/20 bg-black flex items-center justify-center text-white/70 hover:text-white hover:border-white/50 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
           </div>
         </div>
       </div>
-      <div className="bg-black/50 border-b border-white/15">
+
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-black border-b border-white/15 z-40">
+          <nav className="flex flex-col">
+            {navigation.map((item) => {
+              const isActive =
+                item.href === "/"
+                  ? location.pathname === "/"
+                  : location.pathname === item.href ||
+                    location.pathname.startsWith(item.href + "/");
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`flex items-center space-x-3 px-4 py-3 text-sm font-medium border-b border-white/5 transition-all duration-200 ${
+                    isActive
+                      ? "text-white bg-white/5 border-l-2 border-l-white"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <item.icon className="w-4 h-4 flex-shrink-0" />
+                  <span className="font-mono uppercase font-light text-xs">
+                    {item.name}
+                  </span>
+                  {item.badge && (
+                    <span className="text-xs text-gray-500 ml-auto">
+                      <span className="mr-0.5">[</span>
+                      <span className="text-white/80 lowercase font-mono text-xs">
+                        {item.badge}
+                      </span>
+                      <span className="ml-0.5">]</span>
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-white/5">
+              <a
+                href="https://better-auth-studio.vercel.app/docs"
+                target="_blank"
+                rel="noopener"
+                className="text-white/80 font-mono text-xs uppercase hover:text-white"
+              >
+                [Docs]
+              </a>
+              <a
+                href="https://better-auth.com/docs"
+                target="_blank"
+                rel="noopener"
+                className="text-white/80 font-mono text-xs uppercase hover:text-white"
+              >
+                [Support]
+              </a>
+            </div>
+          </nav>
+        </div>
+      )}
+
+      <div className="bg-black/50 border-b border-white/15 hidden md:block">
         <div className="px-6">
           <nav className="flex overflow-y-hidden overflow-x-auto">
             {navigation.map((item, index) => {

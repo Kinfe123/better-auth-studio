@@ -1062,7 +1062,7 @@ export default function Dashboard() {
     const maxActivityValue = Math.max(...activityBuckets, 1);
 
     return (
-      <div className="space-y-6 min-h-screen h-full mt-0 flex-1 overflow-y-hidden overflow-x-hidden px-0">
+      <div className="space-y-6 mt-0 flex-1 overflow-x-hidden px-0">
         {/* <div className="px-6 pt-8">
         <h1 className="text-3xl text-white font-light mb-2">Welcome Back</h1>
         <p className="text-gray-400 text-sm">
@@ -1073,9 +1073,9 @@ export default function Dashboard() {
           })}
         </p>
       </div> */}
-        <div className="px-6 overflow-hidden">
+        <div className="px-3 md:px-6 overflow-hidden">
           <div
-            className={`flex items-center justify-between gap-8 py-4 px-6 bg-gradient-to-b from-white/[4%] to-white/[2.5%]  border border-white/10 rounded-none overflow-x-auto relative`}
+            className={`flex flex-col md:flex-row md:flex-wrap items-start md:items-center justify-between gap-3 md:gap-8 py-4 px-3 md:px-6 bg-gradient-to-b from-white/[4%] to-white/[2.5%]  border border-white/10 rounded-none overflow-x-auto relative`}
           >
             {/* Top-left corner */}
             <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
@@ -1090,26 +1090,26 @@ export default function Dashboard() {
             <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
             <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
 
-            <div className="flex items-center gap-3 min-w-fit">
-              <div className="w-10 h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
-                <Users className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-2 md:gap-3 min-w-fit">
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
+                <Users className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400 text-sm uppercase tracking-wide">Users</span>
-                <span className="text-white text-lg font-medium">
+              <div className="flex items-center gap-1.5 md:gap-2">
+                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Users</span>
+                <span className="text-white text-base md:text-lg font-medium">
                   {loading ? "..." : formatCompactNumber(counts.users)}
                 </span>
                 <div
                   className={`flex items-center gap-1 ${usersDailyPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
                 >
                   <svg
-                    className={`w-3 h-3 ${usersDailyPercentage < 0 ? "rotate-180" : ""}`}
+                    className={`w-2.5 h-2.5 md:w-3 md:h-3 ${usersDailyPercentage < 0 ? "rotate-180" : ""}`}
                     viewBox="0 0 12 12"
                     fill="currentColor"
                   >
                     <path d="M6 0 L12 12 L0 12 Z" />
                   </svg>
-                  <span className="text-sm font-medium">
+                  <span className="text-xs md:text-sm font-medium">
                     {Math.abs(usersDailyPercentage).toFixed(1)}%
                   </span>
                 </div>
@@ -1117,57 +1117,57 @@ export default function Dashboard() {
             </div>
 
             {/* Divider */}
-            <div className="h-8 w-[1px] bg-white/10" />
+            <div className="hidden md:block h-8 w-[1px] bg-white/10" />
 
             {/* Total Organizations Stat */}
-            <div className="flex items-center gap-3 min-w-fit">
-              <div className="w-10 h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
-                <Building2 className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-2 md:gap-3 min-w-fit">
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
+                <Building2 className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400 text-sm uppercase tracking-wide">Organizations</span>
-                <span className="text-white text-lg font-medium">
+              <div className="flex items-center gap-1.5 md:gap-2">
+                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Orgs</span>
+                <span className="text-white text-base md:text-lg font-medium">
                   {loading ? "..." : formatCompactNumber(counts.organizations)}
                 </span>
                 <div
                   className={`flex items-center gap-1 ${organizationsDailyPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
                 >
                   <svg
-                    className={`w-3 h-3 ${organizationsDailyPercentage < 0 ? "rotate-180" : ""}`}
+                    className={`w-2.5 h-2.5 md:w-3 md:h-3 ${organizationsDailyPercentage < 0 ? "rotate-180" : ""}`}
                     viewBox="0 0 12 12"
                     fill="currentColor"
                   >
                     <path d="M6 0 L12 12 L0 12 Z" />
                   </svg>
-                  <span className="text-sm font-medium">
+                  <span className="text-xs md:text-sm font-medium">
                     {Math.abs(organizationsDailyPercentage).toFixed(1)}%
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="h-8 w-[1px] bg-white/10" />
+            <div className="hidden md:block h-8 w-[1px] bg-white/10" />
 
-            <div className="flex items-center gap-3 min-w-fit">
-              <div className="w-10 h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
-                <Zap className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-2 md:gap-3 min-w-fit">
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
+                <Zap className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400 text-sm uppercase tracking-wide">Sessions</span>
-                <span className="text-white text-lg font-medium">
+              <div className="flex items-center gap-1.5 md:gap-2">
+                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Sessions</span>
+                <span className="text-white text-base md:text-lg font-medium">
                   {loading ? "..." : formatCompactNumber(counts.sessions)}
                 </span>
                 <div
                   className={`flex items-center gap-1 ${sessionsDailyPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
                 >
                   <svg
-                    className={`w-3 h-3 ${sessionsDailyPercentage < 0 ? "rotate-180" : ""}`}
+                    className={`w-2.5 h-2.5 md:w-3 md:h-3 ${sessionsDailyPercentage < 0 ? "rotate-180" : ""}`}
                     viewBox="0 0 12 12"
                     fill="currentColor"
                   >
                     <path d="M6 0 L12 12 L0 12 Z" />
                   </svg>
-                  <span className="text-sm font-medium">
+                  <span className="text-xs md:text-sm font-medium">
                     {Math.abs(sessionsDailyPercentage).toFixed(1)}%
                   </span>
                 </div>
@@ -1175,29 +1175,29 @@ export default function Dashboard() {
             </div>
 
             {/* Divider */}
-            <div className="h-8 w-[1px] bg-white/10" />
+            <div className="hidden md:block h-8 w-[1px] bg-white/10" />
 
             {/* Activity Hits Stat */}
-            <div className="flex items-center gap-3 min-w-fit">
-              <div className="w-10 h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
-                <BarChart3 className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-2 md:gap-3 min-w-fit">
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
+                <BarChart3 className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400 text-sm uppercase tracking-wide">Activity Hits</span>
-                <span className="text-white text-lg font-medium">
+              <div className="flex items-center gap-1.5 md:gap-2">
+                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">Hits</span>
+                <span className="text-white text-base md:text-lg font-medium">
                   {loading ? "..." : formatCompactNumber(activityHitsDailyTotal ?? 0)}
                 </span>
                 <div
                   className={`flex items-center gap-1 ${activityHitsDailyPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
                 >
                   <svg
-                    className={`w-3 h-3 ${activityHitsDailyPercentage < 0 ? "rotate-180" : ""}`}
+                    className={`w-2.5 h-2.5 md:w-3 md:h-3 ${activityHitsDailyPercentage < 0 ? "rotate-180" : ""}`}
                     viewBox="0 0 12 12"
                     fill="currentColor"
                   >
                     <path d="M6 0 L12 12 L0 12 Z" />
                   </svg>
-                  <span className="text-sm font-medium">
+                  <span className="text-xs md:text-sm font-medium">
                     {Math.abs(activityHitsDailyPercentage).toFixed(1)}%
                   </span>
                 </div>
@@ -1205,29 +1205,29 @@ export default function Dashboard() {
             </div>
 
             {/* Divider */}
-            <div className="h-8 w-[1px] bg-white/10" />
+            <div className="hidden md:block h-8 w-[1px] bg-white/10" />
 
             {/* New Users Daily */}
-            <div className="flex items-center gap-3 min-w-fit">
-              <div className="w-10 h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
-                <Users className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-2 md:gap-3 min-w-fit">
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-none bg-white/5 border border-dashed border-white/10 flex items-center justify-center flex-shrink-0">
+                <Users className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400 text-sm uppercase tracking-wide">New Users</span>
-                <span className="text-white text-lg font-medium">
+              <div className="flex items-center gap-1.5 md:gap-2">
+                <span className="text-gray-400 text-xs md:text-sm uppercase tracking-wide">New</span>
+                <span className="text-white text-base md:text-lg font-medium">
                   {loading ? "..." : formatCompactNumber(newUsersDaily ?? 0)}
                 </span>
                 <div
                   className={`flex items-center gap-1 ${newUsersDailyPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
                 >
                   <svg
-                    className={`w-3 h-3 ${newUsersDailyPercentage < 0 ? "rotate-180" : ""}`}
+                    className={`w-2.5 h-2.5 md:w-3 md:h-3 ${newUsersDailyPercentage < 0 ? "rotate-180" : ""}`}
                     viewBox="0 0 12 12"
                     fill="currentColor"
                   >
                     <path d="M6 0 L12 12 L0 12 Z" />
                   </svg>
-                  <span className="text-sm font-medium">
+                  <span className="text-xs md:text-sm font-medium">
                     {Math.abs(newUsersDailyPercentage).toFixed(1)}%
                   </span>
                 </div>
@@ -1236,10 +1236,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="px-6 pb-10 space-y-6">
+        <div className="px-3 md:px-6 pb-10 space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Total Users Card */}
-            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-6 relative">
+            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 relative">
               {/* Top-left corner */}
               <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
               <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -1448,7 +1448,7 @@ export default function Dashboard() {
             </div>
 
             {/* Activity Hit Card */}
-            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-6 relative">
+            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 relative">
               <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
               <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
               <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
@@ -1628,11 +1628,11 @@ export default function Dashboard() {
           </div>
 
           {/* Bottom Row - Three Columns */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Left Column - Two Small Cards */}
             <div className="space-y-4 overflow-x-hidden">
               {/* Active Users Daily */}
-              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-6 pb-2 relative">
+              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative">
                 {/* Top-left corner */}
                 <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
                 <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -1753,7 +1753,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-6 pb-2 relative">
+              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative">
                 {/* Top-left corner */}
                 <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
                 <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -1877,7 +1877,7 @@ export default function Dashboard() {
             {/* Middle Column - Organizations and Teams */}
             <div className="space-y-4 overflow-x-hidden">
               {/* Organizations */}
-              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-6 pb-2 relative">
+              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative">
                 {/* Top-left corner */}
                 <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
                 <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -1999,7 +1999,7 @@ export default function Dashboard() {
               </div>
 
               {/* Teams */}
-              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-6 pb-2 relative">
+              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative">
                 {/* Top-left corner */}
                 <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
                 <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -2114,7 +2114,7 @@ export default function Dashboard() {
             </div>
 
             {/* Right Column - Security Insights */}
-            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-6 pt-4 overflow-hidden relative flex flex-col">
+            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pt-4 overflow-hidden relative flex flex-col">
               <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
               <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
               <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
@@ -2186,11 +2186,11 @@ export default function Dashboard() {
 
   return (
     <div
-      className="h-screen bg-black text-white overflow-hidden flex flex-col"
+      className="min-h-screen bg-black text-white flex flex-col"
       style={{ overflowX: "hidden" }}
     >
       {/* Tab Content */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1">
         {activeTab === "overview" ? (
           renderOverview()
         ) : activeTab === "users" ? (
@@ -2205,8 +2205,8 @@ export default function Dashboard() {
 
       {/* Quick Actions Modal */}
       {showQuickActionsModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-3xl rounded-none">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black/90 border border-dashed border-white/20 p-3 md:p-6 w-full max-w-3xl rounded-none max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <Zap className="w-6 h-6 text-white" />
@@ -2367,7 +2367,7 @@ export default function Dashboard() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="sticky top-0 bg-black border-b border-white/10 p-6 z-10">
+            <div className="sticky top-0 bg-black border-b border-white/10 p-3 md:p-6 z-10">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
@@ -2406,7 +2406,7 @@ export default function Dashboard() {
             </div>
 
             {/* Modal Content */}
-            <div className="p-6 space-y-6">
+            <div className="p-3 md:p-6 space-y-6">
               {/* Date */}
               <div>
                 <h4 className="text-sm text-gray-400 uppercase tracking-wide mb-2">Release Date</h4>

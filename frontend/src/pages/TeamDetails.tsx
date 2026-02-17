@@ -256,7 +256,7 @@ export default function TeamDetails() {
 
   if (!team) {
     return (
-      <div className="space-y-6 p-6">
+      <div className="space-y-6 p-3 md:p-6">
         <div className="flex items-center space-x-4">
           <span className="mb-4 ml-0 flex justify-start items-start text-left border-none text-white">
             <span className="font-light">
@@ -280,94 +280,98 @@ export default function TeamDetails() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-3 md:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <span className="mb-4 ml-0 flex justify-start items-start text-left border-none text-white">
-            <span className="font-light">
-              <span
-                onClick={() => navigate(`/organizations/${team.organizationId}`)}
-                className="uppercase cursor-pointer text-white/80 font-mono text-sm"
-              >
-                teams /{" "}
+      <div className="flex items-start justify-between gap-2 md:gap-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center space-x-4 mb-3 md:mb-4">
+            <span className="flex justify-start items-start text-left border-none text-white">
+              <span className="font-light">
+                <span
+                  onClick={() => navigate(`/organizations/${team.organizationId}`)}
+                  className="uppercase cursor-pointer text-white/80 font-mono text-xs md:text-sm"
+                >
+                  teams /{" "}
+                </span>
+                <span className="text-white font-mono text-xs md:text-sm truncate">{teamId}</span>
               </span>
-              <span className="text-white font-mono text-sm">{teamId}</span>
             </span>
-          </span>
+          </div>
+
+          <div className="flex items-center space-x-2 md:space-x-3">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center flex-shrink-0">
+              <Users className="w-5 h-5 md:w-6 md:h-6 text-white" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-lg md:text-2xl text-white font-light inline-flex items-center gap-1">
+                <span className="truncate max-w-[150px] md:max-w-none">{team.name}</span>
+                <span className="hidden md:inline-flex"><CopyableId id={teamId!} variant="subscript" nonSliced={true} /></span>
+              </h1>
+              <div className="flex items-center space-x-2 mt-0.5 md:mt-1">
+                {team.organization && (
+                  <Link
+                    to={`/organizations/${team.organizationId}`}
+                    className="text-gray-400 hover:text-white text-xs md:text-sm font-sans"
+                  >
+                    <Building2 className="w-3.5 h-3.5 md:w-4 md:h-4 inline mr-1" />
+                    {team.organization.name}
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-shrink-0 items-center gap-2 md:space-x-3">
           <Button
             onClick={openAddMemberModal}
-            className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
+            className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none text-xs md:text-sm px-2 md:px-4 h-8 md:h-10"
           >
-            <UserPlus className="w-4 h-4 mr-2" />
-            Add Members
+            <UserPlus className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
+            <span className="hidden sm:inline">Add Members</span>
+            <span className="sm:hidden">Add</span>
           </Button>
           <Button
             onClick={() => setShowEditTeamModal(true)}
-            className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none"
+            className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none text-xs md:text-sm px-2 md:px-4 h-8 md:h-10"
           >
-            <Edit className="w-4 h-4 mr-2" />
-            Edit Team
+            <Edit className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
+            <span className="hidden sm:inline">Edit Team</span>
+            <span className="sm:hidden">Edit</span>
           </Button>
-        </div>
-      </div>
-
-      <div className="flex items-center space-x-3">
-        <div className="w-12 h-12 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-          <Users className="w-6 h-6 text-white" />
-        </div>
-        <div>
-          <h1 className="text-2xl text-white font-light inline-flex items-center">
-            {team.name}
-            <CopyableId id={teamId!} variant="subscript" nonSliced={true} />
-          </h1>
-          <div className="flex items-center space-x-2 mt-1">
-            {team.organization && (
-              <Link
-                to={`/organizations/${team.organizationId}`}
-                className="text-gray-400 hover:text-white text-sm font-sans"
-              >
-                <Building2 className="w-4 h-4 inline mr-1" />
-                {team.organization.name}
-              </Link>
-            )}
-          </div>
         </div>
       </div>
 
       {/* Tabs */}
       <div className="border border-dashed border-white/20 rounded-none">
         <div className="border-b border-dashed border-white/20">
-          <nav className="flex space-x-8 px-6">
+          <nav className="flex overflow-x-auto space-x-1.5 md:space-x-2 px-2 md:px-6">
             <button
               onClick={() => setActiveTab("details")}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
                 activeTab === "details"
                   ? "border-white text-white"
                   : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
               }`}
             >
-              <Users className="w-4 h-4 text-white/90" />
-              <span className="font-mono uppercase text-xs font-normal">Details</span>
+              <Users className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90" />
+              <span className="font-mono uppercase text-[10px] md:text-xs font-normal">Details</span>
             </button>
             <button
               onClick={() => setActiveTab("members")}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
                 activeTab === "members"
                   ? "border-white text-white"
                   : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
               }`}
             >
-              <Users className="w-4 h-4 text-white/90" />
-              <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
+              <Users className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90" />
+              <span className="inline-flex items-start font-mono uppercase text-[10px] md:text-xs font-normal">
                 Members
                 <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
                   <AnimatedNumber
                     value={members.length}
-                    className="text-white/80 font-mono text-xs"
+                    className="text-white/80 font-mono text-[10px] md:text-xs"
                     prefix={<span className="mr-0.5 text-gray-500">[</span>}
                     suffix={<span className="ml-0.5 text-gray-500">]</span>}
                     format={{ notation: "standard", maximumFractionDigits: 0 }}
@@ -378,35 +382,35 @@ export default function TeamDetails() {
           </nav>
         </div>
 
-        <div className="p-6">
+        <div className="p-3 md:p-6">
           {/* Tab Content */}
           {activeTab === "details" && (
             <div className="space-y-6 overflow-x-hidden">
               {/* Team Information */}
-              <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-                <h3 className="text-sm uppercase font-mono text-gray-400 mb-4 tracking-wider">
+              <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-3 md:p-6">
+                <h3 className="text-xs md:text-sm uppercase font-mono text-gray-400 mb-4 tracking-wider">
                   TEAM INFORMATION
                 </h3>
                 <hr className="border-white/15 -mx-10 border-dashed my-4" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
-                    <label className="text-sm text-gray-400 font-mono uppercase">Name</label>
-                    <p className="text-white font-sans mt-1">{team.name}</p>
+                    <label className="text-xs md:text-sm text-gray-400 font-mono uppercase">Name</label>
+                    <p className="text-white font-sans text-sm md:text-base mt-1">{team.name}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-400 font-mono uppercase">
+                    <label className="text-xs md:text-sm text-gray-400 font-mono uppercase">
                       Organization
                     </label>
-                    <p className="text-white font-sans mt-1">
+                    <p className="text-white font-sans text-sm md:text-base mt-1">
                       {team.organization?.name || "Unknown"}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-400 font-mono uppercase">Created</label>
-                    <p className="text-white font-sans mt-1">{formatDateTime(team.createdAt)}</p>
+                    <label className="text-xs md:text-sm text-gray-400 font-mono uppercase">Created</label>
+                    <p className="text-white font-sans text-xs md:text-base mt-1">{formatDateTime(team.createdAt)}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-400 font-mono uppercase">
+                    <label className="text-xs md:text-sm text-gray-400 font-mono uppercase">
                       Last Updated
                     </label>
                     <p className="text-white font-mono text-xs mt-1">
@@ -417,26 +421,26 @@ export default function TeamDetails() {
               </div>
 
               {/* Team Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-                  <div className="flex items-center space-x-3">
-                    <Users className="w-8 h-8 text-white" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-3 md:p-6">
+                  <div className="flex items-center space-x-2 md:space-x-3">
+                    <Users className="w-6 h-6 md:w-8 md:h-8 text-white" />
                     <div>
-                      <p className="text-2xl text-white font-sans font-light">
+                      <p className="text-lg md:text-2xl text-white font-sans font-light">
                         <AnimatedNumber
                           value={members.length}
                           format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </p>
-                      <p className="text-sm text-gray-400 font-mono uppercase">Members</p>
+                      <p className="text-xs md:text-sm text-gray-400 font-mono uppercase">Members</p>
                     </div>
                   </div>
                 </div>
-                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-                  <div className="flex items-center space-x-3">
-                    <Calendar className="w-8 h-8 text-white" />
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-3 md:p-6">
+                  <div className="flex items-center space-x-2 md:space-x-3">
+                    <Calendar className="w-6 h-6 md:w-8 md:h-8 text-white" />
                     <div>
-                      <p className="text-2xl text-white font-sans font-light">
+                      <p className="text-lg md:text-2xl text-white font-sans font-light">
                         <AnimatedNumber
                           value={Math.ceil(
                             (Date.now() - new Date(team.createdAt).getTime()) /
@@ -445,21 +449,21 @@ export default function TeamDetails() {
                           format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </p>
-                      <p className="text-sm text-gray-400 font-mono uppercase">Days Active</p>
+                      <p className="text-xs md:text-sm text-gray-400 font-mono uppercase">Days Active</p>
                     </div>
                   </div>
                 </div>
-                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
-                  <div className="flex items-center space-x-3">
-                    <Building2 className="w-8 h-8 text-white" />
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-3 md:p-6">
+                  <div className="flex items-center space-x-2 md:space-x-3">
+                    <Building2 className="w-6 h-6 md:w-8 md:h-8 text-white" />
                     <div>
-                      <p className="text-2xl text-white font-sans font-light">
+                      <p className="text-lg md:text-2xl text-white font-sans font-light">
                         <AnimatedNumber
                           value={1}
                           format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
                       </p>
-                      <p className="text-sm text-gray-400 font-mono uppercase">Organization</p>
+                      <p className="text-xs md:text-sm text-gray-400 font-mono uppercase">Org</p>
                     </div>
                   </div>
                 </div>
@@ -469,9 +473,9 @@ export default function TeamDetails() {
 
           {activeTab === "members" && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                  <h3 className="text-base md:text-lg relative text-white font-light inline-flex items-start">
                     Team Members
                     <AnimatedNumber
                       value={members.length}
@@ -481,7 +485,7 @@ export default function TeamDetails() {
                       format={{ notation: "standard", maximumFractionDigits: 0 }}
                     />
                   </h3>
-                  <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
+                  <p className="text-gray-400 font-light font-mono text-[10px] md:text-xs uppercase mt-1">
                     Manage members of this team
                   </p>
                 </div>
@@ -494,19 +498,19 @@ export default function TeamDetails() {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-dashed border-white/10">
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             User
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                             Email
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Role
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Joined
                           </th>
-                          <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="text-right py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Actions
                           </th>
                         </tr>
@@ -517,56 +521,56 @@ export default function TeamDetails() {
                             key={member.id}
                             className="border-b border-dashed border-white/5 hover:bg-white/5 group"
                           >
-                            <td className="py-4 px-4">
-                              <div className="flex items-center space-x-3">
+                            <td className="py-3 px-2 md:py-4 md:px-4">
+                              <div className="flex items-center space-x-2 md:space-x-3">
                                 <img
                                   src={
                                     member.user.image ||
                                     `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.user.id}`
                                   }
                                   alt={member.user.name}
-                                  className="w-10 h-10 rounded-none border border-dashed border-white/20"
+                                  className="w-8 h-8 md:w-10 md:h-10 rounded-none border border-dashed border-white/20 flex-shrink-0"
                                 />
-                                <div>
-                                  <div className="text-white font-light inline-flex items-center gap-2">
-                                    <span>{member.user.name}</span>
+                                <div className="min-w-0">
+                                  <div className="text-white font-light text-xs md:text-sm inline-flex items-center gap-1 md:gap-2">
+                                    <span className="truncate">{member.user.name}</span>
                                     <button
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         navigate(`/users/${member.user.id}`);
                                       }}
-                                      className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
+                                      className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all flex-shrink-0"
                                       title="View user details"
                                     >
-                                      <ArrowUpRight className="w-4 h-4" />
+                                      <ArrowUpRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
                                     </button>
                                   </div>
-                                  <CopyableId id={member.user.id} />
+                                  <span className="hidden sm:block"><CopyableId id={member.user.id} /></span>
                                 </div>
                               </div>
                             </td>
-                            <td className="py-4 px-4 text-white">{member.user.email}</td>
-                            <td className="py-4 px-4">
-                              <span className="text-white/80 text-sm font-mono uppercase">
+                            <td className="hidden md:table-cell py-4 px-4 text-white text-sm">{member.user.email}</td>
+                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4">
+                              <span className="text-white/80 text-[10px] md:text-sm font-mono uppercase">
                                 {member.role}
                               </span>
                             </td>
-                            <td className="py-4 px-4 text-sm text-gray-400">
+                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-[10px] md:text-sm text-gray-400">
                               {new Date(member.joinedAt).toLocaleDateString()}
                             </td>
-                            <td className="py-4 px-4 text-right">
-                              <div className="flex items-center justify-end space-x-2">
+                            <td className="py-3 px-2 md:py-4 md:px-4 text-right">
+                              <div className="flex items-center justify-end">
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none text-xs h-7 md:h-9 px-2 md:px-3"
                                   onClick={() =>
                                     handleRemoveTeamMember(member.id, member.user.name)
                                   }
                                   disabled={removingMembers[member.id]}
                                 >
-                                  <Trash2 className="w-4 h-4 mr-1" />
-                                  Remove
+                                  <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1" />
+                                  <span className="hidden sm:inline">Remove</span>
                                 </Button>
                               </div>
                             </td>
@@ -599,10 +603,10 @@ export default function TeamDetails() {
 
       {/* Add Members Modal */}
       {showAddMemberModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black/90 border border-dashed border-white/20 p-3 md:p-6 w-full max-w-2xl rounded-none max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg text-white font-light">Add Team Members</h3>
+              <h3 className="text-base md:text-lg text-white font-light">Add Team Members</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -645,7 +649,7 @@ export default function TeamDetails() {
                     {filteredUsers.map((user) => (
                       <div
                         key={user.id}
-                        className={`flex items-center space-x-3 p-4 cursor-pointer hover:bg-white/5 ${
+                        className={`flex items-center space-x-2 md:space-x-3 p-3 md:p-4 cursor-pointer hover:bg-white/5 ${
                           selectedUsers.includes(user.id) ? "bg-blue-900/20" : ""
                         }`}
                         onClick={() => toggleUserSelection(user.id)}
@@ -654,7 +658,7 @@ export default function TeamDetails() {
                           type="checkbox"
                           checked={selectedUsers.includes(user.id)}
                           onChange={() => toggleUserSelection(user.id)}
-                          className="rounded border-gray-300"
+                          className="rounded border-gray-300 flex-shrink-0"
                         />
                         <img
                           src={
@@ -662,11 +666,11 @@ export default function TeamDetails() {
                             `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`
                           }
                           alt={user.name}
-                          className="w-10 h-10 rounded-none border border-dashed border-white/20"
+                          className="w-8 h-8 md:w-10 md:h-10 rounded-none border border-dashed border-white/20 flex-shrink-0"
                         />
-                        <div className="flex-1">
-                          <div className="text-white font-light">{user.name}</div>
-                          <div className="text-sm text-gray-400">{user.email}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-white font-light text-xs md:text-sm truncate">{user.name}</div>
+                          <div className="text-[10px] md:text-sm text-gray-400 truncate">{user.email}</div>
                         </div>
                       </div>
                     ))}
@@ -679,7 +683,7 @@ export default function TeamDetails() {
               </div>
             </div>
 
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -708,10 +712,10 @@ export default function TeamDetails() {
 
       {/* Edit Team Modal */}
       {showEditTeamModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-lg rounded-none">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black/90 border border-dashed border-white/20 p-3 md:p-6 w-full max-w-lg rounded-none max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light">Edit Team</h3>
+              <h3 className="text-base md:text-lg text-white font-light">Edit Team</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -727,7 +731,7 @@ export default function TeamDetails() {
               <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
             </div>
             <div className="space-y-4">
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-3">
                 <div className="w-16 h-16 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
                   <Users className="w-8 h-8 text-white" />
                 </div>
@@ -752,7 +756,7 @@ export default function TeamDetails() {
                 />
               </div>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowEditTeamModal(false)}

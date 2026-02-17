@@ -2392,7 +2392,7 @@ export const authClient = createAuthClient({
   return (
     <div className="space-y-8 bg-black w-full min-h-screen">
       <div className="w-full flex flex-col">
-        <div className="flex items-center justify-between p-5 pt-7">
+        <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between p-3 pt-5 md:p-5 md:pt-7">
           <div className="pb-8">
             <h1 className="text-3xl font-normal text-white tracking-tight">Tools</h1>
             <p className="text-gray-300 mt-2 uppercase font-mono font-light text-xs">
@@ -2405,8 +2405,8 @@ export const authClient = createAuthClient({
           <hr className="w-full border-white/15 h-px" />
         </div>
         {showLogs && toolLogs.length > 0 && (
-          <div className="mb-6 p-6 gap-8">
-            <div className="flex items-center justify-between mb-2">
+          <div className="mb-6 p-3 md:p-6 gap-8">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-2">
               <h3 className="text-sm uppercase font-mono text-gray-400 tracking-wider">
                 Tool Output
               </h3>
@@ -2428,7 +2428,7 @@ export const authClient = createAuthClient({
             />
           </div>
         )}
-        <div className="space-y-8 p-6 gap-8">
+        <div className="space-y-8 p-3 md:p-6 gap-8">
           {groupedTools.map((category) => (
             <div key={category.id} className="space-y-4">
               <div className="flex items-center space-x-2">
@@ -2486,8 +2486,8 @@ export const authClient = createAuthClient({
       </div>
       {showPasswordHasher && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-black/90 border border-dashed border-white/20 p-3 md:p-6 w-full max-w-2xl rounded-none">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Key className="w-5 h-5 text-white" />
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">
@@ -2623,8 +2623,8 @@ export const authClient = createAuthClient({
       )}
       {showOAuthModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-8 w-full max-w-2xl rounded-none">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-black/90 border border-dashed border-white/20 p-3 md:p-8 w-full max-w-2xl rounded-none">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Globe className="w-6 h-6 text-white" />
                 <h3 className="text-xl text-white font-light">Select OAuth Provider</h3>
@@ -2711,8 +2711,8 @@ export const authClient = createAuthClient({
       )}
       {showMigrationModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black/95 border border-dashed border-white/20 p-8 w-full max-w-5xl rounded-none">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-black/95 border border-dashed border-white/20 p-3 md:p-8 w-full max-w-5xl rounded-none">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Database className="w-6 h-6 text-white" />
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">
@@ -2895,8 +2895,8 @@ export const authClient = createAuthClient({
       )}
       {showExportModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-          <div className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-3xl max-h-[85vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-black border border-dashed border-white/20 rounded-none p-3 md:p-6 w-full max-w-3xl max-h-[85vh] overflow-y-auto">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Download className="w-5 h-5 text-white" />
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">
@@ -3053,8 +3053,8 @@ export const authClient = createAuthClient({
       )}
       {showJwtModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60]">
-          <div className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-black border border-dashed border-white/20 rounded-none p-3 md:p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Shield className="w-5 h-5 text-white" />
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">
@@ -3208,8 +3208,8 @@ export const authClient = createAuthClient({
       )}
       {showTokenGeneratorModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[60]">
-          <div className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-black border border-dashed border-white/20 rounded-none p-3 md:p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Zap className="w-5 h-5 text-white" />
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">
@@ -3402,8 +3402,8 @@ export const authClient = createAuthClient({
       {/* Plugin Generator Modal */}
       {showPluginGeneratorModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60]">
-          <div className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-5xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-black border border-dashed border-white/20 rounded-none p-3 md:p-6 w-full max-w-5xl max-h-[90vh] overflow-y-auto">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Code className="w-5 h-5 text-white" />
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">
@@ -4803,7 +4803,7 @@ export const authClient = createAuthClient({
           }}
         >
           <div
-            className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+            className="bg-black border border-dashed border-white/20 rounded-none p-3 md:p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -5090,7 +5090,7 @@ export const authClient = createAuthClient({
           }}
         >
           <div
-            className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+            className="bg-black border border-dashed border-white/20 rounded-none p-3 md:p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -5289,8 +5289,8 @@ export const authClient = createAuthClient({
 
       {showPasswordStrengthModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] overflow-hidden">
-          <div className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-black border border-dashed border-white/20 rounded-none p-3 md:p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Lock className="w-5 h-5 text-white" />
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">
@@ -5462,8 +5462,8 @@ export const authClient = createAuthClient({
 
       {showOAuthCredentialsModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] overflow-hidden">
-          <div className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-black border border-dashed border-white/20 rounded-none p-3 md:p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Globe className="w-5 h-5 text-white" />
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">
@@ -5674,8 +5674,8 @@ export const authClient = createAuthClient({
       )}
       {showSecretGeneratorModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] overflow-hidden">
-          <div className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-black border border-dashed border-white/20 rounded-none p-3 md:p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <Key className="w-5 h-5 text-white" />
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">
@@ -5901,8 +5901,8 @@ export const authClient = createAuthClient({
       )}
       {showEnvConfirmModal && existingEnvCredentials && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[70] overflow-hidden">
-          <div className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-2xl">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-black border border-dashed border-white/20 rounded-none p-3 md:p-6 w-full max-w-2xl">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <AlertCircle className="w-5 h-5 text-yellow-400" />
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">
@@ -6014,8 +6014,8 @@ export const authClient = createAuthClient({
       {/* Secret Overwrite Confirmation Modal */}
       {showSecretConfirmModal && existingSecret && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[70] overflow-hidden">
-          <div className="bg-black border border-dashed border-white/20 rounded-none p-6 w-full max-w-2xl">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-black border border-dashed border-white/20 rounded-none p-3 md:p-6 w-full max-w-2xl">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <AlertCircle className="w-5 h-5 text-yellow-400" />
                 <h3 className="text-xl text-white font-light uppercase tracking-wider">

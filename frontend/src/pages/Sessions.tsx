@@ -407,11 +407,11 @@ export default function Sessions() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-3 md:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl relative text-white font-light inline-flex items-start">
+          <h1 className="text-xl md:text-2xl relative text-white font-light inline-flex items-start">
             Sessions
             <sup className="text-xs text-gray-500 ml-1 mt-0">
               <span className="mr-1">[</span>
@@ -419,11 +419,11 @@ export default function Sessions() {
               <span className="ml-1">]</span>
             </sup>
           </h1>
-          <p className="text-gray-400 mt-1 uppercase font-mono text-sm font-light">
+          <p className="text-gray-400 mt-1 uppercase font-mono text-xs md:text-sm font-light">
             Manage user sessions and accounts
           </p>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-wrap gap-2 items-center">
           <Button
             className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase font-medium text-xs tracking-tight"
             onClick={() => setShowSeedModal(true)}
@@ -442,7 +442,7 @@ export default function Sessions() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:space-x-4">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
@@ -474,19 +474,19 @@ export default function Sessions() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-dashed border-white/10">
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   Session
                 </th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                   User ID
                 </th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="hidden lg:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                   IP / Location
                 </th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   Status
                 </th>
-                <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   <button
                     type="button"
                     onClick={() =>
@@ -502,7 +502,7 @@ export default function Sessions() {
                     )}
                   </button>
                 </th>
-                <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                <th className="text-right py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                   Actions
                 </th>
               </tr>
@@ -513,21 +513,21 @@ export default function Sessions() {
                   key={session.id}
                   className="border-b border-dashed border-white/5 hover:bg-white/5"
                 >
-                  <td className="py-4 px-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 rounded-none border border-dashed border-white/20 bg-white/10 flex items-center justify-center">
-                        <Database className="w-5 h-5 text-white" />
+                  <td className="py-3 px-2 md:py-4 md:px-4">
+                    <div className="flex items-center space-x-2 md:space-x-3">
+                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-none border border-dashed border-white/20 bg-white/10 flex items-center justify-center flex-shrink-0">
+                        <Database className="w-4 h-4 md:w-5 md:h-5 text-white" />
                       </div>
-                      <div>
-                        <div className="text-white font-light">
+                      <div className="min-w-0">
+                        <div className="text-white font-light text-xs md:text-sm truncate">
                           Session {session.id.slice(0, 8)}...
                         </div>
-                        <CopyableId id={session.id} />
+                        <span className="hidden sm:block"><CopyableId id={session.id} /></span>
                       </div>
                     </div>
                   </td>
-                  <td className="py-4 px-4 text-white">{session.userId}</td>
-                  <td className="py-4 px-4 text-sm text-gray-400">
+                  <td className="hidden md:table-cell py-4 px-4 text-white text-sm">{session.userId}</td>
+                  <td className="hidden lg:table-cell py-4 px-4 text-sm text-gray-400">
                     {session.ipAddress ? (
                       <div className="flex flex-col font-mono text-xs">
                         <span className="text-white/90">{session.ipAddress}</span>
@@ -552,46 +552,46 @@ export default function Sessions() {
                       <span className="text-gray-500">—</span>
                     )}
                   </td>
-                  <td className="py-4 px-4">
-                    <div className="flex items-center space-x-2">
+                  <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4">
+                    <div className="flex items-center space-x-1.5 md:space-x-2">
                       {new Date(session.expiresAt) > new Date() ? (
                         <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                       ) : (
                         <div className="w-2 h-2 bg-red-400 rounded-full"></div>
                       )}
-                      <span className="text-sm text-gray-400">
+                      <span className="text-[10px] md:text-sm text-gray-400">
                         {new Date(session.expiresAt) > new Date() ? "Active" : "Expired"}
                       </span>
                     </div>
                   </td>
-                  <td className="py-4 px-4 text-sm text-gray-400">
+                  <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-[10px] md:text-sm text-gray-400">
                     {new Date(session.expiresAt).toLocaleDateString()}
                   </td>
-                  <td className="py-4 px-4 text-right">
-                    <div className="flex items-center justify-end space-x-2">
+                  <td className="py-3 px-2 md:py-4 md:px-4 text-right">
+                    <div className="flex items-center justify-end space-x-1 md:space-x-2">
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-gray-400 hover:text-white rounded-none"
+                        className="text-gray-400 hover:text-white rounded-none h-7 w-7 md:h-9 md:w-9 p-0"
                         onClick={() => openViewModal(session)}
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-gray-400 hover:text-white rounded-none"
+                        className="text-gray-400 hover:text-white rounded-none h-7 w-7 md:h-9 md:w-9 p-0"
                         onClick={() => openEditModal(session)}
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-red-400 hover:text-red-300 rounded-none"
+                        className="text-red-400 hover:text-red-300 rounded-none h-7 w-7 md:h-9 md:w-9 p-0"
                         onClick={() => openDeleteModal(session)}
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </Button>
                     </div>
                   </td>
@@ -604,8 +604,8 @@ export default function Sessions() {
 
       {/* Seed Modal */}
       {showSeedModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-2xl rounded-none">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black/90 border border-dashed border-white/20 p-3 md:p-6 w-full max-w-2xl rounded-none max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg text-white font-light">Seed Data</h3>
               <Button
@@ -624,7 +624,7 @@ export default function Sessions() {
                   <Database className="w-5 h-5 text-white" />
                   <h4 className="text-white font-light">Seed Sessions</h4>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex flex-col gap-3 md:flex-row md:items-center md:space-x-3">
                   <div className="flex-1">
                     <Label htmlFor="session-count" className="text-sm text-gray-400 font-light">
                       Number of sessions
@@ -671,7 +671,7 @@ export default function Sessions() {
                   <User className="w-5 h-5 text-white" />
                   <h4 className="text-white font-light">Seed Accounts</h4>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex flex-col gap-3 md:flex-row md:items-center md:space-x-3">
                   <div className="flex-1">
                     <Label htmlFor="account-count" className="text-sm text-gray-400 font-light">
                       Number of accounts
@@ -740,8 +740,8 @@ export default function Sessions() {
 
       {/* Create Session Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg text-white font-light uppercase font-mono">Create Session</h3>
               <Button
@@ -809,8 +809,8 @@ export default function Sessions() {
 
       {/* Edit Session Modal */}
       {showEditModal && selectedSession && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-black/90 border border-dashed border-white/20 p-6 w-full max-w-md rounded-none">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black/90 border border-dashed border-white/20 p-3 md:p-6 w-full max-w-md rounded-none max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg text-white font-light">Edit Session</h3>
               <Button
@@ -878,8 +878,8 @@ export default function Sessions() {
 
       {/* Delete Session Modal */}
       {showDeleteModal && selectedSession && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg text-white font-light uppercase font-mono">Delete Session</h3>
               <Button
@@ -935,8 +935,8 @@ export default function Sessions() {
 
       {/* View Session Modal */}
       {showViewModal && selectedSession && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg text-white font-light uppercase font-mono">Session Details</h3>
               <Button

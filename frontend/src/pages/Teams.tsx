@@ -129,8 +129,8 @@ export default function Teams() {
 
   if (!pluginStatus?.enabled) {
     return (
-      <div className="space-y-6 p-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-6 p-3 md:p-6">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-2xl text-white font-light">Teams</h1>
             <p className="text-gray-400 mt-1">Manage your application organizations</p>
@@ -230,11 +230,11 @@ export default function Teams() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 md:p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl relative text-white font-light inline-flex items-start">
+          <h1 className="text-xl md:text-2xl relative text-white font-light inline-flex items-start">
             Teams
             <sup className="text-xs text-gray-500 ml-1 mt-0 inline-flex items-baseline">
               <AnimatedNumber
@@ -246,7 +246,7 @@ export default function Teams() {
               />
             </sup>
           </h1>
-          <p className="text-gray-400 mt-1 uppercase font-mono text-sm font-light flex items-baseline gap-1">
+          <p className="text-gray-400 mt-1 uppercase font-mono text-xs md:text-sm font-light flex items-baseline gap-1">
             <AnimatedNumber
               value={filteredTeams.length}
               className="text-white font-mono text-sm"
@@ -255,7 +255,7 @@ export default function Teams() {
             <span>team{filteredTeams.length !== 1 ? "s" : ""} found</span>
           </p>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-wrap items-center gap-2 md:space-x-3">
           <Button
             onClick={() => navigate("/teams/new")}
             className="bg-white text-black hover:bg-gray-200 border-dashed"
@@ -267,7 +267,7 @@ export default function Teams() {
       </div>
 
       {/* Search and Filter */}
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
@@ -278,7 +278,7 @@ export default function Teams() {
             className="pl-10 bg-black border-dashed border-white/20 text-white placeholder-gray-400 focus:ring-2 focus:ring-white focus:border-transparent"
           />
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant={filter === "all" ? "default" : "outline"}
             size="sm"
@@ -331,25 +331,25 @@ export default function Teams() {
           {currentTeams.map((team) => (
             <div
               key={team.id}
-              className="bg-black/30 border border-white/15 rounded-none p-4 hover:bg-black/40 transition-colors cursor-pointer"
+              className="bg-black/30 border border-white/15 rounded-none p-3 md:p-4 hover:bg-black/40 transition-colors cursor-pointer"
               onClick={() => navigate(`/teams/${team.id}`)}
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-white/10 rounded-none flex items-center justify-center">
-                    <Users className="w-5 h-5 text-white" />
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center space-x-2 md:space-x-4 min-w-0">
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-none flex items-center justify-center flex-shrink-0">
+                    <Users className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </div>
-                  <div>
-                    <h3 className="text-white font-medium">{team.name}</h3>
-                    <p className="text-gray-400 text-sm">
+                  <div className="min-w-0">
+                    <h3 className="text-white font-medium text-sm md:text-base truncate">{team.name}</h3>
+                    <p className="text-gray-400 text-[10px] md:text-sm truncate">
                       {team.organization?.name} • {team.memberCount || 0} members
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-shrink-0 items-center gap-2">
                   <Badge
                     variant="secondary"
-                    className="text-xs bg-green-900/50 border border-dashed rounded-none border-green-500/30 text-green-400"
+                    className="text-[10px] md:text-xs bg-green-900/50 border border-dashed rounded-none border-green-500/30 text-green-400"
                   >
                     Active
                   </Badge>
@@ -362,7 +362,7 @@ export default function Teams() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center space-x-2">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           <Button
             variant="outline"
             size="sm"

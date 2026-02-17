@@ -33,13 +33,13 @@ export function CopyableId({
   if (variant === "detail") {
     return (
       <div className={`flex justify-between items-center ${className}`}>
-        <span className="text-gray-400 font-mono uppercase text-xs">{label}:</span>
+        <span className="text-gray-400 font-mono uppercase text-xs flex-shrink-0">{label}:</span>
         <button
           onClick={copyToClipboard}
-          className="flex items-center gap-2 text-white text-sm hover:text-white/80 transition-colors group"
+          className="flex items-center gap-2 text-white text-sm hover:text-white/80 transition-colors group min-w-0"
           title="Click to copy"
         >
-          <span className="font-mono uppercase text-xs">{id}</span>
+          <span className="font-mono uppercase text-xs truncate">{id}</span>
           {copied ? (
             <Check className="w-3 h-3 text-green-500" />
           ) : (
@@ -54,12 +54,12 @@ export function CopyableId({
     return (
       <sup
         onClick={copyToClipboard}
-        className={`text-xs text-gray-500 ml-2 cursor-pointer hover:text-white transition-colors inline-flex items-center gap-1 ${className}`}
+        className={`text-xs text-gray-500 ml-2 cursor-pointer hover:text-white transition-colors inline-flex items-center gap-1 max-w-[120px] md:max-w-none overflow-hidden ${className}`}
         title="Click to copy User ID"
       >
-        <span className="mr-1">[</span>
-        <span className="text-white/80 font-mono text-xs">{nonSliced ? id : id.slice(0, 8)}</span>
-        <span className="ml-1">]</span>
+        <span className="mr-1 flex-shrink-0">[</span>
+        <span className="text-white/80 font-mono text-xs truncate">{nonSliced ? id : id.slice(0, 8)}</span>
+        <span className="ml-1 flex-shrink-0">]</span>
       </sup>
     );
   }
@@ -67,11 +67,11 @@ export function CopyableId({
   return (
     <button
       onClick={copyToClipboard}
-      className={`flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors group ${className}`}
+      className={`flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors group max-w-full overflow-hidden ${className}`}
       title="Click to copy"
     >
-      <span className="text-[11px] font-mono uppercase text-gray-400">{label}:</span>
-      <span className="text-[11px] font-mono text-white">{id}</span>
+      <span className="text-[11px] font-mono uppercase text-gray-400 flex-shrink-0">{label}:</span>
+      <span className="text-[11px] font-mono text-white truncate">{id}</span>
       {copied ? (
         <Check className="w-3 h-3 text-green-500" />
       ) : (

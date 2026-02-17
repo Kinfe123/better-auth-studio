@@ -509,8 +509,8 @@ export default function Organizations() {
 
   if (pluginStatus && !pluginStatus.enabled) {
     return (
-      <div className="space-y-6 p-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-6 p-3 md:p-6">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-2xl text-white font-light">Organizations</h1>
             <p className="text-gray-400 font-light text-sm mt-1 uppercase font-mono">
@@ -615,9 +615,9 @@ export default function Organizations() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-3 md:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl relative text-white font-light inline-flex items-start">
             Organizations
@@ -635,7 +635,7 @@ export default function Organizations() {
             Manage your organizations and teams
           </p>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-wrap items-center gap-2 md:space-x-3">
           <Button
             className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
             onClick={exportOrganizationsToCSV}
@@ -663,7 +663,7 @@ export default function Organizations() {
 
       {/* Filters */}
       <div className="space-y-3">
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
@@ -676,7 +676,7 @@ export default function Organizations() {
 
           <div className="flex items-center space-x-2">
             <Select value="" onValueChange={addFilter}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px]">
                 <div className="flex mr-3 items-center space-x-2">
                   <Plus className="w-4 h-4" />
                   <span>Add Filter</span>
@@ -791,11 +791,11 @@ export default function Organizations() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-dashed border-white/10">
-                <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">
+                <th className="text-left py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
                   Organization
                 </th>
-                <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">Slug</th>
-                <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">
+                <th className="hidden md:table-cell text-left py-4 px-4 font-mono uppercase text-xs text-white">Slug</th>
+                <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
                   <button
                     type="button"
                     onClick={() =>
@@ -811,7 +811,7 @@ export default function Organizations() {
                     )}
                   </button>
                 </th>
-                <th className="text-right py-4 px-4 font-mono uppercase text-xs text-white">
+                <th className="text-right py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
                   Actions
                 </th>
               </tr>
@@ -833,7 +833,7 @@ export default function Organizations() {
                         </p>
                       </div>
                       {!searchTerm && filter === "all" && (
-                        <div className="flex items-center space-x-3">
+                        <div className="flex flex-wrap items-center gap-2 md:space-x-3">
                           <Button
                             onClick={() => setShowCreateModal(true)}
                             className="bg-white text-black hover:bg-gray-200 rounded-none"
@@ -860,62 +860,62 @@ export default function Organizations() {
                     className="border-b border-dashed border-white/5 hover:bg-white/5 cursor-pointer"
                     onClick={() => navigate(`/organizations/${organization.id}`)}
                   >
-                    <td className="py-4 px-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-none border border-dashed border-white/20 bg-white/10 flex items-center justify-center">
-                          <Building2 className="w-5 h-5 text-white" />
+                    <td className="py-3 px-2 md:py-4 md:px-4">
+                      <div className="flex items-center space-x-2 md:space-x-3">
+                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-none border border-dashed border-white/20 bg-white/10 flex items-center justify-center flex-shrink-0">
+                          <Building2 className="w-4 h-4 md:w-5 md:h-5 text-white" />
                         </div>
-                        <div>
-                          <div className="text-white font-light">{organization.name}</div>
-                          <CopyableId id={organization.id} />
+                        <div className="min-w-0">
+                          <div className="text-white font-light text-xs md:text-sm truncate">{organization.name}</div>
+                          <span className="hidden sm:block"><CopyableId id={organization.id} /></span>
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-white">{organization.slug}</td>
-                    <td className="py-4 px-4 text-sm text-gray-400">
-                      <div className="flex flex-col uppercase font-mono text-xs">
+                    <td className="hidden md:table-cell py-4 px-4 text-white text-sm">{organization.slug}</td>
+                    <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-sm text-gray-400">
+                      <div className="flex flex-col uppercase font-mono text-[10px] md:text-xs">
                         <span>
                           {format(new Date(organization.createdAt), "dd MMM yyyy, HH:mm")}
                         </span>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-[10px] md:text-xs text-gray-500">
                           {formatTimeAgo(organization.createdAt)}
                         </p>
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-right">
-                      <div className="flex items-center justify-end space-x-2">
+                    <td className="py-3 px-2 md:py-4 md:px-4 text-right">
+                      <div className="flex items-center justify-end space-x-1 md:space-x-2">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-gray-400 hover:text-white rounded-none"
+                          className="text-gray-400 hover:text-white rounded-none h-7 w-7 md:h-9 md:w-9 p-0"
                           onClick={(e) => {
                             e.stopPropagation();
                             openViewModal(organization);
                           }}
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye className="w-3.5 h-3.5 md:w-4 md:h-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-gray-400 hover:text-white rounded-none"
+                          className="text-gray-400 hover:text-white rounded-none h-7 w-7 md:h-9 md:w-9 p-0"
                           onClick={(e) => {
                             e.stopPropagation();
                             openEditModal(organization);
                           }}
                         >
-                          <Edit className="w-4 h-4" />
+                          <Edit className="w-3.5 h-3.5 md:w-4 md:h-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-red-400 hover:text-red-300 rounded-none"
+                          className="text-red-400 hover:text-red-300 rounded-none h-7 w-7 md:h-9 md:w-9 p-0"
                           onClick={(e) => {
                             e.stopPropagation();
                             openDeleteModal(organization);
                           }}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
                         </Button>
                       </div>
                     </td>
@@ -939,8 +939,8 @@ export default function Organizations() {
 
       {/* Seed Modal */}
       {showSeedModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="overflow-x-hidden bg-black/90 border border-white/10 p-6 w-full pt-4 max-w-2xl rounded-none">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="overflow-x-hidden bg-black/90 border border-white/10 p-3 md:p-6 w-full pt-4 max-w-2xl rounded-none max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-sm text-white flex items-center justify-center font-light uppercase">
                 <span className="text-white/50 mr-2">[</span>
@@ -961,7 +961,7 @@ export default function Organizations() {
             <div className="space-y-6">
               {/* Organization Seeding */}
               <div className="space-y-4">
-                <div className="flex items-center space-x-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
                   <div className="flex-1">
                     <Label
                       htmlFor="organization-count"
@@ -988,7 +988,7 @@ export default function Organizations() {
                       handleSeedOrganizations(count);
                     }}
                     disabled={isSeeding}
-                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50"
+                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none sm:mt-6 disabled:opacity-50"
                   >
                     {isSeeding ? (
                       <>
@@ -1033,10 +1033,10 @@ export default function Organizations() {
 
       {/* Create Organization Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
                 Create Organization
               </h3>
               <Button
@@ -1084,7 +1084,7 @@ export default function Organizations() {
                 </p>
               </div>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1110,7 +1110,7 @@ export default function Organizations() {
       {/* Edit Organization Modal */}
       {showEditModal && selectedOrganization && (
         <div
-          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowEditModal(false);
@@ -1120,11 +1120,11 @@ export default function Organizations() {
           }}
         >
           <div
-            className="bg-black border border-white/15 p-6 w-full max-w-xl rounded-none shadow-2xl"
+            className="bg-black border border-white/15 p-3 md:p-6 w-full max-w-xl rounded-none shadow-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
                 Edit Organization
               </h3>
               <Button
@@ -1148,7 +1148,7 @@ export default function Organizations() {
             </div>
 
             <div className="space-y-4 mt-4">
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-3">
                 <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
                   <Building2 className="w-7 h-7 text-white" />
                 </div>
@@ -1188,7 +1188,7 @@ export default function Organizations() {
                 </p>
               </div>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1214,10 +1214,10 @@ export default function Organizations() {
 
       {/* Delete Organization Modal */}
       {showDeleteModal && selectedOrganization && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-xl shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
                 Delete Organization
               </h3>
               <Button
@@ -1237,7 +1237,7 @@ export default function Organizations() {
             </div>
 
             <div className="space-y-4 mt-4">
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-3">
                 <div className="w-16 h-16 rounded-none border border-dashed border-white/20 bg-white/10 flex items-center justify-center">
                   <Building2 className="w-8 h-8 text-white" />
                 </div>
@@ -1253,7 +1253,7 @@ export default function Organizations() {
                 Are you sure you want to delete this organization? This action cannot be undone.
               </p>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowDeleteModal(false)}
@@ -1275,11 +1275,11 @@ export default function Organizations() {
 
       {/* View Organization Modal */}
       {showViewModal && selectedOrganization && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none w-full max-w-xl p-6 shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none w-full max-w-xl p-3 md:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <div className="flex flex-col gap-2">
-                <h3 className="text-lg text-white font-light uppercase font-mono">
+              <div>
+                <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
                   Organization Details
                 </h3>
               </div>
@@ -1300,7 +1300,7 @@ export default function Organizations() {
             </div>
 
             <div className="space-y-6 mt-4">
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
                   <Building2 className="w-7 h-7 text-white" />
                 </div>
@@ -1332,7 +1332,7 @@ export default function Organizations() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 mt-8">
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 mt-8">
               <Button
                 onClick={() => setShowViewModal(false)}
                 className="border border-white/20 bg-white/5 text-white hover:bg-white/10 rounded-none font-mono uppercase font-medium text-xs tracking-tight"

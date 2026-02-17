@@ -247,7 +247,7 @@ export default function Settings() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between p-5 pt-7">
+      <div className="flex flex-col gap-3 md:flex-row md:gap-0 md:items-center md:justify-between p-3 pt-5 md:p-5 md:pt-7">
         <div>
           <h1 className="text-2xl font-normal text-white tracking-tight">Settings</h1>
           <p className="text-gray-300 mt-2 uppercase font-mono font-light text-xs">
@@ -257,7 +257,7 @@ export default function Settings() {
       </div>
       <hr className="w-full border-white/15 h-px" />
       <hr className="w-full border-white/15 h-px" />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-3 md:p-5">
         <Card className="border-white/15 bg-black/70 px-0 sm:px-0 md:px-0 lg:px-0 xl:px-0 rounded-none">
           <CardHeader className="space-y-0">
             <CardTitle className="text-white font-light uppercase text-base flex items-center space-x-2">

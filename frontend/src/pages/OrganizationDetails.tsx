@@ -790,7 +790,7 @@ export default function OrganizationDetails() {
 
   if (!organization) {
     return (
-      <div className="space-y-6 p-6">
+      <div className="space-y-6 p-3 md:p-6">
         <div className="flex items-center space-x-4">
           <Link to="/organizations">
             <Button variant="ghost" className="text-gray-400 hover:text-white rounded-none">
@@ -810,8 +810,8 @@ export default function OrganizationDetails() {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 p-3 md:p-6">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center space-x-4">
           <span className="mb-4 ml-0 flex justify-start items-start text-left border-none text-white">
             <span className="font-light">
@@ -826,7 +826,7 @@ export default function OrganizationDetails() {
           </span>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-wrap items-center gap-2 md:space-x-3">
           <Button
             onClick={() => setShowSeedMembersModal(true)}
             className="border border-dashed border-white/20 text-white bg-transparent hover:bg-white/10 rounded-none"
@@ -855,9 +855,9 @@ export default function OrganizationDetails() {
           <Building2 className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h1 className="text-2xl text-white font-light inline-flex items-center">
-            {organization.name}
-            <CopyableId id={organization.slug} nonSliced={true} variant="subscript" />
+          <h1 className="text-xl md:text-2xl text-white font-light inline-flex items-center">
+            <span className="truncate">{organization.name}</span>
+            <span className="hidden sm:inline-flex"><CopyableId id={organization.slug} nonSliced={true} variant="subscript" /></span>
           </h1>
         </div>
       </div>
@@ -865,39 +865,30 @@ export default function OrganizationDetails() {
       {/* Tabs */}
       <div className="border border-dashed border-white/20 rounded-none">
         <div className="border-b border-dashed border-white/20">
-          <nav className="flex space-x-8 px-6">
+          <nav className="flex overflow-x-auto space-x-4 px-3 md:space-x-8 md:px-6">
             <button
               onClick={() => setActiveTab("details")}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
                 activeTab === "details"
                   ? "border-white text-white"
                   : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
               }`}
             >
-              <Building2 className="w-4 h-4 text-white/90" />
-              <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
+              <Building2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90 flex-shrink-0" />
+              <span className="inline-flex items-start font-mono uppercase text-[10px] md:text-xs font-normal">
                 Details
-                <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
-                  <AnimatedNumber
-                    value={0}
-                    className="text-white/80 font-mono text-xs"
-                    prefix={<span className="mr-0.5 text-gray-500">[</span>}
-                    suffix={<span className="ml-0.5 text-gray-500">]</span>}
-                    format={{ notation: "standard", maximumFractionDigits: 0 }}
-                  />
-                </sup>
               </span>
             </button>
             <button
               onClick={() => setActiveTab("members")}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
                 activeTab === "members"
                   ? "border-white text-white"
                   : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
               }`}
             >
-              <Users className="w-4 h-4 text-white/90" />
-              <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
+              <Users className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90 flex-shrink-0" />
+              <span className="inline-flex items-start font-mono uppercase text-[10px] md:text-xs font-normal">
                 Members
                 <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
                   <AnimatedNumber
@@ -912,15 +903,15 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab("invitations")}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
                 activeTab === "invitations"
                   ? "border-white text-white"
                   : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
               }`}
             >
-              <Mail className="w-4 h-4 text-white/90" />
-              <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
-                Invitations
+              <Mail className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90 flex-shrink-0" />
+              <span className="inline-flex items-start font-mono uppercase text-[10px] md:text-xs font-normal">
+                Invites
                 <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
                   <AnimatedNumber
                     value={invitations.length}
@@ -934,14 +925,14 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab("teams")}
-              className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
                 activeTab === "teams"
                   ? "border-white text-white"
                   : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
               }`}
             >
-              <Users className="w-4 h-4 text-white/90" />
-              <span className="inline-flex items-start font-mono uppercase text-xs font-normal">
+              <Users className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90 flex-shrink-0" />
+              <span className="inline-flex items-start font-mono uppercase text-[10px] md:text-xs font-normal">
                 Teams
                 <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
                   <AnimatedNumber
@@ -957,11 +948,11 @@ export default function OrganizationDetails() {
           </nav>
         </div>
 
-        <div className="p-6">
+        <div className="p-3 md:p-6">
           {/* Tab Content */}
           {activeTab === "details" && (
             <div className="space-y-6 overflow-x-hidden">
-              <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+              <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-3 md:p-6">
                 <h3 className="text-sm uppercase font-mono text-gray-400 mb-4 tracking-wider">
                   ORGANIZATION INFORMATION
                 </h3>
@@ -984,8 +975,8 @@ export default function OrganizationDetails() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-4 md:p-6">
                   <div className="flex items-center space-x-3">
                     <Users className="w-8 h-8 text-white" />
                     <div>
@@ -999,7 +990,7 @@ export default function OrganizationDetails() {
                     </div>
                   </div>
                 </div>
-                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-4 md:p-6">
                   <div className="flex items-center space-x-3">
                     <Users className="w-8 h-8 text-white" />
                     <div>
@@ -1013,7 +1004,7 @@ export default function OrganizationDetails() {
                     </div>
                   </div>
                 </div>
-                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-4 md:p-6">
                   <div className="flex items-center space-x-3">
                     <Mail className="w-8 h-8 text-white" />
                     <div>
@@ -1027,7 +1018,7 @@ export default function OrganizationDetails() {
                     </div>
                   </div>
                 </div>
-                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-6">
+                <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-4 md:p-6">
                   <div className="flex items-center space-x-3">
                     <Calendar className="w-8 h-8 text-white" />
                     <div>
@@ -1051,9 +1042,9 @@ export default function OrganizationDetails() {
           {activeTab === "teams" && (
             <div className="space-y-6">
               {/* Teams Header */}
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                  <h3 className="text-base md:text-lg relative text-white font-light inline-flex items-start">
                     Teams
                     <sup className="text-xs text-gray-500 ml-1 mt-0">
                       <span className="mr-1">[</span>
@@ -1061,12 +1052,12 @@ export default function OrganizationDetails() {
                       <span className="ml-1">]</span>
                     </sup>
                   </h3>
-                  <p className="text-gray-400 mt-1 uppercase font-mono text-xs font-light">
+                  <p className="text-gray-400 mt-1 uppercase font-mono text-[10px] md:text-xs font-light">
                     Manage teams within this organization
                   </p>
                 </div>
                 {teamsEnabled && (
-                  <div className="flex items-center space-x-3">
+                  <div className="flex flex-wrap items-center gap-2 md:space-x-3">
                     <Button
                       onClick={() => setShowSeedTeamsModal(true)}
                       className="border border-dashed border-white/20 text-white hover:bg-white/10 bg-transparent rounded-none"
@@ -1171,16 +1162,16 @@ export default function OrganizationDetails() {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-dashed border-white/10">
-                          <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">
+                          <th className="text-left py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
                             Team
                           </th>
-                          <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">
+                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
                             Members
                           </th>
-                          <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">
+                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
                             Created
                           </th>
-                          <th className="text-right py-4 px-4 font-mono uppercase text-xs text-white">
+                          <th className="text-right py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
                             Actions
                           </th>
                         </tr>
@@ -1192,55 +1183,55 @@ export default function OrganizationDetails() {
                             className="border-b border-dashed border-white/5 hover:bg-white/5 cursor-pointer"
                             onClick={() => navigate(`/organizations/${orgId}/teams/${team.id}`)}
                           >
-                            <td className="py-4 px-4">
-                              <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-                                  <Users className="w-5 h-5 text-white" />
+                            <td className="py-3 px-2 md:py-4 md:px-4">
+                              <div className="flex items-center space-x-2 md:space-x-3">
+                                <div className="w-8 h-8 md:w-10 md:h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center flex-shrink-0">
+                                  <Users className="w-4 h-4 md:w-5 md:h-5 text-white" />
                                 </div>
-                                <div>
-                                  <div className="text-white font-light">{team.name}</div>
-                                  <CopyableId id={team.id} label="Team ID" />
+                                <div className="min-w-0">
+                                  <div className="text-white font-light text-xs md:text-sm truncate">{team.name}</div>
+                                  <span className="hidden sm:block"><CopyableId id={team.id} label="Team ID" /></span>
                                 </div>
                               </div>
                             </td>
-                            <td className="py-4 px-4 text-white">{team.memberCount || 0}</td>
-                            <td className="py-4 px-4 text-sm text-gray-400">
-                              <div className="flex flex-col uppercase font-mono text-xs">
+                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-white text-sm">{team.memberCount || 0}</td>
+                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-sm text-gray-400">
+                              <div className="flex flex-col uppercase font-mono text-[10px] md:text-xs">
                                 <span>
                                   {format(new Date(team.createdAt), "dd MMM yyyy, HH:mm")}
                                 </span>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-[10px] md:text-xs text-gray-500">
                                   {formatDistanceToNow(new Date(team.createdAt), {
                                     addSuffix: true,
                                   })}
                                 </p>
                               </div>
                             </td>
-                            <td className="py-4 px-4 text-right">
-                              <div className="flex items-center justify-end space-x-2">
+                            <td className="py-3 px-2 md:py-4 md:px-4 text-right">
+                              <div className="flex items-center justify-end space-x-1 md:space-x-2">
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                                  className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none text-xs h-7 md:h-9 px-2 md:px-3"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     openEditTeamModal(team);
                                   }}
                                 >
-                                  <Edit className="w-4 h-4 mr-1" />
-                                  Edit
+                                  <Edit className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1" />
+                                  <span className="hidden sm:inline">Edit</span>
                                 </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none text-xs h-7 md:h-9 px-2 md:px-3"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     openDeleteTeamModal(team);
                                   }}
                                 >
-                                  <Trash2 className="w-4 h-4 mr-1" />
-                                  Delete
+                                  <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1" />
+                                  <span className="hidden sm:inline">Delete</span>
                                 </Button>
                               </div>
                             </td>
@@ -1274,9 +1265,9 @@ export default function OrganizationDetails() {
           {activeTab === "members" && (
             <div className="space-y-6">
               {/* Members Header */}
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                  <h3 className="text-base md:text-lg relative text-white font-light inline-flex items-start">
                     Members
                     <sup className="text-xs text-gray-500 ml-1 mt-0">
                       <span className="mr-1">[</span>
@@ -1284,7 +1275,7 @@ export default function OrganizationDetails() {
                       <span className="ml-1">]</span>
                     </sup>
                   </h3>
-                  <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
+                  <p className="text-gray-400 font-light font-mono text-[10px] md:text-xs uppercase mt-1">
                     Manage organization members and their roles
                   </p>
                 </div>
@@ -1297,19 +1288,19 @@ export default function OrganizationDetails() {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-dashed border-white/10">
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             User
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                             Email
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Role
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Joined
                           </th>
-                          <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="text-right py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Actions
                           </th>
                         </tr>
@@ -1320,54 +1311,54 @@ export default function OrganizationDetails() {
                             key={member.id}
                             className="border-b border-dashed border-white/5 hover:bg-white/5 group"
                           >
-                            <td className="py-4 px-4">
-                              <div className="flex items-center space-x-3">
+                            <td className="py-3 px-2 md:py-4 md:px-4">
+                              <div className="flex items-center space-x-2 md:space-x-3">
                                 <img
                                   src={
                                     member.user.image ||
                                     `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.user.id}`
                                   }
                                   alt={member.user.name}
-                                  className="w-10 h-10 rounded-none border border-dashed border-white/20"
+                                  className="w-8 h-8 md:w-10 md:h-10 rounded-none border border-dashed border-white/20 flex-shrink-0"
                                 />
-                                <div>
-                                  <div className="text-white font-light inline-flex items-center gap-2">
-                                    <span>{member.user.name}</span>
+                                <div className="min-w-0">
+                                  <div className="text-white font-light text-xs md:text-sm inline-flex items-center gap-1 md:gap-2">
+                                    <span className="truncate">{member.user.name}</span>
                                     <button
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         navigate(`/users/${member.user.id}`);
                                       }}
-                                      className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
+                                      className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all flex-shrink-0"
                                       title="View user details"
                                     >
-                                      <ArrowUpRight className="w-4 h-4" />
+                                      <ArrowUpRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
                                     </button>
                                   </div>
-                                  <CopyableId id={member.user.id} />
+                                  <span className="hidden sm:block"><CopyableId id={member.user.id} /></span>
                                 </div>
                               </div>
                             </td>
-                            <td className="py-4 px-4 text-white">{member.user.email}</td>
-                            <td className="py-4 px-4">
-                              <span className="text-white/80 text-sm font-mono uppercase">
+                            <td className="hidden md:table-cell py-4 px-4 text-white text-sm">{member.user.email}</td>
+                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4">
+                              <span className="text-white/80 text-[10px] md:text-sm font-mono uppercase">
                                 {member.role}
                               </span>
                             </td>
-                            <td className="py-4 px-4 text-sm text-gray-400">
+                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-[10px] md:text-sm text-gray-400">
                               {new Date(member.joinedAt).toLocaleDateString()}
                             </td>
-                            <td className="py-4 px-4 text-right">
-                              <div className="flex items-center justify-end space-x-2">
+                            <td className="py-3 px-2 md:py-4 md:px-4 text-right">
+                              <div className="flex items-center justify-end">
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none text-xs h-7 md:h-9 px-2 md:px-3"
                                   onClick={() => handleRemoveMember(member.id, member.user.name)}
                                   disabled={removingMembers[member.id]}
                                 >
-                                  <Trash2 className="w-4 h-4 mr-1" />
-                                  Remove
+                                  <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1" />
+                                  <span className="hidden sm:inline">Remove</span>
                                 </Button>
                               </div>
                             </td>
@@ -1410,9 +1401,9 @@ export default function OrganizationDetails() {
           {activeTab === "invitations" && (
             <div className="space-y-6">
               {/* Invitations Header */}
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                  <h3 className="text-base md:text-lg relative text-white font-light inline-flex items-start">
                     Invitations
                     <sup className="text-xs text-gray-500 ml-1 mt-0">
                       <span className="mr-1">[</span>
@@ -1420,8 +1411,8 @@ export default function OrganizationDetails() {
                       <span className="ml-1">]</span>
                     </sup>
                   </h3>
-                  <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
-                    Manage pending invitations to this organization
+                  <p className="text-gray-400 font-light font-mono text-[10px] md:text-xs uppercase mt-1">
+                    Manage pending invitations
                   </p>
                 </div>
               </div>
@@ -1433,22 +1424,22 @@ export default function OrganizationDetails() {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-dashed border-white/10">
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Email
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden lg:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                             Team
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                             Role
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Status
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                             Expires
                           </th>
-                          <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="text-right py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Actions
                           </th>
                         </tr>
@@ -1459,16 +1450,16 @@ export default function OrganizationDetails() {
                             key={invitation.id}
                             className="border-b border-dashed border-white/5 hover:bg-white/5 group"
                           >
-                            <td className="py-4 px-4">
-                              <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-                                  <Mail className="w-5 h-5 text-white" />
+                            <td className="py-3 px-2 md:py-4 md:px-4">
+                              <div className="flex items-center space-x-2 md:space-x-3">
+                                <div className="w-8 h-8 md:w-10 md:h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center flex-shrink-0">
+                                  <Mail className="w-4 h-4 md:w-5 md:h-5 text-white" />
                                 </div>
-                                <div>
-                                  <div className="text-white font-light">{invitation.email}</div>
-                                  <div className="text-[11px] font-mono uppercase text-gray-400">
-                                    Expires on{" "}
-                                    <span className="text-whtie">
+                                <div className="min-w-0">
+                                  <div className="text-white font-light text-xs md:text-sm truncate">{invitation.email}</div>
+                                  <div className="text-[10px] md:text-[11px] font-mono uppercase text-gray-400">
+                                    Expires{" "}
+                                    <span className="text-white">
                                       {new Date(invitation.expiresAt).toLocaleDateString("en-US", {
                                         month: "short",
                                         year: "numeric",
@@ -1479,7 +1470,7 @@ export default function OrganizationDetails() {
                                 </div>
                               </div>
                             </td>
-                            <td className="py-4 px-4">
+                            <td className="hidden lg:table-cell py-4 px-4">
                               {invitation.teamId ? (
                                 <div className="flex items-center space-x-2">
                                   <Users className="w-4 h-4 text-gray-400" />
@@ -1503,14 +1494,14 @@ export default function OrganizationDetails() {
                                 <span className="text-gray-500 text-sm">—</span>
                               )}
                             </td>
-                            <td className="py-4 px-4">
+                            <td className="hidden md:table-cell py-4 px-4">
                               <span className="text-white/80 text-sm font-mono uppercase">
                                 {invitation.role}
                               </span>
                             </td>
-                            <td className="py-4 px-4">
+                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4">
                               <span
-                                className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${
+                                className={`text-[10px] md:text-xs font-mono uppercase px-1.5 md:px-2 border-dashed py-0.5 md:py-1 rounded-none ${
                                   invitation.status === "accepted"
                                     ? "bg-green-900/50 text-green-400 border border-green-500/30"
                                     : invitation.status === "rejected" ||
@@ -1524,7 +1515,7 @@ export default function OrganizationDetails() {
                                 {invitation.status}
                               </span>
                             </td>
-                            <td className="py-4 px-4 text-sm text-gray-400">
+                            <td className="hidden md:table-cell py-4 px-4 text-sm text-gray-400">
                               {new Date(invitation.expiresAt).toLocaleDateString()}
                               <br />
                               <span className="text-xs text-gray-400">
@@ -1534,29 +1525,29 @@ export default function OrganizationDetails() {
                                 })}
                               </span>
                             </td>
-                            <td className="py-4 px-4 text-right">
-                              <div className="flex items-center justify-end space-x-2">
+                            <td className="py-3 px-2 md:py-4 md:px-4 text-right">
+                              <div className="flex items-center justify-end space-x-1 md:space-x-2">
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                                  className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none text-xs h-7 md:h-9 px-2 md:px-3"
                                   onClick={() =>
                                     handleResendInvitation(invitation.id, invitation.email)
                                   }
                                   disabled={resendingInvitations[invitation.id]}
                                 >
-                                  <Send className="w-4 h-4 mr-1" />
-                                  Resend
+                                  <Send className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1" />
+                                  <span className="hidden sm:inline">Resend</span>
                                 </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none text-xs h-7 md:h-9 px-2 md:px-3"
                                   onClick={() => handleCancelInvitation(invitation.id)}
                                   disabled={cancellingInvitations[invitation.id]}
                                 >
-                                  <Trash2 className="w-4 h-4 mr-1" />
-                                  Cancel
+                                  <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1" />
+                                  <span className="hidden sm:inline">Cancel</span>
                                 </Button>
                               </div>
                             </td>
@@ -1591,10 +1582,10 @@ export default function OrganizationDetails() {
 
       {/* Invite User Modal */}
       {showInviteModal && organization && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-xl shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Invite User</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Invite User</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1679,7 +1670,7 @@ export default function OrganizationDetails() {
                 </Select>
               </div>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1706,10 +1697,10 @@ export default function OrganizationDetails() {
 
       {/* Create Team Modal */}
       {showCreateTeamModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Create Team</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Create Team</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1743,7 +1734,7 @@ export default function OrganizationDetails() {
                 />
               </div>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1769,10 +1760,10 @@ export default function OrganizationDetails() {
 
       {/* Edit Team Modal */}
       {showEditTeamModal && selectedTeam && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Edit Team</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Edit Team</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1822,7 +1813,7 @@ export default function OrganizationDetails() {
                 />
               </div>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1848,10 +1839,10 @@ export default function OrganizationDetails() {
 
       {/* Delete Team Modal */}
       {showDeleteTeamModal && selectedTeam && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-xl shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Delete Team</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Delete Team</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1870,7 +1861,7 @@ export default function OrganizationDetails() {
             </div>
 
             <div className="space-y-4 mt-4">
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-3">
                 <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
                   <Users className="w-7 h-7 text-white" />
                 </div>
@@ -1885,7 +1876,7 @@ export default function OrganizationDetails() {
                 Are you sure you want to delete this team? This action cannot be undone.
               </p>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowDeleteTeamModal(false)}
@@ -1908,10 +1899,10 @@ export default function OrganizationDetails() {
 
       {/* Seed Members Modal */}
       {showSeedMembersModal && organization && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-2xl shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Seed Members</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Seed Members</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -1930,7 +1921,7 @@ export default function OrganizationDetails() {
             </div>
 
             <div className="space-y-6 mt-4">
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-3">
                 <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
                   <Building2 className="w-7 h-7 text-white" />
                 </div>
@@ -1949,7 +1940,7 @@ export default function OrganizationDetails() {
                     Add Members from Existing Users
                   </h4>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
                   <div className="flex-1">
                     <Label
                       htmlFor="member-count"
@@ -1975,7 +1966,7 @@ export default function OrganizationDetails() {
                       handleSeedMembers(count);
                     }}
                     disabled={isSeeding}
-                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50 font-mono uppercase font-medium text-xs tracking-tight"
+                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none sm:mt-6 disabled:opacity-50 font-mono uppercase font-medium text-xs tracking-tight"
                   >
                     {isSeeding ? (
                       <>
@@ -2021,10 +2012,10 @@ export default function OrganizationDetails() {
 
       {/* Seed Teams Modal */}
       {showSeedTeamsModal && organization && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-2xl shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Seed Teams</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Seed Teams</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -2043,7 +2034,7 @@ export default function OrganizationDetails() {
             </div>
 
             <div className="space-y-6 mt-4">
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-3">
                 <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
                   <Building2 className="w-7 h-7 text-white" />
                 </div>
@@ -2062,7 +2053,7 @@ export default function OrganizationDetails() {
                     Create Teams
                   </h4>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
                   <div className="flex-1">
                     <Label
                       htmlFor="team-count"
@@ -2088,7 +2079,7 @@ export default function OrganizationDetails() {
                       handleSeedTeams(count);
                     }}
                     disabled={isTeamSeeding}
-                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50 font-mono uppercase font-medium text-xs tracking-tight"
+                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none sm:mt-6 disabled:opacity-50 font-mono uppercase font-medium text-xs tracking-tight"
                   >
                     {isTeamSeeding ? (
                       <>
@@ -2134,7 +2125,7 @@ export default function OrganizationDetails() {
       {/* Edit Organization Modal */}
       {showEditModal && organization && (
         <div
-          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowEditModal(false);
@@ -2143,11 +2134,11 @@ export default function OrganizationDetails() {
           }}
         >
           <div
-            className="bg-black border border-white/15 p-6 w-full max-w-xl rounded-none shadow-2xl"
+            className="bg-black border border-white/15 p-3 md:p-6 w-full max-w-xl rounded-none shadow-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
                 Edit Organization
               </h3>
               <Button
@@ -2210,7 +2201,7 @@ export default function OrganizationDetails() {
                 </p>
               </div>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
                 variant="outline"
                 onClick={() => {

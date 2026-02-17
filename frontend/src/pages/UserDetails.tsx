@@ -473,8 +473,7 @@ export default function UserDetails() {
   const initializeEvents = useCallback(async () => {
     try {
       await fetch(buildApiUrl("/api/events/status"));
-    } catch {
-    }
+    } catch {}
   }, []);
 
   const fetchUserEvents = useCallback(async () => {
@@ -1247,46 +1246,46 @@ export default function UserDetails() {
   }
 
   return (
-    <div className="space-y-6 p-6 bg-black w-full">
+    <div className="space-y-6 p-3 md:p-6 bg-black w-full">
       <div className="w-full flex flex-col">
-        <span className="mb-4 ml-0 flex justify-start items-start text-left border-none text-white">
+        <span className="mb-2 md:mb-4 ml-0 flex justify-start items-start text-left border-none text-white">
           <span className="font-light">
             <span
               onClick={() => navigate("/users")}
-              className="uppercase cursor-pointer text-white/80 font-mono text-sm"
+              className="uppercase cursor-pointer text-white/80 font-mono text-xs md:text-sm"
             >
               users /{" "}
             </span>
-            <span className="text-white font-mono text-sm">{user.id}</span>
+            <span className="text-white font-mono text-xs md:text-sm truncate">{user.id}</span>
           </span>
         </span>
-        <div className="mb-8 mt-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gray-800 border border-dashed border-white/20 flex items-center justify-center overflow-hidden">
+        <div className="mb-4 md:mb-8 mt-2 md:mt-4">
+          <div className="flex items-start justify-between gap-2 md:gap-4 md:items-center">
+            <div className="flex items-center space-x-3 md:space-x-4 min-w-0 flex-1">
+              <div className="w-10 h-10 md:w-16 md:h-16 bg-gray-800 border border-dashed border-white/20 flex items-center justify-center overflow-hidden flex-shrink-0">
                 {getImageSrc(user?.image) ? (
                   <img
                     src={getImageSrc(user?.image)}
                     alt={user?.name}
-                    className="w-16 h-16 object-cover"
+                    className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = "none";
                     }}
                   />
                 ) : (
-                  <User className="w-8 h-8 text-white" />
+                  <User className="w-5 h-5 md:w-8 md:h-8 text-white" />
                 )}
               </div>
-              <div>
-                <h1 className="text-3xl font-light text-white inline-flex items-center">
-                  {user.name}
-                  <CopyableId id={user.id} nonSliced={true} variant="subscript" />
+              <div className="min-w-0">
+                <h1 className="text-lg md:text-3xl font-light text-white flex items-center flex-wrap gap-1">
+                  <span className="truncate max-w-[150px] md:max-w-none">{user.name}</span>
+                  <span className="hidden md:inline-flex"><CopyableId id={user.id} nonSliced={true} variant="subscript" /></span>
                   {lastSeenAtEnabled &&
                     (() => {
                       const lastSeen = user.lastSeenAt ?? (user as any)[lastSeenAtColumnName];
                       return lastSeen ? (
                         <sup
-                          className="text-xs text-gray-500 ml-2 cursor-default select-none inline-flex items-center gap-1 hover:text-white/80 transition-colors"
+                          className="hidden md:inline-flex text-xs text-gray-500 ml-2 cursor-default select-none items-center gap-1 hover:text-white/80 transition-colors"
                           title={formatDateTime(lastSeen)}
                         >
                           <span className="mr-1">[</span>
@@ -1301,12 +1300,12 @@ export default function UserDetails() {
                       ) : null;
                     })()}
                   {user.role && (
-                    <sup className="ml-2 px-2 pt-2 pb-2 -mt-1 py-0.5 text-[10px] font-mono uppercase border border-dashed border-white/15 bg-white/5 text-white/80 rounded-none">
+                    <sup className="ml-1 md:ml-2 px-1.5 md:px-2 pt-1 pb-1 md:pt-2 md:pb-2 -mt-1 py-0.5 text-[8px] md:text-[10px] font-mono uppercase border border-dashed border-white/15 bg-white/5 text-white/80 rounded-none">
                       {user.role}
                     </sup>
                   )}
                   {user.banned && (
-                    <sup className="relative group inline-block ml-2 px-2 pt-2 pb-2 -mt-1 py-0.5 text-[10px] font-mono uppercase border border-dashed border-red-500/30 bg-red-500/10 text-red-400/80 rounded-none cursor-help">
+                    <sup className="relative group inline-block ml-1 md:ml-2 px-1.5 md:px-2 pt-1 pb-1 md:pt-2 md:pb-2 -mt-1 py-0.5 text-[8px] md:text-[10px] font-mono uppercase border border-dashed border-red-500/30 bg-red-500/10 text-red-400/80 rounded-none cursor-help">
                       Banned
                       {user.banReason && (
                         <span className="absolute lowercase left-1/2 -translate-x-1/2 bottom-full mb-3 px-2 py-2 text-[10px] font-mono text-gray-300 bg-black border border-dashed border-white/20 rounded-none whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 pointer-events-none z-50">
@@ -1321,11 +1320,11 @@ export default function UserDetails() {
                     </sup>
                   )}
                 </h1>
-                <p className="text-gray-400 font-mono text-sm">{user.email}</p>
+                <p className="text-gray-400 font-mono text-xs md:text-sm truncate">{user.email}</p>
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 flex-shrink-0">
               <div className="relative">
                 <Button
                   variant="ghost"
@@ -1431,7 +1430,7 @@ export default function UserDetails() {
 
         <div className="border border-dashed border-white/20 rounded-none">
           <div className="border-b border-dashed border-white/20">
-            <nav className="flex space-x-8 px-6">
+            <nav className="flex overflow-x-auto space-x-4 px-3 md:space-x-8 md:px-6">
               {[
                 { id: "details", name: "Details", icon: User },
                 {
@@ -1454,15 +1453,15 @@ export default function UserDetails() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm ${
+                  className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
                     activeTab === tab.id
                       ? "border-white text-white"
                       : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
                   }`}
                 >
-                  <tab.icon className="w-4 h-4 text-white/90" />
+                  <tab.icon className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90 flex-shrink-0" />
                   <span className="inline-flex items-start">
-                    <span className="font-mono uppercase text-xs font-normal">{tab.name}</span>
+                    <span className="font-mono uppercase text-[10px] md:text-xs font-normal">{tab.name}</span>
                     {tab.count !== undefined && (
                       <sup className="text-xs text-gray-500 ml-1 inline-flex items-baseline">
                         <AnimatedNumber
@@ -1480,10 +1479,10 @@ export default function UserDetails() {
             </nav>
           </div>
 
-          <div className="p-6">
+          <div className="p-3 md:p-6">
             {activeTab === "details" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="overflow-x-hidden bg-white/[3%] border border-white/10 p-6 rounded-none">
+                <div className="overflow-x-hidden bg-white/[3%] border border-white/10 p-3 md:p-6 rounded-none">
                   <h3 className="text-sm uppercase font-mono text-gray-400 mb-4 tracking-wider">
                     BASIC INFORMATION
                   </h3>
@@ -1539,7 +1538,7 @@ export default function UserDetails() {
                   </div>
                 </div>
 
-                <div className="overflow-x-hidden bg-white/[3%] border border-white/10 p-6 rounded-none">
+                <div className="overflow-x-hidden bg-white/[3%] border border-white/10 p-3 md:p-6 rounded-none">
                   <h3 className="text-sm uppercase font-mono text-gray-400 mb-4 tracking-wider">
                     SECURITY
                   </h3>
@@ -1582,9 +1581,9 @@ export default function UserDetails() {
             )}
             {activeTab === "organizations" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
                   <div>
-                    <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                    <h3 className="text-base md:text-lg relative text-white font-light inline-flex items-start">
                       Organizations
                       <sup className="text-xs text-gray-500 ml-1 mt-0">
                         <span className="mr-1">[</span>
@@ -1592,7 +1591,7 @@ export default function UserDetails() {
                         <span className="ml-1">]</span>
                       </sup>
                     </h3>
-                    <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
+                    <p className="text-gray-400 font-light font-mono text-[10px] md:text-xs uppercase mt-1">
                       Organizations this user belongs to
                     </p>
                   </div>
@@ -1609,25 +1608,25 @@ export default function UserDetails() {
                     {organizations.map((membership) => (
                       <div
                         key={membership.id}
-                        className="border border-dashed border-white/10 rounded-none p-4 hover:bg-white/5 transition-colors"
+                        className="border border-dashed border-white/10 rounded-none p-3 md:p-4 hover:bg-white/5 transition-colors"
                       >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex items-center space-x-4 flex-1">
-                            <div className="w-12 h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none">
+                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-3">
+                          <div className="flex items-center space-x-3 md:space-x-4 flex-1 min-w-0">
+                            <div className="w-10 h-10 md:w-12 md:h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none flex-shrink-0">
                               {membership.organization.image ? (
                                 <img
                                   src={membership.organization.image}
                                   alt={membership.organization.name}
-                                  className="w-12 h-12 object-cover"
+                                  className="w-full h-full object-cover"
                                 />
                               ) : (
-                                <Building2 className="w-6 h-6 text-white" />
+                                <Building2 className="w-5 h-5 md:w-6 md:h-6 text-white" />
                               )}
                             </div>
-                            <div className="flex-1">
-                              <h3 className="text-white font-light inline-flex items-start">
-                                {membership.organization.name}
-                                <sup className="text-xs text-gray-500 ml-2 mt-0.5">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-white text-sm md:text-base font-light inline-flex items-start">
+                                <span className="truncate">{membership.organization.name}</span>
+                                <sup className="hidden sm:inline text-xs text-gray-500 ml-2 mt-0.5">
                                   <span className="mr-1">[</span>
                                   <span className="text-white/80 font-mono text-xs">
                                     {membership.organization.slug}
@@ -1635,14 +1634,14 @@ export default function UserDetails() {
                                   <span className="ml-1">]</span>
                                 </sup>
                               </h3>
-                              <p className="text-gray-400 text-sm font-sans mt-1 flex items-center gap-2">
-                                <span>in {membership.organization.slug}</span>
+                              <p className="text-gray-400 text-xs md:text-sm font-sans mt-1 flex items-center gap-2">
+                                <span className="truncate">in {membership.organization.slug}</span>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     navigate(`/organizations/${membership.organization.id}`);
                                   }}
-                                  className="text-white/60 hover:text-white transition-colors"
+                                  className="text-white/60 hover:text-white transition-colors flex-shrink-0"
                                   title="View organization details"
                                 >
                                   <ArrowUpRight className="w-3.5 h-3.5" />
@@ -1650,22 +1649,16 @@ export default function UserDetails() {
                               </p>
                             </div>
                           </div>
-                          <div className="flex flex-col items-end space-y-2">
+                          <div className="flex flex-col items-start md:items-end space-y-2 pl-13 md:pl-0">
                             <div className="flex items-center space-x-2">
-                              <span className="text-gray-500 font-mono text-xs uppercase">
+                              <span className="text-gray-500 font-mono text-[10px] md:text-xs uppercase">
                                 Joined:{" "}
                               </span>
-                              <span className="text-white font-mono text-xs">
+                              <span className="text-white font-mono text-[10px] md:text-xs">
                                 {new Date(membership.joinedAt).toLocaleDateString("en-US", {
                                   year: "numeric",
                                   month: "short",
                                   day: "numeric",
-                                })}
-                                ,{" "}
-                                {new Date(membership.joinedAt).toLocaleTimeString("en-US", {
-                                  hour: "numeric",
-                                  minute: "2-digit",
-                                  hour12: true,
                                 })}
                               </span>
                             </div>
@@ -1676,9 +1669,9 @@ export default function UserDetails() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleRemoveFromOrganization(membership.id)}
-                            className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none"
+                            className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none text-xs"
                           >
-                            <UserMinus className="w-4 h-4 mr-1" />
+                            <UserMinus className="w-3.5 h-3.5 mr-1" />
                             Remove
                           </Button>
                         </div>
@@ -1691,9 +1684,9 @@ export default function UserDetails() {
 
             {activeTab === "teams" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
                   <div>
-                    <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                    <h3 className="text-base md:text-lg relative text-white font-light inline-flex items-start">
                       Teams
                       <sup className="text-xs text-gray-500 ml-1 mt-0">
                         <span className="mr-1">[</span>
@@ -1701,7 +1694,7 @@ export default function UserDetails() {
                         <span className="ml-1">]</span>
                       </sup>
                     </h3>
-                    <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
+                    <p className="text-gray-400 font-light font-mono text-[10px] md:text-xs uppercase mt-1">
                       Teams this user belongs to
                     </p>
                   </div>
@@ -1716,12 +1709,12 @@ export default function UserDetails() {
                     {teams.map((membership) => (
                       <div
                         key={membership.id}
-                        className="border border-dashed border-white/10 rounded-none p-4 hover:bg-white/5 transition-colors"
+                        className="border border-dashed border-white/10 rounded-none p-3 md:p-4 hover:bg-white/5 transition-colors"
                       >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex items-center space-x-4 flex-1">
-                            <div className="w-12 h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none">
-                              <Users className="w-6 h-6 text-white" />
+                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-3">
+                          <div className="flex items-center space-x-3 md:space-x-4 flex-1 min-w-0">
+                            <div className="w-10 h-10 md:w-12 md:h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none flex-shrink-0">
+                              <Users className="w-5 h-5 md:w-6 md:h-6 text-white" />
                             </div>
                             <div className="flex-1">
                               <h3 className="text-white font-light inline-flex items-start">
@@ -1737,8 +1730,8 @@ export default function UserDetails() {
                                   }
                                 />
                               </h3>
-                              <p className="text-gray-400 text-sm font-sans mt-1 flex items-center gap-2">
-                                <span>
+                              <p className="text-gray-400 text-xs md:text-sm font-sans mt-1 flex items-center gap-2">
+                                <span className="truncate">
                                   in{" "}
                                   {membership.team.organizationSlug ||
                                     membership.team.organizationName}
@@ -1754,7 +1747,7 @@ export default function UserDetails() {
                                       navigate(`/teams/${membership.team.id}`);
                                     }
                                   }}
-                                  className="text-white/60 hover:text-white transition-colors"
+                                  className="text-white/60 hover:text-white transition-colors flex-shrink-0"
                                   title="View team details"
                                 >
                                   <ArrowUpRight className="w-3.5 h-3.5" />
@@ -1762,22 +1755,16 @@ export default function UserDetails() {
                               </p>
                             </div>
                           </div>
-                          <div className="flex flex-col items-end space-y-2">
+                          <div className="flex flex-col items-start md:items-end space-y-2 pl-13 md:pl-0">
                             <div className="flex items-center space-x-2">
-                              <span className="text-gray-500 font-mono text-xs uppercase">
+                              <span className="text-gray-500 font-mono text-[10px] md:text-xs uppercase">
                                 Joined:{" "}
                               </span>
-                              <span className="text-white font-mono text-xs">
+                              <span className="text-white font-mono text-[10px] md:text-xs">
                                 {new Date(membership.joinedAt).toLocaleDateString("en-US", {
                                   year: "numeric",
                                   month: "short",
                                   day: "numeric",
-                                })}
-                                ,{" "}
-                                {new Date(membership.joinedAt).toLocaleTimeString("en-US", {
-                                  hour: "numeric",
-                                  minute: "2-digit",
-                                  hour12: true,
                                 })}
                               </span>
                             </div>
@@ -1788,9 +1775,9 @@ export default function UserDetails() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleRemoveFromTeam(membership.id)}
-                            className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none"
+                            className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none text-xs"
                           >
-                            <UserMinus className="w-4 h-4 mr-1" />
+                            <UserMinus className="w-3.5 h-3.5 mr-1" />
                             Remove
                           </Button>
                         </div>
@@ -1803,9 +1790,9 @@ export default function UserDetails() {
 
             {activeTab === "accounts" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
                   <div>
-                    <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                    <h3 className="text-base md:text-lg relative text-white font-light inline-flex items-start">
                       Linked Accounts
                       <sup className="text-xs text-gray-500 ml-1 mt-0">
                         <span className="mr-1">[</span>
@@ -1813,20 +1800,21 @@ export default function UserDetails() {
                         <span className="ml-1">]</span>
                       </sup>
                     </h3>
-                    <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
+                    <p className="text-gray-400 font-light font-mono text-[10px] md:text-xs uppercase mt-1">
                       Manage user OAuth account connections
                     </p>
                   </div>
                   <Button
                     variant="outline"
+                    size="sm"
                     onClick={() => {
                       setSeedingLogs([]);
                       setIsSeeding(false);
                       setShowAccountSeedModal(true);
                     }}
-                    className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                    className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none text-xs"
                   >
-                    <Link2 className="w-4 h-4 mr-2" />
+                    <Link2 className="w-3.5 h-3.5 mr-1.5" />
                     Seed Accounts
                   </Button>
                 </div>
@@ -1842,29 +1830,29 @@ export default function UserDetails() {
                     {accounts.map((account) => (
                       <div
                         key={account.id}
-                        className="border border-dashed border-white/10 rounded-none p-4 hover:bg-white/5 transition-colors"
+                        className="border border-dashed border-white/10 rounded-none p-3 md:p-4 hover:bg-white/5 transition-colors"
                       >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex items-center space-x-4 flex-1">
-                            <div className="w-12 h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none">
+                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-3">
+                          <div className="flex items-center space-x-3 md:space-x-4 flex-1 min-w-0">
+                            <div className="w-10 h-10 md:w-12 md:h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none flex-shrink-0">
                               {getProviderIcon(account.providerId)}
                             </div>
-                            <div className="flex-1">
-                              <h3 className="text-white font-light inline-flex items-start">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-white text-sm md:text-base font-light inline-flex items-start">
                                 {formatProviderName(account.providerId)}
-                                <CopyableId
+                                <span className="hidden sm:inline-flex"><CopyableId
                                   id={account.accountId}
                                   variant="subscript"
                                   nonSliced={account.email || user.email ? true : false}
-                                />
+                                /></span>
                               </h3>
-                              <p className="text-gray-400 tracking-tight uppercase text-xs font-mono mt-1">
+                              <p className="text-gray-400 tracking-tight uppercase text-[10px] md:text-xs font-mono mt-1 truncate">
                                 {`ID: ${account.id}`}
                               </p>
                             </div>
                           </div>
-                          <div className="flex flex-col items-end space-y-2 text-right">
-                            <div className="flex items-center space-x-2 text-xs font-mono text-gray-400">
+                          <div className="flex flex-col items-start md:items-end space-y-2 text-left md:text-right pl-13 md:pl-0">
+                            <div className="flex items-center space-x-2 text-[10px] md:text-xs font-mono text-gray-400">
                               <span className="uppercase">Linked:</span>
                               <span className="text-white">
                                 {formatDateTime(account.createdAt || account.updatedAt)}
@@ -1878,9 +1866,9 @@ export default function UserDetails() {
                             size="sm"
                             onClick={() => handleUnlinkAccount(account.id)}
                             disabled={unlinkingAccounts[account.id]}
-                            className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none"
+                            className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none text-xs"
                           >
-                            <UserMinus className="w-4 h-4 mr-1" />
+                            <UserMinus className="w-3.5 h-3.5 mr-1" />
                             Unlink
                           </Button>
                         </div>
@@ -1893,9 +1881,9 @@ export default function UserDetails() {
 
             {activeTab === "sessions" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
                   <div>
-                    <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                    <h3 className="text-base md:text-lg relative text-white font-light inline-flex items-start">
                       Sessions
                       <sup className="text-xs text-gray-500 ml-1 mt-0">
                         <span className="mr-1">[</span>
@@ -1903,20 +1891,21 @@ export default function UserDetails() {
                         <span className="ml-1">]</span>
                       </sup>
                     </h3>
-                    <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
+                    <p className="text-gray-400 font-light font-mono text-[10px] md:text-xs uppercase mt-1">
                       Manage user authentication sessions
                     </p>
                   </div>
                   <Button
                     variant="outline"
+                    size="sm"
                     onClick={() => {
                       setSeedingLogs([]);
                       setIsSeeding(false);
                       setShowSessionSeedModal(true);
                     }}
-                    className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                    className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none text-xs"
                   >
-                    <Database className="w-4 h-4 mr-2" />
+                    <Database className="w-3.5 h-3.5 mr-1.5" />
                     Seed Sessions
                   </Button>
                 </div>
@@ -1931,17 +1920,17 @@ export default function UserDetails() {
                     {sessions.map((session) => (
                       <div
                         key={session.id}
-                        className="border border-dashed border-white/10 rounded-none p-4 hover:bg-white/5 transition-colors"
+                        className="border border-dashed border-white/10 rounded-none p-3 md:p-4 hover:bg-white/5 transition-colors"
                       >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex items-center space-x-4 flex-1">
-                            <div className="w-12 h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none">
-                              <Monitor className="w-6 h-6 text-white" />
+                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-3">
+                          <div className="flex items-center space-x-3 md:space-x-4 flex-1 min-w-0">
+                            <div className="w-10 h-10 md:w-12 md:h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none flex-shrink-0">
+                              <Monitor className="w-5 h-5 md:w-6 md:h-6 text-white" />
                             </div>
-                            <div className="flex-1">
-                              <h3 className="text-white font-light inline-flex items-start">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-white text-sm md:text-base font-light inline-flex items-start">
                                 Session {session.id.substring(0, 8)}...
-                                <sup className="text-xs text-gray-500 ml-2 mt-0.5">
+                                <sup className="hidden sm:inline text-xs text-gray-500 ml-2 mt-0.5">
                                   <span className="mr-1">[</span>
                                   <span className="text-white/80 font-mono text-xs">
                                     {session.ipAddress}
@@ -1949,9 +1938,9 @@ export default function UserDetails() {
                                   <span className="ml-1">]</span>
                                 </sup>
                               </h3>
-                              <div className="flex items-center space-x-2 mt-2">
-                                <Globe className="w-3.5 h-3.5 text-gray-400" />
-                                <span className="text-gray-400 uppercase font-mono text-xs">
+                              <div className="flex items-center space-x-2 mt-1 md:mt-2">
+                                <Globe className="w-3 h-3 md:w-3.5 md:h-3.5 text-gray-400 flex-shrink-0" />
+                                <span className="text-gray-400 uppercase font-mono text-[10px] md:text-xs truncate">
                                   {sessionLocations[session.id]?.city || "..."},{" "}
                                   {sessionLocations[session.id]?.country || "..."}
                                 </span>
@@ -1963,40 +1952,28 @@ export default function UserDetails() {
                               </div>
                             </div>
                           </div>
-                          <div className="flex flex-col items-start space-y-1">
+                          <div className="flex flex-col items-start md:items-end space-y-1 pl-13 md:pl-0">
                             <div className="flex items-center space-x-2">
-                              <span className="text-gray-500 font-mono text-xs uppercase">
+                              <span className="text-gray-500 font-mono text-[10px] md:text-xs uppercase">
                                 Expires:{" "}
                               </span>
-                              <span className="text-white font-mono text-xs">
+                              <span className="text-white font-mono text-[10px] md:text-xs">
                                 {new Date(session.expiresAt).toLocaleDateString("en-US", {
                                   year: "numeric",
                                   month: "short",
                                   day: "numeric",
                                 })}
-                                ,{" "}
-                                {new Date(session.expiresAt).toLocaleTimeString("en-US", {
-                                  hour: "numeric",
-                                  minute: "2-digit",
-                                  hour12: true,
-                                })}
                               </span>
                             </div>
                             <div className="flex items-center space-x-2">
-                              <span className="text-gray-500 font-mono text-xs uppercase">
+                              <span className="text-gray-500 font-mono text-[10px] md:text-xs uppercase">
                                 Created:{" "}
                               </span>
-                              <span className="text-white font-mono text-xs">
+                              <span className="text-white font-mono text-[10px] md:text-xs">
                                 {new Date(session.createdAt).toLocaleDateString("en-US", {
                                   year: "numeric",
                                   month: "short",
                                   day: "numeric",
-                                })}
-                                ,{" "}
-                                {new Date(session.createdAt).toLocaleTimeString("en-US", {
-                                  hour: "numeric",
-                                  minute: "2-digit",
-                                  hour12: true,
                                 })}
                               </span>
                             </div>
@@ -2008,9 +1985,9 @@ export default function UserDetails() {
                             size="sm"
                             onClick={() => handleDeleteSession(session.id)}
                             disabled={deletingSessions[session.id]}
-                            className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none"
+                            className="border border-dashed border-red-400/20 text-red-400 hover:bg-red-400/10 rounded-none text-xs"
                           >
-                            <Ban className="w-4 h-4 mr-1" />
+                            <Ban className="w-3.5 h-3.5 mr-1" />
                             Revoke
                           </Button>
                         </div>
@@ -2023,9 +2000,9 @@ export default function UserDetails() {
 
             {activeTab === "invitations" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
                   <div>
-                    <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                    <h3 className="text-base md:text-lg relative text-white font-light inline-flex items-start">
                       Invitations
                       <sup className="text-xs text-gray-500 ml-1 mt-0">
                         <span className="mr-1">[</span>
@@ -2033,7 +2010,7 @@ export default function UserDetails() {
                         <span className="ml-1">]</span>
                       </sup>
                     </h3>
-                    <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
+                    <p className="text-gray-400 font-light font-mono text-[10px] md:text-xs uppercase mt-1">
                       Manage user invitations
                     </p>
                   </div>
@@ -2048,25 +2025,26 @@ export default function UserDetails() {
                   </div>
                 ) : (
                   <div className="border border-white/10 rounded-none overflow-hidden">
+                    <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-white/10 bg-black/50">
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Organization
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                             Team
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Role
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Status
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                             Expires
                           </th>
-                          <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="text-right py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Actions
                           </th>
                         </tr>
@@ -2077,10 +2055,10 @@ export default function UserDetails() {
                             key={invitation.id}
                             className="border-b border-white/10 hover:bg-white/5 transition-colors"
                           >
-                            <td className="py-4 px-4">
+                            <td className="py-3 px-2 md:py-4 md:px-4">
                               <div className="flex items-center space-x-2 group">
-                                <Building2 className="w-4 h-4 text-gray-400" />
-                                <span className="text-white text-sm">
+                                <Building2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400 flex-shrink-0" />
+                                <span className="text-white text-xs md:text-sm truncate max-w-[100px] md:max-w-none">
                                   {invitation.organizationName}
                                 </span>
                                 <button
@@ -2088,14 +2066,14 @@ export default function UserDetails() {
                                     e.stopPropagation();
                                     navigate(`/organizations/${invitation.organizationId}`);
                                   }}
-                                  className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
+                                  className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all flex-shrink-0"
                                   title="View organization details"
                                 >
-                                  <ArrowUpRight className="w-4 h-4" />
+                                  <ArrowUpRight className="w-3.5 h-3.5" />
                                 </button>
                               </div>
                             </td>
-                            <td className="py-4 px-4">
+                            <td className="hidden md:table-cell py-4 px-4">
                               {invitation.teamName ? (
                                 <div className="flex items-center space-x-2 group">
                                   <Users className="w-4 h-4 text-gray-400" />
@@ -2119,12 +2097,12 @@ export default function UserDetails() {
                                 <span className="text-gray-500 text-sm">—</span>
                               )}
                             </td>
-                            <td className="py-4 px-4">
-                              <span className="text-white/80 text-sm font-mono uppercase">
+                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4">
+                              <span className="text-white/80 text-xs md:text-sm font-mono uppercase">
                                 {invitation.role}
                               </span>
                             </td>
-                            <td className="py-4 px-4">
+                            <td className="py-3 px-2 md:py-4 md:px-4">
                               <span
                                 className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${
                                   invitation.status === "accepted"
@@ -2140,7 +2118,7 @@ export default function UserDetails() {
                                 {invitation.status}
                               </span>
                             </td>
-                            <td className="py-4 px-4">
+                            <td className="hidden md:table-cell py-4 px-4">
                               <span className="text-gray-400 text-sm font-mono">
                                 {new Date(invitation.expiresAt).toLocaleDateString("en-US", {
                                   month: "short",
@@ -2149,8 +2127,8 @@ export default function UserDetails() {
                                 })}
                               </span>
                             </td>
-                            <td className="py-4 px-4">
-                              <div className="flex items-center justify-end space-x-2">
+                            <td className="py-3 px-2 md:py-4 md:px-4">
+                              <div className="flex items-center justify-end space-x-1 md:space-x-2">
                                 {invitation.status === "pending" && (
                                   <>
                                     <Button
@@ -2199,6 +2177,7 @@ export default function UserDetails() {
                         ))}
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 )}
               </div>
@@ -2206,9 +2185,9 @@ export default function UserDetails() {
 
             {activeTab === "events" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
                   <div>
-                    <h3 className="text-lg relative text-white font-light inline-flex items-start">
+                    <h3 className="text-base md:text-lg relative text-white font-light inline-flex items-start">
                       Events
                       <sup className="text-xs text-gray-500 ml-1 mt-0">
                         <span className="mr-1">[</span>
@@ -2218,8 +2197,8 @@ export default function UserDetails() {
                         <span className="ml-1">]</span>
                       </sup>
                     </h3>
-                    <p className="text-gray-400 font-light font-mono text-xs uppercase mt-1">
-                      Authentication events for this user. Refresh to load latest.
+                    <p className="text-gray-400 font-light font-mono text-[10px] md:text-xs uppercase mt-1">
+                      Authentication events for this user.
                     </p>
                   </div>
                   <Button
@@ -2241,16 +2220,16 @@ export default function UserDetails() {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-dashed border-white/10">
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Event
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
                             Type
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Status
                           </th>
-                          <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             <button
                               type="button"
                               onClick={() =>
@@ -2268,7 +2247,7 @@ export default function UserDetails() {
                               )}
                             </button>
                           </th>
-                          <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                          <th className="text-right py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
                             Actions
                           </th>
                         </tr>
@@ -2307,45 +2286,45 @@ export default function UserDetails() {
                                   }}
                                   className="border-b border-dashed border-white/5 hover:bg-white/5 transition-all cursor-pointer"
                                 >
-                                  <td className="py-4 px-4">
-                                    <div className="flex items-center space-x-3">
+                                  <td className="py-3 px-2 md:py-4 md:px-4">
+                                    <div className="flex items-center space-x-2 md:space-x-3">
                                       <div
-                                        className={`w-10 h-10 rounded-none border border-dashed flex items-center justify-center ${getEventSeverityColor(
+                                        className={`w-8 h-8 md:w-10 md:h-10 rounded-none border border-dashed flex items-center justify-center flex-shrink-0 ${getEventSeverityColor(
                                           severity,
                                           status,
                                         )}`}
                                       >
                                         {getEventIcon(event.type, severity, status)}
                                       </div>
-                                      <div>
-                                        <div className="text-white font-light">
+                                      <div className="min-w-0">
+                                        <div className="text-white font-light text-xs md:text-sm truncate max-w-[120px] sm:max-w-none">
                                           {event.display?.message || event.type}
                                         </div>
-                                        <CopyableId id={event.id} />
+                                        <span className="hidden sm:block"><CopyableId id={event.id} /></span>
                                       </div>
                                     </div>
                                   </td>
-                                  <td className="py-4 px-4">
+                                  <td className="hidden md:table-cell py-4 px-4">
                                     <span className="text-xs font-mono text-gray-400 uppercase">
                                       {event.type}
                                     </span>
                                   </td>
-                                  <td className="py-4 px-4">
-                                    <div className="flex items-center space-x-2">
+                                  <td className="py-3 px-2 md:py-4 md:px-4">
+                                    <div className="flex items-center space-x-1.5 md:space-x-2">
                                       <div
-                                        className={`w-px h-5 rounded-none ${
+                                        className={`w-px h-4 md:h-5 rounded-none ${
                                           status === "success" ? "bg-green-400" : "bg-red-400"
                                         }`}
                                       />
-                                      <span className="text-xs font-mono uppercase text-gray-400">
+                                      <span className="text-[10px] md:text-xs font-mono uppercase text-gray-400">
                                         {status}
                                       </span>
                                     </div>
                                   </td>
-                                  <td className="py-4 px-4 text-xs text-gray-400">
+                                  <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-[10px] md:text-xs text-gray-400">
                                     <div className="flex font-mono uppercase flex-col">
                                       {ts.toLocaleString()}
-                                      <p className="text-xs">
+                                      <p className="text-[10px] md:text-xs">
                                         {ts.toLocaleString("en-US", {
                                           month: "short",
                                           day: "numeric",
@@ -2358,7 +2337,7 @@ export default function UserDetails() {
                                       </p>
                                     </div>
                                   </td>
-                                  <td className="py-4 px-4 text-right">
+                                  <td className="py-3 px-2 md:py-4 md:px-4 text-right">
                                     <Button
                                       variant="ghost"
                                       size="sm"
@@ -2379,12 +2358,12 @@ export default function UserDetails() {
                       </tbody>
                     </table>
                     {userEventsHasMore ? (
-                      <div className="flex justify-center py-6 border-t border-dashed border-white/10">
+                      <div className="flex justify-center py-4 md:py-6 border-t border-dashed border-white/10">
                         <button
                           type="button"
                           onClick={loadMoreUserEvents}
                           disabled={userEventsLoadingMore}
-                          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 font-mono text-sm uppercase border border-dashed border-white/20 text-white/90 hover:bg-white/10 hover:border-white/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[10rem]"
+                          className="inline-flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-2.5 font-mono text-xs md:text-sm uppercase border border-dashed border-white/20 text-white/90 hover:bg-white/10 hover:border-white/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[8rem] md:min-w-[10rem]"
                         >
                           {userEventsLoadingMore ? (
                             <>
@@ -2414,8 +2393,8 @@ export default function UserDetails() {
       </div>
 
       {showEventViewModal && selectedUserEvent && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none w-full max-w-2xl p-6 shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none w-full max-w-2xl p-3 md:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg text-white font-light font-mono uppercase">
                 Event details
@@ -2535,10 +2514,10 @@ export default function UserDetails() {
       )}
 
       {showEditModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Edit User</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Edit User</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -2684,10 +2663,10 @@ export default function UserDetails() {
       )}
 
       {showBanModal && user && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Ban User</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Ban User</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -2793,10 +2772,10 @@ export default function UserDetails() {
       )}
 
       {showUnbanModal && user && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Unban User</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Unban User</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -2867,10 +2846,10 @@ export default function UserDetails() {
 
       {/* Delete User Modal */}
       {showDeleteModal && user && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Delete User</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Delete User</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -2938,10 +2917,10 @@ export default function UserDetails() {
 
       {/* Password Update Modal */}
       {showPasswordModal && user && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Update Password</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Update Password</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -3049,10 +3028,10 @@ export default function UserDetails() {
 
       {/* Session Seed Modal */}
       {showSessionSeedModal && user && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-xl shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Seed Sessions</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Seed Sessions</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -3161,10 +3140,10 @@ export default function UserDetails() {
         </div>
       )}
       {showAccountSeedModal && user && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-black border border-white/15 rounded-none p-6 w-full max-w-xl shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6">
+          <div className="bg-black border border-white/15 rounded-none p-3 md:p-6 w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-white font-light uppercase font-mono">Seed Accounts</h3>
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">Seed Accounts</h3>
               <Button
                 variant="ghost"
                 size="sm"
