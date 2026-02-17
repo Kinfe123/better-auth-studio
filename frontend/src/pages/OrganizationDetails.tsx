@@ -1159,96 +1159,144 @@ export default function OrganizationDetails() {
                   </div>
                 </div>
               ) : teams.length > 0 ? (
-                <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-dashed border-white/10">
-                          <th className="text-left py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
-                            Team
-                          </th>
-                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
-                            Members
-                          </th>
-                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
-                            Created
-                          </th>
-                          <th className="text-right py-3 px-2 md:py-4 md:px-4 font-mono uppercase text-xs text-white">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {teams.map((team) => (
-                          <tr
-                            key={team.id}
-                            className="border-b border-dashed border-white/5 hover:bg-white/5 cursor-pointer"
-                            onClick={() => navigate(`/organizations/${orgId}/teams/${team.id}`)}
-                          >
-                            <td className="py-3 px-2 md:py-4 md:px-4">
-                              <div className="flex items-center space-x-2 md:space-x-3">
-                                <div className="w-8 h-8 md:w-10 md:h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center flex-shrink-0">
-                                  <Users className="w-4 h-4 md:w-5 md:h-5 text-white" />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="text-white font-light text-xs md:text-sm truncate">
-                                    {team.name}
-                                  </div>
-                                  <span className="hidden sm:block">
-                                    <CopyableId id={team.id} label="Team ID" />
-                                  </span>
-                                </div>
+                <>
+                  {/* Mobile: Card layout */}
+                  <div className="space-y-3 md:hidden">
+                    {teams.map((team) => (
+                      <div
+                        key={team.id}
+                        className="bg-black/30 border border-dashed border-white/20 rounded-none p-3 hover:bg-white/5 cursor-pointer"
+                        onClick={() => navigate(`/organizations/${orgId}/teams/${team.id}`)}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center space-x-2 min-w-0 flex-1">
+                            <div className="w-8 h-8 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center flex-shrink-0">
+                              <Users className="w-4 h-4 text-white" />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-white font-light text-xs truncate">{team.name}</div>
+                              <div className="text-[10px] text-gray-400 font-mono uppercase">
+                                {team.memberCount || 0} members · {formatDistanceToNow(new Date(team.createdAt), { addSuffix: true })}
                               </div>
-                            </td>
-                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-white text-sm">
-                              {team.memberCount || 0}
-                            </td>
-                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-sm text-gray-400">
-                              <div className="flex flex-col uppercase font-mono text-[10px] md:text-xs">
-                                <span>
-                                  {format(new Date(team.createdAt), "dd MMM yyyy, HH:mm")}
-                                </span>
-                                <p className="text-[10px] md:text-xs text-gray-500">
-                                  {formatDistanceToNow(new Date(team.createdAt), {
-                                    addSuffix: true,
-                                  })}
-                                </p>
-                              </div>
-                            </td>
-                            <td className="py-3 px-2 md:py-4 md:px-4 text-right">
-                              <div className="flex items-center justify-end space-x-1 md:space-x-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none text-xs h-7 md:h-9 px-2 md:px-3"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    openEditTeamModal(team);
-                                  }}
-                                >
-                                  <Edit className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1" />
-                                  <span className="hidden sm:inline">Edit</span>
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none text-xs h-7 md:h-9 px-2 md:px-3"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    openDeleteTeamModal(team);
-                                  }}
-                                >
-                                  <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1" />
-                                  <span className="hidden sm:inline">Delete</span>
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-gray-400 hover:text-white rounded-none h-7 w-7 p-0"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openEditTeamModal(team);
+                              }}
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-400 hover:text-red-300 rounded-none h-7 w-7 p-0"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openDeleteTeamModal(team);
+                              }}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
+
+                  {/* Desktop: Table layout */}
+                  <div className="hidden md:block bg-black/30 border border-dashed border-white/20 rounded-none">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-dashed border-white/10">
+                            <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">
+                              Team
+                            </th>
+                            <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">
+                              Members
+                            </th>
+                            <th className="text-left py-4 px-4 font-mono uppercase text-xs text-white">
+                              Created
+                            </th>
+                            <th className="text-right py-4 px-4 font-mono uppercase text-xs text-white">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {teams.map((team) => (
+                            <tr
+                              key={team.id}
+                              className="border-b border-dashed border-white/5 hover:bg-white/5 cursor-pointer"
+                              onClick={() => navigate(`/organizations/${orgId}/teams/${team.id}`)}
+                            >
+                              <td className="py-4 px-4">
+                                <div className="flex items-center space-x-3">
+                                  <div className="w-10 h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
+                                    <Users className="w-5 h-5 text-white" />
+                                  </div>
+                                  <div>
+                                    <div className="text-white font-light">{team.name}</div>
+                                    <CopyableId id={team.id} label="Team ID" />
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-4 px-4 text-white text-sm">
+                                {team.memberCount || 0}
+                              </td>
+                              <td className="py-4 px-4 text-sm text-gray-400">
+                                <div className="flex flex-col uppercase font-mono text-xs">
+                                  <span>
+                                    {format(new Date(team.createdAt), "dd MMM yyyy, HH:mm")}
+                                  </span>
+                                  <p className="text-xs text-gray-500">
+                                    {formatDistanceToNow(new Date(team.createdAt), {
+                                      addSuffix: true,
+                                    })}
+                                  </p>
+                                </div>
+                              </td>
+                              <td className="py-4 px-4 text-right">
+                                <div className="flex items-center justify-end space-x-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      openEditTeamModal(team);
+                                    }}
+                                  >
+                                    <Edit className="w-4 h-4 mr-1" />
+                                    Edit
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      openDeleteTeamModal(team);
+                                    }}
+                                  >
+                                    <Trash2 className="w-4 h-4 mr-1" />
+                                    Delete
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
               ) : (
                 <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
                   <div className="text-center">
@@ -1291,95 +1339,145 @@ export default function OrganizationDetails() {
 
               {/* Members List */}
               {members.length > 0 ? (
-                <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-dashed border-white/10">
-                          <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
-                            User
-                          </th>
-                          <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
-                            Email
-                          </th>
-                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
-                            Role
-                          </th>
-                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
-                            Joined
-                          </th>
-                          <th className="text-right py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {members.map((member) => (
-                          <tr
-                            key={member.id}
-                            className="border-b border-dashed border-white/5 hover:bg-white/5 group"
-                          >
-                            <td className="py-3 px-2 md:py-4 md:px-4">
-                              <div className="flex items-center space-x-2 md:space-x-3">
-                                <img
-                                  src={
-                                    member.user.image ||
-                                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.user.id}`
-                                  }
-                                  alt={member.user.name}
-                                  className="w-8 h-8 md:w-10 md:h-10 rounded-none border border-dashed border-white/20 flex-shrink-0"
-                                />
-                                <div className="min-w-0">
-                                  <div className="text-white font-light text-xs md:text-sm inline-flex items-center gap-1 md:gap-2">
-                                    <span className="truncate">{member.user.name}</span>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate(`/users/${member.user.id}`);
-                                      }}
-                                      className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all flex-shrink-0"
-                                      title="View user details"
-                                    >
-                                      <ArrowUpRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                                    </button>
-                                  </div>
-                                  <span className="hidden sm:block">
-                                    <CopyableId id={member.user.id} />
-                                  </span>
-                                </div>
+                <>
+                  {/* Mobile: Card layout */}
+                  <div className="space-y-3 md:hidden">
+                    {members.map((member) => (
+                      <div
+                        key={member.id}
+                        className="bg-black/30 border border-dashed border-white/20 rounded-none p-3"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center space-x-2 min-w-0 flex-1">
+                            <img
+                              src={
+                                member.user.image ||
+                                `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.user.id}`
+                              }
+                              alt={member.user.name}
+                              className="w-8 h-8 rounded-none border border-dashed border-white/20 flex-shrink-0"
+                            />
+                            <div className="min-w-0">
+                              <div className="text-white font-light text-xs truncate">{member.user.name}</div>
+                              <div className="text-[10px] text-gray-400 font-mono uppercase truncate">
+                                {member.role} · {new Date(member.joinedAt).toLocaleDateString()}
                               </div>
-                            </td>
-                            <td className="hidden md:table-cell py-4 px-4 text-white text-sm">
-                              {member.user.email}
-                            </td>
-                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4">
-                              <span className="text-white/80 text-[10px] md:text-sm font-mono uppercase">
-                                {member.role}
-                              </span>
-                            </td>
-                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4 text-[10px] md:text-sm text-gray-400">
-                              {new Date(member.joinedAt).toLocaleDateString()}
-                            </td>
-                            <td className="py-3 px-2 md:py-4 md:px-4 text-right">
-                              <div className="flex items-center justify-end">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none text-xs h-7 md:h-9 px-2 md:px-3"
-                                  onClick={() => handleRemoveMember(member.id, member.user.name)}
-                                  disabled={removingMembers[member.id]}
-                                >
-                                  <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1" />
-                                  <span className="hidden sm:inline">Remove</span>
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-white/60 hover:text-white rounded-none h-7 w-7 p-0"
+                              onClick={() => navigate(`/users/${member.user.id}`)}
+                              title="View user"
+                            >
+                              <ArrowUpRight className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-400 hover:text-red-300 rounded-none h-7 w-7 p-0"
+                              onClick={() => handleRemoveMember(member.id, member.user.name)}
+                              disabled={removingMembers[member.id]}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
+
+                  {/* Desktop: Table layout */}
+                  <div className="hidden md:block bg-black/30 border border-dashed border-white/20 rounded-none">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-dashed border-white/10">
+                            <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                              User
+                            </th>
+                            <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                              Email
+                            </th>
+                            <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                              Role
+                            </th>
+                            <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                              Joined
+                            </th>
+                            <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {members.map((member) => (
+                            <tr
+                              key={member.id}
+                              className="border-b border-dashed border-white/5 hover:bg-white/5 group"
+                            >
+                              <td className="py-4 px-4">
+                                <div className="flex items-center space-x-3">
+                                  <img
+                                    src={
+                                      member.user.image ||
+                                      `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.user.id}`
+                                    }
+                                    alt={member.user.name}
+                                    className="w-10 h-10 rounded-none border border-dashed border-white/20"
+                                  />
+                                  <div>
+                                    <div className="text-white font-light inline-flex items-center gap-2">
+                                      <span>{member.user.name}</span>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          navigate(`/users/${member.user.id}`);
+                                        }}
+                                        className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
+                                        title="View user details"
+                                      >
+                                        <ArrowUpRight className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                    <CopyableId id={member.user.id} />
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-4 px-4 text-white text-sm">
+                                {member.user.email}
+                              </td>
+                              <td className="py-4 px-4">
+                                <span className="text-white/80 text-sm font-mono uppercase">
+                                  {member.role}
+                                </span>
+                              </td>
+                              <td className="py-4 px-4 text-sm text-gray-400">
+                                {new Date(member.joinedAt).toLocaleDateString()}
+                              </td>
+                              <td className="py-4 px-4 text-right">
+                                <div className="flex items-center justify-end">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                                    onClick={() => handleRemoveMember(member.id, member.user.name)}
+                                    disabled={removingMembers[member.id]}
+                                  >
+                                    <Trash2 className="w-4 h-4 mr-1" />
+                                    Remove
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
               ) : (
                 <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
                   <div className="text-center">
@@ -1431,146 +1529,207 @@ export default function OrganizationDetails() {
 
               {/* Invitations List */}
               {invitations.length > 0 ? (
-                <div className="bg-black/30 border border-dashed border-white/20 rounded-none">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-dashed border-white/10">
-                          <th className="text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
-                            Email
-                          </th>
-                          <th className="hidden lg:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
-                            Team
-                          </th>
-                          <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
-                            Role
-                          </th>
-                          <th className="hidden sm:table-cell text-left py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
-                            Status
-                          </th>
-                          <th className="hidden md:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
-                            Expires
-                          </th>
-                          <th className="text-right py-3 px-2 md:py-4 md:px-4 text-white font-mono uppercase text-xs">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {invitations.map((invitation) => (
-                          <tr
-                            key={invitation.id}
-                            className="border-b border-dashed border-white/5 hover:bg-white/5 group"
-                          >
-                            <td className="py-3 px-2 md:py-4 md:px-4">
-                              <div className="flex items-center space-x-2 md:space-x-3">
-                                <div className="w-8 h-8 md:w-10 md:h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center flex-shrink-0">
-                                  <Mail className="w-4 h-4 md:w-5 md:h-5 text-white" />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="text-white font-light text-xs md:text-sm truncate">
-                                    {invitation.email}
-                                  </div>
-                                  <div className="text-[10px] md:text-[11px] font-mono uppercase text-gray-400">
-                                    Expires{" "}
-                                    <span className="text-white">
-                                      {new Date(invitation.expiresAt).toLocaleDateString("en-US", {
-                                        month: "short",
-                                        year: "numeric",
-                                        day: "numeric",
-                                      })}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="hidden lg:table-cell py-4 px-4">
-                              {invitation.teamId ? (
-                                <div className="flex items-center space-x-2">
-                                  <Users className="w-4 h-4 text-gray-400" />
-                                  <span className="text-white text-sm">
-                                    {teams.find((t) => t.id === invitation.teamId)?.name || "Team"}
-                                  </span>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      navigate(
-                                        `/organizations/${orgId}/teams/${invitation.teamId}`,
-                                      );
-                                    }}
-                                    className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
-                                    title="View team details"
-                                  >
-                                    <ArrowUpRight className="w-4 h-4" />
-                                  </button>
-                                </div>
-                              ) : (
-                                <span className="text-gray-500 text-sm">—</span>
-                              )}
-                            </td>
-                            <td className="hidden md:table-cell py-4 px-4">
-                              <span className="text-white/80 text-sm font-mono uppercase">
-                                {invitation.role}
-                              </span>
-                            </td>
-                            <td className="hidden sm:table-cell py-3 px-2 md:py-4 md:px-4">
-                              <span
-                                className={`text-[10px] md:text-xs font-mono uppercase px-1.5 md:px-2 border-dashed py-0.5 md:py-1 rounded-none ${
-                                  invitation.status === "accepted"
-                                    ? "bg-green-900/50 text-green-400 border border-green-500/30"
-                                    : invitation.status === "rejected" ||
-                                        invitation.status === "cancelled"
-                                      ? "bg-red-900/50 text-red-400 border border-red-500/30"
-                                      : invitation.status === "expired"
-                                        ? "bg-yellow-900/50 text-yellow-400 border border-yellow-500/30"
-                                        : "bg-blue-900/50 text-blue-400 border border-blue-500/30"
-                                }`}
-                              >
-                                {invitation.status}
-                              </span>
-                            </td>
-                            <td className="hidden md:table-cell py-4 px-4 text-sm text-gray-400">
-                              {new Date(invitation.expiresAt).toLocaleDateString()}
-                              <br />
-                              <span className="text-xs text-gray-400">
-                                {new Date(invitation.expiresAt).toLocaleTimeString([], {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })}
-                              </span>
-                            </td>
-                            <td className="py-3 px-2 md:py-4 md:px-4 text-right">
-                              <div className="flex items-center justify-end space-x-1 md:space-x-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none text-xs h-7 md:h-9 px-2 md:px-3"
-                                  onClick={() =>
-                                    handleResendInvitation(invitation.id, invitation.email)
-                                  }
-                                  disabled={resendingInvitations[invitation.id]}
+                <>
+                  {/* Mobile: Card layout */}
+                  <div className="space-y-3 md:hidden">
+                    {invitations.map((invitation) => (
+                      <div
+                        key={invitation.id}
+                        className="bg-black/30 border border-dashed border-white/20 rounded-none p-3"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center space-x-2 min-w-0 flex-1">
+                            <div className="w-8 h-8 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center flex-shrink-0">
+                              <Mail className="w-4 h-4 text-white" />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-white font-light text-xs truncate">{invitation.email}</div>
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                <span
+                                  className={`text-[9px] font-mono uppercase px-1 py-0.5 rounded-none ${
+                                    invitation.status === "accepted"
+                                      ? "bg-green-900/50 text-green-400 border border-green-500/30"
+                                      : invitation.status === "rejected" ||
+                                          invitation.status === "cancelled"
+                                        ? "bg-red-900/50 text-red-400 border border-red-500/30"
+                                        : invitation.status === "expired"
+                                          ? "bg-yellow-900/50 text-yellow-400 border border-yellow-500/30"
+                                          : "bg-blue-900/50 text-blue-400 border border-blue-500/30"
+                                  }`}
                                 >
-                                  <Send className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1" />
-                                  <span className="hidden sm:inline">Resend</span>
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none text-xs h-7 md:h-9 px-2 md:px-3"
-                                  onClick={() => handleCancelInvitation(invitation.id)}
-                                  disabled={cancellingInvitations[invitation.id]}
-                                >
-                                  <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1" />
-                                  <span className="hidden sm:inline">Cancel</span>
-                                </Button>
+                                  {invitation.status}
+                                </span>
+                                <span className="text-[10px] text-gray-400 font-mono uppercase">{invitation.role}</span>
                               </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-white/60 hover:text-white rounded-none h-7 w-7 p-0"
+                              onClick={() => handleResendInvitation(invitation.id, invitation.email)}
+                              disabled={resendingInvitations[invitation.id]}
+                              title="Resend"
+                            >
+                              <Send className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-400 hover:text-red-300 rounded-none h-7 w-7 p-0"
+                              onClick={() => handleCancelInvitation(invitation.id)}
+                              disabled={cancellingInvitations[invitation.id]}
+                              title="Cancel"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
+
+                  {/* Desktop: Table layout */}
+                  <div className="hidden md:block bg-black/30 border border-dashed border-white/20 rounded-none">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-dashed border-white/10">
+                            <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                              Email
+                            </th>
+                            <th className="hidden lg:table-cell text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                              Team
+                            </th>
+                            <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                              Role
+                            </th>
+                            <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                              Status
+                            </th>
+                            <th className="text-left py-4 px-4 text-white font-mono uppercase text-xs">
+                              Expires
+                            </th>
+                            <th className="text-right py-4 px-4 text-white font-mono uppercase text-xs">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {invitations.map((invitation) => (
+                            <tr
+                              key={invitation.id}
+                              className="border-b border-dashed border-white/5 hover:bg-white/5 group"
+                            >
+                              <td className="py-4 px-4">
+                                <div className="flex items-center space-x-3">
+                                  <div className="w-10 h-10 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
+                                    <Mail className="w-5 h-5 text-white" />
+                                  </div>
+                                  <div>
+                                    <div className="text-white font-light">{invitation.email}</div>
+                                    <div className="text-[11px] font-mono uppercase text-gray-400">
+                                      Expires on{" "}
+                                      <span className="text-white">
+                                        {new Date(invitation.expiresAt).toLocaleDateString("en-US", {
+                                          month: "short",
+                                          year: "numeric",
+                                          day: "numeric",
+                                        })}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="hidden lg:table-cell py-4 px-4">
+                                {invitation.teamId ? (
+                                  <div className="flex items-center space-x-2">
+                                    <Users className="w-4 h-4 text-gray-400" />
+                                    <span className="text-white text-sm">
+                                      {teams.find((t) => t.id === invitation.teamId)?.name || "Team"}
+                                    </span>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(
+                                          `/organizations/${orgId}/teams/${invitation.teamId}`,
+                                        );
+                                      }}
+                                      className="opacity-0 group-hover:opacity-100 text-white/60 hover:text-white transition-all"
+                                      title="View team details"
+                                    >
+                                      <ArrowUpRight className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <span className="text-gray-500 text-sm">—</span>
+                                )}
+                              </td>
+                              <td className="py-4 px-4">
+                                <span className="text-white/80 text-sm font-mono uppercase">
+                                  {invitation.role}
+                                </span>
+                              </td>
+                              <td className="py-4 px-4">
+                                <span
+                                  className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${
+                                    invitation.status === "accepted"
+                                      ? "bg-green-900/50 text-green-400 border border-green-500/30"
+                                      : invitation.status === "rejected" ||
+                                          invitation.status === "cancelled"
+                                        ? "bg-red-900/50 text-red-400 border border-red-500/30"
+                                        : invitation.status === "expired"
+                                          ? "bg-yellow-900/50 text-yellow-400 border border-yellow-500/30"
+                                          : "bg-blue-900/50 text-blue-400 border border-blue-500/30"
+                                  }`}
+                                >
+                                  {invitation.status}
+                                </span>
+                              </td>
+                              <td className="py-4 px-4 text-sm text-gray-400">
+                                {new Date(invitation.expiresAt).toLocaleDateString()}
+                                <br />
+                                <span className="text-xs text-gray-400">
+                                  {new Date(invitation.expiresAt).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </span>
+                              </td>
+                              <td className="py-4 px-4 text-right">
+                                <div className="flex items-center justify-end space-x-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                                    onClick={() =>
+                                      handleResendInvitation(invitation.id, invitation.email)
+                                    }
+                                    disabled={resendingInvitations[invitation.id]}
+                                  >
+                                    <Send className="w-4 h-4 mr-1" />
+                                    Resend
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="border border-dashed border-red-400/50 text-red-400 hover:bg-red-400/10 rounded-none"
+                                    onClick={() => handleCancelInvitation(invitation.id)}
+                                    disabled={cancellingInvitations[invitation.id]}
+                                  >
+                                    <Trash2 className="w-4 h-4 mr-1" />
+                                    Cancel
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
               ) : (
                 <div className="bg-black/30 border border-dashed border-white/20 rounded-none p-12">
                   <div className="text-center">
