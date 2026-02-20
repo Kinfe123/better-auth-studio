@@ -383,7 +383,9 @@ export default function DatabaseVisualizer() {
           <div className="h-6 md:h-8 bg-gray-700 rounded w-1/2 md:w-1/3 mb-4 md:mb-6"></div>
           <div className="h-64 md:h-96 bg-gray-700 rounded"></div>
         </div>
-        <div className="text-center text-gray-500 dark:text-gray-400 mt-4 text-sm md:text-base">Loading schema...</div>
+        <div className="text-center text-gray-500 dark:text-gray-400 mt-4 text-sm md:text-base">
+          Loading schema...
+        </div>
       </div>
     );
   }
@@ -414,7 +416,9 @@ export default function DatabaseVisualizer() {
       <div className="space-y-4 md:space-y-8">
         <div className="flex items-center justify-between p-3 md:p-5 pt-4 md:pt-7">
           <div className="min-w-0">
-            <h1 className="text-xl md:text-3xl font-normal text-white tracking-tight">Schema Visualizer</h1>
+            <h1 className="text-xl md:text-3xl font-normal text-white tracking-tight">
+              Schema Visualizer
+            </h1>
             <p className="text-gray-300 mt-1 md:mt-2 uppercase font-mono font-light text-[10px] md:text-xs">
               Visualize your Better Auth database schema with interactive tables and relationships.
             </p>
@@ -431,7 +435,9 @@ export default function DatabaseVisualizer() {
             <CardHeader className="border-b border-white/15 pb-2 md:pb-3 -pt-2 mb-2 px-3 md:px-6 pt-3 md:pt-6">
               <CardTitle className="font-light text-base md:text-xl text-white flex items-center space-x-2">
                 <Settings className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span className="uppercase font-mono text-[10px] md:text-xs tracking-tight">Detected Tables</span>
+                <span className="uppercase font-mono text-[10px] md:text-xs tracking-tight">
+                  Detected Tables
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 px-3 md:px-6 pb-3 md:pb-6">
@@ -488,7 +494,9 @@ export default function DatabaseVisualizer() {
               <CardHeader className="border-b border-white/15 pb-2 md:pb-3 -pt-2 mb-2 px-3 md:px-6 pt-3 md:pt-6">
                 <CardTitle className="font-light text-base md:text-xl text-white flex items-center space-x-2">
                   <Analytics className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                  <span className="uppercase font-mono text-[10px] md:text-xs tracking-tight">Schema Summary</span>
+                  <span className="uppercase font-mono text-[10px] md:text-xs tracking-tight">
+                    Schema Summary
+                  </span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 md:space-y-3 pt-2 px-3 md:px-6 pb-3 md:pb-6">
@@ -633,7 +641,9 @@ export default function DatabaseVisualizer() {
             <div className="flex-shrink-0 p-3 md:p-5 pb-3 md:pb-4 border-b border-dashed border-white/20 bg-black sticky top-0 z-10">
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <h3 className="text-base md:text-xl font-light text-white truncate">{selectedTable.displayName}</h3>
+                  <h3 className="text-base md:text-xl font-light text-white truncate">
+                    {selectedTable.displayName}
+                  </h3>
                   <p className="text-[10px] md:text-xs text-gray-400 mt-0.5 uppercase font-mono truncate">
                     {selectedTable.name} · {selectedTable.origin === "core" ? "Core" : "Extended"}
                   </p>

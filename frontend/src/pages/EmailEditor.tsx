@@ -692,7 +692,9 @@ export const auth = betterAuth({
                 }`}
               >
                 <div className="text-xs md:text-sm uppercase font-mono">{template.name}</div>
-                <div className="text-[10px] md:text-xs text-gray-500 mt-0.5 md:mt-1">{template.fields.length} fields</div>
+                <div className="text-[10px] md:text-xs text-gray-500 mt-0.5 md:mt-1">
+                  {template.fields.length} fields
+                </div>
               </button>
             ))}
           </div>
