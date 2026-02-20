@@ -639,11 +639,11 @@ export const auth = betterAuth({
   );
 
   return (
-    <div className="h-full flex flex-col bg-black">
-      <div className="flex items-center justify-between p-5 pt-7">
-        <div className="pb-8">
-          <h1 className="text-3xl font-normal text-white tracking-tight">Emails</h1>
-          <p className="text-gray-300 mt-2 uppercase font-mono font-light text-xs">
+    <div className="min-h-full md:h-full flex flex-col bg-black">
+      <div className="flex items-center justify-between p-3 md:p-5 pt-4 md:pt-7">
+        <div className="pb-4 md:pb-8">
+          <h1 className="text-xl md:text-3xl font-normal text-white tracking-tight">Emails</h1>
+          <p className="text-gray-300 mt-1 md:mt-2 uppercase font-mono font-light text-[10px] md:text-xs">
             Customize your email templates with a visual editor
           </p>
         </div>
@@ -653,10 +653,10 @@ export const auth = betterAuth({
         <hr className="w-full border-white/15 h-px" />
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
-        <div className="w-[340px] border-r border-dashed border-white/15 flex flex-col overflow-hidden">
-          <div className="p-4 border-b border-dashed border-white/15 flex-shrink-0">
-            <h2 className="text-lg font-light text-white uppercase tracking-wider mb-4">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+        <div className="w-full md:w-[340px] md:border-r border-dashed border-white/15 flex flex-col overflow-hidden md:flex-shrink-0">
+          <div className="p-3 md:p-4 border-b border-dashed border-white/15 flex-shrink-0">
+            <h2 className="text-base md:text-lg font-light text-white uppercase tracking-wider mb-3 md:mb-4">
               Templates
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -678,45 +678,45 @@ export const auth = betterAuth({
             </div>
           </div>
           <div
-            className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-2"
+            className="flex-1 overflow-y-auto overflow-x-hidden p-3 md:p-4 space-y-2 min-h-[120px] md:min-h-0"
             style={{ overscrollBehavior: "contain" }}
           >
             {filteredTemplates.map((template) => (
               <button
                 key={template.id}
                 onClick={() => handleSelectTemplate(template.id)}
-                className={`w-full text-left p-3 border border-dashed rounded-none transition-colors ${
+                className={`w-full text-left p-2.5 md:p-3 border border-dashed rounded-none transition-colors ${
                   selectedTemplate === template.id
                     ? "border-white/30 bg-white/5 text-white"
                     : "border-white/15 bg-black/40 text-gray-300 hover:border-white/20 hover:bg-white/5"
                 }`}
               >
-                <div className="text-sm uppercase font-mono">{template.name}</div>
-                <div className="text-xs text-gray-500 mt-1">{template.fields.length} fields</div>
+                <div className="text-xs md:text-sm uppercase font-mono">{template.name}</div>
+                <div className="text-[10px] md:text-xs text-gray-500 mt-0.5 md:mt-1">{template.fields.length} fields</div>
               </button>
             ))}
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden min-h-0">
           {selectedTemplate ? (
             <>
-              <div className="border-b border-dashed border-white/15 p-4 flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-light text-white uppercase tracking-wider">
+              <div className="border-b border-dashed border-white/15 p-3 md:p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <h3 className="text-base md:text-lg font-light text-white uppercase tracking-wider truncate">
                     {emailTemplates[selectedTemplate]?.name}
                   </h3>
-                  <p className="text-xs text-gray-400 font-mono mt-1">
+                  <p className="text-[10px] md:text-xs text-gray-400 font-mono mt-0.5 md:mt-1">
                     {emailTemplates[selectedTemplate]?.category}
                   </p>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-wrap gap-2">
                   <Button
                     variant="outline"
                     onClick={() => setShowTestEmailModal(true)}
-                    className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                    className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none text-xs h-8 md:h-10 px-2 md:px-4"
                   >
-                    <Send className="w-4 h-4 mr-2" />
+                    <Send className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
                     Test Email
                   </Button>
                   <Button
@@ -727,39 +727,39 @@ export const auth = betterAuth({
                         setShowCodeModal(true);
                       }
                     }}
-                    className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                    className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none text-xs h-8 md:h-10 px-2 md:px-4"
                   >
-                    <Code className="w-4 h-4 mr-2" />
+                    <Code className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
                     Export Code
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => copyToClipboard(emailHtml)}
-                    className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                    className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none text-xs h-8 md:h-10 px-2 md:px-4"
                   >
-                    <Copy className="w-4 h-4 mr-2" />
+                    <Copy className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
                     Copy HTML
                   </Button>
                 </div>
               </div>
-              <div className="flex-1 flex flex-col overflow-hidden">
-                <div className="p-4 border-b border-dashed border-white/10 bg-black/40">
-                  <div className="flex items-end gap-4">
-                    <div className="flex-1">
-                      <Label className="text-xs uppercase font-mono text-gray-400 mb-2 block">
+              <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+                <div className="p-3 md:p-4 border-b border-dashed border-white/10 bg-black/40">
+                  <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
+                    <div className="flex-1 min-w-0">
+                      <Label className="text-[10px] md:text-xs uppercase font-mono text-gray-400 mb-1.5 md:mb-2 block">
                         Subject
                       </Label>
                       <Input
                         value={emailSubject}
                         onChange={(e) => handleSubjectChange(e.target.value)}
                         placeholder="Email subject"
-                        className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-sm"
+                        className="bg-black border border-dashed border-white/20 text-white rounded-none font-mono text-xs md:text-sm"
                       />
                     </div>
                     <Button
                       variant="outline"
                       onClick={() => setShowFieldSimulator(!showFieldSimulator)}
-                      className="h-10 border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+                      className="h-8 md:h-10 border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none text-xs shrink-0"
                     >
                       {showFieldSimulator ? "Hide" : "Show"} Fields
                     </Button>
@@ -767,11 +767,11 @@ export const auth = betterAuth({
                 </div>
 
                 {showFieldSimulator && selectedTemplate && (
-                  <div className="p-4 border-b overflow-hidden border-dashed border-white/10 bg-black/30">
-                    <Label className="text-xs uppercase font-mono text-gray-400 mb-3 block">
+                  <div className="p-3 md:p-4 border-b overflow-y-auto border-dashed border-white/10 bg-black/30 max-h-[200px] md:max-h-full">
+                    <Label className="text-[10px] md:text-xs uppercase font-mono text-gray-400 mb-2 md:mb-3 block">
                       Fields
                     </Label>
-                    <div className="grid grid-cols-2 gap-3 max-h-full overflow-y-hidden">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3 max-h-full overflow-y-hidden">
                       {emailTemplates[selectedTemplate]?.fields.map((field) => (
                         <div key={field}>
                           <Label className="text-xs font-mono text-gray-400 mb-1 block">
@@ -800,11 +800,11 @@ export const auth = betterAuth({
                   </div>
                 )}
                 {selectedTemplate && (
-                  <div className="p-4 border-b border-dashed border-white/10 bg-black/40">
-                    <Label className="text-xs uppercase font-mono text-gray-400 mb-3 block">
+                  <div className="p-3 md:p-4 border-b border-dashed border-white/10 bg-black/40">
+                    <Label className="text-[10px] md:text-xs uppercase font-mono text-gray-400 mb-2 md:mb-3 block">
                       Dynamic Fields
                     </Label>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5 md:gap-2">
                       {emailTemplates[selectedTemplate]?.fields.map((field) => (
                         <div key={field} className="flex items-center gap-1">
                           <Button
@@ -842,7 +842,7 @@ export const auth = betterAuth({
 
       {showCodeModal && selectedTemplate && (
         <div
-          className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 overflow-hidden"
+          className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 overflow-hidden p-3 md:p-6"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowCodeModal(false);
@@ -853,7 +853,7 @@ export const auth = betterAuth({
             className="bg-black border border-white/15 rounded-none p-0 w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-0 pt-2  border-white/15 border-b-0 bg-black/50">
+            <div className="flex items-center justify-between px-3 md:px-6 py-0 pt-2 border-white/15 border-b-0 bg-black/50">
               <div className="flex items-center justify-between p-2 pt-2">
                 <div className="pb-2">
                   <h1 className="text-xl font-normal uppercase text-white tracking-tight">
@@ -880,14 +880,14 @@ export const auth = betterAuth({
               <hr className="w-full border-white/15 h-px" />
             </div>
 
-            <div className="flex-1 overflow-auto p-6 bg-black">
+            <div className="flex-1 overflow-auto p-3 md:p-6 bg-black">
               <CodeBlock
                 code={generateCodeSnippet(selectedTemplate)}
                 language="typescript"
                 fileName="auth.ts"
               />
             </div>
-            <div className="flex items-center justify-end p-6 border-t border-white/15 bg-black/50">
+            <div className="flex items-center justify-end p-3 md:p-6 border-t border-white/15 bg-black/50">
               <Button
                 onClick={handleApplyToAuth}
                 disabled={isApplying}
@@ -902,7 +902,7 @@ export const auth = betterAuth({
 
       {showResendModal && selectedTemplate && (
         <div
-          className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 overflow-hidden"
+          className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 overflow-hidden p-3 md:p-6"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowResendModal(false);
@@ -913,7 +913,7 @@ export const auth = betterAuth({
             className="bg-black border border-white/15 rounded-none p-0 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-white/15 border-b bg-black/50">
+            <div className="flex items-center justify-between px-3 md:px-6 py-3 md:py-4 border-white/15 border-b bg-black/50">
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-xl font-normal uppercase text-white tracking-tight">
@@ -935,10 +935,10 @@ export const auth = betterAuth({
               </Button>
             </div>
 
-            <div className="flex-1 overflow-auto p-8 bg-black">
-              <div className="space-y-6">
+            <div className="flex-1 overflow-auto p-4 md:p-8 bg-black">
+              <div className="space-y-4 md:space-y-6">
                 <div>
-                  <h2 className="text-md font-mono uppercase font-normal text-white mb-3">
+                  <h2 className="text-sm md:text-base font-mono uppercase font-normal text-white mb-2 md:mb-3">
                     Install Resend
                   </h2>
                   <p className="text-gray-300 mb-4 font-sans leading-relaxed">
@@ -1000,7 +1000,7 @@ export const auth = betterAuth({
 
       {showTestEmailModal && selectedTemplate && (
         <div
-          className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 overflow-hidden"
+          className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 overflow-hidden p-3 md:p-6"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowTestEmailModal(false);
@@ -1011,13 +1011,13 @@ export const auth = betterAuth({
             className="bg-black border border-white/15 rounded-none p-0 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-white/15 border-b bg-black/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-xl font-normal uppercase text-white tracking-tight">
+            <div className="flex items-center justify-between px-3 md:px-6 py-3 md:py-4 border-white/15 border-b bg-black/50">
+              <div className="flex items-center justify-between min-w-0">
+                <div className="min-w-0">
+                  <h1 className="text-base md:text-xl font-normal uppercase text-white tracking-tight">
                     Test Email
                   </h1>
-                  <p className="text-gray-300 mt-2 uppercase font-mono font-light text-xs">
+                  <p className="text-gray-300 mt-1 md:mt-2 uppercase font-mono font-light text-[10px] md:text-xs">
                     Send a test email with dynamic values
                   </p>
                 </div>
@@ -1027,13 +1027,13 @@ export const auth = betterAuth({
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowTestEmailModal(false)}
-                className="text-gray-400 hover:text-white rounded-none"
+                className="text-gray-400 hover:text-white rounded-none flex-shrink-0"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
 
-            <div className="flex-1 overflow-auto p-8 bg-black">
+            <div className="flex-1 overflow-auto p-4 md:p-8 bg-black">
               <div className="space-y-6">
                 {resendApiKeyStatus === "checking" && (
                   <div className="bg-black/90 flex border p-4 rounded-none border-dashed border-white/20">

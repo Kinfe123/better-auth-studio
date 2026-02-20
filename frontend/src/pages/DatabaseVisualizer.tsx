@@ -378,20 +378,20 @@ export default function DatabaseVisualizer() {
 
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="p-3 md:p-6">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-700 rounded w-1/3 mb-6"></div>
-          <div className="h-96 bg-gray-700 rounded"></div>
+          <div className="h-6 md:h-8 bg-gray-700 rounded w-1/2 md:w-1/3 mb-4 md:mb-6"></div>
+          <div className="h-64 md:h-96 bg-gray-700 rounded"></div>
         </div>
-        <div className="text-center text-gray-500 dark:text-gray-400 mt-4">Loading schema...</div>
+        <div className="text-center text-gray-500 dark:text-gray-400 mt-4 text-sm md:text-base">Loading schema...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6">
-        <div className="bg-red-900/10 border border-red-300/20 border-dashed rounded-none p-6">
+      <div className="p-3 md:p-6">
+        <div className="bg-red-900/10 border border-red-300/20 border-dashed rounded-none p-4 md:p-6">
           <h2 className="text-md font-light uppercase font-mono text-red-400 mb-2">
             Error Loading Schema
           </h2>
@@ -411,32 +411,32 @@ export default function DatabaseVisualizer() {
 
   const mainContent = (
     <>
-      <div className="space-y-8">
-        <div className="flex items-center justify-between p-5 pt-7">
-          <div>
-            <h1 className="text-3xl font-normal text-white tracking-tight">Schema Visualizer</h1>
-            <p className="text-gray-300 mt-2 uppercase font-mono font-light text-xs">
+      <div className="space-y-4 md:space-y-8">
+        <div className="flex items-center justify-between p-3 md:p-5 pt-4 md:pt-7">
+          <div className="min-w-0">
+            <h1 className="text-xl md:text-3xl font-normal text-white tracking-tight">Schema Visualizer</h1>
+            <p className="text-gray-300 mt-1 md:mt-2 uppercase font-mono font-light text-[10px] md:text-xs">
               Visualize your Better Auth database schema with interactive tables and relationships.
             </p>
           </div>
         </div>
-        <div className="flex flex-col items-center space-y-8 mb-4">
+        <div className="flex flex-col items-center space-y-8 mb-2 md:mb-4">
           <hr className="w-full border-white/15 h-px" />
           <hr className="w-full border-white/15 h-px" />
         </div>
       </div>
-      <div className="flex-1 grid grid-cols-4 gap-6 mt-6">
-        <div className="col-span-1 space-y-4">
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mt-4 md:mt-6 min-h-0">
+        <div className="md:col-span-1 space-y-4 order-2 md:order-1">
           <Card className="rounded-none bg-black h-fit shadow-sm border border-white/15">
-            <CardHeader className="border-b border-white/15 pb-3 -pt-2 mb-2">
-              <CardTitle className="font-light text-xl text-white flex items-center space-x-2">
-                <Settings className="w-4 h-4" />
-                <span className="uppercase font-mono text-xs tracking-tight">Detected Tables</span>
+            <CardHeader className="border-b border-white/15 pb-2 md:pb-3 -pt-2 mb-2 px-3 md:px-6 pt-3 md:pt-6">
+              <CardTitle className="font-light text-base md:text-xl text-white flex items-center space-x-2">
+                <Settings className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                <span className="uppercase font-mono text-[10px] md:text-xs tracking-tight">Detected Tables</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 px-3 md:px-6 pb-3 md:pb-6">
               {schema && schema.tables.length > 0 ? (
-                <div className="space-y-3 max-h-80 overflow-y-auto pr-1 custom-scroll">
+                <div className="space-y-2 md:space-y-3 max-h-48 md:max-h-80 overflow-y-auto pr-1 custom-scroll">
                   {schema.tables.map((table) => (
                     <button
                       key={table.name}
@@ -457,19 +457,19 @@ export default function DatabaseVisualizer() {
                           setHighlightedTableName(null);
                         }
                       }}
-                      className={`w-full text-left border p-3 rounded-none transition-colors ${
+                      className={`w-full text-left border p-2.5 md:p-3 rounded-none transition-colors ${
                         highlightedTableName === table.name
                           ? "border-blue-500/50 bg-blue-500/10"
                           : "border-white/10 hover:border-white/20 hover:bg-white/5"
                       }`}
                     >
-                      <div className="flex items-center justify-between text-sm text-white">
-                        <span>{table.displayName}</span>
-                        <span className="text-xs uppercase font-mono text-gray-400">
+                      <div className="flex items-center justify-between text-xs md:text-sm text-white">
+                        <span className="truncate">{table.displayName}</span>
+                        <span className="text-[10px] md:text-xs uppercase font-mono text-gray-400 flex-shrink-0 ml-1">
                           {table.origin === "core" ? "Core" : "Extended"}
                         </span>
                       </div>
-                      <div className="text-xs text-gray-400 mt-1">
+                      <div className="text-[10px] md:text-xs text-gray-400 mt-0.5 md:mt-1">
                         {table.fields.length} fields · {table.relationships.length} relationships
                       </div>
                     </button>
@@ -485,13 +485,13 @@ export default function DatabaseVisualizer() {
 
           {schema && (
             <Card className="rounded-none bg-black shadow-sm border border-white/15">
-              <CardHeader className="border-b border-white/15 pb-3 -pt-2 mb-2">
-                <CardTitle className="font-light text-xl text-white flex items-center space-x-2">
-                  <Analytics className="w-4 h-4" />
-                  <span className="uppercase font-mono text-xs tracking-tight">Schema Summary</span>
+              <CardHeader className="border-b border-white/15 pb-2 md:pb-3 -pt-2 mb-2 px-3 md:px-6 pt-3 md:pt-6">
+                <CardTitle className="font-light text-base md:text-xl text-white flex items-center space-x-2">
+                  <Analytics className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <span className="uppercase font-mono text-[10px] md:text-xs tracking-tight">Schema Summary</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 pt-2">
+              <CardContent className="space-y-2 md:space-y-3 pt-2 px-3 md:px-6 pb-3 md:pb-6">
                 <div className="flex justify-between items-baseline">
                   <span className="text-gray-400 uppercase font-mono text-xs tracking-wider">
                     Tables
@@ -522,10 +522,10 @@ export default function DatabaseVisualizer() {
 
           {pluginContributions.length > 0 && (
             <Card className="rounded-none bg-black shadow-sm border border-white/15">
-              <CardHeader>
-                <CardTitle className="text-white text-sm">Enabled Plugins</CardTitle>
+              <CardHeader className="px-3 md:px-6 pt-3 md:pt-6 pb-2">
+                <CardTitle className="text-white text-xs md:text-sm">Enabled Plugins</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 text-sm">
+              <CardContent className="space-y-2 md:space-y-3 text-xs md:text-sm px-3 md:px-6 pb-3 md:pb-6">
                 {pluginContributions.map((contribution) => (
                   <div
                     key={contribution.pluginId}
@@ -557,15 +557,15 @@ export default function DatabaseVisualizer() {
           )}
         </div>
 
-        <div className="col-span-3">
-          <div className="h-full bg-black border border-white/20 rounded-lg overflow-hidden shadow-xl relative">
+        <div className="md:col-span-3 order-1 md:order-2 min-h-[320px] md:min-h-[480px]">
+          <div className="h-full min-h-[320px] md:min-h-0 bg-black border border-white/20 rounded-none md:rounded-lg overflow-hidden shadow-xl relative">
             {highlightedTableName && (
-              <div className="absolute top-4 right-4 z-10">
+              <div className="absolute top-2 right-2 md:top-4 md:right-4 z-10">
                 <Button
                   onClick={() => setHighlightedTableName(null)}
                   variant="outline"
                   size="sm"
-                  className="bg-black/80 border-white/20 text-white hover:bg-white/10 rounded-none text-xs"
+                  className="bg-black/80 border-white/20 text-white hover:bg-white/10 rounded-none text-[10px] md:text-xs h-7 md:h-8 px-2 md:px-3"
                 >
                   Clear Selection
                 </Button>
@@ -618,23 +618,23 @@ export default function DatabaseVisualizer() {
   );
 
   return (
-    <div className="h-screen flex flex-col bg-black">
+    <div className="min-h-screen md:h-screen flex flex-col bg-black">
       {mainContent}
 
       {selectedTable && (
         <div
-          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-3 md:p-6"
           onClick={() => setSelectedTable(null)}
         >
           <div
-            className="bg-black border border-dashed border-white/20 rounded-none w-full max-w-3xl max-h-[75vh] flex flex-col"
+            className="bg-black border border-dashed border-white/20 rounded-none w-full max-w-3xl max-h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex-shrink-0 p-5 pb-4 border-b border-dashed border-white/20 bg-black sticky top-0 z-10">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-light text-white">{selectedTable.displayName}</h3>
-                  <p className="text-xs text-gray-400 mt-0.5 uppercase font-mono">
+            <div className="flex-shrink-0 p-3 md:p-5 pb-3 md:pb-4 border-b border-dashed border-white/20 bg-black sticky top-0 z-10">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <h3 className="text-base md:text-xl font-light text-white truncate">{selectedTable.displayName}</h3>
+                  <p className="text-[10px] md:text-xs text-gray-400 mt-0.5 uppercase font-mono truncate">
                     {selectedTable.name} · {selectedTable.origin === "core" ? "Core" : "Extended"}
                   </p>
                 </div>
@@ -642,14 +642,14 @@ export default function DatabaseVisualizer() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setSelectedTable(null)}
-                  className="text-gray-400 hover:text-white rounded-none"
+                  className="text-gray-400 hover:text-white rounded-none flex-shrink-0"
                 >
                   <X className="w-4 h-4" />
                 </Button>
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-5 pt-4">
+            <div className="flex-1 overflow-y-auto p-3 md:p-5 pt-3 md:pt-4">
               <div className="mb-6">
                 <h4 className="text-xs uppercase font-mono text-gray-400 mb-3 tracking-wider">
                   Fields
@@ -771,29 +771,29 @@ export default function DatabaseVisualizer() {
                 </div>
               )}
 
-              <div className="border-t border-dashed border-white/20 pt-4 mt-6">
-                <div className="grid grid-cols-3 gap-6">
+              <div className="border-t border-dashed border-white/20 pt-3 md:pt-4 mt-4 md:mt-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
                   <div className="space-y-1">
-                    <span className="text-gray-400 uppercase font-mono text-xs tracking-wider block">
+                    <span className="text-gray-400 uppercase font-mono text-[10px] md:text-xs tracking-wider block">
                       Fields
                     </span>
-                    <p className="text-white text-lg font-mono font-light">
+                    <p className="text-white text-base md:text-lg font-mono font-light">
                       {selectedTable.fields.length}
                     </p>
                   </div>
-                  <div className="border-l border-dashed border-white/20 pl-6 space-y-1">
-                    <span className="text-gray-400 uppercase font-mono text-xs tracking-wider block">
+                  <div className="border-l-0 sm:border-l border-dashed border-white/20 pl-0 sm:pl-6 space-y-1">
+                    <span className="text-gray-400 uppercase font-mono text-[10px] md:text-xs tracking-wider block">
                       Relationships
                     </span>
-                    <p className="text-white text-lg font-mono font-light">
+                    <p className="text-white text-base md:text-lg font-mono font-light">
                       {selectedTable.relationships.length}
                     </p>
                   </div>
-                  <div className="border-l border-dashed border-white/20 pl-6 space-y-1">
-                    <span className="text-gray-400 uppercase font-mono text-xs tracking-wider block">
+                  <div className="border-l-0 sm:border-l border-dashed border-white/20 pl-0 sm:pl-6 space-y-1">
+                    <span className="text-gray-400 uppercase font-mono text-[10px] md:text-xs tracking-wider block">
                       Origin
                     </span>
-                    <p className="text-white text-sm uppercase font-mono font-light">
+                    <p className="text-white text-xs md:text-sm uppercase font-mono font-light">
                       {selectedTable.origin === "core" ? "Core" : "Extended"}
                     </p>
                   </div>
