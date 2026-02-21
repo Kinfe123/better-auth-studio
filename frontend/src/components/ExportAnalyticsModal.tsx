@@ -615,178 +615,265 @@ export function ExportAnalyticsModal({
 
           {/* Card always renders at 740×380; 10px blank margin outside the border */}
           <CardScaleWrapper width={740} height={380}>
-          <div
-            ref={cardRef}
-            className="bg-black"
-            style={{
-              width: 740,
-              height: 380,
-              padding: 10,
-            }}
-          >
             <div
-              className="relative overflow-hidden"
-              style={{ width: "100%", height: "100%", background: "#000" }}
+              ref={cardRef}
+              className="bg-black"
+              style={{
+                width: 740,
+                height: 380,
+                padding: 10,
+              }}
             >
-              {shaderDataUrl && (
-                <img
-                  src={shaderDataUrl}
-                  alt=""
+              <div
+                className="relative overflow-hidden"
+                style={{ width: "100%", height: "100%", background: "#000" }}
+              >
+                {shaderDataUrl && (
+                  <img
+                    src={shaderDataUrl}
+                    alt=""
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      width: "100%",
+                      height: "100%",
+                      opacity: 0.02,
+                      pointerEvents: "none",
+                    }}
+                  />
+                )}
+
+                <div
                   style={{
                     position: "absolute",
                     inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    opacity: 0.02,
-                    pointerEvents: "none",
+                    border: "1px solid rgba(255,255,255,0.1)",
                   }}
                 />
-              )}
 
-              <div style={{ position: "absolute", inset: 0, border: "1px solid rgba(255,255,255,0.1)" }} />
+                {/* Top-left corner */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: 20,
+                    height: 1,
+                    background: "rgba(255,255,255,0.2)",
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: 1,
+                    height: 20,
+                    background: "rgba(255,255,255,0.2)",
+                  }}
+                />
+                {/* Top-right corner */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    width: 20,
+                    height: 1,
+                    background: "rgba(255,255,255,0.2)",
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    width: 1,
+                    height: 20,
+                    background: "rgba(255,255,255,0.2)",
+                  }}
+                />
+                {/* Bottom-left corner */}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    width: 20,
+                    height: 1,
+                    background: "rgba(255,255,255,0.2)",
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    width: 1,
+                    height: 20,
+                    background: "rgba(255,255,255,0.2)",
+                  }}
+                />
+                {/* Bottom-right corner */}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    width: 20,
+                    height: 1,
+                    background: "rgba(255,255,255,0.2)",
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    width: 1,
+                    height: 20,
+                    background: "rgba(255,255,255,0.2)",
+                  }}
+                />
 
-              {/* Top-left corner */}
-              <div style={{ position: "absolute", top: 0, left: 0, width: 20, height: 1, background: "rgba(255,255,255,0.2)" }} />
-              <div style={{ position: "absolute", top: 0, left: 0, width: 1, height: 20, background: "rgba(255,255,255,0.2)" }} />
-              {/* Top-right corner */}
-              <div style={{ position: "absolute", top: 0, right: 0, width: 20, height: 1, background: "rgba(255,255,255,0.2)" }} />
-              <div style={{ position: "absolute", top: 0, right: 0, width: 1, height: 20, background: "rgba(255,255,255,0.2)" }} />
-              {/* Bottom-left corner */}
-              <div style={{ position: "absolute", bottom: 0, left: 0, width: 20, height: 1, background: "rgba(255,255,255,0.2)" }} />
-              <div style={{ position: "absolute", bottom: 0, left: 0, width: 1, height: 20, background: "rgba(255,255,255,0.2)" }} />
-              {/* Bottom-right corner */}
-              <div style={{ position: "absolute", bottom: 0, right: 0, width: 20, height: 1, background: "rgba(255,255,255,0.2)" }} />
-              <div style={{ position: "absolute", bottom: 0, right: 0, width: 1, height: 20, background: "rgba(255,255,255,0.2)" }} />
+                <div
+                  className="relative z-10 h-full flex flex-col"
+                  style={{ padding: "20px 24px" }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      {logoDataUrl && (
+                        <img src={logoDataUrl} alt="" style={{ width: 32, height: 32 }} />
+                      )}
+                      <div>
+                        <div
+                          className="text-white font-mono font-light tracking-widest uppercase"
+                          style={{ fontSize: 14 }}
+                        >
+                          Better-Auth Studio
+                        </div>
+                        <div
+                          className="text-white/40 font-mono tracking-wider uppercase"
+                          style={{ fontSize: 9, marginTop: 2 }}
+                        >
+                          Summary of your analytics
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-white/30 font-mono text-[8px] tracking-wider uppercase">
+                        {title}
+                      </div>
+                      <div className="text-white/70 font-mono text-[10px] tracking-wider uppercase">
+                        {periodLabel}
+                      </div>
+                    </div>
+                  </div>
 
-              <div className="relative z-10 h-full flex flex-col" style={{ padding: "20px 24px" }}>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    {logoDataUrl && (
-                      <img src={logoDataUrl} alt="" style={{ width: 32, height: 32 }} />
+                  <div
+                    style={{ marginTop: 12, marginBottom: 12, marginLeft: -24, marginRight: -24 }}
+                  >
+                    <div
+                      style={{ height: 1, width: "100%", background: "rgba(255,255,255,0.1)" }}
+                    />
+                    <div
+                      style={{
+                        height: 12,
+                        width: "100%",
+                        background:
+                          "repeating-linear-gradient(-45deg,#ffffff,#ffffff 1px,transparent 1px,transparent 6px)",
+                        opacity: 0.04,
+                      }}
+                    />
+                    <div
+                      style={{ height: 1, width: "100%", background: "rgba(255,255,255,0.1)" }}
+                    />
+                  </div>
+
+                  <div className="flex-1 flex flex-col" style={{ minHeight: 0 }}>
+                    <div className="flex flex-wrap" style={{ gap: "12px 24px" }}>
+                      {mergedAnalyticsTypes.map((at) => {
+                        const d = analyticsMap[at.type];
+                        const total = d?.total ?? 0;
+                        const pct = d?.percentageChange ?? 0;
+                        return (
+                          <div key={at.type} style={{ minWidth: 90 }}>
+                            <div
+                              className="text-white/40 font-mono tracking-wider uppercase"
+                              style={{ fontSize: 8 }}
+                            >
+                              {at.label}
+                            </div>
+                            <div className="flex items-baseline" style={{ gap: 6, marginTop: 2 }}>
+                              <span
+                                className="text-white font-mono font-light"
+                                style={{ fontSize: 18 }}
+                              >
+                                {loading ? "..." : total.toLocaleString()}
+                              </span>
+                              {!loading && <PercentageBadge value={pct} />}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {primaryType && (
+                      <div style={{ marginTop: 16 }}>
+                        <div
+                          className="text-white/30 font-mono tracking-wider uppercase"
+                          style={{ fontSize: 8, marginBottom: 6 }}
+                        >
+                          {primaryType.label} — Trend
+                        </div>
+                        {loading ? (
+                          <div className="flex items-center justify-center" style={{ height: 80 }}>
+                            <span className="text-white/20 font-mono" style={{ fontSize: 10 }}>
+                              Loading...
+                            </span>
+                          </div>
+                        ) : (
+                          <div style={{ width: "100%" }}>
+                            <FullWidthBarChart data={chartData} labels={chartLabels} />
+                          </div>
+                        )}
+                      </div>
                     )}
+
+                    <div style={{ flex: 1 }} />
+
                     <div>
                       <div
-                        className="text-white font-mono font-light tracking-widest uppercase"
-                        style={{ fontSize: 14 }}
-                      >
-                        Better-Auth Studio
-                      </div>
-                      <div
-                        className="text-white/40 font-mono tracking-wider uppercase"
-                        style={{ fontSize: 9, marginTop: 2 }}
-                      >
-                        Summary of your analytics
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-white/30 font-mono text-[8px] tracking-wider uppercase">
-                      {title}
-                    </div>
-                    <div className="text-white/70 font-mono text-[10px] tracking-wider uppercase">
-                      {periodLabel}
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ marginTop: 12, marginBottom: 12, marginLeft: -24, marginRight: -24 }}>
-                  <div style={{ height: 1, width: "100%", background: "rgba(255,255,255,0.1)" }} />
-                  <div
-                    style={{
-                      height: 12,
-                      width: "100%",
-                      background:
-                        "repeating-linear-gradient(-45deg,#ffffff,#ffffff 1px,transparent 1px,transparent 6px)",
-                      opacity: 0.04,
-                    }}
-                  />
-                  <div style={{ height: 1, width: "100%", background: "rgba(255,255,255,0.1)" }} />
-                </div>
-
-                <div className="flex-1 flex flex-col" style={{ minHeight: 0 }}>
-                  <div className="flex flex-wrap" style={{ gap: "12px 24px" }}>
-                    {mergedAnalyticsTypes.map((at) => {
-                      const d = analyticsMap[at.type];
-                      const total = d?.total ?? 0;
-                      const pct = d?.percentageChange ?? 0;
-                      return (
-                        <div key={at.type} style={{ minWidth: 90 }}>
-                          <div
-                            className="text-white/40 font-mono tracking-wider uppercase"
-                            style={{ fontSize: 8 }}
-                          >
-                            {at.label}
-                          </div>
-                          <div className="flex items-baseline" style={{ gap: 6, marginTop: 2 }}>
-                            <span
-                              className="text-white font-mono font-light"
-                              style={{ fontSize: 18 }}
+                        className="bg-white/10"
+                        style={{ height: 1, width: "100%", marginBottom: 8 }}
+                      />
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center" style={{ gap: 16 }}>
+                          {footerStats.map((stat) => (
+                            <div
+                              key={stat.key}
+                              className="text-white/25 font-mono tracking-wider uppercase"
+                              style={{ fontSize: 8 }}
                             >
-                              {loading ? "..." : total.toLocaleString()}
-                            </span>
-                            {!loading && <PercentageBadge value={pct} />}
-                          </div>
+                              {stat.label}:{" "}
+                              {(counts as unknown as Record<string, number | undefined>)[
+                                stat.key
+                              ]?.toLocaleString() ?? "—"}
+                            </div>
+                          ))}
                         </div>
-                      );
-                    })}
-                  </div>
-
-                  {primaryType && (
-                    <div style={{ marginTop: 16 }}>
-                      <div
-                        className="text-white/30 font-mono tracking-wider uppercase"
-                        style={{ fontSize: 8, marginBottom: 6 }}
-                      >
-                        {primaryType.label} — Trend
-                      </div>
-                      {loading ? (
-                        <div className="flex items-center justify-center" style={{ height: 80 }}>
-                          <span className="text-white/20 font-mono" style={{ fontSize: 10 }}>
-                            Loading...
-                          </span>
+                        <div
+                          className="text-white/20 font-mono tracking-wider uppercase"
+                          style={{ fontSize: 7 }}
+                        >
+                          {format(new Date(), "MMM dd, yyyy · HH:mm")}
                         </div>
-                      ) : (
-                        <div style={{ width: "100%" }}>
-                          <FullWidthBarChart data={chartData} labels={chartLabels} />
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  <div style={{ flex: 1 }} />
-
-                  <div>
-                    <div
-                      className="bg-white/10"
-                      style={{ height: 1, width: "100%", marginBottom: 8 }}
-                    />
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center" style={{ gap: 16 }}>
-                        {footerStats.map((stat) => (
-                          <div
-                            key={stat.key}
-                            className="text-white/25 font-mono tracking-wider uppercase"
-                            style={{ fontSize: 8 }}
-                          >
-                            {stat.label}:{" "}
-                            {(counts as unknown as Record<string, number | undefined>)[
-                              stat.key
-                            ]?.toLocaleString() ?? "—"}
-                          </div>
-                        ))}
-                      </div>
-                      <div
-                        className="text-white/20 font-mono tracking-wider uppercase"
-                        style={{ fontSize: 7 }}
-                      >
-                        {format(new Date(), "MMM dd, yyyy · HH:mm")}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
           </CardScaleWrapper>
 
           {/* Export Buttons */}
