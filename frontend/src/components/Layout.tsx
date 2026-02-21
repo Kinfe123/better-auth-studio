@@ -9,6 +9,7 @@ import {
   RefreshCw,
   Search,
   Settings,
+  Share2,
   User,
   Users,
   Wrench,
@@ -18,6 +19,7 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { assetPath } from "@/lib/utils";
 import { getVisibleToolsCount } from "@/lib/studio-tools";
+import { ExportAnalyticsModal } from "./ExportAnalyticsModal";
 import { useCounts } from "../contexts/CountsContext";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { buildApiUrl } from "../utils/api";
@@ -126,6 +128,7 @@ export default function Layout({ children }: LayoutProps) {
   const { counts, loading } = useCounts();
   const navigate = useNavigate();
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [showExportAnalytics, setShowExportAnalytics] = useState(false);
   const [studioVersion, setStudioVersion] = useState("v1.0.0");
   const [watchState, setWatchState] = useState<WatchIndicatorState>({
     status: "connecting",
@@ -504,6 +507,17 @@ export default function Layout({ children }: LayoutProps) {
                       >
                         <RefreshCw className="h-3.5 w-3.5" />
                       </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowExportAnalytics(true);
+                        }}
+                        aria-label="Export analytics"
+                        className="ml-1 inline-flex items-center rounded border border-dashed border-white/20 p-0.5 text-white/70 transition hover:text-white hover:border-white/50"
+                      >
+                        <Share2 className="h-3.5 w-3.5" />
+                      </button>
                     </sup>
                   </h1>
                 </a>
@@ -539,6 +553,14 @@ export default function Layout({ children }: LayoutProps) {
                         className="ml-1 inline-flex items-center rounded border border-dashed border-white/20 p-0.5 text-white/70 transition hover:text-white hover:border-white/50"
                       >
                         <RefreshCw className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowExportAnalytics(true)}
+                        aria-label="Export analytics"
+                        className="ml-1 inline-flex items-center rounded border border-dashed border-white/20 p-0.5 text-white/70 transition hover:text-white hover:border-white/50"
+                      >
+                        <Share2 className="h-3.5 w-3.5" />
                       </button>
                     </sup>
                   </h1>
@@ -822,6 +844,12 @@ export default function Layout({ children }: LayoutProps) {
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
       />
+      {showExportAnalytics && (
+        <ExportAnalyticsModal
+          defaultMode="overview"
+          onClose={() => setShowExportAnalytics(false)}
+        />
+      )}
     </div>
   );
 }

@@ -1412,6 +1412,7 @@ export default function Organizations() {
           </div>
         </div>
       )}
+
     </div>
   );
 }

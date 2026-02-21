@@ -135,7 +135,8 @@ export async function handleStudioRequest(request, config) {
         if (path.startsWith("/assets/") ||
             path === "/vite.svg" ||
             path === "/favicon.svg" ||
-            path === "/logo.png") {
+            path === "/logo.png" ||
+            path === "/shaders.png") {
             return handleStaticFile(path, config);
         }
         if (path === "/") {

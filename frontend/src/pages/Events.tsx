@@ -1998,6 +1998,7 @@ export const auth = betterAuth({
           display: none;
         }
       `}</style>
+
     </div>
   );
 }

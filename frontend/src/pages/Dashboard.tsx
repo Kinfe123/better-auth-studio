@@ -2587,6 +2587,7 @@ export default function Dashboard() {
           background: rgba(255, 255, 255, 0.3);
         }
       `}</style>
+
     </div>
   );
 }
