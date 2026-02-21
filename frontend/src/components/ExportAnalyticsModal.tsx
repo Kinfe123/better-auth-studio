@@ -242,6 +242,45 @@ function PercentageBadge({ value }: { value: number }) {
   );
 }
 
+function CardScaleWrapper({
+  width,
+  height,
+  children,
+}: {
+  width: number;
+  height: number;
+  children: React.ReactNode;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => setScale(Math.min(1, el.clientWidth / width));
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [width]);
+
+  return (
+    <div ref={containerRef} style={{ width: "100%", maxWidth: width, margin: "0 auto" }}>
+      <div
+        style={{
+          width,
+          height: height * scale,
+          overflow: "hidden",
+        }}
+      >
+        <div style={{ width, transformOrigin: "top left", transform: `scale(${scale})` }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function useImageAsDataUrl(src: string): string | null {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   useEffect(() => {
@@ -401,24 +440,14 @@ export function ExportAnalyticsModal({
     if (!cardRef.current) return;
     setExporting(true);
     try {
-      const el = cardRef.current;
-      const origWidth = el.style.width;
-      const origHeight = el.style.height;
-      const origMaxWidth = el.style.maxWidth;
-      el.style.width = "720px";
-      el.style.height = "360px";
-      el.style.maxWidth = "none";
-
-      const dataUrl = await toPng(el, {
+      const dataUrl = await toPng(cardRef.current, {
         pixelRatio: 3,
         backgroundColor: "#000000",
+        width: 720,
+        height: 360,
         canvasWidth: 720 * 3,
         canvasHeight: 360 * 3,
       });
-
-      el.style.width = origWidth;
-      el.style.height = origHeight;
-      el.style.maxWidth = origMaxWidth;
 
       if (action === "download") {
         const link = document.createElement("a");
@@ -584,14 +613,14 @@ export function ExportAnalyticsModal({
             Preview
           </div>
 
+          {/* Card always renders at 720×360; wrapper scales it to fit */}
+          <CardScaleWrapper width={720} height={360}>
           <div
             ref={cardRef}
             className="relative overflow-hidden bg-black"
             style={{
               width: 720,
               height: 360,
-              maxWidth: "100%",
-              margin: "0 auto",
             }}
           >
             {shaderDataUrl && (
@@ -748,6 +777,7 @@ export function ExportAnalyticsModal({
               </div>
             </div>
           </div>
+          </CardScaleWrapper>
 
           {/* Export Buttons */}
           <div className="flex flex-col sm:flex-row justify-end gap-2 pt-2">
