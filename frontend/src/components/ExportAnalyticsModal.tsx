@@ -10,12 +10,7 @@ import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
-export type ExportMode =
-  | "overview"
-  | "users"
-  | "activity"
-  | "organizations"
-  | "teams";
+export type ExportMode = "overview" | "users" | "activity" | "organizations" | "teams";
 
 const INDIVIDUAL_MODES: Exclude<ExportMode, "overview">[] = [
   "users",
@@ -53,15 +48,11 @@ const MODE_ANALYTICS: Record<
   },
   activity: {
     subtitle: "Activity and engagement metrics",
-    analyticsTypes: [
-      { type: "sessions", label: "Sessions" },
-    ],
+    analyticsTypes: [{ type: "sessions", label: "Sessions" }],
   },
   organizations: {
     subtitle: "Organization growth",
-    analyticsTypes: [
-      { type: "organizations", label: "Organizations" },
-    ],
+    analyticsTypes: [{ type: "organizations", label: "Organizations" }],
   },
   teams: {
     subtitle: "Team analytics",
@@ -94,10 +85,7 @@ function formatAxisValue(value: number): string {
   return String(Math.round(value));
 }
 
-function pickAxisLabels(
-  labels: string[],
-  maxLabels: number,
-): { label: string; index: number }[] {
+function pickAxisLabels(labels: string[], maxLabels: number): { label: string; index: number }[] {
   if (labels.length <= maxLabels) {
     return labels.map((l, i) => ({ label: l, index: i }));
   }
@@ -112,13 +100,7 @@ function pickAxisLabels(
   return result;
 }
 
-function FullWidthBarChart({
-  data,
-  labels,
-}: {
-  data: number[];
-  labels: string[];
-}) {
+function FullWidthBarChart({ data, labels }: { data: number[]; labels: string[] }) {
   if (!data.length) return null;
 
   const max = Math.max(...data, 1);
@@ -291,15 +273,13 @@ export function ExportAnalyticsModal({
   initialMode = "overview",
 }: ExportAnalyticsModalProps) {
   const effectiveInitialMode = defaultMode ?? initialMode;
-  const [selectedModes, setSelectedModes] = useState<
-    Set<Exclude<ExportMode, "overview">>
-  >(new Set(INDIVIDUAL_MODES));
+  const [selectedModes, setSelectedModes] = useState<Set<Exclude<ExportMode, "overview">>>(
+    new Set(INDIVIDUAL_MODES),
+  );
   const [period, setPeriod] = useState("1W");
   const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
   const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
-  const [analyticsMap, setAnalyticsMap] = useState<Record<string, AnalyticsData>>(
-    {},
-  );
+  const [analyticsMap, setAnalyticsMap] = useState<Record<string, AnalyticsData>>({});
   const [loading, setLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -381,16 +361,13 @@ export function ExportAnalyticsModal({
     return result;
   }, [selectedModes]);
 
-  const fetchAnalytics = useCallback(
-    async (type: string, p: string, from?: Date, to?: Date) => {
-      const params = new URLSearchParams({ type, period: p });
-      if (from) params.append("from", from.toISOString());
-      if (to) params.append("to", to.toISOString());
-      const response = await fetch(`/api/analytics?${params.toString()}`);
-      return (await response.json()) as AnalyticsData;
-    },
-    [],
-  );
+  const fetchAnalytics = useCallback(async (type: string, p: string, from?: Date, to?: Date) => {
+    const params = new URLSearchParams({ type, period: p });
+    if (from) params.append("from", from.toISOString());
+    if (to) params.append("to", to.toISOString());
+    const response = await fetch(`/api/analytics?${params.toString()}`);
+    return (await response.json()) as AnalyticsData;
+  }, []);
 
   useEffect(() => {
     if (!open || mergedAnalyticsTypes.length === 0) return;
@@ -400,9 +377,7 @@ export function ExportAnalyticsModal({
       setLoading(true);
       try {
         const results = await Promise.all(
-          mergedAnalyticsTypes.map((at) =>
-            fetchAnalytics(at.type, period, dateFrom, dateTo),
-          ),
+          mergedAnalyticsTypes.map((at) => fetchAnalytics(at.type, period, dateFrom, dateTo)),
         );
         if (cancelled) return;
         const map: Record<string, AnalyticsData> = {};
@@ -453,9 +428,7 @@ export function ExportAnalyticsModal({
         toast.success("Image downloaded");
       } else {
         const blob = await (await fetch(dataUrl)).blob();
-        await navigator.clipboard.write([
-          new ClipboardItem({ "image/png": blob }),
-        ]);
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
         toast.success("Copied to clipboard");
       }
     } catch {
@@ -468,9 +441,7 @@ export function ExportAnalyticsModal({
   if (!open) return null;
 
   const primaryType = mergedAnalyticsTypes[0];
-  const primaryAnalytics = primaryType
-    ? analyticsMap[primaryType.type]
-    : undefined;
+  const primaryAnalytics = primaryType ? analyticsMap[primaryType.type] : undefined;
   const chartData = primaryAnalytics?.data || [];
   const chartLabels = primaryAnalytics?.labels || [];
 
@@ -653,17 +624,19 @@ export function ExportAnalyticsModal({
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   {logoDataUrl && (
-                    <img
-                      src={logoDataUrl}
-                      alt=""
-                      style={{ width: 32, height: 32 }}
-                    />
+                    <img src={logoDataUrl} alt="" style={{ width: 32, height: 32 }} />
                   )}
                   <div>
-                    <div className="text-white font-mono font-light tracking-widest uppercase" style={{ fontSize: 14 }}>
+                    <div
+                      className="text-white font-mono font-light tracking-widest uppercase"
+                      style={{ fontSize: 14 }}
+                    >
                       Better-Auth Studio
                     </div>
-                    <div className="text-white/40 font-mono tracking-wider uppercase" style={{ fontSize: 9, marginTop: 2 }}>
+                    <div
+                      className="text-white/40 font-mono tracking-wider uppercase"
+                      style={{ fontSize: 9, marginTop: 2 }}
+                    >
                       Summary of your analytics
                     </div>
                   </div>
@@ -680,7 +653,15 @@ export function ExportAnalyticsModal({
 
               <div style={{ marginTop: 12, marginBottom: 12, marginLeft: -24, marginRight: -24 }}>
                 <div style={{ height: 1, width: "100%", background: "rgba(255,255,255,0.1)" }} />
-                <div style={{ height: 12, width: "100%", background: "repeating-linear-gradient(-45deg,#ffffff,#ffffff 1px,transparent 1px,transparent 6px)", opacity: 0.04 }} />
+                <div
+                  style={{
+                    height: 12,
+                    width: "100%",
+                    background:
+                      "repeating-linear-gradient(-45deg,#ffffff,#ffffff 1px,transparent 1px,transparent 6px)",
+                    opacity: 0.04,
+                  }}
+                />
                 <div style={{ height: 1, width: "100%", background: "rgba(255,255,255,0.1)" }} />
               </div>
 
@@ -692,11 +673,17 @@ export function ExportAnalyticsModal({
                     const pct = d?.percentageChange ?? 0;
                     return (
                       <div key={at.type} style={{ minWidth: 90 }}>
-                        <div className="text-white/40 font-mono tracking-wider uppercase" style={{ fontSize: 8 }}>
+                        <div
+                          className="text-white/40 font-mono tracking-wider uppercase"
+                          style={{ fontSize: 8 }}
+                        >
                           {at.label}
                         </div>
                         <div className="flex items-baseline" style={{ gap: 6, marginTop: 2 }}>
-                          <span className="text-white font-mono font-light" style={{ fontSize: 18 }}>
+                          <span
+                            className="text-white font-mono font-light"
+                            style={{ fontSize: 18 }}
+                          >
                             {loading ? "..." : total.toLocaleString()}
                           </span>
                           {!loading && <PercentageBadge value={pct} />}
@@ -708,7 +695,10 @@ export function ExportAnalyticsModal({
 
                 {primaryType && (
                   <div style={{ marginTop: 16 }}>
-                    <div className="text-white/30 font-mono tracking-wider uppercase" style={{ fontSize: 8, marginBottom: 6 }}>
+                    <div
+                      className="text-white/30 font-mono tracking-wider uppercase"
+                      style={{ fontSize: 8, marginBottom: 6 }}
+                    >
                       {primaryType.label} — Trend
                     </div>
                     {loading ? (
@@ -719,10 +709,7 @@ export function ExportAnalyticsModal({
                       </div>
                     ) : (
                       <div style={{ width: "100%" }}>
-                        <FullWidthBarChart
-                          data={chartData}
-                          labels={chartLabels}
-                        />
+                        <FullWidthBarChart data={chartData} labels={chartLabels} />
                       </div>
                     )}
                   </div>
@@ -731,7 +718,10 @@ export function ExportAnalyticsModal({
                 <div style={{ flex: 1 }} />
 
                 <div>
-                  <div className="bg-white/10" style={{ height: 1, width: "100%", marginBottom: 8 }} />
+                  <div
+                    className="bg-white/10"
+                    style={{ height: 1, width: "100%", marginBottom: 8 }}
+                  />
                   <div className="flex items-center justify-between">
                     <div className="flex items-center" style={{ gap: 16 }}>
                       {footerStats.map((stat) => (
@@ -741,16 +731,16 @@ export function ExportAnalyticsModal({
                           style={{ fontSize: 8 }}
                         >
                           {stat.label}:{" "}
-                          {(
-                            counts as unknown as Record<
-                              string,
-                              number | undefined
-                            >
-                          )[stat.key]?.toLocaleString() ?? "—"}
+                          {(counts as unknown as Record<string, number | undefined>)[
+                            stat.key
+                          ]?.toLocaleString() ?? "—"}
                         </div>
                       ))}
                     </div>
-                    <div className="text-white/20 font-mono tracking-wider uppercase" style={{ fontSize: 7 }}>
+                    <div
+                      className="text-white/20 font-mono tracking-wider uppercase"
+                      style={{ fontSize: 7 }}
+                    >
                       {format(new Date(), "MMM dd, yyyy · HH:mm")}
                     </div>
                   </div>
