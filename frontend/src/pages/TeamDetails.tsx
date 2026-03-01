@@ -419,14 +419,6 @@ export default function TeamDetails() {
                       {formatDateTime(team.createdAt)}
                     </p>
                   </div>
-                  <div>
-                    <label className="text-xs md:text-sm text-gray-400 font-mono uppercase">
-                      Last Updated
-                    </label>
-                    <p className="text-white font-mono text-xs mt-1">
-                      {formatDateTime(team.updatedAt)}
-                    </p>
-                  </div>
                 </div>
               </div>
 

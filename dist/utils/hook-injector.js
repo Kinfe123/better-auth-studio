@@ -70,7 +70,10 @@ function createEventIngestionPlugin(eventsConfig) {
                 const returned = ctx?.context?.returned;
                 if (!returned)
                     return;
-                if (typeof returned === "object" && returned !== null) {
+                const isCallbackPathForReturn = path.startsWith("/callback") ||
+                    path.startsWith("/oauth2/callback") ||
+                    path.includes("callback");
+                if (typeof returned === "object" && returned !== null && !isCallbackPathForReturn) {
                     try {
                         const _ = returned.statusCode;
                     }
@@ -78,8 +81,9 @@ function createEventIngestionPlugin(eventsConfig) {
                         return;
                     }
                 }
-                const isError = returned.statusCode && returned.statusCode >= 400;
-                const isSuccess = !isError && returned.statusCode === 200;
+                const statusCode = returned?.statusCode;
+                const isError = statusCode != null && statusCode >= 400;
+                const isSuccess = !isError && statusCode === 200;
                 let ip = null;
                 const headersObj = {};
                 try {
@@ -247,35 +251,45 @@ function createEventIngestionPlugin(eventsConfig) {
                 const isCallbackPath = path.startsWith("/callback/") ||
                     path.startsWith("/callback") ||
                     path.startsWith("/oauth2/callback/") ||
-                    path.startsWith("/oauth2/callback");
+                    path.startsWith("/oauth2/callback") ||
+                    path.includes("callback");
                 if (isCallbackPath) {
                     try {
-                        const newSession = ctx.context?.newSession || returned?.newSession;
+                        const newSession = ctx.context?.newSession ||
+                            returned?.newSession ||
+                            ctx.context?.returned?.newSession ||
+                            (returned?.data && returned.data?.session) ||
+                            (returned?.data && returned.data?.newSession);
+                        console.log({ newSession });
                         const user = newSession?.user ||
+                            newSession?.session?.user ||
                             returned?.user ||
                             returned?.data?.user ||
-                            ctx.context?.user ||
-                            ctx.user ||
                             (returned?.data && typeof returned.data === "object" && "user" in returned.data
                                 ? returned.data.user
-                                : null);
-                        const existingUser = ctx.context?.existingUser;
-                        const params = ctx.params;
+                                : null) ||
+                            ctx.context?.user ||
+                            ctx.context?.returned?.user ||
+                            ctx.user ||
+                            ctx.body?.user;
+                        console.log({ user });
+                        const existingUser = ctx.context?.existingUser ?? ctx.body?.existingUser;
+                        const params = ctx.params || ctx.context?.params || {};
+                        const providerFromPath = path.includes("/callback/")
+                            ? path.split("/callback/")[1]?.split("/")[0]?.split("?")[0]
+                            : path.includes("/oauth2/callback/")
+                                ? path.split("/oauth2/callback/")[1]?.split("/")[0]?.split("?")[0]
+                                : path.includes("/callback")
+                                    ? path.split("/callback")[1]?.replace(/^\//, "")?.split("/")[0]?.split("?")[0]
+                                    : undefined;
+                        const provider = params?.id ?? providerFromPath ?? "oauth";
                         if (user) {
-                            const provider = path.includes("/callback/")
-                                ? path.split("/callback/")[1]?.split("/")[0]
-                                : path.includes("/oauth2/callback/")
-                                    ? path.split("/oauth2/callback/")[1]?.split("/")[0]
-                                    : path.includes("/callback")
-                                        ? path.split("/callback")[1]?.split("/")[1] ||
-                                            path.split("/callback")[1]?.split("?")[0]
-                                        : undefined;
                             if (existingUser) {
                                 emitEvent("oauth.linked", {
                                     status: "success",
                                     userId: user.id,
                                     metadata: {
-                                        provider: params.id,
+                                        provider,
                                         email: user.email,
                                         name: user.name,
                                     },
@@ -286,14 +300,44 @@ function createEventIngestionPlugin(eventsConfig) {
                                 }, capturedConfig).catch(() => { });
                             }
                             else {
-                                // New user signing in via OAuth
+                                emitEvent("user.joined", {
+                                    status: "success",
+                                    userId: user.id,
+                                    sessionId: newSession?.session?.id ?? newSession?.id ?? "",
+                                    metadata: {
+                                        email: user.email ?? "",
+                                        name: user.name ?? "",
+                                        provider,
+                                        signupMethod: "oauth",
+                                    },
+                                    request: {
+                                        headers: headersObj,
+                                        ip: ip || undefined,
+                                    },
+                                }, capturedConfig).catch(() => { });
+                                emitEvent("oauth.linked", {
+                                    status: "success",
+                                    userId: user.id,
+                                    metadata: {
+                                        provider,
+                                        providerId: provider,
+                                        email: user.email,
+                                        name: user.name,
+                                        userEmail: user.email,
+                                        emailVerified: user.emailVerified,
+                                    },
+                                    request: {
+                                        headers: headersObj,
+                                        ip: ip || undefined,
+                                    },
+                                }, capturedConfig).catch(() => { });
                                 emitEvent("oauth.sign_in", {
                                     status: "success",
                                     userId: user.id,
                                     sessionId: newSession?.session?.id || newSession?.id,
                                     metadata: {
-                                        provider: params.id,
-                                        providerId: params.id,
+                                        provider,
+                                        providerId: provider,
                                         userEmail: user.email,
                                         email: user.email,
                                         name: user.name,
@@ -309,11 +353,11 @@ function createEventIngestionPlugin(eventsConfig) {
                                         emitEvent("session.created", {
                                             status: "success",
                                             userId: user.id,
-                                            sessionId: newSession.session?.id || newSession.id,
+                                            sessionId: newSession.session?.id ?? newSession?.id,
                                             metadata: {
                                                 name: user.name,
                                                 email: user.email,
-                                                provider: params.id,
+                                                provider,
                                             },
                                             request: {
                                                 headers: headersObj,
@@ -325,12 +369,10 @@ function createEventIngestionPlugin(eventsConfig) {
                                         emitEvent("session.created", {
                                             status: "failed",
                                             metadata: {
-                                                reason: reasonToMessage(returned.statusCode === 401
+                                                reason: reasonToMessage(returned?.statusCode === 401
                                                     ? "authentication_failed"
-                                                    : returned.body?.code || "unknown"),
-                                                provider: path.includes("/callback/")
-                                                    ? path.split("/callback/")[1]?.split("/")[0]
-                                                    : undefined,
+                                                    : returned?.body?.code || "unknown"),
+                                                provider,
                                             },
                                             request: {
                                                 headers: headersObj,
@@ -902,54 +944,82 @@ function createEventIngestionPlugin(eventsConfig) {
         if (!account || !account.userId || !account.providerId) {
             return;
         }
-        if (account.providerId !== "credential") {
-            try {
-                if (typeof context.internalAdapter.findUserById !== "function" ||
-                    typeof context.internalAdapter.findAccounts !== "function") {
-                    return;
-                }
-                const user = await context.internalAdapter.findUserById(account.userId);
-                if (user) {
-                    const existingAccounts = await context.internalAdapter.findAccounts(account.userId);
-                    const isLinking = existingAccounts && existingAccounts.length > 1; // More than just this new account
-                    if (isLinking) {
-                        await emitEvent("oauth.linked", {
-                            status: "success",
-                            userId: account.userId,
-                            metadata: {
-                                provider: account.providerId,
-                                providerId: account.providerId,
-                                userEmail: user.email,
-                                email: user.email,
-                                name: user.name,
-                                accountId: account.accountId,
-                                linkedAt: new Date().toISOString(),
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                    else {
-                        await emitEvent("oauth.sign_in", {
-                            status: "success",
-                            userId: account.userId,
-                            metadata: {
-                                provider: account.providerId,
-                                providerId: account.providerId,
-                                userEmail: user.email,
-                                email: user.email,
-                                name: user.name,
-                                emailVerified: user.emailVerified,
-                                accountId: account.accountId,
-                                createdAt: user.createdAt
-                                    ? new Date(user.createdAt).toISOString()
-                                    : new Date().toISOString(),
-                            },
-                        }, capturedConfig).catch(() => { });
-                    }
-                }
+        if (account.providerId === "credential") {
+            return;
+        }
+        try {
+            if (typeof context.internalAdapter.findUserById !== "function" ||
+                typeof context.internalAdapter.findAccounts !== "function") {
+                return;
             }
-            catch (error) {
-                console.error("[OAuth DB Hook] Error:", error);
+            const user = await context.internalAdapter.findUserById(account.userId);
+            if (!user)
+                return;
+            const existingAccounts = await context.internalAdapter.findAccounts(account.userId);
+            const isNewUser = !existingAccounts || existingAccounts.length <= 1;
+            if (isNewUser) {
+                await emitEvent("user.joined", {
+                    status: "success",
+                    userId: account.userId,
+                    metadata: {
+                        email: user.email ?? "",
+                        name: user.name ?? "",
+                        provider: account.providerId,
+                        signupMethod: "oauth",
+                    },
+                    request: { headers: {} },
+                }, capturedConfig).catch(() => { });
+                await emitEvent("oauth.linked", {
+                    status: "success",
+                    userId: account.userId,
+                    metadata: {
+                        provider: account.providerId,
+                        providerId: account.providerId,
+                        userEmail: user.email,
+                        email: user.email,
+                        name: user.name,
+                        accountId: account.accountId,
+                        linkedAt: new Date().toISOString(),
+                    },
+                    request: { headers: {} },
+                }, capturedConfig).catch(() => { });
+                await emitEvent("oauth.sign_in", {
+                    status: "success",
+                    userId: account.userId,
+                    metadata: {
+                        provider: account.providerId,
+                        providerId: account.providerId,
+                        userEmail: user.email,
+                        email: user.email,
+                        name: user.name,
+                        emailVerified: user.emailVerified,
+                        accountId: account.accountId,
+                        createdAt: user.createdAt
+                            ? new Date(user.createdAt).toISOString()
+                            : new Date().toISOString(),
+                    },
+                    request: { headers: {} },
+                }, capturedConfig).catch(() => { });
             }
+            else {
+                await emitEvent("oauth.linked", {
+                    status: "success",
+                    userId: account.userId,
+                    metadata: {
+                        provider: account.providerId,
+                        providerId: account.providerId,
+                        userEmail: user.email,
+                        email: user.email,
+                        name: user.name,
+                        accountId: account.accountId,
+                        linkedAt: new Date().toISOString(),
+                    },
+                    request: { headers: {} },
+                }, capturedConfig).catch(() => { });
+            }
+        }
+        catch (error) {
+            console.error("[OAuth DB Hook] Error:", error);
         }
     };
     const initializeEventIngestion = (context) => {
@@ -1069,6 +1139,7 @@ function createEventIngestionPlugin(eventsConfig) {
                             path === "/unlink-account" ||
                             path.startsWith("/callback") ||
                             path.startsWith("/oauth2/callback") ||
+                            path.includes("callback") ||
                             path === "/organization/create" ||
                             path === "/organization/update" ||
                             path === "/organization/delete" ||
@@ -1082,14 +1153,13 @@ function createEventIngestionPlugin(eventsConfig) {
                 },
             ],
         },
-        // TODO: I cant be able to reach the database hook from this. this will be important for most of event ingestions
-        // databaseHooks: {
-        //   account: {
-        //     create: {
-        //       after: oauthAccountAfter,
-        //     },
-        //   },
-        // },
+        databaseHooks: {
+            account: {
+                create: {
+                    after: oauthAccountAfter,
+                },
+            },
+        },
     };
 }
 /**

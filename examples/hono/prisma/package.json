@@ -14,7 +14,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "test:events": "tsx test-events.ts"
+    "test:events": "tsx test-events.ts",
+    "test:events:existing": "USE_EXISTING_SERVER=1 tsx test-events.ts"
   },
   "dependencies": {
     "@clickhouse/client": "^0.2.10",

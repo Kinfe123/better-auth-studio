@@ -83,31 +83,24 @@ app.get("/", async (c) => {
   }
 });
 app.get("/test", async (c) => {
-  // const { success } = await auth.api.signInPhoneNumber({
-  //   body: {
+  const { redirect, url } = await auth.api.signInSocial({
+    body: {
+      provider: "google",
+      callbackURL: "http://localhost:3002/api/auth/callback/google",
+    },
+  });
+  return c.redirect(url as string);
+});
 
-  //   }
-  // })
-  const res = await auth.api.signUpEmail({
-    body: {
-      name: "Test User",
-      email: "phone3@test.com",
-      password: "password",
-      phoneNumber: "+16502530003",
-    },
+app.get("/test/social", async (c) => {
+  const provider = (c.req.query("provider") as "google" | "github" | "discord") || "google";
+  const host = c.req.header("host") || `localhost:${process.env.PORT || "3000"}`;
+  const protocol = c.req.header("x-forwarded-proto") === "https" ? "https" : "http";
+  const callbackURL = `${protocol}://${host}/api/auth/callback/${provider}`;
+  const { url } = await auth.api.signInSocial({
+    body: { provider, callbackURL },
   });
-  const result = await auth.api.sendPhoneNumberOTP({
-    body: {
-      phoneNumber: "+16502530003",
-    },
-  });
-  // for normal password reset requeset
-  // const result = await auth.api.requestPasswordReset({
-  //   body: {
-  //     email: "user@test.com",
-  //   }
-  // })
-  return c.json({ message: "Test", result });
+  return c.redirect(url as string);
 });
 app.get("/test/phone", async (c) => {
   const result = await auth.api.verifyPhoneNumber({

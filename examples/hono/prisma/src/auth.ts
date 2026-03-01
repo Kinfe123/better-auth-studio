@@ -9,7 +9,7 @@ import {
 } from "better-auth/plugins";
 import prisma from "./prisma";
 
-const baseURL = process.env.BETTER_AUTH_URL || "http://localhost:3000";
+const baseURL = process.env.BETTER_AUTH_URL || "http://localhost:3002";
 
 export const auth = betterAuth({
   secret: process.env.AUTH_SECRET || "better-auth-secret-123456789",
