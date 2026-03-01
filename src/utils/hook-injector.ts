@@ -326,7 +326,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
               ctx.context?.returned?.newSession ||
               (returned?.data && (returned.data as any)?.session) ||
               (returned?.data && (returned.data as any)?.newSession);
-              console.log({newSession})
+            console.log({ newSession });
             const user =
               newSession?.user ||
               (newSession?.session as any)?.user ||
@@ -339,7 +339,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
               ctx.context?.returned?.user ||
               ctx.user ||
               ctx.body?.user;
-              console.log({user})
+            console.log({ user });
             const existingUser = ctx.context?.existingUser ?? (ctx.body as any)?.existingUser;
             const params = ctx.params || ctx.context?.params || {};
             const providerFromPath = path.includes("/callback/")

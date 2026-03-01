@@ -24,11 +24,12 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 
-const USE_EXISTING_SERVER = process.env.USE_EXISTING_SERVER === "1" || process.env.USE_EXISTING_SERVER === "true";
+const USE_EXISTING_SERVER =
+  process.env.USE_EXISTING_SERVER === "1" || process.env.USE_EXISTING_SERVER === "true";
 // Option B: default port 3002; else default 3765 so test doesn't conflict with dev server
 const PORT = parseInt(
   process.env.TEST_PORT || process.env.PORT || (USE_EXISTING_SERVER ? "3002" : "3765"),
-  10
+  10,
 );
 const BASE = `http://localhost:${PORT}`;
 const PROVIDER = process.env.PROVIDER || "google";
@@ -63,7 +64,8 @@ function getSocialSignInUrl(): string {
 
 /** Open URL in the default browser. */
 function openBrowser(url: string): void {
-  const cmd = process.platform === "darwin" ? "open" : process.platform === "win32" ? "start" : "xdg-open";
+  const cmd =
+    process.platform === "darwin" ? "open" : process.platform === "win32" ? "start" : "xdg-open";
   spawn(cmd, [url], { stdio: "ignore", shell: true });
 }
 
@@ -72,7 +74,7 @@ async function readEventsFromSqlite(dbPath: string): Promise<Array<Record<string
     const Database = require("better-sqlite3");
     const db = new Database(dbPath, { readonly: true });
     const stmt = db.prepare(
-      "SELECT id, type, timestamp, status, user_id, display_message, display_severity FROM auth_events ORDER BY timestamp DESC LIMIT 30"
+      "SELECT id, type, timestamp, status, user_id, display_message, display_severity FROM auth_events ORDER BY timestamp DESC LIMIT 30",
     );
     const rows = stmt.all() as Array<Record<string, unknown>>;
     db.close();
@@ -88,12 +90,14 @@ async function readEventsFromSqlite(dbPath: string): Promise<Array<Record<string
             "-csv",
             "SELECT id, type, timestamp, status, user_id, display_message, display_severity FROM auth_events ORDER BY timestamp DESC LIMIT 30",
           ],
-          { stdio: ["ignore", "pipe", "pipe"] }
+          { stdio: ["ignore", "pipe", "pipe"] },
         );
         let out = "";
         proc.stdout?.on("data", (c) => (out += c.toString()));
         proc.stderr?.on("data", () => {});
-        proc.on("exit", (code) => (code === 0 ? resolve(out) : reject(new Error("sqlite3 exited " + code))));
+        proc.on("exit", (code) =>
+          code === 0 ? resolve(out) : reject(new Error("sqlite3 exited " + code)),
+        );
       });
       const lines = result.trim().split("\n");
       if (lines.length < 2) return [];
@@ -123,7 +127,9 @@ async function main() {
       shell: true,
     });
     await new Promise<void>((resolve, reject) => {
-      build.on("exit", (code) => (code === 0 ? resolve() : reject(new Error(`build exited ${code}`))));
+      build.on("exit", (code) =>
+        code === 0 ? resolve() : reject(new Error(`build exited ${code}`)),
+      );
     });
     console.log("Build OK.\n");
 
@@ -165,8 +171,16 @@ async function main() {
       const expectedDomain = PROVIDER_DOMAINS[PROVIDER] || "accounts.google.com";
       redirectOk = res.status === 302 && location.includes(expectedDomain);
       if (!redirectOk) {
-        console.error("  [CHECK] Social sign-in redirect failed: expected 302 to", expectedDomain, "got", res.status, location.slice(0, 80) + "...");
-        console.error("  Fix: ensure GOOGLE_CLIENT_ID / GITHUB_CLIENT_ID etc. are set in .env and the app is running.");
+        console.error(
+          "  [CHECK] Social sign-in redirect failed: expected 302 to",
+          expectedDomain,
+          "got",
+          res.status,
+          location.slice(0, 80) + "...",
+        );
+        console.error(
+          "  Fix: ensure GOOGLE_CLIENT_ID / GITHUB_CLIENT_ID etc. are set in .env and the app is running.",
+        );
       } else {
         console.log("  [CHECK] Social sign-in URL redirects to", PROVIDER, "OK");
       }
@@ -191,7 +205,11 @@ async function main() {
       console.log("Run without --no-open to open the browser, or visit the URL above.");
     }
 
-    console.log("Waiting up to", WAIT_SECONDS, "s for you to complete sign-in (then we'll show events)...");
+    console.log(
+      "Waiting up to",
+      WAIT_SECONDS,
+      "s for you to complete sign-in (then we'll show events)...",
+    );
     console.log("(Set WAIT_SECONDS=20 to wait less, or Ctrl+C once done.)\n");
     await new Promise((r) => setTimeout(r, WAIT_SECONDS * 1000));
 
@@ -201,11 +219,13 @@ async function main() {
         (e) =>
           String(e.type).startsWith("oauth.") ||
           String(e.type) === "user.joined" ||
-          String(e.type) === "session.created"
+          String(e.type) === "session.created",
       );
       console.log("--- Recent OAuth / user.joined / session events (auth_events) ---");
       if (oauthOrJoined.length === 0) {
-        console.log("(None found. Complete sign-in in the browser and run again, or check events config.)");
+        console.log(
+          "(None found. Complete sign-in in the browser and run again, or check events config.)",
+        );
       } else {
         console.table(oauthOrJoined.slice(0, 15));
         console.log("Shown:", Math.min(oauthOrJoined.length, 15), "of", oauthOrJoined.length);
