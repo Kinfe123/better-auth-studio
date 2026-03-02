@@ -54,7 +54,7 @@ export function DropTargetSlot({ slotId, children, className = "" }: DropTargetS
 
   return (
     <div
-      className={`relative transition-all duration-150 ${className} ${
+      className={`relative transition-all duration-150 overflow-hidden ${className} ${
         isDragOver ? "ring-1 ring-white/40 ring-offset-1 ring-offset-black bg-white/[3%]" : ""
       }`}
       onDragOver={handleDragOver}

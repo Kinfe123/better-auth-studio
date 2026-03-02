@@ -165,7 +165,7 @@ export default function Dashboard() {
 
   const { counts, loading } = useCounts();
   const navigate = useNavigate();
-  const { slotOverrides, panelExpanded } = useDashboardWidgets();
+  const { slotOverrides } = useDashboardWidgets();
 
   const slotWidgetItem = (slotId: OverviewSlotId, widgetType: WidgetType) => ({
     id: `slot-${slotId}`,
@@ -1263,7 +1263,7 @@ export default function Dashboard() {
         </div>
 
         <div className="px-3 md:px-6 pb-6 flex flex-col gap-6 flex-1 min-h-0">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 shrink-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 shrink-0 h-full">
             {/* Total Users Card */}
             <DropTargetSlot slotId="total-users">
               {slotOverrides["total-users"] ? (
@@ -1273,7 +1273,7 @@ export default function Dashboard() {
                   />
                 </OverviewSlotCard>
               ) : (
-                <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 relative">
+                <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border h-full border-white/10 rounded-none p-3 md:p-6 relative">
                   {/* Top-left corner */}
                   <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
                   <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -2222,7 +2222,7 @@ export default function Dashboard() {
             </div>
 
             {/* Right Column - Security Insights */}
-            <DropTargetSlot slotId="security-insights" className="flex flex-col">
+            <DropTargetSlot slotId="security-insights" className="flex flex-col min-h-0">
               {slotOverrides["security-insights"] ? (
                 <OverviewSlotCard className="flex-1">
                   <WidgetContent
@@ -2302,15 +2302,12 @@ export default function Dashboard() {
     );
   };
 
-  const panelWidth = 260;
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col" style={{ overflowX: "hidden" }}>
       {/* Tab Content */}
-      <div
-        className="flex-1 transition-[margin] duration-200 ease-out"
-        style={{ marginRight: activeTab === "overview" && panelExpanded ? panelWidth : 0 }}
-      >
+      <div className="flex-1">
+
         {activeTab === "overview" ? (
           renderOverview()
         ) : activeTab === "users" ? (

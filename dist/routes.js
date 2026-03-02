@@ -1271,7 +1271,10 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                     if (ip && ip !== "Unknown") {
                         const loc = resolveIPLocation(ip);
                         if (loc)
-                            userIdToCountry.set(uid, { country: loc.country || loc.countryCode || "—", countryCode: loc.countryCode || "" });
+                            userIdToCountry.set(uid, {
+                                country: loc.country || loc.countryCode || "—",
+                                countryCode: loc.countryCode || "",
+                            });
                     }
                 }
                 for (const u of out) {
@@ -1374,9 +1377,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             if (!adapter || !adapter.findMany) {
                 return res.json({ distribution: [], totalUnique: 0 });
             }
-            const sessions = await adapter
-                .findMany({ model: "session", limit: 50000 })
-                .catch(() => []);
+            const sessions = await adapter.findMany({ model: "session", limit: 50000 }).catch(() => []);
             const byCountry = new Map();
             for (const session of sessions || []) {
                 const ip = session.ipAddress || session.ip_address;
