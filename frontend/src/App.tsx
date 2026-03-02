@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import DatabaseSchemaNodeDemo from "./components/DatabaseSchemaNodeDemo";
 import Layout from "./components/Layout";
 import { CountsProvider } from "./contexts/CountsContext";
+import { DashboardWidgetsProvider } from "./contexts/DashboardWidgetsContext";
 import AccessDenied from "./pages/AccessDenied";
 import Dashboard from "./pages/Dashboard";
 import DatabaseVisualizer from "./pages/DatabaseVisualizer";
@@ -69,7 +70,7 @@ function MainRoutes() {
     <CountsProvider>
       <Layout>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<DashboardWidgetsProvider><Dashboard /></DashboardWidgetsProvider>} />
           <Route path="/users" element={<Users />} />
           <Route path="/users/:userId" element={<UserDetails />} />
           <Route path="/organizations" element={<Organizations />} />

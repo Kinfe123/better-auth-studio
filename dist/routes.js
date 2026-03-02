@@ -16,7 +16,7 @@ import { createRequire } from "module";
 import { createMockAccount, createMockSession, createMockUser, createMockVerification, getAuthAdapter, } from "./auth-adapter.js";
 import { getPathAliases, possiblePaths } from "./config.js";
 import { getAuthData } from "./data.js";
-import { initializeGeoService, resolveIPLocationAsync, setGeoDbPath } from "./geo-service.js";
+import { initializeGeoService, resolveIPLocation, resolveIPLocationAsync, setGeoDbPath, } from "./geo-service.js";
 import { detectDatabaseWithDialect } from "./utils/database-detection.js";
 import { createStudioSession, decryptSession, encryptSession, isSessionValid, STUDIO_COOKIE_NAME, } from "./utils/session.js";
 const config = {
@@ -1228,6 +1228,255 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         }
         catch (_error) {
             res.status(500).json({ error: "Failed to fetch counts" });
+        }
+    });
+    // Dashboard widget APIs
+    router.get("/api/dashboard/recent-users", async (req, res) => {
+        try {
+            const hoursParam = req.query.hours;
+            const hours = Math.min(8760, Math.max(1, parseInt(hoursParam || "24", 10) || 24));
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter || !adapter.findMany) {
+                return res.json({ users: [], total: 0 });
+            }
+            const users = await adapter.findMany({ model: "user", limit: 500 }).catch(() => []);
+            const since = new Date(Date.now() - hours * 60 * 60 * 1000);
+            const recent = (users || []).filter((u) => {
+                const createdAt = u.createdAt ? new Date(u.createdAt) : null;
+                return createdAt && createdAt >= since;
+            });
+            const sorted = recent.sort((a, b) => {
+                const ta = new Date(a.createdAt || 0).getTime();
+                const tb = new Date(b.createdAt || 0).getTime();
+                return tb - ta;
+            });
+            const out = sorted.slice(0, 50);
+            // Enrich with country from latest session IP
+            try {
+                const sessions = await adapter.findMany({ model: "session", limit: 10000 }).catch(() => []);
+                const userIdToCountry = new Map();
+                const byUser = new Map();
+                for (const s of sessions || []) {
+                    const uid = s.userId || s.user_id;
+                    if (!uid)
+                        continue;
+                    if (!byUser.has(uid))
+                        byUser.set(uid, []);
+                    byUser.get(uid).push(s);
+                }
+                for (const [uid, userSessions] of byUser) {
+                    const sortedSessions = userSessions.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+                    const latest = sortedSessions[0];
+                    const ip = latest.ipAddress || latest.ip_address;
+                    if (ip && ip !== "Unknown") {
+                        const loc = resolveIPLocation(ip);
+                        if (loc)
+                            userIdToCountry.set(uid, { country: loc.country || loc.countryCode || "—", countryCode: loc.countryCode || "" });
+                    }
+                }
+                for (const u of out) {
+                    const geo = userIdToCountry.get(u.id);
+                    u.country = geo?.country || "—";
+                    u.countryCode = geo?.countryCode || "";
+                }
+            }
+            catch (_e) { }
+            res.json({ users: out, total: recent.length });
+        }
+        catch (_error) {
+            res.status(500).json({ error: "Failed to fetch recent users", users: [], total: 0 });
+        }
+    });
+    router.get("/api/dashboard/recent-organizations", async (_req, res) => {
+        try {
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter || !adapter.findMany) {
+                return res.json({ organizations: [], total: 0 });
+            }
+            const orgs = await adapter.findMany({ model: "organization", limit: 100 }).catch(() => []);
+            const list = (orgs || []).sort((a, b) => {
+                const ta = new Date(a.createdAt || 0).getTime();
+                const tb = new Date(b.createdAt || 0).getTime();
+                return tb - ta;
+            });
+            let withCount = list.slice(0, 20);
+            if (adapter.findMany && typeof adapter.findMany === "function") {
+                const memberCounts = await Promise.all(withCount.map(async (o) => {
+                    try {
+                        const members = await adapter.findMany({
+                            model: "member",
+                            where: [{ field: "organizationId", value: o.id }],
+                            limit: 1000,
+                        });
+                        return { id: o.id, count: Array.isArray(members) ? members.length : 0 };
+                    }
+                    catch {
+                        return { id: o.id, count: 0 };
+                    }
+                }));
+                const countMap = new Map(memberCounts.map((c) => [c.id, c.count]));
+                withCount = withCount.map((o) => ({ ...o, memberCount: countMap.get(o.id) ?? 0 }));
+            }
+            res.json({ organizations: withCount, total: list.length });
+        }
+        catch (_error) {
+            res.json({ organizations: [], total: 0 });
+        }
+    });
+    router.get("/api/dashboard/recent-teams", async (_req, res) => {
+        try {
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter || !adapter.findMany) {
+                return res.json({ teams: [], total: 0 });
+            }
+            const teams = await adapter.findMany({ model: "team", limit: 100 }).catch(() => []);
+            const list = (teams || []).sort((a, b) => {
+                const ta = new Date(a.createdAt || 0).getTime();
+                const tb = new Date(b.createdAt || 0).getTime();
+                return tb - ta;
+            });
+            const out = list.slice(0, 20).map((t) => ({
+                id: t.id,
+                name: t.name,
+                slug: t.slug,
+                organizationId: t.organizationId,
+                createdAt: t.createdAt,
+            }));
+            res.json({ teams: out, total: list.length });
+        }
+        catch (_error) {
+            res.json({ teams: [], total: 0 });
+        }
+    });
+    router.get("/api/dashboard/invitations", async (_req, res) => {
+        try {
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter || !adapter.findMany) {
+                return res.json({ invitations: [], total: 0 });
+            }
+            const invitations = await adapter
+                .findMany({
+                model: "invitation",
+                where: [{ field: "status", value: "pending" }],
+                limit: 200,
+            })
+                .catch(() => []);
+            const list = Array.isArray(invitations) ? invitations : [];
+            res.json({ invitations: list, total: list.length });
+        }
+        catch (_error) {
+            res.json({ invitations: [], total: 0 });
+        }
+    });
+    router.get("/api/dashboard/geo-distribution", async (_req, res) => {
+        try {
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter || !adapter.findMany) {
+                return res.json({ distribution: [], totalUnique: 0 });
+            }
+            const sessions = await adapter
+                .findMany({ model: "session", limit: 50000 })
+                .catch(() => []);
+            const byCountry = new Map();
+            for (const session of sessions || []) {
+                const ip = session.ipAddress || session.ip_address;
+                if (!ip || ip === "Unknown")
+                    continue;
+                const loc = resolveIPLocation(ip);
+                if (!loc)
+                    continue;
+                const key = loc.countryCode || loc.country || "XX";
+                const existing = byCountry.get(key);
+                const userId = session.userId || session.user_id;
+                if (existing) {
+                    if (userId)
+                        existing.userIds.add(userId);
+                }
+                else {
+                    const userIds = new Set();
+                    if (userId)
+                        userIds.add(userId);
+                    byCountry.set(key, {
+                        country: loc.country,
+                        countryCode: loc.countryCode,
+                        count: userIds.size,
+                        userIds,
+                    });
+                }
+            }
+            for (const [, entry] of byCountry) {
+                entry.count = entry.userIds.size;
+            }
+            const distribution = Array.from(byCountry.entries()).map(([code, v]) => ({
+                countryCode: code,
+                country: v.country,
+                uniqueUsers: v.count,
+            }));
+            distribution.sort((a, b) => b.uniqueUsers - a.uniqueUsers);
+            const totalUnique = new Set((sessions || []).map((s) => s.userId || s.user_id).filter(Boolean)).size;
+            res.json({ distribution, totalUnique });
+        }
+        catch (_error) {
+            res.status(500).json({ distribution: [], totalUnique: 0 });
+        }
+    });
+    router.get("/api/dashboard/geo-country-details", async (req, res) => {
+        try {
+            const countryCode = req.query.code || "";
+            if (!countryCode)
+                return res.json({ users: [], sessions: [] });
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter || !adapter.findMany)
+                return res.json({ users: [], sessions: [] });
+            const sessions = await adapter.findMany({ model: "session", limit: 50000 }).catch(() => []);
+            const matchingSessions = [];
+            const matchingUserIds = new Set();
+            for (const s of sessions || []) {
+                const ip = s.ipAddress || s.ip_address;
+                if (!ip || ip === "Unknown")
+                    continue;
+                const loc = resolveIPLocation(ip);
+                if (!loc)
+                    continue;
+                const code = loc.countryCode || "";
+                if (code.toUpperCase() !== countryCode.toUpperCase())
+                    continue;
+                const userId = s.userId || s.user_id;
+                if (userId)
+                    matchingUserIds.add(userId);
+                matchingSessions.push({
+                    id: s.id,
+                    userId,
+                    ipAddress: ip,
+                    userAgent: s.userAgent || s.user_agent || null,
+                    createdAt: s.createdAt || s.created_at || null,
+                    expiresAt: s.expiresAt || s.expires_at || null,
+                    city: loc.city,
+                    region: loc.region,
+                    country: loc.country,
+                    countryCode: loc.countryCode,
+                });
+            }
+            const allUsers = await adapter.findMany({ model: "user", limit: 100000 }).catch(() => []);
+            const matchingUsers = (allUsers || [])
+                .filter((u) => matchingUserIds.has(u.id))
+                .map((u) => ({
+                id: u.id,
+                name: u.name || null,
+                email: u.email || null,
+                image: u.image || null,
+                createdAt: u.createdAt || u.created_at || null,
+            }));
+            matchingSessions.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+            res.json({
+                countryCode,
+                users: matchingUsers,
+                sessions: matchingSessions.slice(0, 100),
+                totalSessions: matchingSessions.length,
+            });
+        }
+        catch (_error) {
+            res.status(500).json({ users: [], sessions: [], totalSessions: 0 });
         }
     });
     router.get("/api/users/all", async (_req, res) => {

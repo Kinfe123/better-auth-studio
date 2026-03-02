@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useCounts } from "@/contexts/CountsContext";
+import { useDashboardWidgets } from "@/contexts/DashboardWidgetsContext";
+import {
+  DashboardFloatingPanel,
+  DropTargetSlot,
+  OverviewSlotCard,
+  WidgetContent,
+} from "@/components/dashboard-widgets";
+import type { OverviewSlotId, WidgetType } from "@/contexts/DashboardWidgetsContext";
 import {
   AlertTriangle,
   ArrowRight,
@@ -157,6 +165,14 @@ export default function Dashboard() {
 
   const { counts, loading } = useCounts();
   const navigate = useNavigate();
+  const { slotOverrides, panelExpanded } = useDashboardWidgets();
+
+  const slotWidgetItem = (slotId: OverviewSlotId, widgetType: WidgetType) => ({
+    id: `slot-${slotId}`,
+    widgetType,
+    width: 1 as const,
+    config: widgetType === "recent-users" ? { recentUsersHours: 24 } : undefined,
+  });
 
   const periodOptions = ["Daily", "Weekly", "Monthly", "Yearly", "Custom"];
   const analyticsPeriodMap: Record<string, string> = {
@@ -1062,7 +1078,7 @@ export default function Dashboard() {
     const maxActivityValue = Math.max(...activityBuckets, 1);
 
     return (
-      <div className="space-y-6 mt-0 flex-1 overflow-x-hidden px-0">
+      <div className="flex flex-col flex-1 gap-6 px-0 min-h-0">
         {/* <div className="px-6 pt-8">
         <h1 className="text-3xl text-white font-light mb-2">Welcome Back</h1>
         <p className="text-gray-400 text-sm">
@@ -1073,7 +1089,7 @@ export default function Dashboard() {
           })}
         </p>
       </div> */}
-        <div className="px-3 md:px-6 overflow-hidden">
+        <div className="px-3 md:px-6 overflow-hidden shrink-0">
           <div
             className={`flex flex-col md:flex-row md:flex-wrap items-start md:items-center justify-between gap-3 md:gap-8 py-4 px-3 md:px-6 bg-gradient-to-b from-white/[4%] to-white/[2.5%]  border border-white/10 rounded-none overflow-x-auto relative`}
           >
@@ -1246,9 +1262,15 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="px-3 md:px-6 pb-10 space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="px-3 md:px-6 pb-6 flex flex-col gap-6 flex-1 min-h-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 shrink-0">
             {/* Total Users Card */}
+            <DropTargetSlot slotId="total-users">
+              {slotOverrides["total-users"] ? (
+                <OverviewSlotCard>
+                  <WidgetContent item={slotWidgetItem("total-users", slotOverrides["total-users"])} />
+                </OverviewSlotCard>
+              ) : (
             <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 relative">
               {/* Top-left corner */}
               <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
@@ -1456,8 +1478,16 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
+              )}
+            </DropTargetSlot>
 
             {/* Activity Hit Card */}
+            <DropTargetSlot slotId="activity">
+              {slotOverrides["activity"] ? (
+                <OverviewSlotCard>
+                  <WidgetContent item={slotWidgetItem("activity", slotOverrides["activity"])} />
+                </OverviewSlotCard>
+              ) : (
             <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 relative">
               <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
               <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -1635,14 +1665,22 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
+              )}
+            </DropTargetSlot>
           </div>
 
           {/* Bottom Row - Three Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-1 min-h-[400px] lg:grid-rows-1 overflow-hidden">
             {/* Left Column - Two Small Cards */}
-            <div className="space-y-4 overflow-x-hidden">
+            <div className="flex flex-col gap-4 overflow-hidden">
               {/* Active Users Daily */}
-              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative">
+              <DropTargetSlot slotId="active-users" className="flex-1 flex flex-col min-h-0">
+                {slotOverrides["active-users"] ? (
+                  <OverviewSlotCard className="flex-1">
+                    <WidgetContent item={slotWidgetItem("active-users", slotOverrides["active-users"])} />
+                  </OverviewSlotCard>
+                ) : (
+              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative flex-1 flex flex-col">
                 {/* Top-left corner */}
                 <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
                 <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -1762,8 +1800,17 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
+                )}
+              </DropTargetSlot>
 
-              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative">
+              {/* New Users */}
+              <DropTargetSlot slotId="new-users" className="flex-1 flex flex-col min-h-0">
+                {slotOverrides["new-users"] ? (
+                  <OverviewSlotCard className="flex-1">
+                    <WidgetContent item={slotWidgetItem("new-users", slotOverrides["new-users"])} />
+                  </OverviewSlotCard>
+                ) : (
+              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative flex-1 flex flex-col">
                 {/* Top-left corner */}
                 <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
                 <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -1882,12 +1929,20 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
+                )}
+              </DropTargetSlot>
             </div>
 
             {/* Middle Column - Organizations and Teams */}
-            <div className="space-y-4 overflow-x-hidden">
+            <div className="flex flex-col gap-4 overflow-hidden">
               {/* Organizations */}
-              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative">
+              <DropTargetSlot slotId="organizations" className="flex-1 flex flex-col min-h-0">
+                {slotOverrides["organizations"] ? (
+                  <OverviewSlotCard className="flex-1">
+                    <WidgetContent item={slotWidgetItem("organizations", slotOverrides["organizations"])} />
+                  </OverviewSlotCard>
+                ) : (
+              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative flex-1 flex flex-col">
                 {/* Top-left corner */}
                 <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
                 <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -2007,9 +2062,17 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
+                )}
+              </DropTargetSlot>
 
               {/* Teams */}
-              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative">
+              <DropTargetSlot slotId="teams" className="flex-1 flex flex-col min-h-0">
+                {slotOverrides["teams"] ? (
+                  <OverviewSlotCard className="flex-1">
+                    <WidgetContent item={slotWidgetItem("teams", slotOverrides["teams"])} />
+                  </OverviewSlotCard>
+                ) : (
+              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative flex-1 flex flex-col">
                 {/* Top-left corner */}
                 <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
                 <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -2121,10 +2184,18 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
+                )}
+              </DropTargetSlot>
             </div>
 
             {/* Right Column - Security Insights */}
-            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pt-4 overflow-hidden relative flex flex-col">
+            <DropTargetSlot slotId="security-insights" className="flex flex-col">
+              {slotOverrides["security-insights"] ? (
+                <OverviewSlotCard className="flex-1">
+                  <WidgetContent item={slotWidgetItem("security-insights", slotOverrides["security-insights"])} />
+                </OverviewSlotCard>
+              ) : (
+            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pt-4 overflow-hidden relative flex flex-col flex-1">
               <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
               <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
               <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
@@ -2142,7 +2213,7 @@ export default function Dashboard() {
                 </div>
               </div>
               <hr className="-mx-10 -mt-1 border-white/10" />
-              <div className="space-y-3 overflow-y-auto custom-scrollbar max-h-[400px]">
+              <div className="space-y-3 overflow-y-auto custom-scrollbar flex-1 min-h-0">
                 {securityPatches.length === 0 && (
                   <div className="text-sm flex items-center justify-center text-gray-400">
                     <div className="flex mt-5 items-center justify-center">
@@ -2188,16 +2259,23 @@ export default function Dashboard() {
                 ))}
               </div>
             </div>
+              )}
+            </DropTargetSlot>
           </div>
         </div>
       </div>
     );
   };
 
+  const panelWidth = 260;
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col" style={{ overflowX: "hidden" }}>
       {/* Tab Content */}
-      <div className="flex-1">
+      <div
+        className="flex-1 transition-[margin] duration-200 ease-out"
+        style={{ marginRight: activeTab === "overview" && panelExpanded ? panelWidth : 0 }}
+      >
         {activeTab === "overview" ? (
           renderOverview()
         ) : activeTab === "users" ? (
@@ -2205,10 +2283,11 @@ export default function Dashboard() {
         ) : activeTab === "organizations" ? (
           <OrganizationsPage />
         ) : (
-          //  activeTab === 'sessions' ? <SessionsPage /> :
           renderOverview()
         )}
       </div>
+
+      {activeTab === "overview" && <DashboardFloatingPanel />}
 
       {/* Quick Actions Modal */}
       {showQuickActionsModal && (
