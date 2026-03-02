@@ -65,14 +65,14 @@ export function DashboardFloatingPanel() {
 
   return (
     <div
-      className="fixed top-0 right-0 z-30 flex flex-col border-l border-white/10 bg-black/[.97] backdrop-blur-md transition-[width] duration-200 ease-out"
+      className="fixed top-2 right-0 z-30 flex flex-col border-l border-white/10 bg-black/[.97] backdrop-blur-md transition-[width] duration-200 ease-out"
       style={{ width: expanded ? PANEL_WIDTH : 0, height: "100vh" }}
     >
       {/* Toggle tab on the left edge */}
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className="absolute top-3 z-10 flex h-8 items-center gap-1 px-1.5 py-1 border border-white/10 bg-black text-gray-400 hover:text-white hover:bg-white/5 transition-colors text-[10px] font-mono uppercase"
+        className="absolute top-3 mt-12 z-10 flex h-8 items-center gap-1 px-1.5 py-1 border border-white/20 bg-black text-gray-400 hover:text-white hover:bg-white/5 transition-colors text-[10px] font-mono uppercase"
         style={{ right: expanded ? PANEL_WIDTH - 1 : -1, borderRight: "none" }}
         title={expanded ? "Collapse panel" : "Expand widgets panel"}
       >
