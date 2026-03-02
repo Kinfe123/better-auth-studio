@@ -2302,12 +2302,10 @@ export default function Dashboard() {
     );
   };
 
-
   return (
     <div className="min-h-screen bg-black text-white flex flex-col" style={{ overflowX: "hidden" }}>
       {/* Tab Content */}
       <div className="flex-1">
-
         {activeTab === "overview" ? (
           renderOverview()
         ) : activeTab === "users" ? (

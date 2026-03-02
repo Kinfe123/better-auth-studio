@@ -218,10 +218,7 @@ function PreviewWorldMap() {
             {c.name}
           </span>
           <div className="w-10 h-[3px] bg-white/5 overflow-hidden shrink-0">
-            <div
-              className="h-full bg-white/25"
-              style={{ width: `${c.pct}%` }}
-            />
+            <div className="h-full bg-white/25" style={{ width: `${c.pct}%` }} />
           </div>
         </div>
       ))}
@@ -380,7 +377,9 @@ export function DashboardFloatingPanel() {
 
                   {/* Preview content */}
                   <div className="px-2.5 py-2 pointer-events-none">
-                    {Preview ? <Preview /> : (
+                    {Preview ? (
+                      <Preview />
+                    ) : (
                       <div className="text-[8px] font-mono text-gray-600 py-2 text-center">
                         Preview unavailable
                       </div>
