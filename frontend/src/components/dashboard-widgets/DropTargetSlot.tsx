@@ -55,9 +55,7 @@ export function DropTargetSlot({ slotId, children, className = "" }: DropTargetS
   return (
     <div
       className={`relative transition-all duration-150 ${className} ${
-        isDragOver
-          ? "ring-1 ring-white/40 ring-offset-1 ring-offset-black bg-white/[3%]"
-          : ""
+        isDragOver ? "ring-1 ring-white/40 ring-offset-1 ring-offset-black bg-white/[3%]" : ""
       }`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -80,7 +78,9 @@ export function DropTargetSlot({ slotId, children, className = "" }: DropTargetS
 
       {isDragOver && !override && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 border border-dashed border-white/30 pointer-events-none">
-          <span className="text-xs font-mono text-gray-300 uppercase tracking-wider">Drop to replace</span>
+          <span className="text-xs font-mono text-gray-300 uppercase tracking-wider">
+            Drop to replace
+          </span>
         </div>
       )}
 

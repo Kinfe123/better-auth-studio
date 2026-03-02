@@ -70,7 +70,14 @@ function MainRoutes() {
     <CountsProvider>
       <Layout>
         <Routes>
-          <Route path="/" element={<DashboardWidgetsProvider><Dashboard /></DashboardWidgetsProvider>} />
+          <Route
+            path="/"
+            element={
+              <DashboardWidgetsProvider>
+                <Dashboard />
+              </DashboardWidgetsProvider>
+            }
+          />
           <Route path="/users" element={<Users />} />
           <Route path="/users/:userId" element={<UserDetails />} />
           <Route path="/organizations" element={<Organizations />} />

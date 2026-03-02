@@ -28,9 +28,7 @@ interface CountryDetail {
 
 function countryFlag(code: string): string {
   if (!code || code.length !== 2) return "";
-  const codePoints = [...code.toUpperCase()].map(
-    (c) => 0x1f1e6 + c.charCodeAt(0) - 65,
-  );
+  const codePoints = [...code.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65);
   return String.fromCodePoint(...codePoints);
 }
 
@@ -59,9 +57,15 @@ export function WorldMapWidget() {
           setTotalUnique(data.totalUnique ?? 0);
         }
       })
-      .catch(() => { if (!cancelled) setDistribution([]); })
-      .finally(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; };
+      .catch(() => {
+        if (!cancelled) setDistribution([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   function openCountryDetail(d: CountryCount) {
@@ -79,7 +83,6 @@ export function WorldMapWidget() {
     country: d.countryCode.toLowerCase(),
     value: d.uniqueUsers,
   }));
-
 
   return (
     <>
@@ -119,9 +122,7 @@ export function WorldMapWidget() {
               Users by Location
             </h4>
             {totalUnique > 0 && (
-              <span className="text-[10px] font-mono text-gray-600">
-                {totalUnique} unique
-              </span>
+              <span className="text-[10px] font-mono text-gray-600">{totalUnique} unique</span>
             )}
           </div>
           <hr className="border-white/5 mb-2 -mx-2 shrink-0" />
@@ -151,7 +152,9 @@ export function WorldMapWidget() {
                   <div className="w-12 h-1 bg-white/5 overflow-hidden shrink-0">
                     <div
                       className="h-full bg-white/25 transition-all duration-300"
-                      style={{ width: `${(d.uniqueUsers / Math.max(...distribution.map((x) => x.uniqueUsers), 1)) * 100}%` }}
+                      style={{
+                        width: `${(d.uniqueUsers / Math.max(...distribution.map((x) => x.uniqueUsers), 1)) * 100}%`,
+                      }}
                     />
                   </div>
                   <span className="text-[10px] font-mono text-gray-500 w-4 text-right shrink-0">
@@ -187,9 +190,7 @@ export function WorldMapWidget() {
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{countryFlag(selectedCountry.countryCode)}</span>
                 <div>
-                  <h3 className="text-sm text-white font-light">
-                    {selectedCountry.country}
-                  </h3>
+                  <h3 className="text-sm text-white font-light">{selectedCountry.country}</h3>
                   <p className="text-[10px] font-mono text-gray-500 uppercase tracking-wider">
                     {selectedCountry.countryCode} · {selectedCountry.uniqueUsers} unique users
                   </p>
@@ -223,9 +224,15 @@ export function WorldMapWidget() {
                       <table className="w-full text-[11px] border-collapse">
                         <thead>
                           <tr className="border-b border-white/10">
-                            <th className="text-left py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Name</th>
-                            <th className="text-left py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Email</th>
-                            <th className="text-right py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Joined</th>
+                            <th className="text-left py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                              Name
+                            </th>
+                            <th className="text-left py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                              Email
+                            </th>
+                            <th className="text-right py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                              Joined
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -241,7 +248,9 @@ export function WorldMapWidget() {
                               <td className="py-1.5 px-1 text-gray-300 group-hover:text-white transition-colors">
                                 {u.name || "—"}
                               </td>
-                              <td className="py-1.5 px-1 text-gray-500 font-mono truncate max-w-[180px]">{u.email || "—"}</td>
+                              <td className="py-1.5 px-1 text-gray-500 font-mono truncate max-w-[180px]">
+                                {u.email || "—"}
+                              </td>
                               <td className="py-1.5 px-1 text-gray-600 font-mono text-right whitespace-nowrap">
                                 {u.createdAt ? format(new Date(u.createdAt), "MMM dd, yyyy") : "—"}
                               </td>
@@ -263,21 +272,35 @@ export function WorldMapWidget() {
                       <table className="w-full text-[11px] border-collapse">
                         <thead>
                           <tr className="border-b border-white/10">
-                            <th className="text-left py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">IP</th>
-                            <th className="text-left py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">City</th>
-                            <th className="text-left py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">User Agent</th>
-                            <th className="text-right py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Time</th>
+                            <th className="text-left py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                              IP
+                            </th>
+                            <th className="text-left py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                              City
+                            </th>
+                            <th className="text-left py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                              User Agent
+                            </th>
+                            <th className="text-right py-1.5 px-1 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                              Time
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                           {detail.sessions.map((s) => (
-                            <tr key={s.id} className="border-b border-white/5 hover:bg-white/[3%] transition-colors">
+                            <tr
+                              key={s.id}
+                              className="border-b border-white/5 hover:bg-white/[3%] transition-colors"
+                            >
                               <td className="py-1.5 px-1 text-gray-400 font-mono">{s.ipAddress}</td>
                               <td className="py-1.5 px-1 text-gray-500">
                                 {s.city !== "Unknown" ? s.city : "—"}
                                 {s.region && s.region !== "Unknown" ? `, ${s.region}` : ""}
                               </td>
-                              <td className="py-1.5 px-1 text-gray-600 font-mono truncate max-w-[200px]" title={s.userAgent || ""}>
+                              <td
+                                className="py-1.5 px-1 text-gray-600 font-mono truncate max-w-[200px]"
+                                title={s.userAgent || ""}
+                              >
                                 {s.userAgent ? shortenUA(s.userAgent) : "—"}
                               </td>
                               <td className="py-1.5 px-1 text-gray-600 font-mono text-right whitespace-nowrap">

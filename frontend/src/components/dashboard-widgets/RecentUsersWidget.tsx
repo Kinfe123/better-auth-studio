@@ -14,9 +14,7 @@ interface RecentUser {
 
 function countryFlag(code: string): string {
   if (!code || code.length !== 2) return "";
-  const codePoints = [...code.toUpperCase()].map(
-    (c) => 0x1f1e6 + c.charCodeAt(0) - 65,
-  );
+  const codePoints = [...code.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65);
   return String.fromCodePoint(...codePoints);
 }
 
@@ -112,9 +110,15 @@ export function RecentUsersWidget({
         setUsers(fetched);
         setTotal(data.total ?? 0);
       })
-      .catch(() => { if (!cancelled) setUsers([]); })
-      .finally(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; };
+      .catch(() => {
+        if (!cancelled) setUsers([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [effectiveHours, isCustomRange, localFrom, localTo]);
 
   const activeLabel = useMemo(() => {
@@ -236,12 +240,20 @@ export function RecentUsersWidget({
           <table className="w-full text-[11px] border-collapse">
             <thead className="sticky top-0 bg-black/90 backdrop-blur-sm z-10">
               <tr className="border-b border-white/10">
-                <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Name</th>
-                <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Email</th>
+                <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                  Name
+                </th>
+                <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                  Email
+                </th>
                 {!compact && (
-                  <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Country</th>
+                  <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                    Country
+                  </th>
                 )}
-                <th className="text-right py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Joined</th>
+                <th className="text-right py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                  Joined
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -251,16 +263,24 @@ export function RecentUsersWidget({
                   onClick={() => navigate(`/users/${u.id}`)}
                   className="border-b border-white/5 hover:bg-white/[3%] cursor-pointer transition-colors group"
                 >
-                  <td className="py-1.5 px-1.5 text-gray-300 group-hover:text-white truncate max-w-[90px] transition-colors" title={u.name || ""}>
+                  <td
+                    className="py-1.5 px-1.5 text-gray-300 group-hover:text-white truncate max-w-[90px] transition-colors"
+                    title={u.name || ""}
+                  >
                     {u.name || "—"}
                   </td>
-                  <td className="py-1.5 px-1.5 text-gray-500 truncate max-w-[110px] font-mono" title={u.email || ""}>
+                  <td
+                    className="py-1.5 px-1.5 text-gray-500 truncate max-w-[110px] font-mono"
+                    title={u.email || ""}
+                  >
                     {u.email || "—"}
                   </td>
                   {!compact && (
                     <td className="py-1.5 px-1.5 text-gray-600 font-mono">
                       <span className="inline-flex items-center gap-1">
-                        {u.countryCode && <span className="text-xs leading-none">{countryFlag(u.countryCode)}</span>}
+                        {u.countryCode && (
+                          <span className="text-xs leading-none">{countryFlag(u.countryCode)}</span>
+                        )}
                         {u.country ?? "—"}
                       </span>
                     </td>

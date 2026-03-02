@@ -1464,7 +1464,11 @@ export function createRoutes(
           const ip = latest.ipAddress || latest.ip_address;
           if (ip && ip !== "Unknown") {
             const loc = resolveIPLocation(ip);
-            if (loc) userIdToCountry.set(uid, { country: loc.country || loc.countryCode || "—", countryCode: loc.countryCode || "" });
+            if (loc)
+              userIdToCountry.set(uid, {
+                country: loc.country || loc.countryCode || "—",
+                countryCode: loc.countryCode || "",
+              });
           }
         }
         for (const u of out) {
@@ -1567,10 +1571,11 @@ export function createRoutes(
       if (!adapter || !adapter.findMany) {
         return res.json({ distribution: [], totalUnique: 0 });
       }
-      const sessions = await adapter
-        .findMany({ model: "session", limit: 50000 })
-        .catch(() => []);
-      const byCountry = new Map<string, { country: string; countryCode: string; count: number; userIds: Set<string> }>();
+      const sessions = await adapter.findMany({ model: "session", limit: 50000 }).catch(() => []);
+      const byCountry = new Map<
+        string,
+        { country: string; countryCode: string; count: number; userIds: Set<string> }
+      >();
       for (const session of sessions || []) {
         const ip = session.ipAddress || session.ip_address;
         if (!ip || ip === "Unknown") continue;
@@ -1655,8 +1660,9 @@ export function createRoutes(
           createdAt: u.createdAt || u.created_at || null,
         }));
 
-      matchingSessions.sort((a: any, b: any) =>
-        new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+      matchingSessions.sort(
+        (a: any, b: any) =>
+          new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime(),
       );
 
       res.json({

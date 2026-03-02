@@ -20,10 +20,18 @@ export function RecentOrganizationsWidget() {
     let cancelled = false;
     fetch("/api/dashboard/recent-organizations")
       .then((r) => r.json())
-      .then((data) => { if (!cancelled) setOrgs(data.organizations || []); })
-      .catch(() => { if (!cancelled) setOrgs([]); })
-      .finally(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; };
+      .then((data) => {
+        if (!cancelled) setOrgs(data.organizations || []);
+      })
+      .catch(() => {
+        if (!cancelled) setOrgs([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -31,7 +39,9 @@ export function RecentOrganizationsWidget() {
       <div className="flex items-center justify-between gap-2 mb-1 shrink-0">
         <div className="flex items-center gap-2">
           <Building2 className="w-4 h-4 text-white/60" />
-          <h4 className="text-xs text-gray-400 uppercase font-mono font-light tracking-wide">Recent Orgs</h4>
+          <h4 className="text-xs text-gray-400 uppercase font-mono font-light tracking-wide">
+            Recent Orgs
+          </h4>
         </div>
         <span className="text-[10px] font-mono text-gray-600">{orgs.length} total</span>
       </div>
@@ -49,9 +59,15 @@ export function RecentOrganizationsWidget() {
           <table className="w-full text-[11px] border-collapse">
             <thead className="sticky top-0 bg-black/90 backdrop-blur-sm z-10">
               <tr className="border-b border-white/10">
-                <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Name</th>
-                <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Members</th>
-                <th className="text-right py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Created</th>
+                <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                  Name
+                </th>
+                <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                  Members
+                </th>
+                <th className="text-right py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                  Created
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -61,7 +77,10 @@ export function RecentOrganizationsWidget() {
                   onClick={() => navigate(`/organizations/${o.id}`)}
                   className="border-b border-white/5 hover:bg-white/[3%] cursor-pointer transition-colors group"
                 >
-                  <td className="py-1.5 px-1.5 text-gray-300 group-hover:text-white truncate max-w-[140px] transition-colors" title={o.name || ""}>
+                  <td
+                    className="py-1.5 px-1.5 text-gray-300 group-hover:text-white truncate max-w-[140px] transition-colors"
+                    title={o.name || ""}
+                  >
                     {o.name || o.slug || "—"}
                   </td>
                   <td className="py-1.5 px-1.5 text-gray-600 font-mono">{o.memberCount ?? "—"}</td>

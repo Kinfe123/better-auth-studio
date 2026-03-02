@@ -35,9 +35,7 @@ export const DRAGGABLE_WIDGET_TYPES = [
   "world-map",
 ] as const;
 
-export type WidgetType =
-  | OverviewSlotId
-  | (typeof DRAGGABLE_WIDGET_TYPES)[number];
+export type WidgetType = OverviewSlotId | (typeof DRAGGABLE_WIDGET_TYPES)[number];
 
 export interface WidgetConfig {
   recentUsersHours?: number;
@@ -81,7 +79,9 @@ export const WIDGET_LABELS: Record<string, string> = {
 
 interface DashboardWidgetsContextType {
   widgets: DashboardWidgetItem[];
-  setWidgets: (widgets: DashboardWidgetItem[] | ((prev: DashboardWidgetItem[]) => DashboardWidgetItem[])) => void;
+  setWidgets: (
+    widgets: DashboardWidgetItem[] | ((prev: DashboardWidgetItem[]) => DashboardWidgetItem[]),
+  ) => void;
   updateWidgetWidth: (id: string, width: WidgetWidth) => void;
   updateWidgetConfig: (id: string, config: Partial<WidgetConfig>) => void;
   removeWidget: (id: string) => void;
@@ -147,18 +147,30 @@ function loadPanelExpanded(): boolean {
 }
 
 export function DashboardWidgetsProvider({ children }: { children: ReactNode }) {
-  const [widgets, setWidgetsState] = useState<DashboardWidgetItem[]>(() => loadStored() ?? DEFAULT_WIDGETS);
+  const [widgets, setWidgetsState] = useState<DashboardWidgetItem[]>(
+    () => loadStored() ?? DEFAULT_WIDGETS,
+  );
   const [isCustomizing, setCustomizing] = useState(false);
-  const [slotOverrides, setSlotOverridesState] = useState<Partial<Record<OverviewSlotId, WidgetType>>>(() => loadSlotOverrides());
+  const [slotOverrides, setSlotOverridesState] = useState<
+    Partial<Record<OverviewSlotId, WidgetType>>
+  >(() => loadSlotOverrides());
   const [panelExpanded, setPanelExpandedState] = useState(() => loadPanelExpanded());
 
-  useEffect(() => { saveStored(widgets); }, [widgets]);
-  useEffect(() => { saveSlotOverrides(slotOverrides); }, [slotOverrides]);
   useEffect(() => {
-    try { localStorage.setItem(PANEL_EXPANDED_KEY, String(panelExpanded)); } catch (_e) {}
+    saveStored(widgets);
+  }, [widgets]);
+  useEffect(() => {
+    saveSlotOverrides(slotOverrides);
+  }, [slotOverrides]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(PANEL_EXPANDED_KEY, String(panelExpanded));
+    } catch (_e) {}
   }, [panelExpanded]);
 
-  const setPanelExpanded = useCallback((v: boolean) => { setPanelExpandedState(v); }, []);
+  const setPanelExpanded = useCallback((v: boolean) => {
+    setPanelExpandedState(v);
+  }, []);
 
   const setSlotOverride = useCallback((slotId: OverviewSlotId, widgetType: WidgetType | null) => {
     setSlotOverridesState((prev) => {
@@ -174,7 +186,9 @@ export function DashboardWidgetsProvider({ children }: { children: ReactNode }) 
   }, []);
 
   const updateWidgetConfig = useCallback((id: string, config: Partial<WidgetConfig>) => {
-    setWidgetsState((prev) => prev.map((w) => w.id === id ? { ...w, config: { ...w.config, ...config } } : w));
+    setWidgetsState((prev) =>
+      prev.map((w) => (w.id === id ? { ...w, config: { ...w.config, ...config } } : w)),
+    );
   }, []);
 
   const removeWidget = useCallback((id: string) => {
@@ -183,7 +197,8 @@ export function DashboardWidgetsProvider({ children }: { children: ReactNode }) 
 
   const reorderWidgets = useCallback((fromIndex: number, toIndex: number) => {
     setWidgetsState((prev) => {
-      if (fromIndex < 0 || fromIndex >= prev.length || toIndex < 0 || toIndex >= prev.length) return prev;
+      if (fromIndex < 0 || fromIndex >= prev.length || toIndex < 0 || toIndex >= prev.length)
+        return prev;
       const next = [...prev];
       const [removed] = next.splice(fromIndex, 1);
       next.splice(toIndex, 0, removed);
@@ -192,16 +207,13 @@ export function DashboardWidgetsProvider({ children }: { children: ReactNode }) 
   }, []);
 
   const usedTypes = useMemo(() => new Set(widgets.map((w) => w.widgetType)), [widgets]);
-  const availableToAdd = useMemo(
-    () => {
-      const types: WidgetType[] = [];
-      for (const t of DRAGGABLE_WIDGET_TYPES) {
-        if (!usedTypes.has(t)) types.push(t);
-      }
-      return types;
-    },
-    [usedTypes],
-  );
+  const availableToAdd = useMemo(() => {
+    const types: WidgetType[] = [];
+    for (const t of DRAGGABLE_WIDGET_TYPES) {
+      if (!usedTypes.has(t)) types.push(t);
+    }
+    return types;
+  }, [usedTypes]);
 
   const addWidget = useCallback(
     (widgetType: WidgetType, width: WidgetWidth = 1, config?: WidgetConfig): boolean => {
@@ -213,12 +225,16 @@ export function DashboardWidgetsProvider({ children }: { children: ReactNode }) 
     [usedTypes],
   );
 
-  const resetToDefault = useCallback(() => { setWidgetsState(DEFAULT_WIDGETS); }, []);
+  const resetToDefault = useCallback(() => {
+    setWidgetsState(DEFAULT_WIDGETS);
+  }, []);
 
   const value: DashboardWidgetsContextType = useMemo(
     () => ({
       widgets,
-      setWidgets: (arg: DashboardWidgetItem[] | ((prev: DashboardWidgetItem[]) => DashboardWidgetItem[])) => {
+      setWidgets: (
+        arg: DashboardWidgetItem[] | ((prev: DashboardWidgetItem[]) => DashboardWidgetItem[]),
+      ) => {
         setWidgetsState(typeof arg === "function" ? arg : () => arg);
       },
       updateWidgetWidth,
@@ -253,14 +269,13 @@ export function DashboardWidgetsProvider({ children }: { children: ReactNode }) 
   );
 
   return (
-    <DashboardWidgetsContext.Provider value={value}>
-      {children}
-    </DashboardWidgetsContext.Provider>
+    <DashboardWidgetsContext.Provider value={value}>{children}</DashboardWidgetsContext.Provider>
   );
 }
 
 export function useDashboardWidgets() {
   const ctx = useContext(DashboardWidgetsContext);
-  if (ctx === undefined) throw new Error("useDashboardWidgets must be used within DashboardWidgetsProvider");
+  if (ctx === undefined)
+    throw new Error("useDashboardWidgets must be used within DashboardWidgetsProvider");
   return ctx;
 }

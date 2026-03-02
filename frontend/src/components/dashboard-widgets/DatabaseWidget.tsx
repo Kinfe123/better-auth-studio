@@ -21,7 +21,9 @@ export function DatabaseWidget() {
     <div className="flex flex-col min-h-0 h-full">
       <div className="flex items-center gap-2 mb-1 shrink-0">
         <Database className="w-4 h-4 text-white/60" />
-        <h4 className="text-xs text-gray-400 uppercase font-mono font-light tracking-wide">Database</h4>
+        <h4 className="text-xs text-gray-400 uppercase font-mono font-light tracking-wide">
+          Database
+        </h4>
       </div>
       <hr className="border-white/5 mb-3 -mx-2 shrink-0" />
       {loading ? (

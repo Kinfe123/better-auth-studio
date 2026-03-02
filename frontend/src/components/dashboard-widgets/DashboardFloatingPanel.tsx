@@ -17,20 +17,27 @@ const WIDGET_ICONS: Record<string, string> = {
 };
 
 export function DashboardFloatingPanel() {
-  const { widgets, reorderWidgets, removeWidget, addWidget, availableToAdd, slotOverrides, setSlotOverride, resetToDefault, panelExpanded: expanded, setPanelExpanded: setExpanded } =
-    useDashboardWidgets();
+  const {
+    widgets,
+    reorderWidgets,
+    removeWidget,
+    addWidget,
+    availableToAdd,
+    slotOverrides,
+    setSlotOverride,
+    resetToDefault,
+    panelExpanded: expanded,
+    setPanelExpanded: setExpanded,
+  } = useDashboardWidgets();
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
 
-  const handleDragStart = useCallback(
-    (e: React.DragEvent, index: number, widgetType: string) => {
-      e.dataTransfer.effectAllowed = "copyMove";
-      e.dataTransfer.setData("text/plain", String(index));
-      e.dataTransfer.setData(WIDGET_TYPE_DRAG_KEY, widgetType);
-      setDraggedIndex(index);
-    },
-    [],
-  );
+  const handleDragStart = useCallback((e: React.DragEvent, index: number, widgetType: string) => {
+    e.dataTransfer.effectAllowed = "copyMove";
+    e.dataTransfer.setData("text/plain", String(index));
+    e.dataTransfer.setData(WIDGET_TYPE_DRAG_KEY, widgetType);
+    setDraggedIndex(index);
+  }, []);
 
   const handleDragOver = useCallback((e: React.DragEvent, index: number) => {
     e.preventDefault();

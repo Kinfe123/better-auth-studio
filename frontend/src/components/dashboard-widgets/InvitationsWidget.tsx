@@ -17,10 +17,18 @@ export function InvitationsWidget() {
     let cancelled = false;
     fetch("/api/dashboard/invitations")
       .then((r) => r.json())
-      .then((data) => { if (!cancelled) setInvitations(data.invitations || []); })
-      .catch(() => { if (!cancelled) setInvitations([]); })
-      .finally(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; };
+      .then((data) => {
+        if (!cancelled) setInvitations(data.invitations || []);
+      })
+      .catch(() => {
+        if (!cancelled) setInvitations([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const pending = invitations.filter((i) => (i.status || "pending") === "pending");
@@ -28,7 +36,9 @@ export function InvitationsWidget() {
   return (
     <div className="flex flex-col min-h-0 h-full">
       <div className="flex items-center justify-between gap-2 mb-1 shrink-0">
-        <h4 className="text-xs text-gray-400 uppercase font-mono font-light tracking-wide">Invitations</h4>
+        <h4 className="text-xs text-gray-400 uppercase font-mono font-light tracking-wide">
+          Invitations
+        </h4>
         <span className="text-[10px] font-mono text-gray-600">{pending.length} pending</span>
       </div>
       <hr className="border-white/5 mb-2 -mx-2 shrink-0" />
@@ -45,15 +55,27 @@ export function InvitationsWidget() {
           <table className="w-full text-[11px] border-collapse">
             <thead className="sticky top-0 bg-black/90 backdrop-blur-sm z-10">
               <tr className="border-b border-white/10">
-                <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Email</th>
-                <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Role</th>
-                <th className="text-right py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">Created</th>
+                <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                  Email
+                </th>
+                <th className="text-left py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                  Role
+                </th>
+                <th className="text-right py-1.5 px-1.5 font-mono font-normal text-gray-500 uppercase text-[9px] tracking-wider">
+                  Created
+                </th>
               </tr>
             </thead>
             <tbody>
               {pending.slice(0, 10).map((i) => (
-                <tr key={i.id} className="border-b border-white/5 hover:bg-white/[3%] transition-colors group">
-                  <td className="py-1.5 px-1.5 text-gray-300 group-hover:text-white truncate max-w-[120px] font-mono transition-colors" title={i.email}>
+                <tr
+                  key={i.id}
+                  className="border-b border-white/5 hover:bg-white/[3%] transition-colors group"
+                >
+                  <td
+                    className="py-1.5 px-1.5 text-gray-300 group-hover:text-white truncate max-w-[120px] font-mono transition-colors"
+                    title={i.email}
+                  >
                     {i.email}
                   </td>
                   <td className="py-1.5 px-1.5">

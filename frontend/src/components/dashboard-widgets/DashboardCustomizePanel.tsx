@@ -8,14 +8,8 @@ import {
 } from "@/contexts/DashboardWidgetsContext";
 
 export function DashboardCustomizePanel() {
-  const {
-    widgets,
-    addWidget,
-    availableToAdd,
-    resetToDefault,
-    setCustomizing,
-    removeWidget,
-  } = useDashboardWidgets();
+  const { widgets, addWidget, availableToAdd, resetToDefault, setCustomizing, removeWidget } =
+    useDashboardWidgets();
   const [addingType, setAddingType] = useState<WidgetType | "">("");
   const [replaceId, setReplaceId] = useState<string | null>(null);
 
@@ -103,10 +97,7 @@ export function DashboardCustomizePanel() {
           </Button>
         </div>
         <div className="p-4 border-t border-white/10">
-          <Button
-            onClick={() => setCustomizing(false)}
-            className="w-full rounded-none"
-          >
+          <Button onClick={() => setCustomizing(false)} className="w-full rounded-none">
             Done
           </Button>
         </div>

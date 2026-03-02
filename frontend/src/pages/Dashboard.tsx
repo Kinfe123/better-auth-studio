@@ -1268,216 +1268,233 @@ export default function Dashboard() {
             <DropTargetSlot slotId="total-users">
               {slotOverrides["total-users"] ? (
                 <OverviewSlotCard>
-                  <WidgetContent item={slotWidgetItem("total-users", slotOverrides["total-users"])} />
+                  <WidgetContent
+                    item={slotWidgetItem("total-users", slotOverrides["total-users"])}
+                  />
                 </OverviewSlotCard>
               ) : (
-            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 relative">
-              {/* Top-left corner */}
-              <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-              <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-              {/* Top-right corner */}
-              <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-              <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-              {/* Bottom-left corner */}
-              <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-              <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-              {/* Bottom-right corner */}
-              <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-              <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm text-white uppercase font-light">TOTAL USER</h3>
-                <div className="flex items-center space-x-1 overflow-x-auto">
-                  {["1D", "1W", "6M", "1Y", "ALL"].map((period) => (
-                    <button
-                      key={period}
-                      onClick={() => setSelectedUserPeriod(period)}
-                      className={`px-2 py-1 text-xs font-light transition-colors whitespace-nowrap ${
-                        selectedUserPeriod === period
-                          ? "bg-white/20 text-white border border-white/30"
-                          : "text-gray-500 hover:text-white"
-                      }`}
-                    >
-                      {period}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex justify-between items-end mb-4">
-                {(() => {
-                  const chartData = getChartData(selectedUserPeriod, "users");
-                  const rawData =
-                    totalUsersData.length > 0
-                      ? totalUsersData.slice(0, chartData.length)
-                      : Array(chartData.length).fill(0);
-                  const periodTotal = rawData.reduce((sum, val) => sum + val, 0);
-
-                  return (
-                    <>
-                      <p className="text-4xl text-white font-light">
-                        {loading ? "..." : formatCompactNumber(periodTotal)}
-                      </p>
-                      <div className="flex items-center gap-1 px-2 py-1">
-                        <svg
-                          className={`w-3 h-3 ${totalUsersPercentage >= 0 ? "text-green-500" : "text-red-500 rotate-180"}`}
-                          viewBox="0 0 12 12"
-                          fill="currentColor"
+                <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 relative">
+                  {/* Top-left corner */}
+                  <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                  <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                  {/* Top-right corner */}
+                  <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                  <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                  {/* Bottom-left corner */}
+                  <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                  <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                  {/* Bottom-right corner */}
+                  <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                  <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm text-white uppercase font-light">TOTAL USER</h3>
+                    <div className="flex items-center space-x-1 overflow-x-auto">
+                      {["1D", "1W", "6M", "1Y", "ALL"].map((period) => (
+                        <button
+                          key={period}
+                          onClick={() => setSelectedUserPeriod(period)}
+                          className={`px-2 py-1 text-xs font-light transition-colors whitespace-nowrap ${
+                            selectedUserPeriod === period
+                              ? "bg-white/20 text-white border border-white/30"
+                              : "text-gray-500 hover:text-white"
+                          }`}
                         >
-                          <path d="M6 0 L12 12 L0 12 Z" />
-                        </svg>
-                        <span
-                          className={`text-xs font-medium ${totalUsersPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
-                        >
-                          {Math.abs(totalUsersPercentage).toFixed(1)}%
-                        </span>
-                      </div>
-                    </>
-                  );
-                })()}
-              </div>
-              <div className="space-y-2 relative">
-                {(() => {
-                  const chartData = getChartData(selectedUserPeriod, "users");
-                  const rawData =
-                    totalUsersData.length > 0
-                      ? totalUsersData.slice(0, chartData.length)
-                      : Array(chartData.length).fill(0);
-                  const maxValue = Math.max(...rawData, 1);
-                  const yAxisLabels = Array.from({ length: 6 }, (_, i) => {
-                    const value = (maxValue / 5) * (5 - i);
-                    return value;
-                  });
+                          {period}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-end mb-4">
+                    {(() => {
+                      const chartData = getChartData(selectedUserPeriod, "users");
+                      const rawData =
+                        totalUsersData.length > 0
+                          ? totalUsersData.slice(0, chartData.length)
+                          : Array(chartData.length).fill(0);
+                      const periodTotal = rawData.reduce((sum, val) => sum + val, 0);
 
-                  return (
-                    <div className="flex gap-2">
-                      {/* Y-axis labels */}
-                      <div className="flex flex-col justify-between h-48 text-xs text-gray-500 font-mono pt-0.5 pb-0.5">
-                        {yAxisLabels.map((value, i) => (
-                          <span key={i} className="leading-none">
-                            {formatCompactNumber(Math.round(value))}
-                          </span>
-                        ))}
-                      </div>
+                      return (
+                        <>
+                          <p className="text-4xl text-white font-light">
+                            {loading ? "..." : formatCompactNumber(periodTotal)}
+                          </p>
+                          <div className="flex items-center gap-1 px-2 py-1">
+                            <svg
+                              className={`w-3 h-3 ${totalUsersPercentage >= 0 ? "text-green-500" : "text-red-500 rotate-180"}`}
+                              viewBox="0 0 12 12"
+                              fill="currentColor"
+                            >
+                              <path d="M6 0 L12 12 L0 12 Z" />
+                            </svg>
+                            <span
+                              className={`text-xs font-medium ${totalUsersPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
+                            >
+                              {Math.abs(totalUsersPercentage).toFixed(1)}%
+                            </span>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                  <div className="space-y-2 relative">
+                    {(() => {
+                      const chartData = getChartData(selectedUserPeriod, "users");
+                      const rawData =
+                        totalUsersData.length > 0
+                          ? totalUsersData.slice(0, chartData.length)
+                          : Array(chartData.length).fill(0);
+                      const maxValue = Math.max(...rawData, 1);
+                      const yAxisLabels = Array.from({ length: 6 }, (_, i) => {
+                        const value = (maxValue / 5) * (5 - i);
+                        return value;
+                      });
 
-                      {/* Chart area */}
-                      <div className="flex-1 h-48 relative">
-                        {/* Horizontal grid lines */}
-                        <div className="absolute inset-0 flex flex-col justify-between z-0">
-                          {[0, 1, 2, 3, 4, 5].map((i) => (
-                            <div
-                              key={i}
-                              className="w-full h-px bg-white/10"
-                              style={{ opacity: 0.3 }}
-                            />
-                          ))}
-                        </div>
-                        <svg
-                          className="w-full h-full absolute inset-0"
-                          viewBox="0 0 100 100"
-                          preserveAspectRatio="none"
-                        >
-                          <defs>
-                            <linearGradient id="usersBarGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                              <stop
-                                offset="0%"
-                                style={{ stopColor: "rgba(255, 255, 255, 0.3)", stopOpacity: 1 }}
-                              />
-                              <stop
-                                offset="100%"
-                                style={{ stopColor: "rgba(255, 255, 255, 0.05)", stopOpacity: 1 }}
-                              />
-                            </linearGradient>
-                          </defs>
-                        </svg>
-                        <div className="h-48 flex items-end justify-between space-x-1 relative z-10">
-                          {chartData.map((height, i) => {
-                            const isHovered = hoveredUsersAreaIndex === i;
+                      return (
+                        <div className="flex gap-2">
+                          {/* Y-axis labels */}
+                          <div className="flex flex-col justify-between h-48 text-xs text-gray-500 font-mono pt-0.5 pb-0.5">
+                            {yAxisLabels.map((value, i) => (
+                              <span key={i} className="leading-none">
+                                {formatCompactNumber(Math.round(value))}
+                              </span>
+                            ))}
+                          </div>
 
-                            return (
+                          {/* Chart area */}
+                          <div className="flex-1 h-48 relative">
+                            {/* Horizontal grid lines */}
+                            <div className="absolute inset-0 flex flex-col justify-between z-0">
+                              {[0, 1, 2, 3, 4, 5].map((i) => (
+                                <div
+                                  key={i}
+                                  className="w-full h-px bg-white/10"
+                                  style={{ opacity: 0.3 }}
+                                />
+                              ))}
+                            </div>
+                            <svg
+                              className="w-full h-full absolute inset-0"
+                              viewBox="0 0 100 100"
+                              preserveAspectRatio="none"
+                            >
+                              <defs>
+                                <linearGradient
+                                  id="usersBarGradient"
+                                  x1="0%"
+                                  y1="0%"
+                                  x2="0%"
+                                  y2="100%"
+                                >
+                                  <stop
+                                    offset="0%"
+                                    style={{
+                                      stopColor: "rgba(255, 255, 255, 0.3)",
+                                      stopOpacity: 1,
+                                    }}
+                                  />
+                                  <stop
+                                    offset="100%"
+                                    style={{
+                                      stopColor: "rgba(255, 255, 255, 0.05)",
+                                      stopOpacity: 1,
+                                    }}
+                                  />
+                                </linearGradient>
+                              </defs>
+                            </svg>
+                            <div className="h-48 flex items-end justify-between space-x-1 relative z-10">
+                              {chartData.map((height, i) => {
+                                const isHovered = hoveredUsersAreaIndex === i;
+
+                                return (
+                                  <div
+                                    key={i}
+                                    className="flex-1 transition-all duration-200 ease-out relative cursor-pointer group"
+                                    style={{
+                                      height: `${height}%`,
+                                      background: "url(#usersBarGradient)",
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      const rect = e.currentTarget.getBoundingClientRect();
+                                      const x = rect.left + rect.width / 2;
+                                      const y = rect.top;
+                                      const tooltipWidth = 150;
+                                      const tooltipHeight = 60;
+                                      const constrainedX = Math.max(
+                                        tooltipWidth / 2,
+                                        Math.min(window.innerWidth - tooltipWidth / 2, x),
+                                      );
+                                      const constrainedY = Math.max(
+                                        tooltipHeight + 10,
+                                        Math.min(window.innerHeight - 10, y),
+                                      );
+                                      setHoveredUsersAreaIndex(i);
+                                      setHoveredUsersAreaPosition({
+                                        x: constrainedX,
+                                        y: constrainedY,
+                                      });
+                                    }}
+                                    onMouseLeave={() => {
+                                      setHoveredUsersAreaIndex(null);
+                                      setHoveredUsersAreaPosition(null);
+                                    }}
+                                  >
+                                    <div
+                                      className="w-full h-full"
+                                      style={{
+                                        background:
+                                          "linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.285))",
+                                        opacity: isHovered ? 1 : 0.8,
+                                      }}
+                                    />
+                                  </div>
+                                );
+                              })}
+                            </div>
+
+                            {/* Tooltip */}
+                            {hoveredUsersAreaIndex !== null && hoveredUsersAreaPosition && (
                               <div
-                                key={i}
-                                className="flex-1 transition-all duration-200 ease-out relative cursor-pointer group"
+                                className="fixed z-50 pointer-events-none transition-all duration-200 ease-out animate-in fade-in"
                                 style={{
-                                  height: `${height}%`,
-                                  background: "url(#usersBarGradient)",
-                                }}
-                                onMouseEnter={(e) => {
-                                  const rect = e.currentTarget.getBoundingClientRect();
-                                  const x = rect.left + rect.width / 2;
-                                  const y = rect.top;
-                                  const tooltipWidth = 150;
-                                  const tooltipHeight = 60;
-                                  const constrainedX = Math.max(
-                                    tooltipWidth / 2,
-                                    Math.min(window.innerWidth - tooltipWidth / 2, x),
-                                  );
-                                  const constrainedY = Math.max(
-                                    tooltipHeight + 10,
-                                    Math.min(window.innerHeight - 10, y),
-                                  );
-                                  setHoveredUsersAreaIndex(i);
-                                  setHoveredUsersAreaPosition({ x: constrainedX, y: constrainedY });
-                                }}
-                                onMouseLeave={() => {
-                                  setHoveredUsersAreaIndex(null);
-                                  setHoveredUsersAreaPosition(null);
+                                  left: `${hoveredUsersAreaPosition.x}px`,
+                                  top: `${hoveredUsersAreaPosition.y}px`,
+                                  transform: "translate(-50%, -100%)",
+                                  maxWidth: "calc(100vw - 20px)",
                                 }}
                               >
-                                <div
-                                  className="w-full h-full"
-                                  style={{
-                                    background:
-                                      "linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.285))",
-                                    opacity: isHovered ? 1 : 0.8,
-                                  }}
-                                />
+                                <div className="bg-black border border-white/20 rounded-sm px-3 py-2 shadow-lg whitespace-nowrap">
+                                  <div className="text-xs text-gray-400 mb-1 font-mono uppercase">
+                                    {
+                                      getDetailedLabels(selectedUserPeriod, "users")[
+                                        hoveredUsersAreaIndex
+                                      ]
+                                    }
+                                  </div>
+                                  <div className="text-sm text-white font-sans font-medium">
+                                    {totalUsersData[hoveredUsersAreaIndex] !== undefined
+                                      ? totalUsersData[hoveredUsersAreaIndex].toLocaleString()
+                                      : "0"}{" "}
+                                    <span className="font-mono text-xs text-gray-400">users</span>
+                                  </div>
+                                </div>
                               </div>
-                            );
-                          })}
-                        </div>
-
-                        {/* Tooltip */}
-                        {hoveredUsersAreaIndex !== null && hoveredUsersAreaPosition && (
-                          <div
-                            className="fixed z-50 pointer-events-none transition-all duration-200 ease-out animate-in fade-in"
-                            style={{
-                              left: `${hoveredUsersAreaPosition.x}px`,
-                              top: `${hoveredUsersAreaPosition.y}px`,
-                              transform: "translate(-50%, -100%)",
-                              maxWidth: "calc(100vw - 20px)",
-                            }}
-                          >
-                            <div className="bg-black border border-white/20 rounded-sm px-3 py-2 shadow-lg whitespace-nowrap">
-                              <div className="text-xs text-gray-400 mb-1 font-mono uppercase">
-                                {
-                                  getDetailedLabels(selectedUserPeriod, "users")[
-                                    hoveredUsersAreaIndex
-                                  ]
-                                }
-                              </div>
-                              <div className="text-sm text-white font-sans font-medium">
-                                {totalUsersData[hoveredUsersAreaIndex] !== undefined
-                                  ? totalUsersData[hoveredUsersAreaIndex].toLocaleString()
-                                  : "0"}{" "}
-                                <span className="font-mono text-xs text-gray-400">users</span>
-                              </div>
-                            </div>
+                            )}
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      );
+                    })()}
+                    <div
+                      className={`flex justify-between ${selectedUserPeriod === "1M" ? "text-[10px]" : "text-xs"} text-gray-500 font-mono`}
+                    >
+                      {getChartLabels(selectedUserPeriod, "users").map((label, i) => (
+                        <span key={i} className="flex-1 text-center truncate">
+                          {label}
+                        </span>
+                      ))}
                     </div>
-                  );
-                })()}
-                <div
-                  className={`flex justify-between ${selectedUserPeriod === "1M" ? "text-[10px]" : "text-xs"} text-gray-500 font-mono`}
-                >
-                  {getChartLabels(selectedUserPeriod, "users").map((label, i) => (
-                    <span key={i} className="flex-1 text-center truncate">
-                      {label}
-                    </span>
-                  ))}
+                  </div>
                 </div>
-              </div>
-            </div>
               )}
             </DropTargetSlot>
 
@@ -1488,183 +1505,185 @@ export default function Dashboard() {
                   <WidgetContent item={slotWidgetItem("activity", slotOverrides["activity"])} />
                 </OverviewSlotCard>
               ) : (
-            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 relative">
-              <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-              <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-              <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-              <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-              <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-              <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-              <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-              <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className="text-sm text-white uppercase font-light">Activity Hits</h3>
-                  <p className="text-4xl text-white font-light mt-1">
-                    {activityLoading ? "..." : formatFullNumber(activityGrandTotal)}
-                  </p>
-                  <p className="text-xs text-gray-400">Tracked events in selected period</p>
-                </div>
-                <div className="flex items-center space-x-1 overflow-x-auto">
-                  {["1D", "1W", "3M", "6M", "1Y", "ALL"].map((period) => (
-                    <button
-                      key={period}
-                      onClick={() => setActivityPeriod(period)}
-                      className={`px-2 py-1 text-xs font-light transition-colors whitespace-nowrap ${
-                        activityPeriod === period
-                          ? "bg-white/20 text-white border border-white/30"
-                          : "text-gray-500 hover:text-white"
-                      }`}
-                    >
-                      {period}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-2 relative">
-                <div className="h-40 flex items-end gap-1">
-                  {resolvedActivityLabels.map((label, index) => {
-                    const bucketTotal = activityBuckets[index] || 0;
-                    const barHeightFraction =
-                      maxActivityValue === 0 ? 0 : Math.min(1, bucketTotal / maxActivityValue);
-                    return (
+                <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 relative">
+                  <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                  <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                  <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                  <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                  <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                  <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                  <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                  <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-sm text-white uppercase font-light">Activity Hits</h3>
+                      <p className="text-4xl text-white font-light mt-1">
+                        {activityLoading ? "..." : formatFullNumber(activityGrandTotal)}
+                      </p>
+                      <p className="text-xs text-gray-400">Tracked events in selected period</p>
+                    </div>
+                    <div className="flex items-center space-x-1 overflow-x-auto">
+                      {["1D", "1W", "3M", "6M", "1Y", "ALL"].map((period) => (
+                        <button
+                          key={period}
+                          onClick={() => setActivityPeriod(period)}
+                          className={`px-2 py-1 text-xs font-light transition-colors whitespace-nowrap ${
+                            activityPeriod === period
+                              ? "bg-white/20 text-white border border-white/30"
+                              : "text-gray-500 hover:text-white"
+                          }`}
+                        >
+                          {period}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-2 relative">
+                    <div className="h-40 flex items-end gap-1">
+                      {resolvedActivityLabels.map((label, index) => {
+                        const bucketTotal = activityBuckets[index] || 0;
+                        const barHeightFraction =
+                          maxActivityValue === 0 ? 0 : Math.min(1, bucketTotal / maxActivityValue);
+                        return (
+                          <div
+                            key={`${label}-${index}`}
+                            className="flex-1 flex flex-col justify-end gap-[1px] h-full cursor-pointer"
+                            onMouseEnter={(event) =>
+                              handleActivityHover(event, index, barHeightFraction)
+                            }
+                            onMouseLeave={() => {
+                              setHoveredAreaIndex(null);
+                              setHoveredAreaPosition(null);
+                            }}
+                          >
+                            {ACTIVITY_STREAMS.map((stream) => {
+                              const value = activitySeries[stream.id]?.[index] ?? 0;
+                              const heightPercent =
+                                bucketTotal === 0 || maxActivityValue === 0
+                                  ? 0
+                                  : Math.max((value / maxActivityValue) * 100, value > 0 ? 4 : 0);
+                              return (
+                                <div
+                                  key={`${stream.id}-${index}`}
+                                  className={`w-full ${stream.barClass}`}
+                                  style={{ height: `${heightPercent}%` }}
+                                />
+                              );
+                            })}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {activityLoading && (
+                      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center text-xs uppercase text-gray-400 pointer-events-none">
+                        Loading activity...
+                      </div>
+                    )}
+                    {hoveredAreaIndex !== null && hoveredAreaPosition && (
                       <div
-                        key={`${label}-${index}`}
-                        className="flex-1 flex flex-col justify-end gap-[1px] h-full cursor-pointer"
-                        onMouseEnter={(event) =>
-                          handleActivityHover(event, index, barHeightFraction)
-                        }
-                        onMouseLeave={() => {
-                          setHoveredAreaIndex(null);
-                          setHoveredAreaPosition(null);
+                        className="fixed z-50 pointer-events-none transition-all duration-200 ease-out animate-in fade-in"
+                        style={{
+                          left: `${hoveredAreaPosition.x}px`,
+                          top: `${hoveredAreaPosition.y}px`,
+                          transform: "translate(-50%, -100%)",
+                          maxWidth: "calc(100vw - 20px)",
                         }}
                       >
-                        {ACTIVITY_STREAMS.map((stream) => {
-                          const value = activitySeries[stream.id]?.[index] ?? 0;
-                          const heightPercent =
-                            bucketTotal === 0 || maxActivityValue === 0
-                              ? 0
-                              : Math.max((value / maxActivityValue) * 100, value > 0 ? 4 : 0);
-                          return (
-                            <div
-                              key={`${stream.id}-${index}`}
-                              className={`w-full ${stream.barClass}`}
-                              style={{ height: `${heightPercent}%` }}
-                            />
-                          );
-                        })}
-                      </div>
-                    );
-                  })}
-                </div>
-                {activityLoading && (
-                  <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center text-xs uppercase text-gray-400 pointer-events-none">
-                    Loading activity...
-                  </div>
-                )}
-                {hoveredAreaIndex !== null && hoveredAreaPosition && (
-                  <div
-                    className="fixed z-50 pointer-events-none transition-all duration-200 ease-out animate-in fade-in"
-                    style={{
-                      left: `${hoveredAreaPosition.x}px`,
-                      top: `${hoveredAreaPosition.y}px`,
-                      transform: "translate(-50%, -100%)",
-                      maxWidth: "calc(100vw - 20px)",
-                    }}
-                  >
-                    <div className="bg-black border border-white/20 rounded-sm px-3 py-2 shadow-lg min-w-[180px]">
-                      <div className="text-xs text-gray-400 mb-2 font-mono uppercase">
-                        {(() => {
-                          const rawLabel =
-                            resolvedActivityLabels[hoveredAreaIndex] ||
-                            `Bucket ${hoveredAreaIndex + 1}`;
-                          if (activityPeriod === "1D" && rawLabel.endsWith("h")) {
-                            const hour = parseInt(rawLabel.replace("h", ""), 10);
-                            if (hour === 0) return "12:00 AM";
-                            if (hour < 12) return `${hour}:00 AM`;
-                            if (hour === 12) return "12:00 PM";
-                            return `${hour - 12}:00 PM`;
-                          }
-                          return rawLabel;
-                        })()}
-                      </div>
-                      <div className="space-y-1">
-                        {ACTIVITY_STREAMS.map((stream) => (
-                          <div key={stream.id}>
-                            <div className="flex items-center justify-between text-sm">
-                              <div className="flex items-center gap-2 text-gray-300">
-                                <span className={`w-2 h-2 rounded-sm ${stream.dotClass}`} />
-                                {stream.label}
-                              </div>
-                              <span className="text-white font-medium">
-                                {activitySeries[stream.id]?.[hoveredAreaIndex] ?? 0}
-                              </span>
-                            </div>
-                            {stream.id === "logins" &&
-                              loginsUniqueUsers[hoveredAreaIndex] !== undefined && (
-                                <div className="flex items-center justify-between text-[11px] ml-4 mt-0.5">
-                                  <span className="text-gray-500">Unique users</span>
-                                  <span className="text-gray-400 font-medium">
-                                    {loginsUniqueUsers[hoveredAreaIndex]}
+                        <div className="bg-black border border-white/20 rounded-sm px-3 py-2 shadow-lg min-w-[180px]">
+                          <div className="text-xs text-gray-400 mb-2 font-mono uppercase">
+                            {(() => {
+                              const rawLabel =
+                                resolvedActivityLabels[hoveredAreaIndex] ||
+                                `Bucket ${hoveredAreaIndex + 1}`;
+                              if (activityPeriod === "1D" && rawLabel.endsWith("h")) {
+                                const hour = parseInt(rawLabel.replace("h", ""), 10);
+                                if (hour === 0) return "12:00 AM";
+                                if (hour < 12) return `${hour}:00 AM`;
+                                if (hour === 12) return "12:00 PM";
+                                return `${hour - 12}:00 PM`;
+                              }
+                              return rawLabel;
+                            })()}
+                          </div>
+                          <div className="space-y-1">
+                            {ACTIVITY_STREAMS.map((stream) => (
+                              <div key={stream.id}>
+                                <div className="flex items-center justify-between text-sm">
+                                  <div className="flex items-center gap-2 text-gray-300">
+                                    <span className={`w-2 h-2 rounded-sm ${stream.dotClass}`} />
+                                    {stream.label}
+                                  </div>
+                                  <span className="text-white font-medium">
+                                    {activitySeries[stream.id]?.[hoveredAreaIndex] ?? 0}
                                   </span>
                                 </div>
-                              )}
+                                {stream.id === "logins" &&
+                                  loginsUniqueUsers[hoveredAreaIndex] !== undefined && (
+                                    <div className="flex items-center justify-between text-[11px] ml-4 mt-0.5">
+                                      <span className="text-gray-500">Unique users</span>
+                                      <span className="text-gray-400 font-medium">
+                                        {loginsUniqueUsers[hoveredAreaIndex]}
+                                      </span>
+                                    </div>
+                                  )}
+                              </div>
+                            ))}
                           </div>
-                        ))}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                )}
-                <div
-                  className={`flex justify-between ${activityPeriod === "1M" || activityPeriod === "1D" ? "text-[10px]" : "text-xs"} text-gray-500 font-mono`}
-                >
-                  {resolvedActivityLabels.map((label, i) => {
-                    // For daily (1D), only show every 4th label with AM/PM format
-                    if (activityPeriod === "1D") {
-                      if (i % 4 !== 0) {
+                    )}
+                    <div
+                      className={`flex justify-between ${activityPeriod === "1M" || activityPeriod === "1D" ? "text-[10px]" : "text-xs"} text-gray-500 font-mono`}
+                    >
+                      {resolvedActivityLabels.map((label, i) => {
+                        // For daily (1D), only show every 4th label with AM/PM format
+                        if (activityPeriod === "1D") {
+                          if (i % 4 !== 0) {
+                            return (
+                              <span key={i} className="flex-1 text-center truncate">
+                                &nbsp;
+                              </span>
+                            );
+                          }
+                          const hour = parseInt(label.replace("h", ""), 10);
+                          let formatted = "";
+                          if (hour === 0) formatted = "12am";
+                          else if (hour < 12) formatted = `${hour}am`;
+                          else if (hour === 12) formatted = "12pm";
+                          else formatted = `${hour - 12}pm`;
+                          return (
+                            <span key={i} className="flex-1 text-center truncate">
+                              {formatted}
+                            </span>
+                          );
+                        }
                         return (
                           <span key={i} className="flex-1 text-center truncate">
-                            &nbsp;
+                            {label}
                           </span>
                         );
-                      }
-                      const hour = parseInt(label.replace("h", ""), 10);
-                      let formatted = "";
-                      if (hour === 0) formatted = "12am";
-                      else if (hour < 12) formatted = `${hour}am`;
-                      else if (hour === 12) formatted = "12pm";
-                      else formatted = `${hour - 12}pm`;
-                      return (
-                        <span key={i} className="flex-1 text-center truncate">
-                          {formatted}
-                        </span>
-                      );
-                    }
-                    return (
-                      <span key={i} className="flex-1 text-center truncate">
-                        {label}
-                      </span>
-                    );
-                  })}
-                </div>
-                <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mt-4 pt-4 border-t border-white/10">
-                  {ACTIVITY_STREAMS.map((stream) => (
-                    <div
-                      key={stream.id}
-                      className="flex items-center justify-between text-xs text-gray-400"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className={`w-2 h-2 rounded-sm ${stream.dotClass}`} />
-                        {stream.label}
-                      </div>
-                      <span className="text-white font-medium">
-                        {activityLoading ? "..." : formatFullNumber(activityTotals[stream.id] || 0)}
-                      </span>
+                      })}
                     </div>
-                  ))}
+                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mt-4 pt-4 border-t border-white/10">
+                      {ACTIVITY_STREAMS.map((stream) => (
+                        <div
+                          key={stream.id}
+                          className="flex items-center justify-between text-xs text-gray-400"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className={`w-2 h-2 rounded-sm ${stream.dotClass}`} />
+                            {stream.label}
+                          </div>
+                          <span className="text-white font-medium">
+                            {activityLoading
+                              ? "..."
+                              : formatFullNumber(activityTotals[stream.id] || 0)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
               )}
             </DropTargetSlot>
           </div>
@@ -1677,129 +1696,133 @@ export default function Dashboard() {
               <DropTargetSlot slotId="active-users" className="flex-1 flex flex-col min-h-0">
                 {slotOverrides["active-users"] ? (
                   <OverviewSlotCard className="flex-1">
-                    <WidgetContent item={slotWidgetItem("active-users", slotOverrides["active-users"])} />
+                    <WidgetContent
+                      item={slotWidgetItem("active-users", slotOverrides["active-users"])}
+                    />
                   </OverviewSlotCard>
                 ) : (
-              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative flex-1 flex flex-col">
-                {/* Top-left corner */}
-                <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-                {/* Top-right corner */}
-                <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-                {/* Bottom-left corner */}
-                <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-                {/* Bottom-right corner */}
-                <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-                <div className="flex items-center justify-between mb-2 relative -mt-2 pb-1">
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowActiveUsersDropdown(!showActiveUsersDropdown)}
-                      className="text-xs h-full font-mono uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
-                    >
-                      <ChevronDown className="w-3 h-3" />
-                      <span>{activeUsersPeriod}</span>
-                    </button>
-                    {showActiveUsersDropdown && (
-                      <div className="absolute top-6 left-0 w-[150px]  z-10 bg-black border border-white/10 rounded-none shadow-lg">
-                        {periodOptions.map((period) => (
-                          <button
-                            key={period}
-                            onClick={() => {
-                              setActiveUsersPeriod(period);
-                              setShowActiveUsersDropdown(false);
-                            }}
-                            className="block border-b border-dashed border-white/5 w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors whitespace-nowrap"
-                          >
-                            {period}
-                          </button>
-                        ))}
+                  <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative flex-1 flex flex-col">
+                    {/* Top-left corner */}
+                    <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                    {/* Top-right corner */}
+                    <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                    {/* Bottom-left corner */}
+                    <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                    {/* Bottom-right corner */}
+                    <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                    <div className="flex items-center justify-between mb-2 relative -mt-2 pb-1">
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowActiveUsersDropdown(!showActiveUsersDropdown)}
+                          className="text-xs h-full font-mono uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
+                        >
+                          <ChevronDown className="w-3 h-3" />
+                          <span>{activeUsersPeriod}</span>
+                        </button>
+                        {showActiveUsersDropdown && (
+                          <div className="absolute top-6 left-0 w-[150px]  z-10 bg-black border border-white/10 rounded-none shadow-lg">
+                            {periodOptions.map((period) => (
+                              <button
+                                key={period}
+                                onClick={() => {
+                                  setActiveUsersPeriod(period);
+                                  setShowActiveUsersDropdown(false);
+                                }}
+                                className="block border-b border-dashed border-white/5 w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+                              >
+                                {period}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  {activeUsersPeriod === "Custom" && (
-                    <div className="h-0 flex items-center gap-2">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
-                          >
-                            <CalendarIcon className="mr-1 h-3 w-3" />
-                            {activeUsersDateFrom
-                              ? format(activeUsersDateFrom, "MMM dd yyyy")
-                              : "From"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                          <Calendar
-                            mode="single"
-                            selected={activeUsersDateFrom}
-                            onSelect={setActiveUsersDateFrom}
-                            initialFocus
-                            className="rounded-none"
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      {activeUsersPeriod === "Custom" && (
+                        <div className="h-0 flex items-center gap-2">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                              >
+                                <CalendarIcon className="mr-1 h-3 w-3" />
+                                {activeUsersDateFrom
+                                  ? format(activeUsersDateFrom, "MMM dd yyyy")
+                                  : "From"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                              <Calendar
+                                mode="single"
+                                selected={activeUsersDateFrom}
+                                onSelect={setActiveUsersDateFrom}
+                                initialFocus
+                                className="rounded-none"
+                              />
+                            </PopoverContent>
+                          </Popover>
 
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
-                          >
-                            <CalendarIcon className="mr-1 h-3 w-3" />
-                            {activeUsersDateTo ? format(activeUsersDateTo, "MMM dd yyyy") : "To"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                          <Calendar
-                            mode="single"
-                            selected={activeUsersDateTo}
-                            onSelect={setActiveUsersDateTo}
-                            initialFocus
-                            disabled={(date) =>
-                              activeUsersDateFrom ? date < activeUsersDateFrom : false
-                            }
-                            className="rounded-none"
-                          />
-                        </PopoverContent>
-                      </Popover>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                              >
+                                <CalendarIcon className="mr-1 h-3 w-3" />
+                                {activeUsersDateTo
+                                  ? format(activeUsersDateTo, "MMM dd yyyy")
+                                  : "To"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                              <Calendar
+                                mode="single"
+                                selected={activeUsersDateTo}
+                                onSelect={setActiveUsersDateTo}
+                                initialFocus
+                                disabled={(date) =>
+                                  activeUsersDateFrom ? date < activeUsersDateFrom : false
+                                }
+                                className="rounded-none"
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <hr className="mb-2 -mx-10 border-white/10" />
-                <h4 className="text-md text-white/80 uppercase font-mono font-light mb-1">
-                  Active Users
-                </h4>
-                <p className="text-xs text-gray-400 mb-3">
-                  Users with active session in the time frame
-                </p>
-                <div className="flex pt-4 justify-between items-end">
-                  <p className="text-3xl text-white font-light">
-                    {formatFullNumber(activeUsersDaily)}
-                  </p>
-                  <div className="mt-2 mb-1 flex items-center gap-2">
-                    <div className="flex items-center -mr-5 gap-1 px-2 py-1 border-white/5 rounded-none">
-                      <svg
-                        className={`w-3 h-3 ${activeUsersPercentage >= 0 ? "text-green-500" : "text-red-500 rotate-180"}`}
-                        viewBox="0 0 12 12"
-                        fill="currentColor"
-                      >
-                        <path d="M6 0 L12 12 L0 12 Z" />
-                      </svg>
-                      <span
-                        className={`text-xs font-medium ${activeUsersPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
-                      >
-                        {Math.abs(activeUsersPercentage).toFixed(1)}%
-                      </span>
+                    <hr className="mb-2 -mx-10 border-white/10" />
+                    <h4 className="text-md text-white/80 uppercase font-mono font-light mb-1">
+                      Active Users
+                    </h4>
+                    <p className="text-xs text-gray-400 mb-3">
+                      Users with active session in the time frame
+                    </p>
+                    <div className="flex pt-4 justify-between items-end">
+                      <p className="text-3xl text-white font-light">
+                        {formatFullNumber(activeUsersDaily)}
+                      </p>
+                      <div className="mt-2 mb-1 flex items-center gap-2">
+                        <div className="flex items-center -mr-5 gap-1 px-2 py-1 border-white/5 rounded-none">
+                          <svg
+                            className={`w-3 h-3 ${activeUsersPercentage >= 0 ? "text-green-500" : "text-red-500 rotate-180"}`}
+                            viewBox="0 0 12 12"
+                            fill="currentColor"
+                          >
+                            <path d="M6 0 L12 12 L0 12 Z" />
+                          </svg>
+                          <span
+                            className={`text-xs font-medium ${activeUsersPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
+                          >
+                            {Math.abs(activeUsersPercentage).toFixed(1)}%
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
                 )}
               </DropTargetSlot>
 
@@ -1810,125 +1833,129 @@ export default function Dashboard() {
                     <WidgetContent item={slotWidgetItem("new-users", slotOverrides["new-users"])} />
                   </OverviewSlotCard>
                 ) : (
-              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative flex-1 flex flex-col">
-                {/* Top-left corner */}
-                <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-                {/* Top-right corner */}
-                <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-                {/* Bottom-left corner */}
-                <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-                {/* Bottom-right corner */}
-                <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-                <div className="flex items-center justify-between mb-2 relative -mt-2 pb-1">
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowNewUsersDropdown(!showNewUsersDropdown)}
-                      className="text-xs h-full font-mono uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
-                    >
-                      <ChevronDown className="w-3 h-3" />
-                      <span>{newUsersPeriod}</span>
-                    </button>
-                    {showNewUsersDropdown && (
-                      <div className="absolute top-6 left-0 w-[150px]  z-10 bg-black border border-white/10 rounded-none shadow-lg">
-                        {periodOptions.map((period) => (
-                          <button
-                            key={period}
-                            onClick={() => {
-                              setNewUsersPeriod(period);
-                              setShowNewUsersDropdown(false);
-                            }}
-                            className="block border-b border-dashed border-white/5 w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors whitespace-nowrap"
-                          >
-                            {period}
-                          </button>
-                        ))}
+                  <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative flex-1 flex flex-col">
+                    {/* Top-left corner */}
+                    <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                    {/* Top-right corner */}
+                    <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                    {/* Bottom-left corner */}
+                    <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                    {/* Bottom-right corner */}
+                    <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                    <div className="flex items-center justify-between mb-2 relative -mt-2 pb-1">
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowNewUsersDropdown(!showNewUsersDropdown)}
+                          className="text-xs h-full font-mono uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
+                        >
+                          <ChevronDown className="w-3 h-3" />
+                          <span>{newUsersPeriod}</span>
+                        </button>
+                        {showNewUsersDropdown && (
+                          <div className="absolute top-6 left-0 w-[150px]  z-10 bg-black border border-white/10 rounded-none shadow-lg">
+                            {periodOptions.map((period) => (
+                              <button
+                                key={period}
+                                onClick={() => {
+                                  setNewUsersPeriod(period);
+                                  setShowNewUsersDropdown(false);
+                                }}
+                                className="block border-b border-dashed border-white/5 w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+                              >
+                                {period}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  {newUsersPeriod === "Custom" && (
-                    <div className="h-0 flex items-center gap-2">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
-                          >
-                            <CalendarIcon className="mr-1 h-3 w-3" />
-                            {newUsersDateFrom ? format(newUsersDateFrom, "MMM dd yyyy") : "From"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                          <Calendar
-                            mode="single"
-                            selected={newUsersDateFrom}
-                            onSelect={setNewUsersDateFrom}
-                            initialFocus
-                            className="rounded-none"
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      {newUsersPeriod === "Custom" && (
+                        <div className="h-0 flex items-center gap-2">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                              >
+                                <CalendarIcon className="mr-1 h-3 w-3" />
+                                {newUsersDateFrom
+                                  ? format(newUsersDateFrom, "MMM dd yyyy")
+                                  : "From"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                              <Calendar
+                                mode="single"
+                                selected={newUsersDateFrom}
+                                onSelect={setNewUsersDateFrom}
+                                initialFocus
+                                className="rounded-none"
+                              />
+                            </PopoverContent>
+                          </Popover>
 
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
-                          >
-                            <CalendarIcon className="mr-1 h-3 w-3" />
-                            {newUsersDateTo ? format(newUsersDateTo, "MMM dd yyyy") : "To"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                          <Calendar
-                            mode="single"
-                            selected={newUsersDateTo}
-                            onSelect={setNewUsersDateTo}
-                            initialFocus
-                            disabled={(date) =>
-                              newUsersDateFrom ? date < newUsersDateFrom : false
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                              >
+                                <CalendarIcon className="mr-1 h-3 w-3" />
+                                {newUsersDateTo ? format(newUsersDateTo, "MMM dd yyyy") : "To"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                              <Calendar
+                                mode="single"
+                                selected={newUsersDateTo}
+                                onSelect={setNewUsersDateTo}
+                                initialFocus
+                                disabled={(date) =>
+                                  newUsersDateFrom ? date < newUsersDateFrom : false
+                                }
+                                className="rounded-none"
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      )}
+                    </div>
+                    <hr className="mb-2 -mx-10 border-white/10" />
+                    <h4 className="text-md text-white/80 uppercase font-mono font-light mb-1">
+                      New Users
+                    </h4>
+                    <p className="text-xs text-gray-400 mb-3">
+                      Newly registered Users in the time frame
+                    </p>
+                    <div className="flex pt-4 justify-between items-end">
+                      <p className="text-3xl text-white font-light">
+                        {formatFullNumber(_newUsersCount)}
+                      </p>
+                      <div className="mt-2 mb-1 flex items-center gap-2">
+                        <div className="flex items-center -mr-5 gap-1 px-2 py-1 rounded-none">
+                          <svg
+                            className={`w-3 h-3 ${newUsersCountPercentage >= 0 ? "text-green-500" : "text-red-500 rotate-180"}`}
+                            viewBox="0 0 12 12"
+                            fill="currentColor"
+                            style={
+                              newUsersCountPercentage < 0 ? { transform: "rotate(180deg)" } : {}
                             }
-                            className="rounded-none"
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                  )}
-                </div>
-                <hr className="mb-2 -mx-10 border-white/10" />
-                <h4 className="text-md text-white/80 uppercase font-mono font-light mb-1">
-                  New Users
-                </h4>
-                <p className="text-xs text-gray-400 mb-3">
-                  Newly registered Users in the time frame
-                </p>
-                <div className="flex pt-4 justify-between items-end">
-                  <p className="text-3xl text-white font-light">
-                    {formatFullNumber(_newUsersCount)}
-                  </p>
-                  <div className="mt-2 mb-1 flex items-center gap-2">
-                    <div className="flex items-center -mr-5 gap-1 px-2 py-1 rounded-none">
-                      <svg
-                        className={`w-3 h-3 ${newUsersCountPercentage >= 0 ? "text-green-500" : "text-red-500 rotate-180"}`}
-                        viewBox="0 0 12 12"
-                        fill="currentColor"
-                        style={newUsersCountPercentage < 0 ? { transform: "rotate(180deg)" } : {}}
-                      >
-                        <path d="M6 0 L12 12 L0 12 Z" />
-                      </svg>
-                      <span
-                        className={`text-xs font-medium ${newUsersCountPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
-                      >
-                        {Math.abs(newUsersCountPercentage).toFixed(1)}%
-                      </span>
+                          >
+                            <path d="M6 0 L12 12 L0 12 Z" />
+                          </svg>
+                          <span
+                            className={`text-xs font-medium ${newUsersCountPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
+                          >
+                            {Math.abs(newUsersCountPercentage).toFixed(1)}%
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
                 )}
               </DropTargetSlot>
             </div>
@@ -1939,129 +1966,133 @@ export default function Dashboard() {
               <DropTargetSlot slotId="organizations" className="flex-1 flex flex-col min-h-0">
                 {slotOverrides["organizations"] ? (
                   <OverviewSlotCard className="flex-1">
-                    <WidgetContent item={slotWidgetItem("organizations", slotOverrides["organizations"])} />
+                    <WidgetContent
+                      item={slotWidgetItem("organizations", slotOverrides["organizations"])}
+                    />
                   </OverviewSlotCard>
                 ) : (
-              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative flex-1 flex flex-col">
-                {/* Top-left corner */}
-                <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-                {/* Top-right corner */}
-                <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-                {/* Bottom-left corner */}
-                <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-                {/* Bottom-right corner */}
-                <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-                <div className="flex items-center justify-between mb-2 relative -mt-2 pb-1">
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowOrganizationsDropdown(!showOrganizationsDropdown)}
-                      className="text-xs h-full font-mono uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
-                    >
-                      <ChevronDown className="w-3 h-3" />
-                      <span>{organizationsPeriod}</span>
-                    </button>
-                    {showOrganizationsDropdown && (
-                      <div className="absolute top-6 left-0 w-[150px]  z-10 bg-black border border-white/10 rounded-none shadow-lg">
-                        {periodOptions.map((period) => (
-                          <button
-                            key={period}
-                            onClick={() => {
-                              setOrganizationsPeriod(period);
-                              setShowOrganizationsDropdown(false);
-                            }}
-                            className="block border-b border-dashed border-white/5 w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors whitespace-nowrap"
-                          >
-                            {period}
-                          </button>
-                        ))}
+                  <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative flex-1 flex flex-col">
+                    {/* Top-left corner */}
+                    <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                    {/* Top-right corner */}
+                    <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                    {/* Bottom-left corner */}
+                    <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                    {/* Bottom-right corner */}
+                    <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                    <div className="flex items-center justify-between mb-2 relative -mt-2 pb-1">
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowOrganizationsDropdown(!showOrganizationsDropdown)}
+                          className="text-xs h-full font-mono uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
+                        >
+                          <ChevronDown className="w-3 h-3" />
+                          <span>{organizationsPeriod}</span>
+                        </button>
+                        {showOrganizationsDropdown && (
+                          <div className="absolute top-6 left-0 w-[150px]  z-10 bg-black border border-white/10 rounded-none shadow-lg">
+                            {periodOptions.map((period) => (
+                              <button
+                                key={period}
+                                onClick={() => {
+                                  setOrganizationsPeriod(period);
+                                  setShowOrganizationsDropdown(false);
+                                }}
+                                className="block border-b border-dashed border-white/5 w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+                              >
+                                {period}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  {organizationsPeriod === "Custom" && (
-                    <div className="h-0 flex items-center gap-2">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
-                          >
-                            <CalendarIcon className="mr-1 h-3 w-3" />
-                            {organizationsDateFrom
-                              ? format(organizationsDateFrom, "MMM dd yyyy")
-                              : "From"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                          <Calendar
-                            mode="single"
-                            selected={organizationsDateFrom}
-                            onSelect={setOrganizationsDateFrom}
-                            initialFocus
-                            className="rounded-none"
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      {organizationsPeriod === "Custom" && (
+                        <div className="h-0 flex items-center gap-2">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                              >
+                                <CalendarIcon className="mr-1 h-3 w-3" />
+                                {organizationsDateFrom
+                                  ? format(organizationsDateFrom, "MMM dd yyyy")
+                                  : "From"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                              <Calendar
+                                mode="single"
+                                selected={organizationsDateFrom}
+                                onSelect={setOrganizationsDateFrom}
+                                initialFocus
+                                className="rounded-none"
+                              />
+                            </PopoverContent>
+                          </Popover>
 
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
-                          >
-                            <CalendarIcon className="mr-1 h-3 w-3" />
-                            {organizationsDateTo
-                              ? format(organizationsDateTo, "MMM dd yyyy")
-                              : "To"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                          <Calendar
-                            mode="single"
-                            selected={organizationsDateTo}
-                            onSelect={setOrganizationsDateTo}
-                            initialFocus
-                            disabled={(date) =>
-                              organizationsDateFrom ? date < organizationsDateFrom : false
-                            }
-                            className="rounded-none"
-                          />
-                        </PopoverContent>
-                      </Popover>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                              >
+                                <CalendarIcon className="mr-1 h-3 w-3" />
+                                {organizationsDateTo
+                                  ? format(organizationsDateTo, "MMM dd yyyy")
+                                  : "To"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                              <Calendar
+                                mode="single"
+                                selected={organizationsDateTo}
+                                onSelect={setOrganizationsDateTo}
+                                initialFocus
+                                disabled={(date) =>
+                                  organizationsDateFrom ? date < organizationsDateFrom : false
+                                }
+                                className="rounded-none"
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <hr className="mb-2 -mx-10 border-white/10" />
-                <h4 className="text-md text-white/80 uppercase font-mono font-light mb-1">
-                  Organizations
-                </h4>
-                <p className="text-xs text-gray-400 mb-3">Total organizations in the time frame</p>
-                <div className="flex pt-4 justify-between items-end">
-                  <p className="text-3xl text-white font-light">
-                    {organizationsLoading ? "..." : formatFullNumber(organizationsCount)}
-                  </p>
-                  <div className="mt-2 mb-1 flex items-center gap-2">
-                    <div className="flex items-center -mr-5 gap-1 px-2 py-1 rounded-none">
-                      <svg
-                        className={`w-3 h-3 ${organizationsPercentage >= 0 ? "text-green-500" : "text-red-500 rotate-180"}`}
-                        viewBox="0 0 12 12"
-                        fill="currentColor"
-                      >
-                        <path d="M6 0 L12 12 L0 12 Z" />
-                      </svg>
-                      <span
-                        className={`text-xs font-medium ${organizationsPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
-                      >
-                        {Math.abs(organizationsPercentage).toFixed(1)}%
-                      </span>
+                    <hr className="mb-2 -mx-10 border-white/10" />
+                    <h4 className="text-md text-white/80 uppercase font-mono font-light mb-1">
+                      Organizations
+                    </h4>
+                    <p className="text-xs text-gray-400 mb-3">
+                      Total organizations in the time frame
+                    </p>
+                    <div className="flex pt-4 justify-between items-end">
+                      <p className="text-3xl text-white font-light">
+                        {organizationsLoading ? "..." : formatFullNumber(organizationsCount)}
+                      </p>
+                      <div className="mt-2 mb-1 flex items-center gap-2">
+                        <div className="flex items-center -mr-5 gap-1 px-2 py-1 rounded-none">
+                          <svg
+                            className={`w-3 h-3 ${organizationsPercentage >= 0 ? "text-green-500" : "text-red-500 rotate-180"}`}
+                            viewBox="0 0 12 12"
+                            fill="currentColor"
+                          >
+                            <path d="M6 0 L12 12 L0 12 Z" />
+                          </svg>
+                          <span
+                            className={`text-xs font-medium ${organizationsPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
+                          >
+                            {Math.abs(organizationsPercentage).toFixed(1)}%
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
                 )}
               </DropTargetSlot>
 
@@ -2072,118 +2103,120 @@ export default function Dashboard() {
                     <WidgetContent item={slotWidgetItem("teams", slotOverrides["teams"])} />
                   </OverviewSlotCard>
                 ) : (
-              <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative flex-1 flex flex-col">
-                {/* Top-left corner */}
-                <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-                {/* Top-right corner */}
-                <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-                {/* Bottom-left corner */}
-                <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-                {/* Bottom-right corner */}
-                <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-                <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-                <div className="flex items-center justify-between mb-2 relative -mt-2 pb-1">
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowTeamsDropdown(!showTeamsDropdown)}
-                      className="text-xs h-full font-mono uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
-                    >
-                      <ChevronDown className="w-3 h-3" />
-                      <span>{teamsPeriod}</span>
-                    </button>
-                    {showTeamsDropdown && (
-                      <div className="absolute top-6 left-0 w-[150px]  z-10 bg-black border border-white/10 rounded-none shadow-lg">
-                        {periodOptions.map((period) => (
-                          <button
-                            key={period}
-                            onClick={() => {
-                              setTeamsPeriod(period);
-                              setShowTeamsDropdown(false);
-                            }}
-                            className="block border-b border-dashed border-white/5 w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors whitespace-nowrap"
-                          >
-                            {period}
-                          </button>
-                        ))}
+                  <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pb-2 relative flex-1 flex flex-col">
+                    {/* Top-left corner */}
+                    <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                    {/* Top-right corner */}
+                    <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                    {/* Bottom-left corner */}
+                    <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                    {/* Bottom-right corner */}
+                    <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                    <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                    <div className="flex items-center justify-between mb-2 relative -mt-2 pb-1">
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowTeamsDropdown(!showTeamsDropdown)}
+                          className="text-xs h-full font-mono uppercase text-gray-400 flex items-center space-x-1 hover:text-white transition-colors"
+                        >
+                          <ChevronDown className="w-3 h-3" />
+                          <span>{teamsPeriod}</span>
+                        </button>
+                        {showTeamsDropdown && (
+                          <div className="absolute top-6 left-0 w-[150px]  z-10 bg-black border border-white/10 rounded-none shadow-lg">
+                            {periodOptions.map((period) => (
+                              <button
+                                key={period}
+                                onClick={() => {
+                                  setTeamsPeriod(period);
+                                  setShowTeamsDropdown(false);
+                                }}
+                                className="block border-b border-dashed border-white/5 w-full text-left px-4 py-2 text-xs text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+                              >
+                                {period}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  {teamsPeriod === "Custom" && (
-                    <div className="h-0 flex items-center gap-2">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
-                          >
-                            <CalendarIcon className="mr-1 h-3 w-3" />
-                            {teamsDateFrom ? format(teamsDateFrom, "MMM dd yyyy") : "From"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                          <Calendar
-                            mode="single"
-                            selected={teamsDateFrom}
-                            onSelect={setTeamsDateFrom}
-                            initialFocus
-                            className="rounded-none"
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      {teamsPeriod === "Custom" && (
+                        <div className="h-0 flex items-center gap-2">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                              >
+                                <CalendarIcon className="mr-1 h-3 w-3" />
+                                {teamsDateFrom ? format(teamsDateFrom, "MMM dd yyyy") : "From"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                              <Calendar
+                                mode="single"
+                                selected={teamsDateFrom}
+                                onSelect={setTeamsDateFrom}
+                                initialFocus
+                                className="rounded-none"
+                              />
+                            </PopoverContent>
+                          </Popover>
 
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
-                          >
-                            <CalendarIcon className="mr-1 h-3 w-3" />
-                            {teamsDateTo ? format(teamsDateTo, "MMM dd yyyy") : "To"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-black border-white/10">
-                          <Calendar
-                            mode="single"
-                            selected={teamsDateTo}
-                            onSelect={setTeamsDateTo}
-                            initialFocus
-                            disabled={(date) => (teamsDateFrom ? date < teamsDateFrom : false)}
-                            className="rounded-none"
-                          />
-                        </PopoverContent>
-                      </Popover>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="h-6 px-2 text-xs font-mono uppercase text-gray-400 hover:text-white bg-transparent border-white/10 hover:bg-white/5"
+                              >
+                                <CalendarIcon className="mr-1 h-3 w-3" />
+                                {teamsDateTo ? format(teamsDateTo, "MMM dd yyyy") : "To"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 bg-black border-white/10">
+                              <Calendar
+                                mode="single"
+                                selected={teamsDateTo}
+                                onSelect={setTeamsDateTo}
+                                initialFocus
+                                disabled={(date) => (teamsDateFrom ? date < teamsDateFrom : false)}
+                                className="rounded-none"
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <hr className="mb-2 -mx-10 border-white/10" />
-                <h4 className="text-md text-white/80 uppercase font-mono font-light mb-1">Teams</h4>
-                <p className="text-xs text-gray-400 mb-3">Total teams in the time frame</p>
-                <div className="flex pt-4 justify-between items-end">
-                  <p className="text-3xl text-white font-light">
-                    {teamsLoading ? "..." : formatFullNumber(teamsCount)}
-                  </p>
-                  <div className="mt-2 mb-1 flex items-center gap-2">
-                    <div className="flex items-center -mr-5 gap-1 px-2 py-1 rounded-none">
-                      <svg
-                        className={`w-3 h-3 ${teamsPercentage >= 0 ? "text-green-500" : "text-red-500 rotate-180"}`}
-                        viewBox="0 0 12 12"
-                        fill="currentColor"
-                      >
-                        <path d="M6 0 L12 12 L0 12 Z" />
-                      </svg>
-                      <span
-                        className={`text-xs font-medium ${teamsPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
-                      >
-                        {Math.abs(teamsPercentage).toFixed(1)}%
-                      </span>
+                    <hr className="mb-2 -mx-10 border-white/10" />
+                    <h4 className="text-md text-white/80 uppercase font-mono font-light mb-1">
+                      Teams
+                    </h4>
+                    <p className="text-xs text-gray-400 mb-3">Total teams in the time frame</p>
+                    <div className="flex pt-4 justify-between items-end">
+                      <p className="text-3xl text-white font-light">
+                        {teamsLoading ? "..." : formatFullNumber(teamsCount)}
+                      </p>
+                      <div className="mt-2 mb-1 flex items-center gap-2">
+                        <div className="flex items-center -mr-5 gap-1 px-2 py-1 rounded-none">
+                          <svg
+                            className={`w-3 h-3 ${teamsPercentage >= 0 ? "text-green-500" : "text-red-500 rotate-180"}`}
+                            viewBox="0 0 12 12"
+                            fill="currentColor"
+                          >
+                            <path d="M6 0 L12 12 L0 12 Z" />
+                          </svg>
+                          <span
+                            className={`text-xs font-medium ${teamsPercentage >= 0 ? "text-green-500" : "text-red-500"}`}
+                          >
+                            {Math.abs(teamsPercentage).toFixed(1)}%
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
                 )}
               </DropTargetSlot>
             </div>
@@ -2192,73 +2225,75 @@ export default function Dashboard() {
             <DropTargetSlot slotId="security-insights" className="flex flex-col">
               {slotOverrides["security-insights"] ? (
                 <OverviewSlotCard className="flex-1">
-                  <WidgetContent item={slotWidgetItem("security-insights", slotOverrides["security-insights"])} />
+                  <WidgetContent
+                    item={slotWidgetItem("security-insights", slotOverrides["security-insights"])}
+                  />
                 </OverviewSlotCard>
               ) : (
-            <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pt-4 overflow-hidden relative flex flex-col flex-1">
-              <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-              <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-              <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-              <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-              <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
-              <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
-              <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
-              <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
-              <div className="flex items-center justify-between mb-4 flex-shrink-0">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-white/60" />
-                  <h4 className="text-xs text-gray-400 uppercase font-mono font-light">
-                    Security Insights
-                  </h4>
-                </div>
-              </div>
-              <hr className="-mx-10 -mt-1 border-white/10" />
-              <div className="space-y-3 overflow-y-auto custom-scrollbar flex-1 min-h-0">
-                {securityPatches.length === 0 && (
-                  <div className="text-sm flex items-center justify-center text-gray-400">
-                    <div className="flex mt-5 items-center justify-center">
-                      <Shield className="w-4 h-4 text-gray-400 mr-2" />
-                      <p className="text-center">No security insights found</p>
+                <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 pt-4 overflow-hidden relative flex flex-col flex-1">
+                  <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                  <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                  <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                  <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                  <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+                  <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+                  <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+                  <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+                  <div className="flex items-center justify-between mb-4 flex-shrink-0">
+                    <div className="flex items-center gap-2">
+                      <Shield className="w-4 h-4 text-white/60" />
+                      <h4 className="text-xs text-gray-400 uppercase font-mono font-light">
+                        Security Insights
+                      </h4>
                     </div>
                   </div>
-                )}
-                {securityPatches.map((patch, index) => (
-                  <div
-                    key={patch.id}
-                    onClick={() => handlePatchClick(patch)}
-                    className="group py-2 border-b border-white/5 cursor-pointer transition-all duration-200 hover:border-white/20"
-                    style={{
-                      animation: `slideIn 0.3s ease-out ${index * 0.1}s both`,
-                    }}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-sm text-white/90 font-light truncate group-hover:text-white transition-colors">
-                            {patch.title}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span
-                            className={`text-[9px] px-1.5 py-0.5 border rounded-sm uppercase font-mono ${getSeverityColor(
-                              patch.severity,
-                            )}`}
-                          >
-                            {patch.severity}
-                          </span>
-                          <span
-                            className={`text-[9px] px-1.5 py-0.5 border rounded-sm capitalize font-mono ${getStatusColor(patch.status)}`}
-                          >
-                            {patch.status}
-                          </span>
+                  <hr className="-mx-10 -mt-1 border-white/10" />
+                  <div className="space-y-3 overflow-y-auto custom-scrollbar flex-1 min-h-0">
+                    {securityPatches.length === 0 && (
+                      <div className="text-sm flex items-center justify-center text-gray-400">
+                        <div className="flex mt-5 items-center justify-center">
+                          <Shield className="w-4 h-4 text-gray-400 mr-2" />
+                          <p className="text-center">No security insights found</p>
                         </div>
                       </div>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-white transition-all flex-shrink-0 mt-0.5" />
-                    </div>
+                    )}
+                    {securityPatches.map((patch, index) => (
+                      <div
+                        key={patch.id}
+                        onClick={() => handlePatchClick(patch)}
+                        className="group py-2 border-b border-white/5 cursor-pointer transition-all duration-200 hover:border-white/20"
+                        style={{
+                          animation: `slideIn 0.3s ease-out ${index * 0.1}s both`,
+                        }}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <span className="text-sm text-white/90 font-light truncate group-hover:text-white transition-colors">
+                                {patch.title}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span
+                                className={`text-[9px] px-1.5 py-0.5 border rounded-sm uppercase font-mono ${getSeverityColor(
+                                  patch.severity,
+                                )}`}
+                              >
+                                {patch.severity}
+                              </span>
+                              <span
+                                className={`text-[9px] px-1.5 py-0.5 border rounded-sm capitalize font-mono ${getStatusColor(patch.status)}`}
+                              >
+                                {patch.status}
+                              </span>
+                            </div>
+                          </div>
+                          <ArrowUpRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-white transition-all flex-shrink-0 mt-0.5" />
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
               )}
             </DropTargetSlot>
           </div>
