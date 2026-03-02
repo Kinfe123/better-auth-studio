@@ -287,6 +287,9 @@ importers:
       react-router-dom:
         specifier: ^6.20.1
         version: 6.30.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react-svg-worldmap:
+        specifier: ^2.0.0
+        version: 2.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-syntax-highlighter:
         specifier: ^15.6.6
         version: 15.6.6(react@19.1.0)
@@ -2878,6 +2881,9 @@ packages:
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
 
+  d3-array@2.12.1:
+    resolution: {integrity: sha512-B0ErZK/66mHtEsR1TkPEEkwdy+WDesimkM5gpZr5Dsg54BiTA5RXtYW5qTLIAcekaS9xfZrzBLF/OAkB3Qn1YQ==}
+
   d3-array@3.2.4:
     resolution: {integrity: sha512-tdQAmyA18i4J7wprpYq8ClcxZy3SC31QMeByyCFyRt7BVHdREQZ5lpzoe5mFEYZUWe+oq8HBvk9JjpibyEV4Jg==}
     engines: {node: '>=12'}
@@ -2909,6 +2915,9 @@ packages:
   d3-geo-voronoi@2.1.0:
     resolution: {integrity: sha512-kqE4yYuOjPbKdBXG0xztCacPwkVSK2REF1opSNrnqqtXJmNcM++UbwQ8SxvwP6IQTj9RvIjjK4qeiVsEfj0Z2Q==}
     engines: {node: '>=12'}
+
+  d3-geo@2.0.2:
+    resolution: {integrity: sha512-8pM1WGMLGFuhq9S+FpPURxic+gKzjluCD/CHTuUF3mXMeiCo0i6R0tO1s4+GArRFde96SLcW/kOFRjoAosPsFA==}
 
   d3-geo@3.1.1:
     resolution: {integrity: sha512-637ln3gXKXOwhalDzinUgY83KzNWZRKbYubaG+fGVuc/dxO64RRljtCTnf5ecMyE1RIdtqpkVcq0IbtU2S8j2Q==}
@@ -3717,6 +3726,9 @@ packages:
   internal-slot@1.1.0:
     resolution: {integrity: sha512-4gd7VpWNQNB4UKKCFFVcp1AVv+FMOgs9NKzjHKusc8jTMhd5eL1NqQqOpE0KzMds804/yHlglp3uxgluOqAPLw==}
     engines: {node: '>= 0.4'}
+
+  internmap@1.0.1:
+    resolution: {integrity: sha512-lDB5YccMydFBtasVtxnZ3MRBHuaoE8GKsppq+EchKL2U4nK/DmEpPHNH8MZe5HkMtpSiTSOZwfN0tzYjO/lJEw==}
 
   internmap@2.0.3:
     resolution: {integrity: sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==}
@@ -4592,6 +4604,13 @@ packages:
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
 
+  react-path-tooltip@1.0.25:
+    resolution: {integrity: sha512-wT1+mDi10aFyP3nyRCz3ixcwWGPIeCb3QOPHFYC+kIzaQUPk82Lrm3TsDn2k24n8FdUbbsxpfL8iwIddzaG5LQ==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16.0.0'
+
   react-reconciler@0.31.0:
     resolution: {integrity: sha512-7Ob7Z+URmesIsIVRjnLoDGwBEG/tVitidU0nMsqX/eeJaLY89RISO/10ERe0MqmzuKUUB1rmY+h1itMbUHg9BQ==}
     engines: {node: '>=0.10.0'}
@@ -4649,6 +4668,16 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc
     peerDependenciesMeta:
       '@types/react':
+        optional: true
+
+  react-svg-worldmap@2.0.0:
+    resolution: {integrity: sha512-r9jYwLveSxvXpQlsVtvzjEpWkL1sgATOUHS0k+d0wkjRYTtywqichOAJ80UXKX6mWrjnU4N5juAr3+Ul2I939w==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+    peerDependenciesMeta:
+      react-dom:
         optional: true
 
   react-syntax-highlighter@15.6.6:
@@ -7924,6 +7953,10 @@ snapshots:
 
   csstype@3.2.3: {}
 
+  d3-array@2.12.1:
+    dependencies:
+      internmap: 1.0.1
+
   d3-array@3.2.4:
     dependencies:
       internmap: 2.0.3
@@ -7951,6 +7984,10 @@ snapshots:
       d3-delaunay: 6.0.4
       d3-geo: 3.1.1
       d3-tricontour: 1.1.0
+
+  d3-geo@2.0.2:
+    dependencies:
+      d3-array: 2.12.1
 
   d3-geo@3.1.1:
     dependencies:
@@ -9001,6 +9038,8 @@ snapshots:
       hasown: 2.0.2
       side-channel: 1.1.0
 
+  internmap@1.0.1: {}
+
   internmap@2.0.3: {}
 
   ipaddr.js@1.9.1: {}
@@ -9838,6 +9877,11 @@ snapshots:
 
   react-is@18.3.1: {}
 
+  react-path-tooltip@1.0.25(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
   react-reconciler@0.31.0(react@19.1.0):
     dependencies:
       react: 19.1.0
@@ -9891,6 +9935,15 @@ snapshots:
       tslib: 2.8.1
     optionalDependencies:
       '@types/react': 19.2.6
+
+  react-svg-worldmap@2.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      d3-geo: 2.0.2
+      react: 19.1.0
+      react-path-tooltip: 1.0.25(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      tslib: 2.8.1
+    optionalDependencies:
+      react-dom: 19.1.0(react@19.1.0)
 
   react-syntax-highlighter@15.6.6(react@19.1.0):
     dependencies:

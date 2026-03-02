@@ -39,6 +39,7 @@
     "react-day-picker": "^9.11.1",
     "react-dom": "^19.0.0",
     "react-router-dom": "^6.20.1",
+    "react-svg-worldmap": "^2.0.0",
     "react-syntax-highlighter": "^15.6.6",
     "recharts": "^2.8.0",
     "sonner": "^2.0.7",

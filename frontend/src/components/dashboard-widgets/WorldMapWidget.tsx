@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
+import WorldMap from "react-svg-worldmap";
 import { X } from "../PixelIcons";
 
 interface CountryCount {
@@ -32,36 +34,21 @@ function countryFlag(code: string): string {
   return String.fromCodePoint(...codePoints);
 }
 
-function generateMapDots(distribution: CountryCount[], maxCount: number): string {
-  const coords: Record<string, [number, number]> = {
-    US: [25, 40], CA: [20, 30], BR: [35, 70], GB: [48, 30], FR: [50, 35],
-    DE: [52, 33], JP: [80, 38], CN: [72, 38], IN: [68, 48], AU: [82, 72],
-    KR: [78, 38], RU: [65, 25], ZA: [55, 75], NG: [50, 55], EG: [55, 42],
-    MX: [22, 50], AR: [32, 80], SE: [52, 22], NL: [50, 30], IT: [52, 38],
-    ES: [47, 38], PT: [45, 38], PL: [54, 32], TR: [58, 38], SA: [60, 45],
-    AE: [62, 45], SG: [72, 55], ID: [75, 58], TH: [72, 50], VN: [73, 48],
-    PH: [78, 50], MY: [72, 55], PK: [66, 42], BD: [70, 45], ET: [58, 52],
-    KE: [58, 58], TZ: [58, 62], CO: [28, 55], CL: [30, 78], PE: [27, 62],
-  };
-  return distribution
-    .slice(0, 20)
-    .map((d) => {
-      const [x, y] = coords[d.countryCode] || [50, 50];
-      const r = Math.max(2, Math.min(8, (d.uniqueUsers / maxCount) * 8));
-      const opacity = 0.15 + (d.uniqueUsers / maxCount) * 0.35;
-      return `<circle cx="${x}%" cy="${y}%" r="${r}" fill="white" opacity="${opacity.toFixed(2)}" />`;
-    })
-    .join("");
-}
-
 export function WorldMapWidget() {
+  const navigate = useNavigate();
   const [distribution, setDistribution] = useState<CountryCount[]>([]);
   const [totalUnique, setTotalUnique] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState<CountryCount | null>(null);
   const [detail, setDetail] = useState<CountryDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
-
+  useEffect(() => {
+    if (selectedCountry) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [selectedCountry]);
   useEffect(() => {
     let cancelled = false;
     fetch("/api/dashboard/geo-distribution")
@@ -88,23 +75,44 @@ export function WorldMapWidget() {
       .finally(() => setDetailLoading(false));
   }
 
-  const maxCount = Math.max(...distribution.map((d) => d.uniqueUsers), 1);
-  const mapSvg = distribution.length > 0
-    ? `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${generateMapDots(distribution, maxCount)}</svg>`)}`
-    : null;
+  const mapData = distribution.map((d) => ({
+    country: d.countryCode.toLowerCase(),
+    value: d.uniqueUsers,
+  }));
+
 
   return (
     <>
-      <div className="flex flex-col min-h-0 h-full relative">
-        {mapSvg && (
+      <div className="flex flex-col min-h-0 h-full relative overflow-hidden">
+        {/* World map background */}
+        {distribution.length > 0 && (
           <div
-            className="absolute inset-0 opacity-40 bg-no-repeat bg-center bg-contain pointer-events-none"
-            style={{
-              backgroundImage: `url("${mapSvg}")`,
-              filter: "blur(6px)",
-            }}
-          />
+            className="absolute inset-0 pointer-events-none flex items-center justify-center"
+            style={{ filter: "blur(1.5px)", opacity: 0.6 }}
+          >
+            <WorldMap
+              color="white"
+              valueSuffix="users"
+              size="responsive"
+              data={mapData as any}
+              backgroundColor="transparent"
+              borderColor="#ffffff10"
+              strokeOpacity={0.15}
+              richInteraction={false}
+              tooltipBgColor="transparent"
+              tooltipTextColor="transparent"
+              styleFunction={({ countryValue, maxValue }) => ({
+                fill: countryValue
+                  ? `rgba(255,255,255,${0.08 + (((countryValue as number) || 0) / (maxValue || 1)) * 0.35})`
+                  : "rgba(255,255,255,0.02)",
+                stroke: "rgba(255,255,255,0.06)",
+                strokeWidth: 0.5,
+                cursor: "default",
+              })}
+            />
+          </div>
         )}
+
         <div className="relative z-[1] flex flex-col min-h-0 h-full">
           <div className="flex items-center justify-between gap-2 mb-1 shrink-0">
             <h4 className="text-xs text-gray-400 uppercase font-mono font-light tracking-wide">
@@ -132,7 +140,7 @@ export function WorldMapWidget() {
                   key={d.countryCode}
                   type="button"
                   onClick={() => openCountryDetail(d)}
-                  className="flex items-center gap-2 py-2 px-1 w-full text-left hover:bg-white/5 transition-colors group rounded-none"
+                  className="flex items-center gap-2 py-1.5 px-1 w-full text-left hover:bg-white/5 transition-colors group rounded-none"
                 >
                   <span className="text-sm leading-none shrink-0" title={d.country}>
                     {countryFlag(d.countryCode)}
@@ -143,7 +151,7 @@ export function WorldMapWidget() {
                   <div className="w-12 h-1 bg-white/5 overflow-hidden shrink-0">
                     <div
                       className="h-full bg-white/25 transition-all duration-300"
-                      style={{ width: `${(d.uniqueUsers / maxCount) * 100}%` }}
+                      style={{ width: `${(d.uniqueUsers / Math.max(...distribution.map((x) => x.uniqueUsers), 1)) * 100}%` }}
                     />
                   </div>
                   <span className="text-[10px] font-mono text-gray-500 w-4 text-right shrink-0">
@@ -156,17 +164,25 @@ export function WorldMapWidget() {
         </div>
       </div>
 
-      {/* Country Detail Modal */}
       {selectedCountry && (
         <div
           className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setSelectedCountry(null)}
         >
           <div
-            className="bg-black border border-white/10 w-full max-w-2xl max-h-[80vh] flex flex-col rounded-none shadow-2xl"
+            className="bg-black border border-white/10 w-full max-w-2xl max-h-[80vh] flex flex-col rounded-none shadow-2xl relative"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header */}
+            {/* Corner accents */}
+            <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+            <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+            <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+            <div className="absolute top-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+            <div className="absolute bottom-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
+            <div className="absolute bottom-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
+            <div className="absolute bottom-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
+            <div className="absolute bottom-0 right-0 w-[0.5px] h-[12px] bg-white/20" />
+
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 shrink-0">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{countryFlag(selectedCountry.countryCode)}</span>
@@ -214,8 +230,17 @@ export function WorldMapWidget() {
                         </thead>
                         <tbody>
                           {detail.users.map((u) => (
-                            <tr key={u.id} className="border-b border-white/5 hover:bg-white/[3%] transition-colors">
-                              <td className="py-1.5 px-1 text-gray-300">{u.name || "—"}</td>
+                            <tr
+                              key={u.id}
+                              className="border-b border-white/5 hover:bg-white/[3%] transition-colors cursor-pointer group"
+                              onClick={() => {
+                                setSelectedCountry(null);
+                                navigate(`/users/${u.id}`);
+                              }}
+                            >
+                              <td className="py-1.5 px-1 text-gray-300 group-hover:text-white transition-colors">
+                                {u.name || "—"}
+                              </td>
                               <td className="py-1.5 px-1 text-gray-500 font-mono truncate max-w-[180px]">{u.email || "—"}</td>
                               <td className="py-1.5 px-1 text-gray-600 font-mono text-right whitespace-nowrap">
                                 {u.createdAt ? format(new Date(u.createdAt), "MMM dd, yyyy") : "—"}

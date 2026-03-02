@@ -94,21 +94,6 @@ export function DashboardFloatingPanel() {
               <h3 className="text-[11px] font-mono font-medium text-gray-300 uppercase tracking-wider">
                 Widgets
               </h3>
-              {hasOverrides && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    for (const key of Object.keys(slotOverrides) as any[]) {
-                      setSlotOverride(key, null);
-                    }
-                  }}
-                  className="text-[10px] text-gray-500 hover:text-white flex items-center gap-1 transition-colors"
-                  title="Restore all overridden cards"
-                >
-                  <RotateCcw className="w-3 h-3" />
-                  Reset cards
-                </button>
-              )}
             </div>
             <p className="text-[10px] text-gray-500 mt-1 leading-tight">
               Drag a widget onto any dashboard card to replace it

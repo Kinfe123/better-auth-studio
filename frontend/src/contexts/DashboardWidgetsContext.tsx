@@ -139,9 +139,10 @@ function saveSlotOverrides(overrides: Partial<Record<OverviewSlotId, WidgetType>
 function loadPanelExpanded(): boolean {
   try {
     const raw = localStorage.getItem(PANEL_EXPANDED_KEY);
-    return raw !== "false";
+    if (raw === null) return false;
+    return raw === "true";
   } catch (_e) {
-    return true;
+    return false;
   }
 }
 
