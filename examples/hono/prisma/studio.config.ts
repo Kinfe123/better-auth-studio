@@ -30,7 +30,7 @@ const config: StudioConfig = {
   },
   access: {
     roles: ["admin"],
-    allowEmails: ["kinfetare83@gmail.com"],
+    allowEmails: ["kinfetare83@gmail.com" , "admin@user.com"],
   },
   events: {
     enabled: true,

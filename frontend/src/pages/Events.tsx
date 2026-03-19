@@ -212,9 +212,36 @@ function checkIsSelfHosted(): boolean {
   return !!cfg.basePath;
 }
 
+const EVENTS_PAGE_SIZE = 50;
+const EVENTS_INITIAL_FETCH_BATCH_SIZE = 1000;
+const EVENTS_POLL_LIMIT = 100;
+const MAX_FETCH_RETRIES = 8;
+
+function getEventTimestamp(value: string | Date): number {
+  const timestamp = new Date(value).getTime();
+  return Number.isNaN(timestamp) ? 0 : timestamp;
+}
+
+function sortEventsByTimestamp(events: AuthEvent[]): AuthEvent[] {
+  return [...events].sort((a, b) => getEventTimestamp(b.timestamp) - getEventTimestamp(a.timestamp));
+}
+
+function mergeEventsById(current: AuthEvent[], incoming: AuthEvent[]): AuthEvent[] {
+  if (incoming.length === 0) {
+    return current;
+  }
+
+  const merged = new Map<string, AuthEvent>();
+  current.forEach((event) => merged.set(event.id, event));
+  incoming.forEach((event) => merged.set(event.id, event));
+
+  return sortEventsByTimestamp(Array.from(merged.values()));
+}
+
 export default function Events() {
   const navigate = useNavigate();
   const [events, setEvents] = useState<AuthEvent[]>([]);
+  const eventsRef = useRef<AuthEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
@@ -224,7 +251,6 @@ export default function Events() {
   const [newEventIds, setNewEventIds] = useState<Set<string>>(new Set());
   const pollTimeoutRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isPollingRef = useRef(false);
-  const lastEventIdRef = useRef<string | null>(null);
   const pollInterval = getStudioConfig()?.liveMarquee?.pollInterval ?? 2000;
   const [isSelfHosted, setIsSelfHosted] = useState(false);
   const [eventsEnabled, setEventsEnabled] = useState<boolean | null>(null);
@@ -236,18 +262,7 @@ export default function Events() {
   const [activityDetailsCanScroll, setActivityDetailsCanScroll] = useState(false);
   const [_lastPollAt, setLastPollAt] = useState<number | null>(null);
   const [totalEventCount, setTotalEventCount] = useState<number | null>(null);
-  const [serverEventStats, setServerEventStats] = useState<{
-    success: number;
-    failed: number;
-    warning: number;
-    info: number;
-  } | null>(null);
-  const [nextOffset, setNextOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const eventsLengthRef = useRef(0);
-  eventsLengthRef.current = events.length;
-  const [allEventsForActivity, setAllEventsForActivity] = useState<AuthEvent[]>([]);
+  const [visibleCount, setVisibleCount] = useState(EVENTS_PAGE_SIZE);
 
   interface FilterConfig {
     type: string;
@@ -288,6 +303,10 @@ export default function Events() {
   }, []);
 
   useEffect(() => {
+    eventsRef.current = events;
+  }, [events]);
+
+  useEffect(() => {
     if (!showViewModal || !selectedEvent?.ipAddress) {
       setEventLocation(null);
       setEventLocationLoading(false);
@@ -307,7 +326,7 @@ export default function Events() {
     };
   }, [showViewModal, selectedEvent?.id, selectedEvent?.ipAddress, resolveIPLocation]);
 
-  const eventStatsFromLoaded = useMemo(() => {
+  const eventStats = useMemo(() => {
     const failed = events.filter((e) => {
       const status = e.status || "success";
       const severity = e.display?.severity;
@@ -330,209 +349,150 @@ export default function Events() {
     return { success, failed, warning, info };
   }, [events]);
 
-  const eventStats = serverEventStats ?? eventStatsFromLoaded;
+  const fetchEventsPage = useCallback(
+    async (
+      limit: number,
+      retryable: boolean,
+      offset = 0,
+    ): Promise<{ events: AuthEvent[]; total: number | null; hasMore: boolean }> => {
+      const params = new URLSearchParams({
+        limit: String(limit),
+        sort: "desc",
+        offset: String(offset),
+      });
+      const fetchUrl = `${buildApiUrl("/api/events")}?${params.toString()}`;
 
-  const fetchEventCount = useCallback(async (): Promise<void> => {
-    const maxRetries = 8;
-    const apiPath = buildApiUrl("/api/events/count");
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        const response = await fetch(apiPath);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.retryable && attempt < maxRetries) {
+      for (let attempt = 0; attempt <= MAX_FETCH_RETRIES; attempt++) {
+        try {
+          const response = await fetch(fetchUrl);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.retryable && retryable && attempt < MAX_FETCH_RETRIES) {
+              await new Promise((r) => setTimeout(r, Math.min(1000 * (attempt + 1), 4000)));
+              continue;
+            }
+
+            const list = Array.isArray(data.events) ? sortEventsByTimestamp(data.events) : [];
+            return {
+              events: list,
+              total: typeof data.total === "number" ? data.total : null,
+              hasMore: Boolean(data.hasMore),
+            };
+          }
+
+          const errData = await response.json().catch(() => ({}));
+          if ((response.status === 503 || errData.retryable) && retryable && attempt < MAX_FETCH_RETRIES) {
             await new Promise((r) => setTimeout(r, Math.min(1000 * (attempt + 1), 4000)));
             continue;
           }
-          setTotalEventCount(typeof data.total === "number" ? data.total : null);
-          if (
-            typeof data.success === "number" &&
-            typeof data.failed === "number" &&
-            typeof data.warning === "number" &&
-            typeof data.info === "number"
-          ) {
-            setServerEventStats({
-              success: data.success,
-              failed: data.failed,
-              warning: data.warning,
-              info: data.info,
-            });
-          } else {
-            setServerEventStats(null);
+
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        } catch (error) {
+          if (!retryable || attempt >= MAX_FETCH_RETRIES) {
+            throw error;
           }
-          return;
-        }
-        const errData = await response.json().catch(() => ({}));
-        if ((response.status === 503 || errData.retryable) && attempt < maxRetries) {
           await new Promise((r) => setTimeout(r, Math.min(1000 * (attempt + 1), 4000)));
-          continue;
         }
-        setTotalEventCount(null);
-        setServerEventStats(null);
-        return;
-      } catch {
-        if (attempt >= maxRetries) {
-          setTotalEventCount(null);
-          setServerEventStats(null);
-          return;
-        }
-        await new Promise((r) => setTimeout(r, Math.min(1000 * (attempt + 1), 4000)));
+      }
+
+      return { events: [], total: null, hasMore: false };
+    },
+    [],
+  );
+
+  const fetchAllEvents = useCallback(async (): Promise<{ events: AuthEvent[]; total: number | null }> => {
+    let allEvents: AuthEvent[] = [];
+    let total: number | null = null;
+    let offset = 0;
+
+    while (true) {
+      const page = await fetchEventsPage(EVENTS_INITIAL_FETCH_BATCH_SIZE, true, offset);
+
+      if (page.events.length === 0) {
+        return {
+          events: allEvents,
+          total: total ?? page.total ?? allEvents.length,
+        };
+      }
+
+      allEvents = mergeEventsById(allEvents, page.events);
+      total = page.total ?? total;
+      offset += page.events.length;
+
+      if (!page.hasMore || (total != null && allEvents.length >= total)) {
+        return {
+          events: allEvents,
+          total: total ?? allEvents.length,
+        };
       }
     }
-  }, []);
+  }, [fetchEventsPage]);
 
-  const fetchAllEventsForActivity = useCallback(async (): Promise<void> => {
-    const maxRetries = 8;
-    const params = new URLSearchParams({
-      limit: "10000",
-      sort: "desc",
-      offset: "0",
+  const highlightNewEvents = useCallback((newEvents: AuthEvent[]) => {
+    if (newEvents.length === 0) {
+      return;
+    }
+
+    const newIds = new Set<string>(newEvents.map((event) => event.id));
+    setNewEventIds((prevIds) => {
+      const combined = new Set<string>([...prevIds, ...newIds]);
+      setTimeout(() => {
+        setNewEventIds((prevSet) => {
+          const updated = new Set<string>(prevSet);
+          newIds.forEach((id) => updated.delete(id));
+          return updated;
+        });
+      }, 3000);
+      return combined;
     });
-    const fetchUrl = `${buildApiUrl("/api/events")}?${params.toString()}`;
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        const response = await fetch(fetchUrl);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.retryable && attempt < maxRetries) {
-            await new Promise((r) => setTimeout(r, Math.min(1000 * (attempt + 1), 4000)));
-            continue;
-          }
-          if (data.events && Array.isArray(data.events)) {
-            setAllEventsForActivity(data.events);
-          }
-          return;
-        }
-        const errData = await response.json().catch(() => ({}));
-        if ((response.status === 503 || errData.retryable) && attempt < maxRetries) {
-          await new Promise((r) => setTimeout(r, Math.min(1000 * (attempt + 1), 4000)));
-          continue;
-        }
-        return;
-      } catch {
-        if (attempt >= maxRetries) return;
-        await new Promise((r) => setTimeout(r, Math.min(1000 * (attempt + 1), 4000)));
-      }
-    }
   }, []);
 
   const fetchEvents = useCallback(
     async (isInitial = false) => {
-      if (isPollingRef.current && !isInitial) return;
+      if (isPollingRef.current) return;
       isPollingRef.current = true;
 
       try {
-        const params = new URLSearchParams({
-          limit: "50",
-          sort: "desc",
-          offset: "0",
-        });
+        const { events: fetchedEvents, total } = isInitial
+          ? await fetchAllEvents()
+          : await fetchEventsPage(EVENTS_POLL_LIMIT, false);
 
-        const apiPath = buildApiUrl("/api/events");
-        const fetchUrl = `${apiPath}?${params.toString()}`;
-        let data: any = null;
+        setIsConnected(true);
+        setLastPollAt(Date.now());
 
         if (isInitial) {
-          const maxRetries = 8;
-          for (let attempt = 0; attempt <= maxRetries; attempt++) {
-            try {
-              const response = await fetch(fetchUrl);
-              if (response.ok) {
-                data = await response.json();
-                if (data.retryable && attempt < maxRetries) {
-                  await new Promise((r) => setTimeout(r, Math.min(1000 * (attempt + 1), 4000)));
-                  continue;
-                }
-                break;
-              }
-              const errData = await response.json().catch(() => ({}));
-              if ((response.status === 503 || errData.retryable) && attempt < maxRetries) {
-                await new Promise((r) => setTimeout(r, Math.min(1000 * (attempt + 1), 4000)));
-                continue;
-              }
-              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            } catch (retryErr) {
-              if (attempt >= maxRetries) throw retryErr;
-              await new Promise((r) => setTimeout(r, Math.min(1000 * (attempt + 1), 4000)));
-            }
-          }
-        } else {
-          const response = await fetch(fetchUrl);
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-          }
-          data = await response.json();
+          setEvents(fetchedEvents);
+          setTotalEventCount(total ?? fetchedEvents.length);
+          setVisibleCount(EVENTS_PAGE_SIZE);
+          return;
         }
 
-        if (!data) {
-          throw new Error("No data received");
+        if (fetchedEvents.length === 0) {
+          if (typeof total === "number") {
+            setTotalEventCount(total);
+          }
+          return;
         }
-        setIsConnected(true);
 
-        if (data.events && Array.isArray(data.events)) {
-          const list = data.events;
-          const hasMoreFromApi = Boolean(data.hasMore);
+        const currentEvents = eventsRef.current;
+        const existingIds = new Set(currentEvents.map((event) => event.id));
+        const uniqueNewEvents = fetchedEvents.filter((event) => !existingIds.has(event.id));
+        const merged = mergeEventsById(currentEvents, fetchedEvents);
 
-          if (typeof data.total === "number") {
-            setTotalEventCount(data.total);
-          }
-
-          if (list.length === 0 && isInitial) {
-            setEvents([]);
-            if (typeof data.total !== "number") setTotalEventCount(0);
-            setNextOffset(0);
-            setHasMore(false);
-            setLoading(false);
-            return;
-          }
-          if (isInitial) {
-            setEvents(list);
-            setNextOffset(list.length);
-            setHasMore(hasMoreFromApi);
-            setLastPollAt(Date.now());
-            fetchEventCount();
-            if (list.length > 0) {
-              lastEventIdRef.current = list[0].id;
-            }
-          } else {
-            const hadMoreThan50 = eventsLengthRef.current > 50;
-            setEvents((prev) => {
-              const existingIds = new Set(prev.map((e) => e.id));
-              const newEvents = list.filter((e: AuthEvent) => !existingIds.has(e.id));
-              if (newEvents.length > 0) {
-                const newIds = new Set<string>(newEvents.map((e: AuthEvent) => e.id));
-                setNewEventIds((prevIds) => {
-                  const combined = new Set<string>([...prevIds, ...newIds]);
-                  setTimeout(() => {
-                    setNewEventIds((prevSet) => {
-                      const updated = new Set<string>(prevSet);
-                      newIds.forEach((id: string) => updated.delete(id));
-                      return updated;
-                    });
-                  }, 3000);
-                  return combined;
-                });
-              }
-              if (prev.length > 50) {
-                const merged = [...list.filter((e: AuthEvent) => !existingIds.has(e.id)), ...prev];
-                const deduped = merged.filter(
-                  (e, i, arr) => arr.findIndex((x) => x.id === e.id) === i,
-                );
-                return deduped.slice(0, 500);
-              }
-              return [...list];
-            });
-            setLastPollAt(Date.now());
-            fetchEventCount();
-            if (list.length > 0) {
-              lastEventIdRef.current = list[0].id;
-            }
-            if (!hadMoreThan50) {
-              setNextOffset(list.length);
-              setHasMore(hasMoreFromApi);
-            }
-          }
+        if (uniqueNewEvents.length > 0) {
+          highlightNewEvents(uniqueNewEvents);
         }
+
+        setEvents(merged);
+        setTotalEventCount((prevTotal) => {
+          if (typeof total === "number") {
+            return total;
+          }
+          if (prevTotal == null) {
+            return merged.length;
+          }
+          return prevTotal + uniqueNewEvents.length;
+        });
       } catch (error) {
         console.error("Failed to fetch events:", error);
         setIsConnected(false);
@@ -541,7 +501,7 @@ export default function Events() {
         setLoading(false);
       }
     },
-    [fetchEventCount],
+    [fetchAllEvents, fetchEventsPage, highlightNewEvents],
   );
 
   useEffect(() => {
@@ -589,7 +549,6 @@ export default function Events() {
     }
 
     fetchEvents(true);
-    fetchAllEventsForActivity();
 
     const startPolling = () => {
       if (pollTimeoutRef.current) {
@@ -608,7 +567,7 @@ export default function Events() {
         clearInterval(pollTimeoutRef.current);
       }
     };
-  }, [eventsEnabled, isSelfHosted, checkingEvents, fetchEvents, fetchAllEventsForActivity]);
+  }, [eventsEnabled, isSelfHosted, checkingEvents, fetchEvents, pollInterval]);
 
   useEffect(() => {
     if (!selectedActivityDateKey || events.length === 0) {
@@ -640,38 +599,9 @@ export default function Events() {
     setShowViewModal(true);
   };
 
-  const loadMoreEvents = useCallback(async () => {
-    if (loadingMore || !hasMore) return;
-    const offset = nextOffset;
-    setLoadingMore(true);
-    try {
-      const params = new URLSearchParams({
-        limit: "50",
-        sort: "desc",
-        offset: String(offset),
-      });
-      const apiPath = buildApiUrl("/api/events");
-      const response = await fetch(`${apiPath}?${params.toString()}`);
-      if (!response.ok) {
-        setLoadingMore(false);
-        return;
-      }
-      const data = await response.json();
-      const list = data.events && Array.isArray(data.events) ? data.events : [];
-      const added = list.length;
-      setEvents((prev) => {
-        const existingIds = new Set(prev.map((e) => e.id));
-        const appended = list.filter((e: AuthEvent) => !existingIds.has(e.id));
-        return appended.length > 0 ? [...prev, ...appended] : prev;
-      });
-      setNextOffset(offset + added);
-      setHasMore(added >= 50 && Boolean(data.hasMore));
-    } catch (e) {
-      console.error("Load more events failed:", e);
-    } finally {
-      setLoadingMore(false);
-    }
-  }, [loadingMore, hasMore, nextOffset]);
+  const loadMoreEvents = useCallback(() => {
+    setVisibleCount((prev) => prev + EVENTS_PAGE_SIZE);
+  }, []);
 
   const addFilter = (filterType: string) => {
     const exists = activeFilters.some((f) => f.type === filterType);
@@ -775,6 +705,13 @@ export default function Events() {
     });
     return list;
   }, [filteredEvents, eventSort]);
+
+  const visibleEvents = useMemo(
+    () => sortedEvents.slice(0, Math.max(visibleCount, EVENTS_PAGE_SIZE)),
+    [sortedEvents, visibleCount],
+  );
+
+  const hasMoreVisibleEvents = visibleEvents.length < sortedEvents.length;
 
   if (checkingEvents) {
     return (
@@ -1039,7 +976,7 @@ export const auth = betterAuth({
             }
           }
 
-          const activitySource = allEventsForActivity.length > 0 ? allEventsForActivity : events;
+          const activitySource = events;
           activitySource.forEach((event) => {
             const eventDate = new Date(event.timestamp);
             eventDate.setHours(0, 0, 0, 0);
@@ -1653,7 +1590,7 @@ export const auth = betterAuth({
                   </td>
                 </tr>
               ) : (
-                sortedEvents.map((event) => {
+                visibleEvents.map((event) => {
                   const isNew = newEventIds.has(event.id);
                   const severity = event.display?.severity || "info";
                   const status = event.status || "success";
@@ -1771,26 +1708,18 @@ export const auth = betterAuth({
               )}
             </tbody>
           </table>
-          {hasMore ? (
+          {hasMoreVisibleEvents ? (
             <div className="flex justify-center py-4 md:py-6 border-t border-dashed border-white/10">
               <button
                 type="button"
                 onClick={loadMoreEvents}
-                disabled={loadingMore}
-                className="inline-flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-2.5 font-mono text-xs md:text-sm uppercase border border-dashed border-white/20 text-white/90 hover:bg-white/10 hover:border-white/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[8rem] md:min-w-[10rem]"
+                className="inline-flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-2.5 font-mono text-xs md:text-sm uppercase border border-dashed border-white/20 text-white/90 hover:bg-white/10 hover:border-white/30 transition-colors min-w-[8rem] md:min-w-[10rem]"
               >
-                {loadingMore ? (
-                  <>
-                    <Loader className="w-4 h-4 animate-spin shrink-0" />
-                    Loading more
-                  </>
-                ) : (
-                  "Load more"
-                )}
+                Load more
               </button>
             </div>
           ) : (
-            events.length > 0 && (
+            visibleEvents.length > 0 && (
               <div className="flex justify-center py-6 border-t border-dashed border-white/10">
                 <p className="text-gray-500 font-mono text-sm uppercase">
                   You&apos;ve reached the end
