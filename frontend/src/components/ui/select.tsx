@@ -43,13 +43,13 @@ const SelectTrigger = React.forwardRef<
     <button
       ref={ref}
       type="button"
-      className={`flex h-10 w-full items-center justify-between border bg-black/30 px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white focus:border-white/40 disabled:cursor-not-allowed disabled:opacity-50 rounded-none ${className}`}
+      className={`flex h-10 w-full items-center justify-between rounded-none border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       onClick={() => setIsOpen(!isOpen)}
       {...props}
     >
       {children}
       <ChevronDown
-        className={`h-4 w-4 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+        className={`h-4 w-4 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`}
       />
     </button>
   );
@@ -63,7 +63,7 @@ const SelectValue = React.forwardRef<
   const { value } = React.useContext(SelectContext);
 
   return (
-    <span ref={ref} className={`text-sm text-white ${className}`} {...props}>
+    <span ref={ref} className={`text-sm text-foreground ${className}`} {...props}>
       {value || placeholder}
     </span>
   );
@@ -79,7 +79,7 @@ const SelectContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
     return (
       <div
         ref={ref}
-        className={`absolute top-full left-0 right-0 z-[100] mt-1 border border-dashed border-white/20 bg-black rounded-none shadow-lg max-h-60 overflow-y-auto ${className}`}
+        className={`absolute top-full left-0 right-0 z-[100] mt-1 max-h-60 overflow-y-auto rounded-none border border-dashed border-border bg-popover text-popover-foreground shadow-lg ${className}`}
         {...props}
       >
         {children}
@@ -98,7 +98,7 @@ const SelectItem = React.forwardRef<
   return (
     <div
       ref={ref}
-      className={`px-3 py-2 text-sm text-white hover:bg-white/10 cursor-pointer ${className}`}
+      className={`cursor-pointer px-3 py-2 text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground ${className}`}
       onClick={() => {
         onValueChange?.(value);
         setIsOpen(false);

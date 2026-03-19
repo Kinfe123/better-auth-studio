@@ -173,8 +173,23 @@ function injectConfig(html: string, config: WindowStudioConfig): string {
 
   const script = `
     <script>
+      const __BAS_THEME_KEY__ = "better-auth-studio-theme";
       window.__STUDIO_CONFIG__ = ${safeJson};
       Object.freeze(window.__STUDIO_CONFIG__);
+      try {
+        const configuredTheme = window.__STUDIO_CONFIG__?.metadata?.theme === "light" ? "light" : "dark";
+        const storedTheme = window.localStorage.getItem(__BAS_THEME_KEY__);
+        const activeTheme = storedTheme === "light" || storedTheme === "dark" ? storedTheme : configuredTheme;
+        document.documentElement.dataset.theme = activeTheme;
+        document.documentElement.style.colorScheme = activeTheme;
+        document.documentElement.classList.remove("light", "dark");
+        document.documentElement.classList.add(activeTheme);
+      } catch {
+        document.documentElement.dataset.theme = window.__STUDIO_CONFIG__?.metadata?.theme === "light" ? "light" : "dark";
+        document.documentElement.style.colorScheme = document.documentElement.dataset.theme;
+        document.documentElement.classList.remove("light", "dark");
+        document.documentElement.classList.add(document.documentElement.dataset.theme);
+      }
       // Update document title from config
       if (window.__STUDIO_CONFIG__?.metadata?.title) {
         document.title = window.__STUDIO_CONFIG__.metadata.title;

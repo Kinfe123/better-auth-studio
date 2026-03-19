@@ -8,6 +8,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useCounts } from "@/contexts/CountsContext";
 import { useDashboardWidgets } from "@/contexts/DashboardWidgetsContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   DashboardFloatingPanel,
   DropTargetSlot,
@@ -40,36 +41,26 @@ const ACTIVITY_STREAMS = [
     id: "signups",
     label: "Signups",
     analyticsKey: "newUsers",
-    barClass: "bg-white/25 border border-white/10",
-    dotClass: "bg-white/25",
   },
   {
     id: "logins",
     label: "Logins",
     analyticsKey: "activeUsers",
-    barClass: "bg-white/20 border border-white/10",
-    dotClass: "bg-white/20",
   },
   {
     id: "organizations",
     label: "Organizations",
     analyticsKey: "organizations",
-    barClass: "bg-white/15 border border-white/10",
-    dotClass: "bg-white/15",
   },
   {
     id: "teams",
     label: "Teams",
     analyticsKey: "teams",
-    barClass: "bg-white/10 border border-white/10",
-    dotClass: "bg-white/10",
   },
   {
     id: "sessions",
     label: "Sessions",
     analyticsKey: "sessions",
-    barClass: "bg-white/5 border border-white/10",
-    dotClass: "bg-white/5",
   },
 ] as const;
 
@@ -85,6 +76,7 @@ interface SecurityPatch {
 }
 
 export default function Dashboard() {
+  const { theme } = useTheme();
   const [activeTab] = useState("overview");
   const [showQuickActionsModal, setShowQuickActionsModal] = useState(false);
   const [activeUsersDaily, setActiveUsersDaily] = useState(0);
@@ -115,6 +107,75 @@ export default function Dashboard() {
   const [hoveredAreaPosition, setHoveredAreaPosition] = useState<{ x: number; y: number } | null>(
     null,
   );
+
+  const isLightTheme = theme === "light";
+  const activityStreams = useMemo(
+    () =>
+      ACTIVITY_STREAMS.map((stream, index) => {
+        const lightPalette = [
+          {
+            barClass: "bg-slate-900/75 border border-slate-900/10",
+            dotClass: "bg-slate-900/75",
+          },
+          {
+            barClass: "bg-slate-900/55 border border-slate-900/10",
+            dotClass: "bg-slate-900/55",
+          },
+          {
+            barClass: "bg-slate-900/40 border border-slate-900/10",
+            dotClass: "bg-slate-900/40",
+          },
+          {
+            barClass: "bg-slate-900/28 border border-slate-900/10",
+            dotClass: "bg-slate-900/28",
+          },
+          {
+            barClass: "bg-slate-900/18 border border-slate-900/10",
+            dotClass: "bg-slate-900/18",
+          },
+        ] as const;
+
+        const darkPalette = [
+          { barClass: "bg-white/25 border border-white/10", dotClass: "bg-white/25" },
+          { barClass: "bg-white/20 border border-white/10", dotClass: "bg-white/20" },
+          { barClass: "bg-white/15 border border-white/10", dotClass: "bg-white/15" },
+          { barClass: "bg-white/10 border border-white/10", dotClass: "bg-white/10" },
+          { barClass: "bg-white/5 border border-white/10", dotClass: "bg-white/5" },
+        ] as const;
+
+        return {
+          ...stream,
+          ...(isLightTheme ? lightPalette[index] : darkPalette[index]),
+        };
+      }),
+    [isLightTheme],
+  );
+  const totalUsersGridLineClass = isLightTheme ? "bg-slate-900/10" : "bg-white/10";
+  const totalUsersAxisTextClass = isLightTheme ? "text-slate-500" : "text-gray-500";
+  const chartTooltipClass = isLightTheme
+    ? "bg-white border border-slate-200 shadow-xl"
+    : "bg-black border border-white/20 shadow-lg";
+  const chartTooltipLabelClass = isLightTheme ? "text-slate-500" : "text-gray-400";
+  const chartTooltipValueClass = isLightTheme ? "text-slate-950" : "text-white";
+  const chartTooltipMetaClass = isLightTheme ? "text-slate-500" : "text-gray-400";
+  const totalUsersBarGradientStops = isLightTheme
+    ? {
+        top: "rgba(15, 23, 42, 0.78)",
+        bottom: "rgba(15, 23, 42, 0.28)",
+        fill: "linear-gradient(to bottom, rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.34))",
+      }
+    : {
+        top: "rgba(255, 255, 255, 0.3)",
+        bottom: "rgba(255, 255, 255, 0.05)",
+        fill: "linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.285))",
+      };
+  const activityLoadingOverlayClass = isLightTheme
+    ? "absolute inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center text-xs uppercase text-slate-500 pointer-events-none"
+    : "absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center text-xs uppercase text-gray-400 pointer-events-none";
+  const activityTooltipSeriesLabelClass = isLightTheme ? "text-slate-600" : "text-gray-300";
+  const activityTooltipUniqueLabelClass = isLightTheme ? "text-slate-500" : "text-gray-500";
+  const activityLegendTextClass = isLightTheme ? "text-slate-600" : "text-gray-400";
+  const activityLegendValueClass = isLightTheme ? "text-slate-950" : "text-white";
 
   // Custom date range states
   const [activeUsersDateFrom, setActiveUsersDateFrom] = useState<Date | undefined>(undefined);
@@ -1354,7 +1415,7 @@ export default function Dashboard() {
                           {/* Y-axis labels */}
                           <div className="flex flex-col justify-between h-48 text-xs text-gray-500 font-mono pt-0.5 pb-0.5">
                             {yAxisLabels.map((value, i) => (
-                              <span key={i} className="leading-none">
+                              <span key={i} className={`leading-none ${totalUsersAxisTextClass}`}>
                                 {formatCompactNumber(Math.round(value))}
                               </span>
                             ))}
@@ -1367,7 +1428,7 @@ export default function Dashboard() {
                               {[0, 1, 2, 3, 4, 5].map((i) => (
                                 <div
                                   key={i}
-                                  className="w-full h-px bg-white/10"
+                                  className={`h-px w-full ${totalUsersGridLineClass}`}
                                   style={{ opacity: 0.3 }}
                                 />
                               ))}
@@ -1388,14 +1449,14 @@ export default function Dashboard() {
                                   <stop
                                     offset="0%"
                                     style={{
-                                      stopColor: "rgba(255, 255, 255, 0.3)",
+                                      stopColor: totalUsersBarGradientStops.top,
                                       stopOpacity: 1,
                                     }}
                                   />
                                   <stop
                                     offset="100%"
                                     style={{
-                                      stopColor: "rgba(255, 255, 255, 0.05)",
+                                      stopColor: totalUsersBarGradientStops.bottom,
                                       stopOpacity: 1,
                                     }}
                                   />
@@ -1442,8 +1503,7 @@ export default function Dashboard() {
                                     <div
                                       className="w-full h-full"
                                       style={{
-                                        background:
-                                          "linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.285))",
+                                        background: totalUsersBarGradientStops.fill,
                                         opacity: isHovered ? 1 : 0.8,
                                       }}
                                     />
@@ -1463,19 +1523,21 @@ export default function Dashboard() {
                                   maxWidth: "calc(100vw - 20px)",
                                 }}
                               >
-                                <div className="bg-black border border-white/20 rounded-sm px-3 py-2 shadow-lg whitespace-nowrap">
-                                  <div className="text-xs text-gray-400 mb-1 font-mono uppercase">
+                                <div className={`${chartTooltipClass} rounded-sm px-3 py-2 whitespace-nowrap`}>
+                                  <div className={`mb-1 text-xs font-mono uppercase ${chartTooltipLabelClass}`}>
                                     {
                                       getDetailedLabels(selectedUserPeriod, "users")[
                                         hoveredUsersAreaIndex
                                       ]
                                     }
                                   </div>
-                                  <div className="text-sm text-white font-sans font-medium">
+                                  <div className={`text-sm font-sans font-medium ${chartTooltipValueClass}`}>
                                     {totalUsersData[hoveredUsersAreaIndex] !== undefined
                                       ? totalUsersData[hoveredUsersAreaIndex].toLocaleString()
                                       : "0"}{" "}
-                                    <span className="font-mono text-xs text-gray-400">users</span>
+                                    <span className={`text-xs font-mono ${chartTooltipMetaClass}`}>
+                                      users
+                                    </span>
                                   </div>
                                 </div>
                               </div>
@@ -1485,7 +1547,7 @@ export default function Dashboard() {
                       );
                     })()}
                     <div
-                      className={`flex justify-between ${selectedUserPeriod === "1M" ? "text-[10px]" : "text-xs"} text-gray-500 font-mono`}
+                      className={`flex justify-between font-mono ${selectedUserPeriod === "1M" ? "text-[10px]" : "text-xs"} ${totalUsersAxisTextClass}`}
                     >
                       {getChartLabels(selectedUserPeriod, "users").map((label, i) => (
                         <span key={i} className="flex-1 text-center truncate">
@@ -1556,7 +1618,7 @@ export default function Dashboard() {
                               setHoveredAreaPosition(null);
                             }}
                           >
-                            {ACTIVITY_STREAMS.map((stream) => {
+                            {activityStreams.map((stream) => {
                               const value = activitySeries[stream.id]?.[index] ?? 0;
                               const heightPercent =
                                 bucketTotal === 0 || maxActivityValue === 0
@@ -1575,7 +1637,7 @@ export default function Dashboard() {
                       })}
                     </div>
                     {activityLoading && (
-                      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center text-xs uppercase text-gray-400 pointer-events-none">
+                      <div className={activityLoadingOverlayClass}>
                         Loading activity...
                       </div>
                     )}
@@ -1589,8 +1651,8 @@ export default function Dashboard() {
                           maxWidth: "calc(100vw - 20px)",
                         }}
                       >
-                        <div className="bg-black border border-white/20 rounded-sm px-3 py-2 shadow-lg min-w-[180px]">
-                          <div className="text-xs text-gray-400 mb-2 font-mono uppercase">
+                        <div className={`${chartTooltipClass} min-w-[180px] rounded-sm px-3 py-2`}>
+                          <div className={`mb-2 text-xs font-mono uppercase ${chartTooltipLabelClass}`}>
                             {(() => {
                               const rawLabel =
                                 resolvedActivityLabels[hoveredAreaIndex] ||
@@ -1606,22 +1668,24 @@ export default function Dashboard() {
                             })()}
                           </div>
                           <div className="space-y-1">
-                            {ACTIVITY_STREAMS.map((stream) => (
+                            {activityStreams.map((stream) => (
                               <div key={stream.id}>
                                 <div className="flex items-center justify-between text-sm">
-                                  <div className="flex items-center gap-2 text-gray-300">
+                                  <div className={`flex items-center gap-2 ${activityTooltipSeriesLabelClass}`}>
                                     <span className={`w-2 h-2 rounded-sm ${stream.dotClass}`} />
                                     {stream.label}
                                   </div>
-                                  <span className="text-white font-medium">
+                                  <span className={`font-medium ${chartTooltipValueClass}`}>
                                     {activitySeries[stream.id]?.[hoveredAreaIndex] ?? 0}
                                   </span>
                                 </div>
                                 {stream.id === "logins" &&
                                   loginsUniqueUsers[hoveredAreaIndex] !== undefined && (
                                     <div className="flex items-center justify-between text-[11px] ml-4 mt-0.5">
-                                      <span className="text-gray-500">Unique users</span>
-                                      <span className="text-gray-400 font-medium">
+                                      <span className={activityTooltipUniqueLabelClass}>
+                                        Unique users
+                                      </span>
+                                      <span className={`font-medium ${chartTooltipMetaClass}`}>
                                         {loginsUniqueUsers[hoveredAreaIndex]}
                                       </span>
                                     </div>
@@ -1633,7 +1697,7 @@ export default function Dashboard() {
                       </div>
                     )}
                     <div
-                      className={`flex justify-between ${activityPeriod === "1M" || activityPeriod === "1D" ? "text-[10px]" : "text-xs"} text-gray-500 font-mono`}
+                      className={`flex justify-between font-mono ${activityPeriod === "1M" || activityPeriod === "1D" ? "text-[10px]" : "text-xs"} ${totalUsersAxisTextClass}`}
                     >
                       {resolvedActivityLabels.map((label, i) => {
                         // For daily (1D), only show every 4th label with AM/PM format
@@ -1665,16 +1729,16 @@ export default function Dashboard() {
                       })}
                     </div>
                     <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mt-4 pt-4 border-t border-white/10">
-                      {ACTIVITY_STREAMS.map((stream) => (
+                      {activityStreams.map((stream) => (
                         <div
                           key={stream.id}
-                          className="flex items-center justify-between text-xs text-gray-400"
+                          className={`flex items-center justify-between text-xs ${activityLegendTextClass}`}
                         >
                           <div className="flex items-center gap-2">
                             <span className={`w-2 h-2 rounded-sm ${stream.dotClass}`} />
                             {stream.label}
                           </div>
-                          <span className="text-white font-medium">
+                          <span className={`font-medium ${activityLegendValueClass}`}>
                             {activityLoading
                               ? "..."
                               : formatFullNumber(activityTotals[stream.id] || 0)}

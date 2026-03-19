@@ -6,10 +6,12 @@ import {
   LogOut,
   Mail,
   Menu,
+  Moon,
   RefreshCw,
   Search,
   Settings,
   Share2,
+  Sun,
   User,
   Users,
   Wrench,
@@ -21,6 +23,7 @@ import { assetPath } from "@/lib/utils";
 import { getVisibleToolsCount } from "@/lib/studio-tools";
 import { ExportAnalyticsModal } from "./ExportAnalyticsModal";
 import { useCounts } from "../contexts/CountsContext";
+import { useTheme } from "../contexts/ThemeContext";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { buildApiUrl } from "../utils/api";
 import CommandPalette from "./CommandPalette";
@@ -126,6 +129,7 @@ const EMAIL_TEMPLATES_COUNT = 6;
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const { counts, loading } = useCounts();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [showExportAnalytics, setShowExportAnalytics] = useState(false);
@@ -143,6 +147,8 @@ export default function Layout({ children }: LayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSelfHosted, setIsSelfHosted] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+  const nextThemeLabel = theme === "dark" ? "Light" : "Dark";
+  const ThemeIcon = theme === "dark" ? Sun : Moon;
 
   useEffect(() => {
     setIsSelfHosted(checkIsSelfHosted());
@@ -620,6 +626,19 @@ export default function Layout({ children }: LayoutProps) {
               <Search className="w-4 h-4" />
             </button>
 
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="inline-flex h-9 items-center gap-2 border border-dashed border-white/20 bg-black px-3 text-white/70 hover:text-white hover:border-white/50 transition-colors"
+              aria-label={`Switch to ${nextThemeLabel.toLowerCase()} mode`}
+              title={`Switch to ${nextThemeLabel.toLowerCase()} mode`}
+            >
+              <ThemeIcon className="h-4 w-4" />
+              <span className="hidden md:inline font-mono text-[11px] uppercase">
+                {nextThemeLabel}
+              </span>
+            </button>
+
             {isSelfHosted && userProfile && (
               <div className="relative h-full" ref={profileRef}>
                 <button
@@ -764,6 +783,21 @@ export default function Layout({ children }: LayoutProps) {
                 [Support]
               </a>
             </div>
+            <button
+              type="button"
+              onClick={() => {
+                toggleTheme();
+                setIsMobileMenuOpen(false);
+              }}
+              className="flex items-center justify-between px-4 py-3 text-sm font-medium border-b border-white/5 text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200"
+            >
+              <span className="inline-flex items-center gap-3">
+                <ThemeIcon className="w-4 h-4 flex-shrink-0" />
+                <span className="font-mono uppercase font-light text-xs">
+                  Switch to {nextThemeLabel}
+                </span>
+              </span>
+            </button>
           </nav>
         </div>
       )}

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneLight, vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface CodeEditorProps {
   value: string;
@@ -17,6 +18,7 @@ export function CodeEditor({
   placeholder = "",
   className = "",
 }: CodeEditorProps) {
+  const { theme } = useTheme();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
   const [highlightCode, setHighlightCode] = useState(value || placeholder);
@@ -47,12 +49,14 @@ export function CodeEditor({
   const basePadding = "0.75rem";
   const baseFontFamily =
     'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace';
+  const palette = theme === "light" ? oneLight : vscDarkPlus;
+  const caretColor = theme === "light" ? "#111827" : "#ffffff";
 
   // Custom style for syntax highlighter
   const customStyle = {
-    ...vscDarkPlus,
+    ...palette,
     'pre[class*="language-"]': {
-      ...vscDarkPlus['pre[class*="language-"]'],
+      ...palette['pre[class*="language-"]'],
       background: "transparent",
       padding: 0,
       margin: 0,
@@ -60,7 +64,7 @@ export function CodeEditor({
       overflow: "visible",
     },
     'code[class*="language-"]': {
-      ...vscDarkPlus['code[class*="language-"]'],
+      ...palette['code[class*="language-"]'],
       background: "transparent",
       fontSize: baseFontSize,
       lineHeight: baseLineHeight,
@@ -78,7 +82,7 @@ export function CodeEditor({
     outline: "none",
     resize: "none" as const,
     color: "transparent",
-    caretColor: "#fff",
+    caretColor,
     background: "transparent",
     width: "100%",
     minHeight: "200px",

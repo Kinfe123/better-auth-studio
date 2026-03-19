@@ -103,6 +103,14 @@ export default function Settings() {
   const [databaseInfo, setDatabaseInfo] = useState<DatabaseInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [studioVersion, setStudioVersion] = useState<string | null>(null);
+  const pluginEnabledBadgeClass =
+    "flex items-center gap-1 rounded-none border border-dashed border-emerald-200 bg-emerald-50 text-xs font-mono font-light uppercase text-emerald-700 dark:border-green-500/30 dark:bg-green-900/50 dark:text-green-400";
+  const pluginWarningBadgeClass =
+    "rounded-sm border border-amber-200 bg-amber-50 text-xs font-mono font-light uppercase text-amber-700 dark:border-yellow-500/30 dark:bg-yellow-900/50 dark:text-yellow-400";
+  const pluginIconBoxClass =
+    "flex h-8 w-8 items-center justify-center rounded-none border border-dashed border-border bg-card";
+  const pluginWarningIconBoxClass =
+    "flex h-8 w-8 items-center justify-center rounded-none border border-dashed border-amber-200 bg-amber-50 dark:border-yellow-500/20 dark:bg-black/50";
 
   useWebSocket((message) => {
     if (message.type === "config_changed") {
@@ -1253,8 +1261,8 @@ export default function Settings() {
                     className={`flex items-center justify-between p-4 px-5 ${index < plugins.plugins.length - 1 ? "border-b border-white/10" : ""}`}
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-black/50 border border-dashed border-white/10 flex items-center justify-center rounded-none">
-                        <Puzzle className="w-4 h-4 text-white/70" />
+                      <div className={pluginIconBoxClass}>
+                        <Puzzle className="w-4 h-4 text-muted-foreground" />
                       </div>
                       <div>
                         <p className="text-xs font-mono uppercase tracking-tight text-white/80">
@@ -1267,10 +1275,7 @@ export default function Settings() {
                       </div>
                     </div>
                     <div className="text-right flex items-center space-x-2">
-                      <Badge
-                        variant="secondary"
-                        className="text-xs font-mono uppercase font-light text-gray-400 bg-green-900/50 border border-dashed rounded-none border-green-500/30 text-green-400 flex items-center gap-1"
-                      >
+                      <Badge variant="secondary" className={pluginEnabledBadgeClass}>
                         <CheckCircle className="w-3 h-3" />
                         Enabled
                       </Badge>
@@ -1279,7 +1284,7 @@ export default function Settings() {
                 ))}
 
                 {plugins.configPath && (
-                  <div className="p-4 px-5 bg-black/30 border-t border-white/10">
+                  <div className="border-t border-white/10 bg-card/60 p-4 px-5">
                     <p className="text-xs text-gray-400">
                       Config file:{" "}
                       <span className="text-white font-mono">{plugins.configPath}</span>
@@ -1290,7 +1295,7 @@ export default function Settings() {
             ) : (
               <div className="flex items-center justify-between p-4 px-5">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-black/50 border border-dashed border-yellow-500/20 flex items-center justify-center rounded-none">
+                  <div className={pluginWarningIconBoxClass}>
                     <AlertTriangle className="w-4 h-4 text-yellow-400" />
                   </div>
                   <div>
@@ -1303,10 +1308,7 @@ export default function Settings() {
                     </p>
                   </div>
                 </div>
-                <Badge
-                  variant="secondary"
-                  className="text-xs font-mono uppercase font-light bg-yellow-900/50 border border-yellow-500/30 text-yellow-400 rounded-sm"
-                >
+                <Badge variant="secondary" className={pluginWarningBadgeClass}>
                   None
                 </Badge>
               </div>

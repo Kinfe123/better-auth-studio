@@ -56,7 +56,7 @@ export function Pagination({
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mt-6">
-      <div className="text-xs sm:text-sm text-gray-400 text-center sm:text-left">
+      <div className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
         Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} items
       </div>
 
@@ -67,7 +67,7 @@ export function Pagination({
           size="sm"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
+          className="h-8 rounded-none border border-dashed border-input px-2 text-xs text-foreground hover:bg-accent sm:h-9 sm:px-3 sm:text-sm"
         >
           <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           <span className="hidden sm:inline">Previous</span>
@@ -83,7 +83,7 @@ export function Pagination({
                   variant="outline"
                   size="sm"
                   disabled
-                  className="border border-dashed border-white/20 text-white rounded-none h-8 sm:h-9 w-8 sm:w-9 p-0"
+                  className="h-8 w-8 rounded-none border border-dashed border-input p-0 text-foreground sm:h-9 sm:w-9"
                 >
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
@@ -101,8 +101,8 @@ export function Pagination({
                 onClick={() => onPageChange(pageNumber)}
                 className={
                   isCurrentPage
-                    ? "bg-white text-black rounded-none h-8 sm:h-9 w-8 sm:w-9 p-0"
-                    : "border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none h-8 sm:h-9 w-8 sm:w-9 p-0"
+                    ? "h-8 w-8 rounded-none bg-primary p-0 text-primary-foreground sm:h-9 sm:w-9"
+                    : "h-8 w-8 rounded-none border border-dashed border-input p-0 text-foreground hover:bg-accent sm:h-9 sm:w-9"
                 }
               >
                 {pageNumber}
@@ -112,7 +112,7 @@ export function Pagination({
         </div>
 
         {/* Mobile: Page indicator */}
-        <span className="sm:hidden text-xs text-gray-400 px-2">
+        <span className="sm:hidden px-2 text-xs text-muted-foreground">
           {currentPage} / {totalPages}
         </span>
 
@@ -122,7 +122,7 @@ export function Pagination({
           size="sm"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3"
+          className="h-8 rounded-none border border-dashed border-input px-2 text-xs text-foreground hover:bg-accent sm:h-9 sm:px-3 sm:text-sm"
         >
           <span className="hidden sm:inline">Next</span>
           <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />

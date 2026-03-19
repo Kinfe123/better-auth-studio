@@ -5,6 +5,7 @@ import DatabaseSchemaNodeDemo from "./components/DatabaseSchemaNodeDemo";
 import Layout from "./components/Layout";
 import { CountsProvider } from "./contexts/CountsContext";
 import { DashboardWidgetsProvider } from "./contexts/DashboardWidgetsContext";
+import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import AccessDenied from "./pages/AccessDenied";
 import Dashboard from "./pages/Dashboard";
 import DatabaseVisualizer from "./pages/DatabaseVisualizer";
@@ -98,7 +99,9 @@ function MainRoutes() {
   );
 }
 
-function App() {
+function AppShell() {
+  const { theme } = useTheme();
+
   useEffect(() => {
     const title = config?.metadata?.title;
     if (title) {
@@ -128,19 +131,29 @@ function App() {
       )}
       <Toaster
         className="rounded-none border-dashed border-white/20"
-        theme="dark"
+        theme={theme}
         position="top-right"
         richColors
         toastOptions={{
           style: {
-            border: "dashed 1px #ffffff20",
+            border: theme === "light" ? "dashed 1px #00000020" : "dashed 1px #ffffff20",
             borderRadius: "0",
+            background: theme === "light" ? "#ffffff" : "#000000",
+            color: theme === "light" ? "#000000" : "#ffffff",
           },
           className: "font-mono uppercase",
         }}
         closeButton
       />
     </Router>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppShell />
+    </ThemeProvider>
   );
 }
 

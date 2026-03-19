@@ -430,11 +430,11 @@ export function LiveEventMarquee({
     const colors = propColors || {};
 
     const defaults = {
-      success: "text-green-400", // #34d399
-      info: "text-amber-300", // #fcd34d
-      warning: "text-yellow-400", // #facc15
-      error: "text-red-400", // #f87171
-      failed: "text-red-400", // #f87171
+      success: "text-emerald-700 dark:text-emerald-400",
+      info: "text-sky-700 dark:text-sky-300",
+      warning: "text-amber-700 dark:text-amber-300",
+      error: "text-red-700 dark:text-red-400",
+      failed: "text-red-700 dark:text-red-400",
     };
 
     return {
@@ -559,7 +559,7 @@ export function LiveEventMarquee({
 
   return (
     <div
-      className="relative w-full h-10 overflow-hidden bg-black/50 border-y border-white/10"
+      className="relative h-10 w-full overflow-hidden border-y border-border bg-background/80 backdrop-blur-sm"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -569,7 +569,7 @@ export function LiveEventMarquee({
             isConnected ? "bg-green-400 animate-pulse" : "bg-red-400"
           }`}
         />
-        <span className="text-[9px] animate-pulse font-mono text-white/50">
+        <span className="text-[9px] font-mono animate-pulse text-muted-foreground">
           {isConnected ? "LIVE" : "CONNECTING..."}
         </span>
       </div>
@@ -584,9 +584,9 @@ export function LiveEventMarquee({
           }}
         >
           {eventsEnabled === false ? (
-            <span className="text-xs ml-5 font-mono text-white/50">Events not enabled</span>
+            <span className="ml-5 text-xs font-mono text-muted-foreground">Events not enabled</span>
           ) : events.length === 0 ? (
-            <span className="text-xs ml-5 font-mono text-white/50 animate-pulse">
+            <span className="ml-5 animate-pulse text-xs font-mono text-muted-foreground">
               Waiting for events...
             </span>
           ) : (
@@ -606,7 +606,7 @@ export function LiveEventMarquee({
                     key={`set-${setIndex}-event-${event.id}-${eventIndex}`}
                     className="flex items-center gap-2 flex-shrink-0"
                   >
-                    <span className="text-xs font-mono text-white/30">
+                    <span className="text-xs font-mono text-muted-foreground">
                       {new Date(event.timestamp).toLocaleTimeString()}
                     </span>
                     <span
@@ -615,7 +615,7 @@ export function LiveEventMarquee({
                     >
                       {event.display?.message || event.type}
                     </span>
-                    <span className="text-white/20">•</span>
+                    <span className="text-border">•</span>
                   </div>
                 );
               });

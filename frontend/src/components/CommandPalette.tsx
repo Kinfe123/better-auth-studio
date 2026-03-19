@@ -11,6 +11,7 @@ import {
   Key,
   Lock,
   Mail,
+  Moon,
   // Monitor,
   Plus,
   RefreshCw,
@@ -19,12 +20,14 @@ import {
   Share2,
   Shield,
   Shuffle,
+  Sun,
   UserPlus,
   Users,
   Wrench,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface CommandItem {
   id: string;
@@ -47,6 +50,7 @@ interface CommandPaletteProps {
 
 export default function CommandPalette({ isOpen, onClose, onAction }: CommandPaletteProps) {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const [search, setSearch] = useState("");
   const [plugins, setPlugins] = useState<any>(null);
 
@@ -222,6 +226,17 @@ export default function CommandPalette({ isOpen, onClose, onAction }: CommandPal
       action: () => onAction?.("hardRefresh"),
       category: "Actions",
       keywords: ["refresh", "reload", "sync", "update"],
+    },
+
+    // ─── Appearance ───
+    {
+      id: "toggle-theme",
+      title: "Toggle Theme",
+      description: `Switch to ${theme === "dark" ? "light" : "dark"} mode`,
+      icon: theme === "dark" ? Sun : Moon,
+      action: () => toggleTheme(),
+      category: "Appearance",
+      keywords: ["theme", "appearance", "mode", "dark", "light", "toggle"],
     },
 
     // ─── Tools Quick Access ───

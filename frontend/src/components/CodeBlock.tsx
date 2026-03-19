@@ -1,7 +1,8 @@
 import { Check, Copy, FileCode } from "lucide-react";
 import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneLight, vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { useTheme } from "../contexts/ThemeContext";
 import { Button } from "./ui/button";
 
 interface CodeBlockProps {
@@ -17,6 +18,7 @@ export function CodeBlock({
   fileName = "auth.ts",
   className = "",
 }: CodeBlockProps) {
+  const { theme } = useTheme();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -27,17 +29,21 @@ export function CodeBlock({
     } catch (_err) {}
   };
 
+  const palette = theme === "light" ? oneLight : vscDarkPlus;
+  const background = theme === "light" ? "#f8fafc" : "#0d1117";
+  const borderColor = theme === "light" ? "#cbd5e1" : "#333333";
+
   const customStyle = {
-    ...vscDarkPlus,
+    ...palette,
     'pre[class*="language-"]': {
-      ...vscDarkPlus['pre[class*="language-"]'],
-      background: "#0d1117",
+      ...palette['pre[class*="language-"]'],
+      background,
       padding: "1.25rem",
       margin: 0,
       borderRadius: 0,
     },
     'code[class*="language-"]': {
-      ...vscDarkPlus['code[class*="language-"]'],
+      ...palette['code[class*="language-"]'],
       background: "transparent",
       fontSize: "13px",
       lineHeight: "1.6",
@@ -72,8 +78,8 @@ export function CodeBlock({
           customStyle={{
             margin: 0,
             padding: "1.25rem",
-            background: "black",
-            border: "1px dashed #333333",
+            background,
+            border: `1px dashed ${borderColor}`,
           }}
           codeTagProps={{
             style: {
