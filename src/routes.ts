@@ -2434,8 +2434,8 @@ export function createRoutes(
             nextCursor: result.nextCursor,
             total,
           });
-	        } catch (providerError: any) {
-	          const isSchemaError = isEventModelLookupError(providerError);
+        } catch (providerError: any) {
+          const isSchemaError = isEventModelLookupError(providerError);
           if (isSchemaError) {
             return res.status(200).json({
               events: [],
