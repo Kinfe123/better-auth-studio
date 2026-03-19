@@ -1523,15 +1523,21 @@ export default function Dashboard() {
                                   maxWidth: "calc(100vw - 20px)",
                                 }}
                               >
-                                <div className={`${chartTooltipClass} rounded-sm px-3 py-2 whitespace-nowrap`}>
-                                  <div className={`mb-1 text-xs font-mono uppercase ${chartTooltipLabelClass}`}>
+                                <div
+                                  className={`${chartTooltipClass} rounded-sm px-3 py-2 whitespace-nowrap`}
+                                >
+                                  <div
+                                    className={`mb-1 text-xs font-mono uppercase ${chartTooltipLabelClass}`}
+                                  >
                                     {
                                       getDetailedLabels(selectedUserPeriod, "users")[
                                         hoveredUsersAreaIndex
                                       ]
                                     }
                                   </div>
-                                  <div className={`text-sm font-sans font-medium ${chartTooltipValueClass}`}>
+                                  <div
+                                    className={`text-sm font-sans font-medium ${chartTooltipValueClass}`}
+                                  >
                                     {totalUsersData[hoveredUsersAreaIndex] !== undefined
                                       ? totalUsersData[hoveredUsersAreaIndex].toLocaleString()
                                       : "0"}{" "}
@@ -1637,9 +1643,7 @@ export default function Dashboard() {
                       })}
                     </div>
                     {activityLoading && (
-                      <div className={activityLoadingOverlayClass}>
-                        Loading activity...
-                      </div>
+                      <div className={activityLoadingOverlayClass}>Loading activity...</div>
                     )}
                     {hoveredAreaIndex !== null && hoveredAreaPosition && (
                       <div
@@ -1652,7 +1656,9 @@ export default function Dashboard() {
                         }}
                       >
                         <div className={`${chartTooltipClass} min-w-[180px] rounded-sm px-3 py-2`}>
-                          <div className={`mb-2 text-xs font-mono uppercase ${chartTooltipLabelClass}`}>
+                          <div
+                            className={`mb-2 text-xs font-mono uppercase ${chartTooltipLabelClass}`}
+                          >
                             {(() => {
                               const rawLabel =
                                 resolvedActivityLabels[hoveredAreaIndex] ||
@@ -1671,7 +1677,9 @@ export default function Dashboard() {
                             {activityStreams.map((stream) => (
                               <div key={stream.id}>
                                 <div className="flex items-center justify-between text-sm">
-                                  <div className={`flex items-center gap-2 ${activityTooltipSeriesLabelClass}`}>
+                                  <div
+                                    className={`flex items-center gap-2 ${activityTooltipSeriesLabelClass}`}
+                                  >
                                     <span className={`w-2 h-2 rounded-sm ${stream.dotClass}`} />
                                     {stream.label}
                                   </div>
