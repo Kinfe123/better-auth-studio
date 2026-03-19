@@ -466,9 +466,9 @@ export default function UserDetails() {
     setUserEvents(list);
     setUserEventsNextOffset(list.length);
     setUserEventsHasMore(Boolean(data.hasMore));
-    if (typeof data.total === "number") {
-      setUserEventsTotalCount(data.total);
-    }
+    setUserEventsTotalCount(
+      typeof data.total === "number" ? Math.max(data.total, list.length) : list.length || null,
+    );
   }, []);
 
   const initializeEvents = useCallback(async () => {
@@ -508,6 +508,8 @@ export default function UserDetails() {
           }
           setUserEvents([]);
           setUserEventsHasMore(false);
+          setUserEventsNextOffset(0);
+          setUserEventsTotalCount(0);
           return;
         } catch {
           if (attempt < maxRetries) {
@@ -516,6 +518,8 @@ export default function UserDetails() {
           }
           setUserEvents([]);
           setUserEventsHasMore(false);
+          setUserEventsNextOffset(0);
+          setUserEventsTotalCount(0);
           return;
         }
       }
@@ -543,8 +547,14 @@ export default function UserDetails() {
               continue;
             }
             const list = Array.isArray(data.events) ? data.events : [];
-            if (typeof data.total === "number") {
-              setUserEventsTotalCount(data.total);
+            const nextKnownTotal =
+              typeof data.total === "number"
+                ? Math.max(data.total, offset + list.length)
+                : offset + list.length || null;
+            if (nextKnownTotal !== null) {
+              setUserEventsTotalCount((currentTotal) =>
+                currentTotal == null ? nextKnownTotal : Math.max(currentTotal, nextKnownTotal),
+              );
             }
             setUserEvents((prev) => {
               const existingIds = new Set(prev.map((e) => e.id));

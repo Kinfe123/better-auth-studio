@@ -444,28 +444,102 @@ export function createRoutes(
 
     return Array.from(candidates);
   };
+  const getEventFieldCandidates = (field?: string) => {
+    switch (field) {
+      case "userId":
+        return ["userId", "user_id"];
+      case "sessionId":
+        return ["sessionId", "session_id"];
+      case "organizationId":
+        return ["organizationId", "organization_id"];
+      case "ipAddress":
+        return ["ipAddress", "ip_address"];
+      case "userAgent":
+        return ["userAgent", "user_agent"];
+      case "displayMessage":
+        return ["displayMessage", "display_message"];
+      case "displaySeverity":
+        return ["displaySeverity", "display_severity"];
+      case "createdAt":
+        return ["createdAt", "created_at"];
+      default:
+        return field ? [field] : [];
+    }
+  };
+  const getEventWhereCandidates = (where?: Array<Record<string, any>>) => {
+    if (!Array.isArray(where) || where.length === 0) {
+      return {
+        whereCandidates: [undefined],
+        hasAliasedFields: false,
+      };
+    }
+
+    let hasAliasedFields = false;
+    let combinations: Array<Array<Record<string, any>>> = [[]];
+
+    for (const clause of where) {
+      const fieldCandidates = getEventFieldCandidates(clause?.field);
+      if (fieldCandidates.length > 1) {
+        hasAliasedFields = true;
+      }
+
+      const nextCombinations = fieldCandidates.flatMap((fieldName) =>
+        combinations.map((existing) => [...existing, { ...clause, field: fieldName }]),
+      );
+
+      if (nextCombinations.length > 0) {
+        combinations = nextCombinations;
+      }
+    }
+
+    return {
+      whereCandidates: combinations.length > 0 ? combinations : [where],
+      hasAliasedFields,
+    };
+  };
   const findManyEventRows = async (adapter: any, options: Record<string, any>) => {
     const candidates = Array.from(
       new Set([resolvedEventModelName, ...getEventModelCandidates()].filter(Boolean) as string[]),
     );
+    const { where, ...restOptions } = options;
+    const { whereCandidates, hasAliasedFields } = getEventWhereCandidates(where);
 
     let lastLookupError: any = null;
+    let lastSuccessfulEmptyResult: any[] | null = null;
 
     for (const modelName of candidates) {
-      try {
-        const result = await adapter.findMany({
-          ...options,
-          model: modelName,
-        });
-        resolvedEventModelName = modelName;
-        return result;
-      } catch (error: any) {
-        if (isEventModelLookupError(error)) {
-          lastLookupError = error;
-          continue;
+      for (let index = 0; index < whereCandidates.length; index += 1) {
+        try {
+          const result = await adapter.findMany({
+            ...restOptions,
+            ...(whereCandidates[index] ? { where: whereCandidates[index] } : {}),
+            model: modelName,
+          });
+          resolvedEventModelName = modelName;
+
+          if (
+            Array.isArray(result) &&
+            result.length === 0 &&
+            hasAliasedFields &&
+            index < whereCandidates.length - 1
+          ) {
+            lastSuccessfulEmptyResult = result;
+            continue;
+          }
+
+          return result;
+        } catch (error: any) {
+          if (isEventModelLookupError(error)) {
+            lastLookupError = error;
+            continue;
+          }
+          throw error;
         }
-        throw error;
       }
+    }
+
+    if (lastSuccessfulEmptyResult && !lastLookupError) {
+      return lastSuccessfulEmptyResult;
     }
 
     if (lastLookupError) {

@@ -353,25 +353,87 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         addForms(baseName === "auth_events" ? "auth_event" : "auth_events");
         return Array.from(candidates);
     };
+    const getEventFieldCandidates = (field) => {
+        switch (field) {
+            case "userId":
+                return ["userId", "user_id"];
+            case "sessionId":
+                return ["sessionId", "session_id"];
+            case "organizationId":
+                return ["organizationId", "organization_id"];
+            case "ipAddress":
+                return ["ipAddress", "ip_address"];
+            case "userAgent":
+                return ["userAgent", "user_agent"];
+            case "displayMessage":
+                return ["displayMessage", "display_message"];
+            case "displaySeverity":
+                return ["displaySeverity", "display_severity"];
+            case "createdAt":
+                return ["createdAt", "created_at"];
+            default:
+                return field ? [field] : [];
+        }
+    };
+    const getEventWhereCandidates = (where) => {
+        if (!Array.isArray(where) || where.length === 0) {
+            return {
+                whereCandidates: [undefined],
+                hasAliasedFields: false,
+            };
+        }
+        let hasAliasedFields = false;
+        let combinations = [[]];
+        for (const clause of where) {
+            const fieldCandidates = getEventFieldCandidates(clause?.field);
+            if (fieldCandidates.length > 1) {
+                hasAliasedFields = true;
+            }
+            const nextCombinations = fieldCandidates.flatMap((fieldName) => combinations.map((existing) => [...existing, { ...clause, field: fieldName }]));
+            if (nextCombinations.length > 0) {
+                combinations = nextCombinations;
+            }
+        }
+        return {
+            whereCandidates: combinations.length > 0 ? combinations : [where],
+            hasAliasedFields,
+        };
+    };
     const findManyEventRows = async (adapter, options) => {
         const candidates = Array.from(new Set([resolvedEventModelName, ...getEventModelCandidates()].filter(Boolean)));
+        const { where, ...restOptions } = options;
+        const { whereCandidates, hasAliasedFields } = getEventWhereCandidates(where);
         let lastLookupError = null;
+        let lastSuccessfulEmptyResult = null;
         for (const modelName of candidates) {
-            try {
-                const result = await adapter.findMany({
-                    ...options,
-                    model: modelName,
-                });
-                resolvedEventModelName = modelName;
-                return result;
-            }
-            catch (error) {
-                if (isEventModelLookupError(error)) {
-                    lastLookupError = error;
-                    continue;
+            for (let index = 0; index < whereCandidates.length; index += 1) {
+                try {
+                    const result = await adapter.findMany({
+                        ...restOptions,
+                        ...(whereCandidates[index] ? { where: whereCandidates[index] } : {}),
+                        model: modelName,
+                    });
+                    resolvedEventModelName = modelName;
+                    if (Array.isArray(result) &&
+                        result.length === 0 &&
+                        hasAliasedFields &&
+                        index < whereCandidates.length - 1) {
+                        lastSuccessfulEmptyResult = result;
+                        continue;
+                    }
+                    return result;
                 }
-                throw error;
+                catch (error) {
+                    if (isEventModelLookupError(error)) {
+                        lastLookupError = error;
+                        continue;
+                    }
+                    throw error;
+                }
             }
+        }
+        if (lastSuccessfulEmptyResult && !lastLookupError) {
+            return lastSuccessfulEmptyResult;
         }
         if (lastLookupError) {
             throw lastLookupError;

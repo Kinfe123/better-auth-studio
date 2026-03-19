@@ -1790,6 +1790,88 @@ export function createStorageProvider(options: {
 
     throw new Error(`No event model candidates available for "${tableName}"`);
   };
+  const getFieldCandidates = (field?: string) => {
+    switch (field) {
+      case "userId":
+        return ["userId", "user_id"];
+      case "sessionId":
+        return ["sessionId", "session_id"];
+      case "organizationId":
+        return ["organizationId", "organization_id"];
+      case "ipAddress":
+        return ["ipAddress", "ip_address"];
+      case "userAgent":
+        return ["userAgent", "user_agent"];
+      case "displayMessage":
+        return ["displayMessage", "display_message"];
+      case "displaySeverity":
+        return ["displaySeverity", "display_severity"];
+      case "createdAt":
+        return ["createdAt", "created_at"];
+      default:
+        return field ? [field] : [];
+    }
+  };
+  const getWhereCandidates = (where?: Array<Record<string, any>>) => {
+    if (!Array.isArray(where) || where.length === 0) {
+      return {
+        whereCandidates: [undefined],
+        hasAliasedFields: false,
+      };
+    }
+
+    let hasAliasedFields = false;
+    let combinations: Array<Array<Record<string, any>>> = [[]];
+
+    for (const clause of where) {
+      const fieldCandidates = getFieldCandidates(clause?.field);
+      if (fieldCandidates.length > 1) {
+        hasAliasedFields = true;
+      }
+
+      const nextCombinations = fieldCandidates.flatMap((fieldName) =>
+        combinations.map((existing) => [...existing, { ...clause, field: fieldName }]),
+      );
+
+      if (nextCombinations.length > 0) {
+        combinations = nextCombinations;
+      }
+    }
+
+    return {
+      whereCandidates: combinations.length > 0 ? combinations : [where],
+      hasAliasedFields,
+    };
+  };
+  const findManyWithResolvedModel = async (options: Record<string, any>): Promise<any[]> => {
+    const { where, ...restOptions } = options;
+    const { whereCandidates, hasAliasedFields } = getWhereCandidates(where);
+    let lastSuccessfulEmptyResult: any[] | null = null;
+
+    for (let index = 0; index < whereCandidates.length; index += 1) {
+      const result = (await withResolvedModel((modelName) =>
+        adapter.findMany({
+          ...restOptions,
+          ...(whereCandidates[index] ? { where: whereCandidates[index] } : {}),
+          model: modelName,
+        }),
+      )) as any[];
+
+      if (
+        Array.isArray(result) &&
+        result.length === 0 &&
+        hasAliasedFields &&
+        index < whereCandidates.length - 1
+      ) {
+        lastSuccessfulEmptyResult = result;
+        continue;
+      }
+
+      return Array.isArray(result) ? result : [];
+    }
+
+    return lastSuccessfulEmptyResult ?? [];
+  };
 
   const ensureTable = async (): Promise<void> => {
     if (!adapter) return;
@@ -1993,12 +2075,7 @@ export function createStorageProvider(options: {
           if (offset != null && offset > 0) {
             findManyOptions.offset = offset;
           }
-          const events = (await withResolvedModel((modelName) =>
-            adapter.findMany({
-              ...findManyOptions,
-              model: modelName,
-            }),
-          )) as any[];
+          const events = await findManyWithResolvedModel(findManyOptions);
 
           const hasMore = events.length > limit;
           const paginatedEvents = events.slice(0, limit).map((event: any) => ({
