@@ -223,7 +223,9 @@ function getEventTimestamp(value: string | Date): number {
 }
 
 function sortEventsByTimestamp(events: AuthEvent[]): AuthEvent[] {
-  return [...events].sort((a, b) => getEventTimestamp(b.timestamp) - getEventTimestamp(a.timestamp));
+  return [...events].sort(
+    (a, b) => getEventTimestamp(b.timestamp) - getEventTimestamp(a.timestamp),
+  );
 }
 
 function mergeEventsById(current: AuthEvent[], incoming: AuthEvent[]): AuthEvent[] {
@@ -381,7 +383,11 @@ export default function Events() {
           }
 
           const errData = await response.json().catch(() => ({}));
-          if ((response.status === 503 || errData.retryable) && retryable && attempt < MAX_FETCH_RETRIES) {
+          if (
+            (response.status === 503 || errData.retryable) &&
+            retryable &&
+            attempt < MAX_FETCH_RETRIES
+          ) {
             await new Promise((r) => setTimeout(r, Math.min(1000 * (attempt + 1), 4000)));
             continue;
           }
@@ -400,7 +406,10 @@ export default function Events() {
     [],
   );
 
-  const fetchAllEvents = useCallback(async (): Promise<{ events: AuthEvent[]; total: number | null }> => {
+  const fetchAllEvents = useCallback(async (): Promise<{
+    events: AuthEvent[];
+    total: number | null;
+  }> => {
     let allEvents: AuthEvent[] = [];
     let total: number | null = null;
     let offset = 0;
