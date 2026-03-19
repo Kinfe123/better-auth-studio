@@ -315,6 +315,69 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         const secs = Math.max(1, Math.floor(absMs / 1000));
         return `${secs}s`;
     };
+    let resolvedEventModelName = null;
+    const isEventModelLookupError = (error) => error?.message?.includes("not found in schema") ||
+        error?.message?.includes("not found in model") ||
+        error?.message?.includes("Model") ||
+        error?.code === "P2025" ||
+        error?.code === "42P01";
+    const toEventModelCamelCase = (value) => value.replace(/[_-]([a-z])/g, (_match, char) => char.toUpperCase());
+    const getEventModelCandidates = () => {
+        const baseName = studioConfig?.events?.tableName || "auth_events";
+        const candidates = new Set();
+        const addForms = (value) => {
+            const normalized = value?.trim();
+            if (!normalized)
+                return;
+            const snake = normalized.replace(/-/g, "_");
+            const singularSnake = snake.endsWith("s") ? snake.slice(0, -1) : snake;
+            const pluralSnake = snake.endsWith("s") ? snake : `${snake}s`;
+            const singularCamel = toEventModelCamelCase(singularSnake);
+            const pluralCamel = toEventModelCamelCase(pluralSnake);
+            [
+                normalized,
+                snake,
+                singularSnake,
+                pluralSnake,
+                singularCamel,
+                pluralCamel,
+                singularCamel.charAt(0).toUpperCase() + singularCamel.slice(1),
+                pluralCamel.charAt(0).toUpperCase() + pluralCamel.slice(1),
+            ].forEach((candidate) => {
+                if (candidate) {
+                    candidates.add(candidate);
+                }
+            });
+        };
+        addForms(baseName);
+        addForms(baseName === "auth_events" ? "auth_event" : "auth_events");
+        return Array.from(candidates);
+    };
+    const findManyEventRows = async (adapter, options) => {
+        const candidates = Array.from(new Set([resolvedEventModelName, ...getEventModelCandidates()].filter(Boolean)));
+        let lastLookupError = null;
+        for (const modelName of candidates) {
+            try {
+                const result = await adapter.findMany({
+                    ...options,
+                    model: modelName,
+                });
+                resolvedEventModelName = modelName;
+                return result;
+            }
+            catch (error) {
+                if (isEventModelLookupError(error)) {
+                    lastLookupError = error;
+                    continue;
+                }
+                throw error;
+            }
+        }
+        if (lastLookupError) {
+            throw lastLookupError;
+        }
+        throw new Error("Failed to resolve events model");
+    };
     if (geoDbPath) {
         setGeoDbPath(geoDbPath);
     }
@@ -2111,10 +2174,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                     });
                 }
                 catch (providerError) {
-                    const isSchemaError = providerError?.message?.includes("not found in schema") ||
-                        providerError?.message?.includes("Model") ||
-                        providerError?.code === "P2025" ||
-                        providerError?.code === "42P01";
+                    const isSchemaError = isEventModelLookupError(providerError);
                     if (isSchemaError) {
                         return res.status(200).json({
                             events: [],
@@ -2157,7 +2217,6 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             if (adapter.findMany) {
                 try {
                     const findManyOptions = {
-                        model: "auth_events",
                         where,
                         orderBy: [{ field: "timestamp", direction: sort === "desc" ? "desc" : "asc" }],
                         limit: limit + 1,
@@ -2165,13 +2224,10 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                     if (offset != null && offset > 0) {
                         findManyOptions.offset = offset;
                     }
-                    events = await adapter.findMany(findManyOptions);
+                    events = await findManyEventRows(adapter, findManyOptions);
                 }
                 catch (adapterError) {
-                    if (adapterError?.message?.includes("not found in schema") ||
-                        adapterError?.message?.includes("Model") ||
-                        adapterError?.code === "P2025" ||
-                        adapterError?.code === "42P01") {
+                    if (isEventModelLookupError(adapterError)) {
                         return res.status(200).json({
                             events: [],
                             hasMore: false,
@@ -2235,8 +2291,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                         countWhere.push({ field: "type", value: type });
                     if (userId)
                         countWhere.push({ field: "userId", value: userId });
-                    const allForCount = await adapter.findMany({
-                        model: "auth_events",
+                    const allForCount = await findManyEventRows(adapter, {
                         where: countWhere.length > 0 ? countWhere : undefined,
                         limit: 100000,
                     });
@@ -2255,10 +2310,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         }
         catch (error) {
             const msg = error instanceof Error ? error.message : String(error);
-            if (msg?.includes("not found in schema") ||
-                msg?.includes("Model") ||
-                error?.code === "P2025" ||
-                error?.code === "42P01") {
+            if (isEventModelLookupError(error) || msg?.includes("not found in schema")) {
                 return res.status(200).json({
                     events: [],
                     hasMore: false,
@@ -2335,10 +2387,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 }
             }
             const eventProvider = getEventIngestionProvider();
-            const isSchemaError = (e) => e?.message?.includes("not found in schema") ||
-                e?.message?.includes("Model") ||
-                e?.code === "P2025" ||
-                e?.code === "42P01";
+            const isSchemaError = (e) => isEventModelLookupError(e);
             // When filtering by userId, use query() to get filtered count
             if (userIdFilter) {
                 if (eventProvider?.query) {
@@ -2366,8 +2415,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 const adapter = await getAuthAdapterWithConfig();
                 if (adapter?.findMany) {
                     try {
-                        const events = await adapter.findMany({
-                            model: "auth_events",
+                        const events = await findManyEventRows(adapter, {
                             where: [{ field: "userId", value: userIdFilter }],
                             limit: 100000,
                         });
@@ -2429,8 +2477,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             const adapter = await getAuthAdapterWithConfig();
             if (adapter?.findMany) {
                 try {
-                    const events = await adapter.findMany({
-                        model: "auth_events",
+                    const events = await findManyEventRows(adapter, {
                         limit: 100000,
                     });
                     const list = Array.isArray(events) ? events : [];

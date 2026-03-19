@@ -91,6 +91,23 @@ function checkIsSelfHosted(): boolean {
   return !!cfg.basePath;
 }
 
+function isEventModelLookupError(value: unknown): boolean {
+  const text =
+    typeof value === "string"
+      ? value
+      : value && typeof value === "object"
+        ? JSON.stringify(value)
+        : String(value ?? "");
+
+  return (
+    text.includes("not found in schema") ||
+    text.includes("not found in model") ||
+    text.includes("Model") ||
+    text.includes("auth_event") ||
+    text.includes("auth_events")
+  );
+}
+
 export function LiveEventMarquee({
   maxEvents: propMaxEvents,
   pollInterval = 2000,
@@ -142,13 +159,13 @@ export function LiveEventMarquee({
     checkEventsStatus();
   }, []);
 
-  const pollEvents = useCallback(async () => {
+  const pollEvents = useCallback(async (): Promise<boolean> => {
     // Don't poll if events are not enabled
     if (eventsEnabled !== true) {
-      return;
+      return false;
     }
 
-    if (isPollingRef.current) return;
+    if (isPollingRef.current) return false;
     isPollingRef.current = true;
 
     try {
@@ -181,11 +198,12 @@ export function LiveEventMarquee({
           try {
             const errorData = await response.json();
             if (
-              errorData.details?.includes("not found in schema") ||
-              errorData.details?.includes("Model")
+              isEventModelLookupError(errorData?.details) ||
+              isEventModelLookupError(errorData?.error) ||
+              isEventModelLookupError(errorData)
             ) {
               setIsConnected(true);
-              return;
+              return true;
             }
           } catch {
             // Continue with error
@@ -231,9 +249,15 @@ export function LiveEventMarquee({
         // If response doesn't have events array, log for debugging
         console.warn("Events API response missing events array:", data);
       }
+      return true;
     } catch (error) {
       console.error("Failed to poll events:", error);
+      if (isEventModelLookupError(error)) {
+        setIsConnected(true);
+        return true;
+      }
       setIsConnected(false);
+      return false;
     } finally {
       isPollingRef.current = false;
     }
@@ -281,8 +305,8 @@ export function LiveEventMarquee({
       }
 
       const retryPoll = () => {
-        pollEvents().then(() => {
-          if (isConnected) {
+        pollEvents().then((connected) => {
+          if (connected) {
             // Success, resume normal polling
             pollTimeoutRef.current = setInterval(pollEvents, pollInterval);
           } else {
@@ -565,9 +589,7 @@ export function LiveEventMarquee({
     >
       <div className="absolute -top-1 right-4 z-10 flex items-center gap-1 py-1">
         <div
-          className={`w-1 h-1 rounded-full ${
-            isConnected ? "bg-green-400 animate-pulse" : "bg-red-400"
-          }`}
+          className={`h-1 w-1 rounded-none ${isConnected ? "bg-green-400 animate-pulse" : "bg-red-400"}`}
         />
         <span className="text-[9px] font-mono animate-pulse text-muted-foreground">
           {isConnected ? "LIVE" : "CONNECTING..."}

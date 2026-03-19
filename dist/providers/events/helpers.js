@@ -1433,6 +1433,65 @@ export function createStorageProvider(options) {
     const { adapter, tableName = "auth_events" } = options;
     let tableEnsured = false;
     let tableEnsuringPromise = null;
+    let resolvedModelName = null;
+    const isMissingModelError = (error) => error?.message?.includes("not found in schema") ||
+        error?.message?.includes("not found in model") ||
+        error?.message?.includes("Model") ||
+        error?.code === "P2025" ||
+        error?.code === "42P01";
+    const toCamelCase = (value) => value.replace(/[_-]([a-z])/g, (_match, char) => char.toUpperCase());
+    const getModelCandidates = () => {
+        const candidates = new Set();
+        const addForms = (value) => {
+            const normalized = value?.trim();
+            if (!normalized)
+                return;
+            const snake = normalized.replace(/-/g, "_");
+            const singularSnake = snake.endsWith("s") ? snake.slice(0, -1) : snake;
+            const pluralSnake = snake.endsWith("s") ? snake : `${snake}s`;
+            const singularCamel = toCamelCase(singularSnake);
+            const pluralCamel = toCamelCase(pluralSnake);
+            [
+                normalized,
+                snake,
+                singularSnake,
+                pluralSnake,
+                singularCamel,
+                pluralCamel,
+                singularCamel.charAt(0).toUpperCase() + singularCamel.slice(1),
+                pluralCamel.charAt(0).toUpperCase() + pluralCamel.slice(1),
+            ].forEach((candidate) => {
+                if (candidate) {
+                    candidates.add(candidate);
+                }
+            });
+        };
+        addForms(tableName);
+        addForms(tableName === "auth_events" ? "auth_event" : "auth_events");
+        return Array.from(candidates);
+    };
+    const withResolvedModel = async (callback) => {
+        const candidates = Array.from(new Set([resolvedModelName, ...getModelCandidates()].filter(Boolean)));
+        let lastLookupError = null;
+        for (const modelName of candidates) {
+            try {
+                const result = await callback(modelName);
+                resolvedModelName = modelName;
+                return result;
+            }
+            catch (error) {
+                if (isMissingModelError(error)) {
+                    lastLookupError = error;
+                    continue;
+                }
+                throw error;
+            }
+        }
+        if (lastLookupError) {
+            throw lastLookupError;
+        }
+        throw new Error(`No event model candidates available for "${tableName}"`);
+    };
     const ensureTable = async () => {
         if (!adapter)
             return;
@@ -1444,10 +1503,10 @@ export function createStorageProvider(options) {
             try {
                 if (adapter.findMany) {
                     // Try to query the table to see if it exists
-                    await adapter.findMany({
-                        model: tableName,
+                    await withResolvedModel((modelName) => adapter.findMany({
+                        model: modelName,
                         limit: 1,
-                    });
+                    }));
                     tableEnsured = true;
                     return;
                 }
@@ -1517,8 +1576,8 @@ export function createStorageProvider(options) {
     return {
         async ingest(event) {
             if (adapter.create) {
-                await adapter.create({
-                    model: tableName,
+                await withResolvedModel((modelName) => adapter.create({
+                    model: modelName,
                     data: {
                         id: event.id,
                         type: event.type,
@@ -1534,7 +1593,7 @@ export function createStorageProvider(options) {
                         displayMessage: event.display?.message,
                         displaySeverity: event.display?.severity,
                     },
-                });
+                }));
             }
             else if (adapter.insert) {
                 await adapter.insert({
@@ -1561,8 +1620,8 @@ export function createStorageProvider(options) {
             // Ensure table exists before ingesting
             await ensureTable();
             if (adapter.createMany) {
-                await adapter.createMany({
-                    model: tableName,
+                await withResolvedModel((modelName) => adapter.createMany({
+                    model: modelName,
                     data: events.map((event) => ({
                         id: event.id,
                         type: event.type,
@@ -1578,7 +1637,7 @@ export function createStorageProvider(options) {
                         displayMessage: event.display?.message,
                         displaySeverity: event.display?.severity,
                     })),
-                });
+                }));
             }
             else {
                 await Promise.all(events.map((event) => this.ingest(event)));
@@ -1611,7 +1670,6 @@ export function createStorageProvider(options) {
                         where.push({ field: "timestamp", operator: ">=", value: sinceDate });
                     }
                     const findManyOptions = {
-                        model: tableName,
                         where,
                         orderBy: [{ field: "timestamp", direction: sort === "desc" ? "desc" : "asc" }],
                         limit: limit + 1,
@@ -1619,7 +1677,10 @@ export function createStorageProvider(options) {
                     if (offset != null && offset > 0) {
                         findManyOptions.offset = offset;
                     }
-                    const events = await adapter.findMany(findManyOptions);
+                    const events = (await withResolvedModel((modelName) => adapter.findMany({
+                        ...findManyOptions,
+                        model: modelName,
+                    })));
                     const hasMore = events.length > limit;
                     const paginatedEvents = events.slice(0, limit).map((event) => ({
                         id: event.id,
