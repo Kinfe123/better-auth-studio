@@ -8,6 +8,10 @@ export interface AuthAdapter extends UserInternalAdapter {
     createAccount: (data: any) => Promise<any>;
     createVerification: (data: any) => Promise<any>;
     createOrganization: (data: any) => Promise<any>;
+    count?: (options: {
+        model: string;
+        where?: any;
+    }) => Promise<number>;
     create?: (...args: any[]) => Promise<any>;
     update?: (...args: any[]) => Promise<any>;
     delete?: (...args: any[]) => Promise<any>;

@@ -201,6 +201,25 @@ export async function getAuthAdapter(configPath) {
                     return [];
                 }
             },
+            count: async (options) => {
+                try {
+                    if (typeof adapter.count === "function") {
+                        return await adapter.count(options);
+                    }
+                    if (typeof adapter.findMany === "function") {
+                        const rows = await adapter.findMany({
+                            model: options.model,
+                            where: options.where,
+                            limit: 100000,
+                        });
+                        return Array.isArray(rows) ? rows.length : 0;
+                    }
+                    return 0;
+                }
+                catch (_error) {
+                    return 0;
+                }
+            },
             findMany: async (options) => {
                 try {
                     if (typeof adapter.findMany === "function") {

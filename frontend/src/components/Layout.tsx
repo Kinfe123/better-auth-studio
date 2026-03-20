@@ -465,9 +465,17 @@ export default function Layout({ children }: LayoutProps) {
   const companyName = metadata.company?.name || "Better-Auth Studio.";
   const companyWebsite = metadata.company?.website;
 
+  const isDashboardRoute = location.pathname === "/";
+
   return (
-    <div className="min-h-screen bg-black">
-      <div className="bg-black/70 border-b border-white/15">
+    <div
+      className={
+        isDashboardRoute
+          ? "h-screen min-h-0 overflow-hidden bg-black flex flex-col"
+          : "min-h-screen bg-black"
+      }
+    >
+      <div className="bg-black/70 border-b border-white/15 shrink-0">
         <div className="flex items-center justify-between px-3 py-3 md:px-6 md:py-4">
           <div className="flex items-center space-x-4 min-w-0">
             <div className="flex items-center justify-end space-x-2 min-w-0">
@@ -739,7 +747,7 @@ export default function Layout({ children }: LayoutProps) {
       </div>
 
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-black border-b border-white/15 z-40">
+        <div className="md:hidden bg-black border-b border-white/15 z-40 shrink-0">
           <nav className="flex flex-col">
             {navigation.map((item) => {
               const isActive =
@@ -809,7 +817,7 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       )}
 
-      <div className="bg-black/50 border-b border-white/15 hidden md:block">
+      <div className="bg-black/50 border-b border-white/15 hidden md:block shrink-0">
         <div className="px-6">
           <nav className="flex overflow-y-hidden overflow-x-auto">
             {navigation.map((item, index) => {
@@ -868,18 +876,26 @@ export default function Layout({ children }: LayoutProps) {
           const sort = liveMarqueeConfig?.sort ?? "desc";
           const colors = liveMarqueeConfig?.colors;
           return eventsEnabled === true && liveMarqueeEnabled && isSelfHosted ? (
-            <LiveEventMarquee
-              maxEvents={limit}
-              pollInterval={pollInterval}
-              speed={speed}
-              pauseOnHover={pauseOnHover}
-              sort={sort}
-              colors={colors}
-            />
+            <div className="shrink-0">
+              <LiveEventMarquee
+                maxEvents={limit}
+                pollInterval={pollInterval}
+                speed={speed}
+                pauseOnHover={pauseOnHover}
+                sort={sort}
+                colors={colors}
+              />
+            </div>
           ) : null;
         })()}
 
-      <div className={`flex-1 ${!config.liveMarquee && "mt-4"}`}>{children}</div>
+      <div
+        className={`flex-1 ${isDashboardRoute ? "min-h-0 overflow-hidden" : ""} ${
+          !config.liveMarquee ? "mt-4" : ""
+        }`}
+      >
+        {children}
+      </div>
 
       <CommandPalette
         isOpen={isCommandPaletteOpen}

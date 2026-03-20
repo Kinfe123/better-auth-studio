@@ -588,6 +588,7 @@ export function createRoutes(
       // For self-hosted studio, wrap the preloaded adapter to match expected interface
       return {
         ...preloadedAdapter,
+        count: preloadedAdapter.count?.bind(preloadedAdapter),
         findUnique: preloadedAdapter.findUnique?.bind(preloadedAdapter),
         findOne:
           preloadedAdapter.findOne?.bind(preloadedAdapter) ||
@@ -4129,10 +4130,33 @@ export function createRoutes(
     );
   }
 
+  async function getDatabaseModelCount(adapter: any, model: string) {
+    if (typeof adapter?.count === "function") {
+      const count = await adapter.count({ model });
+      return typeof count === "number" ? count : Number(count ?? 0);
+    }
+
+    if (typeof adapter?.findMany === "function") {
+      const rows = await adapter.findMany({
+        model,
+        limit: 100000,
+      });
+      return Array.isArray(rows) ? rows.length : 0;
+    }
+
+    return null;
+  }
+
   async function resolveAvailableSchemaTables(schema: { tables: any[] }) {
     const adapter = await getAuthAdapterWithConfig();
-    if (!adapter || typeof adapter.findMany !== "function") {
-      return schema;
+    if (!adapter || (typeof adapter.findMany !== "function" && typeof adapter.count !== "function")) {
+      return {
+        tables: schema.tables.map((table) => ({
+          ...table,
+          model: getTableModelCandidates(table)[0] || table.name,
+          rowCount: null,
+        })),
+      };
     }
 
     const tables = await Promise.all(
@@ -4141,14 +4165,12 @@ export function createRoutes(
 
         for (const model of candidates) {
           try {
-            await adapter.findMany({
-              model,
-              limit: 1,
-            } as any);
+            const rowCount = await getDatabaseModelCount(adapter, model);
 
             return {
               ...table,
               model,
+              rowCount,
             };
           } catch (error) {
             if (isMissingDatabaseModelError(error)) {
@@ -4158,6 +4180,7 @@ export function createRoutes(
             return {
               ...table,
               model: candidates[0] || table.name,
+              rowCount: null,
             };
           }
         }

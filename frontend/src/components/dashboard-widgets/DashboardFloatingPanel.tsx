@@ -68,28 +68,34 @@ function PreviewEvents() {
 }
 
 function PreviewDatabase() {
-  const { summary, loading } = useDatabaseSchemaSummary();
-  const items = [
-    { label: "Tables", value: summary.tableCount },
-    { label: "Core", value: summary.coreTableCount },
-    { label: "Extended", value: summary.pluginTableCount },
-    { label: "Fields", value: summary.fieldCount },
-  ];
+  const { tables, loading } = useDatabaseSchemaSummary();
+  const previewTables = tables.slice(0, 4);
 
   if (loading) {
     return <div className="text-[7px] font-mono text-gray-600 uppercase tracking-wider">Loading</div>;
   }
 
+  if (previewTables.length === 0) {
+    return <div className="text-[7px] font-mono text-gray-600 uppercase tracking-wider">No tables</div>;
+  }
+
   return (
     <div className="space-y-1.5">
-      {items.map((it, i) => (
+      {previewTables.map((table, i) => (
         <div key={i} className="flex items-center justify-between">
-          <span className="text-[7px] font-mono text-gray-500 uppercase tracking-wider">
-            {it.label}
+          <span className="text-[7px] font-mono text-gray-500 uppercase tracking-wider truncate pr-2">
+            {table.name}
           </span>
-          <span className="text-[8px] font-mono text-gray-300">{it.value.toLocaleString()}</span>
+          <span className="text-[8px] font-mono text-gray-300">
+            {typeof table.rowCount === "number" ? table.rowCount.toLocaleString() : "—"}
+          </span>
         </div>
       ))}
+      {tables.length > previewTables.length && (
+        <div className="text-[7px] font-mono text-gray-600 uppercase tracking-wider">
+          +{tables.length - previewTables.length} more
+        </div>
+      )}
     </div>
   );
 }

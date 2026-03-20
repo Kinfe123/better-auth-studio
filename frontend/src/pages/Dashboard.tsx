@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { ArrowUpRight, Shield } from "lucide-react";
-import { type MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { type MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -107,6 +107,10 @@ export default function Dashboard() {
   const [hoveredAreaPosition, setHoveredAreaPosition] = useState<{ x: number; y: number } | null>(
     null,
   );
+  const overviewViewportRef = useRef<HTMLDivElement | null>(null);
+  const overviewContentRef = useRef<HTMLDivElement | null>(null);
+  const [overviewScale, setOverviewScale] = useState(1);
+  const [overviewScaledHeight, setOverviewScaledHeight] = useState<number | null>(null);
 
   const isLightTheme = theme === "light";
   const activityStreams = useMemo(
@@ -176,6 +180,58 @@ export default function Dashboard() {
   const activityTooltipUniqueLabelClass = isLightTheme ? "text-slate-500" : "text-gray-500";
   const activityLegendTextClass = isLightTheme ? "text-slate-600" : "text-gray-400";
   const activityLegendValueClass = isLightTheme ? "text-slate-950" : "text-white";
+
+  useEffect(() => {
+    if (activeTab !== "overview") return;
+    if (typeof ResizeObserver === "undefined") return;
+
+    const viewport = overviewViewportRef.current;
+    const content = overviewContentRef.current;
+
+    if (!viewport || !content) return;
+
+    let frame = 0;
+
+    const recalculateOverviewScale = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const nextViewport = overviewViewportRef.current;
+        const nextContent = overviewContentRef.current;
+
+        if (!nextViewport || !nextContent) return;
+
+        const availableHeight = nextViewport.clientHeight;
+        const naturalHeight = nextContent.scrollHeight;
+
+        if (!availableHeight || !naturalHeight) return;
+
+        const nextScale = Math.min(1, availableHeight / naturalHeight);
+
+        setOverviewScale((currentScale) =>
+          Math.abs(currentScale - nextScale) < 0.01 ? currentScale : nextScale,
+        );
+        setOverviewScaledHeight((currentHeight) => {
+          const nextHeight = Math.ceil(naturalHeight * nextScale);
+          return currentHeight === nextHeight ? currentHeight : nextHeight;
+        });
+      });
+    };
+
+    const viewportObserver = new ResizeObserver(recalculateOverviewScale);
+    const contentObserver = new ResizeObserver(recalculateOverviewScale);
+
+    viewportObserver.observe(viewport);
+    contentObserver.observe(content);
+    window.addEventListener("resize", recalculateOverviewScale);
+    recalculateOverviewScale();
+
+    return () => {
+      cancelAnimationFrame(frame);
+      viewportObserver.disconnect();
+      contentObserver.disconnect();
+      window.removeEventListener("resize", recalculateOverviewScale);
+    };
+  }, [activeTab]);
 
   // Custom date range states
   const [activeUsersDateFrom, setActiveUsersDateFrom] = useState<Date | undefined>(undefined);
@@ -1139,7 +1195,7 @@ export default function Dashboard() {
     const maxActivityValue = Math.max(...activityBuckets, 1);
 
     return (
-      <div className="flex flex-col flex-1 gap-6 px-0 min-h-0">
+      <div className="flex flex-col flex-1 gap-6 px-0 min-h-0 lg:h-[960px]">
         {/* <div className="px-6 pt-8">
         <h1 className="text-3xl text-white font-light mb-2">Welcome Back</h1>
         <p className="text-gray-400 text-sm">
@@ -1323,10 +1379,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="px-3 md:px-6 pb-6 flex flex-col gap-6 flex-1 min-h-0">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 shrink-0 h-full">
+        <div className="px-3 md:px-6 pb-6 flex flex-col gap-6 flex-1 min-h-0 lg:grid lg:grid-rows-[minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0 h-full">
             {/* Total Users Card */}
-            <DropTargetSlot slotId="total-users">
+            <DropTargetSlot slotId="total-users" className="h-full min-h-0">
               {slotOverrides["total-users"] ? (
                 <OverviewSlotCard>
                   <WidgetContent
@@ -1334,7 +1390,7 @@ export default function Dashboard() {
                   />
                 </OverviewSlotCard>
               ) : (
-                <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border h-full border-white/10 rounded-none p-3 md:p-6 relative">
+                <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border h-full border-white/10 rounded-none p-3 md:p-6 relative flex flex-col overflow-hidden">
                   {/* Top-left corner */}
                   <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
                   <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
@@ -1567,13 +1623,13 @@ export default function Dashboard() {
             </DropTargetSlot>
 
             {/* Activity Hit Card */}
-            <DropTargetSlot slotId="activity">
+            <DropTargetSlot slotId="activity" className="h-full min-h-0">
               {slotOverrides["activity"] ? (
                 <OverviewSlotCard>
                   <WidgetContent item={slotWidgetItem("activity", slotOverrides["activity"])} />
                 </OverviewSlotCard>
               ) : (
-                <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 relative">
+                <div className="bg-gradient-to-b from-white/[4%] to-white/[2.5%] border border-white/10 rounded-none p-3 md:p-6 relative flex flex-col overflow-hidden">
                   <div className="absolute top-0 left-0 w-[12px] h-[0.5px] bg-white/20" />
                   <div className="absolute top-0 left-0 w-[0.5px] h-[12px] bg-white/20" />
                   <div className="absolute top-0 right-0 w-[12px] h-[0.5px] bg-white/20" />
@@ -1761,9 +1817,9 @@ export default function Dashboard() {
           </div>
 
           {/* Bottom Row - Three Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-1 min-h-[400px] lg:grid-rows-1 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-1 min-h-[320px] lg:min-h-0 h-full lg:grid-rows-1 overflow-hidden">
             {/* Left Column - Two Small Cards */}
-            <div className="flex flex-col gap-4 overflow-hidden">
+            <div className="flex flex-col gap-4 min-h-0 overflow-hidden">
               {/* Active Users Daily */}
               <DropTargetSlot slotId="active-users" className="flex-1 flex flex-col min-h-0">
                 {slotOverrides["active-users"] ? (
@@ -2033,7 +2089,7 @@ export default function Dashboard() {
             </div>
 
             {/* Middle Column - Organizations and Teams */}
-            <div className="flex flex-col gap-4 overflow-hidden">
+            <div className="flex flex-col gap-4 min-h-0 overflow-hidden">
               {/* Organizations */}
               <DropTargetSlot slotId="organizations" className="flex-1 flex flex-col min-h-0">
                 {slotOverrides["organizations"] ? (
@@ -2375,11 +2431,33 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col" style={{ overflowX: "hidden" }}>
+    <div className="h-full min-h-0 bg-black text-white flex flex-col overflow-hidden">
       {/* Tab Content */}
-      <div className="flex-1">
+      <div className="flex-1 min-h-0 overflow-hidden">
         {activeTab === "overview" ? (
-          renderOverview()
+          <div ref={overviewViewportRef} className="h-full min-h-0 overflow-hidden">
+            <div className="flex h-full items-start justify-start overflow-hidden">
+              <div
+                className="w-full"
+                style={overviewScaledHeight ? { height: `${overviewScaledHeight}px` } : undefined}
+              >
+                <div
+                  style={overviewScale < 1 ? { width: `${100 / overviewScale}%` } : undefined}
+                >
+                  <div
+                    ref={overviewContentRef}
+                    style={{
+                      transform: `scale(${overviewScale})`,
+                      transformOrigin: "top left",
+                      willChange: overviewScale < 1 ? "transform" : undefined,
+                    }}
+                  >
+                    {renderOverview()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         ) : activeTab === "users" ? (
           <UsersPage />
         ) : activeTab === "organizations" ? (

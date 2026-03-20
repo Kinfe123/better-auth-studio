@@ -23,6 +23,7 @@ export interface AuthAdapter extends UserInternalAdapter {
   createAccount: (data: any) => Promise<any>;
   createVerification: (data: any) => Promise<any>;
   createOrganization: (data: any) => Promise<any>;
+  count?: (options: { model: string; where?: any }) => Promise<number>;
   create?: (...args: any[]) => Promise<any>;
   update?: (...args: any[]) => Promise<any>;
   delete?: (...args: any[]) => Promise<any>;
@@ -229,6 +230,24 @@ export async function getAuthAdapter(configPath?: string): Promise<AuthAdapter |
           return [];
         } catch (_error) {
           return [];
+        }
+      },
+      count: async (options: { model: string; where?: any }) => {
+        try {
+          if (typeof adapter.count === "function") {
+            return await adapter.count(options as any);
+          }
+          if (typeof adapter.findMany === "function") {
+            const rows = await adapter.findMany({
+              model: options.model,
+              where: options.where,
+              limit: 100000,
+            });
+            return Array.isArray(rows) ? rows.length : 0;
+          }
+          return 0;
+        } catch (_error) {
+          return 0;
         }
       },
       findMany: async (options: {
