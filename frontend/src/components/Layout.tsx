@@ -257,8 +257,15 @@ export default function Layout({ children }: LayoutProps) {
       try {
         const response = await fetch("/api/database/schema");
         const data = await response.json();
-        if (data.success && data.schema && data.schema.tables) {
-          setSchemaCount(data.schema.tables.length);
+        if (data.success) {
+          if (typeof data.summary?.tableCount === "number") {
+            setSchemaCount(data.summary.tableCount);
+            return;
+          }
+
+          if (data.schema && data.schema.tables) {
+            setSchemaCount(data.schema.tables.length);
+          }
         }
       } catch (_error) {
         setSchemaCount(null);

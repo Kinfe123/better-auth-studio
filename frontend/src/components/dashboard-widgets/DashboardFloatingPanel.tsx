@@ -1,6 +1,7 @@
 import type React from "react";
 import { useCallback, useState } from "react";
 import { GripVertical, PanelRightClose, PanelRightOpen, X } from "lucide-react";
+import { useDatabaseSchemaSummary } from "@/hooks/useDatabaseSchemaSummary";
 import { useDashboardWidgets } from "@/contexts/DashboardWidgetsContext";
 import { WIDGET_LABELS } from "@/contexts/DashboardWidgetsContext";
 import { WIDGET_TYPE_DRAG_KEY } from "./DropTargetSlot";
@@ -67,12 +68,18 @@ function PreviewEvents() {
 }
 
 function PreviewDatabase() {
+  const { summary, loading } = useDatabaseSchemaSummary();
   const items = [
-    { label: "Users", value: "1,247" },
-    { label: "Sessions", value: "8,431" },
-    { label: "Organizations", value: "52" },
-    { label: "Events", value: "24.1K" },
+    { label: "Tables", value: summary.tableCount },
+    { label: "Core", value: summary.coreTableCount },
+    { label: "Extended", value: summary.pluginTableCount },
+    { label: "Fields", value: summary.fieldCount },
   ];
+
+  if (loading) {
+    return <div className="text-[7px] font-mono text-gray-600 uppercase tracking-wider">Loading</div>;
+  }
+
   return (
     <div className="space-y-1.5">
       {items.map((it, i) => (
@@ -80,7 +87,7 @@ function PreviewDatabase() {
           <span className="text-[7px] font-mono text-gray-500 uppercase tracking-wider">
             {it.label}
           </span>
-          <span className="text-[8px] font-mono text-gray-300">{it.value}</span>
+          <span className="text-[8px] font-mono text-gray-300">{it.value.toLocaleString()}</span>
         </div>
       ))}
     </div>

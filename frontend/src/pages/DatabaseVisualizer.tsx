@@ -15,6 +15,7 @@ import { useCallback, useEffect, useState } from "react";
 import "@xyflow/react/dist/style.css";
 import { Link2, Settings, X } from "lucide-react";
 import { Analytics } from "@/components/PixelIcons";
+import type { DatabaseSchemaSummary } from "@/hooks/useDatabaseSchemaSummary";
 import { DatabaseSchemaNode, type DatabaseSchemaNodeData } from "../components/DatabaseSchemaNode";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
@@ -68,6 +69,7 @@ interface PluginContribution {
 
 export default function DatabaseVisualizer() {
   const [schema, setSchema] = useState<Schema | null>(null);
+  const [summary, setSummary] = useState<DatabaseSchemaSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [enabledPlugins, setEnabledPlugins] = useState<Plugin[]>([]);
@@ -108,6 +110,7 @@ export default function DatabaseVisualizer() {
 
       if (data.success) {
         setSchema(data.schema);
+        setSummary(data.summary ?? null);
       } else {
         setError(data.error || "Failed to fetch schema");
       }
@@ -505,7 +508,7 @@ export default function DatabaseVisualizer() {
                     Tables
                   </span>
                   <span className="text-white text-sm font-mono font-light">
-                    {schema.tables.length}
+                    {summary?.tableCount ?? schema.tables.length}
                   </span>
                 </div>
                 <div className="flex justify-between items-baseline">
@@ -513,7 +516,8 @@ export default function DatabaseVisualizer() {
                     Total Fields
                   </span>
                   <span className="text-white text-sm font-mono font-light">
-                    {schema.tables.reduce((sum, table) => sum + table.fields.length, 0)}
+                    {summary?.fieldCount ??
+                      schema.tables.reduce((sum, table) => sum + table.fields.length, 0)}
                   </span>
                 </div>
                 <div className="flex justify-between items-baseline">
@@ -521,7 +525,8 @@ export default function DatabaseVisualizer() {
                     Relationships
                   </span>
                   <span className="text-white text-sm font-mono font-light">
-                    {schema.tables.reduce((sum, table) => sum + table.relationships.length, 0)}
+                    {summary?.relationshipCount ??
+                      schema.tables.reduce((sum, table) => sum + table.relationships.length, 0)}
                   </span>
                 </div>
               </CardContent>

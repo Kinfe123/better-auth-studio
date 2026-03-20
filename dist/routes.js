@@ -3465,6 +3465,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             });
             const table = {
                 name,
+                contextKey: key,
                 displayName: formatDisplayName(name),
                 origin: tableMeta?.plugin?.id ||
                     tableMeta?.pluginId ||
@@ -3499,6 +3500,89 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         tableEntries.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
         return { tables: tableEntries };
     }
+    function normalizeModelName(value) {
+        if (!value)
+            return null;
+        return value.trim();
+    }
+    function toSnakeCase(value) {
+        return value
+            .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
+            .replace(/[-\s]+/g, "_")
+            .toLowerCase();
+    }
+    function toCamelCase(value) {
+        const normalized = value.replace(/[-\s]+/g, "_");
+        return normalized.replace(/_([a-z0-9])/gi, (_, char) => char.toUpperCase());
+    }
+    function getTableModelCandidates(table) {
+        const names = [table?.name, table?.contextKey]
+            .map((value) => normalizeModelName(value))
+            .filter(Boolean);
+        return Array.from(new Set(names.flatMap((value) => {
+            const snake = toSnakeCase(value);
+            const camel = toCamelCase(value);
+            return [value, snake, camel].filter(Boolean);
+        })));
+    }
+    function isMissingDatabaseModelError(error) {
+        const message = typeof error?.message === "string" ? error.message.toLowerCase() : "";
+        return (error?.code === "P2021" ||
+            error?.code === "P2025" ||
+            error?.code === "42P01" ||
+            message.includes("not found in schema") ||
+            message.includes("model") && message.includes("not found") ||
+            message.includes("relation") && message.includes("does not exist") ||
+            message.includes("table") && message.includes("does not exist") ||
+            message.includes("unknown table") ||
+            message.includes("no such table"));
+    }
+    async function resolveAvailableSchemaTables(schema) {
+        const adapter = await getAuthAdapterWithConfig();
+        if (!adapter || typeof adapter.findMany !== "function") {
+            return schema;
+        }
+        const tables = await Promise.all(schema.tables.map(async (table) => {
+            const candidates = getTableModelCandidates(table);
+            for (const model of candidates) {
+                try {
+                    await adapter.findMany({
+                        model,
+                        limit: 1,
+                    });
+                    return {
+                        ...table,
+                        model,
+                    };
+                }
+                catch (error) {
+                    if (isMissingDatabaseModelError(error)) {
+                        continue;
+                    }
+                    return {
+                        ...table,
+                        model: candidates[0] || table.name,
+                    };
+                }
+            }
+            return null;
+        }));
+        return {
+            tables: tables.filter(Boolean),
+        };
+    }
+    function buildDatabaseSchemaSummary(schema) {
+        const tables = schema.tables || [];
+        const coreTableCount = tables.filter((table) => CONTEXT_CORE_TABLES.has(table.name)).length;
+        const pluginTableCount = tables.filter((table) => !CONTEXT_CORE_TABLES.has(table.name)).length;
+        return {
+            tableCount: tables.length,
+            coreTableCount,
+            pluginTableCount,
+            fieldCount: tables.reduce((sum, table) => sum + (table.fields?.length || 0), 0),
+            relationshipCount: tables.reduce((sum, table) => sum + (table.relationships?.length || 0), 0),
+        };
+    }
     async function generateSchemaFromContext(selectedPlugins) {
         try {
             const tables = await loadContextTables();
@@ -3523,28 +3607,34 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             return null;
         }
     }
+    async function generateResolvedDatabaseSchema(selectedPlugins) {
+        const schema = await generateSchemaFromContext(selectedPlugins);
+        if (!schema) {
+            return null;
+        }
+        const resolvedSchema = await resolveAvailableSchemaTables(schema);
+        return {
+            schema: resolvedSchema,
+            summary: buildDatabaseSchemaSummary(resolvedSchema),
+        };
+    }
     router.get("/api/database/schema", async (req, res) => {
         try {
-            const adapter = await getAuthAdapterWithConfig();
             const { plugins } = req.query;
             let selectedPlugins = [];
             if (plugins && typeof plugins === "string") {
                 selectedPlugins = plugins.split(",").filter(Boolean);
             }
-            if (!adapter) {
-                return res.json({
-                    schema: null,
-                    error: "Auth adapter not available",
-                });
-            }
-            const schema = await generateSchemaFromContext(selectedPlugins);
-            if (!schema) {
+            const resolvedDatabaseSchema = await generateResolvedDatabaseSchema(selectedPlugins);
+            if (!resolvedDatabaseSchema) {
                 return res.json({
                     success: false,
                     schema: null,
+                    summary: null,
                     error: "Failed to load schema from Better Auth context. Please ensure your auth configuration is properly set up.",
                 });
             }
+            const { schema, summary } = resolvedDatabaseSchema;
             // Extract available plugins from schema
             const availablePlugins = Array.from(new Set(schema.tables
                 .map((table) => table.origin)
@@ -3552,6 +3642,7 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             res.json({
                 success: true,
                 schema: schema,
+                summary,
                 availablePlugins: availablePlugins,
                 selectedPlugins: selectedPlugins,
             });

@@ -1,5 +1,5 @@
-import { useCounts } from "@/contexts/CountsContext";
-import { Database, Building2, Users, Zap } from "../PixelIcons";
+import { useDatabaseSchemaSummary } from "@/hooks/useDatabaseSchemaSummary";
+import { Analytics, Database, Building2, Settings, Users } from "../PixelIcons";
 
 const compactFmt = new Intl.NumberFormat("en-US", {
   notation: "compact",
@@ -7,14 +7,14 @@ const compactFmt = new Intl.NumberFormat("en-US", {
 });
 
 export function DatabaseWidget() {
-  const { counts, loading } = useCounts();
+  const { summary, loading } = useDatabaseSchemaSummary();
 
   const items = [
-    { label: "Users", value: counts.users, Icon: Users },
-    { label: "Sessions", value: counts.sessions, Icon: Zap },
-    { label: "Organizations", value: counts.organizations ?? 0, Icon: Building2 },
-    { label: "Teams", value: counts.teams ?? 0, Icon: Building2 },
-    { label: "Events", value: counts.events ?? 0, Icon: Database },
+    { label: "Tables", value: summary.tableCount, Icon: Database },
+    { label: "Core", value: summary.coreTableCount, Icon: Users },
+    { label: "Extended", value: summary.pluginTableCount, Icon: Building2 },
+    { label: "Fields", value: summary.fieldCount, Icon: Settings },
+    { label: "Relations", value: summary.relationshipCount, Icon: Analytics },
   ];
 
   return (
