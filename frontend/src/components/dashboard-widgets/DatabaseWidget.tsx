@@ -97,7 +97,9 @@ export function DatabaseWidget() {
           >
             <div className="flex items-start justify-between gap-3 border-b border-dashed border-white/20 px-4 py-4">
               <div className="min-w-0">
-                <h3 className="text-lg text-white font-light truncate">{selectedTable.displayName}</h3>
+                <h3 className="text-lg text-white font-light truncate">
+                  {selectedTable.displayName}
+                </h3>
                 <p className="text-[11px] text-gray-400 font-mono uppercase tracking-wider mt-1 truncate">
                   {selectedTable.name}
                 </p>
@@ -199,7 +201,9 @@ export function DatabaseWidget() {
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="text-white text-sm font-mono truncate">{relation.field}</p>
+                            <p className="text-white text-sm font-mono truncate">
+                              {relation.field}
+                            </p>
                             <button
                               type="button"
                               onClick={() => setSelectedTableName(relation.target)}

@@ -72,11 +72,15 @@ function PreviewDatabase() {
   const previewTables = tables.slice(0, 4);
 
   if (loading) {
-    return <div className="text-[7px] font-mono text-gray-600 uppercase tracking-wider">Loading</div>;
+    return (
+      <div className="text-[7px] font-mono text-gray-600 uppercase tracking-wider">Loading</div>
+    );
   }
 
   if (previewTables.length === 0) {
-    return <div className="text-[7px] font-mono text-gray-600 uppercase tracking-wider">No tables</div>;
+    return (
+      <div className="text-[7px] font-mono text-gray-600 uppercase tracking-wider">No tables</div>
+    );
   }
 
   return (

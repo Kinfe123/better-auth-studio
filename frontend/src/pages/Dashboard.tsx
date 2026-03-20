@@ -2441,9 +2441,7 @@ export default function Dashboard() {
                 className="w-full"
                 style={overviewScaledHeight ? { height: `${overviewScaledHeight}px` } : undefined}
               >
-                <div
-                  style={overviewScale < 1 ? { width: `${100 / overviewScale}%` } : undefined}
-                >
+                <div style={overviewScale < 1 ? { width: `${100 / overviewScale}%` } : undefined}>
                   <div
                     ref={overviewContentRef}
                     style={{

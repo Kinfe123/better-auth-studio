@@ -477,7 +477,9 @@ export default function DatabaseVisualizer() {
                       <div className="flex items-center justify-between gap-3 text-xs md:text-sm text-white">
                         <span className="truncate font-mono">{table.name}</span>
                         <span className="text-[10px] md:text-xs uppercase font-mono text-gray-400 flex-shrink-0">
-                          {typeof table.rowCount === "number" ? table.rowCount.toLocaleString() : "—"}
+                          {typeof table.rowCount === "number"
+                            ? table.rowCount.toLocaleString()
+                            : "—"}
                         </span>
                       </div>
                       <div className="text-[10px] md:text-xs text-gray-400 mt-0.5 md:mt-1">

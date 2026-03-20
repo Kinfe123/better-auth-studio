@@ -4122,9 +4122,9 @@ export function createRoutes(
       error?.code === "P2025" ||
       error?.code === "42P01" ||
       message.includes("not found in schema") ||
-      message.includes("model") && message.includes("not found") ||
-      message.includes("relation") && message.includes("does not exist") ||
-      message.includes("table") && message.includes("does not exist") ||
+      (message.includes("model") && message.includes("not found")) ||
+      (message.includes("relation") && message.includes("does not exist")) ||
+      (message.includes("table") && message.includes("does not exist")) ||
       message.includes("unknown table") ||
       message.includes("no such table")
     );
@@ -4149,7 +4149,10 @@ export function createRoutes(
 
   async function resolveAvailableSchemaTables(schema: { tables: any[] }) {
     const adapter = await getAuthAdapterWithConfig();
-    if (!adapter || (typeof adapter.findMany !== "function" && typeof adapter.count !== "function")) {
+    if (
+      !adapter ||
+      (typeof adapter.findMany !== "function" && typeof adapter.count !== "function")
+    ) {
       return {
         tables: schema.tables.map((table) => ({
           ...table,
@@ -4204,10 +4207,7 @@ export function createRoutes(
       coreTableCount,
       pluginTableCount,
       fieldCount: tables.reduce((sum, table) => sum + (table.fields?.length || 0), 0),
-      relationshipCount: tables.reduce(
-        (sum, table) => sum + (table.relationships?.length || 0),
-        0,
-      ),
+      relationshipCount: tables.reduce((sum, table) => sum + (table.relationships?.length || 0), 0),
     };
   }
 
