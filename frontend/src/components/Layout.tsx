@@ -26,6 +26,7 @@ import { useCounts } from "../contexts/CountsContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { buildApiUrl } from "../utils/api";
+import { fetchStudioAuthJson } from "../utils/studio-auth";
 import CommandPalette from "./CommandPalette";
 import { LiveEventMarquee } from "./LiveEventMarquee";
 
@@ -190,9 +191,7 @@ export default function Layout({ children }: LayoutProps) {
 
     const fetchUserProfile = async () => {
       try {
-        const basePath = getStudioConfig().basePath || "";
-        const response = await fetch(`${basePath}/auth/session`, { credentials: "include" });
-        const data = await response.json();
+        const { data } = await fetchStudioAuthJson("/session");
         if (data.authenticated && data.user) {
           setUserProfile(data.user);
         }
@@ -219,8 +218,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const handleLogout = async () => {
     try {
-      const basePath = getStudioConfig().basePath || "";
-      await fetch(`${basePath}/auth/logout`, { method: "GET", credentials: "include" });
+      await fetchStudioAuthJson("/logout", { method: "GET" });
       navigate("/login");
     } catch {
       navigate("/login");

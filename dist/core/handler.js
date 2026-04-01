@@ -155,6 +155,16 @@ export async function handleStudioRequest(request, config) {
             }
             return await handleApiRoute(request, path, config);
         }
+        if (isSelfHosted && (path === "/auth" || path.startsWith("/auth/"))) {
+            const apiPath = "/api" + path;
+            if (isProtectedApiPath(apiPath)) {
+                const sessionResult = verifyStudioSession(request, config);
+                if (!sessionResult.valid) {
+                    return jsonResponse(401, { error: "Unauthorized", message: sessionResult.error });
+                }
+            }
+            return await handleApiRoute(request, apiPath, config);
+        }
         if (isSelfHosted) {
             const acceptHeader = request.headers["accept"] || request.headers["Accept"] || "";
             const wantsJson = acceptHeader.includes("application/json") ||

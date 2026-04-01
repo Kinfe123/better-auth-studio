@@ -1,6 +1,7 @@
 import { AlertCircle, Loader } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { fetchStudioAuthJson } from "../utils/studio-auth";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -18,17 +19,11 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const basePath = (window as any).__STUDIO_CONFIG__?.basePath || "";
-      const studioAuthPath = basePath ? `${basePath}/auth` : "/api/auth";
-
-      const signInResponse = await fetch(`${studioAuthPath}/sign-in`, {
+      const { response: signInResponse, data: result } = await fetchStudioAuthJson("/sign-in", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-        credentials: "include",
       });
-
-      const result = await signInResponse.json();
 
       if (!signInResponse.ok) {
         if (signInResponse.status === 403) {

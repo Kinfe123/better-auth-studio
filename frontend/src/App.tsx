@@ -6,6 +6,7 @@ import Layout from "./components/Layout";
 import { CountsProvider } from "./contexts/CountsContext";
 import { DashboardWidgetsProvider } from "./contexts/DashboardWidgetsContext";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
+import { fetchStudioAuthJson } from "./utils/studio-auth";
 import AccessDenied from "./pages/AccessDenied";
 import Dashboard from "./pages/Dashboard";
 import DatabaseVisualizer from "./pages/DatabaseVisualizer";
@@ -39,9 +40,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const studioAuthPath = basePath ? `${basePath}/auth` : "/api/auth";
-        const response = await fetch(`${studioAuthPath}/session`, { credentials: "include" });
-        const data = await response.json();
+        const { data } = await fetchStudioAuthJson("/session");
         setAuth({ loading: false, authenticated: data.authenticated, user: data.user });
       } catch {
         setAuth({ loading: false, authenticated: false, user: null });

@@ -48,6 +48,7 @@ import {
 } from "../components/ui/select";
 import { useCounts } from "../contexts/CountsContext";
 import { getImageSrc } from "../lib/utils";
+import { fetchStudioAuthJson } from "../utils/studio-auth";
 
 interface User {
   id: string;
@@ -77,10 +78,6 @@ const formatTimeAgo = (value?: string | null): string => {
   if (Number.isNaN(d.getTime())) return "—";
   return formatDistanceToNow(d, { addSuffix: true });
 };
-
-const studioConfig = (window as any).__STUDIO_CONFIG__ || {};
-const basePath = studioConfig.basePath !== undefined ? studioConfig.basePath : "";
-const studioAuthPath = basePath ? `${basePath}/auth` : "/api/auth";
 
 export default function Users() {
   const navigate = useNavigate();
@@ -194,8 +191,7 @@ export default function Users() {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const response = await fetch(`${studioAuthPath}/session`, { credentials: "include" });
-        const data = await response.json();
+        const { data } = await fetchStudioAuthJson("/session");
         if (data?.authenticated && data.user) {
           setCurrentUser(data.user);
         } else {
