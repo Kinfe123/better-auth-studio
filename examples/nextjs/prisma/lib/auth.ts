@@ -4,10 +4,29 @@ import { organization, admin, createAuthMiddleware } from "better-auth/plugins";
 import { prisma } from "@/lib/db";
 import { buttonConfig, apiConfig } from "@/components/Button";
 
+const allowedHosts = Array.from(
+  new Set(
+    [
+      "localhost:3000",
+      "localhost:3002",
+      "*.vercel.app",
+      ...(process.env.BETTER_AUTH_ALLOWED_HOSTS?.split(",")
+        .map((host) => host.trim())
+        .filter(Boolean) || []),
+    ].filter(Boolean),
+  ),
+);
+
+const baseURL = {
+  allowedHosts,
+  protocol: process.env.NODE_ENV === "development" ? ("http" as const) : ("https" as const),
+  ...(process.env.BETTER_AUTH_URL ? { fallback: process.env.BETTER_AUTH_URL } : {}),
+};
+
 export const auth = betterAuth({
   secret: process.env.AUTH_SECRET || "better-auth-secret-123456789",
   database: prismaAdapter(prisma, { provider: "postgresql" }),
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL,
   basePath: apiConfig.basePath,
   socialProviders: {
     github: {
@@ -68,5 +87,4 @@ export const auth = betterAuth({
   telemetry: {
     enabled: false,
   },
-  trustedOrigins: ["http://localhost:3000", "http://localhost:3002"],
 });

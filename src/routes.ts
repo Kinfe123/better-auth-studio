@@ -767,6 +767,125 @@ export function createRoutes(
     return allowedEmails.includes(email.toLowerCase());
   };
 
+  const finalizeStudioSignIn = (
+    res: Response,
+    user: { id: string; email: string; name?: string; role?: string | null },
+  ) => {
+    const allowedRoles = getAllowedRoles();
+
+    if (!allowedRoles.includes(user.role || "")) {
+      return res.status(403).json({
+        success: false,
+        message: `Access denied.`,
+        userRole: user.role || "none",
+      });
+    }
+
+    if (!isEmailAllowed(user.email)) {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Your email is not authorized to access this dashboard.",
+      });
+    }
+
+    const studioSession = createStudioSession(
+      {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role || undefined,
+      },
+      getSessionDuration(),
+    );
+    const encryptedSession = encryptSession(studioSession, getSessionSecret());
+
+    res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: getSessionDuration(),
+      path: "/",
+    });
+
+    return res.json({
+      success: true,
+      user: { id: user.id, email: user.email, name: user.name, role: user.role || null },
+    });
+  };
+
+  const attemptManualCredentialStudioSignIn = async (
+    email: string,
+    password: string,
+    adapter: any,
+  ): Promise<
+    | {
+        ok: true;
+        user: { id: string; email: string; name?: string; role?: string | null };
+      }
+    | {
+        ok: false;
+        status?: number;
+        message?: string;
+      }
+  > => {
+    if (!adapter?.findMany) {
+      return { ok: false };
+    }
+
+    const users = await adapter.findMany({
+      model: "user",
+      where: [{ field: "email", value: email }],
+      limit: 1,
+    });
+
+    if (!users || users.length === 0) {
+      return { ok: false, status: 401, message: "Invalid credentials" };
+    }
+
+    const userRecord = users[0];
+    const userId = userRecord.id;
+    const accounts = await adapter.findMany({
+      model: "account",
+      where: [{ field: "userId", value: userId }],
+      limit: 10,
+    });
+
+    const credentialAccount = accounts?.find(
+      (acc: any) => acc.providerId === "credential" || acc.providerId === "email",
+    );
+
+    if (!credentialAccount) {
+      return {
+        ok: false,
+        status: 401,
+        message: "No password set for this account. Please use social login or reset your password.",
+      };
+    }
+
+    if (!credentialAccount.password) {
+      return {
+        ok: false,
+        status: 401,
+        message: "Password not configured. Please reset your password.",
+      };
+    }
+
+    const isValidPassword = await verifyPassword(password, credentialAccount.password);
+    if (!isValidPassword) {
+      return { ok: false, status: 401, message: "Invalid credentials" };
+    }
+
+    return {
+      ok: true,
+      user: {
+        id: userId,
+        email: userRecord.email,
+        name: userRecord.name,
+        role: userRecord.role,
+      },
+    };
+  };
+
   const verifyStudioSession = (req: Request): { valid: boolean; session?: any; error?: string } => {
     if (!isSelfHosted) {
       return { valid: true };
@@ -828,79 +947,20 @@ export function createRoutes(
       if (!signInResult || signInResult.error || signInError) {
         const errorMessage = signInError || signInResult?.error?.message || "Invalid credentials";
 
-        if (errorMessage.includes("Invalid password hash") && adapter?.findMany) {
-          const users = await adapter.findMany({
-            model: "user",
-            where: [{ field: "email", value: email }],
-            limit: 1,
-          });
-          if (!users || users.length === 0) {
-            return res.status(401).json({ success: false, message: "Invalid credentials" });
+        const shouldAttemptManualFallback =
+          !!signInError || errorMessage.includes("Invalid password hash");
+
+        if (shouldAttemptManualFallback) {
+          const manualResult = await attemptManualCredentialStudioSignIn(email, password, adapter);
+          if (manualResult.ok) {
+            return finalizeStudioSignIn(res, manualResult.user);
           }
-
-          const userId = users[0].id;
-          const accounts = await adapter.findMany({
-            model: "account",
-            where: [{ field: "userId", value: userId }],
-            limit: 10,
-          });
-
-          const credentialAccount = accounts?.find(
-            (acc: any) => acc.providerId === "credential" || acc.providerId === "email",
-          );
-
-          if (!credentialAccount) {
-            return res.status(401).json({
+          if (manualResult.status && manualResult.message) {
+            return res.status(manualResult.status).json({
               success: false,
-              message:
-                "No password set for this account. Please use social login or reset your password.",
+              message: manualResult.message,
             });
           }
-
-          if (!credentialAccount.password) {
-            return res.status(401).json({
-              success: false,
-              message: "Password not configured. Please reset your password.",
-            });
-          }
-          const isValidPassword = await verifyPassword(password, credentialAccount.password);
-          if (!isValidPassword) {
-            return res.status(401).json({ success: false, message: "Invalid credentials" });
-          }
-
-          const userRole = users[0].role;
-          const user = { id: userId, email: users[0].email, name: users[0].name, role: userRole };
-          const allowedRoles = getAllowedRoles();
-          if (!allowedRoles.includes(user.role)) {
-            return res.status(403).json({
-              success: false,
-              message: `Access denied.`,
-              userRole: user.role || "none",
-            });
-          }
-
-          if (!isEmailAllowed(user.email)) {
-            return res.status(403).json({
-              success: false,
-              message: "Access denied. Your email is not authorized to access this dashboard.",
-            });
-          }
-
-          const studioSession = createStudioSession(user, getSessionDuration());
-          const encryptedSession = encryptSession(studioSession, getSessionSecret());
-
-          res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: getSessionDuration(),
-            path: "/",
-          });
-
-          return res.json({
-            success: true,
-            user: { id: user.id, email: user.email, name: user.name, role: user.role },
-          });
         }
 
         return res.status(401).json({
@@ -926,38 +986,7 @@ export function createRoutes(
       }
 
       const user = { ...signInResult.user, role: userRole };
-      const allowedRoles = getAllowedRoles();
-
-      if (!allowedRoles.includes(user.role)) {
-        return res.status(403).json({
-          success: false,
-          message: `Access denied.`,
-          userRole: user.role || "none",
-        });
-      }
-
-      if (!isEmailAllowed(user.email)) {
-        return res.status(403).json({
-          success: false,
-          message: "Access denied. Your email is not authorized to access this dashboard.",
-        });
-      }
-
-      const studioSession = createStudioSession(user, getSessionDuration());
-      const encryptedSession = encryptSession(studioSession, getSessionSecret());
-
-      res.cookie(STUDIO_COOKIE_NAME, encryptedSession, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: getSessionDuration(),
-        path: "/",
-      });
-
-      return res.json({
-        success: true,
-        user: { id: user.id, email: user.email, name: user.name, role: user.role },
-      });
+      return finalizeStudioSignIn(res, user);
     } catch (error: any) {
       console.error("Sign-in error:", error);
       return res.status(401).json({
