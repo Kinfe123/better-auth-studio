@@ -858,7 +858,8 @@ export function createRoutes(
       return {
         ok: false,
         status: 401,
-        message: "No password set for this account. Please use social login or reset your password.",
+        message:
+          "No password set for this account. Please use social login or reset your password.",
       };
     }
 
