@@ -12,11 +12,14 @@ export async function fetchStudioAuthJson(
     headers.set("Accept", "application/json");
   }
 
-  const response = await fetch(`${getStudioAuthPath()}${path.startsWith("/") ? path : `/${path}`}`, {
-    ...init,
-    headers,
-    credentials: "include",
-  });
+  const response = await fetch(
+    `${getStudioAuthPath()}${path.startsWith("/") ? path : `/${path}`}`,
+    {
+      ...init,
+      headers,
+      credentials: "include",
+    },
+  );
 
   const contentType = response.headers.get("content-type") || "";
   if (!contentType.includes("application/json")) {
