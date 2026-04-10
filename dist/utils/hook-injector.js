@@ -1,4 +1,4 @@
-import { createAuthMiddleware } from "better-auth/plugins";
+import { createAuthMiddleware } from "better-auth/api";
 import { createClickHouseProvider, createHttpProvider, createNodeSqliteProvider, createPostgresProvider, createSqliteProvider, } from "../providers/events/helpers.js";
 import { wrapAuthCallbacks } from "./auth-callbacks-injector.js";
 import { emitEvent, isEventIngestionInitialized, } from "./event-ingestion.js";

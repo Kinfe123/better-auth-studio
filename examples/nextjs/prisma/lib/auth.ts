@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { organization, admin, createAuthMiddleware } from "better-auth/plugins";
+import { createAuthMiddleware } from "better-auth/api";
+import { organization, admin } from "better-auth/plugins";
 import { prisma } from "@/lib/db";
 import { buttonConfig, apiConfig } from "@/components/Button";
 

@@ -1,9 +1,9 @@
 import { betterAuth, url } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { createAuthMiddleware } from "better-auth/api";
 import {
   organization,
   admin,
-  createAuthMiddleware,
   emailOTP,
   phoneNumber,
 } from "better-auth/plugins";

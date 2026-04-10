@@ -1,5 +1,4 @@
-import { getSessionFromCtx } from "better-auth/api";
-import { createAuthMiddleware } from "better-auth/plugins";
+import { createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
 import {
   createClickHouseProvider,
   createHttpProvider,

@@ -1,6 +1,7 @@
 import { betterAuth, createMiddleware } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { organization, admin, createAuthMiddleware } from "better-auth/plugins";
+import { createAuthMiddleware } from "better-auth/api";
+import { organization, admin } from "better-auth/plugins";
 import prisma from "./prisma";
 
 const baseURL = process.env.BETTER_AUTH_URL || "http://localhost:3000";
