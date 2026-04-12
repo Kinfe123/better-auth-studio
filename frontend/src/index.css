@@ -259,6 +259,25 @@ html[data-theme="light"] {
   color-scheme: light;
 }
 
+.studio-code-block {
+  font-size: 11.5px;
+  line-height: 1.6;
+  font-family:
+    "Geist Mono",
+    ui-monospace,
+    SFMono-Regular,
+    "SF Mono",
+    Menlo,
+    Consolas,
+    "Liberation Mono",
+    monospace;
+}
+
+.studio-code-block code {
+  font-size: inherit;
+  line-height: inherit;
+}
+
 html[data-theme="light"] body {
   background: #f6f5f0 !important;
   color: #111827 !important;

@@ -32,6 +32,8 @@ export function CodeBlock({
   const palette = theme === "light" ? oneLight : vscDarkPlus;
   const background = theme === "light" ? "#f8fafc" : "#0d1117";
   const borderColor = theme === "light" ? "#cbd5e1" : "#333333";
+  const codeFontSize = "11.5px";
+  const codeLineHeight = "1.6";
 
   const customStyle = {
     ...palette,
@@ -45,8 +47,8 @@ export function CodeBlock({
     'code[class*="language-"]': {
       ...palette['code[class*="language-"]'],
       background: "transparent",
-      fontSize: "13px",
-      lineHeight: "1.6",
+      fontSize: codeFontSize,
+      lineHeight: codeLineHeight,
       fontFamily:
         'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
     },
@@ -85,8 +87,8 @@ export function CodeBlock({
             style: {
               fontFamily:
                 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
-              fontSize: "13px",
-              lineHeight: "1.6",
+              fontSize: codeFontSize,
+              lineHeight: codeLineHeight,
             },
           }}
         >

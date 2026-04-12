@@ -602,7 +602,7 @@ export default function Organizations() {
                 </ol>
 
                 <div className="mt-4 bg-black/70 border border-dashed border-white/10 rounded-none p-3 overflow-x-auto">
-                  <pre className="text-sm text-gray-300">
+                  <pre className="studio-code-block text-gray-300">
                     <span className="text-blue-400">import</span> {`{ betterAuth }`}{" "}
                     <span className="text-blue-400">from</span>{" "}
                     <span className="text-green-400">"better-auth"</span> <br />
