@@ -55,6 +55,37 @@ const frameworks: Array<{
 export default function SelfHosting() {
   const [activeFramework, setActiveFramework] = useState<Framework>("nextjs");
 
+  const dockerComposeSnippet = String.raw`services:
+  studio:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: better-auth-studio:self-host
+    working_dir: /workspace
+    environment:
+      STUDIO_PROJECT_DIR: /workspace
+      HOST: 0.0.0.0
+      PORT: \${PORT:-3002}
+      CONFIG_PATH: \${CONFIG_PATH:-./auth.ts}
+      AUTO_INSTALL: \${AUTO_INSTALL:-true}
+      WATCH: \${WATCH:-false}
+    ports:
+      - "\${PORT:-3002}:\${PORT:-3002}"
+    volumes:
+      - \${HOST_PROJECT_PATH:?Set HOST_PROJECT_PATH to your Better Auth project path}:/workspace
+      - studio_node_modules:/workspace/node_modules
+      - studio_pnpm_store:/pnpm/store
+
+volumes:
+  studio_node_modules:
+  studio_pnpm_store:`;
+
+  const dockerEnvSnippet = String.raw`HOST_PROJECT_PATH=/absolute/path/to/your-better-auth-project
+CONFIG_PATH=./auth.ts
+PORT=3002
+AUTO_INSTALL=true
+WATCH=false`;
+
   useEffect(() => {
     const scrollToHash = () => {
       const hash = window.location.hash;
@@ -269,6 +300,112 @@ export default function SelfHosting() {
                   needed at runtime in production.
                 </p>
                 <CodeBlock code="pnpm add better-auth-studio" className="flex-1 min-w-0" />
+              </div>
+            </div>
+          </PixelCard>
+        </section>
+
+        <section id="docker">
+          <PixelCard variant="highlight" className="relative">
+            <div className="absolute -top-10 left-0">
+              <h3
+                onClick={() => handleSectionClick("docker")}
+                className="relative text-[12px] font-light uppercase tracking-tight text-white/90 border border-white/20 bg-[#0a0a0a] px-2 py-[6px] overflow-hidden cursor-pointer hover:border-white/40 hover:bg-white/15 transition-all duration-200"
+              >
+                <div className="absolute inset-0 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[2.5%]" />
+                <span className="relative z-10 inline-flex gap-[5px] items-center">
+                  <ServerIcon />
+                  Docker Container
+                </span>
+              </h3>
+            </div>
+            <div className="pt-4 space-y-4">
+              <p className="text-sm font-light tracking-tight text-white/70">
+                Better Auth Studio can also run as a standalone Docker container. This is useful if
+                you want a separate admin container instead of embedding Studio directly into your
+                application server.
+              </p>
+              <p className="text-sm font-light tracking-tight text-white/70">
+                The container still needs your real Better Auth project mounted in, because Studio
+                reads{" "}
+                <code className="text-white/90 bg-white/10 px-1 py-0.5">auth.ts</code> and{" "}
+                <code className="text-white/90 bg-white/10 px-1 py-0.5">studio.config.*</code> at
+                runtime.
+              </p>
+              <div className="space-y-2">
+                <p className="text-xs font-light tracking-tight text-white/60">
+                  Build the image from this repository:
+                </p>
+                <CodeBlock code="docker build -t better-auth-studio:self-host ." />
+              </div>
+              <div className="space-y-2">
+                <p className="text-xs font-light tracking-tight text-white/60">
+                  Example environment values:
+                </p>
+                <CodeHighlighter code={dockerEnvSnippet} language="bash" />
+              </div>
+              <div className="space-y-2">
+                <p className="text-xs font-light tracking-tight text-white/60">
+                  Example compose file:
+                </p>
+                <CodeHighlighter code={dockerComposeSnippet} language="yaml" />
+              </div>
+              <div className="space-y-2">
+                <p className="text-xs font-light tracking-tight text-white/60">
+                  Start the container:
+                </p>
+                <CodeBlock code="HOST_PROJECT_PATH=/absolute/path/to/your-better-auth-project CONFIG_PATH=./auth.ts docker compose -f docker/compose.yml up --build" />
+              </div>
+              <div className="space-y-2">
+                <p className="text-xs font-light tracking-tight text-white/60">Notes:</p>
+                <ul className="text-sm font-light tracking-tight text-white/70 space-y-1 ml-4">
+                  <li className="flex items-start gap-2">
+                    <span className="text-white/50">→</span>
+                    <span>
+                      The compose example uses named volumes for{" "}
+                      <code className="text-white/90 bg-white/10 px-1 py-0.5">node_modules</code>{" "}
+                      and the pnpm store so your host project stays clean.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-white/50">→</span>
+                    <span>
+                      Set{" "}
+                      <code className="text-white/90 bg-white/10 px-1 py-0.5">CONFIG_PATH</code>{" "}
+                      when your auth config is not at the project root.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-white/50">→</span>
+                    <span>
+                      <code className="text-white/90 bg-white/10 px-1 py-0.5">3002</code> is only
+                      the default standalone Studio port. You can change{" "}
+                      <code className="text-white/90 bg-white/10 px-1 py-0.5">PORT</code> to any
+                      free port, including <code className="text-white/90 bg-white/10 px-1 py-0.5">3000</code>.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-white/50">→</span>
+                    <span>
+                      Use the shorter file name{" "}
+                      <code className="text-white/90 bg-white/10 px-1 py-0.5">
+                        docker/compose.yml
+                      </code>{" "}
+                      for the default setup. The older{" "}
+                      <code className="text-white/90 bg-white/10 px-1 py-0.5">
+                        docker/docker-compose.self-host.yml
+                      </code>{" "}
+                      file still works too.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-white/50">→</span>
+                    <span>
+                      If you already mount Studio through a framework adapter, that is still the
+                      recommended production setup.
+                    </span>
+                  </li>
+                </ul>
               </div>
             </div>
           </PixelCard>

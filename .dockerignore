@@ -1,0 +1,15 @@
+.git
+.github
+node_modules
+docs
+examples
+tests
+dist
+frontend/node_modules
+cookies.txt
+.DS_Store
+.env
+.env.*
+*.tgz
+start-studio.sh
+start-studio.bat

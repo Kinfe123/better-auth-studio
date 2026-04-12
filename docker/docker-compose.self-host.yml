@@ -1,0 +1,28 @@
+services:
+  studio:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: better-auth-studio:self-host
+    container_name: better-auth-studio
+    working_dir: /workspace
+    environment:
+      STUDIO_PROJECT_DIR: /workspace
+      HOST: 0.0.0.0
+      PORT: ${PORT:-3002}
+      CONFIG_PATH: ${CONFIG_PATH:-./auth.ts}
+      GEO_DB_PATH: ${GEO_DB_PATH:-}
+      AUTO_INSTALL: ${AUTO_INSTALL:-true}
+      WATCH: ${WATCH:-false}
+      PROJECT_INSTALL_CMD: ${PROJECT_INSTALL_CMD:-}
+    ports:
+      - "${PORT:-3002}:${PORT:-3002}"
+    volumes:
+      - ${HOST_PROJECT_PATH:?Set HOST_PROJECT_PATH to your Better Auth project path}:/workspace
+      - studio_node_modules:/workspace/node_modules
+      - studio_pnpm_store:/pnpm/store
+    restart: unless-stopped
+
+volumes:
+  studio_node_modules:
+  studio_pnpm_store:
