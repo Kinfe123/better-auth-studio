@@ -46,7 +46,7 @@ export default function CodeBlock({
     <div className={`relative group max-w-full ${className}`}>
       <PixelCard variant="code">
         <div className="flex items-center justify-between gap-3 overflow-x-auto thin-scrollbar">
-          <code className="text-sm font-mono text-white/90 flex-1 whitespace-pre leading-normal py-0.5 min-w-0">
+          <code className="text-[12px] font-mono text-white/90 flex-1 whitespace-pre leading-[1.55] py-0.5 min-w-0">
             {code}
           </code>
           {showCopy && (

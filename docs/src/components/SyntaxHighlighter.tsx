@@ -19,6 +19,8 @@ export default function CodeHighlighter({
   showCopy = true,
 }: SyntaxHighlighterProps) {
   const [copied, setCopied] = useState(false);
+  const codeFontSize = "0.75rem";
+  const codeLineHeight = "1.55";
 
   const copyToClipboard = async () => {
     try {
@@ -39,9 +41,9 @@ export default function CodeHighlighter({
           background: "transparent",
           padding: "0",
           margin: "0",
-          fontSize: "0.875rem",
+          fontSize: codeFontSize,
           fontFamily: "var(--font-geist-mono)",
-          lineHeight: "1.5",
+          lineHeight: codeLineHeight,
           maxHeight: "100%",
           maxWidth: "100%",
           overflowX: "auto",
@@ -51,11 +53,22 @@ export default function CodeHighlighter({
           style: {
             fontFamily: "var(--font-geist-mono)",
             color: "rgba(255, 255, 255, 0.9)",
+            fontSize: codeFontSize,
+            lineHeight: codeLineHeight,
             display: "block",
           },
         }}
         PreTag={({ children, ...props }) => (
-          <pre {...props} style={{ margin: 0, padding: 0, background: "transparent" }}>
+          <pre
+            {...props}
+            style={{
+              margin: 0,
+              padding: 0,
+              background: "transparent",
+              fontSize: codeFontSize,
+              lineHeight: codeLineHeight,
+            }}
+          >
             {children}
           </pre>
         )}
