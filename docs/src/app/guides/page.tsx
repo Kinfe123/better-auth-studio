@@ -373,6 +373,13 @@ export default function Guides() {
                 </li>
                 <li className="flex items-start">
                   <span className="text-white/50 mr-2">•</span>
+                  <code className="bg-white/10 px-1">access.allowIpAddresses</code> and{" "}
+                  <code className="bg-white/10 px-1">access.blockIpAddresses</code> – IP allow/block
+                  rules for Studio requests (supports wildcard patterns like{" "}
+                  <code className="bg-white/10 px-1">192.168.*</code>).
+                </li>
+                <li className="flex items-start">
+                  <span className="text-white/50 mr-2">•</span>
                   <code className="bg-white/10 px-1">metadata</code> – Title, logo, theme
                   (dark/light/auto), and other UI options.
                 </li>
@@ -609,6 +616,14 @@ export { handler as GET, handler as POST, handler as PUT, handler as DELETE, han
                     <code className="bg-white/10 px-1 whitespace-nowrap">[&quot;admin&quot;]</code>)
                     or{" "}
                     <code className="bg-white/10 px-1 whitespace-nowrap">access.allowEmails</code>{" "}
+                    and optionally{" "}
+                    <code className="bg-white/10 px-1 whitespace-nowrap">
+                      access.allowIpAddresses
+                    </code>{" "}
+                    /{" "}
+                    <code className="bg-white/10 px-1 whitespace-nowrap">
+                      access.blockIpAddresses
+                    </code>{" "}
                     in the config. See the{" "}
                     <Link
                       href="/guides#customize-studio"
@@ -828,6 +843,14 @@ export { handler as GET, handler as POST, handler as PUT, handler as DELETE, han
                   when not using roles.
                 </li>
                 <li>
+                  <code className="bg-white/10 px-1">allowIpAddresses</code> – Optional IP
+                  allowlist for Studio requests.
+                </li>
+                <li>
+                  <code className="bg-white/10 px-1">blockIpAddresses</code> – Optional IP blocklist
+                  for Studio requests.
+                </li>
+                <li>
                   <code className="bg-white/10 px-1">sessionDuration</code> – Studio session length
                   (e.g. seconds).
                 </li>
@@ -842,6 +865,8 @@ export { handler as GET, handler as POST, handler as PUT, handler as DELETE, han
                   code={`access: {
   roles: ["admin"],
   allowEmails: ["admin@example.com"],
+  allowIpAddresses: ["127.0.0.1", "::1", "192.168.*"],
+  blockIpAddresses: ["203.0.113.45"],
   sessionDuration: 60 * 60 * 24,
   secret: process.env.STUDIO_SECRET,
 }`}

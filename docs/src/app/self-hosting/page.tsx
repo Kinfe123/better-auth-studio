@@ -448,6 +448,8 @@ const config: StudioConfig = {
   access: {
     roles: ["admin"],
     allowEmails: ["admin@example.com"],
+    allowIpAddresses: ["127.0.0.1", "::1", "192.168.*"],
+    blockIpAddresses: ["203.0.113.45"],
   },
 };
 
@@ -1012,6 +1014,31 @@ ADMIN_EMAIL_3=admin3@example.com`}
                   </p>
                 </div>
                 <div className="border-b border-white/10 pb-3">
+                  <code className="text-white/90 text-sm">access.allowIpAddresses</code>
+                  <span className="text-white/50 text-xs ml-2">(optional)</span>
+                  <p className="text-sm font-light tracking-tight text-white/50 mt-1">
+                    IP allowlist for Studio requests. Supports exact IPs and wildcard patterns
+                    (e.g.,{" "}
+                    <code className="text-white/70 bg-white/10 px-1 py-0.5">192.168.*</code>).
+                  </p>
+                </div>
+                <div className="border-b border-white/10 pb-3">
+                  <code className="text-white/90 text-sm">access.blockIpAddresses</code>
+                  <span className="text-white/50 text-xs ml-2">(optional)</span>
+                  <p className="text-sm font-light tracking-tight text-white/50 mt-1">
+                    IP blocklist for Studio requests. Supports exact IPs and wildcard patterns.
+                  </p>
+                  <div className="mt-3 p-3 bg-white/5 border border-white/10 rounded-none">
+                    <CodeHighlighter
+                      code={`access: {
+  allowIpAddresses: ["127.0.0.1", "::1", "192.168.*"],
+  blockIpAddresses: ["203.0.113.45"],
+}`}
+                      language="typescript"
+                    />
+                  </div>
+                </div>
+                <div className="border-b border-white/10 pb-3">
                   <code className="text-white/90 text-sm">tools.exclude</code>
                   <span className="text-white/50 text-xs ml-2">(optional)</span>
                   <p className="text-sm font-light tracking-tight text-white/50 mt-1">
@@ -1219,6 +1246,8 @@ const config: StudioConfig = {
       process.env.ADMIN_EMAIL_1,
       process.env.ADMIN_EMAIL_2,
     ].filter(Boolean) as string[],
+    allowIpAddresses: ["127.0.0.1", "::1", "10.0.*"],
+    blockIpAddresses: ["203.0.113.45"],
   },
 };
 
