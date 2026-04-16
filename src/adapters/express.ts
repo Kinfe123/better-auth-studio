@@ -35,6 +35,7 @@ function convertExpressToUniversal(req: Request): UniversalRequest {
     url: req.originalUrl,
     method: req.method,
     headers: req.headers as Record<string, string>,
+    ip: req.ip,
     body: req.body,
   };
 }

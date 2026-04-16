@@ -1,10 +1,10 @@
-import type { StudioConfig } from "../types/handler.js";
-import type { StudioAccessConfig } from "../utils/html-injector.js";
+import type { StudioAccessConfig, StudioConfig } from "../types/handler.js";
 
 export type ApiContext = {
   path: string;
   method: string;
   headers: Record<string, string>;
+  ip?: string;
   body?: any;
   auth: any;
   basePath?: string;

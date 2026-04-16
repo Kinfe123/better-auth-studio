@@ -2,6 +2,7 @@ export type UniversalRequest = {
   url: string;
   method: string;
   headers: Record<string, string>;
+  ip?: string;
   body?: any;
 };
 
@@ -77,6 +78,15 @@ export type StudioMetadata = {
 export type StudioAccessConfig = {
   roles?: string[];
   allowEmails?: string[];
+  /**
+   * Optional IP allowlist. Supports exact IPs and wildcard patterns (e.g. "10.0.*").
+   * When set, only matching IPs can access Studio.
+   */
+  allowIpAddresses?: string[];
+  /**
+   * Optional IP blocklist. Supports exact IPs and wildcard patterns (e.g. "203.0.113.*").
+   */
+  blockIpAddresses?: string[];
   sessionDuration?: number;
   secret?: string;
 };

@@ -40,9 +40,9 @@ import {
   setGeoDbPath,
 } from "./geo-service.js";
 import type { AuthEvent, AuthEventType } from "./types/events.js";
-import type { StudioConfig } from "./types/handler.js";
+import type { StudioAccessConfig, StudioConfig } from "./types/handler.js";
+import { evaluateRequestAccess, extractClientIp } from "./utils/access-rules.js";
 import { detectDatabaseWithDialect } from "./utils/database-detection.js";
-import type { StudioAccessConfig } from "./utils/html-injector.js";
 import {
   createStudioSession,
   decryptSession,
@@ -663,6 +663,10 @@ export function createRoutes(
 
   if (isSelfHosted) {
     router.use((req: Request, res: Response, next) => {
+      if (!enforceRequestAccess(req, res)) {
+        return;
+      }
+
       const path = req.path;
       const publicPaths = [
         "/api/auth/sign-in",
@@ -765,6 +769,32 @@ export function createRoutes(
     const allowedEmails = getAllowedEmails();
     if (!allowedEmails) return true;
     return allowedEmails.includes(email.toLowerCase());
+  };
+
+  const enforceRequestAccess = (req: Request, res: Response): boolean => {
+    if (!isSelfHosted) {
+      return true;
+    }
+
+    const decision = evaluateRequestAccess({
+      accessConfig,
+      path: req.path,
+      method: req.method,
+      headers: req.headers as Record<string, string>,
+      ip: req.ip,
+    });
+
+    if (decision.allowed) {
+      return true;
+    }
+
+    res.status(403).json({
+      success: false,
+      message: decision.message,
+      reason: decision.reason,
+      ...(decision.ipAddress ? { ipAddress: decision.ipAddress } : {}),
+    });
+    return false;
   };
 
   const finalizeStudioSignIn = (
@@ -8298,6 +8328,7 @@ export async function handleStudioApiRequest(ctx: {
   path: string;
   method: string;
   headers: Record<string, string>;
+  ip?: string;
   body?: any;
   auth: any;
   basePath?: string;
@@ -8318,6 +8349,7 @@ export async function handleStudioApiRequest(ctx: {
       }
     } catch {}
   }
+  const isSelfHosted = !!preloadedAdapter;
 
   const authOptions = ctx.auth?.options || null;
   const router = createRoutes(
@@ -8338,6 +8370,28 @@ export async function handleStudioApiRequest(ctx: {
       const [key, value] = param.split("=");
       if (key) query[key] = decodeURIComponent(value || "");
     });
+  }
+
+  if (isSelfHosted) {
+    const accessDecision = evaluateRequestAccess({
+      accessConfig: ctx.accessConfig,
+      path: pathname,
+      method: ctx.method,
+      headers: ctx.headers,
+      ip: ctx.ip,
+    });
+
+    if (!accessDecision.allowed) {
+      return {
+        status: 403,
+        data: {
+          success: false,
+          message: accessDecision.message,
+          reason: accessDecision.reason,
+          ...(accessDecision.ipAddress ? { ipAddress: accessDecision.ipAddress } : {}),
+        },
+      };
+    }
   }
 
   try {
@@ -8365,6 +8419,7 @@ export async function handleStudioApiRequest(ctx: {
       path: pathname,
       originalUrl: ctx.path,
       headers: ctx.headers,
+      ip: ctx.ip || extractClientIp(ctx.headers) || undefined,
       body: ctx.body,
       query: query,
       params: route.params,

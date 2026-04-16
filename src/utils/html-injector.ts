@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import type { StudioAccessConfig } from "../types/handler.js";
 
 export interface StudioMetadata {
   title?: string;
@@ -11,13 +12,6 @@ export interface StudioMetadata {
   };
   theme?: "light" | "dark";
   customStyles?: string;
-}
-
-export interface StudioAccessConfig {
-  roles?: string[];
-  allowEmails?: string[];
-  sessionDuration?: number;
-  secret?: string;
 }
 
 export interface StudioConfig {

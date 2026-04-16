@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { createRoutes } from "../src/routes";
+import { createRoutes, handleStudioApiRequest } from "../src/routes";
 import type { AuthConfig } from "../src/config";
 import express from "express";
 import request from "supertest";
@@ -80,5 +80,54 @@ describe("Routes", () => {
       .expect(200);
 
     expect(response.body).toBeDefined();
+  });
+
+  it("should block self-hosted requests for blocked IP addresses", async () => {
+    const selfHostedApp = express();
+    selfHostedApp.use(express.json());
+    selfHostedApp.use(
+      createRoutes(
+        {
+          database: {
+            adapter: "prisma",
+            provider: "postgresql",
+          },
+        },
+        undefined,
+        undefined,
+        {},
+        {},
+        { blockIpAddresses: ["203.0.113.10"] },
+      ),
+    );
+
+    const response = await request(selfHostedApp)
+      .get("/api/auth/session")
+      .set("x-forwarded-for", "203.0.113.10");
+
+    expect(response.status).toBe(403);
+    expect(response.body.message).toContain("blocked");
+  });
+
+  it("should enforce blocked IPs in universal API routing", async () => {
+    const response = await handleStudioApiRequest({
+      path: "/api/health",
+      method: "GET",
+      headers: {
+        "x-forwarded-for": "198.51.100.77",
+      },
+      auth: {
+        options: {},
+        $context: Promise.resolve({
+          adapter: {},
+        }),
+      },
+      accessConfig: {
+        blockIpAddresses: ["198.51.100.77"],
+      },
+    });
+
+    expect(response.status).toBe(403);
+    expect(response.data?.reason).toBe("ip_blocked");
   });
 });
