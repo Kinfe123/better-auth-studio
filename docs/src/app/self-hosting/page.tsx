@@ -327,8 +327,7 @@ WATCH=false`;
               </p>
               <p className="text-sm font-light tracking-tight text-white/70">
                 The container still needs your real Better Auth project mounted in, because Studio
-                reads{" "}
-                <code className="text-white/90 bg-white/10 px-1 py-0.5">auth.ts</code> and{" "}
+                reads <code className="text-white/90 bg-white/10 px-1 py-0.5">auth.ts</code> and{" "}
                 <code className="text-white/90 bg-white/10 px-1 py-0.5">studio.config.*</code> at
                 runtime.
               </p>
@@ -370,8 +369,7 @@ WATCH=false`;
                   <li className="flex items-start gap-2">
                     <span className="text-white/50">→</span>
                     <span>
-                      Set{" "}
-                      <code className="text-white/90 bg-white/10 px-1 py-0.5">CONFIG_PATH</code>{" "}
+                      Set <code className="text-white/90 bg-white/10 px-1 py-0.5">CONFIG_PATH</code>{" "}
                       when your auth config is not at the project root.
                     </span>
                   </li>
@@ -381,7 +379,8 @@ WATCH=false`;
                       <code className="text-white/90 bg-white/10 px-1 py-0.5">3002</code> is only
                       the default standalone Studio port. You can change{" "}
                       <code className="text-white/90 bg-white/10 px-1 py-0.5">PORT</code> to any
-                      free port, including <code className="text-white/90 bg-white/10 px-1 py-0.5">3000</code>.
+                      free port, including{" "}
+                      <code className="text-white/90 bg-white/10 px-1 py-0.5">3000</code>.
                     </span>
                   </li>
                   <li className="flex items-start gap-2">

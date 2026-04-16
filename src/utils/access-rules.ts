@@ -134,7 +134,9 @@ export function evaluateRequestAccess(input: AccessEvaluationInput): AccessEvalu
   const { accessConfig, headers, ip } = input;
   const ipAddress = extractClientIp(headers, ip);
 
-  const allowIpAddresses = accessConfig?.allowIpAddresses?.filter((value) => value.trim().length > 0);
+  const allowIpAddresses = accessConfig?.allowIpAddresses?.filter(
+    (value) => value.trim().length > 0,
+  );
   if (hasRules(allowIpAddresses)) {
     if (!ipAddress || !allowIpAddresses.some((rule) => ipMatchesRule(ipAddress, rule))) {
       return {
@@ -146,7 +148,9 @@ export function evaluateRequestAccess(input: AccessEvaluationInput): AccessEvalu
     }
   }
 
-  const blockIpAddresses = accessConfig?.blockIpAddresses?.filter((value) => value.trim().length > 0);
+  const blockIpAddresses = accessConfig?.blockIpAddresses?.filter(
+    (value) => value.trim().length > 0,
+  );
   if (hasRules(blockIpAddresses) && ipAddress) {
     const blocked = blockIpAddresses.some((rule) => ipMatchesRule(ipAddress, rule));
     if (blocked) {

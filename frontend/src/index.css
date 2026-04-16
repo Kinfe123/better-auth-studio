@@ -263,13 +263,7 @@ html[data-theme="light"] {
   font-size: 11.5px;
   line-height: 1.6;
   font-family:
-    "Geist Mono",
-    ui-monospace,
-    SFMono-Regular,
-    "SF Mono",
-    Menlo,
-    Consolas,
-    "Liberation Mono",
+    "Geist Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
     monospace;
 }
 

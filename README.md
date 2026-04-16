@@ -399,17 +399,17 @@ Access at `http://localhost:3000/api/studio`
 
 ### Configuration Options
 
-| Option               | Required | Description                                                                                                                                   |
-| -------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `auth`               | Yes      | Your Better Auth instance                                                                                                                     |
-| `basePath`           | Yes      | URL path where studio is mounted                                                                                                              |
-| `access.allowEmails` | No       | Array of admin email addresses                                                                                                                |
-| `access.roles`       | No       | Array of allowed user roles                                                                                                                   |
-| `access.allowIpAddresses` | No  | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: `192.168.*`)                                           |
-| `access.blockIpAddresses` | No  | IP blocklist for Studio requests. Supports exact IPs and wildcard patterns                                                                   |
-| `ipAddress`          | No       | IP geolocation for Events/Sessions: `provider` ("ipinfo" \| "ipapi"), `apiToken`, `baseUrl`, optional `endpoint` (ipinfo: "lite" \| "lookup") |
-| `lastSeenAt`         | No       | Enable last-seen tracking: `{ enabled: true, columnName?: string }`                                                                           |
-| `metadata`           | No       | Custom branding (title, theme)                                                                                                                |
+| Option                    | Required | Description                                                                                                                                   |
+| ------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`                    | Yes      | Your Better Auth instance                                                                                                                     |
+| `basePath`                | Yes      | URL path where studio is mounted                                                                                                              |
+| `access.allowEmails`      | No       | Array of admin email addresses                                                                                                                |
+| `access.roles`            | No       | Array of allowed user roles                                                                                                                   |
+| `access.allowIpAddresses` | No       | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: `192.168.*`)                                             |
+| `access.blockIpAddresses` | No       | IP blocklist for Studio requests. Supports exact IPs and wildcard patterns                                                                    |
+| `ipAddress`               | No       | IP geolocation for Events/Sessions: `provider` ("ipinfo" \| "ipapi"), `apiToken`, `baseUrl`, optional `endpoint` (ipinfo: "lite" \| "lookup") |
+| `lastSeenAt`              | No       | Enable last-seen tracking: `{ enabled: true, columnName?: string }`                                                                           |
+| `metadata`                | No       | Custom branding (title, theme)                                                                                                                |
 
 ## 📝 Development
 
