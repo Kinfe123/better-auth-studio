@@ -1,0 +1,57 @@
+---
+title: "Quickstart"
+description: "Run Better Auth Studio with the current scripts and configuration."
+---
+
+# Quickstart
+
+Use this page as the shortest path from clone to a working run.
+## Recommended First Run
+1. Install dependencies with `pnpm install`.
+2. Copy `env.example` to `.env` and set the required values.
+3. Run `pnpm start` to exercise the main workflow.
+## Useful Commands
+- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public`
+- `geo:update`: `node scripts/download-geolite2.js`
+- `copy:public`: `rm -rf dist/public && cp -r public dist/`
+- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)`
+- `postinstall`: `node scripts/postinstall.js`
+- `dev`: `tsx src/cli.ts`
+- `start`: `node dist/cli.js`
+- `studio`: `tsx src/cli.ts`
+- `clean`: `rm -rf dist`
+- `frontend:dev`: `cd frontend && pnpm run dev`
+- `frontend:build`: `cd frontend && pnpm run build`
+- `frontend:preview`: `cd frontend && pnpm run preview`
+- `lint`: `oxlint . && oxfmt --check .`
+- `format`: `oxlint --fix . && oxfmt .`
+- `lint:fix`: `oxlint --fix . && oxfmt .`
+- `type-check`: `tsc --noEmit`
+- `test`: `vitest`
+- `test:watch`: `vitest --watch`
+- `test:coverage`: `vitest --coverage`
+- `test:ci`: `pnpm test --run`
+- `release`: `pnpm build && bumpp && pnpm publish --access public --no-git-checks`
+- `release:beta`: `pnpm build && bumpp --preid beta && pnpm publish --access public --tag beta --no-git-checks`
+- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next`
+- `release:canary`: `pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks`
+- `bump`: `bumpp`
+## Useful CLI Options
+- `--api-dir`: <path>", 'Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
+- `--cell-size`
+- `--config`: <path>", "Path to the auth configuration file
+- `--geo-db`: <path>", "Path to MaxMind GeoLite2 database file (.mmdb
+- `--host`: <host>", "Host to run the studio on", "localhost
+- `--no-open`
+- `--port`: <port>", "Port to run the studio on", "3002
+- `--Streamline-Simple-Icons`
+- `--watch`
+## Next Places to Read
+- Installation: `docs/installation/page.mdx`
+- Better Auth Studio: `docs/page.mdx`
+- Dashboard Overview: `docs/features/dashboard-overview/page.mdx`
+- Developer Tools: `docs/features/developer-tools/page.mdx`
+- Event Tracking: `docs/features/event-tracking/page.mdx`
+- Organization Management: `docs/features/organization-management/page.mdx`
+- Session Management: `docs/features/session-management/page.mdx`
+- User Management: `docs/features/user-management/page.mdx`

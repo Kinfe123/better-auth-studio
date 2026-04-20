@@ -1,0 +1,54 @@
+---
+title: "Developer Tools"
+description: "The project includes developer-facing tools, generators, inspectors, or visual editors."
+---
+
+# Developer Tools
+
+The project includes developer-facing tools, generators, inspectors, or visual editors.
+## What It Covers
+This page is generated from repository evidence rather than a generic template. Use it as the canonical docs surface for this capability.
+## Implementation Surface
+- `./dist/cli.js`
+- `frontend/src/components/CommandPalette.tsx`
+- `frontend/src/components/ui/tooltip-docs.tsx`
+- `frontend/src/lib/studio-tools.ts`
+- `frontend/src/pages/Tools.tsx`
+- `src/cli.ts`
+- `src/cli/commands/init.ts`
+## Repository Notes
+These notes were lifted from the repository README so the generated docs stay grounded in existing project language.
+
+### Other Commands
+```bash
+# Check version
+pnpx better-auth-studio --version
+
+# Show help
+pnpx better-auth-studio --help
+```
+## Developer Checklist
+- Confirm the routes, handlers, or components listed above are still the source of truth.
+- Keep examples in this page aligned with the scripts, flags, and configuration shown below.
+- Update this page when the underlying feature changes behavior, permissions, or data shape.
+## Source Details
+- `./dist/cli.js`: flags `--api-dir`, `--config`, `--geo-db`, `--host`, `--no-open`, `--port`
+- `src/cli.ts`: flags `--api-dir`, `--config`, `--geo-db`, `--host`, `--no-open`, `--port`
+- `frontend/src/components/CommandPalette.tsx`: exports `CommandPalette`
+- `frontend/src/lib/studio-tools.ts`: exports `ALL_STUDIO_TOOL_IDS`, `getExcludedToolIds`, `getVisibleToolsCount`, `StudioToolsConfig`
+- `frontend/src/pages/Tools.tsx`: exports `Tools`; flags `--Streamline-Simple-Icons`
+- `src/cli/commands/init.ts`: exports `initCommand`
+- `frontend/src/components/ui/tooltip-docs.tsx`: exports `Tooltip`, `TooltipContent`, `TooltipProvider`, `TooltipTrigger`
+## Evidence
+- `./dist/cli.js`
+- `frontend/src/components/CommandPalette.tsx`
+- `frontend/src/components/ui/tooltip-docs.tsx`
+- `frontend/src/lib/studio-tools.ts`
+- `frontend/src/pages/Tools.tsx`
+- `package.json:commander`
+- `README.md#docker-standalone-self-host`
+- `README.md#installation-for-self-hosting`
+- `README.md#next-js-app-router`
+- `README.md#other-commands`
+- `src/cli.ts`
+- `src/cli/commands/init.ts`

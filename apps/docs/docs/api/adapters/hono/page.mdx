@@ -1,0 +1,39 @@
+---
+title: "Hono Adapter"
+description: "The package exposes a Hono adapter surface."
+---
+
+# Hono Adapter
+
+The package exposes a Hono adapter surface.
+## Import Surface
+Use `better-auth-studio/hono` as the package path indicated by package metadata or adapter file evidence.
+## Source Details
+- `src/adapters/hono.ts`: exports `betterAuthStudio`
+- `examples/hono/prisma/studio.config.pg.example.ts`: exports `config`; env `DATABASE_URL`
+- `examples/hono/prisma/studio.config.ts`: exports `config`; env `CLICKHOUSE_HOST`, `CLICKHOUSE_PASSWORD`, `CLICKHOUSE_USERNAME`, `IPINFO_TOKEN`
+- `examples/hono/prisma/src/auth.ts`: exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- `examples/hono/prisma/src/index.ts`: env `PORT`
+- `examples/hono/prisma/src/prisma.ts`: exports `prisma`; env `NODE_ENV`
+## Related Exports
+- `AccessDeniedPage`
+- `AccessEvaluationInput`
+- `AccessEvaluationResult`
+- `account`
+- `accountRelations`
+- `addSvelteKitEnvModules`
+- `AlertInfo`
+- `AlertTriangle`
+- `ALL`
+- `ALL_STUDIO_TOOL_IDS`
+- `Analytics`
+- `AnimatedNumber`
+## Evidence
+- `examples/hono/prisma/src/auth.ts`
+- `examples/hono/prisma/src/index.ts`
+- `examples/hono/prisma/src/prisma.ts`
+- `examples/hono/prisma/studio.config.pg.example.ts`
+- `examples/hono/prisma/studio.config.ts`
+- `package.json:exports:./dist/adapters/hono.js`
+- `package.json:exports:./hono`
+- `src/adapters/hono.ts`

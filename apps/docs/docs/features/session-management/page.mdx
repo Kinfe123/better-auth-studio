@@ -1,0 +1,58 @@
+---
+title: "Session Management"
+description: "The project includes session, sign-in, authentication, or token workflows."
+---
+
+# Session Management
+
+The project includes session, sign-in, authentication, or token workflows.
+## What It Covers
+This page is generated from repository evidence rather than a generic template. Use it as the canonical docs surface for this capability.
+## Implementation Surface
+- `./dist/cli.js`
+- `examples/astro/prisma/src/lib/auth.ts`
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts`
+- `examples/elysia/prisma/src/auth.ts`
+- `examples/express/drizzle/auth-schema.ts`
+- `examples/express/drizzle/server/src/lib/auth.ts`
+- `examples/express/drizzle/src/auth.ts`
+- `examples/express/mongodb/src/auth.ts`
+- `examples/express/prisma/src/auth.ts`
+## Repository Notes
+These notes were lifted from the repository README so the generated docs stay grounded in existing project language.
+
+### ✨ Try Better Auth Studio Demo
+You can try a live, demo version of Better Auth Studio here:
+
+👉 **[https://bt-nextjs.vercel.app/admin](https://bt-nextjs.vercel.app/admin)**
+
+- **Login email:** `admin@user.com`
+- **Password:** `admin@user.com`
+
+This online demo lets you explore the admin studio UI. Please note this is a test environment.
+## Developer Checklist
+- Confirm the routes, handlers, or components listed above are still the source of truth.
+- Keep examples in this page aligned with the scripts, flags, and configuration shown below.
+- Update this page when the underlying feature changes behavior, permissions, or data shape.
+## Source Details
+- `./dist/cli.js`: flags `--api-dir`, `--config`, `--geo-db`, `--host`, `--no-open`, `--port`
+- `examples/express/drizzle/auth-schema.ts`: exports `account`, `invitation`, `member`, `organization`, `session`, `team`
+- `examples/express/mongodb/src/auth.ts`: exports `auth`; env `BETTER_AUTH_URL`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`
+- `examples/elysia/prisma/src/auth.ts`: exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- `examples/express/drizzle/src/auth.ts`: exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- `examples/express/prisma/src/auth.ts`: exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- `examples/astro/prisma/src/lib/auth.ts`: exports `auth`; env `AUTH_SECRET`, `BASE_URL`, `BETTER_AUTH_URL`
+- `examples/express/drizzle/server/src/lib/auth.ts`: exports `auth`; env `AUTH_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+## Evidence
+- `./dist/cli.js`
+- `examples/astro/prisma/src/lib/auth.ts`
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts`
+- `examples/elysia/prisma/src/auth.ts`
+- `examples/express/drizzle/auth-schema.ts`
+- `examples/express/drizzle/server/src/lib/auth.ts`
+- `examples/express/drizzle/src/auth.ts`
+- `examples/express/mongodb/src/auth.ts`
+- `examples/express/prisma/src/auth.ts`
+- `package.json:@better-auth/utils`
+- `package.json:better-auth`
+- `package.json:keywords`

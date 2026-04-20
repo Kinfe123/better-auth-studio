@@ -1,0 +1,62 @@
+---
+title: "Events Config"
+description: "The source includes types or helpers for events config."
+---
+
+# Events Config
+
+The source includes types or helpers for events config.
+## Import Surface
+Use `better-auth-studio` as the package path indicated by package metadata or adapter file evidence.
+## Source Details
+- `src/types/events.ts`: exports `AuthEvent`, `AuthEventType`, `EVENT_TEMPLATES`, `EventIngestionProvider`, `EventQueryOptions`, `EventQueryResult`
+- `src/utils/event-ingestion.ts`: exports `checkEventIngestionHealth`, `emitEvent`, `getEventIngestionProvider`, `getEventQueueSize`, `initializeEventIngestion`, `isEventIngestionInitialized`
+- `frontend/src/pages/Events.tsx`: exports `Events`
+- `src/providers/events/helpers.ts`: exports `createClickHouseProvider`, `createHttpProvider`, `createNodeSqliteProvider`, `createPostgresProvider`, `createSqliteProvider`, `createStorageProvider`
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx`: exports `EventsWidget`
+## Related Exports
+- `AccessDeniedPage`
+- `AccessEvaluationInput`
+- `AccessEvaluationResult`
+- `account`
+- `accountRelations`
+- `addSvelteKitEnvModules`
+- `AlertInfo`
+- `AlertTriangle`
+- `ALL`
+- `ALL_STUDIO_TOOL_IDS`
+- `Analytics`
+- `AnimatedNumber`
+## Repository Notes
+These notes were lifted from the repository README so the generated docs stay grounded in existing project language.
+
+### 👥 User Management
+- **View all users** - Paginated list with search and filtering
+- **Create users** - Add new users with email/password
+- **Edit users** - Update user information, email verification status
+- **Delete users** - Remove users from the system
+- **Bulk operations** - Seed multiple test users
+- **User details** - View user profiles, and accounts
+- **Last seen** - When events are enabled, the studio injects an optional `lastSeenAt` field on the user model and updates it on each sign-in or session creation. Run your database migration (e.g. `prisma migrate dev` or Drizzle push) to add the `lastSeenAt` column to the user table.
+
+### Configuration Options
+| Option                    | Required | Description                                                                                                                                   |
+| ------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`                    | Yes      | Your Better Auth instance                                                                                                                     |
+| `basePath`                | Yes      | URL path where studio is mounted                                                                                                              |
+| `access.allowEmails`      | No       | Array of admin email addresses                                                                                                                |
+| `access.roles`            | No       | Array of allowed user roles                                                                                                                   |
+| `access.allowIpAddresses` | No       | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: `192.168.*`)                                             |
+| `access.blockIpAddresses` | No       | IP blocklist for Studio requests. Supports exact IPs and wildcard patterns                                                                    |
+| `ipAddress`               | No       | IP geolocation for Events/Sessions: `provider` ("ipinfo" \| "ipapi"), `apiToken`, `baseUrl`, optional `endpoint` (ipinfo: "lite" \| "lookup") |
+| `lastSeenAt`              | No       | Enable last-seen tracking: `{ enabled: true, columnName?: string }`                                                                           |
+| `metadata`                | No       | Custom branding (title, theme)                                                                                                                |
+## Evidence
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx`
+- `frontend/src/pages/Events.tsx`
+- `README.md#configuration-options`
+- `README.md#settings-configuration`
+- `README.md#user-management`
+- `src/providers/events/helpers.ts`
+- `src/types/events.ts`
+- `src/utils/event-ingestion.ts`

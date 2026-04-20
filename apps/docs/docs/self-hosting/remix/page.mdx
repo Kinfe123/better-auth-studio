@@ -1,0 +1,108 @@
+---
+title: "Remix Setup"
+description: "The repository includes a Remix adapter or example for self-hosted usage."
+---
+
+# Remix Setup
+
+The repository includes a Remix adapter or example for self-hosted usage.
+## Runtime Shape
+This page focuses on the Remix runtime path detected from adapters, examples, or package exports.
+The package export evidence points to `better-auth-studio/remix`.
+## Setup Checklist
+1. Install dependencies with `pnpm install`.
+2. Configure required environment variables before starting the runtime.
+3. Run `pnpm start` or the framework-specific command from the host app.
+4. Verify the mounted route, API handler, or container can reach the same auth/database configuration as the host app.
+## Repository Notes
+These notes were lifted from the repository README so the generated docs stay grounded in existing project language.
+
+### 🏠 Self Hosting (Beta)
+> ⚠️ **Beta Feature**: Self-hosting is currently in beta. Please report any issues on GitHub.
+
+Deploy Better Auth Studio alongside your application for production use.
+
+### Installation for Self Hosting
+**Important:** For self-hosting, install `better-auth-studio` as a **regular dependency** (not devDependency) since it's required at runtime in production:
+
+```bash
+pnpm add better-auth-studio
+```
+
+> **Note:** The CLI usage (standalone studio) can be installed as a dev dependency, but self-hosting requires it in `dependencies` for production deployments.
+
+### Setup
+**Step 1: Initialize configuration**
+
+```bash
+pnpx better-auth-studio init
+```
+
+This creates a `studio.config.ts` file:
+
+```typescript
+import type { StudioConfig } from "better-auth-studio";
+import { auth } from "./lib/auth";
+
+const config: StudioConfig = {
+  auth,
+  basePath: "/api/studio",
+  metadata: {
+    title: "Admin Dashboard",
+    theme: "dark",
+  },
+  access: {
+    roles: ["admin"],
+    allowEmails: ["admin@example.com"],
+    allowIpAddresses: ["127.0.0.1", "::1", "192.168.*"],
+    blockIpAddresses: ["203.0.113.45"],
+  },
+};
+
+export default config;
+```
+## Configuration Files
+- `examples/remix/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/nextjs/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/remix/prisma/vite.config.ts` (framework) - Vite application configuration.
+- `examples/remix/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+## Environment Variables
+- `AUTH_SECRET`
+- `AUTH_URL`
+- `BASE_URL`
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `CLERK_SECRET_KEY`
+- `CLICKHOUSE_HOST`
+- `CLICKHOUSE_PASSWORD`
+- `CLICKHOUSE_USERNAME`
+- `DATABASE_URL`
+- `DB_HOST`
+- `DB_NAME`
+- `DB_PASSWORD`
+- `DB_PORT`
+- `DB_USER`
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `IPINFO_TOKEN`
+- `MONGO_URI`
+- `MONGODB_DB_NAME`
+- `MONGODB_URI`
+- `MYSQL_URL`
+- `NEXT_PUBLIC_BETTER_AUTH_URL`
+- `NODE_ENV`
+- `NODE_PATH`
+- `PORT`
+- `POSTGRES_URL`
+- `RESEND_API_KEY`
+- `VERCEL`
+## Evidence
+- `package.json:exports:./dist/adapters/remix.js`
+- `package.json:exports:./remix`
+- `src/adapters/remix.ts`

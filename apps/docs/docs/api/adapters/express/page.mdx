@@ -1,0 +1,64 @@
+---
+title: "Express Adapter"
+description: "The package exposes a Express adapter surface."
+---
+
+# Express Adapter
+
+The package exposes a Express adapter surface.
+## Import Surface
+Use `better-auth-studio/express` as the package path indicated by package metadata or adapter file evidence.
+## Source Details
+- `src/adapters/express.ts`: exports `betterAuthStudio`
+- `examples/express/drizzle/auth-schema.ts`: exports `account`, `invitation`, `member`, `organization`, `session`, `team`
+- `examples/express/drizzle/drizzle.config.ts`: env `DATABASE_URL`
+- `examples/express/drizzle/drizzle/relations.ts`: exports `accountRelations`, `invitationRelations`, `memberRelations`, `organizationRelations`, `sessionRelations`, `teamMemberRelations`
+- `examples/express/drizzle/drizzle/schema.ts`: exports `account`, `invitation`, `member`, `organization`, `session`, `team`
+- `examples/express/drizzle/lib/db.d.ts`: exports `db`, `Session`, `User`, `UserInsert`
+- `examples/express/drizzle/lib/db.js`: exports `db`; env `DATABASE_URL`
+## Related Exports
+- `AccessDeniedPage`
+- `AccessEvaluationInput`
+- `AccessEvaluationResult`
+- `account`
+- `accountRelations`
+- `addSvelteKitEnvModules`
+- `AlertInfo`
+- `AlertTriangle`
+- `ALL`
+- `ALL_STUDIO_TOOL_IDS`
+- `Analytics`
+- `AnimatedNumber`
+## Repository Notes
+These notes were lifted from the repository README so the generated docs stay grounded in existing project language.
+
+### Express
+Add the studio handler to your server:
+
+```typescript
+import express from "express";
+import { toNodeHandler } from "better-auth/node";
+import { betterAuthStudio } from "better-auth-studio/express";
+import { auth } from "./auth";
+import studioConfig from "./studio.config";
+
+const app = express();
+
+app.use(express.json());
+app.use("/api/studio", betterAuthStudio(studioConfig));
+app.all("/api/auth/*", toNodeHandler(auth));
+
+app.listen(3000);
+```
+
+Access at `http://localhost:3000/api/studio`
+## Evidence
+- `examples/express/drizzle/auth-schema.ts`
+- `examples/express/drizzle/drizzle.config.ts`
+- `examples/express/drizzle/drizzle/relations.ts`
+- `examples/express/drizzle/drizzle/schema.ts`
+- `examples/express/drizzle/lib/db.d.ts`
+- `examples/express/drizzle/lib/db.js`
+- `package.json:exports:./dist/adapters/express.js`
+- `package.json:exports:./express`
+- `src/adapters/express.ts`

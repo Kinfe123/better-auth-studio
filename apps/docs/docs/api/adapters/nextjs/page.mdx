@@ -1,0 +1,57 @@
+---
+title: "Next.js Adapter"
+description: "The package exposes a Next.js adapter surface."
+---
+
+# Next.js Adapter
+
+The package exposes a Next.js adapter surface.
+## Import Surface
+Use `better-auth-studio/nextjs` as the package path indicated by package metadata or adapter file evidence.
+## Source Details
+- `src/adapters/nextjs.ts`: exports `betterAuthStudio`
+- `examples/nextjs/drizzle/auth-schema.ts`: exports `account`, `invitation`, `member`, `organization`, `session`, `team`
+- `examples/nextjs/drizzle/drizzle.config.ts`: env `DATABASE_URL`
+- `examples/nextjs/drizzle/app/layout.tsx`: exports `metadata`, `RootLayout`
+- `examples/nextjs/drizzle/app/page.tsx`: exports `Home`
+- `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts`: exports `GET`, `POST`
+- `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts`: exports `DELETE`, `GET`, `PATCH`, `POST`, `PUT`
+## Related Exports
+- `AccessDeniedPage`
+- `AccessEvaluationInput`
+- `AccessEvaluationResult`
+- `account`
+- `accountRelations`
+- `addSvelteKitEnvModules`
+- `AlertInfo`
+- `AlertTriangle`
+- `ALL`
+- `ALL_STUDIO_TOOL_IDS`
+- `Analytics`
+- `AnimatedNumber`
+## Repository Notes
+These notes were lifted from the repository README so the generated docs stay grounded in existing project language.
+
+### Next.js (App Router)
+The init command automatically creates `app/api/studio/[[...path]]/route.ts`:
+
+```typescript
+import { betterAuthStudio } from "better-auth-studio/nextjs";
+import studioConfig from "@/studio.config";
+
+const handler = betterAuthStudio(studioConfig);
+
+export { handler as GET, handler as POST, handler as PUT, handler as DELETE, handler as PATCH };
+```
+
+Access at `http://localhost:3000/api/studio`
+## Evidence
+- `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts`
+- `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts`
+- `examples/nextjs/drizzle/app/layout.tsx`
+- `examples/nextjs/drizzle/app/page.tsx`
+- `examples/nextjs/drizzle/auth-schema.ts`
+- `examples/nextjs/drizzle/drizzle.config.ts`
+- `package.json:exports:./dist/adapters/nextjs.js`
+- `package.json:exports:./nextjs`
+- `src/adapters/nextjs.ts`

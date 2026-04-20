@@ -1,0 +1,38 @@
+---
+title: "Astro Adapter"
+description: "The package exposes a Astro adapter surface."
+---
+
+# Astro Adapter
+
+The package exposes a Astro adapter surface.
+## Import Surface
+Use `better-auth-studio/astro` as the package path indicated by package metadata or adapter file evidence.
+## Source Details
+- `src/adapters/astro.ts`: exports `betterAuthStudio`
+- `examples/astro/prisma/src/lib/auth.ts`: exports `auth`; env `AUTH_SECRET`, `BASE_URL`, `BETTER_AUTH_URL`
+- `examples/astro/prisma/src/lib/db.ts`: exports `prisma`; env `NODE_ENV`
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts`: exports `ALL`
+## Related Exports
+- `AccessDeniedPage`
+- `AccessEvaluationInput`
+- `AccessEvaluationResult`
+- `account`
+- `accountRelations`
+- `addSvelteKitEnvModules`
+- `AlertInfo`
+- `AlertTriangle`
+- `ALL`
+- `ALL_STUDIO_TOOL_IDS`
+- `Analytics`
+- `AnimatedNumber`
+## Evidence
+- `examples/astro/astro.config.mjs`
+- `examples/astro/prisma/astro.config.mjs`
+- `examples/astro/prisma/src/env.d.ts`
+- `examples/astro/prisma/src/lib/auth.ts`
+- `examples/astro/prisma/src/lib/db.ts`
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts`
+- `package.json:exports:./astro`
+- `package.json:exports:./dist/adapters/astro.js`
+- `src/adapters/astro.ts`

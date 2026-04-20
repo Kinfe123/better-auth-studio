@@ -1,0 +1,115 @@
+---
+title: "Troubleshooting"
+description: "The docs should explain common setup and runtime issues detected in the project."
+---
+
+# Troubleshooting
+
+The docs should explain common setup and runtime issues detected in the project.
+## Before You Start
+- Install dependencies with `pnpm install`.
+- Confirm the main workflow with `pnpm start`.
+- Review the evidence section before adding new examples.
+## Commands and Flags
+- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public`
+- `geo:update`: `node scripts/download-geolite2.js`
+- `copy:public`: `rm -rf dist/public && cp -r public dist/`
+- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)`
+- `postinstall`: `node scripts/postinstall.js`
+- `dev`: `tsx src/cli.ts`
+- `start`: `node dist/cli.js`
+- `studio`: `tsx src/cli.ts`
+- `clean`: `rm -rf dist`
+- `frontend:dev`: `cd frontend && pnpm run dev`
+- `frontend:build`: `cd frontend && pnpm run build`
+- `frontend:preview`: `cd frontend && pnpm run preview`
+- `lint`: `oxlint . && oxfmt --check .`
+- `format`: `oxlint --fix . && oxfmt .`
+- `lint:fix`: `oxlint --fix . && oxfmt .`
+- `type-check`: `tsc --noEmit`
+- `test`: `vitest`
+- `test:watch`: `vitest --watch`
+- `test:coverage`: `vitest --coverage`
+- `test:ci`: `pnpm test --run`
+- `release`: `pnpm build && bumpp && pnpm publish --access public --no-git-checks`
+- `release:beta`: `pnpm build && bumpp --preid beta && pnpm publish --access public --tag beta --no-git-checks`
+- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next`
+- `release:canary`: `pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks`
+- `bump`: `bumpp`
+- `--api-dir`: <path>", 'Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
+- `--cell-size`
+- `--config`: <path>", "Path to the auth configuration file
+- `--geo-db`: <path>", "Path to MaxMind GeoLite2 database file (.mmdb
+- `--host`: <host>", "Host to run the studio on", "localhost
+- `--no-open`
+- `--port`: <port>", "Port to run the studio on", "3002
+- `--Streamline-Simple-Icons`
+- `--watch`
+## Repository Notes
+These notes were lifted from the repository README so the generated docs stay grounded in existing project language.
+
+### Start Studio
+```bash
+pnpx better-auth-studio start [options]
+```
+
+**Options:**
+
+- `--port <number>` - Specify port (default: 3002)
+- `--host <string>` - Specify host (default: localhost)
+- `--no-open` - Don't automatically open browser
+- `--config <path>` - Path to auth config file (default: auto-detect)
+- `--watch` - Watch for changes in auth config file and reload server automatically
+
+`3002` is just the standalone Studio default so it does not clash with apps that already use `3000`. You can run Studio on `3000`, `4000`, or any other free port.
+
+**Examples:**
+
+```bash
+# Start on custom port (if installed as dev dependency)
+pnpm better-auth-studio start --port 3001
+
+# Or with pnpx
+pnpx better-auth-studio start --port 3001
+
+# Start without opening browser
+pnpm better-auth-studio start --no-open
+
+# Use custom config file
+pnpm better-auth-studio start --config ./custom-auth.ts
+
+# Enable watch mode for auto-reload on config changes
+pnpm better-auth-studio start --watch
+
+# Combine multiple options
+pnpx better-auth-studio start --port 3001 --watch --config ./src/auth.ts
+```
+
+### 👥 User Management
+- **View all users** - Paginated list with search and filtering
+- **Create users** - Add new users with email/password
+- **Edit users** - Update user information, email verification status
+- **Delete users** - Remove users from the system
+- **Bulk operations** - Seed multiple test users
+- **User details** - View user profiles, and accounts
+- **Last seen** - When events are enabled, the studio injects an optional `lastSeenAt` field on the user model and updates it on each sign-in or session creation. Run your database migration (e.g. `prisma migrate dev` or Drizzle push) to add the `lastSeenAt` column to the user table.
+
+### Using config Option
+Specify a custom path to your auth config file when it's in a non-standard location or auto-detection fails.
+
+**Example:**
+
+```bash
+# With relative path
+pnpm better-auth-studio start --config ./src/lib/auth.ts
+
+# With absolute path
+pnpm better-auth-studio start --config /path/to/project/auth.ts
+```
+
+**How it works:** Studio automatically searches for config files in common locations (`auth.ts`, `src/auth.ts`, `lib/auth.ts`, etc.). Use `--config` to specify a custom path when needed.
+## Evidence
+- `./dist/cli.js`
+- `README.md#start-studio`
+- `README.md#user-management`
+- `README.md#using-config-option`

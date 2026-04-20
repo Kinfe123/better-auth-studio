@@ -1,0 +1,127 @@
+---
+title: "Studio Config"
+description: "The source includes types or helpers for studio config."
+---
+
+# Studio Config
+
+The source includes types or helpers for studio config.
+## Import Surface
+Use `better-auth-studio` as the package path indicated by package metadata or adapter file evidence.
+## Source Details
+- `examples/elysia/prisma/studio.config.ts`: exports `config`
+- `examples/express/drizzle/drizzle.config.ts`: env `DATABASE_URL`
+- `examples/express/drizzle/studio.config.ts`: exports `studioConfig`
+- `examples/express/prisma/studio.config.ts`: exports `studioConfig`
+- `examples/astro/prisma/studio.config.ts`: exports `config`
+## Related Exports
+- `AccessDeniedPage`
+- `AccessEvaluationInput`
+- `AccessEvaluationResult`
+- `account`
+- `accountRelations`
+- `addSvelteKitEnvModules`
+- `AlertInfo`
+- `AlertTriangle`
+- `ALL`
+- `ALL_STUDIO_TOOL_IDS`
+- `Analytics`
+- `AnimatedNumber`
+## Repository Notes
+These notes were lifted from the repository README so the generated docs stay grounded in existing project language.
+
+### Setup
+**Step 1: Initialize configuration**
+
+```bash
+pnpx better-auth-studio init
+```
+
+This creates a `studio.config.ts` file:
+
+```typescript
+import type { StudioConfig } from "better-auth-studio";
+import { auth } from "./lib/auth";
+
+const config: StudioConfig = {
+  auth,
+  basePath: "/api/studio",
+  metadata: {
+    title: "Admin Dashboard",
+    theme: "dark",
+  },
+  access: {
+    roles: ["admin"],
+    allowEmails: ["admin@example.com"],
+    allowIpAddresses: ["127.0.0.1", "::1", "192.168.*"],
+    blockIpAddresses: ["203.0.113.45"],
+  },
+};
+
+export default config;
+```
+
+### Docker (Standalone Self Host)
+If you want to run Better Auth Studio in its own container, this repository includes a Docker setup for the standalone CLI server.
+
+This mode is useful when:
+
+- you want a separate admin container
+- your Better Auth app already lives in its own repository
+- you want Docker-managed `node_modules` and package-manager cache volumes
+
+> **Important:** The standalone container still needs your Better Auth project mounted into it, because Studio loads your real `auth.ts` and `studio.config.*` files at runtime.
+
+Build the image from this repository:
+
+```bash
+docker build -t better-auth-studio:self-host .
+```
+
+Run it with Docker Compose:
+
+```bash
+HOST_PROJECT_PATH=/absolute/path/to/your-better-auth-project \
+CONFIG_PATH=./auth.ts \
+docker compose -f docker/compose.yml up --build
+```
+
+If your auth config is not at the project root, pass it explicitly:
+
+```bash
+HOST_PROJECT_PATH=/absolute/path/to/your-better-auth-project \
+CONFIG_PATH=./src/lib/auth.ts \
+docker compose -f docker/compose.yml up --build
+```
+
+If you already used the older filename, `docker/docker-compose.self-host.yml` still works too.
+
+What the container does:
+
+- mounts your Better Auth project into `/workspace`
+- installs project dependencies into Docker volumes on first boot
+- starts `better-auth-studio start --host 0.0.0.0 --port 3002 --no-open`
+
+Useful environment variables:
+
+- `HOST_PROJECT_PATH` - absolute path to your Better Auth project on the host machine
+- `CONFIG_PATH` - optional auth config path inside the mounted project, for example `./src/lib/auth.ts`
+- `PORT` - studio port, defaults to `3002`
+- `WATCH` - set to `true` to enable watch mode
+- `AUTO_INSTALL` - set to `false` if your container/project already has dependencies installed
+- `PROJECT_INSTALL_CMD` - optional custom install command for non-standard setups
+- `GEO_DB_PATH` - optional GeoLite database path inside the mounted project
+
+If you change the Studio port, make sure your Better Auth config also trusts that origin when needed. The examples usually include both `http://localhost:3000` and `http://localhost:3002` for that reason.
+
+If you already embed Studio in your server with the framework adapters below, that remains the recommended production setup. The Docker flow is mainly for running the standalone Studio server in a containerized environment.
+## Evidence
+- `docs/next.config.ts`
+- `examples/astro/prisma/studio.config.ts`
+- `examples/elysia/prisma/studio.config.ts`
+- `examples/express/drizzle/drizzle.config.ts`
+- `examples/express/drizzle/studio.config.ts`
+- `examples/express/prisma/studio.config.ts`
+- `package.json`
+- `README.md#docker-standalone-self-host`
+- `README.md#setup`

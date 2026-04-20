@@ -1,0 +1,41 @@
+---
+title: "User Management"
+description: "The project includes user listing, profile, creation, update, or deletion workflows."
+---
+
+# User Management
+
+The project includes user listing, profile, creation, update, or deletion workflows.
+## What It Covers
+This page is generated from repository evidence rather than a generic template. Use it as the canonical docs surface for this capability.
+## Implementation Surface
+- `frontend/src/components/dashboard-widgets/RecentUsersWidget.tsx`
+- `frontend/src/pages/UserDetails.tsx`
+- `frontend/src/pages/Users.tsx`
+## Repository Notes
+These notes were lifted from the repository README so the generated docs stay grounded in existing project language.
+
+### 👥 User Management
+- **View all users** - Paginated list with search and filtering
+- **Create users** - Add new users with email/password
+- **Edit users** - Update user information, email verification status
+- **Delete users** - Remove users from the system
+- **Bulk operations** - Seed multiple test users
+- **User details** - View user profiles, and accounts
+- **Last seen** - When events are enabled, the studio injects an optional `lastSeenAt` field on the user model and updates it on each sign-in or session creation. Run your database migration (e.g. `prisma migrate dev` or Drizzle push) to add the `lastSeenAt` column to the user table.
+## Developer Checklist
+- Confirm the routes, handlers, or components listed above are still the source of truth.
+- Keep examples in this page aligned with the scripts, flags, and configuration shown below.
+- Update this page when the underlying feature changes behavior, permissions, or data shape.
+## Source Details
+- `frontend/src/pages/UserDetails.tsx`: exports `UserDetails`
+- `frontend/src/pages/Users.tsx`: exports `Users`
+- `frontend/src/components/dashboard-widgets/RecentUsersWidget.tsx`: exports `RecentUsersWidget`
+## Evidence
+- `frontend/src/components/dashboard-widgets/RecentUsersWidget.tsx`
+- `frontend/src/pages/UserDetails.tsx`
+- `frontend/src/pages/Users.tsx`
+- `README.md#configuration-options`
+- `README.md#dashboard`
+- `README.md#try-better-auth-studio-demo`
+- `README.md#user-management`

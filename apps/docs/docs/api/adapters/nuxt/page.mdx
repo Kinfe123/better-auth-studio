@@ -1,0 +1,36 @@
+---
+title: "Nuxt Adapter"
+description: "The package exposes a Nuxt adapter surface."
+---
+
+# Nuxt Adapter
+
+The package exposes a Nuxt adapter surface.
+## Import Surface
+Use `better-auth-studio/nuxt` as the package path indicated by package metadata or adapter file evidence.
+## Source Details
+- `src/adapters/nuxt.ts`: exports `betterAuthStudio`
+- `examples/nuxt/prisma/server/lib/auth.ts`: exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+- `examples/nuxt/prisma/server/lib/db.ts`: exports `prisma`; env `NODE_ENV`
+## Related Exports
+- `AccessDeniedPage`
+- `AccessEvaluationInput`
+- `AccessEvaluationResult`
+- `account`
+- `accountRelations`
+- `addSvelteKitEnvModules`
+- `AlertInfo`
+- `AlertTriangle`
+- `ALL`
+- `ALL_STUDIO_TOOL_IDS`
+- `Analytics`
+- `AnimatedNumber`
+## Evidence
+- `examples/nuxt/prisma/server/api/auth/[...all].ts`
+- `examples/nuxt/prisma/server/api/studio/[...all].ts`
+- `examples/nuxt/prisma/server/api/studio/index.ts`
+- `examples/nuxt/prisma/server/lib/auth.ts`
+- `examples/nuxt/prisma/server/lib/db.ts`
+- `package.json:exports:./dist/adapters/nuxt.js`
+- `package.json:exports:./nuxt`
+- `src/adapters/nuxt.ts`
