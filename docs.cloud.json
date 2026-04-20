@@ -1,0 +1,15 @@
+{
+  "$schema": "https://docs.farming-labs.dev/schema/cloud.json",
+  "version": 1,
+  "docs": {
+    "root": "apps/docs",
+    "framework": "nextjs"
+  },
+  "preview": {
+    "enabled": true
+  },
+  "publish": {
+    "mode": "draft-pr",
+    "baseBranch": "master"
+  }
+}
