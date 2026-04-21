@@ -1,0 +1,167 @@
+---
+title: "Event Ingestion"
+description: "The project supports event ingestion providers, helpers, or event metadata."
+order: 390
+---
+
+# Event Ingestion
+
+The project supports event ingestion providers, helpers, or event metadata.
+## What This Is
+Event ingestion describes how activity enters the product. It explains provider responsibilities, event shape, helper functions, and how ingested events become visible in dashboards, timelines, or last-seen fields.
+## Why It Matters
+Event Ingestion matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses implementation evidence as supporting context.
+## Core Concepts
+- event provider
+- event type
+- severity
+- helpers
+- last seen
+## Typical Workflow
+1. Select or implement the event provider for the host application.
+2. Send normalized auth and product events through the ingestion helper.
+3. Verify events appear in the UI with useful metadata and timestamps.
+## Detailed Configuration Model
+Event Ingestion controls behavior rather than UI copy. The important questions are what decision this configuration helps a developer make, what happens when it is absent, and what runtime behavior changes when it is enabled. This page keeps the mental model ahead of the raw files that mention the setting.
+
+For Better Auth Studio, configuration usually answers practical questions: who can access the product, where it is mounted, which runtime services it depends on, and what optional capabilities are enabled. Each setting is documented in relation to one of those questions.
+
+## Decision Points
+- Is the setting required for every installation, or only for a specific framework, adapter, or deployment mode?
+- Does the setting affect security, persistence, presentation, integrations, or developer convenience?
+- What does a developer verify after changing it?
+
+## Success Criteria
+- Readers know when to configure this area and when they can ignore it.
+- Readers understand the consequence of a wrong value.
+- Readers can connect the setting to a visible product behavior or runtime integration.
+## Configuration Surface
+Configuration is easiest to understand when each setting is tied to the behavior it controls. The tables below collect the relevant files and environment variables after the mental model, so readers can connect the concept to the concrete setup surface.
+### Files
+- `examples/astro/prisma/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/astro/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/server/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/mongodb/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/studio.config.pg.example.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/nextjs/drizzle/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/nextjs/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/nextjs/mongodb/lib/auth.ts` (product) - Product runtime configuration.
+### Environment Variables
+- `AUTH_SECRET`
+- `AUTH_URL`
+- `BASE_URL`
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `CLERK_SECRET_KEY`
+- `CLICKHOUSE_HOST`
+- `CLICKHOUSE_PASSWORD`
+- `CLICKHOUSE_USERNAME`
+- `DATABASE_URL`
+- `DB_HOST`
+- `DB_NAME`
+- `DB_PASSWORD`
+- `DB_PORT`
+- `DB_USER`
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `IPINFO_TOKEN`
+- `MONGO_URI`
+- `MONGODB_DB_NAME`
+- `MONGODB_URI`
+- `MYSQL_URL`
+- `NEXT_PUBLIC_BETTER_AUTH_URL`
+- `NODE_ENV`
+- `NODE_PATH`
+- `PORT`
+- `POSTGRES_URL`
+- `RESEND_API_KEY`
+- `VERCEL`
+- `VERCEL_URL`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### 👥 User Management
+- **View all users** - Paginated list with search and filtering
+- **Create users** - Add new users with email/password
+- **Edit users** - Update user information, email verification status
+- **Delete users** - Remove users from the system
+- **Bulk operations** - Seed multiple test users
+- **User details** - View user profiles, and accounts
+- **Last seen** - When events are enabled, the studio injects an optional `lastSeenAt` field on the user model and updates it on each sign-in or session creation. Run your database migration (e.g. `prisma migrate dev` or Drizzle push) to add the `lastSeenAt` column to the user table.
+
+### Configuration Options
+| Option                    | Required | Description                                                                                                                                   |
+| ------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`                    | Yes      | Your Better Auth instance                                                                                                                     |
+| `basePath`                | Yes      | URL path where studio is mounted                                                                                                              |
+| `access.allowEmails`      | No       | Array of admin email addresses                                                                                                                |
+| `access.roles`            | No       | Array of allowed user roles                                                                                                                   |
+| `access.allowIpAddresses` | No       | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: `192.168.*`)                                             |
+| `access.blockIpAddresses` | No       | IP blocklist for Studio requests. Supports exact IPs and wildcard patterns                                                                    |
+| `ipAddress`               | No       | IP geolocation for Events/Sessions: `provider` ("ipinfo" \| "ipapi"), `apiToken`, `baseUrl`, optional `endpoint` (ipinfo: "lite" \| "lookup") |
+| `lastSeenAt`              | No       | Enable last-seen tracking: `{ enabled: true, columnName?: string }`                                                                           |
+| `metadata`                | No       | Custom branding (title, theme)                                                                                                                |
+## How to Reason About This Config
+- Identify whether the option affects security, runtime mounting, data access, or presentation.
+- Prefer examples that use the same names and defaults found in the repository evidence.
+- Call out adapter-specific behavior instead of implying every setting applies to every framework.
+## Validation Checklist
+- Keep config examples aligned with source defaults and runtime validation.
+- Mention whether a setting is required, optional, or only needed for a specific adapter.
+- Update this page when config object names, env vars, or supported providers change.
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Required settings, optional settings, defaults, and adapter-specific behavior are separated clearly.
+- Security impact and validation expectations are called out before examples.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx` - EventsWidget reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/pages/Events.tsx` - Events page-level UI. This is where users usually encounter the capability in the product.
+- `src/providers/events/helpers.ts` - Evidence file that contributes to the implementation understanding for this page.
+- `src/types/events.ts` - Events type surface. It documents data shapes, provider contracts, or configuration objects.
+- `src/utils/event-ingestion.ts` - Event Ingestion utility. It supports the feature behind the scenes and is often where shared rules live.
+
+### Knowledge Chunks
+- `README.md#configuration-options:1-11` - Configuration Options (readme; Markdown; heading README > Configuration Options > Configuration Options). | Option | Required | Description | | | | | | auth | Yes | Your Better Auth instance | | basePath | Yes | URL path where studio is mounted | | access.allowEmails | No | Array of admin email addresses | | access.roles | No | Array of allowed user roles | | access.allowIpAddresses | No | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: 192.168. ) | | access.blockIpAddresses | No | IP
+- `README.md#user-management:1-7` - 👥 User Management (readme; Markdown; heading README > 👥 User Management > 👥 User Management). View all users Paginated list with search and filtering Create users Add new users with email/password Edit users Update user information, email verification status Delete users Remove users from the system Bulk operations Seed multiple test users User details View user profiles, and accounts Last seen When events are enabled, the studio injects an optional lastSeenAt field on the user model and updates it on each si
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx:1-69` - EventsWidget (source; TypeScript; module frontend/src; symbols EventsWidget). import { useEffect, useRef, useState } from "react"; import { format } from "date fns"; import { BarChart3, ChevronDown } from "../PixelIcons"; interface EventItem { id: string; type: string; timestamp: string; status?: string; userId?: string; metadata?: Record ; } const EVENT RANGE OPTIONS = [ { label: "Last 24h", hours: 24 }, { label: "Last 2 days", hours: 48 }, { label: "Last 7 days", hours: 168 }, { label: "Last
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx:69-132` - EventsWidget (source; TypeScript; module frontend/src; symbols EventsWidget). listData?.error === "Events not ready" || listData?.ready === false || !listRes.ok; setEventsNotReady(notReady); if (notReady) { setEvents([]); setTotal(0); } else { if (listRes.ok && Array.isArray(listData.events)) { setEvents(listData.events); } if (countRes.ok) { setTotal(countData.total ?? countData.count ?? null); } } } catch ( e) { if (!cancelled) { setEvents([]); } } finally { if (!cancelled) setLoading(false)
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx:132-181` - EventsWidget (source; TypeScript; module frontend/src; symbols EventsWidget). className={block w full text left px 3 py 1.5 text [11px] font mono border b border white/5 transition colors ${ selectedHours === opt.hours ? "text white bg white/10" : "text gray 400 hover:text white hover:bg white/5" }} {opt.label} ))} )} {loading ? ( Loading... ) : events.length === 0 ? ( {eventsNotReady ? "Events not configured. Enable in studio config to use the events table." : "No events in this period"} ) :
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx:181-213` - EventsWidget (source; TypeScript; module frontend/src; symbols EventsWidget). {e.type} {e.status ? ( {e.status} ) : ( — )} {e.timestamp ? formatEventTime(e.timestamp) : "—"} ))} )} ); }
+- `frontend/src/pages/Events.tsx:1-83` - Events (source; TypeScript; module frontend/src; symbols Events). import { addDays, format, startOfWeek, subWeeks } from "date fns"; import { ArrowDown, ArrowUp, Calendar as CalendarIcon, Computer, Copy, Eye, Filter, Loader, Search, X, } from "lucide react"; import { useCallback, useEffect, useMemo, useRef, useState } from "react"; import type { DateRange } from "react day picker"; import { useNavigate } from "react router dom"; import { toast } from "sonner"; import { CodeBlock }
+- `frontend/src/pages/Events.tsx:83-170` - Events (source; TypeScript; module frontend/src; symbols Events). / Category is the first segment of event type (e.g. "user.joined" "user"). / const getEventCategory = (eventType: string): string = { const dot = eventType.indexOf("."); return dot === 1 ? eventType : eventType.slice(0, dot); }; const EVENT CATEGORY ORDER = [ "user", "organization", "member", "session", "password", "oauth", "team", "invitation", "phone number", ] as const; const EVENT CATEGORY LABELS: Record = { user
+- `frontend/src/pages/Events.tsx:170-231` - Events (source; TypeScript; module frontend/src; symbols Events). t getEventIcon = (eventType: string, severity?: string, status?: string) = { if ( eventType.includes("organization") || eventType.includes("member") || eventType.includes("team") || eventType.includes("invitation") ) { return ; } if (eventType.includes("phone number")) { return ; } if (eventType.includes("user")) { return ; } if (eventType.includes("session") || eventType.includes("login")) { return ; } if (status ==
+- `frontend/src/pages/Events.tsx:231-274` - Events (source; TypeScript; module frontend/src; symbols Events). tion mergeEventsById(current: AuthEvent[], incoming: AuthEvent[]): AuthEvent[] { if (incoming.length === 0) { return current; } const merged = new Map (); current.forEach((event) = merged.set(event.id, event)); incoming.forEach((event) = merged.set(event.id, event)); return sortEventsByTimestamp(Array.from(merged.values())); } function getSafeEventCount( total: number | null | undefined, loadedCount: number, previous
+
+### Source Details
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx`: language TypeScript; exports `EventsWidget`
+- `frontend/src/pages/Events.tsx`: language TypeScript; exports `Events`
+- `src/providers/events/helpers.ts`: language TypeScript; exports `createClickHouseProvider`, `createHttpProvider`, `createNodeSqliteProvider`, `createPostgresProvider`, `createSqliteProvider`, `createStorageProvider`
+- `src/types/events.ts`: language TypeScript; exports `AuthEvent`, `AuthEventType`, `EVENT_TEMPLATES`, `EventIngestionProvider`, `EventQueryOptions`, `EventQueryResult`
+- `src/utils/event-ingestion.ts`: language TypeScript; exports `checkEventIngestionHealth`, `emitEvent`, `getEventIngestionProvider`, `getEventQueueSize`, `initializeEventIngestion`, `isEventIngestionInitialized`
+
+### Evidence
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx`
+- `frontend/src/pages/Events.tsx`
+- `README.md#configuration-options`
+- `README.md#user-management`
+- `src/providers/events/helpers.ts`
+- `src/types/events.ts`
+- `src/utils/event-ingestion.ts`

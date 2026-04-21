@@ -1,0 +1,55 @@
+---
+title: "Html Injector"
+description: "Html Injector is a repository module detected from 1 source file."
+order: 1020
+---
+
+# Html Injector
+
+Html Injector is a repository module detected from 1 source file.
+## What This Module Owns
+Html Injector owns the behavior described by the source-backed function docs and implementation facts below. The module key is `html-injector`, and the evidence comes from `src/utils/html-injector.ts`.
+## What It Actually Does
+The attached source chunks do not include function-level comments, so this page stays conservative and uses the implementation map below as the source of truth.
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `light`, `title`, `theme`.
+- Maps detected inputs to normalized values such as `light` -> `dark`, `title` -> `Better Auth Studio`, `theme` -> `dark`.
+## Module Responsibilities
+- EventColors
+- Html Injector
+- LastSeenAtConfig
+- LiveMarqueeConfig
+- serveIndexHtml
+- StudioConfig
+- StudioMetadata
+- TimeWindowConfig
+- TimeWindowPreset
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `EventColors`
+- `LastSeenAtConfig`
+- `LiveMarqueeConfig`
+- `serveIndexHtml`
+- `StudioConfig`
+- `StudioMetadata`
+- `TimeWindowConfig`
+- `TimeWindowPreset`
+- `WindowStudioConfig`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/utils/html-injector.ts` - Html Injector utility. It supports the feature behind the scenes and is often where shared rules live.
+
+### Knowledge Chunks
+- `src/utils/html-injector.ts:1-95` - EventColors, LastSeenAtConfig, LiveMarqueeConfig (source; TypeScript; module html-injector; symbols EventColors, LastSeenAtConfig, LiveMarqueeConfig, serveIndexHtml). import { readFileSync } from "node:fs"; import { join } from "node:path"; import type { StudioAccessConfig } from "../types/handler.js"; export interface StudioMetadata { title?: string; logo?: string; favicon?: string; company?: { name?: string; website?: string; }; theme?: "light" | "dark"; customStyles?: string; } export interface StudioConfig { basePath?: string; metadata?: StudioMetadata; auth?: any; access?: St
+- `src/utils/html-injector.ts:95-147` - EventColors, LastSeenAtConfig, LiveMarqueeConfig (source; TypeScript; module html-injector; symbols EventColors, LastSeenAtConfig, LiveMarqueeConfig, serveIndexHtml). function prepareFrontendConfig(config: Partial ): WindowStudioConfig { const defaultMetadata: Required = { title: "Better Auth Studio", logo: "", favicon: "", company: { name: "", website: "", }, theme: "dark", customStyles: "", }; const mergedMetadata: Required = { ...defaultMetadata, ...config.metadata, company: { ...defaultMetadata.company, ...config.metadata?.company, }, }; const eventsConfig = (config as any).ev
+- `src/utils/html-injector.ts:147-197` - EventColors, LastSeenAtConfig, LiveMarqueeConfig (source; TypeScript; module html-injector; symbols EventColors, LastSeenAtConfig, LiveMarqueeConfig, serveIndexHtml). toolsConfig && Array.isArray(toolsConfig.exclude) && toolsConfig.exclude.length 0 ? { exclude: toolsConfig.exclude } : undefined, }; } function injectConfig(html: string, config: WindowStudioConfig): string { // Safely serialize (prevent XSS) const safeJson = JSON.stringify(config) .replace(/ /g, "\\u003e") .replace(/&/g, "\\u0026"); // Escape title for HTML insertion const escapedTitle = config.metadata.title .repla
+- `src/utils/html-injector.ts:197-247` - EventColors, LastSeenAtConfig, LiveMarqueeConfig (source; TypeScript; module html-injector; symbols EventColors, LastSeenAtConfig, LiveMarqueeConfig, serveIndexHtml). modifiedHtml = modifiedHtml.replace(/ . ? /i, ${escapedTitle} ); // Replace favicon if provided if (config.metadata.favicon) { const escapedFavicon = config.metadata.favicon .replace(/&/g, "&amp;") .replace(/ /g, "&gt;") .replace(/"/g, "&quot;") .replace(/'/g, "& 39;"); const faviconLower = config.metadata.favicon.toLowerCase(); let mimeType = "image/png"; // default if (faviconLower.endsWith(".ico")) { mimeType = "i
+
+### Source Details
+- `src/utils/html-injector.ts`: language TypeScript; exports `EventColors`, `LastSeenAtConfig`, `LiveMarqueeConfig`, `serveIndexHtml`, `StudioConfig`, `StudioMetadata`
+
+### Evidence
+- `src/utils/html-injector.ts`

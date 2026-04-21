@@ -1,0 +1,106 @@
+---
+title: "Src"
+description: "Src is a repository module detected from 69 source files."
+order: 1090
+---
+
+# Src
+
+Src is a repository module detected from 69 source files.
+## What This Module Owns
+Src owns the behavior described by the source-backed function docs and implementation facts below. The module key is `frontend/src`, and the evidence comes from `frontend/src/App.tsx`, `frontend/src/components/AnimatedNumber.tsx`, `frontend/src/components/CodeBlock.tsx`, `frontend/src/components/CodeEditor.tsx`, `frontend/src/components/CommandPalette.tsx`, `frontend/src/components/CopyableId.tsx`, `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx`, `frontend/src/components/dashboard-widgets/DashboardFloatingPanel.tsx`, `frontend/src/components/dashboard-widgets/DashboardWidgetGrid.tsx`, `frontend/src/components/dashboard-widgets/DatabaseWidget.tsx`.
+## What It Actually Does
+The attached source chunks do not include function-level comments, so this page stays conservative and uses the implementation map below as the source of truth.
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `dashed 1px #00000020`, `#ffffff`, `#000000`, `#f8fafc`, `#cbd5e1`, `#111827`, `className`, `notation`, `padding`, `background`, `border`, `overflow`, `outline`, `color`, and more.
+- Maps detected inputs to normalized values such as `dashed 1px #00000020` -> `dashed 1px #ffffff20`, `#ffffff` -> `#000000`, `#000000` -> `#ffffff`, `#f8fafc` -> `#0d1117`, `#cbd5e1` -> `#333333`, `#111827` -> `#ffffff`, `className` -> `font-mono uppercase`, `notation` -> `compact`, and more.
+## Module Responsibilities
+- AnimatedNumber
+- App
+- CodeBlock
+- CodeEditor
+- CommandPalette
+- CopyableId
+- DashboardCustomizePanel
+- DashboardFloatingPanel
+- Frontend
+- Src
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `AnimatedNumber`
+- `App`
+- `CodeBlock`
+- `CodeEditor`
+- `CommandPalette`
+- `CopyableId`
+- `DashboardCustomizePanel`
+- `DashboardFloatingPanel`
+- `DashboardWidgetGrid`
+- `DatabaseWidget`
+- `PANEL_WIDTH`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Using config Option
+Specify a custom path to your auth config file when it's in a non-standard location or auto-detection fails.
+
+**Example:**
+
+```bash
+# With relative path
+pnpm better-auth-studio start --config ./src/lib/auth.ts
+
+# With absolute path
+pnpm better-auth-studio start --config /path/to/project/auth.ts
+```
+
+**How it works:** Studio automatically searches for config files in common locations (`auth.ts`, `src/auth.ts`, `lib/auth.ts`, etc.). Use `--config` to specify a custom path when needed.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `frontend/src/App.tsx` - Evidence file that contributes to the implementation understanding for this page.
+- `frontend/src/components/AnimatedNumber.tsx` - AnimatedNumber reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/CodeBlock.tsx` - CodeBlock reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/CodeEditor.tsx` - CodeEditor reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/CommandPalette.tsx` - CommandPalette reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/CopyableId.tsx` - CopyableId reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx` - DashboardCustomizePanel reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardFloatingPanel.tsx` - DashboardFloatingPanel reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardWidgetGrid.tsx` - DashboardWidgetGrid reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DatabaseWidget.tsx` - DatabaseWidget reusable UI component. It likely renders part of the workflow or a focused interaction.
+
+### Knowledge Chunks
+- `frontend/src/App.tsx:1-55` - App (source; TypeScript; module frontend/src; symbols App). import { useEffect, useState } from "react"; import { Navigate, Route, BrowserRouter as Router, Routes, useLocation } from "react router dom"; import { Toaster } from "sonner"; import DatabaseSchemaNodeDemo from "./components/DatabaseSchemaNodeDemo"; import Layout from "./components/Layout"; import { CountsProvider } from "./contexts/CountsContext"; import { DashboardWidgetsProvider } from "./contexts/DashboardWidget
+- `frontend/src/App.tsx:55-87` - App (source; TypeScript; module frontend/src; symbols App). ); } if (!auth.authenticated) { const redirect = encodeURIComponent(location.pathname + location.search); return ; } return < {children} ; } function MainRoutes() { return ( } / } / } / } / } / } / } /
+- `frontend/src/App.tsx:87-160` - App (source; TypeScript; module frontend/src; symbols App). } / } / } / } / } / } / } / } / ); } function AppShell() { const { theme } = useTheme(); useEffect(() = { const title = config?.metadata?.title; if (title) { document.title = title; } }, []); return ( {isSelfHosted ? ( } / } / } / ) : ( } / )} ); } function App() { return ( ); } export default App;
+- `frontend/src/components/AnimatedNumber.tsx:1-74` - AnimatedNumber (source; TypeScript; module frontend/src; symbols AnimatedNumber). "use client"; import NumberFlow from "@number flow/react"; import clsx from "clsx"; import { type ComponentType, type ReactNode, useMemo } from "react"; interface AnimatedNumberProps { value: number | null | undefined; loading?: boolean; className?: string; prefix?: ReactNode; suffix?: ReactNode; format?: Intl.NumberFormatOptions; trend?: number | boolean; fallback?: ReactNode; } const defaultFormat: Intl.NumberForma
+- `frontend/src/components/CodeBlock.tsx:1-72` - CodeBlock (source; TypeScript; module frontend/src; symbols CodeBlock). import { Check, Copy, FileCode } from "lucide react"; import { useState } from "react"; import { Prism as SyntaxHighlighter } from "react syntax highlighter"; import { oneLight, vscDarkPlus } from "react syntax highlighter/dist/esm/styles/prism"; import { useTheme } from "../contexts/ThemeContext"; import { Button } from "./ui/button"; interface CodeBlockProps { code: string; language?: string; fileName?: string; cla
+- `frontend/src/components/CodeBlock.tsx:72-101` - CodeBlock (source; TypeScript; module frontend/src; symbols CodeBlock). {copied ? : } {code} ); }
+- `frontend/src/components/CodeEditor.tsx:1-51` - CodeEditor (source; TypeScript; module frontend/src; symbols CodeEditor). import { useEffect, useRef, useState } from "react"; import { Prism as SyntaxHighlighter } from "react syntax highlighter"; import { oneLight, vscDarkPlus } from "react syntax highlighter/dist/esm/styles/prism"; import { useTheme } from "../contexts/ThemeContext"; interface CodeEditorProps { value: string; onChange: (value: string) = void; language?: string; placeholder?: string; className?: string; } export function
+- `frontend/src/components/CodeEditor.tsx:51-95` - CodeEditor (source; TypeScript; module frontend/src; symbols CodeEditor). 'ui monospace, SFMono Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace'; const palette = theme === "light" ? oneLight : vscDarkPlus; const caretColor = theme === "light" ? " 111827" : " ffffff"; // Custom style for syntax highlighter const customStyle = { ...palette, 'pre[class ="language "]': { ...palette['pre[class ="language "]'], background: "transparent", padding: 0, margin: 0, borderRadius: 0,
+- `frontend/src/components/CodeEditor.tsx:95-161` - CodeEditor (source; TypeScript; module frontend/src; symbols CodeEditor). className={relative border border dashed border white/20 rounded none focus within:border white/40 ${className}} {/ Syntax highlighted background /} ( {children} )} {highlightCode} {/ Editable textarea /} onChange(e.target.value)} placeholder={placeholder} className="relative w full min h [200px] bg transparent text white font mono text xs rounded none focus:outline none resize none" style={{ ...textareaStyle, boxSiz
+- `frontend/src/components/CommandPalette.tsx:1-51` - CommandPalette (source; TypeScript; module frontend/src; symbols CommandPalette). import { Command } from "cmdk"; import type { LucideIcon } from "lucide react"; import { ArrowRight, BarChart3, Building2, Database, Download, ExternalLink, Globe, Key, Lock, Mail, Moon, // Monitor, Plus, RefreshCw, Search, Settings, Share2, Shield, Shuffle, Sun, UserPlus, Users, Wrench, } from "lucide react"; import { useEffect, useState } from "react"; import { useNavigate } from "react router dom"; import { useThe
+
+### Source Details
+- `frontend/src/App.tsx`: language TypeScript; exports `App`
+- `frontend/src/components/AnimatedNumber.tsx`: language TypeScript; exports `AnimatedNumber`
+- `frontend/src/components/CodeBlock.tsx`: language TypeScript; exports `CodeBlock`
+- `frontend/src/components/CodeEditor.tsx`: language TypeScript; exports `CodeEditor`
+- `frontend/src/components/CommandPalette.tsx`: language TypeScript; exports `CommandPalette`
+- `frontend/src/components/CopyableId.tsx`: language TypeScript; exports `CopyableId`
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx`: language TypeScript; exports `DashboardCustomizePanel`
+- `frontend/src/components/dashboard-widgets/DashboardFloatingPanel.tsx`: language TypeScript; exports `DashboardFloatingPanel`, `PANEL_WIDTH`
+
+### Evidence
+- `frontend/src/App.tsx`
+- `frontend/src/components/AnimatedNumber.tsx`
+- `frontend/src/components/CodeBlock.tsx`
+- `frontend/src/components/CodeEditor.tsx`
+- `frontend/src/components/CommandPalette.tsx`
+- `frontend/src/components/CopyableId.tsx`
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx`
+- `frontend/src/components/dashboard-widgets/DashboardFloatingPanel.tsx`
+- `frontend/src/components/dashboard-widgets/DashboardWidgetGrid.tsx`
+- `frontend/src/components/dashboard-widgets/DatabaseWidget.tsx`

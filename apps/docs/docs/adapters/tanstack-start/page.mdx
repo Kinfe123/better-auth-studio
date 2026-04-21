@@ -1,0 +1,39 @@
+---
+title: "Tanstack Start"
+description: "Tanstack Start is a repository module detected from 1 source file."
+order: 130
+---
+
+# Tanstack Start
+
+Tanstack Start is a repository module detected from 1 source file.
+## What This Module Owns
+Tanstack Start owns the behavior described by the source-backed function docs and implementation facts below. The module key is `adapters/tanstack-start`, and the evidence comes from `src/adapters/tanstack-start.ts`.
+## What It Actually Does
+- `betterAuthStudio(config: StudioConfig)` - TanStack Start adapter for Better Auth Studio Usage in a server route: ```ts // src/routes/api/studio/$.ts import { createFileRoute } from '@tanstack/react-router'; import { betterAuthStudio } from 'better-auth-studio/tanstack-start'; import studioConfig from '../../../../studio.config'; const handler = betterAuthStudio(studioConfig); export const Route = createFileRoute('/api/studio/$')({ server: { handlers: { GET: handler, POST: handler, PUT: handler, DELETE: handler, PATCH: handler, }, }, }); ```
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `Content-Type`.
+- Maps detected inputs to normalized values such as `Content-Type` -> `application/json`.
+## Module Responsibilities
+- Adapters
+- betterAuthStudio
+- Tanstack Start
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `betterAuthStudio`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/adapters/tanstack-start.ts` - Framework adapter that connects host requests to the product runtime.
+
+### Knowledge Chunks
+- `src/adapters/tanstack-start.ts:1-48` - betterAuthStudio (source; TypeScript; module adapters/tanstack-start; symbols betterAuthStudio). import { handleStudioRequest } from "../core/handler.js"; import type { StudioConfig, UniversalRequest, UniversalResponse } from "../types/handler.js"; import { injectEventHooks, injectLastSeenAtHooks } from "../utils/hook injector.js"; // TanStack Start server route handler context type TanStackStartHandlerContext = { request: Request; }; / TanStack Start adapter for Better Auth Studio Usage in a server route: / exp
+- `src/adapters/tanstack-start.ts:48-127` - betterAuthStudio (source; TypeScript; module adapters/tanstack-start; symbols betterAuthStudio). return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500, headers: { "Content Type": "application/json" }, }); } }; } async function convertTanStackStartToUniversal( request: Request, config: StudioConfig, ): Promise { let body: any; const method = request.method; if (method !== "GET" && method !== "HEAD") { const contentType = request.headers.get("content type") || ""; if (contentType.in
+
+### Source Details
+- `src/adapters/tanstack-start.ts`: language TypeScript; exports `betterAuthStudio`
+
+### Evidence
+- `src/adapters/tanstack-start.ts`

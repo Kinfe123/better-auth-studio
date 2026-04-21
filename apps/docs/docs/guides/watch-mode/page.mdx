@@ -1,0 +1,137 @@
+---
+title: "Watch Mode"
+description: "The CLI or runtime can watch files and reload during development."
+order: 470
+---
+
+# Watch Mode
+
+The CLI or runtime can watch files and reload during development.
+## What This Is
+Watch mode is the development feedback loop. It keeps the product aligned with local configuration changes by monitoring files, restarting or refreshing the runtime, and reducing manual browser refreshes.
+
+Repository context: Automatically reload the server when your auth. ts file changes.  Perfect for development when iterating on your auth configuration.
+## Why It Matters
+Watch Mode matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses implementation evidence as supporting context.
+## Core Concepts
+- file watcher
+- reload
+- config changes
+- development loop
+- WebSocket updates
+## Typical Workflow
+1. Start the runtime with watch mode enabled.
+2. Edit the auth or studio configuration file.
+3. Confirm the server reloads and the browser reflects the updated configuration.
+## Detailed Guide Goal
+Watch Mode takes a reader from a known starting point to a useful end state. The guide is more than a command list: it explains when to use the workflow, what state the project needs before starting, what each step changes, and how to verify that the workflow succeeded.
+
+The guide is written for someone who wants to accomplish a task, not someone browsing the source code. Commands and flags appear as tools inside the workflow while the reader stays oriented around the goal.
+
+## When to Use This
+- Use this guide when a developer needs to perform the watch mode workflow from the project root or host application.
+- Use it when a maintainer needs to understand the intended operator or developer path before changing behavior.
+- Link to API or configuration pages only after the reader understands the task.
+
+## Success Criteria
+- The reader knows the prerequisite state.
+- The reader knows what command, action, or setting moves them forward.
+- The reader knows the expected result and how to verify it.
+## Before You Start
+- Install dependencies with `pnpm install`.
+- Confirm the main workflow with `pnpm start`.
+- Review the maintainer reference before adding new examples.
+## Command Mental Model
+- `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
+- `geo:update` runs `node scripts/download-geolite2.js` and supports the project workflow.
+- `copy:public` runs `rm -rf dist/public && cp -r public dist/` and supports the project workflow.
+- `verify:public` runs `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)` and supports the project workflow.
+- `postinstall` runs `node scripts/postinstall.js` and supports the project workflow.
+- `dev` runs `tsx src/cli.ts` and starts the local development workflow.
+- `start` runs `node dist/cli.js` and starts the runtime entrypoint after dependencies or build output are ready.
+- `studio` runs `tsx src/cli.ts` and starts the runtime entrypoint after dependencies or build output are ready.
+- `clean` runs `rm -rf dist` and removes generated artifacts so the next build starts from a clean state.
+- `frontend:dev` runs `cd frontend && pnpm run dev` and starts the local development workflow.
+- `frontend:build` runs `cd frontend && pnpm run build` and creates the production build or compiled package artifacts.
+- `frontend:preview` runs `cd frontend && pnpm run preview` and supports the project workflow.
+- `lint` runs `oxlint . && oxfmt --check .` and checks or fixes code style before changes are shipped.
+- `format` runs `oxlint --fix . && oxfmt .` and checks or fixes code style before changes are shipped.
+- `lint:fix` runs `oxlint --fix . && oxfmt .` and checks or fixes code style before changes are shipped.
+- `type-check` runs `tsc --noEmit` and supports the project workflow.
+## Raw Commands and Flags
+- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public`
+- `geo:update`: `node scripts/download-geolite2.js`
+- `copy:public`: `rm -rf dist/public && cp -r public dist/`
+- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)`
+- `postinstall`: `node scripts/postinstall.js`
+- `dev`: `tsx src/cli.ts`
+- `start`: `node dist/cli.js`
+- `studio`: `tsx src/cli.ts`
+- `clean`: `rm -rf dist`
+- `frontend:dev`: `cd frontend && pnpm run dev`
+- `frontend:build`: `cd frontend && pnpm run build`
+- `frontend:preview`: `cd frontend && pnpm run preview`
+- `lint`: `oxlint . && oxfmt --check .`
+- `format`: `oxlint --fix . && oxfmt .`
+- `lint:fix`: `oxlint --fix . && oxfmt .`
+- `type-check`: `tsc --noEmit`
+- `test`: `vitest`
+- `test:watch`: `vitest --watch`
+- `test:coverage`: `vitest --coverage`
+- `test:ci`: `pnpm test --run`
+- `release`: `pnpm build && bumpp && pnpm publish --access public --no-git-checks`
+- `release:beta`: `pnpm build && bumpp --preid beta && pnpm publish --access public --tag beta --no-git-checks`
+- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next`
+- `release:canary`: `pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks`
+- `bump`: `bumpp`
+- `--api-dir`: <path>", 'Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
+- `--config`: <path>", "Path to the auth configuration file
+- `--geo-db`: <path>", "Path to MaxMind GeoLite2 database file (.mmdb
+- `--host`: <host>", "Host to run the studio on", "localhost
+- `--no-open`
+- `--port`: <port>", "Port to run the studio on", "3002
+- `--watch`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Using watch Option
+Automatically reload the server when your `auth.ts` file changes. Perfect for development when iterating on your auth configuration.
+
+**Example:**
+
+```bash
+# Start with watch mode enabled
+pnpx better-auth-studio start --watch
+```
+
+**How it works:** Monitors your auth config file for changes, automatically restarts the server, and updates the browser UI via WebSocket - no manual refresh needed.
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- The guide stays task-oriented: prerequisite, action, expected result, verification.
+- Each command or option is connected to its reason before the raw command inventory appears.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `./dist/cli.js` - CLI entrypoint or command implementation that defines developer-facing commands and flags.
+
+### Knowledge Chunks
+- `README.md#start-studio:1-17` - Start Studio (readme; Markdown; heading README > Start Studio > Start Studio). Options: port Specify port (default: 3002) host Specify host (default: localhost) no open Don't automatically open browser config Path to auth config file (default: auto detect) watch Watch for changes in auth config file and reload server automatically 3002 is just the standalone Studio default so it does not clash with apps that already use 3000. You can run Studio on 3000, 4000, or any other free port. Examples: `
+- `README.md#start-studio:18-20` - Start on custom port (if installed as dev dependency) (readme; Markdown; heading README > Start Studio > Start on custom port (if installed as dev dependency)). Start on custom port (if installed as dev dependency) pnpm better auth studio start port 3001
+- `README.md#start-studio:21-23` - Or with pnpx (readme; Markdown; heading README > Start Studio > Or with pnpx). Or with pnpx pnpx better auth studio start port 3001
+- `README.md#start-studio:24-26` - Start without opening browser (readme; Markdown; heading README > Start Studio > Start without opening browser). Start without opening browser pnpm better auth studio start no open
+- `README.md#start-studio:27-29` - Use custom config file (readme; Markdown; heading README > Start Studio > Use custom config file). Use custom config file pnpm better auth studio start config ./custom auth.ts
+- `README.md#start-studio:30-32` - Enable watch mode for auto reload on config changes (readme; Markdown; heading README > Start Studio > Enable watch mode for auto reload on config changes). Enable watch mode for auto reload on config changes pnpm better auth studio start watch
+- `README.md#start-studio:33-35` - Combine multiple options (readme; Markdown; heading README > Start Studio > Combine multiple options). Combine multiple options pnpx better auth studio start port 3001 watch config ./src/auth.ts ```
+- `README.md#using-watch-option:1-5` - Using watch Option (readme; Markdown; heading README > Using watch Option > Using watch Option). Automatically reload the server when your auth.ts file changes. Perfect for development when iterating on your auth configuration. Example: ```bash
+- `README.md#using-watch-option:6-10` - Start with watch mode enabled (readme; Markdown; heading README > Using watch Option > Start with watch mode enabled). Start with watch mode enabled pnpx better auth studio start watch ``` How it works: Monitors your auth config file for changes, automatically restarts the server, and updates the browser UI via WebSocket no manual refresh needed.
+
+### Source Details
+- `./dist/cli.js`: language JavaScript; flags `--api-dir`, `--config`, `--geo-db`, `--host`, `--no-open`, `--port`
+
+### Evidence
+- `./dist/cli.js`
+- `README.md#start-studio`
+- `README.md#using-watch-option`

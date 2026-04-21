@@ -1,0 +1,72 @@
+---
+title: "Handlers"
+description: "Handlers is a repository module detected from 1 source file."
+order: 1000
+---
+
+# Handlers
+
+Handlers is a repository module detected from 1 source file.
+## What This Module Owns
+Handlers owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar.
+The module key is `handlers`. It is included because source files, declarations, routes, or package exports show this area has behavior worth documenting.
+## Module Responsibilities
+- defineStudioConfig
+- EventColors
+- Handlers
+- LiveMarqueeConfig
+- STUDIO_TOOL_IDS
+- StudioAccessConfig
+- StudioConfig
+- StudioIpAddressConfig
+- StudioLastSeenAtConfig
+## Detailed Module Model
+Handlers is generated from a coherent source area, not from a generic keyword. The docs engine groups files into this page when they share a module boundary, package export, route family, or public symbol surface.
+
+For Better Auth Studio, module pages help the docs grow with the repository. Small codebases may only need a few module pages; larger codebases can expose many focused pages so readers can learn one capability, adapter, plugin, or subsystem at a time.
+
+## What to Look For
+- The responsibility owned by this module.
+- The public exports, route handlers, declarations, or configuration values attached to the module.
+- The neighboring docs pages that explain related user-facing workflows or integration details.
+
+## Success Criteria
+- Readers understand why this source area exists before reading file paths.
+- Readers can find the files that define the module without searching the whole repo.
+- Maintainers can update this page when the module's exports, routes, or responsibilities change.
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `defineStudioConfig`
+- `EventColors`
+- `LiveMarqueeConfig`
+- `STUDIO_TOOL_IDS`
+- `StudioAccessConfig`
+- `StudioConfig`
+- `StudioIpAddressConfig`
+- `StudioLastSeenAtConfig`
+- `StudioMetadata`
+- `StudioToolId`
+- `TimeWindowConfig`
+- `TimeWindowPreset`
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Module pages are generated only from concrete source, route, declaration, or package export evidence.
+- If the module is internal, keep the page focused on responsibility and maintenance boundaries rather than promising public APIs.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/types/handler.ts` - Handler type surface. It documents data shapes, provider contracts, or configuration objects.
+
+### Knowledge Chunks
+- `src/types/handler.ts:1-87` - defineStudioConfig, EventColors, LiveMarqueeConfig (source; TypeScript; module handlers; symbols defineStudioConfig, EventColors, LiveMarqueeConfig, STUDIO_TOOL_IDS). export type UniversalRequest = { url: string; method: string; headers: Record ; ip?: string; body?: any; }; export type UniversalResponse = { status: number; headers: Record ; setCookies?: string[]; body: string | Buffer; }; export type TimeWindowPreset = | "15m" | "30m" | "1h" | "2h" | "4h" | "6h" | "12h" | "1d" | "2d" | "3d" | "7d" | "14d" | "30d"; // TimeWindowConfig is always an object with either 'since' OR 'cus
+- `src/types/handler.ts:87-156` - defineStudioConfig, EventColors, LiveMarqueeConfig (source; TypeScript; module handlers; symbols defineStudioConfig, EventColors, LiveMarqueeConfig, STUDIO_TOOL_IDS). Optional IP blocklist. Supports exact IPs and wildcard patterns (e.g. "203.0.113. "). / blockIpAddresses?: string[]; sessionDuration?: number; secret?: string; }; import type { AuthEvent, AuthEventType, EventIngestionProvider } from "./events.js"; / Last seen tracking: no plugin or additionalFields needed in your Better Auth config. When enabled, Studio injects the field into the user schema and updates it on sign in
+- `src/types/handler.ts:156-206` - defineStudioConfig, EventColors, LiveMarqueeConfig (source; TypeScript; module handlers; symbols defineStudioConfig, EventColors, LiveMarqueeConfig, STUDIO_TOOL_IDS). Tools list config. When self hosting, use exclude to hide tools from the UI (e.g. in production). By default all tools are included. @example tools: { exclude: ['test oauth', 'health check'] } / tools?: { exclude?: StudioToolId[]; }; events?: { enabled?: boolean; tableName?: string; // Auto use Better Auth adapter if provided provider?: EventIngestionProvider; // Custom provider client?: any; // Client instance (Post
+
+### Source Details
+- `src/types/handler.ts`: language TypeScript; exports `defineStudioConfig`, `EventColors`, `LiveMarqueeConfig`, `STUDIO_TOOL_IDS`, `StudioAccessConfig`, `StudioConfig`
+
+### Evidence
+- `src/types/handler.ts`

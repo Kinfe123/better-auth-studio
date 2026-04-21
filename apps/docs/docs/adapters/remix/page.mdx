@@ -1,0 +1,39 @@
+---
+title: "Remix"
+description: "Remix is a repository module detected from 1 source file."
+order: 100
+---
+
+# Remix
+
+Remix is a repository module detected from 1 source file.
+## What This Module Owns
+Remix owns the behavior described by the source-backed function docs and implementation facts below. The module key is `adapters/remix`, and the evidence comes from `src/adapters/remix.ts`.
+## What It Actually Does
+- `betterAuthStudio(config: StudioConfig)` - Remix adapter for Better Auth Studio Usage in a resource route: ```ts // app/routes/api.studio.$.ts import { betterAuthStudio } from 'better-auth-studio/remix'; import studioConfig from '~/studio.config'; import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node'; const handler = betterAuthStudio(studioConfig); export async function loader({ request }: LoaderFunctionArgs) { return handler({ request }); } export async function action({ request }: ActionFunctionArgs) { return handler({ request }); } ```
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `Content-Type`.
+- Maps detected inputs to normalized values such as `Content-Type` -> `application/json`.
+## Module Responsibilities
+- Adapters
+- betterAuthStudio
+- Remix
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `betterAuthStudio`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/adapters/remix.ts` - Framework adapter that connects host requests to the product runtime.
+
+### Knowledge Chunks
+- `src/adapters/remix.ts:1-39` - betterAuthStudio (source; TypeScript; module adapters/remix; symbols betterAuthStudio). import { handleStudioRequest } from "../core/handler.js"; import type { StudioConfig, UniversalRequest, UniversalResponse } from "../types/handler.js"; import { injectEventHooks, injectLastSeenAtHooks } from "../utils/hook injector.js"; / Remix adapter for Better Auth Studio Usage in a resource route: / export function betterAuthStudio(config: StudioConfig) { if (config.auth) { injectLastSeenAtHooks(config.auth, conf
+- `src/adapters/remix.ts:39-118` - betterAuthStudio (source; TypeScript; module adapters/remix; symbols betterAuthStudio). return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500, headers: { "Content Type": "application/json" }, }); } }; } async function convertRemixToUniversal( { request }: { request: Request }, config: StudioConfig, ): Promise { let body: any; const method = request.method; if (method !== "GET" && method !== "HEAD") { const contentType = request.headers.get("content type") || ""; if (conte
+
+### Source Details
+- `src/adapters/remix.ts`: language TypeScript; exports `betterAuthStudio`
+
+### Evidence
+- `src/adapters/remix.ts`

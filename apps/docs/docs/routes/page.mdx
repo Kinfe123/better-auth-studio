@@ -1,0 +1,48 @@
+---
+title: "Routes"
+description: "Routes is a repository module detected from 1 source file."
+order: 1050
+---
+
+# Routes
+
+Routes is a repository module detected from 1 source file.
+## What This Module Owns
+Routes owns the behavior described by the source-backed function docs and implementation facts below. The module key is `routes`, and the evidence comes from `src/routes.ts`.
+## What It Actually Does
+The attached source chunks do not include function-level comments, so this page stays conservative and uses the implementation map below as the source of truth.
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `auth_event`.
+- Maps detected inputs to normalized values such as `auth_event` -> `auth_events`.
+## Module Responsibilities
+- createRoutes
+- handleStudioApiRequest
+- Routes
+- safeImportAuthConfig
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `createRoutes`
+- `handleStudioApiRequest`
+- `safeImportAuthConfig`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/routes.ts` - Evidence file that contributes to the implementation understanding for this page.
+
+### Knowledge Chunks
+- `src/routes.ts:1-71` - createRoutes, handleStudioApiRequest, safeImportAuthConfig (source; TypeScript; module routes; symbols createRoutes, handleStudioApiRequest, safeImportAuthConfig). import { createHmac, randomBytes } from "node:crypto"; import { existsSync, readFileSync as readFile, readFileSync, unlinkSync, writeFileSync as writeFile, writeFileSync, } from "node:fs"; import { tmpdir } from "node:os"; import { dirname, join, join as pathJoin, sep as pathSep } from "node:path"; import { fileURLToPath, pathToFileURL } from "node:url"; // @ts expect error No types available import babelPresetReact
+- `src/routes.ts:71-151` - createRoutes, handleStudioApiRequest, safeImportAuthConfig (source; TypeScript; module routes; symbols createRoutes, handleStudioApiRequest, safeImportAuthConfig). async function verifyPassword(password: string, storedHash: string): Promise { if (!storedHash || typeof storedHash !== "string") { return false; } const parts = storedHash.split(":"); if (parts.length !== 2) { return false; } const [salt, storedKey] = parts; if (!salt || !storedKey) { return false; } try { const key = await generateKey(password, salt); const keyHex = hex.encode(key); return keyHex === storedKey; } c
+- `src/routes.ts:151-209` - createRoutes, handleStudioApiRequest, safeImportAuthConfig (source; TypeScript; module routes; symbols createRoutes, handleStudioApiRequest, safeImportAuthConfig). export async function safeImportAuthConfig(authConfigPath: string, noCache = false): Promise { try { if (authConfigPath.endsWith(".ts")) { const aliases: Record = {}; const authConfigDir = dirname(authConfigPath); let projectDir = authConfigDir; let tsconfigPath = join(projectDir, "tsconfig.json"); while (!existsSync(tsconfigPath) && projectDir !== dirname(projectDir)) { projectDir = dirname(projectDir); tsconfigPath
+- `src/routes.ts:209-255` - createRoutes, handleStudioApiRequest, safeImportAuthConfig (source; TypeScript; module routes; symbols createRoutes, handleStudioApiRequest, safeImportAuthConfig). const resolvedPath = join(tsconfigAliases[aliasBase], remainingPath); const possiblePaths = [ ${resolvedPath}.ts, ${resolvedPath}.js, ${resolvedPath}.mjs, ${resolvedPath}.cjs, join(resolvedPath, "index.ts"), join(resolvedPath, "index.js"), join(resolvedPath, "index.mjs"), join(resolvedPath, "index.cjs"), ]; for (const path of possiblePaths) { if (existsSync(path)) { aliases[aliasPath] = pathToFileURL(path).href; brea
+- `src/routes.ts:255-322` - createRoutes, handleStudioApiRequest, safeImportAuthConfig (source; TypeScript; module routes; symbols createRoutes, handleStudioApiRequest, safeImportAuthConfig). const { existsSync, readFileSync, writeFileSync, mkdtempSync, unlinkSync, rmdirSync } = await import("node:fs"); const { tmpdir } = await import("node:os"); const projectDir = dirname(authConfigPath); const content = readFileSync(authConfigPath, "utf 8"); let resolvedContent = content; let currentDir = projectDir; let nodeModulesPath = null; while (currentDir && currentDir !== dirname(currentDir)) { const potentialNo
+- `src/routes.ts:322-401` - createRoutes, handleStudioApiRequest, safeImportAuthConfig (source; TypeScript; module routes; symbols createRoutes, handleStudioApiRequest, safeImportAuthConfig). NODE PATH; } } } else { throw new Error("No node modules found"); } } catch ( resolveError) { throw importError; } } } async function findAuthConfigPath(): Promise { const { join, dirname } = await import("node:path"); const { existsSync } = await import("node:fs"); for (const path of possiblePaths) { const fullPath = join(process.cwd(), path); if (existsSync(fullPath)) { return fullPath; } } return null; } export fu
+- `src/routes.ts:401-412` - createRoutes, handleStudioApiRequest, safeImportAuthConfig (source; TypeScript; module routes; symbols createRoutes, handleStudioApiRequest, safeImportAuthConfig). floor(absMs / 1000)); return ${secs}s; }; let resolvedEventModelName: string | null = null; const isEventModelLookupError = (error: any) = error?.message?.includes("not found in schema") || error?.message?.includes("not found in model") || error?.message?.includes("Model") || error?.code === "P2025" || error?.code === "42P01"; const toEventModelCamelCase = (value: string) =
+- `src/routes.ts:412-482` - createRoutes, handleStudioApiRequest, safeImportAuthConfig (source; TypeScript; module routes; symbols createRoutes, handleStudioApiRequest, safeImportAuthConfig). value.replace(/ /g, ( match, char: string) = char.toUpperCase()); const getEventModelCandidates = () = { const baseName = studioConfig?.events?.tableName || "auth events"; const candidates = new Set (); const addForms = (value?: string) = { const normalized = value?.trim(); if (!normalized) return; const snake = normalized.replace(/ /g, " "); const singularSnake = snake.endsWith("s") ? snake.slice(0, 1) : snake; cons
+
+### Source Details
+- `src/routes.ts`: language TypeScript; exports `createRoutes`, `handleStudioApiRequest`, `safeImportAuthConfig`; env `AUTH_SECRET`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `DATABASE_URL`, `MYSQL_URL`, `NODE_ENV`
+
+### Evidence
+- `src/routes.ts`

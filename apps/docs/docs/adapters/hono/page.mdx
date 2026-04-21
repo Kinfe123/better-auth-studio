@@ -1,0 +1,34 @@
+---
+title: "Hono"
+description: "Hono is a repository module detected from 1 source file."
+order: 70
+---
+
+# Hono
+
+Hono is a repository module detected from 1 source file.
+## What This Module Owns
+Hono owns the behavior described by the source-backed function docs and implementation facts below. The module key is `adapters/hono`, and the evidence comes from `src/adapters/hono.ts`.
+## What It Actually Does
+- `betterAuthStudio(config: StudioConfig)` - Hono adapter for Better Auth Studio
+## Module Responsibilities
+- Adapters
+- betterAuthStudio
+- Hono
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `betterAuthStudio`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/adapters/hono.ts` - Framework adapter that connects host requests to the product runtime.
+
+### Knowledge Chunks
+- `src/adapters/hono.ts:1-74` - betterAuthStudio (source; TypeScript; module adapters/hono; symbols betterAuthStudio). import type { Context } from "hono"; import type { StatusCode } from "hono/utils/http status.js"; import { handleStudioRequest } from "../core/handler.js"; import type { StudioConfig, UniversalRequest, UniversalResponse } from "../types/handler.js"; import { injectEventHooks, injectLastSeenAtHooks } from "../utils/hook injector.js"; / Hono adapter for Better Auth Studio / export function betterAuthStudio(config: Stud
+
+### Source Details
+- `src/adapters/hono.ts`: language TypeScript; exports `betterAuthStudio`
+
+### Evidence
+- `src/adapters/hono.ts`

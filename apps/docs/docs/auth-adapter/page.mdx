@@ -1,0 +1,54 @@
+---
+title: "Auth Adapter"
+description: "Auth Adapter is a repository module detected from 1 source file."
+order: 880
+---
+
+# Auth Adapter
+
+Auth Adapter is a repository module detected from 1 source file.
+## What This Module Owns
+Auth Adapter owns the behavior described by the source-backed function docs and implementation facts below. The module key is `auth-adapter`, and the evidence comes from `src/auth-adapter.ts`.
+## What It Actually Does
+- `findTsconfigPath(startDir: string): string | null` - Find tsconfig.json by searching upwards from a starting directory
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `model`, `providerId`, `email`, `image`, `country`, `city`, `region`.
+- Maps detected inputs to normalized values such as `model` -> `user`, `model` -> `account`, `providerId` -> `credential`, `model` -> `session`, `model` -> `verification`, `model` -> `organization`, `email` -> `user${randomString}@example.com`, `image` -> `https://api.dicebear.com/7.x/avataaars/svg?seed=user${index}`, and more.
+## Module Responsibilities
+- Auth Adapter
+- AuthAdapter
+- createMockAccount
+- createMockSession
+- createMockUser
+- createMockVerification
+- getAuthAdapter
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `AuthAdapter`
+- `createMockAccount`
+- `createMockSession`
+- `createMockUser`
+- `createMockVerification`
+- `getAuthAdapter`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/auth-adapter.ts` - Evidence file that contributes to the implementation understanding for this page.
+
+### Knowledge Chunks
+- `src/auth-adapter.ts:1-62` - AuthAdapter, createMockAccount, createMockSession (source; TypeScript; module auth-adapter; symbols AuthAdapter, createMockAccount, createMockSession, createMockUser). import { randomBytes } from "node:crypto"; import { existsSync } from "node:fs"; import { dirname, join, parse, resolve } from "node:path"; // @ts expect error No types available import babelPresetReact from "@babel/preset react"; // @ts expect error No types available import babelPresetTypeScript from "@babel/preset typescript"; // @ts expect error No types available for current moduleResolution and bundler mode imp
+- `src/auth-adapter.ts:62-136` - AuthAdapter, createMockAccount, createMockSession (source; TypeScript; module auth-adapter; symbols AuthAdapter, createMockAccount, createMockSession, createMockUser). const authConfigPath = configPath ? configPath : await findAuthConfigPath(); if (!authConfigPath) { return null; } let authModule: any; try { let importPath = authConfigPath; if (!authConfigPath.startsWith("/")) { importPath = join(process.cwd(), authConfigPath); } const configDir = dirname(resolve(importPath)); const projectRoot = findTsconfigPath(configDir) || process.cwd(); const alias = getPathAliases(projectRoot
+- `src/auth-adapter.ts:136-212` - AuthAdapter, createMockAccount, createMockSession (source; TypeScript; module auth-adapter; symbols AuthAdapter, createMockAccount, createMockSession, createMockUser). image: data.image || https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}, }, }); if (data.password) { let hashedPassword = data.password; try { hashedPassword = await hashPassword(data.password); } catch (err) { console.log({ err }); } try { await adapter.create({ model: "account", data: { userId: user.id, providerId: "credential", accountId: user.id, password: hashedPassword, createdAt: new Date(), updated
+- `src/auth-adapter.ts:212-277` - AuthAdapter, createMockAccount, createMockSession (source; TypeScript; module auth-adapter; symbols AuthAdapter, createMockAccount, createMockSession, createMockUser). getUsers(); return users || []; } return []; } catch ( error) { return []; } }, getSessions: async () = { try { if (typeof adapter.findMany === "function") { const sessions = await adapter.findMany({ model: "session" }); return sessions || []; } if (typeof adapter.getSessions === "function") { const sessions = await adapter.getSessions(); return sessions || []; } return []; } catch ( error) { return []; } }, count: a
+- `src/auth-adapter.ts:277-319` - AuthAdapter, createMockAccount, createMockSession (source; TypeScript; module auth-adapter; symbols AuthAdapter, createMockAccount, createMockSession, createMockUser). cwd(); const maxDepth = 10; let depth = 0; while (currentDir && depth { const config = { N: 16384, r: 16, p: 1, dkLen: 64, }; const salt = hex.encode(randomBytes(16)); const key = await scryptAsync(password.normalize("NFKC"), salt, { N: config.N, p: config.p, r: config.r, dkLen: config.dkLen, maxmem: 128 config.N config.r 2, }); return ${salt}:${hex.encode(key)}; }
+- `src/auth-adapter.ts:319-337` - AuthAdapter, createMockAccount, createMockSession (source; TypeScript; module auth-adapter; symbols AuthAdapter, createMockAccount, createMockSession, createMockUser). export async function createMockUser(adapter: AuthAdapter, index: number, role?: string) { const randomString = Math.random().toString(36).substring(2, 8); const hashedPassword = await hashPassword(randomString.toString()); const userData: any = { email: user${randomString}@example.com, name: User ${index}, emailVerified: true, image: https://api.dicebear.com/7.x/avataaars/svg?seed=user${index}, createdAt: new Date()
+- `src/auth-adapter.ts:337-464` - AuthAdapter, createMockAccount, createMockSession (source; TypeScript; module auth-adapter; symbols AuthAdapter, createMockAccount, createMockSession, createMockUser). createUser(userData); } // Random IP address generators for different countries const countryIPRanges = [ // United States { country: "United States", city: "New York", region: "NY", ranges: [ { min: 8, max: 8 }, { min: 24, max: 24 }, { min: 32, max: 32 }, { min: 64, max: 64 }, ], }, // United Kingdom { country: "United Kingdom", city: "London", region: "England", ranges: [ { min: 51, max: 51 }, { min: 77, max: 77 },
+- `src/auth-adapter.ts:464-479` - AuthAdapter, createMockAccount, createMockSession (source; TypeScript; module auth-adapter; symbols AuthAdapter, createMockAccount, createMockSession, createMockUser). x: " 2.255.255.255" } / G rmany m n: " 7.0.0.0", m x: " 7.255.255.255" } / F ance m n: " 26.0.0.0", m x: " 26.255.255.255" } / J pan m n: " 10.0.0.0", m x: " 10.255.255.255" } / J pan m n: " .0.0.0", m x: " .255.255.255" } / A stralia m n: " 7.0.0.0", m x: " 7.255.255.255" } / A stralia m n: " 77.0.0.0", m x: " 77.255.255.255" } / B azil m n: " 01.0.0.0", m x: " 01.255.255.255" } / B azil m n: " 03.0.0.0", m x: " 03.
+
+### Source Details
+- `src/auth-adapter.ts`: language TypeScript; exports `AuthAdapter`, `createMockAccount`, `createMockSession`, `createMockUser`, `createMockVerification`, `getAuthAdapter`
+
+### Evidence
+- `src/auth-adapter.ts`

@@ -1,0 +1,119 @@
+---
+title: "Remix"
+description: "Remix is a repository module detected from 8 source files."
+order: 550
+---
+
+# Remix
+
+Remix is a repository module detected from 8 source files.
+## What This Module Owns
+Remix owns the behavior described by the source-backed function docs and implementation facts below. The module key is `examples/remix`, and the evidence comes from `examples/remix/prisma/app/lib/auth.server.ts`, `examples/remix/prisma/app/lib/db.server.ts`, `examples/remix/prisma/app/root.tsx`, `examples/remix/prisma/app/routes/_index.tsx`, `examples/remix/prisma/app/routes/api.auth.$.ts`, `examples/remix/prisma/app/routes/api.studio.$.ts`, `examples/remix/prisma/studio.config.ts`, `examples/remix/prisma/vite.config.ts`.
+## What It Actually Does
+The attached source chunks do not include function-level comments, so this page stays conservative and uses the implementation map below as the source of truth.
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `basePath`, `fontFamily`, `lineHeight`, `padding`, `maxWidth`, `margin`, `title`, `theme`.
+- Maps detected inputs to normalized values such as `basePath` -> `/api/auth`, `fontFamily` -> `system-ui, sans-serif`, `lineHeight` -> `1.8`, `padding` -> `2rem`, `maxWidth` -> `800px`, `margin` -> `0 auto`, `basePath` -> `/api/studio`, `title` -> `Better Auth Studio`, and more.
+## Module Responsibilities
+- action
+- App
+- auth
+- Examples
+- Index
+- Layout
+- links
+- loader
+- prisma
+- Remix
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `action`
+- `App`
+- `auth`
+- `config`
+- `Index`
+- `Layout`
+- `links`
+- `loader`
+- `prisma`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Start Studio
+```bash
+pnpx better-auth-studio start [options]
+```
+
+**Options:**
+
+- `--port <number>` - Specify port (default: 3002)
+- `--host <string>` - Specify host (default: localhost)
+- `--no-open` - Don't automatically open browser
+- `--config <path>` - Path to auth config file (default: auto-detect)
+- `--watch` - Watch for changes in auth config file and reload server automatically
+
+`3002` is just the standalone Studio default so it does not clash with apps that already use `3000`. You can run Studio on `3000`, `4000`, or any other free port.
+
+**Examples:**
+
+```bash
+# Start on custom port (if installed as dev dependency)
+pnpm better-auth-studio start --port 3001
+
+# Or with pnpx
+pnpx better-auth-studio start --port 3001
+
+# Start without opening browser
+pnpm better-auth-studio start --no-open
+
+# Use custom config file
+pnpm better-auth-studio start --config ./custom-auth.ts
+
+# Enable watch mode for auto-reload on config changes
+pnpm better-auth-studio start --watch
+
+# Combine multiple options
+pnpx better-auth-studio start --port 3001 --watch --config ./src/auth.ts
+```
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/remix/prisma/app/lib/auth.server.ts` - Auth.Server page-level UI. This is where users usually encounter the capability in the product.
+- `examples/remix/prisma/app/lib/db.server.ts` - Db.Server page-level UI. This is where users usually encounter the capability in the product.
+- `examples/remix/prisma/app/root.tsx` - Root page-level UI. This is where users usually encounter the capability in the product.
+- `examples/remix/prisma/app/routes/_index.tsx` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/remix/prisma/app/routes/api.auth.$.ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/remix/prisma/app/routes/api.studio.$.ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/remix/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/remix/prisma/vite.config.ts` - Example project file that shows how the capability is wired in a real framework setup.
+
+### Knowledge Chunks
+- `examples/remix/prisma/app/lib/auth.server.ts:1-38` - auth (example; TypeScript; module examples/remix; symbols auth). import { betterAuth } from "better auth"; import { prismaAdapter } from "better auth/adapters/prisma"; import { prisma } from "./db.server"; const baseURL = process.env.BETTER AUTH URL || process.env.BASE URL || "http://localhost:3000"; export const auth = betterAuth({ secret: process.env.AUTH SECRET || "your secret key change in production", database: prismaAdapter(prisma, { provider: "sqlite" }), baseURL, basePath:
+- `examples/remix/prisma/app/lib/db.server.ts:1-10` - prisma (example; TypeScript; module examples/remix; symbols prisma). import { PrismaClient } from "@prisma/client"; const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined; }; export const prisma = globalForPrisma.prisma ?? new PrismaClient(); if (process.env.NODE ENV !== "production") globalForPrisma.prisma = prisma;
+- `examples/remix/prisma/app/root.tsx:1-27` - App, Layout, links (example; TypeScript; module examples/remix; symbols App, Layout, links). import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix run/react"; import type { LinksFunction } from "@remix run/node"; export const links: LinksFunction = () = [{ rel: "stylesheet", href: "/styles.css" }]; export function Layout({ children }: { children: React.ReactNode }) { return ( {children} ); } export default function App() { return ; }
+- `examples/remix/prisma/app/routes/_index.tsx:1-22` - Index (example; TypeScript; module examples/remix; symbols Index). export default function Index() { return ( Better Auth Studio Remix Example Welcome to the Better Auth Studio Remix example! Access the Studio at /api/studio ); }
+- `examples/remix/prisma/app/routes/api.auth.$.ts:1-11` - action, loader (example; TypeScript; module examples/remix; symbols action, loader). import { auth } from "~/lib/auth.server"; import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix run/node"; export async function loader({ request }: LoaderFunctionArgs) { return auth.handler(request); } export async function action({ request }: ActionFunctionArgs) { return auth.handler(request); }
+- `examples/remix/prisma/app/routes/api.studio.$.ts:1-14` - action, loader (example; TypeScript; module examples/remix; symbols action, loader). import { betterAuthStudio } from "better auth studio/remix"; import studioConfig from "../../studio.config"; import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix run/node"; const handler = betterAuthStudio(studioConfig); export async function loader({ request }: LoaderFunctionArgs) { return handler({ request }); } export async function action({ request }: ActionFunctionArgs) { return handler({ request
+- `examples/remix/prisma/studio.config.ts:1-18` - config (example; TypeScript; module examples/remix; symbols config). import type { StudioConfig } from "better auth studio"; import { auth } from "./app/lib/auth.server"; const config: StudioConfig = { auth, basePath: "/api/studio", metadata: { title: "Better Auth Studio", theme: "dark", }, access: { roles: ["admin"], allowEmails: ["kinfetare8@gmail.com"], }, }; export default config;
+- `examples/remix/prisma/vite.config.ts:1-17` - Remix (example; typescript; module examples/remix). import { vitePlugin as remix } from "@remix run/dev"; import { defineConfig } from "vite"; import tsconfigPaths from "vite tsconfig paths"; export default defineConfig({ plugins: [ remix({ future: { v3 fetcherPersist: true, v3 relativeSplatPath: true, v3 throwAbortReason: true, }, }), tsconfigPaths(), ], });
+
+### Source Details
+- `examples/remix/prisma/app/lib/auth.server.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BASE_URL`, `BETTER_AUTH_URL`
+- `examples/remix/prisma/app/lib/db.server.ts`: language TypeScript; exports `prisma`; env `NODE_ENV`
+- `examples/remix/prisma/app/root.tsx`: language TypeScript; exports `App`, `Layout`, `links`
+- `examples/remix/prisma/app/routes/_index.tsx`: language TypeScript; exports `Index`
+- `examples/remix/prisma/app/routes/api.auth.$.ts`: language TypeScript; exports `action`, `loader`
+- `examples/remix/prisma/app/routes/api.studio.$.ts`: language TypeScript; exports `action`, `loader`
+- `examples/remix/prisma/studio.config.ts`: language TypeScript; exports `config`
+
+### Evidence
+- `examples/remix/prisma/app/lib/auth.server.ts`
+- `examples/remix/prisma/app/lib/db.server.ts`
+- `examples/remix/prisma/app/root.tsx`
+- `examples/remix/prisma/app/routes/_index.tsx`
+- `examples/remix/prisma/app/routes/api.auth.$.ts`
+- `examples/remix/prisma/app/routes/api.studio.$.ts`
+- `examples/remix/prisma/studio.config.ts`
+- `examples/remix/prisma/vite.config.ts`

@@ -1,0 +1,103 @@
+---
+title: "Express Adapter"
+description: "The package exposes a Express adapter surface."
+order: 680
+---
+
+# Express Adapter
+
+The package exposes a Express adapter surface.
+## What This Is
+Express Adapter is documented from the source evidence attached to this page. The goal is to explain what a developer can rely on, what the code detects or returns, and what behavior the utility exposes before listing raw file paths.
+
+## Why It Matters
+Express Adapter matters when a reader needs to understand the behavior exposed by Better Auth Studio without reverse-engineering the implementation first.
+## What It Actually Does
+- `betterAuthStudio(config: StudioConfig): ExpressRouter` - Express adapter for Better Auth Studio
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `name`, `version`, `description`, `license`, `author`, `better-auth-studio`, `type`, `main`, `./express`, `./nextjs`, `./hono`, `./elysia`, `./svelte-kit`, `./solid-start`, and more.
+- Maps detected inputs to normalized values such as `name` -> `better-auth-studio`, `version` -> `1.1.3-beta.49`, `description` -> `Studio for Better Auth`, `license` -> `MIT`, `author` -> `kinfish`, `better-auth-studio` -> `./dist/cli.js`, `type` -> `module`, `main` -> `dist/index.js`, and more.
+## Import Surface
+Use `better-auth-studio/express` as the package path indicated by package metadata or adapter file evidence.
+## API Mental Model
+Use the source-backed behavior above as the contract. The related exports below identify the functions or types a maintainer should keep aligned with the docs.
+## Related Exports
+- `account`
+- `apikey`
+- `betterAuthStudio`
+- `invitation`
+- `member`
+- `organization`
+- `session`
+- `team`
+- `team_member`
+- `teamMember`
+- `two_factor`
+- `user`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Express
+Add the studio handler to your server:
+
+```typescript
+import express from "express";
+import { toNodeHandler } from "better-auth/node";
+import { betterAuthStudio } from "better-auth-studio/express";
+import { auth } from "./auth";
+import studioConfig from "./studio.config";
+
+const app = express();
+
+app.use(express.json());
+app.use("/api/studio", betterAuthStudio(studioConfig));
+app.all("/api/auth/*", toNodeHandler(auth));
+
+app.listen(3000);
+```
+
+Access at `http://localhost:3000/api/studio`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/express/drizzle/auth-schema.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/express/drizzle/better-auth_migrations/2025-09-04T02-33-19.422Z.sql` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/express/drizzle/drizzle.config.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/express/drizzle/drizzle/0000_medical_white_queen.sql` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/express/drizzle/drizzle/0001_stale_nightmare.sql` - Example project file that shows how the capability is wired in a real framework setup.
+- `src/adapters/express.ts` - Framework adapter that connects host requests to the product runtime.
+
+### Knowledge Chunks
+- `package.json:1-64` - Package Config (package; JSON; heading Package). { "name": "better auth studio", "version": "1.1.3 beta.49", "description": "Studio for Better Auth", "keywords": [ "admin", "authentication", "better auth", "dashboard", "gui", "studio" ], "license": "MIT", "author": "kinfish", "bin": { "better auth studio": "./dist/cli.js" }, "files": [ "README.md", "data/default geo.json", "dist/", "scripts/postinstall.js" ], "type": "module", "main": "dist/index.js", "exports": {
+- `package.json:64-116` - Package Config 2 (package; JSON; heading Package). "release:canary": "pnpm build && bumpp preid canary no commit no tag no push && pnpm publish access public tag canary no git checks", "bump": "bumpp" }, "dependencies": { "@babel/preset react": "^7.27.1", "@babel/preset typescript": "^7.27.1", "@better auth/utils": "^0.3.0", "@noble/hashes": "^2.0.1", "@number flow/react": "^0.5.10", "@types/chokidar": "^2.1.7", "better auth": "1.4.5", "bumpp": "^10.2.3", "c12": "^3.
+- `src/adapters/express.ts:1-59` - betterAuthStudio (source; TypeScript; module adapters/express; symbols betterAuthStudio). import type { Router as ExpressRouter, NextFunction, Request, Response } from "express"; import { Router } from "express"; import { handleStudioRequest } from "../core/handler.js"; import type { StudioConfig, UniversalRequest, UniversalResponse } from "../types/handler.js"; import { injectEventHooks, injectLastSeenAtHooks } from "../utils/hook injector.js"; / Express adapter for Better Auth Studio / export function b
+- `examples/express/drizzle/auth-schema.ts:1-68` - account, invitation, member (example; TypeScript; module examples/express; symbols account, invitation, member, organization). import { pgTable, text, timestamp, boolean, integer } from "drizzle orm/pg core"; export const user = pgTable("user", { id: text("id").primaryKey(), name: text("name").notNull(), email: text("email").notNull().unique(), emailVerified: boolean("emailVerified").default(false).notNull(), image: text("image"), createdAt: timestamp("createdAt").defaultNow().notNull(), updatedAt: timestamp("updatedAt") .defaultNow() .$onUp
+- `examples/express/drizzle/auth-schema.ts:68-128` - account, invitation, member (example; TypeScript; module examples/express; symbols account, invitation, member, organization). notNull(), }); export const organization = pgTable("organization", { id: text("id").primaryKey(), name: text("name").notNull(), slug: text("slug").notNull().unique(), logo: text("logo"), createdAt: timestamp("createdAt").notNull(), metadata: text("metadata"), }); export const team = pgTable("team", { id: text("id").primaryKey(), name: text("name").notNull(), organizationId: text("organizationId") .notNull() .referenc
+- `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql:1-7` - account, session, user (example; SQL; module examples/express; symbols account, session, user, verification). create table "user" ("id" text not null primary key, "name" text not null, "email" text not null unique, "emailVerified" integer not null, "image" text, "createdAt" date not null, "updatedAt" date not null); create table "session" ("id" text not null primary key, "expiresAt" date not null, "token" text not null unique, "createdAt" date not null, "updatedAt" date not null, "ipAddress" text, "userAgent" text, "userId"
+- `examples/express/drizzle/better-auth_migrations/2025-09-04T02-33-19.422Z.sql:1-7` - invitation, member, organization (example; SQL; module examples/express; symbols invitation, member, organization). alter table "session" add column "activeOrganizationId" text; create table "organization" ("id" text not null primary key, "name" text not null, "slug" text not null unique, "logo" text, "createdAt" date not null, "metadata" text); create table "member" ("id" text not null primary key, "organizationId" text not null references "organization" ("id") on delete cascade, "userId" text not null references "user" ("id") on
+- `examples/express/drizzle/drizzle.config.ts:1-12` - Express (example; TypeScript; module examples/express). import { type Config } from "drizzle kit"; type ConfigWithoutDriver = Omit ; export default { schema: "./auth schema.ts", dialect: "postgresql", out: "./drizzle", // @ts ignore dbCredentials: { url: process.env.DATABASE URL, }, } satisfies ConfigWithoutDriver;
+- `examples/express/drizzle/drizzle/0000_medical_white_queen.sql:1-89` - account, invitation, member (example; SQL; module examples/express; symbols account, invitation, member, organization). CREATE TABLE "account" ( "id" text PRIMARY KEY NOT NULL, "account id" text NOT NULL, "provider id" text NOT NULL, "user id" text NOT NULL, "access token" text, "refresh token" text, "id token" text, "access token expires at" timestamp, "refresh token expires at" timestamp, "scope" text, "password" text, "created at" timestamp DEFAULT now() NOT NULL, "updated at" timestamp NOT NULL ); statement breakpoint CREATE TABLE
+- `examples/express/drizzle/drizzle/0000_medical_white_queen.sql:89-95` - account, invitation, member (example; SQL; module examples/express; symbols account, invitation, member, organization). NULL, "expires at" timestamp NOT NULL, "created at" timestamp DEFAULT now() NOT NULL, "updated at" timestamp DEFAULT now() NOT NULL ); statement breakpoint
+
+### Source Details
+- `examples/express/drizzle/auth-schema.ts`: language TypeScript; exports `account`, `invitation`, `member`, `organization`, `session`, `team`
+- `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql`: language SQL; declares `account`, `session`, `user`, `verification`
+- `examples/express/drizzle/better-auth_migrations/2025-09-04T02-33-19.422Z.sql`: language SQL; declares `invitation`, `member`, `organization`
+- `examples/express/drizzle/drizzle.config.ts`: language TypeScript; env `DATABASE_URL`
+- `examples/express/drizzle/drizzle/0000_medical_white_queen.sql`: language SQL; declares `account`, `invitation`, `member`, `organization`, `session`, `team`
+- `examples/express/drizzle/drizzle/0001_stale_nightmare.sql`: language SQL; declares `apikey`, `two_factor`
+- `src/adapters/express.ts`: language TypeScript; exports `betterAuthStudio`
+
+### Evidence
+- `examples/express/drizzle/auth-schema.ts`
+- `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql`
+- `examples/express/drizzle/better-auth_migrations/2025-09-04T02-33-19.422Z.sql`
+- `examples/express/drizzle/drizzle.config.ts`
+- `examples/express/drizzle/drizzle/0000_medical_white_queen.sql`
+- `examples/express/drizzle/drizzle/0001_stale_nightmare.sql`
+- `package.json:exports:./dist/adapters/express.js`
+- `package.json:exports:./express`
+- `src/adapters/express.ts`

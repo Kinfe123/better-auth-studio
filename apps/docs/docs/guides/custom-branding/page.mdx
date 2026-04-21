@@ -1,0 +1,136 @@
+---
+title: "Custom Branding"
+description: "The product can be customized through branding, metadata, or theme options."
+order: 450
+---
+
+# Custom Branding
+
+The product can be customized through branding, metadata, or theme options.
+## What This Is
+Custom branding explains how the embedded experience can match the host product. It helps developers understand the difference between visual customization and behavior-changing configuration.
+## Why It Matters
+Custom Branding matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses implementation evidence as supporting context.
+## Core Concepts
+- brand title
+- theme
+- logo
+- metadata
+- visual identity
+## Typical Workflow
+1. Configure title, theme, and branding metadata.
+2. Preview the embedded or standalone UI in the host app.
+3. Keep branding changes separate from access, database, or adapter settings.
+## Detailed Guide Goal
+Custom Branding takes a reader from a known starting point to a useful end state. The guide is more than a command list: it explains when to use the workflow, what state the project needs before starting, what each step changes, and how to verify that the workflow succeeded.
+
+The guide is written for someone who wants to accomplish a task, not someone browsing the source code. Commands and flags appear as tools inside the workflow while the reader stays oriented around the goal.
+
+## When to Use This
+- Use this guide when a developer needs to perform the custom branding workflow from the project root or host application.
+- Use it when a maintainer needs to understand the intended operator or developer path before changing behavior.
+- Link to API or configuration pages only after the reader understands the task.
+
+## Success Criteria
+- The reader knows the prerequisite state.
+- The reader knows what command, action, or setting moves them forward.
+- The reader knows the expected result and how to verify it.
+## Before You Start
+- Install dependencies with `pnpm install`.
+- Confirm the main workflow with `pnpm start`.
+- Review the maintainer reference before adding new examples.
+## Command Mental Model
+- `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
+- `geo:update` runs `node scripts/download-geolite2.js` and supports the project workflow.
+- `copy:public` runs `rm -rf dist/public && cp -r public dist/` and supports the project workflow.
+- `verify:public` runs `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)` and supports the project workflow.
+- `postinstall` runs `node scripts/postinstall.js` and supports the project workflow.
+- `dev` runs `tsx src/cli.ts` and starts the local development workflow.
+- `start` runs `node dist/cli.js` and starts the runtime entrypoint after dependencies or build output are ready.
+- `studio` runs `tsx src/cli.ts` and starts the runtime entrypoint after dependencies or build output are ready.
+- `clean` runs `rm -rf dist` and removes generated artifacts so the next build starts from a clean state.
+- `frontend:dev` runs `cd frontend && pnpm run dev` and starts the local development workflow.
+- `frontend:build` runs `cd frontend && pnpm run build` and creates the production build or compiled package artifacts.
+- `frontend:preview` runs `cd frontend && pnpm run preview` and supports the project workflow.
+- `lint` runs `oxlint . && oxfmt --check .` and checks or fixes code style before changes are shipped.
+- `format` runs `oxlint --fix . && oxfmt .` and checks or fixes code style before changes are shipped.
+- `lint:fix` runs `oxlint --fix . && oxfmt .` and checks or fixes code style before changes are shipped.
+- `type-check` runs `tsc --noEmit` and supports the project workflow.
+## Raw Commands and Flags
+- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public`
+- `geo:update`: `node scripts/download-geolite2.js`
+- `copy:public`: `rm -rf dist/public && cp -r public dist/`
+- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)`
+- `postinstall`: `node scripts/postinstall.js`
+- `dev`: `tsx src/cli.ts`
+- `start`: `node dist/cli.js`
+- `studio`: `tsx src/cli.ts`
+- `clean`: `rm -rf dist`
+- `frontend:dev`: `cd frontend && pnpm run dev`
+- `frontend:build`: `cd frontend && pnpm run build`
+- `frontend:preview`: `cd frontend && pnpm run preview`
+- `lint`: `oxlint . && oxfmt --check .`
+- `format`: `oxlint --fix . && oxfmt .`
+- `lint:fix`: `oxlint --fix . && oxfmt .`
+- `type-check`: `tsc --noEmit`
+- `test`: `vitest`
+- `test:watch`: `vitest --watch`
+- `test:coverage`: `vitest --coverage`
+- `test:ci`: `pnpm test --run`
+- `release`: `pnpm build && bumpp && pnpm publish --access public --no-git-checks`
+- `release:beta`: `pnpm build && bumpp --preid beta && pnpm publish --access public --tag beta --no-git-checks`
+- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next`
+- `release:canary`: `pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks`
+- `bump`: `bumpp`
+- `--api-dir`: <path>", 'Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
+- `--config`: <path>", "Path to the auth configuration file
+- `--geo-db`: <path>", "Path to MaxMind GeoLite2 database file (.mmdb
+- `--host`: <host>", "Host to run the studio on", "localhost
+- `--no-open`
+- `--port`: <port>", "Port to run the studio on", "3002
+- `--watch`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Configuration Options
+| Option                    | Required | Description                                                                                                                                   |
+| ------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`                    | Yes      | Your Better Auth instance                                                                                                                     |
+| `basePath`                | Yes      | URL path where studio is mounted                                                                                                              |
+| `access.allowEmails`      | No       | Array of admin email addresses                                                                                                                |
+| `access.roles`            | No       | Array of allowed user roles                                                                                                                   |
+| `access.allowIpAddresses` | No       | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: `192.168.*`)                                             |
+| `access.blockIpAddresses` | No       | IP blocklist for Studio requests. Supports exact IPs and wildcard patterns                                                                    |
+| `ipAddress`               | No       | IP geolocation for Events/Sessions: `provider` ("ipinfo" \| "ipapi"), `apiToken`, `baseUrl`, optional `endpoint` (ipinfo: "lite" \| "lookup") |
+| `lastSeenAt`              | No       | Enable last-seen tracking: `{ enabled: true, columnName?: string }`                                                                           |
+| `metadata`                | No       | Custom branding (title, theme)                                                                                                                |
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- The guide stays task-oriented: prerequisite, action, expected result, verification.
+- Each command or option is connected to its reason before the raw command inventory appears.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/tanstack-start/drizzle/src/components/meta-theme.ts` - Meta Theme reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx` - DashboardCustomizePanel reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/contexts/ThemeContext.tsx` - Evidence file that contributes to the implementation understanding for this page.
+
+### Knowledge Chunks
+- `README.md#configuration-options:1-11` - Configuration Options (readme; Markdown; heading README > Configuration Options > Configuration Options). | Option | Required | Description | | | | | | auth | Yes | Your Better Auth instance | | basePath | Yes | URL path where studio is mounted | | access.allowEmails | No | Array of admin email addresses | | access.roles | No | Array of allowed user roles | | access.allowIpAddresses | No | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: 192.168. ) | | access.blockIpAddresses | No | IP
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx:1-50` - DashboardCustomizePanel (source; TypeScript; module frontend/src; symbols DashboardCustomizePanel). import { useState } from "react"; import { Button } from "@/components/ui/button"; import { X } from "../PixelIcons"; import { useDashboardWidgets, WIDGET LABELS, type WidgetType, } from "@/contexts/DashboardWidgetsContext"; export function DashboardCustomizePanel() { const { widgets, addWidget, availableToAdd, resetToDefault, setCustomizing, removeWidget } = useDashboardWidgets(); const [addingType, setAddingType] =
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx:50-108` - DashboardCustomizePanel (source; TypeScript; module frontend/src; symbols DashboardCustomizePanel). className="bg white/5 border border white/10 text white text sm px 3 py 2 rounded none focus:outline none focus:ring 1 focus:ring white/30" Remove which widget? {widgets.map((w) = ( {WIDGET LABELS[w.widgetType]} (remove) ))} setAddingType(e.target.value as WidgetType | "")} className="bg white/5 border border white/10 text white text sm px 3 py 2 rounded none focus:outline none focus:ring 1 focus:ring white/30" Add w
+- `frontend/src/contexts/ThemeContext.tsx:1-85` - StudioTheme, THEME_STORAGE_KEY, ThemeProvider (source; TypeScript; module frontend/src; symbols StudioTheme, THEME_STORAGE_KEY, ThemeProvider, useTheme). import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react"; export type StudioTheme = "light" | "dark"; export const THEME STORAGE KEY = "better auth studio theme"; type ThemeContextValue = { theme: StudioTheme; setTheme: (theme: StudioTheme) = void; toggleTheme: () = void; }; const ThemeContext = createContext (null); function getConfiguredTheme(): StudioTheme { const configuredT
+
+### Source Details
+- `examples/tanstack-start/drizzle/src/components/meta-theme.ts`: language TypeScript; exports `MetaTheme`
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx`: language TypeScript; exports `DashboardCustomizePanel`
+- `frontend/src/contexts/ThemeContext.tsx`: language TypeScript; exports `StudioTheme`, `THEME_STORAGE_KEY`, `ThemeProvider`, `useTheme`
+
+### Evidence
+- `examples/tanstack-start/drizzle/src/components/meta-theme.ts`
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx`
+- `frontend/src/contexts/ThemeContext.tsx`
+- `README.md#configuration-options`

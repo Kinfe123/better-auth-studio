@@ -1,0 +1,58 @@
+---
+title: "Dist"
+description: "Dist is a repository module detected from 1 source file and package export metadata."
+order: 940
+---
+
+# Dist
+
+Dist is a repository module detected from 1 source file and package export metadata.
+## What This Module Owns
+Dist owns the behavior described by the source-backed function docs and implementation facts below. The module key is `dist`, and the evidence comes from `dist/index.js`, `package.json:exports:./dist/index.js`, `package.json:exports:./dist/types/handler.js`.
+## What It Actually Does
+The attached source chunks do not include function-level comments, so this page stays conservative and uses the implementation map below as the source of truth.
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `name`, `version`, `description`, `license`, `author`, `better-auth-studio`, `type`, `main`, `./express`, `./nextjs`, `./hono`, `./elysia`, `./svelte-kit`, `./solid-start`, and more.
+- Maps detected inputs to normalized values such as `name` -> `better-auth-studio`, `version` -> `1.1.3-beta.49`, `description` -> `Studio for Better Auth`, `license` -> `MIT`, `author` -> `kinfish`, `better-auth-studio` -> `./dist/cli.js`, `type` -> `module`, `main` -> `dist/index.js`, and more.
+## Module Responsibilities
+- checkEventIngestionHealth
+- createClickHouseProvider
+- createHttpProvider
+- createNodeSqliteProvider
+- createPostgresProvider
+- createSqliteProvider
+- createStorageProvider
+- defineStudioConfig
+- Dist
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `checkEventIngestionHealth`
+- `createClickHouseProvider`
+- `createHttpProvider`
+- `createNodeSqliteProvider`
+- `createPostgresProvider`
+- `createSqliteProvider`
+- `createStorageProvider`
+- `defineStudioConfig`
+- `emitEvent`
+- `EVENT_TEMPLATES`
+- `getEventIngestionProvider`
+- `getEventQueueSize`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `dist/index.js` - Evidence file that contributes to the implementation understanding for this page.
+
+### Knowledge Chunks
+- `package.json:1-64` - Package Config (package; JSON; heading Package). { "name": "better auth studio", "version": "1.1.3 beta.49", "description": "Studio for Better Auth", "keywords": [ "admin", "authentication", "better auth", "dashboard", "gui", "studio" ], "license": "MIT", "author": "kinfish", "bin": { "better auth studio": "./dist/cli.js" }, "files": [ "README.md", "data/default geo.json", "dist/", "scripts/postinstall.js" ], "type": "module", "main": "dist/index.js", "exports": {
+- `package.json:64-116` - Package Config 2 (package; JSON; heading Package). "release:canary": "pnpm build && bumpp preid canary no commit no tag no push && pnpm publish access public tag canary no git checks", "bump": "bumpp" }, "dependencies": { "@babel/preset react": "^7.27.1", "@babel/preset typescript": "^7.27.1", "@better auth/utils": "^0.3.0", "@noble/hashes": "^2.0.1", "@number flow/react": "^0.5.10", "@types/chokidar": "^2.1.7", "better auth": "1.4.5", "bumpp": "^10.2.3", "c12": "^3.
+
+### Source Details
+- `dist/index.js`: language JavaScript; exports `checkEventIngestionHealth`, `createClickHouseProvider`, `createHttpProvider`, `createNodeSqliteProvider`, `createPostgresProvider`, `createSqliteProvider`
+
+### Evidence
+- `dist/index.js`
+- `package.json:exports:./dist/index.js`
+- `package.json:exports:./dist/types/handler.js`

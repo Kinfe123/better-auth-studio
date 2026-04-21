@@ -1,0 +1,53 @@
+---
+title: "Commands"
+description: "Commands is a repository module detected from 1 source file."
+order: 1070
+---
+
+# Commands
+
+Commands is a repository module detected from 1 source file.
+## What This Module Owns
+Commands owns the behavior described by the source-backed function docs and implementation facts below. The module key is `cli/commands`, and the evidence comes from `src/cli/commands/init.ts`.
+## What It Actually Does
+The attached source chunks do not include function-level comments, so this page stays conservative and uses the implementation map below as the source of truth.
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `Express`, `basePath`, `title`, `theme`.
+- Maps detected inputs to normalized values such as `Express` -> `your app`, `basePath` -> `/api/studio`, `title` -> `Admin Dashboard`, `theme` -> `dark`.
+## Module Responsibilities
+- Cli
+- Commands
+- initCommand
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `initCommand`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Other Commands
+```bash
+# Check version
+pnpx better-auth-studio --version
+
+# Show help
+pnpx better-auth-studio --help
+```
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/cli/commands/init.ts` - CLI entrypoint or command implementation that defines developer-facing commands and flags.
+
+### Knowledge Chunks
+- `src/cli/commands/init.ts:1-39` - initCommand (source; TypeScript; module cli/commands; symbols initCommand). import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs"; import { join } from "path"; export async function initCommand(options?: { apiDir?: string }) { console.log("🚀 Initializing Better Auth Studio...\n"); const framework = detectFramework(); console.log("🔍 Detected framework:", framework); const configPath = await createStudioConfig(framework); console.log("✅ Created config:", configPath); const
+- `src/cli/commands/init.ts:39-99` - initCommand (source; TypeScript; module cli/commands; symbols initCommand). nfigContent = import type { StudioConfig } from 'better auth studio'; import { auth } from '${authImportPath}'; const config: StudioConfig = { auth, basePath: '/api/studio', metadata: { title: 'Admin Dashboard', theme: 'dark', }, }; export default config; ; writeFileSync(configPath, configContent, "utf 8"); return configPath; } function detectNextJSAppDir(): string { if (existsSync(join(process.cwd(), "src", "app")))
+- `src/cli/commands/init.ts:99-156` - initCommand (source; TypeScript; module cli/commands; symbols initCommand). ║ ║ • studio.config.ts ║ ║ • ${relativePath} ║ ║ ║ ║ ⚠️ Important: Ensure better auth studio is in dependencies ║ ║ (not devDependencies) for production deployments ║ ║ ║ ║ 🚀 Start your app: ║ ║ pnpm dev ║ ║ ║ ║ 🌐 Dashboard will be at: ║ ║ http://localhost:3000${basePath} ║ ║ ║ ╚═══════════════════════════════════════════════════════════════╝ ); } function generateNextJSRoute(): string { return import { betterAuthS
+- `src/cli/commands/init.ts:156-219` - initCommand (source; TypeScript; module cli/commands; symbols initCommand). ║ ║ ⚠️ Important: Ensure better auth studio is in dependencies ║ ║ (not devDependencies) for production deployments ║ ║ ║ ║ 🚀 Start your app: ║ ║ pnpm dev ║ ║ ║ ║ 🌐 Dashboard will be at: ║ ║ http://localhost:5173${basePath} ║ ║ ║ ╚═══════════════════════════════════════════════════════════════╝ ); } function generateSvelteKitRoute(): string { return import { betterAuthStudio } from 'better auth studio/svelte kit';
+- `src/cli/commands/init.ts:219-281` - initCommand (source; TypeScript; module cli/commands; symbols initCommand). ║ ║ http://localhost:3000${basePath} ║ ║ ║ ╚═══════════════════════════════════════════════════════════════╝ `); } function detectFramework(): string { // Check for SvelteKit if ( existsSync("svelte.config.js") || existsSync("svelte.config.ts") || existsSync("src/routes") || existsSync("src/hooks.server.ts") ) { try { const pkgPath = join(process.cwd(), "package.json"); if (existsSync(pkgPath)) { const pkg = JSON.par
+
+### Source Details
+- `src/cli/commands/init.ts`: language TypeScript; exports `initCommand`
+
+### Evidence
+- `src/cli/commands/init.ts`

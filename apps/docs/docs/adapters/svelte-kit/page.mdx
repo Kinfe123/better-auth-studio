@@ -1,0 +1,39 @@
+---
+title: "Svelte Kit"
+description: "Svelte Kit is a repository module detected from 1 source file."
+order: 120
+---
+
+# Svelte Kit
+
+Svelte Kit is a repository module detected from 1 source file.
+## What This Module Owns
+Svelte Kit owns the behavior described by the source-backed function docs and implementation facts below. The module key is `adapters/svelte-kit`, and the evidence comes from `src/adapters/svelte-kit.ts`.
+## What It Actually Does
+- `betterAuthStudio(config: StudioConfig)` - SvelteKit adapter for Better Auth Studio Usage in a catch-all route handler: ```ts // src/routes/api/studio/[...path]/+server.ts import { betterAuthStudio } from 'better-auth-studio/svelte-kit'; import studioConfig from '../../../../studio.config'; const handler = betterAuthStudio(studioConfig); export async function GET(event) { return handler(event); } export async function POST(event) { return handler(event); } export async function PUT(event) { return handler(event); } export async function DELETE(event) { return handler(event); } export async function PATCH(event) { return handler(event); } ```
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `Content-Type`.
+- Maps detected inputs to normalized values such as `Content-Type` -> `application/json`.
+## Module Responsibilities
+- Adapters
+- betterAuthStudio
+- Svelte Kit
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `betterAuthStudio`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/adapters/svelte-kit.ts` - Framework adapter that connects host requests to the product runtime.
+
+### Knowledge Chunks
+- `src/adapters/svelte-kit.ts:1-52` - betterAuthStudio (source; TypeScript; module adapters/svelte-kit; symbols betterAuthStudio). // @ts expect error SvelteKit types may not be available in the main package import type { RequestEvent } from "@sveltejs/kit"; import { handleStudioRequest } from "../core/handler.js"; import type { StudioConfig, UniversalRequest, UniversalResponse } from "../types/handler.js"; import { injectEventHooks, injectLastSeenAtHooks } from "../utils/hook injector.js"; / SvelteKit adapter for Better Auth Studio Usage in a c
+- `src/adapters/svelte-kit.ts:52-129` - betterAuthStudio (source; TypeScript; module adapters/svelte-kit; symbols betterAuthStudio). return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500, headers: { "Content Type": "application/json" }, }); } }; } async function convertSvelteKitToUniversal( event: RequestEvent, config: StudioConfig, ): Promise { let body: any; const method = event.request.method; if (method !== "GET" && method !== "HEAD") { const contentType = event.request.headers.get("content type") || ""; if (con
+
+### Source Details
+- `src/adapters/svelte-kit.ts`: language TypeScript; exports `betterAuthStudio`
+
+### Evidence
+- `src/adapters/svelte-kit.ts`

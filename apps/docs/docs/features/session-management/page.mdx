@@ -1,0 +1,107 @@
+---
+title: "Session Management"
+description: "The project includes session, sign-in, authentication, or token workflows."
+order: 190
+---
+
+# Session Management
+
+The project includes session, sign-in, authentication, or token workflows.
+## What This Is
+This area explains how the product observes active authentication state. It connects user identity, session creation, sign-in activity, cookies or tokens, and any security-sensitive controls exposed to administrators.
+## Why It Matters
+Session Management matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses implementation evidence as supporting context.
+## Core Concepts
+- sessions
+- sign in
+- tokens
+- cookies
+- auth state
+## Typical Workflow
+1. Review session records for a user or the whole workspace.
+2. Use session metadata to understand device, location, or activity context when available.
+3. Document any destructive session action with its security impact before exposing it to operators.
+## Detailed Behavior
+Session Management works as a product workflow with three layers. The first layer is the user-facing experience: what an operator sees, what they can search or inspect, and what actions they can take. The second layer is the domain model: which records, relationships, or configuration values the workflow depends on. The third layer is the safety model: which permissions, access rules, or validation steps prevent accidental or unauthorized changes.
+
+For Better Auth Studio, this feature is easiest to understand from the operator's point of view. A reader can understand what problem this page solves, what state it reads or changes, and what a successful outcome looks like before they need to think about source files.
+
+## Common Scenarios
+- A new operator wants to understand what session management is for before using it in production.
+- A developer is wiring the feature into a host application and needs to know which data, config, or permissions are involved.
+- A maintainer changed the feature and needs to update docs without forcing readers to understand the source tree first.
+
+## Success Criteria
+- Readers can explain what session management does in plain language.
+- Readers know the main objects or settings involved before they see any file paths.
+- Readers know which actions are safe, which actions are destructive, and which actions depend on access control.
+## How It Fits in the Product
+Session Management is a product capability, not just a list of source files. The important story is the user-facing outcome, the data or configuration it depends on, and the guardrails that make the workflow safe to operate.
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### ✨ Try Better Auth Studio Demo
+You can try a live, demo version of Better Auth Studio here:
+
+👉 **[https://bt-nextjs.vercel.app/admin](https://bt-nextjs.vercel.app/admin)**
+
+- **Login email:** `admin@user.com`
+- **Password:** `admin@user.com`
+
+This online demo lets you explore the admin studio UI. Please note this is a test environment.
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- User-facing state, available actions, empty/error states, and permission boundaries are part of the product behavior.
+- The page explains what data the feature reads or changes before referencing source files.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `./dist/cli.js` - CLI entrypoint or command implementation that defines developer-facing commands and flags.
+- `examples/astro/prisma/src/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/elysia/prisma/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/express/drizzle/auth-schema.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/express/drizzle/better-auth_migrations/2025-09-04T02-33-19.422Z.sql` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/express/drizzle/server/src/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/express/drizzle/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/express/mongodb/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+
+### Knowledge Chunks
+- `README.md#basic-usage:1-23` - Basic Usage (readme; Markdown; heading README > Basic Usage > Basic Usage). 1. Navigate to your Better Auth project directory 2. Start the studio If installed as dev dependency: Or with pnpx: 3. Open your browser The studio will automatically open at http://localhost:3000 Or manually navigate to the URL shown in the terminal
+- `README.md#configuration-options:1-11` - Configuration Options (readme; Markdown; heading README > Configuration Options > Configuration Options). | Option | Required | Description | | | | | | auth | Yes | Your Better Auth instance | | basePath | Yes | URL path where studio is mounted | | access.allowEmails | No | Array of admin email addresses | | access.roles | No | Array of allowed user roles | | access.allowIpAddresses | No | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: 192.168. ) | | access.blockIpAddresses | No | IP
+- `README.md#docker-standalone-self-host:1-53` - Docker (Standalone Self Host) (readme; Markdown; heading README > Docker (Standalone Self Host) > Docker (Standalone Self Host)). If you want to run Better Auth Studio in its own container, this repository includes a Docker setup for the standalone CLI server. This mode is useful when: you want a separate admin container your Better Auth app already lives in its own repository you want Docker managed node modules and package manager cache volumes Important: The standalone container still needs your Better Auth project mounted into it, because S
+- `README.md#hosted-version:1` - Hosted Version (readme; Markdown; heading README > Hosted Version > Hosted Version). For the hosted version: better auth.build
+- `README.md#installation-for-self-hosting:1-7` - Installation for Self Hosting (readme; Markdown; heading README > Installation for Self Hosting > Installation for Self Hosting). Important: For self hosting, install better auth studio as a regular dependency (not devDependency) since it's required at runtime in production: Note: The CLI usage (standalone studio) can be installed as a dev dependency, but self hosting requires it in dependencies for production deployments.
+- `README.md#prerequisites:1-5` - 📋 Prerequisites (readme; Markdown; heading README > 📋 Prerequisites > 📋 Prerequisites). Before using Better Auth Studio, ensure you have: Node.js (v18 or higher) A Better Auth project with a valid auth.ts configuration file Database setup (Prisma, Drizzle, or SQLite)
+- `README.md#self-hosting-beta:1-3` - 🏠 Self Hosting (Beta) (readme; Markdown; heading README > 🏠 Self Hosting (Beta) > 🏠 Self Hosting (Beta)). ⚠️ Beta Feature : Self hosting is currently in beta. Please report any issues on GitHub. Deploy Better Auth Studio alongside your application for production use.
+- `README.md#settings-configuration:1-4` - ⚙️ Settings & Configuration (readme; Markdown; heading README > ⚙️ Settings & Configuration > ⚙️ Settings & Configuration). Plugin status Check which Better Auth plugins are enabled Database configuration View current database adapter and settings Social providers Configure OAuth providers (GitHub, Google, etc.) Email settings Configure email verification and password reset
+- `README.md#start-studio:1-17` - Start Studio (readme; Markdown; heading README > Start Studio > Start Studio). Options: port Specify port (default: 3002) host Specify host (default: localhost) no open Don't automatically open browser config Path to auth config file (default: auto detect) watch Watch for changes in auth config file and reload server automatically 3002 is just the standalone Studio default so it does not clash with apps that already use 3000. You can run Studio on 3000, 4000, or any other free port. Examples: `
+- `README.md#start-studio:18-20` - Start on custom port (if installed as dev dependency) (readme; Markdown; heading README > Start Studio > Start on custom port (if installed as dev dependency)). Start on custom port (if installed as dev dependency) pnpm better auth studio start port 3001
+
+### Source Details
+- `./dist/cli.js`: language JavaScript; flags `--api-dir`, `--config`, `--geo-db`, `--host`, `--no-open`, `--port`
+- `examples/astro/prisma/src/lib/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BASE_URL`, `BETTER_AUTH_URL`
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts`: language TypeScript; exports `ALL`
+- `examples/elysia/prisma/src/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- `examples/express/drizzle/auth-schema.ts`: language TypeScript; exports `account`, `invitation`, `member`, `organization`, `session`, `team`
+- `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql`: language SQL; declares `account`, `session`, `user`, `verification`
+- `examples/express/drizzle/better-auth_migrations/2025-09-04T02-33-19.422Z.sql`: language SQL; declares `invitation`, `member`, `organization`
+- `examples/express/drizzle/server/src/lib/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+
+### Evidence
+- `./dist/cli.js`
+- `examples/astro/prisma/src/lib/auth.ts`
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts`
+- `examples/elysia/prisma/src/auth.ts`
+- `examples/express/drizzle/auth-schema.ts`
+- `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql`
+- `examples/express/drizzle/better-auth_migrations/2025-09-04T02-33-19.422Z.sql`
+- `examples/express/drizzle/server/src/lib/auth.ts`
+- `examples/express/drizzle/src/auth.ts`
+- `examples/express/mongodb/src/auth.ts`
+- `examples/express/prisma/src/auth.ts`
+- `package.json:@better-auth/utils`

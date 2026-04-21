@@ -1,0 +1,49 @@
+---
+title: "Hook Injector"
+description: "The source includes a hook injector utility."
+order: 860
+---
+
+# Hook Injector
+
+The source includes a hook injector utility.
+## What This Is
+Hook Injector is documented from the source evidence attached to this page. The goal is to explain what a developer can rely on, what the code detects or returns, and what behavior the utility exposes before listing raw file paths.
+
+## Why It Matters
+Hook Injector matters when a reader needs to understand the behavior exposed by Better Auth Studio without reverse-engineering the implementation first.
+## What It Actually Does
+- `buildLastSeenSchema(columnName: string): Record<string, unknown>` - Build plugin schema for lastSeenAt (same shape as phoneNumber plugin: user.fields with returned: true). So the adapter includes this field when fetching users, like phoneNumber / phoneNumberVerified.
+- `updateUserLastSeenAt(adapter: any, userId: string | undefined, columnName: string): Promise<void>` - Update user's last-seen column using the adapter only. Column name is configurable (e.g. lastSeenAt, last_seen_at).
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `type`, `model`, `status`.
+- Maps detected inputs to normalized values such as `type` -> `date`, `model` -> `user`, `status` -> `success`, `status` -> `failed`.
+## Import Surface
+No package export was detected for this utility page. Treat it as internal support behavior unless package metadata explicitly exposes it as public API.
+## API Mental Model
+Use the source-backed behavior above as the contract. The related exports below identify the functions or types a maintainer should keep aligned with the docs.
+## Related Exports
+- `injectEventHooks`
+- `injectLastSeenAtHooks`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/utils/hook-injector.ts` - Hook Injector utility. It supports the feature behind the scenes and is often where shared rules live.
+
+### Knowledge Chunks
+- `src/utils/hook-injector.ts:1-75` - injectEventHooks, injectLastSeenAtHooks (source; TypeScript; module hook-injector; symbols injectEventHooks, injectLastSeenAtHooks). import { createAuthMiddleware, getSessionFromCtx } from "better auth/api"; import { createClickHouseProvider, createHttpProvider, createNodeSqliteProvider, createPostgresProvider, createSqliteProvider, } from "../providers/events/helpers.js"; import type { StudioConfig } from "../types/handler.js"; import { wrapAuthCallbacks } from "./auth callbacks injector.js"; import { emitEvent, initializeEventIngestion, isEventI
+- `src/utils/hook-injector.ts:75-111` - injectEventHooks, injectLastSeenAtHooks (source; TypeScript; module hook-injector; symbols injectEventHooks, injectLastSeenAtHooks). function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any { const capturedConfig = eventsConfig; const eventMiddleware = createAuthMiddleware(async (ctx: any) = { if (!capturedConfig?.enabled) { return ctx; } setTimeout(() = { try { const path = ctx?.path || ctx?.context?.path || ""; if (!path) return; const returned = ctx?.context?.returned; if (!returned) return; if (typeof returned === "object
+- `src/utils/hook-injector.ts:111-150` - injectEventHooks, injectLastSeenAtHooks (source; TypeScript; module hook-injector; symbols injectEventHooks, injectLastSeenAtHooks). ip = ctx.headers["x forwarded for"] || ctx.headers["x real ip"] || null; } } } catch (e) {} if (path === "/sign up" || path === "/sign up/email") { const body = ctx.body || {}; const user = returned || ctx.context.returned; if (!isError) { emitEvent( "user.joined", { status: "success", userId: returned.user.id, sessionId: "", metadata: { email: body.email || returned.user.email || "", name: body.name || returned.user
+- `src/utils/hook-injector.ts:150-217` - injectEventHooks, injectLastSeenAtHooks (source; TypeScript; module hook-injector; symbols injectEventHooks, injectLastSeenAtHooks). : returned.body?.code || returned.body?.message || "unknown", ), }, request: { headers: headersObj, ip: ip || undefined, }, }, capturedConfig, ).catch(() = {}); } } if (path === "/sign in" || path === "/sign in/email") { const body = ctx.body || {}; const user = returned.user || ctx.context?.returned; const session = returned.newSession || ctx.context?.newSession; if (!isError) { emitEvent( "user.logged in", { status
+- `src/utils/hook-injector.ts:217-294` - injectEventHooks, injectLastSeenAtHooks (source; TypeScript; module hook-injector; symbols injectEventHooks, injectLastSeenAtHooks). code || "unknown", ), }, request: { headers: headersObj, ip: ip || undefined, }, }, capturedConfig, ).catch(() = {}); } } if (path === "/sign out") { const session = beforeSession as any; const { user, session: sessionData } = session || {}; if (!isError && user) { emitEvent( "user.logged out", { status: "success", userId: user.id, sessionId: sessionData?.id, metadata: { email: user?.email, name: user?.name, }, reque
+- `src/utils/hook-injector.ts:294-322` - injectEventHooks, injectLastSeenAtHooks (source; TypeScript; module hook-injector; symbols injectEventHooks, injectLastSeenAtHooks). : returned.body?.code || returned.body?.message || "unknown", ), }, request: { headers: headersObj, ip: ip || undefined, }, }, capturedConfig, ).catch(() = {}); } } const isCallbackPath = path.startsWith("/callback/") || path.startsWith("/callback") || path.startsWith("/oauth2/callback/") || path.startsWith("/oauth2/callback"); if (isCallbackPath) { try { const newSession = ctx.context?.newSession || returned?.newSes
+- `src/utils/hook-injector.ts:322-381` - injectEventHooks, injectLastSeenAtHooks (source; TypeScript; module hook-injector; symbols injectEventHooks, injectLastSeenAtHooks). (returned?.data && typeof returned.data === "object" && "user" in returned.data ? returned.data.user : null); const existingUser = ctx.context?.existingUser; const params = ctx.params; if (user) { const provider = path.includes("/callback/") ? path.split("/callback/")[1]?.split("/")[0] : path.includes("/oauth2/callback/") ? path.split("/oauth2/callback/")[1]?.split("/")[0] : path.includes("/callback") ? path.split("/
+- `src/utils/hook-injector.ts:381-426` - injectEventHooks, injectLastSeenAtHooks (source; TypeScript; module hook-injector; symbols injectEventHooks, injectLastSeenAtHooks). created", { status: "success", userId: user.id, sessionId: newSession.session?.id || newSession.id, metadata: { name: user.name, email: user.email, provider: params.id, }, request: { headers: headersObj, ip: ip || undefined, }, }, capturedConfig, ).catch(() = {}); } else if (isError) { emitEvent( "session.created", { status: "failed", metadata: { reason: reasonToMessage( returned.statusCode === 401 ? "authentication
+
+### Source Details
+- `src/utils/hook-injector.ts`: language TypeScript; exports `injectEventHooks`, `injectLastSeenAtHooks`
+
+### Evidence
+- `src/utils/hook-injector.ts`

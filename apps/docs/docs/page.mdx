@@ -1,0 +1,327 @@
+---
+title: "Better Auth Studio"
+description: "Overview for Better Auth Studio."
+order: 0
+---
+
+# Better Auth Studio
+
+Studio for Better Auth
+## Product Story
+Better Auth Studio is documented as a product with capabilities, workflows, configuration decisions, and integration surfaces. These pages are organized so a reader can understand the purpose of the project before they need to inspect source files.
+## Reader Paths
+- Start with the overview, quickstart, and installation pages to understand the repository before drilling into implementation details.
+- Use feature pages to understand the product capabilities detected from README, routes, UI, or domain evidence.
+- Use self-hosting pages when deciding how this project fits into a framework, server, or deployment environment.
+- Use configuration pages for detected runtime settings, environment files, deployment files, database files, or product config.
+- Use guides for task-oriented workflows such as CLI usage, local development, troubleshooting, or repository-specific operations.
+- Use API reference pages after the mental model is clear and you need routes, commands, adapters, exports, or type contracts.
+## Knowledge Model
+Each page answers four questions: what the concept is, why it matters, how a developer or operator uses it, and where maintainers can verify the implementation. File paths and exports are kept as supporting evidence rather than the main explanation.
+## Documentation Map
+- Get Started: [Better Auth Studio](/docs) - Core landing page for the docs app.
+- Get Started: [Quickstart](/docs/quickstart) - Core first-run workflow.
+- Get Started: [Installation](/docs/installation) - Core install and configuration workflow.
+- Adapters: [Adapters](/docs/adapters) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- Adapters: [Astro](/docs/adapters/astro) - Detected module evidence with confidence 0.63.
+- Adapters: [Elysia](/docs/adapters/elysia) - Detected module evidence with confidence 0.63.
+- Adapters: [Express](/docs/adapters/express) - Detected module evidence with confidence 0.63.
+- Adapters: [Hono](/docs/adapters/hono) - Detected module evidence with confidence 0.63.
+- Adapters: [Nextjs](/docs/adapters/nextjs) - Detected module evidence with confidence 0.63.
+- Adapters: [Nuxt](/docs/adapters/nuxt) - Detected module evidence with confidence 0.63.
+- Adapters: [Remix](/docs/adapters/remix) - Detected module evidence with confidence 0.63.
+- Adapters: [Solid Start](/docs/adapters/solid-start) - Detected module evidence with confidence 0.63.
+- Adapters: [Svelte Kit](/docs/adapters/svelte-kit) - Detected module evidence with confidence 0.63.
+- Adapters: [Tanstack Start](/docs/adapters/tanstack-start) - Detected module evidence with confidence 0.63.
+- Core Features: [Features](/docs/features) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- Core Features: [Dashboard Overview](/docs/features/dashboard-overview) - Detected feature evidence with confidence 0.80.
+- Core Features: [Developer Tools](/docs/features/developer-tools) - Detected feature evidence with confidence 0.98.
+- Core Features: [Event Tracking](/docs/features/event-tracking) - Detected feature evidence with confidence 0.92.
+- Core Features: [Organization Management](/docs/features/organization-management) - Detected feature evidence with confidence 0.92.
+- Core Features: [Session Management](/docs/features/session-management) - Detected feature evidence with confidence 0.98.
+- Core Features: [User Management](/docs/features/user-management) - Detected feature evidence with confidence 0.92.
+- Self-Hosting: [Self-Hosting](/docs/self-hosting) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- Self-Hosting: [Astro Setup](/docs/self-hosting/astro) - Detected self-hosting evidence with confidence 0.84.
+- Self-Hosting: [Elysia Setup](/docs/self-hosting/elysia) - Detected self-hosting evidence with confidence 0.84.
+- Self-Hosting: [Express Setup](/docs/self-hosting/express) - Detected self-hosting evidence with confidence 0.84.
+- Self-Hosting: [Hono Setup](/docs/self-hosting/hono) - Detected self-hosting evidence with confidence 0.84.
+- Self-Hosting: [Next.js Setup](/docs/self-hosting/nextjs) - Detected self-hosting evidence with confidence 0.84.
+- Self-Hosting: [Nuxt Setup](/docs/self-hosting/nuxt) - Detected self-hosting evidence with confidence 0.84.
+- Self-Hosting: [Self-Hosting Overview](/docs/self-hosting/overview) - Detected self-hosting evidence with confidence 0.76.
+- Self-Hosting: [Remix Setup](/docs/self-hosting/remix) - Detected self-hosting evidence with confidence 0.84.
+- Self-Hosting: [SolidStart Setup](/docs/self-hosting/solid-start) - Detected self-hosting evidence with confidence 0.84.
+- Self-Hosting: [SvelteKit Setup](/docs/self-hosting/svelte-kit) - Detected self-hosting evidence with confidence 0.84.
+- Self-Hosting: [TanStack Start Setup](/docs/self-hosting/tanstack-start) - Detected self-hosting evidence with confidence 0.84.
+- Configuration: [Configuration](/docs/configuration) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- Configuration: [Access Control](/docs/configuration/access-control) - Detected configuration evidence with confidence 0.84.
+- Configuration: [Database Adapters](/docs/configuration/database-adapters) - Detected configuration evidence with confidence 0.98.
+- Configuration: [Database](/docs/configuration/database) - Detected configuration evidence with confidence 0.86.
+- Configuration: [Deployment](/docs/configuration/deployment) - Detected configuration evidence with confidence 0.84.
+- Configuration: [Environment Variables](/docs/configuration/environment) - Detected configuration evidence with confidence 0.90.
+- Configuration: [Event Ingestion](/docs/configuration/event-ingestion) - Detected configuration evidence with confidence 0.92.
+- Configuration: [IP Geolocation](/docs/configuration/ip-geolocation) - Detected configuration evidence with confidence 0.62.
+- Configuration: [Metadata](/docs/configuration/metadata) - Detected configuration evidence with confidence 0.56.
+- Guides: [Guides](/docs/guides) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- Guides: [Bulk Operations](/docs/guides/bulk-operations) - Detected guide evidence with confidence 0.68.
+- Guides: [CLI Usage](/docs/guides/cli-usage) - Detected guide evidence with confidence 0.98.
+- Guides: [Custom Branding](/docs/guides/custom-branding) - Detected guide evidence with confidence 0.64.
+- Guides: [Troubleshooting](/docs/guides/troubleshooting) - Detected guide evidence with confidence 0.76.
+- Guides: [Watch Mode](/docs/guides/watch-mode) - Detected guide evidence with confidence 0.68.
+- Examples: [Examples](/docs/examples) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- Examples: [Astro](/docs/examples/astro) - Detected module evidence with confidence 0.90.
+- Examples: [Elysia](/docs/examples/elysia) - Detected module evidence with confidence 0.74.
+- Examples: [Express](/docs/examples/express) - Detected module evidence with confidence 0.94.
+- Examples: [Hono](/docs/examples/hono) - Detected module evidence with confidence 0.78.
+- Examples: [Nextjs](/docs/examples/nextjs) - Detected module evidence with confidence 0.94.
+- Examples: [Nuxt](/docs/examples/nuxt) - Detected module evidence with confidence 0.81.
+- Examples: [Remix](/docs/examples/remix) - Detected module evidence with confidence 0.94.
+- Examples: [Solid Start](/docs/examples/solid-start) - Detected module evidence with confidence 0.94.
+- Examples: [Svelte Kit](/docs/examples/svelte-kit) - Detected module evidence with confidence 0.94.
+- Examples: [Tanstack Start](/docs/examples/tanstack-start) - Detected module evidence with confidence 0.94.
+- API Reference: [API Reference](/docs/api) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- API Reference: [Adapters](/docs/api/adapters) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- API Reference: [CLI](/docs/api/cli) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- API Reference: [Configuration API](/docs/api/config) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- API Reference: [Events API](/docs/api/events) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- API Reference: [Public Exports](/docs/api/exports) - Detected api evidence with confidence 0.88.
+- API Reference: [Utilities](/docs/api/utilities) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- API Reference: [Astro Adapter](/docs/api/adapters/astro) - Detected api evidence with confidence 0.90.
+- API Reference: [Elysia Adapter](/docs/api/adapters/elysia) - Detected api evidence with confidence 0.90.
+- API Reference: [Express Adapter](/docs/api/adapters/express) - Detected api evidence with confidence 0.90.
+- API Reference: [Hono Adapter](/docs/api/adapters/hono) - Detected api evidence with confidence 0.90.
+- API Reference: [Next.js Adapter](/docs/api/adapters/nextjs) - Detected api evidence with confidence 0.90.
+- API Reference: [Nuxt Adapter](/docs/api/adapters/nuxt) - Detected api evidence with confidence 0.90.
+- API Reference: [Remix Adapter](/docs/api/adapters/remix) - Detected api evidence with confidence 0.90.
+- API Reference: [SolidStart Adapter](/docs/api/adapters/solid-start) - Detected api evidence with confidence 0.90.
+- API Reference: [SvelteKit Adapter](/docs/api/adapters/svelte-kit) - Detected api evidence with confidence 0.90.
+- API Reference: [TanStack Start Adapter](/docs/api/adapters/tanstack-start) - Detected api evidence with confidence 0.90.
+- API Reference: [Init Command](/docs/api/cli/init) - Detected api evidence with confidence 0.88.
+- API Reference: [Start Command](/docs/api/cli/start) - Detected api evidence with confidence 0.92.
+- API Reference: [Access Config](/docs/api/config/access-config) - Detected api evidence with confidence 0.84.
+- API Reference: [Events Config](/docs/api/config/events-config) - Detected api evidence with confidence 0.84.
+- API Reference: [Metadata Config](/docs/api/config/metadata-config) - Detected api evidence with confidence 0.84.
+- API Reference: [Studio Config](/docs/api/config/studio-config) - Detected api evidence with confidence 0.84.
+- API Reference: [Event Providers](/docs/api/events/providers) - Detected api evidence with confidence 0.86.
+- API Reference: [Access Rules](/docs/api/utilities/access-rules) - Detected api evidence with confidence 0.82.
+- API Reference: [Database Detection](/docs/api/utilities/database-detection) - Detected api evidence with confidence 0.82.
+- API Reference: [Event Ingestion](/docs/api/utilities/event-ingestion) - Detected api evidence with confidence 0.82.
+- API Reference: [Hook Injector](/docs/api/utilities/hook-injector) - Detected api evidence with confidence 0.82.
+- Access Rules: [Access Rules](/docs/access-rules) - Detected module evidence with confidence 0.68.
+- Auth Adapter: [Auth Adapter](/docs/auth-adapter) - Detected module evidence with confidence 0.72.
+- Cli: [Cli](/docs/cli) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- Config: [Config](/docs/config) - Detected module evidence with confidence 0.79.
+- Core: [Core](/docs/core) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- Data: [Data](/docs/data) - Detected module evidence with confidence 0.70.
+- Database Detection: [Database Detection](/docs/database-detection) - Detected module evidence with confidence 0.67.
+- Dist: [Dist](/docs/dist) - Detected module evidence with confidence 0.84.
+- Event Ingestion: [Event Ingestion](/docs/event-ingestion) - Detected module evidence with confidence 0.74.
+- Events: [Events](/docs/events) - Detected module evidence with confidence 0.77.
+- Frontend: [Frontend](/docs/frontend) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- Geo Service: [Geo Service](/docs/geo-service) - Detected module evidence with confidence 0.72.
+- Get Tsconfig Info: [Get Tsconfig Info](/docs/get-tsconfig-info) - Detected module evidence with confidence 0.65.
+- Handlers: [Handlers](/docs/handlers) - Detected module evidence with confidence 0.77.
+- Hook Injector: [Hook Injector](/docs/hook-injector) - Detected module evidence with confidence 0.65.
+- Html Injector: [Html Injector](/docs/html-injector) - Detected module evidence with confidence 0.77.
+- Org Hooks Injector: [Org Hooks Injector](/docs/org-hooks-injector) - Detected module evidence with confidence 0.65.
+- Providers: [Providers](/docs/providers) - Section index generated so nested repository-specific pages are visible in the sidebar.
+- Routes: [Routes](/docs/routes) - Detected module evidence with confidence 0.67.
+- Session: [Session](/docs/session) - Detected module evidence with confidence 0.72.
+- Cli: [Commands](/docs/cli/commands) - Detected module evidence with confidence 0.63.
+- Core: [Handlers](/docs/core/handlers) - Detected module evidence with confidence 0.67.
+- Frontend: [Src](/docs/frontend/src) - Detected module evidence with confidence 0.94.
+- Providers: [Events](/docs/providers/events) - Detected module evidence with confidence 0.72.
+- Routes: [Api Router](/docs/routes/api-router) - Detected module evidence with confidence 0.67.
+## Maintainer Snapshot
+- Project type: `cli`
+- Package name: `better-auth-studio`
+- Detected runtimes/adapters: Astro, Elysia, Express, Hono, Next.js, Nuxt, Remix, SolidStart, SvelteKit, TanStack Start
+- Source entrypoints: `dist/index.js`, `./dist/cli.js`, `src/index.ts`, `src/cli.ts`
+- Bootstrap evidence: `README.md`, `package.json`, `docker/compose.yml`, `docker/docker-compose.self-host.yml`, `Dockerfile`, `docs/.vercelignore`, `docs/next.config.ts`, `docs/package.json`, `docs/postcss.config.mjs`, `docs/tailwind.config.js`, `docs/vercel.json`, `examples/astro/astro.config.mjs`, `examples/astro/prisma/astro.config.mjs`, `examples/astro/prisma/package.json`, `examples/astro/prisma/src/lib/auth.ts`, `examples/astro/prisma/studio.config.ts`, `examples/elysia/prisma/package.json`, `examples/elysia/prisma/src/auth.ts`, `examples/elysia/prisma/studio.config.ts`, `examples/express/drizzle/drizzle.config.ts`, `examples/express/drizzle/package.json`, `examples/express/drizzle/server/src/lib/auth.ts`, `examples/express/drizzle/src/auth.ts`, `examples/express/drizzle/studio.config.ts`, `examples/express/mongodb/package.json`, `examples/express/mongodb/src/auth.ts`, `examples/express/prisma/package.json`, `examples/express/prisma/src/auth.ts`, `examples/express/prisma/studio.config.ts`, `examples/hono/prisma/package.json`, `examples/hono/prisma/src/auth.ts`, `examples/hono/prisma/studio.config.pg.example.ts`, `examples/hono/prisma/studio.config.ts`, `examples/nextjs/drizzle/drizzle.config.ts`, `examples/nextjs/drizzle/lib/auth.ts`, `examples/nextjs/drizzle/next.config.js`, `examples/nextjs/drizzle/package.json`, `examples/nextjs/drizzle/studio.config.ts`, `examples/nextjs/mongodb/lib/auth.ts`, `examples/nextjs/mongodb/next.config.js`, `examples/nextjs/mongodb/package.json`, `examples/nextjs/prisma/lib/auth.ts`, `examples/nextjs/prisma/next.config.js`, `examples/nextjs/prisma/package.json`, `examples/nextjs/prisma/studio.config.ts`, `examples/nuxt/prisma/nuxt.config.ts`, `examples/nuxt/prisma/package.json`, `examples/nuxt/prisma/server/lib/auth.ts`, `examples/nuxt/prisma/studio.config.ts`, `examples/remix/prisma/package.json`, `examples/remix/prisma/studio.config.ts`, `examples/remix/prisma/vite.config.ts`, `examples/solid-start/package.json`, `examples/solid-start/postcss.config.cjs`, `examples/solid-start/src/lib/auth.ts`, `examples/solid-start/src/utils/auth.ts`, `examples/solid-start/studio.config.ts`, `examples/solid-start/tailwind.config.cjs`, `examples/solid-start/vite.config.ts`, `examples/svelte-kit/mongodb/package.json`, `examples/svelte-kit/mongodb/postcss.config.js`, `examples/svelte-kit/mongodb/src/lib/auth.ts`, `examples/svelte-kit/mongodb/svelte.config.js`, `examples/svelte-kit/mongodb/tailwind.config.js`, `examples/svelte-kit/mongodb/vite.config.ts`, `examples/svelte-kit/prisma/package.json`, `examples/svelte-kit/prisma/postcss.config.js`, `examples/svelte-kit/prisma/src/lib/auth.ts`, `examples/svelte-kit/prisma/studio.config.ts`, `examples/svelte-kit/prisma/svelte.config.js`, `examples/svelte-kit/prisma/tailwind.config.js`, `examples/svelte-kit/prisma/vite.config.ts`, `examples/tanstack-start/drizzle/components.json`, `examples/tanstack-start/drizzle/package.json`, `examples/tanstack-start/drizzle/src/lib/auth.ts`, `examples/tanstack-start/drizzle/studio.config.ts`, `examples/tanstack-start/drizzle/vite.config.ts`, `frontend/components.json`, `frontend/package.json`, `frontend/postcss.config.js`, `frontend/tailwind.config.js`, `frontend/vite.config.ts`, `vercel.json`, `./dist/cli.js`, `frontend/src/components/CodeEditor.tsx`, `frontend/src/components/CommandPalette.tsx`, `frontend/src/lib/studio-tools.ts`, `frontend/src/pages/DatabaseVisualizer.tsx`, `frontend/src/pages/EmailEditor.tsx`, `frontend/src/pages/Tools.tsx`, `README.md#docker-standalone-self-host`, `README.md#installation-for-self-hosting`, `README.md#next-js-app-router`, `src/cli.ts`, `examples/astro/prisma/src/pages/api/auth/[...all].ts`, `examples/express/drizzle/auth-schema.ts`, `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql`, `examples/express/drizzle/better-auth_migrations/2025-09-04T02-33-19.422Z.sql`, `package.json:@better-auth/utils`, `package.json:better-auth`, `package.json:keywords`, `README.md#basic-usage`, `README.md#configuration-options`, `README.md#hosted-version`, `README.md#prerequisites`, `README.md#self-hosting-beta`, `README.md#settings-configuration`, `README.md#start-studio`, `README.md#supported-database-adapters`, `README.md#try-better-auth-studio-demo`, `README.md#user-management`, `README.md#using-config-option`, `README.md#using-watch-option`, `frontend/src/components/dashboard-widgets/EventsWidget.tsx`, `frontend/src/components/ExportAnalyticsModal.tsx`, `frontend/src/components/LiveEventMarquee.tsx`, `frontend/src/pages/Events.tsx`, `src/providers/events/helpers.ts`, `src/types/events.ts`, `src/utils/event-ingestion.ts`, `frontend/src/components/dashboard-widgets/RecentOrganizationsWidget.tsx`, `frontend/src/components/dashboard-widgets/RecentTeamsWidget.tsx`, `frontend/src/pages/OrganizationDetails.tsx`, `frontend/src/pages/Organizations.tsx`, `frontend/src/pages/TeamDetails.tsx`, `frontend/src/pages/Teams.tsx`, `README.md#dashboard`, `README.md#organization-management`, `examples/tanstack-start/drizzle/src/routes/account/$path.tsx`, `frontend/src/components/dashboard-widgets/RecentUsersWidget.tsx`, `frontend/src/pages/UserDetails.tsx`, `frontend/src/pages/Users.tsx`, `examples/nextjs/prisma/app/dashboard/[...path]/route.ts`, `examples/nextjs/prisma/app/dashboard/route.ts`, `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx`, `frontend/src/components/dashboard-widgets/DashboardFloatingPanel.tsx`, `frontend/src/components/dashboard-widgets/DashboardWidgetGrid.tsx`, `frontend/src/components/dashboard-widgets/DatabaseWidget.tsx`, `frontend/src/components/dashboard-widgets/DropTargetSlot.tsx`, `examples/express/drizzle/drizzle/0000_medical_white_queen.sql`, `examples/express/drizzle/drizzle/0001_stale_nightmare.sql`, `examples/express/drizzle/drizzle/relations.ts`, `examples/express/drizzle/drizzle/schema.ts`, `examples/express/drizzle/lib/db.d.ts`, `examples/express/drizzle/lib/db.js`, `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts`, `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts`, `examples/nextjs/drizzle/app/layout.tsx`, `examples/nextjs/drizzle/app/page.tsx`, `examples/nextjs/drizzle/auth-schema.ts`, `examples/nextjs/drizzle/lib/db.ts`, `examples/remix/prisma/app/lib/auth.server.ts`, `examples/remix/prisma/app/lib/db.server.ts`, `examples/remix/prisma/app/root.tsx`, `examples/remix/prisma/app/routes/_index.tsx`, `examples/remix/prisma/app/routes/api.auth.$.ts`, `examples/remix/prisma/app/routes/api.studio.$.ts`, `examples/solid-start/src/components/Counter.tsx`, `examples/solid-start/src/entry-client.tsx`, `examples/solid-start/src/entry-server.tsx`, `examples/solid-start/src/env/client.ts`, `examples/solid-start/src/env/schema.ts`, `examples/solid-start/src/env/server.ts`, `examples/solid-start/src/lib/auth-client.ts`, `examples/solid-start/src/root.tsx`, `frontend/src/App.tsx`, `frontend/src/components/AnimatedNumber.tsx`, `frontend/src/components/CodeBlock.tsx`, `frontend/src/components/CopyableId.tsx`, `examples/svelte-kit/.eslintrc.cjs`, `examples/svelte-kit/mongodb/app.d.ts`, `examples/svelte-kit/mongodb/src/hooks.server.ts`, `examples/svelte-kit/mongodb/src/lib/auth-client.ts`, `examples/svelte-kit/mongodb/src/lib/db/index.ts`, `examples/tanstack-start/drizzle/auth-schema.ts`, `examples/tanstack-start/drizzle/src/components/header.tsx`, `examples/tanstack-start/drizzle/src/components/meta-theme.ts`, `examples/tanstack-start/drizzle/src/components/mode-toggle.tsx`, `examples/tanstack-start/drizzle/src/components/providers.tsx`, `examples/tanstack-start/drizzle/src/components/ui/button.tsx`, `examples/tanstack-start/drizzle/src/components/ui/dropdown-menu.tsx`, `examples/tanstack-start/drizzle/src/database/db.ts`, `examples/tanstack-start/drizzle/src/database/schema.ts`, `examples/tanstack-start/drizzle/src/lib/auth-client.ts`, `examples/astro/prisma/src/env.d.ts`, `examples/astro/prisma/src/lib/db.ts`, `examples/astro/prisma/src/pages/api/studio/[...all].ts`, `examples/astro/src/pages/api/studio/[...all].ts`, `dist/index.js`, `package.json:exports:./dist/index.js`, `package.json:exports:./dist/types/handler.js`, `examples/nuxt/prisma/server/api/auth/[...all].ts`, `examples/nuxt/prisma/server/api/studio/[...all].ts`, `examples/nuxt/prisma/server/api/studio/index.ts`, `examples/nuxt/prisma/server/lib/db.ts`, `package.json:exports:./config`, `src/config.ts`, `examples/hono/prisma/src/index.ts`, `examples/hono/prisma/src/prisma.ts`, `src/types/handler.ts`, `src/utils/html-injector.ts`, `package.json:exports:./dist/adapters/astro.js`, `package.json:exports:./dist/adapters/elysia.js`, `package.json:exports:./dist/adapters/express.js`, `package.json:exports:./dist/adapters/hono.js`, `package.json:exports:./dist/adapters/nextjs.js`, `package.json:exports:./dist/adapters/nuxt.js`, `package.json:exports:./dist/adapters/remix.js`, `package.json:exports:./dist/adapters/solid-start.js`, `package.json:exports:./dist/adapters/svelte-kit.js`, `package.json:exports:./dist/adapters/tanstack-start.js`, `examples/elysia/prisma/src/index.ts`, `examples/elysia/prisma/src/prisma.ts`, `src/auth-adapter.ts`, `src/geo-service.ts`, `src/utils/session.ts`, `src/data.ts`, `src/utils/access-rules.ts`, `src/routes/api-router.ts`, `src/utils/database-detection.ts`, `src/core/handler.ts`, `src/routes.ts`, `src/get-tsconfig-info.ts`, `src/utils/hook-injector.ts`, `src/utils/org-hooks-injector.ts`, `src/adapters/astro.ts`, `src/cli/commands/init.ts`, `src/adapters/elysia.ts`, `src/adapters/express.ts`, `src/adapters/hono.ts`, `src/adapters/nextjs.ts`, `src/adapters/nuxt.ts`, `src/adapters/remix.ts`, `src/adapters/solid-start.ts`, `src/adapters/svelte-kit.ts`, `src/adapters/tanstack-start.ts`, `package.json:exports:./astro`, `package.json:exports:./elysia`, `package.json:exports:./express`, `package.json:exports:./hono`, `package.json:exports:./nextjs`, `package.json:exports:./nuxt`, `package.json:exports:./remix`, `package.json:exports:./solid-start`, `package.json:exports:./svelte-kit`, `package.json:exports:./tanstack-start`, `README.md#drizzle-setup`, `README.md#prisma-setup`, `examples/express/drizzle/lib/db.ts`, `examples/express/drizzle/src/index.ts`, `frontend/src/pages/AccessDenied.tsx`, `README.md#express`, `tests/access-rules.test.ts`, `package.json:maxmind`, `frontend/src/contexts/ThemeContext.tsx`, `package.json:commander`, `package.json:bin`, `package.json:exports:.`, `README.md#setup`, `examples/express/mongodb/src/db.ts`, `examples/express/drizzle/lib/schema.ts`, `examples/express/mongodb/src/index.ts`, `examples/express/prisma/better-auth_migrations/2025-08-27T15-55-04.099Z.sql`, `examples/express/prisma/better-auth_migrations/2025-09-04T02-33-19.422Z.sql`, `examples/express/prisma/src/index.ts`, `examples/express/prisma/src/lib/email.ts`, `examples/express/prisma/src/prisma.ts`, `examples/nextjs/mongodb/app/api/auth/[...all]/route.ts`, `examples/nextjs/mongodb/app/layout.tsx`, `examples/nextjs/mongodb/app/page.tsx`, `examples/nextjs/mongodb/lib/db.ts`, `examples/nextjs/prisma/app/api/auth/[...all]/route.ts`, `examples/nextjs/prisma/app/api/studio/[[...path]]/route.ts`, `examples/nextjs/prisma/app/layout.tsx`, `examples/nextjs/prisma/app/page.tsx`, `examples/nextjs/prisma/components/Button.tsx`, `examples/nextjs/prisma/lib/db.ts`, `examples/solid-start/src/routes/[...404].tsx`, `examples/solid-start/src/routes/about.tsx`, `examples/solid-start/src/routes/api/auth/*auth.ts`, `examples/solid-start/src/routes/api/session.ts`, `examples/solid-start/src/routes/api/studio/*studio.ts`, `examples/solid-start/src/routes/api/trpc/[...trpc].ts`, `examples/solid-start/src/routes/index.tsx`, `examples/solid-start/src/server/db/client.ts`, `examples/solid-start/src/server/trpc/context.ts`, `examples/solid-start/src/server/trpc/router/_app.ts`, `examples/solid-start/src/server/trpc/utils.ts`, `examples/solid-start/src/utils/trpc-client.ts`, `examples/solid-start/src/utils/useSession.ts`, `examples/svelte-kit/prisma/src/hooks.server.ts`, `examples/svelte-kit/prisma/src/lib/auth-client.ts`, `examples/svelte-kit/prisma/src/lib/db/index.ts`, `examples/svelte-kit/prisma/src/routes/api/studio/[...path]/+server.ts`, `examples/tanstack-start/drizzle/src/lib/utils.ts`, `examples/tanstack-start/drizzle/src/router.tsx`, `examples/tanstack-start/drizzle/src/routes/__root.tsx`, `examples/tanstack-start/drizzle/src/routes/api/auth/$.ts`, `examples/tanstack-start/drizzle/src/routes/api/studio/$.ts`, `examples/tanstack-start/drizzle/src/routes/auth/$path.tsx`, `examples/tanstack-start/drizzle/src/routes/index.tsx`, `examples/tanstack-start/drizzle/src/routeTree.gen.ts`, `frontend/src/components/dashboard-widgets/index.ts`, `frontend/src/components/dashboard-widgets/InvitationsWidget.tsx`, `frontend/src/components/dashboard-widgets/OverviewSlotCard.tsx`, `frontend/src/components/dashboard-widgets/ResizableWidgetCard.tsx`, `frontend/src/components/dashboard-widgets/WidgetContent.tsx`, `frontend/src/components/dashboard-widgets/WorldMapWidget.tsx`, `frontend/src/components/DatabaseSchemaNode.tsx`, `frontend/src/components/DatabaseSchemaNodeDemo.tsx`, `frontend/src/components/Layout.tsx`, `frontend/src/components/PixelIcons.tsx`, `frontend/src/components/TableNode.tsx`, `frontend/src/components/Terminal.tsx`, `frontend/src/components/ui/badge.tsx`, `frontend/src/components/ui/button.tsx`, `frontend/src/components/ui/calendar.tsx`, `frontend/src/components/ui/card.tsx`, `frontend/src/components/ui/checkbox.tsx`, `frontend/src/components/ui/date-range-picker.tsx`, `frontend/src/components/ui/input.tsx`, `frontend/src/components/ui/label.tsx`, `frontend/src/components/ui/pagination.tsx`, `frontend/src/components/ui/popover.tsx`, `frontend/src/components/ui/radio-group.tsx`, `frontend/src/components/ui/select.tsx`, `frontend/src/components/ui/tooltip-docs.tsx`, `frontend/src/components/VisualEmailBuilder.tsx`, `frontend/src/contexts/CountsContext.tsx`, `frontend/src/contexts/DashboardWidgetsContext.tsx`, `frontend/src/hooks/useDatabaseSchemaSummary.ts`, `frontend/src/hooks/useWebSocket.ts`, `frontend/src/lib/icons.tsx`, `frontend/src/lib/utils.ts`, `frontend/src/pages/Dashboard.tsx`, `frontend/src/pages/Login.tsx`, `frontend/src/pages/Sessions.tsx`, `frontend/src/pages/Settings.tsx`, `frontend/src/utils/api.ts`, `frontend/src/utils/studio-auth.ts`, `src/add-svelte-kit-env-modules.ts`, `src/index.ts`, `src/studio.ts`, `src/types/index.ts`, `src/utils.ts`, `src/utils/auth-callbacks-injector.ts`, `src/utils/package-json.ts`, `src/utils/paths.ts`, `src/utils/reason-messages.ts`
+## Core Capabilities
+- Developer Tools: This section explains the utilities that help developers inspect, configure, or generate parts of the product. These tools are not just UI screens; they are shortcuts for common setup, debugging, schema, email, or integration work. Key concepts: developer tools, generators, inspectors, visual editors.
+- Session Management: This area explains how the product observes active authentication state. It connects user identity, session creation, sign-in activity, cookies or tokens, and any security-sensitive controls exposed to administrators. Key concepts: sessions, sign in, tokens, cookies.
+- Event Tracking: This capability turns runtime activity into a timeline that administrators can inspect. It is especially useful for auth products because sign-ins, session creation, account updates, and organization events often need auditability and context. Key concepts: events, audit trail, activity feed, last seen.
+- Organization Management: This capability documents the multi-tenant administrative model. It explains how organizations group users, how teams subdivide access, and how membership or invitation actions change what a person can do inside the product. Key concepts: organizations, teams, members, invitations.
+- User Management: This capability is the administrative surface for user records. It helps an operator inspect accounts, find a user by identity, update profile or verification state, and remove records when needed. In an auth-oriented product, this page is usually one of the highest-value docs pages because it explains the exact model an admin interacts with. Key concepts: users, accounts, profiles, email verification.
+- Dashboard Overview: This area gives operators a high-level view of the system before they drill into individual records. It usually brings together counts, recent activity, database state, and health signals so an admin can understand whether the product is working as expected. Key concepts: workspace status, operational metrics, recent activity, dashboard widgets.
+- Express: Express owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar. Key concepts: account, Examples, Express, invitation.
+- Nextjs: Nextjs owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar. Key concepts: DELETE, Examples, GET, metadata.
+- Remix: Remix owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar. Key concepts: action, App, auth, Examples.
+- Solid Start: Solid Start owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar. Key concepts: authClient, clientEnv, clientScheme, Counter.
+- Src: Src owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar. Key concepts: AnimatedNumber, App, CodeBlock, CodeEditor.
+- Svelte Kit: Svelte Kit owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar. Key concepts: auth, authClient, config, Examples.
+- Tanstack Start: Tanstack Start owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar. Key concepts: accounts, Examples, Header, MetaTheme.
+- Astro: Astro owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar. Key concepts: ALL, Astro, auth, config.
+- Dist: Dist owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar. Key concepts: checkEventIngestionHealth, createClickHouseProvider, createHttpProvider, createNodeSqliteProvider.
+- Nuxt: Nuxt owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar. Key concepts: auth, config, Examples, Nuxt.
+- Config: Config owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar. Key concepts: AuthConfig, AuthDatabase, AuthProvider, Config.
+- Hono: Hono owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar. Key concepts: auth, config, Examples, Hono.
+## Runtime and Adapter Coverage
+- Astro
+- Elysia
+- Express
+- Hono
+- Next.js
+- Nuxt
+- Remix
+- SolidStart
+- SvelteKit
+- TanStack Start
+## Language Coverage
+- TypeScript: 228 analyzed source files
+- SQL: 6 analyzed source files
+- JavaScript: 5 analyzed source files
+## Config Files
+- `docker/compose.yml` (deployment) - Container or Docker Compose setup.
+- `docker/docker-compose.self-host.yml` (deployment) - Container or Docker Compose setup.
+- `Dockerfile` (deployment) - Container or Docker Compose setup.
+- `docs/.vercelignore` (deployment) - Deployment platform configuration.
+- `docs/next.config.ts` (framework) - Next.js application configuration.
+- `docs/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `docs/postcss.config.mjs` (styling) - Styling and CSS pipeline configuration.
+- `docs/tailwind.config.js` (styling) - Styling and CSS pipeline configuration.
+- `docs/vercel.json` (deployment) - Deployment platform configuration.
+- `examples/astro/astro.config.mjs` (framework) - Astro application configuration.
+- `examples/astro/prisma/astro.config.mjs` (framework) - Astro application configuration.
+- `examples/astro/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `examples/astro/prisma/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/astro/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `examples/elysia/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/express/drizzle/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `examples/express/drizzle/server/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/mongodb/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `examples/express/mongodb/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `examples/express/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `examples/hono/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/studio.config.pg.example.ts` (product) - Product runtime configuration.
+## Available Commands
+- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public`
+- `geo:update`: `node scripts/download-geolite2.js`
+- `copy:public`: `rm -rf dist/public && cp -r public dist/`
+- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)`
+- `postinstall`: `node scripts/postinstall.js`
+- `dev`: `tsx src/cli.ts`
+- `start`: `node dist/cli.js`
+- `studio`: `tsx src/cli.ts`
+- `clean`: `rm -rf dist`
+- `frontend:dev`: `cd frontend && pnpm run dev`
+- `frontend:build`: `cd frontend && pnpm run build`
+- `frontend:preview`: `cd frontend && pnpm run preview`
+- `lint`: `oxlint . && oxfmt --check .`
+- `format`: `oxlint --fix . && oxfmt .`
+- `lint:fix`: `oxlint --fix . && oxfmt .`
+- `type-check`: `tsc --noEmit`
+- `test`: `vitest`
+- `test:watch`: `vitest --watch`
+- `test:coverage`: `vitest --coverage`
+- `test:ci`: `pnpm test --run`
+- `release`: `pnpm build && bumpp && pnpm publish --access public --no-git-checks`
+- `release:beta`: `pnpm build && bumpp --preid beta && pnpm publish --access public --tag beta --no-git-checks`
+- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next`
+- `release:canary`: `pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks`
+- `bump`: `bumpp`
+## Configuration Surface
+- `AUTH_SECRET`
+- `AUTH_URL`
+- `BASE_URL`
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `CLERK_SECRET_KEY`
+- `CLICKHOUSE_HOST`
+- `CLICKHOUSE_PASSWORD`
+- `CLICKHOUSE_USERNAME`
+- `DATABASE_URL`
+- `DB_HOST`
+- `DB_NAME`
+- `DB_PASSWORD`
+- `DB_PORT`
+- `DB_USER`
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `IPINFO_TOKEN`
+- `MONGO_URI`
+- `MONGODB_DB_NAME`
+- `MONGODB_URI`
+- `MYSQL_URL`
+- `NEXT_PUBLIC_BETTER_AUTH_URL`
+- `NODE_ENV`
+- `NODE_PATH`
+- `PORT`
+- `POSTGRES_URL`
+- `RESEND_API_KEY`
+- `VERCEL`
+- `VERCEL_URL`
+## Dependencies
+- `@babel/preset-react` (dependency): `^7.27.1`
+- `@babel/preset-typescript` (dependency): `^7.27.1`
+- `@better-auth/utils` (dependency): `^0.3.0`
+- `@noble/hashes` (dependency): `^2.0.1`
+- `@number-flow/react` (dependency): `^0.5.10`
+- `@types/chokidar` (dependency): `^2.1.7`
+- `@types/cors` (devDependency): `^2.8.17`
+- `@types/express` (devDependency): `^4.17.21`
+- `@types/node` (devDependency): `^20.10.0`
+- `@types/supertest` (devDependency): `^6.0.2`
+- `@types/ws` (devDependency): `^8.5.10`
+- `better-auth` (dependency): `1.4.5`
+- `bumpp` (dependency): `^10.2.3`
+- `c12` (dependency): `^3.3.2`
+- `chalk` (dependency): `^5.3.0`
+- `chokidar` (dependency): `^4.0.3`
+- `commander` (dependency): `^11.1.0`
+- `cors` (dependency): `^2.8.5`
+- `dotenv` (dependency): `^16.3.1`
+- `elysia` (dependency): `^1.4.19`
+- `express` (dependency): `^4.18.2`
+- `hono` (dependency): `^4.11.4`
+- `jiti` (dependency): `^2.5.1`
+- `maxmind` (dependency): `^5.0.0`
+## README Sections
+- ## ✨ Try Better Auth Studio Demo
+- ### Hosted Version
+- ### Installation
+- ### Basic Usage
+- ## 📋 Prerequisites
+- ### Supported Database Adapters
+- #### Prisma Setup
+- #### Drizzle Setup
+- #### SQLite Setup
+- ### 📊 Dashboard
+- ### 👥 User Management
+- ### 🏢 Organization Management
+- ### ⚙️ Settings & Configuration
+- ### Start Studio
+## Named Exports
+- `About`
+- `AccessDeniedPage`
+- `AccessEvaluationInput`
+- `AccessEvaluationResult`
+- `account`
+- `accountRelations`
+- `accounts`
+- `action`
+- `addSvelteKitEnvModules`
+- `AlertInfo`
+- `AlertTriangle`
+- `ALL`
+## CLI Options
+- `--api-dir`: <path>", 'Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
+- `--config`: <path>", "Path to the auth configuration file
+- `--geo-db`: <path>", "Path to MaxMind GeoLite2 database file (.mmdb
+- `--host`: <host>", "Host to run the studio on", "localhost
+- `--no-open`
+- `--port`: <port>", "Port to run the studio on", "3002
+- `--watch`

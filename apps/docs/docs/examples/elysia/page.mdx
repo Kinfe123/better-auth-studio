@@ -1,0 +1,94 @@
+---
+title: "Elysia"
+description: "Elysia is a repository module detected from 4 source files."
+order: 500
+---
+
+# Elysia
+
+Elysia is a repository module detected from 4 source files.
+## What This Module Owns
+Elysia owns the behavior described by the source-backed function docs and implementation facts below. The module key is `examples/elysia`, and the evidence comes from `examples/elysia/prisma/src/auth.ts`, `examples/elysia/prisma/src/index.ts`, `examples/elysia/prisma/src/prisma.ts`, `examples/elysia/prisma/studio.config.ts`.
+## What It Actually Does
+The attached source chunks do not include function-level comments, so this page stays conservative and uses the implementation map below as the source of truth.
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `basePath`, `redirectURI`, `status`, `message`, `model`, `description`, `health`, `auth`, `studio`, `error`.
+- Maps detected inputs to normalized values such as `basePath` -> `/api/auth`, `redirectURI` -> `${baseURL}/api/auth/callback/github`, `redirectURI` -> `${baseURL}/api/auth/callback/google`, `redirectURI` -> `${baseURL}/api/auth/callback/discord`, `status` -> `ok`, `message` -> `Better Auth Test Project Running`, `model` -> `account`, `model` -> `user`, and more.
+## Module Responsibilities
+- auth
+- config
+- Elysia
+- Examples
+- prisma
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `auth`
+- `config`
+- `prisma`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Start Studio
+```bash
+pnpx better-auth-studio start [options]
+```
+
+**Options:**
+
+- `--port <number>` - Specify port (default: 3002)
+- `--host <string>` - Specify host (default: localhost)
+- `--no-open` - Don't automatically open browser
+- `--config <path>` - Path to auth config file (default: auto-detect)
+- `--watch` - Watch for changes in auth config file and reload server automatically
+
+`3002` is just the standalone Studio default so it does not clash with apps that already use `3000`. You can run Studio on `3000`, `4000`, or any other free port.
+
+**Examples:**
+
+```bash
+# Start on custom port (if installed as dev dependency)
+pnpm better-auth-studio start --port 3001
+
+# Or with pnpx
+pnpx better-auth-studio start --port 3001
+
+# Start without opening browser
+pnpm better-auth-studio start --no-open
+
+# Use custom config file
+pnpm better-auth-studio start --config ./custom-auth.ts
+
+# Enable watch mode for auto-reload on config changes
+pnpm better-auth-studio start --watch
+
+# Combine multiple options
+pnpx better-auth-studio start --port 3001 --watch --config ./src/auth.ts
+```
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/elysia/prisma/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/elysia/prisma/src/index.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/elysia/prisma/src/prisma.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/elysia/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+
+### Knowledge Chunks
+- `examples/elysia/prisma/src/auth.ts:1-77` - auth (example; TypeScript; module examples/elysia; symbols auth). import { betterAuth, createMiddleware } from "better auth"; import { prismaAdapter } from "better auth/adapters/prisma"; import { createAuthMiddleware } from "better auth/api"; import { organization, admin } from "better auth/plugins"; import prisma from "./prisma"; const baseURL = process.env.BETTER AUTH URL || "http://localhost:3000"; const sendEmail = async ({ to, subject, text, html, }: { to: string; subject: str
+- `examples/elysia/prisma/src/auth.ts:77-101` - auth (example; TypeScript; module examples/elysia; symbols auth). log("sendInvitationEmail", data, request); }, }), admin(), ], session: { expiresIn: 60 60 24 7, // 7 days updateAge: 60 60 24, // 1 day }, advanced: { crossSubDomainCookies: { enabled: true, }, }, rateLimit: { enabled: true, window: 10, max: 100, }, telemetry: { enabled: false, }, trustedOrigins: ["http://localhost:3002", "http://localhost:3000"], });
+- `examples/elysia/prisma/src/index.ts:1-68` - Elysia (example; TypeScript; module examples/elysia). import { Elysia } from "elysia"; import { auth } from "./auth"; import { betterAuthStudio } from "better auth studio/elysia"; import studioConfig from "../studio.config"; const app = new Elysia() .get("/health", (ctx) = { return { status: "ok", message: "Better Auth Test Project Running", timestamp: new Date().toISOString(), }; }) .get("/", async (context) = { try { const sessionResponse = await auth.api.getSession({
+- `examples/elysia/prisma/src/prisma.ts:1-15` - prisma (example; TypeScript; module examples/elysia; symbols prisma). // @ts ignore import { PrismaClient } from "./generated/prisma/index.js"; declare global { var prisma: PrismaClient | undefined; } const prisma = global.prisma || new PrismaClient(); if (process.env.NODE ENV !== "production") { global.prisma = prisma; } export default prisma;
+- `examples/elysia/prisma/studio.config.ts:1-18` - config (example; TypeScript; module examples/elysia; symbols config). import type { StudioConfig } from "better auth studio"; import { auth } from "./src/auth"; const config: StudioConfig = { auth, basePath: "/api/studio", metadata: { title: "Better Auth Studio", theme: "dark", }, access: { roles: ["admin"], allowEmails: ["kinfetare83@gmail.com"], }, }; export default config;
+
+### Source Details
+- `examples/elysia/prisma/src/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- `examples/elysia/prisma/src/index.ts`: language TypeScript; env `PORT`
+- `examples/elysia/prisma/src/prisma.ts`: language TypeScript; exports `prisma`; env `NODE_ENV`
+- `examples/elysia/prisma/studio.config.ts`: language TypeScript; exports `config`
+
+### Evidence
+- `examples/elysia/prisma/src/auth.ts`
+- `examples/elysia/prisma/src/index.ts`
+- `examples/elysia/prisma/src/prisma.ts`
+- `examples/elysia/prisma/studio.config.ts`

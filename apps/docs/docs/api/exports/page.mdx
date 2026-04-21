@@ -1,0 +1,85 @@
+---
+title: "Public Exports"
+description: "The package exposes public imports, declarations, or exported integration helpers."
+order: 640
+---
+
+# Public Exports
+
+The package exposes public imports, declarations, or exported integration helpers.
+## What This Is
+Public Exports is documented from the source evidence attached to this page. The goal is to explain what a developer can rely on, what the code detects or returns, and what behavior the utility exposes before listing raw file paths.
+
+## Why It Matters
+Public Exports matters when a reader needs to understand the behavior exposed by Better Auth Studio without reverse-engineering the implementation first.
+## What It Actually Does
+The attached source chunks do not include function-level comments, so this page stays conservative and uses the implementation map below as the source of truth.
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `name`, `version`, `description`, `license`, `author`, `better-auth-studio`, `type`, `main`, `./express`, `./nextjs`, `./hono`, `./elysia`, `./svelte-kit`, `./solid-start`, and more.
+- Maps detected inputs to normalized values such as `name` -> `better-auth-studio`, `version` -> `1.1.3-beta.49`, `description` -> `Studio for Better Auth`, `license` -> `MIT`, `author` -> `kinfish`, `better-auth-studio` -> `./dist/cli.js`, `type` -> `module`, `main` -> `dist/index.js`, and more.
+## Import Surface
+Use `better-auth-studio` as the package path indicated by package metadata or adapter file evidence.
+## API Mental Model
+Use the source-backed behavior above as the contract. The related exports below identify the functions or types a maintainer should keep aligned with the docs.
+## Related Exports
+- `ALL`
+- `auth`
+- `checkEventIngestionHealth`
+- `config`
+- `createClickHouseProvider`
+- `createHttpProvider`
+- `createNodeSqliteProvider`
+- `createPostgresProvider`
+- `createSqliteProvider`
+- `createStorageProvider`
+- `defineStudioConfig`
+- `emitEvent`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `dist/index.js` - Evidence file that contributes to the implementation understanding for this page.
+- `examples/astro/prisma/src/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/astro/prisma/src/lib/db.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/astro/prisma/src/pages/api/studio/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/astro/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/astro/src/pages/api/studio/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/elysia/prisma/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+
+### Knowledge Chunks
+- `package.json:1-64` - Package Config (package; JSON; heading Package). { "name": "better auth studio", "version": "1.1.3 beta.49", "description": "Studio for Better Auth", "keywords": [ "admin", "authentication", "better auth", "dashboard", "gui", "studio" ], "license": "MIT", "author": "kinfish", "bin": { "better auth studio": "./dist/cli.js" }, "files": [ "README.md", "data/default geo.json", "dist/", "scripts/postinstall.js" ], "type": "module", "main": "dist/index.js", "exports": {
+- `package.json:64-116` - Package Config 2 (package; JSON; heading Package). "release:canary": "pnpm build && bumpp preid canary no commit no tag no push && pnpm publish access public tag canary no git checks", "bump": "bumpp" }, "dependencies": { "@babel/preset react": "^7.27.1", "@babel/preset typescript": "^7.27.1", "@better auth/utils": "^0.3.0", "@noble/hashes": "^2.0.1", "@number flow/react": "^0.5.10", "@types/chokidar": "^2.1.7", "better auth": "1.4.5", "bumpp": "^10.2.3", "c12": "^3.
+- `examples/astro/prisma/src/lib/auth.ts:1-38` - auth (example; TypeScript; module examples/astro; symbols auth). import { betterAuth } from "better auth"; import { prismaAdapter } from "better auth/adapters/prisma"; import { prisma } from "./db"; const baseURL = process.env.BETTER AUTH URL || process.env.BASE URL || "http://localhost:4321"; export const auth = betterAuth({ secret: process.env.AUTH SECRET || "your secret key change in production", database: prismaAdapter(prisma, { provider: "sqlite" }), baseURL, basePath: "/api/
+- `examples/astro/prisma/src/lib/db.ts:1-10` - prisma (example; TypeScript; module examples/astro; symbols prisma). import { PrismaClient } from "@prisma/client"; const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined; }; export const prisma = globalForPrisma.prisma ?? new PrismaClient(); if (process.env.NODE ENV !== "production") globalForPrisma.prisma = prisma;
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts:1-9` - ALL (example; TypeScript; module examples/astro; symbols ALL). import { auth } from "~/lib/auth"; import type { APIRoute } from "astro"; export const ALL: APIRoute = async (ctx) = { // If you want to use rate limiting, make sure to set the 'x forwarded for' header to the request headers from the context // ctx.request.headers.set("x forwarded for", ctx.clientAddress); return auth.handler(ctx.request); };
+- `examples/astro/prisma/src/pages/api/studio/[...all].ts:1-9` - ALL (example; TypeScript; module examples/astro; symbols ALL). import { betterAuthStudio } from "better auth studio/astro"; import studioConfig from "../../../../studio.config"; import type { APIRoute } from "astro"; const handler = betterAuthStudio(studioConfig); export const ALL: APIRoute = async (ctx) = { return handler(ctx); };
+- `examples/astro/prisma/studio.config.ts:1-18` - config (example; TypeScript; module examples/astro; symbols config). import type { StudioConfig } from "better auth studio"; import { auth } from "./src/lib/auth"; const config: StudioConfig = { auth, basePath: "/api/studio", metadata: { title: "Better Auth Studio", theme: "dark", }, access: { roles: ["admin"], allowEmails: ["admin@example.com"], }, }; export default config;
+- `examples/astro/src/pages/api/studio/[...all].ts:1-9` - ALL (example; TypeScript; module examples/astro; symbols ALL). import { betterAuthStudio } from "better auth studio/astro"; import studioConfig from "../../../../studio.config"; import type { APIRoute } from "astro"; const handler = betterAuthStudio(studioConfig); export const ALL: APIRoute = async (ctx) = { return handler(ctx); };
+- `examples/elysia/prisma/src/auth.ts:1-77` - auth (example; TypeScript; module examples/elysia; symbols auth). import { betterAuth, createMiddleware } from "better auth"; import { prismaAdapter } from "better auth/adapters/prisma"; import { createAuthMiddleware } from "better auth/api"; import { organization, admin } from "better auth/plugins"; import prisma from "./prisma"; const baseURL = process.env.BETTER AUTH URL || "http://localhost:3000"; const sendEmail = async ({ to, subject, text, html, }: { to: string; subject: str
+- `examples/elysia/prisma/src/auth.ts:77-101` - auth (example; TypeScript; module examples/elysia; symbols auth). log("sendInvitationEmail", data, request); }, }), admin(), ], session: { expiresIn: 60 60 24 7, // 7 days updateAge: 60 60 24, // 1 day }, advanced: { crossSubDomainCookies: { enabled: true, }, }, rateLimit: { enabled: true, window: 10, max: 100, }, telemetry: { enabled: false, }, trustedOrigins: ["http://localhost:3002", "http://localhost:3000"], });
+
+### Source Details
+- `dist/index.js`: language JavaScript; exports `checkEventIngestionHealth`, `createClickHouseProvider`, `createHttpProvider`, `createNodeSqliteProvider`, `createPostgresProvider`, `createSqliteProvider`
+- `examples/astro/prisma/src/lib/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BASE_URL`, `BETTER_AUTH_URL`
+- `examples/astro/prisma/src/lib/db.ts`: language TypeScript; exports `prisma`; env `NODE_ENV`
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts`: language TypeScript; exports `ALL`
+- `examples/astro/prisma/src/pages/api/studio/[...all].ts`: language TypeScript; exports `ALL`
+- `examples/astro/prisma/studio.config.ts`: language TypeScript; exports `config`
+- `examples/astro/src/pages/api/studio/[...all].ts`: language TypeScript; exports `ALL`
+- `examples/elysia/prisma/src/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+
+### Evidence
+- `dist/index.js`
+- `examples/astro/prisma/src/lib/auth.ts`
+- `examples/astro/prisma/src/lib/db.ts`
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts`
+- `examples/astro/prisma/src/pages/api/studio/[...all].ts`
+- `examples/astro/prisma/studio.config.ts`
+- `examples/astro/src/pages/api/studio/[...all].ts`
+- `examples/elysia/prisma/src/auth.ts`
+- `package.json:exports:.`
+- `package.json:exports:./astro`
+- `package.json:exports:./config`
+- `package.json:exports:./dist/adapters/astro.js`

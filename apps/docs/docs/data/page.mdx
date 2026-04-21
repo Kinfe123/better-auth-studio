@@ -1,0 +1,63 @@
+---
+title: "Data"
+description: "Data is a repository module detected from 1 source file."
+order: 920
+---
+
+# Data
+
+Data is a repository module detected from 1 source file.
+## What This Module Owns
+Data owns the behavior described by the source-backed function docs and implementation facts below. The module key is `data`, and the evidence comes from `src/data.ts`.
+## What It Actually Does
+The attached source chunks do not include function-level comments, so this page stays conservative and uses the implementation map below as the source of truth.
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `provider`, `model`, `field`, `id`, `email`, `image`, `userId`, `userAgent`, `ip`.
+- Maps detected inputs to normalized values such as `provider` -> `email`, `model` -> `user`, `field` -> `id`, `id` -> `user_${i + 1}`, `email` -> `user${i + 1}@example.com`, `image` -> `https://api.dicebear.com/7.x/avataaars/svg?seed=user${i + 1}`, `id` -> `session_${i + 1}`, `userId` -> `user_${Math.floor(Math.random() * 100) + 1}`, and more.
+## Module Responsibilities
+- AuthStats
+- Data
+- getAuthData
+- PaginatedResult
+- Session
+- User
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `AuthStats`
+- `getAuthData`
+- `PaginatedResult`
+- `Session`
+- `User`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Supported Database Adapters
+Better Auth Studio automatically detects and works with:
+
+- **Prisma** (`prismaAdapter`)
+- **Drizzle** (`drizzleAdapter`)
+- **SQLite** (`new Database()` from better-sqlite3)
+- **PostgreSQL** (via Prisma or Drizzle)
+- **MySQL** (via Prisma or Drizzle)
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/data.ts` - Evidence file that contributes to the implementation understanding for this page.
+
+### Knowledge Chunks
+- `src/data.ts:1-64` - AuthStats, getAuthData, PaginatedResult (source; TypeScript; module data; symbols AuthStats, getAuthData, PaginatedResult, Session). import { getAuthAdapter } from "./auth adapter.js"; import type { AuthConfig } from "./config.js"; export interface User { id: string; email?: string; name?: string; image?: string; emailVerified?: Date; createdAt: Date; updatedAt: Date; provider?: string; lastSignIn?: Date; } export interface Session { id: string; userId: string; expires: Date; createdAt: Date; userAgent?: string; ip?: string; } export interface Aut
+- `src/data.ts:64-136` - AuthStats, getAuthData, PaginatedResult (source; TypeScript; module data; symbols AuthStats, getAuthData, PaginatedResult, Session). No adapter found. if you think this is an issue from our side. please file a github issue at \x1b]8;;${githubUrl}\x1b\\${githubUrl}\x1b]8;;\x1b\\, ); } }, 2000); switch (type) { case "stats": return await getRealStats(adapter); case "users": return await getRealUsers(adapter, options); case "sessions": return await getRealSessions(adapter, options); case "providers": return await getRealProviderStats(adapter); case "
+- `src/data.ts:136-215` - AuthStats, getAuthData, PaginatedResult (source; TypeScript; module data; symbols AuthStats, getAuthData, PaginatedResult, Session). .sort((a: any, b: any) = new Date(b.createdAt).getTime() new Date(a.createdAt).getTime()) .slice(0, 5); return { totalUsers: users.length, activeUsers, totalSessions: sessions.length, activeSessions: activeSessions.length, usersByProvider, recentSignups, recentLogins, }; } catch ( error) { throw new Error(Failed to get auth data: ${ error}); } } async function getRealUsers( adapter: any, options: { page: number; limi
+- `src/data.ts:215-244` - AuthStats, getAuthData, PaginatedResult (source; TypeScript; module data; symbols AuthStats, getAuthData, PaginatedResult, Session). length / limit), }; } return { data: [], total: 0, page, limit, totalPages: 0, }; } catch ( error) { throw new Error(Failed to get auth data: ${ error}); } } async function getRealProviderStats( adapter: any) { try { return [ { type: "email", users: 0, active: 0 }, { type: "github", users: 0, active: 0 }, ]; } catch ( error) { throw new Error(Failed to get auth data: ${ error}); } } async function deleteRealUser(adap
+- `src/data.ts:244-332` - AuthStats, getAuthData, PaginatedResult (source; TypeScript; module data; symbols AuthStats, getAuthData, PaginatedResult, Session). await adapter.delete({ model: "user", where: [{ field: "id", value: userId }] }); } else { } } async function updateRealUser( adapter: any, userId: string, userData: Partial , ): Promise { const updatedUser = await adapter.update({ model: "user", where: [ { field: "id", value: userId, }, ], update: { ...userData }, }); return updatedUser; } function getMockData(type: string, options?: any): any { switch (type) { case
+- `src/data.ts:332-408` - AuthStats, getAuthData, PaginatedResult (source; TypeScript; module data; symbols AuthStats, getAuthData, PaginatedResult, Session). function getMockSessions(options: { page: number; limit: number }): PaginatedResult { const { page, limit } = options; const allSessions = generateMockSessions(200); const start = (page 1) limit; const end = start + limit; const data = allSessions.slice(start, end); return { data, total: allSessions.length, page, limit, totalPages: Math.ceil(allSessions.length / limit), }; } function getMockProviderStats() { return [
+- `src/data.ts:408-471` - AuthStats, getAuthData, PaginatedResult (source; TypeScript; module data; symbols AuthStats, getAuthData, PaginatedResult, Session). sessions = await adapter.findMany({ model: "session", limit: 100000 }).catch(() = []); } else { users = adapter.getUsers ? await adapter.getUsers() : []; sessions = adapter.getSessions ? await adapter.getSessions() : []; } const organizations = adapter.findMany ? await adapter.findMany({ model: "organization", limit: 100000 }).catch(() = []) : []; const teams = adapter.findMany ? await adapter.findMany({ model: "team
+- `src/data.ts:471-515` - AuthStats, getAuthData, PaginatedResult (source; TypeScript; module data; symbols AuthStats, getAuthData, PaginatedResult, Session). const bucketDate = new Date(endDate.getTime() (23 i) 60 60 1000); const bucketStart = new Date(bucketDate); bucketStart.setMinutes(0, 0, 0); const bucketEnd = new Date(bucketStart); bucketEnd.setMinutes(59, 59, 999); const hour = bucketDate.getHours(); buckets.push({ start: bucketStart, end: bucketEnd, label: ${hour}h }); } } else if (period === "1W") { // 7 days last 7 days from today for (let i = 0; i < 7; i++) { c
+
+### Source Details
+- `src/data.ts`: language TypeScript; exports `AuthStats`, `getAuthData`, `PaginatedResult`, `Session`, `User`
+
+### Evidence
+- `src/data.ts`

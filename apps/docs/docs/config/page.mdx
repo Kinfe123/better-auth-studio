@@ -1,0 +1,58 @@
+---
+title: "Config"
+description: "Config is a repository module detected from 1 source file and package export metadata."
+order: 900
+---
+
+# Config
+
+Config is a repository module detected from 1 source file and package export metadata.
+## What This Module Owns
+Config owns the behavior described by the source-backed function docs and implementation facts below. The module key is `config`, and the evidence comes from `package.json:exports:./config`, `src/config.ts`.
+## What It Actually Does
+- `findTsconfigPath(startDir: string): string | null` - Find tsconfig.json by searching upwards from a starting directory
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `name`, `version`, `description`, `license`, `author`, `better-auth-studio`, `type`, `main`, `./express`, `./nextjs`, `./hono`, `./elysia`, `./svelte-kit`, `./solid-start`, and more.
+- Maps detected inputs to normalized values such as `name` -> `better-auth-studio`, `version` -> `1.1.3-beta.49`, `description` -> `Studio for Better Auth`, `license` -> `MIT`, `author` -> `kinfish`, `better-auth-studio` -> `./dist/cli.js`, `type` -> `module`, `main` -> `dist/index.js`, and more.
+## Module Responsibilities
+- AuthConfig
+- AuthDatabase
+- AuthProvider
+- Config
+- findAuthConfig
+- getConfig
+- getPathAliases
+- possiblePaths
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `AuthConfig`
+- `AuthDatabase`
+- `AuthProvider`
+- `findAuthConfig`
+- `getConfig`
+- `getPathAliases`
+- `possiblePaths`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/config.ts` - Evidence file that contributes to the implementation understanding for this page.
+
+### Knowledge Chunks
+- `package.json:1-64` - Package Config (package; JSON; heading Package). { "name": "better auth studio", "version": "1.1.3 beta.49", "description": "Studio for Better Auth", "keywords": [ "admin", "authentication", "better auth", "dashboard", "gui", "studio" ], "license": "MIT", "author": "kinfish", "bin": { "better auth studio": "./dist/cli.js" }, "files": [ "README.md", "data/default geo.json", "dist/", "scripts/postinstall.js" ], "type": "module", "main": "dist/index.js", "exports": {
+- `package.json:64-116` - Package Config 2 (package; JSON; heading Package). "release:canary": "pnpm build && bumpp preid canary no commit no tag no push && pnpm publish access public tag canary no git checks", "bump": "bumpp" }, "dependencies": { "@babel/preset react": "^7.27.1", "@babel/preset typescript": "^7.27.1", "@better auth/utils": "^0.3.0", "@noble/hashes": "^2.0.1", "@number flow/react": "^0.5.10", "@types/chokidar": "^2.1.7", "better auth": "1.4.5", "bumpp": "^10.2.3", "c12": "^3.
+- `src/config.ts:1-57` - AuthConfig, AuthDatabase, AuthProvider (source; TypeScript; module config; symbols AuthConfig, AuthDatabase, AuthProvider, findAuthConfig). import fs, { existsSync } from "node:fs"; import path from "node:path"; // @ts expect error No types available import babelPresetReact from "@babel/preset react"; // @ts expect error No types available import babelPresetTypeScript from "@babel/preset typescript"; import type { BetterAuthOptions } from "better auth"; import { BetterAuthError, logger } from "better auth"; import { loadConfig } from "c12"; import type {
+- `src/config.ts:57-135` - AuthConfig, AuthDatabase, AuthProvider (source; TypeScript; module config; symbols AuthConfig, AuthDatabase, AuthProvider, findAuthConfig). let possiblePaths = ["auth.ts", "auth.js", "auth.server.js", "auth.server.ts"]; possiblePaths = [ ...possiblePaths, ...possiblePaths.map((it) = lib/server/${it}), ...possiblePaths.map((it) = server/${it}), ...possiblePaths.map((it) = lib/${it}), ...possiblePaths.map((it) = utils/${it}), ...possiblePaths.map((it) = src/${it}), ...possiblePaths.map((it) = app/${it}), ...possiblePaths.map((it) = apps/${it}), ]; / Find t
+- `src/config.ts:135-216` - AuthConfig, AuthDatabase, AuthProvider (source; TypeScript; module config; symbols AuthConfig, AuthDatabase, AuthProvider, findAuthConfig). result[finalAlias || ""] = path.join(resolvedBaseUrl, finalAliasedPath); } } if (tsConfig.extends) { const extendsPath = Array.isArray(tsConfig.extends) ? tsConfig.extends[0] : tsConfig.extends; const extendedPath = path.isAbsolute(extendsPath) ? extendsPath : path.resolve(configDir, extendsPath); const extendedAliases = getPathAliasesRecursive(extendedPath, visited); for (const [alias, aliasPath] of Object.entries(e
+- `src/config.ts:216-269` - AuthConfig, AuthDatabase, AuthProvider (source; TypeScript; module config; symbols AuthConfig, AuthDatabase, AuthProvider, findAuthConfig). const isDefaultExport = (object: Record ): object is BetterAuthOptions = { return ( typeof object === "object" && object !== null && !Array.isArray(object) && Object.keys(object).length 0 && "options" in object ); }; export async function getConfig({ cwd, configPath, shouldThrowOnError = false, noCache = false, }: { cwd: string; configPath?: string; shouldThrowOnError?: boolean; noCache?: boolean; }) { try { let conf
+- `src/config.ts:269-323` - AuthConfig, AuthDatabase, AuthProvider (source; TypeScript; module config; symbols AuthConfig, AuthDatabase, AuthProvider, findAuthConfig). Couldn't read your auth config in ${resolvedPath}. Make sure to default export your auth instance or to export as a variable named auth., ); process.exit(1); } configFile = "auth" in config ? config.auth?.options : config.options; } if (!configFile) { for (const possiblePath of possiblePaths) { try { const fullPath = path.join(cwd, possiblePath); const { config } = await loadConfig ({ configFile: possiblePath, cwd: c
+- `src/config.ts:323-385` - AuthConfig, AuthDatabase, AuthProvider (source; TypeScript; module config; symbols AuthConfig, AuthDatabase, AuthProvider, findAuthConfig). Please remove import 'server only' from your auth config file temporarily. The CLI cannot resolve the configuration with it included. You can re add it after running the CLI., ); process.exit(1); } if (shouldThrowOnError) { throw e; } logger.error("Couldn't read your auth config.", e); process.exit(1); } } } return configFile; } catch (e) { if ( typeof e === "object" && e && "message" in e && typeof e.message === "st
+- `src/config.ts:385-421` - AuthConfig, AuthDatabase, AuthProvider (source; TypeScript; module config; symbols AuthConfig, AuthDatabase, AuthProvider, findAuthConfig). const providerConfig = betterAuthConfig.socialProviders?.[provider]; const hasCredentials = Boolean( providerConfig?.clientId && providerConfig?.clientSecret, ); return { id: provider, name: provider, clientId: providerConfig?.clientId, clientSecret: providerConfig?.clientSecret, redirectURI: providerConfig?.redirectURI, enabled: Boolean(hasCredentials && providerConfig?.redirectURI), }; }) : [], trustedOrigins: Arra
+
+### Source Details
+- `src/config.ts`: language TypeScript; exports `AuthConfig`, `AuthDatabase`, `AuthProvider`, `findAuthConfig`, `getConfig`, `getPathAliases`
+
+### Evidence
+- `package.json:exports:./config`
+- `src/config.ts`

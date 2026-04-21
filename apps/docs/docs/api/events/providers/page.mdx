@@ -1,0 +1,87 @@
+---
+title: "Event Providers"
+description: "The source exposes event provider types or helpers."
+order: 820
+---
+
+# Event Providers
+
+The source exposes event provider types or helpers.
+## What This Is
+Event Providers is documented from the source evidence attached to this page. The goal is to explain what a developer can rely on, what the code detects or returns, and what behavior the utility exposes before listing raw file paths.
+
+## Why It Matters
+Event Providers matters when a reader needs to understand the behavior exposed by Better Auth Studio without reverse-engineering the implementation first.
+## What It Actually Does
+The attached source chunks do not include function-level comments, so this page stays conservative and uses the implementation map below as the source of truth.
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as ` method) client.`.
+- Maps detected inputs to normalized values such as ` method) client.` -> `Invalid Postgres client. Client must have either a `.
+## Import Surface
+Use `better-auth-studio` as the package path indicated by package metadata or adapter file evidence.
+## API Mental Model
+Use the source-backed behavior above as the contract. The related exports below identify the functions or types a maintainer should keep aligned with the docs.
+## Related Exports
+- `AuthEvent`
+- `AuthEventType`
+- `createClickHouseProvider`
+- `createHttpProvider`
+- `createNodeSqliteProvider`
+- `createPostgresProvider`
+- `createSqliteProvider`
+- `createStorageProvider`
+- `EVENT_TEMPLATES`
+- `EventIngestionProvider`
+- `EventQueryOptions`
+- `EventQueryResult`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### 👥 User Management
+- **View all users** - Paginated list with search and filtering
+- **Create users** - Add new users with email/password
+- **Edit users** - Update user information, email verification status
+- **Delete users** - Remove users from the system
+- **Bulk operations** - Seed multiple test users
+- **User details** - View user profiles, and accounts
+- **Last seen** - When events are enabled, the studio injects an optional `lastSeenAt` field on the user model and updates it on each sign-in or session creation. Run your database migration (e.g. `prisma migrate dev` or Drizzle push) to add the `lastSeenAt` column to the user table.
+
+### Configuration Options
+| Option                    | Required | Description                                                                                                                                   |
+| ------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`                    | Yes      | Your Better Auth instance                                                                                                                     |
+| `basePath`                | Yes      | URL path where studio is mounted                                                                                                              |
+| `access.allowEmails`      | No       | Array of admin email addresses                                                                                                                |
+| `access.roles`            | No       | Array of allowed user roles                                                                                                                   |
+| `access.allowIpAddresses` | No       | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: `192.168.*`)                                             |
+| `access.blockIpAddresses` | No       | IP blocklist for Studio requests. Supports exact IPs and wildcard patterns                                                                    |
+| `ipAddress`               | No       | IP geolocation for Events/Sessions: `provider` ("ipinfo" \| "ipapi"), `apiToken`, `baseUrl`, optional `endpoint` (ipinfo: "lite" \| "lookup") |
+| `lastSeenAt`              | No       | Enable last-seen tracking: `{ enabled: true, columnName?: string }`                                                                           |
+| `metadata`                | No       | Custom branding (title, theme)                                                                                                                |
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/providers/events/helpers.ts` - Evidence file that contributes to the implementation understanding for this page.
+- `src/types/events.ts` - Events type surface. It documents data shapes, provider contracts, or configuration objects.
+
+### Knowledge Chunks
+- `src/providers/events/helpers.ts:1-54` - createClickHouseProvider, createHttpProvider, createNodeSqliteProvider (source; TypeScript; module providers/events; symbols createClickHouseProvider, createHttpProvider, createNodeSqliteProvider, createPostgresProvider). import type { AuthEvent, AuthEventType, EventIngestionProvider, EventQueryOptions, EventQueryResult, } from "../../types/events.js"; export function createPostgresProvider(options: { client: any; tableName?: string; schema?: string; clientType?: "postgres" | "prisma" | "drizzle"; }): EventIngestionProvider { const { client, tableName = "auth events", schema = "public", clientType } = options; // Validate client is pr
+- `src/providers/events/helpers.ts:54-90` - createClickHouseProvider, createHttpProvider, createNodeSqliteProvider (source; TypeScript; module providers/events; symbols createClickHouseProvider, createHttpProvider, createNodeSqliteProvider, createPostgresProvider). // Support Prisma client ($executeRaw), Drizzle instance ($client), or standard pg client (query) let executeQuery: (query: string) = Promise ; if (clientType === "prisma" || client.$executeRaw) { // Prisma client executeQuery = async (query: string) = { return await client.$executeRawUnsafe(query); }; } else if (clientType === "drizzle") { // Drizzle client use $client which exposes the underlying client if (actualC
+- `src/providers/events/helpers.ts:90-130` - createClickHouseProvider, createHttpProvider, createNodeSqliteProvider (source; TypeScript; module providers/events; symbols createClickHouseProvider, createHttpProvider, createNodeSqliteProvider, createPostgresProvider). Postgres client doesn't support $executeRaw or query method. Available properties: ${Object.keys(client).join(", ")}, ); } // Use CREATE TABLE IF NOT EXISTS (simpler and more reliable) const createTableQuery = CREATE TABLE IF NOT EXISTS ${schema}.${tableName} ( id UUID PRIMARY KEY DEFAULT gen random uuid(), type VARCHAR(100) NOT NULL, timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(), status VARCHAR(20) NOT NULL DEFAULT '
+- `src/providers/events/helpers.ts:130-184` - createClickHouseProvider, createHttpProvider, createNodeSqliteProvider (source; TypeScript; module providers/events; symbols createClickHouseProvider, createHttpProvider, createNodeSqliteProvider, createPostgresProvider). if (error?.message?.includes("already exists") || error?.code === "42P07") { return; } console.error(Failed to ensure ${schema}.${tableName} table:, error); } }; let tableEnsured = false; let tableEnsuringPromise: Promise | null = null; const ensureTableSync = async (): Promise = { if (tableEnsured) { return; } if (tableEnsuringPromise) { return tableEnsuringPromise; } tableEnsuringPromise = (async () = { try { await
+- `src/providers/events/helpers.ts:184-217` - createClickHouseProvider, createHttpProvider, createNodeSqliteProvider (source; TypeScript; module providers/events; symbols createClickHouseProvider, createHttpProvider, createNodeSqliteProvider, createPostgresProvider). if (error.code === "42P01" || error.meta?.code === "42P01" || error.code === "P2010") { tableEnsured = false; await ensureTableSync(); try { await client.$executeRawUnsafe(query); return; } catch (retryError: any) { console.error(Retry after table creation also failed:, retryError); throw retryError; } } throw error; } } else if ( (actualClient && (actualClient.query || actualClient.unsafe)) || client.query || client
+- `src/providers/events/helpers.ts:217-268` - createClickHouseProvider, createHttpProvider, createNodeSqliteProvider (source; TypeScript; module providers/events; symbols createClickHouseProvider, createHttpProvider, createNodeSqliteProvider, createPostgresProvider). Failed to insert event (${event.type}) into ${schema}.${tableName}:, error, ); if (error.code === "42P01") { tableEnsured = false; await ensureTableSync(); try { await queryClient.unsafe(query); return; } catch (retryError: any) { console.error(Retry after table creation also failed:, retryError); throw retryError; } } throw error; } } else { // pg Pool/Client use parameterized queries try { await queryClient.query(
+- `src/providers/events/helpers.ts:268-326` - createClickHouseProvider, createHttpProvider, createNodeSqliteProvider (source; TypeScript; module providers/events; symbols createClickHouseProvider, createHttpProvider, createNodeSqliteProvider, createPostgresProvider). VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13), [ event.id, event.type, event.timestamp, event.status || "success", event.userId || null, event.sessionId || null, event.organizationId || null, JSON.stringify(event.metadata || {}), event.ipAddress || null, event.userAgent || null, event.source, event.display?.message || null, event.display?.severity || null, ], ); return; } catch (retryError: any) { c
+- `src/providers/events/helpers.ts:326-360` - createClickHouseProvider, createHttpProvider, createNodeSqliteProvider (source; TypeScript; module providers/events; symbols createClickHouseProvider, createHttpProvider, createNodeSqliteProvider, createPostgresProvider). ('${event.id}', '${event.type}', '${event.timestamp.toISOString()}', '${event.status || "success"}', ${event.userId ? '${event.userId.replace(/'/g, "''")}' : "NULL"}, ${event.sessionId ? '${event.sessionId.replace(/'/g, "''")}' : "NULL"}, ${event.organizationId ? '${event.organizationId.replace(/'/g, "''")}' : "NULL"}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? '${event.
+- `src/types/events.ts:1-91` - AuthEvent, AuthEventType, EVENT_TEMPLATES (source; TypeScript; module events; symbols AuthEvent, AuthEventType, EVENT_TEMPLATES, EventIngestionProvider). export type AuthEventType = | "user.joined" | "user.logged in" | "user.updated" | "user.logged out" | "user.password changed" | "user.email verified" | "user.banned" | "user.unbanned" | "user.deleted" | "user.delete verification requested" | "organization.created" | "organization.deleted" | "organization.updated" | "member.added" | "member.removed" | "member.role changed" | "session.created" | "login.failed" | "passw
+- `src/types/events.ts:91-143` - AuthEvent, AuthEventType, EVENT_TEMPLATES (source; TypeScript; module events; symbols AuthEvent, AuthEventType, EVENT_TEMPLATES, EventIngestionProvider). export const EVENT TEMPLATES: Record string = { "user.joined": (event) = { const name = event.metadata?.name || event.metadata?.email || "User"; if (event.status === "failed") return ${name} failed to join; return ${name} joined!; }, "user.updated": (event) = { const name = event.metadata?.name || event.metadata?.email || "User"; return ${name} updated their profile; }, "user.logged in": (event) = { const name = even
+
+### Source Details
+- `src/providers/events/helpers.ts`: language TypeScript; exports `createClickHouseProvider`, `createHttpProvider`, `createNodeSqliteProvider`, `createPostgresProvider`, `createSqliteProvider`, `createStorageProvider`
+- `src/types/events.ts`: language TypeScript; exports `AuthEvent`, `AuthEventType`, `EVENT_TEMPLATES`, `EventIngestionProvider`, `EventQueryOptions`, `EventQueryResult`
+
+### Evidence
+- `src/providers/events/helpers.ts`
+- `src/types/events.ts`

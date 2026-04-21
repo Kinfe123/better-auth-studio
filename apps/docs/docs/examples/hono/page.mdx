@@ -1,0 +1,102 @@
+---
+title: "Hono"
+description: "Hono is a repository module detected from 5 source files."
+order: 520
+---
+
+# Hono
+
+Hono is a repository module detected from 5 source files.
+## What This Module Owns
+Hono owns the behavior described by the source-backed function docs and implementation facts below. The module key is `examples/hono`, and the evidence comes from `examples/hono/prisma/src/auth.ts`, `examples/hono/prisma/src/index.ts`, `examples/hono/prisma/src/prisma.ts`, `examples/hono/prisma/studio.config.pg.example.ts`, `examples/hono/prisma/studio.config.ts`.
+## What It Actually Does
+The attached source chunks do not include function-level comments, so this page stays conservative and uses the implementation map below as the source of truth.
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `basePath`, `redirectURI`, `status`, `message`, `model`, `description`, `health`, `auth`, `studio`, `error`, `email`.
+- Maps detected inputs to normalized values such as `basePath` -> `/api/auth`, `redirectURI` -> `${baseURL}/api/auth/callback/github`, `redirectURI` -> `${baseURL}/api/auth/callback/google`, `redirectURI` -> `${baseURL}/api/auth/callback/discord`, `status` -> `ok`, `message` -> `Better Auth Test Project Running`, `model` -> `account`, `model` -> `user`, and more.
+## Module Responsibilities
+- auth
+- config
+- Examples
+- Hono
+- prisma
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `auth`
+- `config`
+- `prisma`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Start Studio
+```bash
+pnpx better-auth-studio start [options]
+```
+
+**Options:**
+
+- `--port <number>` - Specify port (default: 3002)
+- `--host <string>` - Specify host (default: localhost)
+- `--no-open` - Don't automatically open browser
+- `--config <path>` - Path to auth config file (default: auto-detect)
+- `--watch` - Watch for changes in auth config file and reload server automatically
+
+`3002` is just the standalone Studio default so it does not clash with apps that already use `3000`. You can run Studio on `3000`, `4000`, or any other free port.
+
+**Examples:**
+
+```bash
+# Start on custom port (if installed as dev dependency)
+pnpm better-auth-studio start --port 3001
+
+# Or with pnpx
+pnpx better-auth-studio start --port 3001
+
+# Start without opening browser
+pnpm better-auth-studio start --no-open
+
+# Use custom config file
+pnpm better-auth-studio start --config ./custom-auth.ts
+
+# Enable watch mode for auto-reload on config changes
+pnpm better-auth-studio start --watch
+
+# Combine multiple options
+pnpx better-auth-studio start --port 3001 --watch --config ./src/auth.ts
+```
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/hono/prisma/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/hono/prisma/src/index.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/hono/prisma/src/prisma.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/hono/prisma/studio.config.pg.example.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/hono/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+
+### Knowledge Chunks
+- `examples/hono/prisma/src/auth.ts:1-4` - auth (example; TypeScript; module examples/hono; symbols auth). import { betterAuth, url } from "better auth"; import { prismaAdapter } from "better auth/adapters/prisma"; import { createAuthMiddleware } from "better auth/api";
+- `examples/hono/prisma/src/auth.ts:4-73` - auth (example; TypeScript; module examples/hono; symbols auth). import { organization, admin, emailOTP, phoneNumber } from "better auth/plugins"; import prisma from "./prisma"; const baseURL = process.env.BETTER AUTH URL || "http://localhost:3000"; export const auth = betterAuth({ secret: process.env.AUTH SECRET || "better auth secret 123456789", database: prismaAdapter(prisma, { provider: "postgresql" }), baseURL, basePath: "/api/auth", socialProviders: { github: { clientId: pro
+- `examples/hono/prisma/src/auth.ts:73-104` - auth (example; TypeScript; module examples/hono; symbols auth). log("sendInvitationEmail", data, request); }, }), admin({ adminUserIds: ["i66uyfRQar7veXs94jLZ48YKZO8ehxxK"], }), emailOTP({ sendVerificationOTP: async ({ email, otp, type }) = { console.log(Verification OTP email for ${email}: ${otp}); }, }), ], session: { expiresIn: 60 60 24 7, // 7 days updateAge: 60 60 24, // 1 day }, advanced: { crossSubDomainCookies: { enabled: true, }, }, rateLimit: { enabled: true, window: 10
+- `examples/hono/prisma/src/index.ts:1-43` - Hono (example; TypeScript; module examples/hono). import "dotenv/config"; import { Hono } from "hono"; import { cors } from "hono/cors"; import { serve } from "@hono/node server"; import { auth } from "./auth"; import { betterAuthStudio } from "better auth studio/hono"; import studioConfig from "../studio.config"; const app = new Hono(); // CORS configuration app.use( " ", cors({ origin: ["http://localhost:3000", "http://localhost:3002"], allowHeaders: ["Content Typ
+- `examples/hono/prisma/src/index.ts:43-132` - Hono (example; TypeScript; module examples/hono). const sessionResponse = await auth.api.getSession({ headers: c.req.raw.headers }); const recentAccounts = await ( await auth.$context ).adapter.findMany({ model: "account", where: [{ field: "providerId", value: "github" }], limit: 5, }); const recentUsers = await ( await auth.$context ).adapter.findMany({ model: "user", limit: 5, }); const sessions = await ( await auth.$context ).adapter.findMany({ model: "session",
+- `examples/hono/prisma/src/index.ts:132-148` - Hono (example; TypeScript; module examples/hono). resetPassword({ // body: { // token: token, // newPassword: "someonepassword" // } // }) return c.json({ message: "Test", success }); }); // Start server const PORT = parseInt(process.env.PORT || "3000", 10); serve( { fetch: app.fetch, port: PORT, }, (info) = {
+- `examples/hono/prisma/src/index.ts:148-151` - Hono (example; TypeScript; module examples/hono). console.log(🚀 Better Auth Test Project running on http://localhost:${info.port}); }, );
+- `examples/hono/prisma/src/prisma.ts:1-14` - prisma (example; TypeScript; module examples/hono; symbols prisma). // @ts ignore import { PrismaClient } from "./generated/prisma/index.js"; declare global { var prisma: PrismaClient | undefined; } const prisma = global.prisma || new PrismaClient(); if (process.env.NODE ENV !== "production") { global.prisma = prisma; } export default prisma;
+- `examples/hono/prisma/studio.config.pg.example.ts:1-38` - config (example; TypeScript; module examples/hono; symbols config). import type { StudioConfig } from "better auth studio"; import { auth } from "./src/auth"; import { Pool } from "pg"; // Example using standard pg Pool const pgPool = new Pool({ connectionString: process.env.DATABASE URL, // Or use individual connection parameters: // host: process.env.DB HOST, // port: parseInt(process.env.DB PORT || '5432', 10), // database: process.env.DB NAME, // user: process.env.DB USER, // pas
+- `examples/hono/prisma/studio.config.ts:1-65` - config (example; TypeScript; module examples/hono; symbols config). import type { StudioConfig } from "better auth studio"; import { auth } from "./src/auth"; import { createClient } from "@clickhouse/client"; import { DatabaseSync } from "node:sqlite"; const clickhouseClient = createClient({ host: process.env.CLICKHOUSE HOST, username: process.env.CLICKHOUSE USERNAME || "default", password: process.env.CLICKHOUSE PASSWORD || "", }); const config: StudioConfig = { auth, basePath: "/a
+
+### Source Details
+- `examples/hono/prisma/src/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- `examples/hono/prisma/src/index.ts`: language TypeScript; env `PORT`
+- `examples/hono/prisma/src/prisma.ts`: language TypeScript; exports `prisma`; env `NODE_ENV`
+- `examples/hono/prisma/studio.config.pg.example.ts`: language TypeScript; exports `config`; env `DATABASE_URL`
+- `examples/hono/prisma/studio.config.ts`: language TypeScript; exports `config`; env `CLICKHOUSE_HOST`, `CLICKHOUSE_PASSWORD`, `CLICKHOUSE_USERNAME`, `IPINFO_TOKEN`
+
+### Evidence
+- `examples/hono/prisma/src/auth.ts`
+- `examples/hono/prisma/src/index.ts`
+- `examples/hono/prisma/src/prisma.ts`
+- `examples/hono/prisma/studio.config.pg.example.ts`
+- `examples/hono/prisma/studio.config.ts`

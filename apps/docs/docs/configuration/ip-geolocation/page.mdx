@@ -1,0 +1,149 @@
+---
+title: "IP Geolocation"
+description: "The project supports IP geolocation or location-aware session/event metadata."
+order: 400
+---
+
+# IP Geolocation
+
+The project supports IP geolocation or location-aware session/event metadata.
+## What This Is
+IP geolocation enriches security and activity views with approximate location context. It usually depends on a provider or database file, so this page separates required config, optional provider tokens, and privacy-sensitive behavior.
+## Why It Matters
+IP Geolocation matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses implementation evidence as supporting context.
+## Core Concepts
+- IP address
+- geolocation provider
+- GeoLite
+- session metadata
+- privacy
+## Typical Workflow
+1. Choose the supported geolocation provider or database source.
+2. Configure any required token, endpoint, or local database path.
+3. Use location data as supporting context rather than a definitive identity signal.
+## Detailed Configuration Model
+IP Geolocation controls behavior rather than UI copy. The important questions are what decision this configuration helps a developer make, what happens when it is absent, and what runtime behavior changes when it is enabled. This page keeps the mental model ahead of the raw files that mention the setting.
+
+For Better Auth Studio, configuration usually answers practical questions: who can access the product, where it is mounted, which runtime services it depends on, and what optional capabilities are enabled. Each setting is documented in relation to one of those questions.
+
+## Decision Points
+- Is the setting required for every installation, or only for a specific framework, adapter, or deployment mode?
+- Does the setting affect security, persistence, presentation, integrations, or developer convenience?
+- What does a developer verify after changing it?
+
+## Success Criteria
+- Readers know when to configure this area and when they can ignore it.
+- Readers understand the consequence of a wrong value.
+- Readers can connect the setting to a visible product behavior or runtime integration.
+## Configuration Surface
+Configuration is easiest to understand when each setting is tied to the behavior it controls. The tables below collect the relevant files and environment variables after the mental model, so readers can connect the concept to the concrete setup surface.
+### Files
+- `examples/astro/prisma/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/astro/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/server/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/mongodb/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/studio.config.pg.example.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/nextjs/drizzle/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/nextjs/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/nextjs/mongodb/lib/auth.ts` (product) - Product runtime configuration.
+### Environment Variables
+- `AUTH_SECRET`
+- `AUTH_URL`
+- `BASE_URL`
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `CLERK_SECRET_KEY`
+- `CLICKHOUSE_HOST`
+- `CLICKHOUSE_PASSWORD`
+- `CLICKHOUSE_USERNAME`
+- `DATABASE_URL`
+- `DB_HOST`
+- `DB_NAME`
+- `DB_PASSWORD`
+- `DB_PORT`
+- `DB_USER`
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `IPINFO_TOKEN`
+- `MONGO_URI`
+- `MONGODB_DB_NAME`
+- `MONGODB_URI`
+- `MYSQL_URL`
+- `NEXT_PUBLIC_BETTER_AUTH_URL`
+- `NODE_ENV`
+- `NODE_PATH`
+- `PORT`
+- `POSTGRES_URL`
+- `RESEND_API_KEY`
+- `VERCEL`
+- `VERCEL_URL`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Configuration Options
+| Option                    | Required | Description                                                                                                                                   |
+| ------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`                    | Yes      | Your Better Auth instance                                                                                                                     |
+| `basePath`                | Yes      | URL path where studio is mounted                                                                                                              |
+| `access.allowEmails`      | No       | Array of admin email addresses                                                                                                                |
+| `access.roles`            | No       | Array of allowed user roles                                                                                                                   |
+| `access.allowIpAddresses` | No       | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: `192.168.*`)                                             |
+| `access.blockIpAddresses` | No       | IP blocklist for Studio requests. Supports exact IPs and wildcard patterns                                                                    |
+| `ipAddress`               | No       | IP geolocation for Events/Sessions: `provider` ("ipinfo" \| "ipapi"), `apiToken`, `baseUrl`, optional `endpoint` (ipinfo: "lite" \| "lookup") |
+| `lastSeenAt`              | No       | Enable last-seen tracking: `{ enabled: true, columnName?: string }`                                                                           |
+| `metadata`                | No       | Custom branding (title, theme)                                                                                                                |
+## How to Reason About This Config
+- Identify whether the option affects security, runtime mounting, data access, or presentation.
+- Prefer examples that use the same names and defaults found in the repository evidence.
+- Call out adapter-specific behavior instead of implying every setting applies to every framework.
+## Validation Checklist
+- Keep config examples aligned with source defaults and runtime validation.
+- Mention whether a setting is required, optional, or only needed for a specific adapter.
+- Update this page when config object names, env vars, or supported providers change.
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Required settings, optional settings, defaults, and adapter-specific behavior are separated clearly.
+- Security impact and validation expectations are called out before examples.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `./dist/cli.js` - CLI entrypoint or command implementation that defines developer-facing commands and flags.
+- `src/geo-service.ts` - Evidence file that contributes to the implementation understanding for this page.
+
+### Knowledge Chunks
+- `README.md#configuration-options:1-11` - Configuration Options (readme; Markdown; heading README > Configuration Options > Configuration Options). | Option | Required | Description | | | | | | auth | Yes | Your Better Auth instance | | basePath | Yes | URL path where studio is mounted | | access.allowEmails | No | Array of admin email addresses | | access.roles | No | Array of allowed user roles | | access.allowIpAddresses | No | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: 192.168. ) | | access.blockIpAddresses | No | IP
+- `package.json:1-64` - Package Config (package; JSON; heading Package). { "name": "better auth studio", "version": "1.1.3 beta.49", "description": "Studio for Better Auth", "keywords": [ "admin", "authentication", "better auth", "dashboard", "gui", "studio" ], "license": "MIT", "author": "kinfish", "bin": { "better auth studio": "./dist/cli.js" }, "files": [ "README.md", "data/default geo.json", "dist/", "scripts/postinstall.js" ], "type": "module", "main": "dist/index.js", "exports": {
+- `package.json:64-116` - Package Config 2 (package; JSON; heading Package). "release:canary": "pnpm build && bumpp preid canary no commit no tag no push && pnpm publish access public tag canary no git checks", "bump": "bumpp" }, "dependencies": { "@babel/preset react": "^7.27.1", "@babel/preset typescript": "^7.27.1", "@better auth/utils": "^0.3.0", "@noble/hashes": "^2.0.1", "@number flow/react": "^0.5.10", "@types/chokidar": "^2.1.7", "better auth": "1.4.5", "bumpp": "^10.2.3", "c12": "^3.
+- `src/geo-service.ts:1-23` - initializeGeoService, IpAddressProviderConfig, LocationData (source; TypeScript; module geo-service; symbols initializeGeoService, IpAddressProviderConfig, LocationData, resolveIPLocation). / IP geolocation: when studio config ipAddress is set, uses that provider (ipinfo.io or ipapi.co); otherwise falls back to maxmind (GeoLite2 City.mmdb), data/default geo.json, then hardcoded ranges. Run pnpm geo:update to download the latest GeoLite2 City.mmdb for fallback. / import { existsSync, readFileSync } from "node:fs"; import { dirname, join } from "node:path"; import { fileURLToPath } from "node:url"; import
+- `src/geo-service.ts:23-114` - initializeGeoService, IpAddressProviderConfig, LocationData (source; TypeScript; module geo-service; symbols initializeGeoService, IpAddressProviderConfig, LocationData, resolveIPLocation). | { provider: "ipinfo"; apiToken?: string; baseUrl?: string; endpoint?: "lite" | "lookup" } | { provider: "ipapi"; apiToken?: string; baseUrl?: string } | { provider: "static"; path: string }; / ipapi.co JSON response (subset we use) / interface IpApiCoResponse { ip?: string; city?: string | null; region?: string | null; region code?: string | null; country?: string | null; country name?: string | null; country code?
+- `src/geo-service.ts:114-150` - initializeGeoService, IpAddressProviderConfig, LocationData (source; TypeScript; module geo-service; symbols initializeGeoService, IpAddressProviderConfig, LocationData, resolveIPLocation). (); } catch ( e) {} lookup = null; } try { const dbPath = geoDbPath || "./data/GeoLite2 City.mmdb"; lookup = await maxmind.open (dbPath); } catch ( error) { lookup = null; loadDefaultDatabase(); } if (!lookup) { loadDefaultDatabase(); } } const DEFAULT IPINFO BASE = "https://api.ipinfo.io"; const DEFAULT IPAPI BASE = "https://ipapi.co"; function parseIpInfoResponse( data: IpInfoLiteResponse | IpInfoLookupResponse | I
+- `src/geo-service.ts:150-203` - initializeGeoService, IpAddressProviderConfig, LocationData (source; TypeScript; module geo-service; symbols initializeGeoService, IpAddressProviderConfig, LocationData, resolveIPLocation). (typeof flat.country === "string" && flat.country.length === 2 ? flat.country : ""); const countryName = lite.country ?? (typeof flat.country === "string" && flat.country.length 2 ? flat.country : "Unknown"); return { country: countryName || "Unknown", countryCode: countryCode || "", city: flat.city ?? "Unknown", region: flat.region ?? "Unknown", }; } return null; } / Resolve IP location: if ipConfig is set, use that
+- `src/geo-service.ts:203-247` - initializeGeoService, IpAddressProviderConfig, LocationData (source; TypeScript; module geo-service; symbols initializeGeoService, IpAddressProviderConfig, LocationData, resolveIPLocation). if (data.error || !data.country code) throw new Error(data.reason || "Invalid response"); return { country: data.country name || data.country || "Unknown", countryCode: data.country code || "", city: data.city ?? "Unknown", region: data.region ?? data.region code ?? "Unknown", }; } catch ( error) { return resolveIPLocation(trimmed); } } return resolveIPLocation(trimmed); } export function resolveIPLocation(ipAddress:
+- `src/geo-service.ts:247-332` - initializeGeoService, IpAddressProviderConfig, LocationData (source; TypeScript; module geo-service; symbols initializeGeoService, IpAddressProviderConfig, LocationData, resolveIPLocation). return ip.split(".").reduce((acc, part) = (acc 0; }; const isIPInRange = (ip: string, minIP: string, maxIP: string): boolean = { const ipNum = ipToNumber(ip); const minNum = ipToNumber(minIP); const maxNum = ipToNumber(maxIP); return ipNum = minNum && ipNum <= maxNum; }; for (const countryData of defaultDatabase.ranges) { for (const range of countryData.ranges) { if (isIPInRange(ipAddress, range.min, range.max)) { re
+- `src/geo-service.ts:332-419` - initializeGeoService, IpAddressProviderConfig, LocationData (source; TypeScript; module geo-service; symbols initializeGeoService, IpAddressProviderConfig, LocationData, resolveIPLocation). 55" }, ], }, { country: "Australia", countryCode: "AU", city: "Sydney", region: "New South Wales", ranges: [ { min: "1.0.0.0", max: "1.255.255.255" }, { min: "27.0.0.0", max: "27.255.255.255" }, ], }, { country: "Brazil", countryCode: "BR", city: "São Paulo", region: "São Paulo", ranges: [ { min: "177.0.0.0", max: "177.255.255.255" }, { min: "201.0.0.0", max: "201.255.255.255" }, ], }, { country: "Ethiopia", countryC
+
+### Source Details
+- `./dist/cli.js`: language JavaScript; flags `--api-dir`, `--config`, `--geo-db`, `--host`, `--no-open`, `--port`
+- `src/geo-service.ts`: language TypeScript; exports `initializeGeoService`, `IpAddressProviderConfig`, `LocationData`, `resolveIPLocation`, `resolveIPLocationAsync`, `setGeoDbPath`
+
+### Evidence
+- `./dist/cli.js`
+- `package.json:maxmind`
+- `README.md#configuration-options`
+- `src/geo-service.ts`

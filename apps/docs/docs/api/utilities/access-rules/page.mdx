@@ -1,0 +1,45 @@
+---
+title: "Access Rules"
+description: "The source includes a access rules utility."
+order: 830
+---
+
+# Access Rules
+
+The source includes a access rules utility.
+## What This Is
+Access Rules is documented from the source evidence attached to this page. The goal is to explain what a developer can rely on, what the code detects or returns, and what behavior the utility exposes before listing raw file paths.
+
+## Why It Matters
+Access Rules matters when a reader needs to understand the behavior exposed by Better Auth Studio without reverse-engineering the implementation first.
+## What It Actually Does
+The attached source chunks do not include function-level comments, so this page stays conservative and uses the implementation map below as the source of truth.
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `reason`, `message`.
+- Maps detected inputs to normalized values such as `reason` -> `ip_not_allowed`, `message` -> `Access denied. This IP address is not in the allowed list.`, `reason` -> `ip_blocked`, `message` -> `Access denied. This IP address is blocked.`.
+## Import Surface
+No package export was detected for this utility page. Treat it as internal support behavior unless package metadata explicitly exposes it as public API.
+## API Mental Model
+Use the source-backed behavior above as the contract. The related exports below identify the functions or types a maintainer should keep aligned with the docs.
+## Related Exports
+- `AccessEvaluationInput`
+- `AccessEvaluationResult`
+- `evaluateRequestAccess`
+- `extractClientIp`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/utils/access-rules.ts` - Access Rules utility. It supports the feature behind the scenes and is often where shared rules live.
+
+### Knowledge Chunks
+- `src/utils/access-rules.ts:1-68` - AccessEvaluationInput, AccessEvaluationResult, evaluateRequestAccess (source; TypeScript; module access-rules; symbols AccessEvaluationInput, AccessEvaluationResult, evaluateRequestAccess, extractClientIp). import { isIP } from "node:net"; import type { StudioAccessConfig } from "../types/handler.js"; export type AccessEvaluationInput = { accessConfig?: StudioAccessConfig; path: string; method: string; headers: Record ; ip?: string | null; }; export type AccessEvaluationResult = | { allowed: true; ipAddress: string | null; } | { allowed: false; ipAddress: string | null; reason: "ip not allowed" | "ip blocked"; message:
+- `src/utils/access-rules.ts:68-141` - AccessEvaluationInput, AccessEvaluationResult, evaluateRequestAccess (source; TypeScript; module access-rules; symbols AccessEvaluationInput, AccessEvaluationResult, evaluateRequestAccess, extractClientIp). function getHeaderValue(headers: Record , headerName: string): string | undefined { const target = headerName.toLowerCase(); for (const [key, value] of Object.entries(headers)) { if (key.toLowerCase() === target) { return value; } } return undefined; } function getForwardedIp(headers: Record ): string | null { const forwarded = getHeaderValue(headers, "forwarded"); if (!forwarded) return null; const entries = forward
+- `src/utils/access-rules.ts:141-171` - AccessEvaluationInput, AccessEvaluationResult, evaluateRequestAccess (source; TypeScript; module access-rules; symbols AccessEvaluationInput, AccessEvaluationResult, evaluateRequestAccess, extractClientIp). if (!ipAddress || !allowIpAddresses.some((rule) = ipMatchesRule(ipAddress, rule))) { return { allowed: false, ipAddress, reason: "ip not allowed", message: "Access denied. This IP address is not in the allowed list.", }; } } const blockIpAddresses = accessConfig?.blockIpAddresses?.filter( (value) = value.trim().length 0, ); if (hasRules(blockIpAddresses) && ipAddress) { const blocked = blockIpAddresses.some((rule) =
+
+### Source Details
+- `src/utils/access-rules.ts`: language TypeScript; exports `AccessEvaluationInput`, `AccessEvaluationResult`, `evaluateRequestAccess`, `extractClientIp`
+
+### Evidence
+- `src/utils/access-rules.ts`

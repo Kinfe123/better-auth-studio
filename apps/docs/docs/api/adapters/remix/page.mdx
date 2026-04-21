@@ -1,0 +1,77 @@
+---
+title: "Remix Adapter"
+description: "The package exposes a Remix adapter surface."
+order: 720
+---
+
+# Remix Adapter
+
+The package exposes a Remix adapter surface.
+## What This Is
+Remix Adapter is documented from the source evidence attached to this page. The goal is to explain what a developer can rely on, what the code detects or returns, and what behavior the utility exposes before listing raw file paths.
+
+## Why It Matters
+Remix Adapter matters when a reader needs to understand the behavior exposed by Better Auth Studio without reverse-engineering the implementation first.
+## What It Actually Does
+- `betterAuthStudio(config: StudioConfig)` - Remix adapter for Better Auth Studio Usage in a resource route: ```ts // app/routes/api.studio.$.ts import { betterAuthStudio } from 'better-auth-studio/remix'; import studioConfig from '~/studio.config'; import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node'; const handler = betterAuthStudio(studioConfig); export async function loader({ request }: LoaderFunctionArgs) { return handler({ request }); } export async function action({ request }: ActionFunctionArgs) { return handler({ request }); } ```
+
+## Behavior From Source Evidence
+- Recognizes evidence markers such as `name`, `version`, `description`, `license`, `author`, `better-auth-studio`, `type`, `main`, `./express`, `./nextjs`, `./hono`, `./elysia`, `./svelte-kit`, `./solid-start`, and more.
+- Maps detected inputs to normalized values such as `name` -> `better-auth-studio`, `version` -> `1.1.3-beta.49`, `description` -> `Studio for Better Auth`, `license` -> `MIT`, `author` -> `kinfish`, `better-auth-studio` -> `./dist/cli.js`, `type` -> `module`, `main` -> `dist/index.js`, and more.
+## Import Surface
+Use `better-auth-studio/remix` as the package path indicated by package metadata or adapter file evidence.
+## API Mental Model
+Use the source-backed behavior above as the contract. The related exports below identify the functions or types a maintainer should keep aligned with the docs.
+## Related Exports
+- `action`
+- `App`
+- `auth`
+- `betterAuthStudio`
+- `Index`
+- `Layout`
+- `links`
+- `loader`
+- `prisma`
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/remix/prisma/app/lib/auth.server.ts` - Auth.Server page-level UI. This is where users usually encounter the capability in the product.
+- `examples/remix/prisma/app/lib/db.server.ts` - Db.Server page-level UI. This is where users usually encounter the capability in the product.
+- `examples/remix/prisma/app/root.tsx` - Root page-level UI. This is where users usually encounter the capability in the product.
+- `examples/remix/prisma/app/routes/_index.tsx` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/remix/prisma/app/routes/api.auth.$.ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/remix/prisma/app/routes/api.studio.$.ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `src/adapters/remix.ts` - Framework adapter that connects host requests to the product runtime.
+
+### Knowledge Chunks
+- `package.json:1-64` - Package Config (package; JSON; heading Package). { "name": "better auth studio", "version": "1.1.3 beta.49", "description": "Studio for Better Auth", "keywords": [ "admin", "authentication", "better auth", "dashboard", "gui", "studio" ], "license": "MIT", "author": "kinfish", "bin": { "better auth studio": "./dist/cli.js" }, "files": [ "README.md", "data/default geo.json", "dist/", "scripts/postinstall.js" ], "type": "module", "main": "dist/index.js", "exports": {
+- `package.json:64-116` - Package Config 2 (package; JSON; heading Package). "release:canary": "pnpm build && bumpp preid canary no commit no tag no push && pnpm publish access public tag canary no git checks", "bump": "bumpp" }, "dependencies": { "@babel/preset react": "^7.27.1", "@babel/preset typescript": "^7.27.1", "@better auth/utils": "^0.3.0", "@noble/hashes": "^2.0.1", "@number flow/react": "^0.5.10", "@types/chokidar": "^2.1.7", "better auth": "1.4.5", "bumpp": "^10.2.3", "c12": "^3.
+- `src/adapters/remix.ts:1-39` - betterAuthStudio (source; TypeScript; module adapters/remix; symbols betterAuthStudio). import { handleStudioRequest } from "../core/handler.js"; import type { StudioConfig, UniversalRequest, UniversalResponse } from "../types/handler.js"; import { injectEventHooks, injectLastSeenAtHooks } from "../utils/hook injector.js"; / Remix adapter for Better Auth Studio Usage in a resource route: / export function betterAuthStudio(config: StudioConfig) { if (config.auth) { injectLastSeenAtHooks(config.auth, conf
+- `src/adapters/remix.ts:39-118` - betterAuthStudio (source; TypeScript; module adapters/remix; symbols betterAuthStudio). return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500, headers: { "Content Type": "application/json" }, }); } }; } async function convertRemixToUniversal( { request }: { request: Request }, config: StudioConfig, ): Promise { let body: any; const method = request.method; if (method !== "GET" && method !== "HEAD") { const contentType = request.headers.get("content type") || ""; if (conte
+- `examples/remix/prisma/app/lib/auth.server.ts:1-38` - auth (example; TypeScript; module examples/remix; symbols auth). import { betterAuth } from "better auth"; import { prismaAdapter } from "better auth/adapters/prisma"; import { prisma } from "./db.server"; const baseURL = process.env.BETTER AUTH URL || process.env.BASE URL || "http://localhost:3000"; export const auth = betterAuth({ secret: process.env.AUTH SECRET || "your secret key change in production", database: prismaAdapter(prisma, { provider: "sqlite" }), baseURL, basePath:
+- `examples/remix/prisma/app/lib/db.server.ts:1-10` - prisma (example; TypeScript; module examples/remix; symbols prisma). import { PrismaClient } from "@prisma/client"; const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined; }; export const prisma = globalForPrisma.prisma ?? new PrismaClient(); if (process.env.NODE ENV !== "production") globalForPrisma.prisma = prisma;
+- `examples/remix/prisma/app/root.tsx:1-27` - App, Layout, links (example; TypeScript; module examples/remix; symbols App, Layout, links). import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix run/react"; import type { LinksFunction } from "@remix run/node"; export const links: LinksFunction = () = [{ rel: "stylesheet", href: "/styles.css" }]; export function Layout({ children }: { children: React.ReactNode }) { return ( {children} ); } export default function App() { return ; }
+- `examples/remix/prisma/app/routes/_index.tsx:1-22` - Index (example; TypeScript; module examples/remix; symbols Index). export default function Index() { return ( Better Auth Studio Remix Example Welcome to the Better Auth Studio Remix example! Access the Studio at /api/studio ); }
+- `examples/remix/prisma/app/routes/api.auth.$.ts:1-11` - action, loader (example; TypeScript; module examples/remix; symbols action, loader). import { auth } from "~/lib/auth.server"; import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix run/node"; export async function loader({ request }: LoaderFunctionArgs) { return auth.handler(request); } export async function action({ request }: ActionFunctionArgs) { return auth.handler(request); }
+- `examples/remix/prisma/app/routes/api.studio.$.ts:1-14` - action, loader (example; TypeScript; module examples/remix; symbols action, loader). import { betterAuthStudio } from "better auth studio/remix"; import studioConfig from "../../studio.config"; import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix run/node"; const handler = betterAuthStudio(studioConfig); export async function loader({ request }: LoaderFunctionArgs) { return handler({ request }); } export async function action({ request }: ActionFunctionArgs) { return handler({ request
+
+### Source Details
+- `examples/remix/prisma/app/lib/auth.server.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BASE_URL`, `BETTER_AUTH_URL`
+- `examples/remix/prisma/app/lib/db.server.ts`: language TypeScript; exports `prisma`; env `NODE_ENV`
+- `examples/remix/prisma/app/root.tsx`: language TypeScript; exports `App`, `Layout`, `links`
+- `examples/remix/prisma/app/routes/_index.tsx`: language TypeScript; exports `Index`
+- `examples/remix/prisma/app/routes/api.auth.$.ts`: language TypeScript; exports `action`, `loader`
+- `examples/remix/prisma/app/routes/api.studio.$.ts`: language TypeScript; exports `action`, `loader`
+- `src/adapters/remix.ts`: language TypeScript; exports `betterAuthStudio`
+
+### Evidence
+- `examples/remix/prisma/app/lib/auth.server.ts`
+- `examples/remix/prisma/app/lib/db.server.ts`
+- `examples/remix/prisma/app/root.tsx`
+- `examples/remix/prisma/app/routes/_index.tsx`
+- `examples/remix/prisma/app/routes/api.auth.$.ts`
+- `examples/remix/prisma/app/routes/api.studio.$.ts`
+- `package.json:exports:./dist/adapters/remix.js`
+- `package.json:exports:./remix`
+- `src/adapters/remix.ts`
