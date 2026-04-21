@@ -1,0 +1,76 @@
+---
+title: "Express"
+description: "Express is a repository module detected from 1 source file."
+order: 60
+---
+
+# Express
+
+Express is a repository module detected from 1 source file.
+## What This Module Owns
+Express owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar.
+The module key is `adapters/express`. It was selected because the repository has concrete source evidence for this area, such as files, declarations, routes, or package exports.
+## Module Responsibilities
+- Adapters
+- betterAuthStudio
+- Express
+## Detailed Module Model
+Express is generated from a coherent source area, not from a generic keyword. The docs engine groups files into this page when they share a module boundary, package export, route family, or public symbol surface.
+
+For Better Auth Studio, module pages help the docs grow with the repository. Small codebases may only need a few module pages; larger codebases can expose many focused pages so readers can learn one capability, adapter, plugin, or subsystem at a time.
+
+## What to Look For
+- The responsibility owned by this module.
+- The public exports, route handlers, declarations, or configuration values attached to the module.
+- The neighboring docs pages that explain related user-facing workflows or integration details.
+
+## Success Criteria
+- Readers understand why this source area exists before reading file paths.
+- Readers can find the files that define the module without searching the whole repo.
+- Maintainers can update this page when the module's exports, routes, or responsibilities change.
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `betterAuthStudio`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Express
+Add the studio handler to your server:
+
+```typescript
+import express from "express";
+import { toNodeHandler } from "better-auth/node";
+import { betterAuthStudio } from "better-auth-studio/express";
+import { auth } from "./auth";
+import studioConfig from "./studio.config";
+
+const app = express();
+
+app.use(express.json());
+app.use("/api/studio", betterAuthStudio(studioConfig));
+app.all("/api/auth/*", toNodeHandler(auth));
+
+app.listen(3000);
+```
+
+Access at `http://localhost:3000/api/studio`
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Module pages are generated only from concrete source, route, declaration, or package export evidence.
+- If the module is internal, keep the page focused on responsibility and maintenance boundaries rather than promising public APIs.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/adapters/express.ts` - Framework adapter that connects host requests to the product runtime.
+
+### Knowledge Chunks
+No semantic knowledge chunks were generated directly for these evidence files.
+
+### Source Details
+- `src/adapters/express.ts`: language TypeScript; exports `betterAuthStudio`
+
+### Evidence
+- `src/adapters/express.ts`

@@ -1,0 +1,152 @@
+---
+title: "Nextjs"
+description: "Nextjs is a repository module detected from 27 source files."
+order: 530
+---
+
+# Nextjs
+
+Nextjs is a repository module detected from 27 source files.
+## What This Module Owns
+Nextjs owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar.
+The module key is `examples/nextjs`. It was selected because the repository has concrete source evidence for this area, such as files, declarations, routes, or package exports.
+## Module Responsibilities
+- DELETE
+- Examples
+- GET
+- metadata
+- Nextjs
+- PATCH
+- POST
+- PUT
+## Detailed Module Model
+Nextjs is generated from a coherent source area, not from a generic keyword. The docs engine groups files into this page when they share a module boundary, package export, route family, or public symbol surface.
+
+For Better Auth Studio, module pages help the docs grow with the repository. Small codebases may only need a few module pages; larger codebases can expose many focused pages so readers can learn one capability, adapter, plugin, or subsystem at a time.
+
+## What to Look For
+- The responsibility owned by this module.
+- The public exports, route handlers, declarations, or configuration values attached to the module.
+- The neighboring docs pages that explain related user-facing workflows or integration details.
+
+## Success Criteria
+- Readers understand why this source area exists before reading file paths.
+- Readers can find the files that define the module without searching the whole repo.
+- Maintainers can update this page when the module's exports, routes, or responsibilities change.
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `account`
+- `auth`
+- `config`
+- `db`
+- `DELETE`
+- `GET`
+- `Home`
+- `invitation`
+- `member`
+- `metadata`
+- `organization`
+- `PATCH`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### ✨ Try Better Auth Studio Demo
+You can try a live, demo version of Better Auth Studio here:
+
+👉 **[https://bt-nextjs.vercel.app/admin](https://bt-nextjs.vercel.app/admin)**
+
+- **Login email:** `admin@user.com`
+- **Password:** `admin@user.com`
+
+This online demo lets you explore the admin studio UI. Please note this is a test environment.
+
+### Start Studio
+```bash
+pnpx better-auth-studio start [options]
+```
+
+**Options:**
+
+- `--port <number>` - Specify port (default: 3002)
+- `--host <string>` - Specify host (default: localhost)
+- `--no-open` - Don't automatically open browser
+- `--config <path>` - Path to auth config file (default: auto-detect)
+- `--watch` - Watch for changes in auth config file and reload server automatically
+
+`3002` is just the standalone Studio default so it does not clash with apps that already use `3000`. You can run Studio on `3000`, `4000`, or any other free port.
+
+**Examples:**
+
+```bash
+# Start on custom port (if installed as dev dependency)
+pnpm better-auth-studio start --port 3001
+
+# Or with pnpx
+pnpx better-auth-studio start --port 3001
+
+# Start without opening browser
+pnpm better-auth-studio start --no-open
+
+# Use custom config file
+pnpm better-auth-studio start --config ./custom-auth.ts
+
+# Enable watch mode for auto-reload on config changes
+pnpm better-auth-studio start --watch
+
+# Combine multiple options
+pnpx better-auth-studio start --port 3001 --watch --config ./src/auth.ts
+```
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Module pages are generated only from concrete source, route, declaration, or package export evidence.
+- If the module is internal, keep the page focused on responsibility and maintenance boundaries rather than promising public APIs.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/nextjs/drizzle/app/layout.tsx` - Layout page-level UI. This is where users usually encounter the capability in the product.
+- `examples/nextjs/drizzle/app/page.tsx` - Page page-level UI. This is where users usually encounter the capability in the product.
+- `examples/nextjs/drizzle/auth-schema.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/nextjs/drizzle/drizzle.config.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/nextjs/drizzle/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/nextjs/drizzle/lib/db.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/nextjs/drizzle/next.config.js` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/nextjs/drizzle/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+
+### Knowledge Chunks
+- `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts:1-5` - GET, POST (example; TypeScript; module examples/nextjs; symbols GET, POST). import { auth } from "@/lib/auth"; import { toNextJsHandler } from "better auth/next js"; export const { GET, POST } = toNextJsHandler(auth);
+- `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts:1-7` - DELETE, GET, PATCH (example; TypeScript; module examples/nextjs; symbols DELETE, GET, PATCH, POST). import { betterAuthStudio } from "better auth studio/nextjs"; import studioConfig from "@/studio.config"; const handler = betterAuthStudio(studioConfig); export { handler as GET, handler as POST, handler as PUT, handler as DELETE, handler as PATCH };
+- `examples/nextjs/drizzle/app/layout.tsx:1-15` - metadata, RootLayout (example; TypeScript; module examples/nextjs; symbols metadata, RootLayout). import type { Metadata } from "next"; export const metadata: Metadata = { title: "Better Auth Next.js Drizzle Example", description: "Example application with Better Auth, Next.js, and Drizzle", }; export default function RootLayout({ children }: { children: React.ReactNode }) { return ( {children} ); }
+- `examples/nextjs/drizzle/app/page.tsx:1-25` - Home (example; TypeScript; module examples/nextjs; symbols Home). export default function Home() { return ( Better Auth + Next.js + Drizzle Example application with Better Auth Studio Sign In Sign Up ); }
+- `examples/nextjs/drizzle/auth-schema.ts:1-66` - account, invitation, member (example; TypeScript; module examples/nextjs; symbols account, invitation, member, organization). import { pgTable, text, timestamp, boolean, integer } from "drizzle orm/pg core"; export const user = pgTable("user", { id: text("id").primaryKey(), name: text("name").notNull(), email: text("email").notNull().unique(), emailVerified: boolean("email verified").default(false).notNull(), image: text("image"), createdAt: timestamp("created at").defaultNow().notNull(), updatedAt: timestamp("updated at") .defaultNow() .$o
+- `examples/nextjs/drizzle/auth-schema.ts:66-117` - account, invitation, member (example; TypeScript; module examples/nextjs; symbols account, invitation, member, organization). notNull(), metadata: text("metadata"), }); export const member = pgTable("member", { id: text("id").primaryKey(), organizationId: text("organization id") .notNull() .references(() = organization.id, { onDelete: "cascade" }), userId: text("user id") .notNull() .references(() = user.id, { onDelete: "cascade" }), role: text("role").default("member").notNull(), createdAt: timestamp("created at").notNull(), }); export con
+- `examples/nextjs/drizzle/drizzle.config.ts:1-11` - Nextjs (example; TypeScript; module examples/nextjs). import type { Config } from "drizzle kit"; export default { schema: "./auth schema.ts", out: "./drizzle", dialect: "postgresql", dbCredentials: { url: process.env.DATABASE URL!, }, } satisfies Config;
+- `examples/nextjs/drizzle/lib/auth.ts:1-69` - auth (example; TypeScript; module examples/nextjs; symbols auth). import { betterAuth } from "better auth"; import { drizzleAdapter } from "better auth/adapters/drizzle"; import { organization, admin } from "better auth/plugins"; import { db } from "./db"; import as schema from "../auth schema"; export const auth = betterAuth({ secret: process.env.AUTH SECRET || "better auth secret 123456789", database: drizzleAdapter(db, { provider: "pg", schema: { user: schema.user, account: sche
+- `examples/nextjs/drizzle/lib/db.ts:1-11` - db, Session, User (example; TypeScript; module examples/nextjs; symbols db, Session, User, UserInsert). import { drizzle } from "drizzle orm/postgres js"; import postgres from "postgres"; import as schema from "../auth schema"; const client = postgres(process.env.DATABASE URL!); export const db = drizzle(client, { schema }); export type User = typeof schema.user.$inferSelect; export type Session = typeof schema.session.$inferSelect; export type UserInsert = typeof schema.user.$inferInsert;
+- `examples/nextjs/drizzle/next.config.js:1-7` - Nextjs (example; javascript; module examples/nextjs). / @type {import('next').NextConfig} / const nextConfig = { reactStrictMode: true, }; module.exports = nextConfig;
+
+### Source Details
+- `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts`: language TypeScript; exports `GET`, `POST`
+- `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts`: language TypeScript; exports `DELETE`, `GET`, `PATCH`, `POST`, `PUT`
+- `examples/nextjs/drizzle/app/layout.tsx`: language TypeScript; exports `metadata`, `RootLayout`
+- `examples/nextjs/drizzle/app/page.tsx`: language TypeScript; exports `Home`
+- `examples/nextjs/drizzle/auth-schema.ts`: language TypeScript; exports `account`, `invitation`, `member`, `organization`, `session`, `team`
+- `examples/nextjs/drizzle/drizzle.config.ts`: language TypeScript; env `DATABASE_URL`
+- `examples/nextjs/drizzle/lib/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+- `examples/nextjs/drizzle/lib/db.ts`: language TypeScript; exports `db`, `Session`, `User`, `UserInsert`; env `DATABASE_URL`
+
+### Evidence
+- `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts`
+- `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts`
+- `examples/nextjs/drizzle/app/layout.tsx`
+- `examples/nextjs/drizzle/app/page.tsx`
+- `examples/nextjs/drizzle/auth-schema.ts`
+- `examples/nextjs/drizzle/drizzle.config.ts`
+- `examples/nextjs/drizzle/lib/auth.ts`
+- `examples/nextjs/drizzle/lib/db.ts`
+- `examples/nextjs/drizzle/next.config.js`
+- `examples/nextjs/drizzle/studio.config.ts`

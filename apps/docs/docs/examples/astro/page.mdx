@@ -1,0 +1,127 @@
+---
+title: "Astro"
+description: "Astro is a repository module detected from 9 source files."
+order: 490
+---
+
+# Astro
+
+Astro is a repository module detected from 9 source files.
+## What This Module Owns
+Astro owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar.
+The module key is `examples/astro`. It was selected because the repository has concrete source evidence for this area, such as files, declarations, routes, or package exports.
+## Module Responsibilities
+- ALL
+- Astro
+- auth
+- config
+- Examples
+- prisma
+## Detailed Module Model
+Astro is generated from a coherent source area, not from a generic keyword. The docs engine groups files into this page when they share a module boundary, package export, route family, or public symbol surface.
+
+For Better Auth Studio, module pages help the docs grow with the repository. Small codebases may only need a few module pages; larger codebases can expose many focused pages so readers can learn one capability, adapter, plugin, or subsystem at a time.
+
+## What to Look For
+- The responsibility owned by this module.
+- The public exports, route handlers, declarations, or configuration values attached to the module.
+- The neighboring docs pages that explain related user-facing workflows or integration details.
+
+## Success Criteria
+- Readers understand why this source area exists before reading file paths.
+- Readers can find the files that define the module without searching the whole repo.
+- Maintainers can update this page when the module's exports, routes, or responsibilities change.
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `ALL`
+- `auth`
+- `config`
+- `prisma`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Start Studio
+```bash
+pnpx better-auth-studio start [options]
+```
+
+**Options:**
+
+- `--port <number>` - Specify port (default: 3002)
+- `--host <string>` - Specify host (default: localhost)
+- `--no-open` - Don't automatically open browser
+- `--config <path>` - Path to auth config file (default: auto-detect)
+- `--watch` - Watch for changes in auth config file and reload server automatically
+
+`3002` is just the standalone Studio default so it does not clash with apps that already use `3000`. You can run Studio on `3000`, `4000`, or any other free port.
+
+**Examples:**
+
+```bash
+# Start on custom port (if installed as dev dependency)
+pnpm better-auth-studio start --port 3001
+
+# Or with pnpx
+pnpx better-auth-studio start --port 3001
+
+# Start without opening browser
+pnpm better-auth-studio start --no-open
+
+# Use custom config file
+pnpm better-auth-studio start --config ./custom-auth.ts
+
+# Enable watch mode for auto-reload on config changes
+pnpm better-auth-studio start --watch
+
+# Combine multiple options
+pnpx better-auth-studio start --port 3001 --watch --config ./src/auth.ts
+```
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Module pages are generated only from concrete source, route, declaration, or package export evidence.
+- If the module is internal, keep the page focused on responsibility and maintenance boundaries rather than promising public APIs.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/astro/astro.config.mjs` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/astro/prisma/astro.config.mjs` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/astro/prisma/src/env.d.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/astro/prisma/src/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/astro/prisma/src/lib/db.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/astro/prisma/src/pages/api/studio/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/astro/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/astro/src/pages/api/studio/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
+
+### Knowledge Chunks
+- `examples/astro/astro.config.mjs:1-10` - Astro (example; javascript; module examples/astro). import { defineConfig } from "astro/config"; import node from "@astrojs/node"; export default defineConfig({ output: "server", adapter: node({ mode: "standalone", }), });
+- `examples/astro/prisma/astro.config.mjs:1-10` - Astro (example; javascript; module examples/astro). import { defineConfig } from "astro/config"; import node from "@astrojs/node"; export default defineConfig({ output: "server", adapter: node({ mode: "standalone", }), });
+- `examples/astro/prisma/src/env.d.ts:1-2` - Astro (example; typescript; module examples/astro). ///
+- `examples/astro/prisma/src/lib/auth.ts:1-38` - auth (example; TypeScript; module examples/astro; symbols auth). import { betterAuth } from "better auth"; import { prismaAdapter } from "better auth/adapters/prisma"; import { prisma } from "./db"; const baseURL = process.env.BETTER AUTH URL || process.env.BASE URL || "http://localhost:4321"; export const auth = betterAuth({ secret: process.env.AUTH SECRET || "your secret key change in production", database: prismaAdapter(prisma, { provider: "sqlite" }), baseURL, basePath: "/api/
+- `examples/astro/prisma/src/lib/db.ts:1-10` - prisma (example; TypeScript; module examples/astro; symbols prisma). import { PrismaClient } from "@prisma/client"; const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined; }; export const prisma = globalForPrisma.prisma ?? new PrismaClient(); if (process.env.NODE ENV !== "production") globalForPrisma.prisma = prisma;
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts:1-9` - ALL (example; TypeScript; module examples/astro; symbols ALL). import { auth } from "~/lib/auth"; import type { APIRoute } from "astro"; export const ALL: APIRoute = async (ctx) = { // If you want to use rate limiting, make sure to set the 'x forwarded for' header to the request headers from the context // ctx.request.headers.set("x forwarded for", ctx.clientAddress); return auth.handler(ctx.request); };
+- `examples/astro/prisma/src/pages/api/studio/[...all].ts:1-9` - ALL (example; TypeScript; module examples/astro; symbols ALL). import { betterAuthStudio } from "better auth studio/astro"; import studioConfig from "../../../../studio.config"; import type { APIRoute } from "astro"; const handler = betterAuthStudio(studioConfig); export const ALL: APIRoute = async (ctx) = { return handler(ctx); };
+- `examples/astro/prisma/studio.config.ts:1-18` - config (example; TypeScript; module examples/astro; symbols config). import type { StudioConfig } from "better auth studio"; import { auth } from "./src/lib/auth"; const config: StudioConfig = { auth, basePath: "/api/studio", metadata: { title: "Better Auth Studio", theme: "dark", }, access: { roles: ["admin"], allowEmails: ["admin@example.com"], }, }; export default config;
+- `examples/astro/src/pages/api/studio/[...all].ts:1-9` - ALL (example; TypeScript; module examples/astro; symbols ALL). import { betterAuthStudio } from "better auth studio/astro"; import studioConfig from "../../../../studio.config"; import type { APIRoute } from "astro"; const handler = betterAuthStudio(studioConfig); export const ALL: APIRoute = async (ctx) = { return handler(ctx); };
+
+### Source Details
+- `examples/astro/prisma/src/lib/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BASE_URL`, `BETTER_AUTH_URL`
+- `examples/astro/prisma/src/lib/db.ts`: language TypeScript; exports `prisma`; env `NODE_ENV`
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts`: language TypeScript; exports `ALL`
+- `examples/astro/prisma/src/pages/api/studio/[...all].ts`: language TypeScript; exports `ALL`
+- `examples/astro/prisma/studio.config.ts`: language TypeScript; exports `config`
+- `examples/astro/src/pages/api/studio/[...all].ts`: language TypeScript; exports `ALL`
+
+### Evidence
+- `examples/astro/astro.config.mjs`
+- `examples/astro/prisma/astro.config.mjs`
+- `examples/astro/prisma/src/env.d.ts`
+- `examples/astro/prisma/src/lib/auth.ts`
+- `examples/astro/prisma/src/lib/db.ts`
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts`
+- `examples/astro/prisma/src/pages/api/studio/[...all].ts`
+- `examples/astro/prisma/studio.config.ts`
+- `examples/astro/src/pages/api/studio/[...all].ts`

@@ -1,0 +1,174 @@
+---
+title: "Studio Config"
+description: "The source includes types or helpers for studio config."
+order: 810
+---
+
+# Studio Config
+
+The source includes types or helpers for studio config.
+## What This Is
+This API reference page explains the studio config shape, how developers pass it to the package, and which related feature pages depend on those settings.
+
+Repository context: If you want to run Better Auth Studio in its own container, this repository includes a Docker setup for the standalone CLI server.
+## Why It Matters
+Studio Config matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses implementation evidence as supporting context.
+## Core Concepts
+- Studio Config
+- configuration type
+- runtime options
+- validation
+## Typical Workflow
+1. Locate the configuration object in the host application.
+2. Set only the options needed for the selected runtime and feature set.
+3. Use the related feature docs to understand behavior controlled by each option.
+## Detailed API Contract
+Studio Config is a developer contract, not just an exported name. The page explains what the API represents, what problem it solves, what a caller provides, what the package returns or performs, and how it relates to the surrounding runtime.
+
+API pages are most useful when they explain the shape of responsibility. For an adapter, that means the host framework owns routing and the package supplies a handler. For configuration, it means the host app supplies options and the package changes runtime behavior. For utilities, it means the function supports a feature that needs to be understood before the utility is changed.
+
+## Integration Questions
+- What does the caller provide?
+- What does the package create, mutate, or return?
+- Which feature or configuration page explains the user-facing behavior behind this API?
+- What needs to be tested after this API changes?
+
+## Success Criteria
+- Readers understand the API purpose before looking at source files.
+- Readers know whether the API is public integration surface or internal support code.
+- Readers know which runtime or feature depends on it.
+## Import Surface
+Use `better-auth-studio` as the package path indicated by package metadata or adapter file evidence.
+## API Mental Model
+Configuration APIs are the contract between the host application and the product runtime. The important details are what each option changes and which feature depends on it.
+## Related Exports
+- `config`
+- `studioConfig`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Docker (Standalone Self Host)
+If you want to run Better Auth Studio in its own container, this repository includes a Docker setup for the standalone CLI server.
+
+This mode is useful when:
+
+- you want a separate admin container
+- your Better Auth app already lives in its own repository
+- you want Docker-managed `node_modules` and package-manager cache volumes
+
+> **Important:** The standalone container still needs your Better Auth project mounted into it, because Studio loads your real `auth.ts` and `studio.config.*` files at runtime.
+
+Build the image from this repository:
+
+```bash
+docker build -t better-auth-studio:self-host .
+```
+
+Run it with Docker Compose:
+
+```bash
+HOST_PROJECT_PATH=/absolute/path/to/your-better-auth-project \
+CONFIG_PATH=./auth.ts \
+docker compose -f docker/compose.yml up --build
+```
+
+If your auth config is not at the project root, pass it explicitly:
+
+```bash
+HOST_PROJECT_PATH=/absolute/path/to/your-better-auth-project \
+CONFIG_PATH=./src/lib/auth.ts \
+docker compose -f docker/compose.yml up --build
+```
+
+If you already used the older filename, `docker/docker-compose.self-host.yml` still works too.
+
+What the container does:
+
+- mounts your Better Auth project into `/workspace`
+- installs project dependencies into Docker volumes on first boot
+- starts `better-auth-studio start --host 0.0.0.0 --port 3002 --no-open`
+
+Useful environment variables:
+
+- `HOST_PROJECT_PATH` - absolute path to your Better Auth project on the host machine
+- `CONFIG_PATH` - optional auth config path inside the mounted project, for example `./src/lib/auth.ts`
+- `PORT` - studio port, defaults to `3002`
+- `WATCH` - set to `true` to enable watch mode
+- `AUTO_INSTALL` - set to `false` if your container/project already has dependencies installed
+- `PROJECT_INSTALL_CMD` - optional custom install command for non-standard setups
+- `GEO_DB_PATH` - optional GeoLite database path inside the mounted project
+
+If you change the Studio port, make sure your Better Auth config also trusts that origin when needed. The examples usually include both `http://localhost:3000` and `http://localhost:3002` for that reason.
+
+If you already embed Studio in your server with the framework adapters below, that remains the recommended production setup. The Docker flow is mainly for running the standalone Studio server in a containerized environment.
+
+### Setup
+**Step 1: Initialize configuration**
+
+```bash
+pnpx better-auth-studio init
+```
+
+This creates a `studio.config.ts` file:
+
+```typescript
+import type { StudioConfig } from "better-auth-studio";
+import { auth } from "./lib/auth";
+
+const config: StudioConfig = {
+  auth,
+  basePath: "/api/studio",
+  metadata: {
+    title: "Admin Dashboard",
+    theme: "dark",
+  },
+  access: {
+    roles: ["admin"],
+    allowEmails: ["admin@example.com"],
+    allowIpAddresses: ["127.0.0.1", "::1", "192.168.*"],
+    blockIpAddresses: ["203.0.113.45"],
+  },
+};
+
+export default config;
+```
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Inputs, outputs, side effects, and ownership boundaries are described before exported names.
+- The API connects back to feature or configuration pages that explain user-facing behavior.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/astro/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/elysia/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/express/drizzle/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/express/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/hono/prisma/studio.config.pg.example.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+
+### Knowledge Chunks
+- `README.md#docker-standalone-self-host:1-53` - Docker (Standalone Self Host) (readme; Markdown; heading README > Docker (Standalone Self Host) > Docker (Standalone Self Host)). If you want to run Better Auth Studio in its own container, this repository includes a Docker setup for the standalone CLI server. This mode is useful when: you want a separate admin container your Better Auth app already lives in its own repository you want Docker managed node modules and package manager cache volumes Important: The standalone container still needs your Better Auth project mounted into it, because S
+- `README.md#setup:1-29` - Setup (readme; Markdown; heading README > Setup > Setup). Step 1: Initialize configuration This creates a studio.config.ts file:
+- `examples/astro/prisma/studio.config.ts:1-18` - config (example; TypeScript; module examples/astro; symbols config). import type { StudioConfig } from "better auth studio"; import { auth } from "./src/lib/auth"; const config: StudioConfig = { auth, basePath: "/api/studio", metadata: { title: "Better Auth Studio", theme: "dark", }, access: { roles: ["admin"], allowEmails: ["admin@example.com"], }, }; export default config;
+- `examples/elysia/prisma/studio.config.ts:1-18` - config (example; TypeScript; module examples/elysia; symbols config). import type { StudioConfig } from "better auth studio"; import { auth } from "./src/auth"; const config: StudioConfig = { auth, basePath: "/api/studio", metadata: { title: "Better Auth Studio", theme: "dark", }, access: { roles: ["admin"], allowEmails: ["kinfetare83@gmail.com"], }, }; export default config;
+- `examples/express/drizzle/studio.config.ts:1-39` - studioConfig (example; TypeScript; module examples/express; symbols studioConfig). import type { StudioConfig } from "better auth studio"; import { auth } from "./src/auth"; import { db } from "./lib/db"; const studioConfig: StudioConfig = { auth, basePath: "/api/studio", metadata: { title: "Better Auth Studio", theme: "dark", }, access: { roles: ["admin"], allowEmails: ["kinfetare83@gmail.com"], }, events: { enabled: true, client: db, clientType: "drizzle", tableName: "auth events", liveMarquee: {
+- `examples/express/prisma/studio.config.ts:1-39` - studioConfig (example; TypeScript; module examples/express; symbols studioConfig). import type { StudioConfig } from "better auth studio"; import { auth } from "./src/auth"; import prisma from "./src/prisma"; const studioConfig: StudioConfig = { auth, basePath: "/api/studio", metadata: { title: "Better Auth Studio", theme: "dark", }, access: { roles: ["admin"], allowEmails: ["kinfetare83@gmail.com"], }, events: { enabled: true, client: prisma, clientType: "prisma", tableName: "auth events", liveMar
+- `examples/hono/prisma/studio.config.pg.example.ts:1-38` - config (example; TypeScript; module examples/hono; symbols config). import type { StudioConfig } from "better auth studio"; import { auth } from "./src/auth"; import { Pool } from "pg"; // Example using standard pg Pool const pgPool = new Pool({ connectionString: process.env.DATABASE URL, // Or use individual connection parameters: // host: process.env.DB HOST, // port: parseInt(process.env.DB PORT || '5432', 10), // database: process.env.DB NAME, // user: process.env.DB USER, // pas
+
+### Source Details
+- `examples/astro/prisma/studio.config.ts`: language TypeScript; exports `config`
+- `examples/elysia/prisma/studio.config.ts`: language TypeScript; exports `config`
+- `examples/express/drizzle/studio.config.ts`: language TypeScript; exports `studioConfig`
+- `examples/express/prisma/studio.config.ts`: language TypeScript; exports `studioConfig`
+- `examples/hono/prisma/studio.config.pg.example.ts`: language TypeScript; exports `config`; env `DATABASE_URL`
+
+### Evidence
+- `examples/astro/prisma/studio.config.ts`
+- `examples/elysia/prisma/studio.config.ts`
+- `examples/express/drizzle/studio.config.ts`
+- `examples/express/prisma/studio.config.ts`
+- `examples/hono/prisma/studio.config.pg.example.ts`
+- `README.md#docker-standalone-self-host`
+- `README.md#setup`

@@ -1,0 +1,181 @@
+---
+title: "TanStack Start Setup"
+description: "The repository includes a TanStack Start adapter or example for self-hosted usage."
+order: 320
+---
+
+# TanStack Start Setup
+
+The repository includes a TanStack Start adapter or example for self-hosted usage.
+## What This Is
+This setup page explains how to run the product inside a TanStack Start application. It covers the runtime dependency, the framework route or server hook, and the configuration the host app must provide.
+
+Repository context: ⚠️ Beta Feature : Self hosting is currently in beta.  Please report any issues on GitHub.
+## Why It Matters
+TanStack Start Setup matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses implementation evidence as supporting context.
+## Core Concepts
+- TanStack Start
+- self-hosting
+- runtime dependency
+- route mount
+- host app config
+## Typical Workflow
+1. Install the package where the production server can import it.
+2. Create the TanStack Start route, handler, or server integration.
+3. Verify the product can read the same runtime, database, and access configuration as the host app.
+## Detailed Architecture
+TanStack Start Setup is about the boundary between the user's application and Better Auth Studio. The host application owns the production environment, routing, runtime configuration, database access, secrets, and deployment platform. Better Auth Studio supplies the package entrypoint, adapter, handler, or standalone runtime that plugs into that host.
+
+The practical goal is to make that boundary obvious. Developers need to know what they install, where they mount it, what configuration they pass in, and what infrastructure must already exist. They also need to understand the difference between local CLI usage and production self-hosted usage when the package is required at runtime.
+
+## Operational Considerations
+- Runtime dependencies must be installed in the environment that serves the admin surface.
+- Auth, database, and access-control configuration come from the same source of truth as the host app.
+- Preview, staging, and production each verify trusted origins, secrets, route paths, and database migrations.
+
+## Success Criteria
+- A reader knows what belongs to the host app and what belongs to the package.
+- A reader can identify the route or server integration point before editing files.
+- A reader knows which configuration must be production-ready before exposing the admin surface.
+## Runtime Shape
+This page focuses on the TanStack Start runtime path detected from adapters, examples, or package exports.
+The package export evidence points to `better-auth-studio/tanstack-start`.
+## Integration Story
+For TanStack Start, the important idea is that the host application owns runtime state, database access, routing, and deployment. Better Auth Studio provides the handler or adapter that plugs into that host application. This page makes that boundary clear so developers know what the package supplies and what their app must still configure.
+## Setup Checklist
+1. Install dependencies with `pnpm install`.
+2. Configure required environment variables before starting the runtime.
+3. Run `pnpm start` or the framework-specific command from the host app.
+4. Verify the mounted route, API handler, or container can reach the same runtime and database configuration as the host app.
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### 🏠 Self Hosting (Beta)
+> ⚠️ **Beta Feature**: Self-hosting is currently in beta. Please report any issues on GitHub.
+
+Deploy Better Auth Studio alongside your application for production use.
+
+### Installation for Self Hosting
+**Important:** For self-hosting, install `better-auth-studio` as a **regular dependency** (not devDependency) since it's required at runtime in production:
+
+```bash
+pnpm add better-auth-studio
+```
+
+> **Note:** The CLI usage (standalone studio) can be installed as a dev dependency, but self-hosting requires it in `dependencies` for production deployments.
+
+### Setup
+**Step 1: Initialize configuration**
+
+```bash
+pnpx better-auth-studio init
+```
+
+This creates a `studio.config.ts` file:
+
+```typescript
+import type { StudioConfig } from "better-auth-studio";
+import { auth } from "./lib/auth";
+
+const config: StudioConfig = {
+  auth,
+  basePath: "/api/studio",
+  metadata: {
+    title: "Admin Dashboard",
+    theme: "dark",
+  },
+  access: {
+    roles: ["admin"],
+    allowEmails: ["admin@example.com"],
+    allowIpAddresses: ["127.0.0.1", "::1", "192.168.*"],
+    blockIpAddresses: ["203.0.113.45"],
+  },
+};
+
+export default config;
+```
+## Configuration Files
+- `examples/tanstack-start/drizzle/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/tanstack-start/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/nextjs/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/tanstack-start/drizzle/vite.config.ts` (framework) - Vite application configuration.
+- `examples/tanstack-start/drizzle/components.json` (ui) - shadcn/ui component aliases and project structure.
+- `examples/tanstack-start/drizzle/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+## Environment Variables
+- `AUTH_SECRET`
+- `AUTH_URL`
+- `BASE_URL`
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `CLERK_SECRET_KEY`
+- `CLICKHOUSE_HOST`
+- `CLICKHOUSE_PASSWORD`
+- `CLICKHOUSE_USERNAME`
+- `DATABASE_URL`
+- `DB_HOST`
+- `DB_NAME`
+- `DB_PASSWORD`
+- `DB_PORT`
+- `DB_USER`
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `IPINFO_TOKEN`
+- `MONGO_URI`
+- `MONGODB_DB_NAME`
+- `MONGODB_URI`
+- `MYSQL_URL`
+- `NEXT_PUBLIC_BETTER_AUTH_URL`
+- `NODE_ENV`
+- `NODE_PATH`
+- `PORT`
+- `POSTGRES_URL`
+- `RESEND_API_KEY`
+- `VERCEL`
+- `VERCEL_URL`
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Local development, standalone runtime, and production embedded usage are treated as separate operating modes.
+- Host-app responsibilities include runtime config, database access, secrets, trusted origins, and route mounting.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/tanstack-start/drizzle/auth-schema.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/tanstack-start/drizzle/src/components/header.tsx` - Header reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `examples/tanstack-start/drizzle/src/components/meta-theme.ts` - Meta Theme reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `examples/tanstack-start/drizzle/src/components/mode-toggle.tsx` - Mode Toggle reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `examples/tanstack-start/drizzle/src/components/providers.tsx` - Providers reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `examples/tanstack-start/drizzle/src/components/ui/button.tsx` - Button reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `src/adapters/tanstack-start.ts` - Framework adapter that connects host requests to the product runtime.
+
+### Knowledge Chunks
+- `package.json:1-64` - Package Config (package; JSON; heading Package). { "name": "better auth studio", "version": "1.1.3 beta.49", "description": "Studio for Better Auth", "keywords": [ "admin", "authentication", "better auth", "dashboard", "gui", "studio" ], "license": "MIT", "author": "kinfish", "bin": { "better auth studio": "./dist/cli.js" }, "files": [ "README.md", "data/default geo.json", "dist/", "scripts/postinstall.js" ], "type": "module", "main": "dist/index.js", "exports": {
+- `package.json:64-116` - Package Config 2 (package; JSON; heading Package). "release:canary": "pnpm build && bumpp preid canary no commit no tag no push && pnpm publish access public tag canary no git checks", "bump": "bumpp" }, "dependencies": { "@babel/preset react": "^7.27.1", "@babel/preset typescript": "^7.27.1", "@better auth/utils": "^0.3.0", "@noble/hashes": "^2.0.1", "@number flow/react": "^0.5.10", "@types/chokidar": "^2.1.7", "better auth": "1.4.5", "bumpp": "^10.2.3", "c12": "^3.
+
+### Source Details
+- `examples/tanstack-start/drizzle/auth-schema.ts`: language TypeScript; exports `accounts`, `sessions`, `users`, `verifications`
+- `examples/tanstack-start/drizzle/src/components/header.tsx`: language TypeScript; exports `Header`
+- `examples/tanstack-start/drizzle/src/components/meta-theme.ts`: language TypeScript; exports `MetaTheme`
+- `examples/tanstack-start/drizzle/src/components/mode-toggle.tsx`: language TypeScript; exports `ModeToggle`
+- `examples/tanstack-start/drizzle/src/components/providers.tsx`: language TypeScript; exports `Providers`
+- `examples/tanstack-start/drizzle/src/components/ui/button.tsx`: language TypeScript; exports `Button`, `buttonVariants`
+- `src/adapters/tanstack-start.ts`: language TypeScript; exports `betterAuthStudio`
+
+### Evidence
+- `examples/tanstack-start/drizzle/auth-schema.ts`
+- `examples/tanstack-start/drizzle/src/components/header.tsx`
+- `examples/tanstack-start/drizzle/src/components/meta-theme.ts`
+- `examples/tanstack-start/drizzle/src/components/mode-toggle.tsx`
+- `examples/tanstack-start/drizzle/src/components/providers.tsx`
+- `examples/tanstack-start/drizzle/src/components/ui/button.tsx`
+- `package.json:exports:./dist/adapters/tanstack-start.js`
+- `package.json:exports:./tanstack-start`
+- `src/adapters/tanstack-start.ts`

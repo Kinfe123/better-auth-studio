@@ -1,0 +1,87 @@
+---
+title: "Metadata Config"
+description: "The source includes types or helpers for metadata config."
+order: 800
+---
+
+# Metadata Config
+
+The source includes types or helpers for metadata config.
+## What This Is
+This API reference page explains the metadata config shape, how developers pass it to the package, and which related feature pages depend on those settings.
+## Why It Matters
+Metadata Config matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses implementation evidence as supporting context.
+## Core Concepts
+- Metadata Config
+- configuration type
+- runtime options
+- validation
+## Typical Workflow
+1. Locate the configuration object in the host application.
+2. Set only the options needed for the selected runtime and feature set.
+3. Use the related feature docs to understand behavior controlled by each option.
+## Detailed API Contract
+Metadata Config is a developer contract, not just an exported name. The page explains what the API represents, what problem it solves, what a caller provides, what the package returns or performs, and how it relates to the surrounding runtime.
+
+API pages are most useful when they explain the shape of responsibility. For an adapter, that means the host framework owns routing and the package supplies a handler. For configuration, it means the host app supplies options and the package changes runtime behavior. For utilities, it means the function supports a feature that needs to be understood before the utility is changed.
+
+## Integration Questions
+- What does the caller provide?
+- What does the package create, mutate, or return?
+- Which feature or configuration page explains the user-facing behavior behind this API?
+- What needs to be tested after this API changes?
+
+## Success Criteria
+- Readers understand the API purpose before looking at source files.
+- Readers know whether the API is public integration surface or internal support code.
+- Readers know which runtime or feature depends on it.
+## Import Surface
+Use `better-auth-studio` as the package path indicated by package metadata or adapter file evidence.
+## API Mental Model
+Configuration APIs are the contract between the host application and the product runtime. The important details are what each option changes and which feature depends on it.
+## Related Exports
+- `MetaTheme`
+- `StudioTheme`
+- `THEME_STORAGE_KEY`
+- `ThemeProvider`
+- `useTheme`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Configuration Options
+| Option                    | Required | Description                                                                                                                                   |
+| ------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`                    | Yes      | Your Better Auth instance                                                                                                                     |
+| `basePath`                | Yes      | URL path where studio is mounted                                                                                                              |
+| `access.allowEmails`      | No       | Array of admin email addresses                                                                                                                |
+| `access.roles`            | No       | Array of allowed user roles                                                                                                                   |
+| `access.allowIpAddresses` | No       | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: `192.168.*`)                                             |
+| `access.blockIpAddresses` | No       | IP blocklist for Studio requests. Supports exact IPs and wildcard patterns                                                                    |
+| `ipAddress`               | No       | IP geolocation for Events/Sessions: `provider` ("ipinfo" \| "ipapi"), `apiToken`, `baseUrl`, optional `endpoint` (ipinfo: "lite" \| "lookup") |
+| `lastSeenAt`              | No       | Enable last-seen tracking: `{ enabled: true, columnName?: string }`                                                                           |
+| `metadata`                | No       | Custom branding (title, theme)                                                                                                                |
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Inputs, outputs, side effects, and ownership boundaries are described before exported names.
+- The API connects back to feature or configuration pages that explain user-facing behavior.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/tanstack-start/drizzle/src/components/meta-theme.ts` - Meta Theme reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/contexts/ThemeContext.tsx` - Evidence file that contributes to the implementation understanding for this page.
+
+### Knowledge Chunks
+- `README.md#configuration-options:1-11` - Configuration Options (readme; Markdown; heading README > Configuration Options > Configuration Options). | Option | Required | Description | | | | | | auth | Yes | Your Better Auth instance | | basePath | Yes | URL path where studio is mounted | | access.allowEmails | No | Array of admin email addresses | | access.roles | No | Array of allowed user roles | | access.allowIpAddresses | No | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: 192.168. ) | | access.blockIpAddresses | No | IP
+- `frontend/src/contexts/ThemeContext.tsx:1-85` - StudioTheme, THEME_STORAGE_KEY, ThemeProvider (source; TypeScript; module frontend/src; symbols StudioTheme, THEME_STORAGE_KEY, ThemeProvider, useTheme). import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react"; export type StudioTheme = "light" | "dark"; export const THEME STORAGE KEY = "better auth studio theme"; type ThemeContextValue = { theme: StudioTheme; setTheme: (theme: StudioTheme) = void; toggleTheme: () = void; }; const ThemeContext = createContext (null); function getConfiguredTheme(): StudioTheme { const configuredT
+
+### Source Details
+- `examples/tanstack-start/drizzle/src/components/meta-theme.ts`: language TypeScript; exports `MetaTheme`
+- `frontend/src/contexts/ThemeContext.tsx`: language TypeScript; exports `StudioTheme`, `THEME_STORAGE_KEY`, `ThemeProvider`, `useTheme`
+
+### Evidence
+- `examples/tanstack-start/drizzle/src/components/meta-theme.ts`
+- `frontend/src/contexts/ThemeContext.tsx`
+- `README.md#configuration-options`

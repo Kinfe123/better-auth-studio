@@ -1,0 +1,119 @@
+---
+title: "Next.js Adapter"
+description: "The package exposes a Next.js adapter surface."
+order: 700
+---
+
+# Next.js Adapter
+
+The package exposes a Next.js adapter surface.
+## What This Is
+The Next.js adapter is the framework-specific bridge between the host application and this package. It explains how requests enter the product, where the handler is mounted, and which package export developers import when integrating with Next.js.
+## Why It Matters
+Next.js Adapter matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses implementation evidence as supporting context.
+## Core Concepts
+- Next.js
+- framework adapter
+- request handler
+- mount path
+- package export
+## Typical Workflow
+1. Import the adapter from the Next.js-specific package export.
+2. Pass the product configuration into the adapter or handler factory.
+3. Mount the generated handler at the route expected by the host application.
+## Detailed API Contract
+Next.js Adapter is a developer contract, not just an exported name. The page explains what the API represents, what problem it solves, what a caller provides, what the package returns or performs, and how it relates to the surrounding runtime.
+
+API pages are most useful when they explain the shape of responsibility. For an adapter, that means the host framework owns routing and the package supplies a handler. For configuration, it means the host app supplies options and the package changes runtime behavior. For utilities, it means the function supports a feature that needs to be understood before the utility is changed.
+
+## Integration Questions
+- What does the caller provide?
+- What does the package create, mutate, or return?
+- Which feature or configuration page explains the user-facing behavior behind this API?
+- What needs to be tested after this API changes?
+
+## Success Criteria
+- Readers understand the API purpose before looking at source files.
+- Readers know whether the API is public integration surface or internal support code.
+- Readers know which runtime or feature depends on it.
+## Import Surface
+Use `better-auth-studio/nextjs` as the package path indicated by package metadata or adapter file evidence.
+## API Mental Model
+Adapter APIs work as framework entrypoints: they accept product configuration, produce a request handler, and let the host app decide where that handler is mounted.
+## Related Exports
+- `account`
+- `betterAuthStudio`
+- `DELETE`
+- `GET`
+- `Home`
+- `invitation`
+- `member`
+- `metadata`
+- `organization`
+- `PATCH`
+- `POST`
+- `PUT`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Next.js (App Router)
+The init command automatically creates `app/api/studio/[[...path]]/route.ts`:
+
+```typescript
+import { betterAuthStudio } from "better-auth-studio/nextjs";
+import studioConfig from "@/studio.config";
+
+const handler = betterAuthStudio(studioConfig);
+
+export { handler as GET, handler as POST, handler as PUT, handler as DELETE, handler as PATCH };
+```
+
+Access at `http://localhost:3000/api/studio`
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Inputs, outputs, side effects, and ownership boundaries are described before exported names.
+- The API connects back to feature or configuration pages that explain user-facing behavior.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/nextjs/drizzle/app/layout.tsx` - Layout page-level UI. This is where users usually encounter the capability in the product.
+- `examples/nextjs/drizzle/app/page.tsx` - Page page-level UI. This is where users usually encounter the capability in the product.
+- `examples/nextjs/drizzle/auth-schema.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/nextjs/drizzle/drizzle.config.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `src/adapters/nextjs.ts` - Framework adapter that connects host requests to the product runtime.
+
+### Knowledge Chunks
+- `package.json:1-64` - Package Config (package; JSON; heading Package). { "name": "better auth studio", "version": "1.1.3 beta.49", "description": "Studio for Better Auth", "keywords": [ "admin", "authentication", "better auth", "dashboard", "gui", "studio" ], "license": "MIT", "author": "kinfish", "bin": { "better auth studio": "./dist/cli.js" }, "files": [ "README.md", "data/default geo.json", "dist/", "scripts/postinstall.js" ], "type": "module", "main": "dist/index.js", "exports": {
+- `package.json:64-116` - Package Config 2 (package; JSON; heading Package). "release:canary": "pnpm build && bumpp preid canary no commit no tag no push && pnpm publish access public tag canary no git checks", "bump": "bumpp" }, "dependencies": { "@babel/preset react": "^7.27.1", "@babel/preset typescript": "^7.27.1", "@better auth/utils": "^0.3.0", "@noble/hashes": "^2.0.1", "@number flow/react": "^0.5.10", "@types/chokidar": "^2.1.7", "better auth": "1.4.5", "bumpp": "^10.2.3", "c12": "^3.
+- `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts:1-5` - GET, POST (example; TypeScript; module examples/nextjs; symbols GET, POST). import { auth } from "@/lib/auth"; import { toNextJsHandler } from "better auth/next js"; export const { GET, POST } = toNextJsHandler(auth);
+- `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts:1-7` - DELETE, GET, PATCH (example; TypeScript; module examples/nextjs; symbols DELETE, GET, PATCH, POST). import { betterAuthStudio } from "better auth studio/nextjs"; import studioConfig from "@/studio.config"; const handler = betterAuthStudio(studioConfig); export { handler as GET, handler as POST, handler as PUT, handler as DELETE, handler as PATCH };
+- `examples/nextjs/drizzle/app/layout.tsx:1-15` - metadata, RootLayout (example; TypeScript; module examples/nextjs; symbols metadata, RootLayout). import type { Metadata } from "next"; export const metadata: Metadata = { title: "Better Auth Next.js Drizzle Example", description: "Example application with Better Auth, Next.js, and Drizzle", }; export default function RootLayout({ children }: { children: React.ReactNode }) { return ( {children} ); }
+- `examples/nextjs/drizzle/app/page.tsx:1-25` - Home (example; TypeScript; module examples/nextjs; symbols Home). export default function Home() { return ( Better Auth + Next.js + Drizzle Example application with Better Auth Studio Sign In Sign Up ); }
+- `examples/nextjs/drizzle/auth-schema.ts:1-66` - account, invitation, member (example; TypeScript; module examples/nextjs; symbols account, invitation, member, organization). import { pgTable, text, timestamp, boolean, integer } from "drizzle orm/pg core"; export const user = pgTable("user", { id: text("id").primaryKey(), name: text("name").notNull(), email: text("email").notNull().unique(), emailVerified: boolean("email verified").default(false).notNull(), image: text("image"), createdAt: timestamp("created at").defaultNow().notNull(), updatedAt: timestamp("updated at") .defaultNow() .$o
+- `examples/nextjs/drizzle/auth-schema.ts:66-117` - account, invitation, member (example; TypeScript; module examples/nextjs; symbols account, invitation, member, organization). notNull(), metadata: text("metadata"), }); export const member = pgTable("member", { id: text("id").primaryKey(), organizationId: text("organization id") .notNull() .references(() = organization.id, { onDelete: "cascade" }), userId: text("user id") .notNull() .references(() = user.id, { onDelete: "cascade" }), role: text("role").default("member").notNull(), createdAt: timestamp("created at").notNull(), }); export con
+- `examples/nextjs/drizzle/drizzle.config.ts:1-11` - Nextjs (example; TypeScript; module examples/nextjs). import type { Config } from "drizzle kit"; export default { schema: "./auth schema.ts", out: "./drizzle", dialect: "postgresql", dbCredentials: { url: process.env.DATABASE URL!, }, } satisfies Config;
+
+### Source Details
+- `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts`: language TypeScript; exports `GET`, `POST`
+- `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts`: language TypeScript; exports `DELETE`, `GET`, `PATCH`, `POST`, `PUT`
+- `examples/nextjs/drizzle/app/layout.tsx`: language TypeScript; exports `metadata`, `RootLayout`
+- `examples/nextjs/drizzle/app/page.tsx`: language TypeScript; exports `Home`
+- `examples/nextjs/drizzle/auth-schema.ts`: language TypeScript; exports `account`, `invitation`, `member`, `organization`, `session`, `team`
+- `examples/nextjs/drizzle/drizzle.config.ts`: language TypeScript; env `DATABASE_URL`
+- `src/adapters/nextjs.ts`: language TypeScript; exports `betterAuthStudio`
+
+### Evidence
+- `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts`
+- `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts`
+- `examples/nextjs/drizzle/app/layout.tsx`
+- `examples/nextjs/drizzle/app/page.tsx`
+- `examples/nextjs/drizzle/auth-schema.ts`
+- `examples/nextjs/drizzle/drizzle.config.ts`
+- `package.json:exports:./dist/adapters/nextjs.js`
+- `package.json:exports:./nextjs`
+- `src/adapters/nextjs.ts`

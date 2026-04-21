@@ -1,0 +1,121 @@
+---
+title: "Src"
+description: "Src is a repository module detected from 69 source files."
+order: 1090
+---
+
+# Src
+
+Src is a repository module detected from 69 source files.
+## What This Module Owns
+Src owns a coherent part of the codebase. This page is generated from module structure, public symbols, routes, and package exports so larger repositories produce deeper docs instead of a fixed sidebar.
+The module key is `frontend/src`. It was selected because the repository has concrete source evidence for this area, such as files, declarations, routes, or package exports.
+## Module Responsibilities
+- AnimatedNumber
+- App
+- CodeBlock
+- CodeEditor
+- CommandPalette
+- CopyableId
+- DashboardCustomizePanel
+- DashboardFloatingPanel
+- Frontend
+- Src
+## Detailed Module Model
+Src is generated from a coherent source area, not from a generic keyword. The docs engine groups files into this page when they share a module boundary, package export, route family, or public symbol surface.
+
+For Better Auth Studio, module pages help the docs grow with the repository. Small codebases may only need a few module pages; larger codebases can expose many focused pages so readers can learn one capability, adapter, plugin, or subsystem at a time.
+
+## What to Look For
+- The responsibility owned by this module.
+- The public exports, route handlers, declarations, or configuration values attached to the module.
+- The neighboring docs pages that explain related user-facing workflows or integration details.
+
+## Success Criteria
+- Readers understand why this source area exists before reading file paths.
+- Readers can find the files that define the module without searching the whole repo.
+- Maintainers can update this page when the module's exports, routes, or responsibilities change.
+## Public or Observable Surface
+The items below are extracted from the files attached to this page. Treat them as evidence for what the module exposes or handles, not as a guarantee that every symbol is public API.
+- `AnimatedNumber`
+- `App`
+- `CodeBlock`
+- `CodeEditor`
+- `CommandPalette`
+- `CopyableId`
+- `DashboardCustomizePanel`
+- `DashboardFloatingPanel`
+- `DashboardWidgetGrid`
+- `DatabaseWidget`
+- `PANEL_WIDTH`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Using config Option
+Specify a custom path to your auth config file when it's in a non-standard location or auto-detection fails.
+
+**Example:**
+
+```bash
+# With relative path
+pnpm better-auth-studio start --config ./src/lib/auth.ts
+
+# With absolute path
+pnpm better-auth-studio start --config /path/to/project/auth.ts
+```
+
+**How it works:** Studio automatically searches for config files in common locations (`auth.ts`, `src/auth.ts`, `lib/auth.ts`, etc.). Use `--config` to specify a custom path when needed.
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Module pages are generated only from concrete source, route, declaration, or package export evidence.
+- If the module is internal, keep the page focused on responsibility and maintenance boundaries rather than promising public APIs.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `frontend/src/App.tsx` - Evidence file that contributes to the implementation understanding for this page.
+- `frontend/src/components/AnimatedNumber.tsx` - AnimatedNumber reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/CodeBlock.tsx` - CodeBlock reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/CodeEditor.tsx` - CodeEditor reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/CommandPalette.tsx` - CommandPalette reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/CopyableId.tsx` - CopyableId reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx` - DashboardCustomizePanel reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardFloatingPanel.tsx` - DashboardFloatingPanel reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardWidgetGrid.tsx` - DashboardWidgetGrid reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DatabaseWidget.tsx` - DatabaseWidget reusable UI component. It likely renders part of the workflow or a focused interaction.
+
+### Knowledge Chunks
+- `frontend/src/App.tsx:1-55` - App (source; TypeScript; module frontend/src; symbols App). import { useEffect, useState } from "react"; import { Navigate, Route, BrowserRouter as Router, Routes, useLocation } from "react router dom"; import { Toaster } from "sonner"; import DatabaseSchemaNodeDemo from "./components/DatabaseSchemaNodeDemo"; import Layout from "./components/Layout"; import { CountsProvider } from "./contexts/CountsContext"; import { DashboardWidgetsProvider } from "./contexts/DashboardWidget
+- `frontend/src/App.tsx:55-87` - App (source; TypeScript; module frontend/src; symbols App). ); } if (!auth.authenticated) { const redirect = encodeURIComponent(location.pathname + location.search); return ; } return < {children} ; } function MainRoutes() { return ( } / } / } / } / } / } / } /
+- `frontend/src/App.tsx:87-160` - App (source; TypeScript; module frontend/src; symbols App). } / } / } / } / } / } / } / } / ); } function AppShell() { const { theme } = useTheme(); useEffect(() = { const title = config?.metadata?.title; if (title) { document.title = title; } }, []); return ( {isSelfHosted ? ( } / } / } / ) : ( } / )} ); } function App() { return ( ); } export default App;
+- `frontend/src/components/AnimatedNumber.tsx:1-74` - AnimatedNumber (source; TypeScript; module frontend/src; symbols AnimatedNumber). "use client"; import NumberFlow from "@number flow/react"; import clsx from "clsx"; import { type ComponentType, type ReactNode, useMemo } from "react"; interface AnimatedNumberProps { value: number | null | undefined; loading?: boolean; className?: string; prefix?: ReactNode; suffix?: ReactNode; format?: Intl.NumberFormatOptions; trend?: number | boolean; fallback?: ReactNode; } const defaultFormat: Intl.NumberForma
+- `frontend/src/components/CodeBlock.tsx:1-72` - CodeBlock (source; TypeScript; module frontend/src; symbols CodeBlock). import { Check, Copy, FileCode } from "lucide react"; import { useState } from "react"; import { Prism as SyntaxHighlighter } from "react syntax highlighter"; import { oneLight, vscDarkPlus } from "react syntax highlighter/dist/esm/styles/prism"; import { useTheme } from "../contexts/ThemeContext"; import { Button } from "./ui/button"; interface CodeBlockProps { code: string; language?: string; fileName?: string; cla
+- `frontend/src/components/CodeBlock.tsx:72-101` - CodeBlock (source; TypeScript; module frontend/src; symbols CodeBlock). {copied ? : } {code} ); }
+- `frontend/src/components/CodeEditor.tsx:1-51` - CodeEditor (source; TypeScript; module frontend/src; symbols CodeEditor). import { useEffect, useRef, useState } from "react"; import { Prism as SyntaxHighlighter } from "react syntax highlighter"; import { oneLight, vscDarkPlus } from "react syntax highlighter/dist/esm/styles/prism"; import { useTheme } from "../contexts/ThemeContext"; interface CodeEditorProps { value: string; onChange: (value: string) = void; language?: string; placeholder?: string; className?: string; } export function
+- `frontend/src/components/CodeEditor.tsx:51-95` - CodeEditor (source; TypeScript; module frontend/src; symbols CodeEditor). 'ui monospace, SFMono Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace'; const palette = theme === "light" ? oneLight : vscDarkPlus; const caretColor = theme === "light" ? " 111827" : " ffffff"; // Custom style for syntax highlighter const customStyle = { ...palette, 'pre[class ="language "]': { ...palette['pre[class ="language "]'], background: "transparent", padding: 0, margin: 0, borderRadius: 0,
+- `frontend/src/components/CodeEditor.tsx:95-161` - CodeEditor (source; TypeScript; module frontend/src; symbols CodeEditor). className={relative border border dashed border white/20 rounded none focus within:border white/40 ${className}} {/ Syntax highlighted background /} ( {children} )} {highlightCode} {/ Editable textarea /} onChange(e.target.value)} placeholder={placeholder} className="relative w full min h [200px] bg transparent text white font mono text xs rounded none focus:outline none resize none" style={{ ...textareaStyle, boxSiz
+- `frontend/src/components/CommandPalette.tsx:1-51` - CommandPalette (source; TypeScript; module frontend/src; symbols CommandPalette). import { Command } from "cmdk"; import type { LucideIcon } from "lucide react"; import { ArrowRight, BarChart3, Building2, Database, Download, ExternalLink, Globe, Key, Lock, Mail, Moon, // Monitor, Plus, RefreshCw, Search, Settings, Share2, Shield, Shuffle, Sun, UserPlus, Users, Wrench, } from "lucide react"; import { useEffect, useState } from "react"; import { useNavigate } from "react router dom"; import { useThe
+
+### Source Details
+- `frontend/src/App.tsx`: language TypeScript; exports `App`
+- `frontend/src/components/AnimatedNumber.tsx`: language TypeScript; exports `AnimatedNumber`
+- `frontend/src/components/CodeBlock.tsx`: language TypeScript; exports `CodeBlock`
+- `frontend/src/components/CodeEditor.tsx`: language TypeScript; exports `CodeEditor`
+- `frontend/src/components/CommandPalette.tsx`: language TypeScript; exports `CommandPalette`
+- `frontend/src/components/CopyableId.tsx`: language TypeScript; exports `CopyableId`
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx`: language TypeScript; exports `DashboardCustomizePanel`
+- `frontend/src/components/dashboard-widgets/DashboardFloatingPanel.tsx`: language TypeScript; exports `DashboardFloatingPanel`, `PANEL_WIDTH`
+
+### Evidence
+- `frontend/src/App.tsx`
+- `frontend/src/components/AnimatedNumber.tsx`
+- `frontend/src/components/CodeBlock.tsx`
+- `frontend/src/components/CodeEditor.tsx`
+- `frontend/src/components/CommandPalette.tsx`
+- `frontend/src/components/CopyableId.tsx`
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx`
+- `frontend/src/components/dashboard-widgets/DashboardFloatingPanel.tsx`
+- `frontend/src/components/dashboard-widgets/DashboardWidgetGrid.tsx`
+- `frontend/src/components/dashboard-widgets/DatabaseWidget.tsx`

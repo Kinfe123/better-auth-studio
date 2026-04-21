@@ -1,0 +1,89 @@
+---
+title: "Nuxt Adapter"
+description: "The package exposes a Nuxt adapter surface."
+order: 710
+---
+
+# Nuxt Adapter
+
+The package exposes a Nuxt adapter surface.
+## What This Is
+The Nuxt adapter is the framework-specific bridge between the host application and this package. It explains how requests enter the product, where the handler is mounted, and which package export developers import when integrating with Nuxt.
+## Why It Matters
+Nuxt Adapter matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses implementation evidence as supporting context.
+## Core Concepts
+- Nuxt
+- framework adapter
+- request handler
+- mount path
+- package export
+## Typical Workflow
+1. Import the adapter from the Nuxt-specific package export.
+2. Pass the product configuration into the adapter or handler factory.
+3. Mount the generated handler at the route expected by the host application.
+## Detailed API Contract
+Nuxt Adapter is a developer contract, not just an exported name. The page explains what the API represents, what problem it solves, what a caller provides, what the package returns or performs, and how it relates to the surrounding runtime.
+
+API pages are most useful when they explain the shape of responsibility. For an adapter, that means the host framework owns routing and the package supplies a handler. For configuration, it means the host app supplies options and the package changes runtime behavior. For utilities, it means the function supports a feature that needs to be understood before the utility is changed.
+
+## Integration Questions
+- What does the caller provide?
+- What does the package create, mutate, or return?
+- Which feature or configuration page explains the user-facing behavior behind this API?
+- What needs to be tested after this API changes?
+
+## Success Criteria
+- Readers understand the API purpose before looking at source files.
+- Readers know whether the API is public integration surface or internal support code.
+- Readers know which runtime or feature depends on it.
+## Import Surface
+Use `better-auth-studio/nuxt` as the package path indicated by package metadata or adapter file evidence.
+## API Mental Model
+Adapter APIs work as framework entrypoints: they accept product configuration, produce a request handler, and let the host app decide where that handler is mounted.
+## Related Exports
+- `auth`
+- `betterAuthStudio`
+- `prisma`
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Inputs, outputs, side effects, and ownership boundaries are described before exported names.
+- The API connects back to feature or configuration pages that explain user-facing behavior.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `examples/nuxt/prisma/nuxt.config.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/nuxt/prisma/server/api/auth/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/nuxt/prisma/server/api/studio/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/nuxt/prisma/server/api/studio/index.ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/nuxt/prisma/server/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/nuxt/prisma/server/lib/db.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `src/adapters/nuxt.ts` - Framework adapter that connects host requests to the product runtime.
+
+### Knowledge Chunks
+- `package.json:1-64` - Package Config (package; JSON; heading Package). { "name": "better auth studio", "version": "1.1.3 beta.49", "description": "Studio for Better Auth", "keywords": [ "admin", "authentication", "better auth", "dashboard", "gui", "studio" ], "license": "MIT", "author": "kinfish", "bin": { "better auth studio": "./dist/cli.js" }, "files": [ "README.md", "data/default geo.json", "dist/", "scripts/postinstall.js" ], "type": "module", "main": "dist/index.js", "exports": {
+- `package.json:64-116` - Package Config 2 (package; JSON; heading Package). "release:canary": "pnpm build && bumpp preid canary no commit no tag no push && pnpm publish access public tag canary no git checks", "bump": "bumpp" }, "dependencies": { "@babel/preset react": "^7.27.1", "@babel/preset typescript": "^7.27.1", "@better auth/utils": "^0.3.0", "@noble/hashes": "^2.0.1", "@number flow/react": "^0.5.10", "@types/chokidar": "^2.1.7", "better auth": "1.4.5", "bumpp": "^10.2.3", "c12": "^3.
+- `examples/nuxt/prisma/nuxt.config.ts:1-6` - Nuxt (example; typescript; module examples/nuxt). // https://nuxt.com/docs/api/configuration/nuxt config export default defineNuxtConfig({ compatibilityDate: "2024 04 03", devtools: { enabled: true }, });
+- `examples/nuxt/prisma/server/api/auth/[...all].ts:1-7` - Nuxt (example; typescript; module examples/nuxt). import { auth } from "~/server/lib/auth"; import { toNodeHandler } from "better auth/node"; export default defineEventHandler(async (event) = { return toNodeHandler(auth)(event.node.req, event.node.res); });
+- `examples/nuxt/prisma/server/api/studio/[...all].ts:1-7` - Nuxt (example; typescript; module examples/nuxt). import { betterAuthStudio } from "better auth studio/nuxt"; import studioConfig from "~/studio.config"; const handler = betterAuthStudio(studioConfig); export default defineEventHandler(async (event) = { return handler(toWebRequest(event)); });
+- `examples/nuxt/prisma/server/api/studio/index.ts:1-7` - Nuxt (example; typescript; module examples/nuxt). import { betterAuthStudio } from "better auth studio/nuxt"; import studioConfig from "~/studio.config"; const handler = betterAuthStudio(studioConfig); export default defineEventHandler(async (event) = { return handler(toWebRequest(event)); });
+- `examples/nuxt/prisma/server/lib/auth.ts:1-51` - auth (example; TypeScript; module examples/nuxt; symbols auth). import { betterAuth } from "better auth"; import { prismaAdapter } from "better auth/adapters/prisma"; import { organization, admin } from "better auth/plugins"; import { prisma } from "./db"; export const auth = betterAuth({ secret: process.env.AUTH SECRET || "better auth secret 123456789", database: prismaAdapter(prisma, { provider: "postgresql" }), baseURL: process.env.BETTER AUTH URL || "http://localhost:3000", b
+- `examples/nuxt/prisma/server/lib/db.ts:1-14` - prisma (example; TypeScript; module examples/nuxt; symbols prisma). import { PrismaClient } from "@prisma/client"; const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined; }; export const prisma = globalForPrisma.prisma ?? new PrismaClient({ log: process.env.NODE ENV === "development" ? ["query", "error", "warn"] : ["error"], }); if (process.env.NODE ENV !== "production") globalForPrisma.prisma = prisma;
+
+### Source Details
+- `examples/nuxt/prisma/server/lib/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+- `examples/nuxt/prisma/server/lib/db.ts`: language TypeScript; exports `prisma`; env `NODE_ENV`
+- `src/adapters/nuxt.ts`: language TypeScript; exports `betterAuthStudio`
+
+### Evidence
+- `examples/nuxt/prisma/nuxt.config.ts`
+- `examples/nuxt/prisma/server/api/auth/[...all].ts`
+- `examples/nuxt/prisma/server/api/studio/[...all].ts`
+- `examples/nuxt/prisma/server/api/studio/index.ts`
+- `examples/nuxt/prisma/server/lib/auth.ts`
+- `examples/nuxt/prisma/server/lib/db.ts`
+- `package.json:exports:./dist/adapters/nuxt.js`
+- `package.json:exports:./nuxt`
+- `src/adapters/nuxt.ts`

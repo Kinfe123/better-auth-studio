@@ -1,0 +1,64 @@
+---
+title: "Hook Injector"
+description: "The source includes a hook injector utility."
+order: 860
+---
+
+# Hook Injector
+
+The source includes a hook injector utility.
+## What This Is
+This utility page explains the role of hook injector in the package internals and what developers need to know before relying on or changing it.
+## Why It Matters
+Hook Injector matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses implementation evidence as supporting context.
+## Core Concepts
+- Hook Injector
+- utility function
+- internal behavior
+- integration support
+## Typical Workflow
+1. Read the utility's source and exported symbols to understand its inputs and outputs.
+2. Use related feature or configuration docs to understand when the utility is invoked.
+3. Update tests and docs together when the utility changes observable behavior.
+## Detailed API Contract
+Hook Injector is a developer contract, not just an exported name. The page explains what the API represents, what problem it solves, what a caller provides, what the package returns or performs, and how it relates to the surrounding runtime.
+
+API pages are most useful when they explain the shape of responsibility. For an adapter, that means the host framework owns routing and the package supplies a handler. For configuration, it means the host app supplies options and the package changes runtime behavior. For utilities, it means the function supports a feature that needs to be understood before the utility is changed.
+
+## Integration Questions
+- What does the caller provide?
+- What does the package create, mutate, or return?
+- Which feature or configuration page explains the user-facing behavior behind this API?
+- What needs to be tested after this API changes?
+
+## Success Criteria
+- Readers understand the API purpose before looking at source files.
+- Readers know whether the API is public integration surface or internal support code.
+- Readers know which runtime or feature depends on it.
+## Import Surface
+Use `better-auth-studio` as the package path indicated by package metadata or adapter file evidence.
+## API Mental Model
+Utility APIs are best understood through the behavior they support, not only through exported names.
+## Related Exports
+- `injectEventHooks`
+- `injectLastSeenAtHooks`
+## Operational Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect implementation evidence.
+- Examples stay grounded in detected commands, config names, import paths, or behavior from the repository.
+- Maintainer details live in the reference section so the main page stays useful to product readers.
+- Inputs, outputs, side effects, and ownership boundaries are described before exported names.
+- The API connects back to feature or configuration pages that explain user-facing behavior.
+## Maintainer Reference
+The sections above are the reader-facing explanation. The references below are for maintainers who need to verify or update the implementation behind this page.
+
+### Implementation Map
+- `src/utils/hook-injector.ts` - Hook Injector utility. It supports the feature behind the scenes and is often where shared rules live.
+
+### Knowledge Chunks
+No semantic knowledge chunks were generated directly for these evidence files.
+
+### Source Details
+- `src/utils/hook-injector.ts`: language TypeScript; exports `injectEventHooks`, `injectLastSeenAtHooks`
+
+### Evidence
+- `src/utils/hook-injector.ts`
