@@ -1,12 +1,12 @@
 ---
 title: "Database Adapters"
-description: "The project detects or configures database adapters."
+description: "Database adapters connect the product to the persistence layer used by the host application."
 order: 230
 ---
 
 # Database Adapters
 
-The project detects or configures database adapters.
+Database adapters connect the product to the persistence layer used by the host application.
 ## What This Is
 Database adapter docs explain how the product connects to the persistence layer used by the host application. They identify supported adapters, the expected provider names, and what needs to be migrated before the runtime can read or write records safely.
 ## When To Use This
@@ -49,12 +49,6 @@ Configuration is useful only when readers can connect each value to behavior. St
 - `examples/express/mongodb/src/auth.ts` (product) - Product runtime configuration.
 - `examples/express/prisma/src/auth.ts` (product) - Product runtime configuration.
 - `examples/express/prisma/studio.config.ts` (product) - Product runtime configuration.
-- `examples/hono/prisma/src/auth.ts` (product) - Product runtime configuration.
-- `examples/hono/prisma/studio.config.pg.example.ts` (product) - Product runtime configuration.
-- `examples/hono/prisma/studio.config.ts` (product) - Product runtime configuration.
-- `examples/nextjs/drizzle/lib/auth.ts` (product) - Product runtime configuration.
-- `examples/nextjs/drizzle/studio.config.ts` (product) - Product runtime configuration.
-- `examples/nextjs/mongodb/lib/auth.ts` (product) - Product runtime configuration.
 ## From The README
 The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
 
@@ -66,10 +60,10 @@ The README already describes this area in project language. Use these excerpts a
 - MySQL (via Prisma or Drizzle)
 ## How To Verify Changes
 - Identify whether the option affects security, runtime mounting, data access, or presentation.
-- Prefer examples that use the same names and defaults found in the repository.
+- Prefer examples that use the same names and defaults found in the project.
 - Call out adapter-specific behavior instead of implying every setting applies to every framework.
-## Related Files
-Open these files when you need to verify examples or update the behavior behind this page.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
 
 - `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql` - Example project file that shows how the capability is wired in a real framework setup.
 - `src/utils/database-detection.ts` - Database Detection utility. It supports the feature behind the scenes and is often where shared rules live.

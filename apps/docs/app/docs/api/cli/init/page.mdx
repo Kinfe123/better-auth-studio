@@ -10,7 +10,7 @@ The CLI exposes an init command for creating product configuration.
 ## Command Purpose
 The init command creates or updates the configuration files needed to embed the product. This page explains what files are written, how existing files are handled, and what a developer verifies before committing the result.
 ## How to Run It
-Run `pnpm start` from the repository root after dependencies and required environment values are ready.
+Run `pnpm start` from the project root after dependencies and required environment values are ready.
 Install dependencies first with `pnpm install`.
 ## What the Command Depends On
 The command reads environment-backed configuration. Set these values before using large runs or automation.
@@ -46,7 +46,7 @@ Use flags to override defaults for a specific run. Prefer the default script fir
 - Start with the smallest safe command or script before increasing scale.
 - Use `--help` when available to confirm the flags supported by the current version.
 - Check the command output or downstream service to confirm the expected side effect happened.
-## Related Files
-Open these files when you need to verify examples or update the behavior behind this page.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
 
 - `src/cli/commands/init.ts` - CLI entrypoint or command implementation that defines developer-facing commands and flags.

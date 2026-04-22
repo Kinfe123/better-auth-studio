@@ -1,12 +1,12 @@
 ---
 title: "CLI Usage"
-description: "The project has a command line interface and documented runtime flags."
+description: "CLI usage explains the commands and flags developers use to initialize, run, and debug the product."
 order: 280
 ---
 
 # CLI Usage
 
-The project has a command line interface and documented runtime flags.
+CLI usage explains the commands and flags developers use to initialize, run, and debug the product.
 ## What This Is
 CLI usage explains the command-line mental model: which commands exist, when to use each command, which flags affect runtime behavior, and how the CLI discovers project configuration.
 ## When To Use This
@@ -40,14 +40,14 @@ CLI usage explains the command-line mental model: which commands exist, when to 
 - `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
 ## Useful Options
 - `--api-dir <path>`: Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
-- `--config <path>`: Path to the auth configuration file
 - `--host <host>`: Host to run the studio on
 - `--port <port>`: Port to run the studio on
+- `--config <path>`: Path to the auth configuration file
 - `--watch`: Watch for changes in auth config file and reload server
 - `--geo-db <path>`: Path to MaxMind GeoLite2 database file (.mmdb
 - `--no-open`: Do not open browser automatically
-## Related Files
-Open these files when you need to verify examples or update the behavior behind this page.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
 
 - `src/cli/commands/init.ts` - CLI entrypoint or command implementation that defines developer-facing commands and flags.
 - `src/cli.ts` - CLI entrypoint or command implementation that defines developer-facing commands and flags.

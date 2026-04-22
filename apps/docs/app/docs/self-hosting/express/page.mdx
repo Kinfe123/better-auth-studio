@@ -1,12 +1,12 @@
 ---
 title: "Express Setup"
-description: "The repository includes a Express adapter or example for self-hosted usage."
-order: 130
+description: "Express setup shows how to mount the product inside a Express host application."
+order: 140
 ---
 
 # Express Setup
 
-The repository includes a Express adapter or example for self-hosted usage.
+Express setup shows how to mount the product inside a Express host application.
 ## What This Is
 This setup page explains how to run the product inside a Express application. It covers the runtime dependency, the framework route or server hook, and the configuration the host app must provide.
 
@@ -54,7 +54,6 @@ Add the studio handler to your server: Access at http://localhost:3000/api/studi
 - `examples/nextjs/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
 - `examples/express/drizzle/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 - `examples/express/mongodb/package.json` (package) - Package metadata, scripts, dependencies, and exports.
-- `examples/express/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 ## Environment Variables
 - `DATABASE_URL`
 - `BETTER_AUTH_ALLOWED_HOSTS`
@@ -65,8 +64,8 @@ Add the studio handler to your server: Access at http://localhost:3000/api/studi
 - `MONGODB_DB_NAME`
 - `MONGODB_URI`
 - 27 more environment variables appear elsewhere in the project; document them on the page for the workflow that uses them.
-## Related Files
-Open these files when you need to verify examples or update the behavior behind this page.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
 
 - `examples/express/drizzle/auth-schema.ts` - Example project file that shows how the capability is wired in a real framework setup.
 - `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql` - Example project file that shows how the capability is wired in a real framework setup.

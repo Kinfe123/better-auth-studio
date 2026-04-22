@@ -1,18 +1,18 @@
 ---
 title: "Event Tracking"
-description: "The project includes event ingestion, audit, analytics, activity, or last-seen tracking."
+description: "Event tracking turns runtime activity into timelines, audit trails, and last-seen context."
 order: 60
 ---
 
 # Event Tracking
 
-The project includes event ingestion, audit, analytics, activity, or last-seen tracking.
+Event tracking turns runtime activity into timelines, audit trails, and last-seen context.
 ## What This Is
 This capability turns runtime activity into a timeline that administrators can inspect. It is especially useful for auth products because sign-ins, session creation, account updates, and organization events often need auditability and context.
 ## When To Use This
-- Use this when you want to understand what event tracking lets a user or operator accomplish.
-- Use it before changing UI, routes, permissions, or data flows tied to the capability.
-- Pair it with setup and configuration pages when the feature depends on runtime values.
+- Use this page when you are operating, integrating, or changing event tracking.
+- Read it before changing UI, routes, permissions, or data flows tied to this workflow.
+- Pair it with setup and configuration pages when runtime values affect what the user sees.
 ## Core Concepts
 - events
 - audit trail
@@ -23,18 +23,18 @@ This capability turns runtime activity into a timeline that administrators can i
 1. Capture events from the host application or configured provider.
 2. Normalize events into a consistent shape for display and filtering.
 3. Use the event timeline to explain user, session, organization, or system activity.
-## Where You See It
-Use these hints to connect the concept to the parts of the product or package a reader is most likely to touch.
+## In The Product
+These are the product surfaces or existing docs sections readers are most likely to touch while using this workflow.
 
-- You will usually see this around `Events`, `EventsWidget`, `ExportAnalyticsModal`, `LiveEventMarquee`.
-- The README talks about this near `configuration-options`, `user-management`.
+- Primary product surfaces: `Events`, `EventsWidget`, `ExportAnalyticsModal`, `LiveEventMarquee`.
+- README context: `configuration-options`, `user-management`.
 ## User Path
 1. Capture events from the host application or configured provider.
 2. Normalize events into a consistent shape for display and filtering.
 3. Use the event timeline to explain user, session, organization, or system activity.
 ## Expected Outcome
-- You understand the feature's main outcome before changing configuration or code.
-- You know which permissions, data, or runtime settings can affect the workflow.
+- You can describe the workflow in product terms before changing configuration or code.
+- You know which permissions, data, or runtime settings can change the user's experience.
 - You know where to continue when you need exact commands, imports, or deployment details.
 ## From The README
 The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
@@ -55,12 +55,12 @@ The README already describes this area in project language. Use these excerpts a
 - Delete users - Remove users from the system
 - Bulk operations - Seed multiple test users
 - User details - View user profiles, and accounts
-## Related Files
-Open these files when you need to verify examples or update the behavior behind this page.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
 
-- `frontend/src/components/dashboard-widgets/EventsWidget.tsx` - EventsWidget reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx` - EventsWidget reusable UI component. It renders a visible part of the workflow or a focused interaction.
 - `frontend/src/pages/Events.tsx` - Events page-level UI. This is where users usually encounter the capability in the product.
-- `frontend/src/components/ExportAnalyticsModal.tsx` - ExportAnalyticsModal reusable UI component. It likely renders part of the workflow or a focused interaction.
-- `frontend/src/components/LiveEventMarquee.tsx` - LiveEventMarquee reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/ExportAnalyticsModal.tsx` - ExportAnalyticsModal reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/LiveEventMarquee.tsx` - LiveEventMarquee reusable UI component. It renders a visible part of the workflow or a focused interaction.
 - `src/providers/events/helpers.ts` - Repository file related to this page.
 - `src/types/events.ts` - Events type surface. It documents data shapes, provider contracts, or configuration objects.

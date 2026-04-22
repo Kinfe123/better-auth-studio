@@ -1,12 +1,12 @@
 ---
 title: "SvelteKit Setup"
-description: "The repository includes a SvelteKit adapter or example for self-hosted usage."
+description: "SvelteKit setup shows how to mount the product inside a SvelteKit host application."
 order: 200
 ---
 
 # SvelteKit Setup
 
-The repository includes a SvelteKit adapter or example for self-hosted usage.
+SvelteKit setup shows how to mount the product inside a SvelteKit host application.
 ## What This Is
 This setup page explains how to run the product inside a SvelteKit application. It covers the runtime dependency, the framework route or server hook, and the configuration the host app must provide.
 
@@ -54,19 +54,14 @@ Important: For self hosting, install better auth studio as a regular dependency 
 - `examples/svelte-kit/prisma/svelte.config.js` (framework) - SvelteKit application configuration.
 - `examples/svelte-kit/prisma/vite.config.ts` (framework) - Vite application configuration.
 - `examples/svelte-kit/mongodb/package.json` (package) - Package metadata, scripts, dependencies, and exports.
-- `examples/svelte-kit/mongodb/postcss.config.js` (styling) - Styling and CSS pipeline configuration.
-- `examples/svelte-kit/mongodb/tailwind.config.js` (styling) - Styling and CSS pipeline configuration.
-- `examples/svelte-kit/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
-- `examples/svelte-kit/prisma/postcss.config.js` (styling) - Styling and CSS pipeline configuration.
-- `examples/svelte-kit/prisma/tailwind.config.js` (styling) - Styling and CSS pipeline configuration.
 ## Environment Variables
 - `BETTER_AUTH_ALLOWED_HOSTS`
 - `CLICKHOUSE_HOST`
 - `DB_HOST`
 - `BETTER_AUTH_SECRET`
 - 31 more environment variables appear elsewhere in the project; document them on the page for the workflow that uses them.
-## Related Files
-Open these files when you need to verify examples or update the behavior behind this page.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
 
 - `examples/svelte-kit/mongodb/src/hooks.server.ts` - Example project file that shows how the capability is wired in a real framework setup.
 - `examples/svelte-kit/.eslintrc.cjs` - Example project file that shows how the capability is wired in a real framework setup.

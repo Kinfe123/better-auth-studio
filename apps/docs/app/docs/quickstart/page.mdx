@@ -8,26 +8,22 @@ order: 10
 
 Use this page as the shortest path from clone to a useful first run of Better Auth Studio. The goal is not to understand every file yet; the goal is to install dependencies, provide required configuration, and run the command that proves the project is alive.
 ## What You Will Accomplish
-- Prepare the repository with the detected package manager.
+- Prepare the project with the detected package manager.
 - Add the minimum environment configuration needed for runtime behavior.
 - Run the primary workflow so you can confirm the project is usable before exploring advanced docs.
 ## Before You Start
-This repository appears to use `pnpm` as its package manager.
+This project uses `pnpm` as its package manager.
 Environment-backed behavior is present, so configuration is part of the first-run path.
 ## Recommended First Run
 1. Install dependencies with `pnpm install`.
 2. Copy `env.example` to `.env` and set the required values.
 3. Run `pnpm start` to exercise the main workflow.
 ## Useful Commands
-These commands are useful after the first run because they describe the repeatable workflows exposed by the repository.
+These commands are useful after the first run because they are the repeatable workflows available in the project.
 - `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
 - `dev` runs `tsx src/cli.ts` and starts the local development workflow.
 - `start` runs `node dist/cli.js` and starts the runtime entrypoint after dependencies or build output are ready.
 - `test` runs `vitest` and runs verification for expected behavior.
-- `geo:update` runs `node scripts/download-geolite2.js` and supports the project workflow.
-- `copy:public` runs `rm -rf dist/public && cp -r public dist/` and supports the project workflow.
-- `verify:public` runs `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)` and supports the project workflow.
-- `postinstall` runs `node scripts/postinstall.js` and supports the project workflow.
 ## Useful CLI Options
 - `--api-dir <path>`: Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
 - `--config <path>`: Path to the auth configuration file

@@ -1,18 +1,18 @@
 ---
 title: "User Management"
-description: "The project includes user listing, profile, creation, update, or deletion workflows."
+description: "User management helps operators inspect accounts, profiles, and account-level actions."
 order: 90
 ---
 
 # User Management
 
-The project includes user listing, profile, creation, update, or deletion workflows.
+User management helps operators inspect accounts, profiles, and account-level actions.
 ## What This Is
 This capability is the administrative surface for user records. It helps an operator inspect accounts, find a user by identity, update profile or verification state, and remove records when needed. In an auth-oriented product, this page is usually one of the highest-value docs pages because it explains the exact model an admin interacts with.
 ## When To Use This
-- Use this when you want to understand what user management lets a user or operator accomplish.
-- Use it before changing UI, routes, permissions, or data flows tied to the capability.
-- Pair it with setup and configuration pages when the feature depends on runtime values.
+- Use this page when you are operating, integrating, or changing user management.
+- Read it before changing UI, routes, permissions, or data flows tied to this workflow.
+- Pair it with setup and configuration pages when runtime values affect what the user sees.
 ## Core Concepts
 - users
 - accounts
@@ -23,18 +23,18 @@ This capability is the administrative surface for user records. It helps an oper
 1. Find a user through the list, search, or filter UI.
 2. Open the user detail view to inspect profile, account, and session-related data.
 3. Apply mutations such as create, edit, delete, or bulk seed only when the configured access policy allows it.
-## Where You See It
-Use these hints to connect the concept to the parts of the product or package a reader is most likely to touch.
+## In The Product
+These are the product surfaces or existing docs sections readers are most likely to touch while using this workflow.
 
-- You will usually see this around `RecentUsersWidget`, `UserDetails`, `Users`.
-- The README talks about this near `configuration-options`, `dashboard`, `try-better-auth-studio-demo`, `user-management`.
+- Primary product surfaces: `RecentUsersWidget`, `UserDetails`, `Users`.
+- README context: `configuration-options`, `dashboard`, `try-better-auth-studio-demo`, `user-management`.
 ## User Path
 1. Find a user through the list, search, or filter UI.
 2. Open the user detail view to inspect profile, account, and session-related data.
 3. Apply mutations such as create, edit, delete, or bulk seed only when the configured access policy allows it.
 ## Expected Outcome
-- You understand the feature's main outcome before changing configuration or code.
-- You know which permissions, data, or runtime settings can affect the workflow.
+- You can describe the workflow in product terms before changing configuration or code.
+- You know which permissions, data, or runtime settings can change the user's experience.
 - You know where to continue when you need exact commands, imports, or deployment details.
 ## From The README
 The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
@@ -46,10 +46,10 @@ The README already describes this area in project language. Use these excerpts a
 - Delete users - Remove users from the system
 - Bulk operations - Seed multiple test users
 - User details - View user profiles, and accounts
-## Related Files
-Open these files when you need to verify examples or update the behavior behind this page.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
 
-- `frontend/src/components/dashboard-widgets/RecentUsersWidget.tsx` - RecentUsersWidget reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/RecentUsersWidget.tsx` - RecentUsersWidget reusable UI component. It renders a visible part of the workflow or a focused interaction.
 - `frontend/src/pages/Users.tsx` - Users page-level UI. This is where users usually encounter the capability in the product.
 - `frontend/src/pages/UserDetails.tsx` - UserDetails page-level UI. This is where users usually encounter the capability in the product.
 - `examples/tanstack-start/drizzle/src/routes/account/$path.tsx` - Route or API layer that receives requests and coordinates runtime behavior.

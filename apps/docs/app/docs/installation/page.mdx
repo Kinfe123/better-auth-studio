@@ -6,7 +6,7 @@ order: 20
 
 # Installation
 
-This page explains how to get Better Auth Studio into a runnable state. It separates the setup model from the raw command inventory so readers understand what each step is preparing.
+This page explains how to get Better Auth Studio into a runnable state. It separates the setup model from command lists so readers understand what each step is preparing.
 ## Setup Model
 Installation has three jobs: install the package dependencies, provide the runtime configuration the project expects, and verify the command that exercises the main workflow. If any of those steps are skipped, the application may install correctly but still fail when it tries to load database, adapter, environment-backed, or service-backed behavior.
 ## What Gets Configured
@@ -14,11 +14,11 @@ Installation has three jobs: install the package dependencies, provide the runti
 - Environment variables provide secrets, URLs, database connections, provider tokens, and deployment-specific behavior.
 - Scripts provide repeatable entrypoints for local development, production builds, tests, and release tasks.
 ## Successful Setup Looks Like
-- Dependencies install with the package manager already used by the repository.
+- Dependencies install with the package manager already used by the project.
 - Required environment variables are present before runtime commands are executed.
 - The primary command starts, builds, or verifies the project without needing undocumented manual steps.
 ## Install Dependencies
-Run `pnpm install` from the repository root.
+Run `pnpm install` from the project root.
 ## Configure Environment Variables
 Copy `env.example` into `.env` and fill in the required values before running the project.
 - `AUTH_SECRET`
@@ -56,20 +56,8 @@ The most relevant command detected right now is `pnpm start`.
 - `examples/express/drizzle/src/auth.ts` (product) - Product runtime configuration.
 - `examples/express/drizzle/studio.config.ts` (product) - Product runtime configuration.
 - `examples/express/mongodb/src/auth.ts` (product) - Product runtime configuration.
-- `examples/express/prisma/src/auth.ts` (product) - Product runtime configuration.
-- `examples/express/prisma/studio.config.ts` (product) - Product runtime configuration.
-- `examples/hono/prisma/src/auth.ts` (product) - Product runtime configuration.
-- `examples/hono/prisma/studio.config.pg.example.ts` (product) - Product runtime configuration.
-- `examples/hono/prisma/studio.config.ts` (product) - Product runtime configuration.
-- `examples/nextjs/drizzle/lib/auth.ts` (product) - Product runtime configuration.
-- `examples/nextjs/drizzle/studio.config.ts` (product) - Product runtime configuration.
-- `examples/nextjs/mongodb/lib/auth.ts` (product) - Product runtime configuration.
 ## Useful Commands
 - `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
 - `dev` runs `tsx src/cli.ts` and starts the local development workflow.
 - `start` runs `node dist/cli.js` and starts the runtime entrypoint after dependencies or build output are ready.
 - `test` runs `vitest` and runs verification for expected behavior.
-- `geo:update` runs `node scripts/download-geolite2.js` and supports the project workflow.
-- `copy:public` runs `rm -rf dist/public && cp -r public dist/` and supports the project workflow.
-- `verify:public` runs `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)` and supports the project workflow.
-- `postinstall` runs `node scripts/postinstall.js` and supports the project workflow.

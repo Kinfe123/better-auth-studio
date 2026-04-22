@@ -1,12 +1,12 @@
 ---
 title: "Public Exports"
-description: "The package exposes public imports, declarations, or exported integration helpers."
+description: "Use this reference to choose the correct public import path for the workflow you are building."
 order: 440
 ---
 
 # Public Exports
 
-The package exposes public imports, declarations, or exported integration helpers.
+Use this reference to choose the correct public import path for the workflow you are building.
 ## What To Import
 Use this page when you already know you need to integrate Better Auth Studio from `better-auth-studio`, but you need to choose the right entrypoint. Start with the main package for shared helpers, use framework subpaths when mounting the product in an app, and use config subpaths when you are typing or loading runtime configuration.
 ## Common Imports
@@ -19,10 +19,10 @@ import { betterAuthStudio } from "better-auth-studio/nextjs";
 | Import path | When to use it | Common imports |
 | --- | --- | --- |
 | `better-auth-studio` | Use this for top-level helpers, shared types, and runtime utilities from Better Auth Studio. | `AuthConfig`, `AuthDatabase`, `AuthEvent`, `AuthEventType`, `AuthProvider` |
-| `better-auth-studio/astro` | Use this in a Astro host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
+| `better-auth-studio/astro` | Use this in an Astro host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
 | `better-auth-studio/config` | Use this when loading, validating, or typing the product configuration. | `AuthConfig`, `AuthDatabase`, `AuthProvider`, `findAuthConfig`, `getConfig` |
-| `better-auth-studio/elysia` | Use this in a Elysia host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
-| `better-auth-studio/express` | Use this in a Express host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
+| `better-auth-studio/elysia` | Use this in an Elysia host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
+| `better-auth-studio/express` | Use this in an Express host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
 | `better-auth-studio/hono` | Use this in a Hono host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
 | `better-auth-studio/nextjs` | Use this in a Next.js host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
 | `better-auth-studio/nuxt` | Use this in a Nuxt host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |

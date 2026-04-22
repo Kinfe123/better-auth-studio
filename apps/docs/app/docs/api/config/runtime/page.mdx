@@ -1,12 +1,12 @@
 ---
 title: "Runtime Config"
-description: "The package exposes a public configuration surface."
+description: "Runtime config defines the options developers pass when wiring the package into an application."
 order: 470
 ---
 
 # Runtime Config
 
-The package exposes a public configuration surface.
+Runtime config defines the options developers pass when wiring the package into an application.
 ## What This Is
 This API reference page explains the configuration shape developers pass into the package, which options are part of the public contract, and which feature pages depend on those settings.
 ## When To Use This
@@ -62,8 +62,8 @@ The README already describes this area in project language. Use these excerpts a
 - `access.allowIpAddresses` (optional) - IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: 192.168. )
 - `access.blockIpAddresses` (optional) - IP blocklist for Studio requests. Supports exact IPs and wildcard patterns
 - 3 more settings are described in the README.
-## Related Files
-Open these files when you need to verify examples or update the behavior behind this page.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
 
 - `src/types/handler.ts` - Handler type surface. It documents data shapes, provider contracts, or configuration objects.
 - `src/config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.

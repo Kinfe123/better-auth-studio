@@ -1,12 +1,12 @@
 ---
 title: "Next.js Setup"
-description: "The repository includes a Next.js adapter or example for self-hosted usage."
-order: 150
+description: "Next.js setup shows how to mount the product inside a Next.js host application."
+order: 160
 ---
 
 # Next.js Setup
 
-The repository includes a Next.js adapter or example for self-hosted usage.
+Next.js setup shows how to mount the product inside a Next.js host application.
 ## What This Is
 This setup page explains how to run the product inside a Next.js application. It covers the runtime dependency, the framework route or server hook, and the configuration the host app must provide.
 
@@ -54,9 +54,6 @@ Important: For self hosting, install better auth studio as a regular dependency 
 - `examples/nextjs/drizzle/next.config.js` (framework) - Next.js application configuration.
 - `examples/nextjs/mongodb/next.config.js` (framework) - Next.js application configuration.
 - `examples/nextjs/prisma/next.config.js` (framework) - Next.js application configuration.
-- `examples/nextjs/drizzle/package.json` (package) - Package metadata, scripts, dependencies, and exports.
-- `examples/nextjs/mongodb/package.json` (package) - Package metadata, scripts, dependencies, and exports.
-- `examples/nextjs/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 ## Environment Variables
 - `BETTER_AUTH_ALLOWED_HOSTS`
 - `CLICKHOUSE_HOST`
@@ -64,8 +61,8 @@ Important: For self hosting, install better auth studio as a regular dependency 
 - `NEXT_PUBLIC_BETTER_AUTH_URL`
 - `BETTER_AUTH_SECRET`
 - 30 more environment variables appear elsewhere in the project; document them on the page for the workflow that uses them.
-## Related Files
-Open these files when you need to verify examples or update the behavior behind this page.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
 
 - `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts` - Route or API layer that receives requests and coordinates runtime behavior.
 - `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts` - Route or API layer that receives requests and coordinates runtime behavior.

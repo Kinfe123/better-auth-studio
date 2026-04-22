@@ -38,6 +38,9 @@ export default defineDocs({
       "slug": "self-hosting",
       "children": [
         {
+          "slug": "overview"
+        },
+        {
           "slug": "astro"
         },
         {
@@ -54,9 +57,6 @@ export default defineDocs({
         },
         {
           "slug": "nuxt"
-        },
-        {
-          "slug": "overview"
         },
         {
           "slug": "remix"
