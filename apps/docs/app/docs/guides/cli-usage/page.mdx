@@ -1,0 +1,189 @@
+---
+title: "CLI Usage"
+description: "The project has a command line interface and documented runtime flags."
+order: 280
+---
+
+# CLI Usage
+
+The project has a command line interface and documented runtime flags.
+## What This Is
+CLI usage explains the command-line mental model: which commands exist, when to use each command, which flags affect runtime behavior, and how the CLI discovers project configuration.
+
+Repository context: Important: For self hosting, install better auth studio as a regular dependency (not devDependency) since it's required at runtime in production:
+## Why It Matters
+CLI Usage matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses code-level details as supporting context.
+## Core Concepts
+- commands
+- flags
+- config discovery
+- local development
+- standalone server
+## Typical Workflow
+1. Install or run the CLI from the host project root.
+2. Choose the command that matches the task, such as starting the studio or initializing config.
+3. Pass flags for port, host, config path, watch mode, or other runtime behavior when defaults do not match the app.
+## Detailed Guide Goal
+CLI Usage takes a reader from a known starting point to a useful end state. The guide is more than a command list: it explains when to use the workflow, what state the project needs before starting, what each step changes, and how to verify that the workflow succeeded.
+
+The guide is written for someone who wants to accomplish a task, not someone browsing the source code. Commands and flags appear as tools inside the workflow while the reader stays oriented around the goal.
+
+## When to Use This
+- Use this guide when a developer needs to perform the cli usage workflow from the project root or host application.
+- Use it when a contributor needs to understand the intended operator or developer path before changing behavior.
+- Link to API or configuration pages only after the reader understands the task.
+
+## Reader Outcomes
+- The reader knows the prerequisite state.
+- The reader knows what command, action, or setting moves them forward.
+- The reader knows the expected result and how to verify it.
+## Before You Start
+- Install dependencies with `pnpm install`.
+- Confirm the main workflow with `pnpm start`.
+- Review related source files before adding new examples.
+## Command Mental Model
+- `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
+- `geo:update` runs `node scripts/download-geolite2.js` and supports the project workflow.
+- `copy:public` runs `rm -rf dist/public && cp -r public dist/` and supports the project workflow.
+- `verify:public` runs `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)` and supports the project workflow.
+- `postinstall` runs `node scripts/postinstall.js` and supports the project workflow.
+- `dev` runs `tsx src/cli.ts` and starts the local development workflow.
+- `start` runs `node dist/cli.js` and starts the runtime entrypoint after dependencies or build output are ready.
+- `studio` runs `tsx src/cli.ts` and starts the runtime entrypoint after dependencies or build output are ready.
+- `clean` runs `rm -rf dist` and removes generated artifacts so the next build starts from a clean state.
+- `frontend:dev` runs `cd frontend && pnpm run dev` and starts the local development workflow.
+- `frontend:build` runs `cd frontend && pnpm run build` and creates the production build or compiled package artifacts.
+- `frontend:preview` runs `cd frontend && pnpm run preview` and supports the project workflow.
+- `lint` runs `oxlint . && oxfmt --check .` and checks or fixes code style before changes are shipped.
+- `format` runs `oxlint --fix . && oxfmt .` and checks or fixes code style before changes are shipped.
+- `lint:fix` runs `oxlint --fix . && oxfmt .` and checks or fixes code style before changes are shipped.
+- `type-check` runs `tsc --noEmit` and supports the project workflow.
+## Raw Commands and Flags
+- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public`
+- `geo:update`: `node scripts/download-geolite2.js`
+- `copy:public`: `rm -rf dist/public && cp -r public dist/`
+- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)`
+- `postinstall`: `node scripts/postinstall.js`
+- `dev`: `tsx src/cli.ts`
+- `start`: `node dist/cli.js`
+- `studio`: `tsx src/cli.ts`
+- `clean`: `rm -rf dist`
+- `frontend:dev`: `cd frontend && pnpm run dev`
+- `frontend:build`: `cd frontend && pnpm run build`
+- `frontend:preview`: `cd frontend && pnpm run preview`
+- `lint`: `oxlint . && oxfmt --check .`
+- `format`: `oxlint --fix . && oxfmt .`
+- `lint:fix`: `oxlint --fix . && oxfmt .`
+- `type-check`: `tsc --noEmit`
+- `test`: `vitest`
+- `test:watch`: `vitest --watch`
+- `test:coverage`: `vitest --coverage`
+- `test:ci`: `pnpm test --run`
+- `release`: `pnpm build && bumpp && pnpm publish --access public --no-git-checks`
+- `release:beta`: `pnpm build && bumpp --preid beta && pnpm publish --access public --tag beta --no-git-checks`
+- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next`
+- `release:canary`: `pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks`
+- `bump`: `bumpp`
+- `--api-dir <path>`: Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
+- `--config <path>`: Path to the auth configuration file
+- `--geo-db <path>`: Path to MaxMind GeoLite2 database file (.mmdb
+- `--host <host>`: Host to run the studio on
+- `--no-open`: Do not open browser automatically
+- `--port <port>`: Port to run the studio on
+- `--watch`: Watch for changes in auth config file and reload server
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Installation for Self Hosting
+**Important:** For self-hosting, install `better-auth-studio` as a **regular dependency** (not devDependency) since it's required at runtime in production:
+
+```bash
+pnpm add better-auth-studio
+```
+
+> **Note:** The CLI usage (standalone studio) can be installed as a dev dependency, but self-hosting requires it in `dependencies` for production deployments.
+
+### Docker (Standalone Self Host)
+If you want to run Better Auth Studio in its own container, this repository includes a Docker setup for the standalone CLI server.
+
+This mode is useful when:
+
+- you want a separate admin container
+- your Better Auth app already lives in its own repository
+- you want Docker-managed `node_modules` and package-manager cache volumes
+
+> **Important:** The standalone container still needs your Better Auth project mounted into it, because Studio loads your real `auth.ts` and `studio.config.*` files at runtime.
+
+Build the image from this repository:
+
+```bash
+docker build -t better-auth-studio:self-host .
+```
+
+Run it with Docker Compose:
+
+```bash
+HOST_PROJECT_PATH=/absolute/path/to/your-better-auth-project \
+CONFIG_PATH=./auth.ts \
+docker compose -f docker/compose.yml up --build
+```
+
+If your auth config is not at the project root, pass it explicitly:
+
+```bash
+HOST_PROJECT_PATH=/absolute/path/to/your-better-auth-project \
+CONFIG_PATH=./src/lib/auth.ts \
+docker compose -f docker/compose.yml up --build
+```
+
+If you already used the older filename, `docker/docker-compose.self-host.yml` still works too.
+
+What the container does:
+
+- mounts your Better Auth project into `/workspace`
+- installs project dependencies into Docker volumes on first boot
+- starts `better-auth-studio start --host 0.0.0.0 --port 3002 --no-open`
+
+Useful environment variables:
+
+- `HOST_PROJECT_PATH` - absolute path to your Better Auth project on the host machine
+- `CONFIG_PATH` - optional auth config path inside the mounted project, for example `./src/lib/auth.ts`
+- `PORT` - studio port, defaults to `3002`
+- `WATCH` - set to `true` to enable watch mode
+- `AUTO_INSTALL` - set to `false` if your container/project already has dependencies installed
+- `PROJECT_INSTALL_CMD` - optional custom install command for non-standard setups
+- `GEO_DB_PATH` - optional GeoLite database path inside the mounted project
+
+If you change the Studio port, make sure your Better Auth config also trusts that origin when needed. The examples usually include both `http://localhost:3000` and `http://localhost:3002` for that reason.
+
+If you already embed Studio in your server with the framework adapters below, that remains the recommended production setup. The Docker flow is mainly for running the standalone Studio server in a containerized environment.
+## Usage Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect source files.
+- Examples should match the commands, config names, import paths, or behavior present in the repository.
+- Code-level context stays at the bottom so the main page remains useful to product readers.
+- The guide stays task-oriented: prerequisite, action, expected result, verification.
+- Each command or option is connected to its reason before the raw command inventory appears.
+## Source Reference
+Use these links when you need to verify behavior, update examples, or trace a public name back to the code that owns it.
+
+### Key Files
+- `examples/solid-start/postcss.config.cjs` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/solid-start/src/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/solid-start/src/utils/auth.ts` - Auth utility. It supports the feature behind the scenes and is often where shared rules live.
+- `examples/solid-start/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/solid-start/tailwind.config.cjs` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/solid-start/vite.config.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/tanstack-start/drizzle/auth-schema.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/tanstack-start/drizzle/src/database/db.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/tanstack-start/drizzle/src/database/schema.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/tanstack-start/drizzle/src/lib/auth-client.ts` - Example project file that shows how the capability is wired in a real framework setup.
+
+### Public Names and Routes
+- `examples/solid-start/src/lib/auth.ts`: language TypeScript; exports `auth`
+- `examples/solid-start/src/utils/auth.ts`: language TypeScript; exports `session`, `useSession`
+- `examples/solid-start/studio.config.ts`: language TypeScript; exports `config`
+- `examples/tanstack-start/drizzle/auth-schema.ts`: language TypeScript; exports `accounts`, `sessions`, `users`, `verifications`
+- `examples/tanstack-start/drizzle/src/database/db.ts`: language TypeScript; exports `db`; env `DATABASE_URL`
+- `examples/tanstack-start/drizzle/src/lib/auth-client.ts`: language TypeScript; exports `authClient`
+- `src/adapters/solid-start.ts`: language TypeScript; exports `betterAuthStudio`
+- `src/adapters/tanstack-start.ts`: language TypeScript; exports `betterAuthStudio`

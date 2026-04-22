@@ -1,0 +1,71 @@
+---
+title: "Public Exports"
+description: "The package exposes public imports, declarations, or exported integration helpers."
+order: 440
+---
+
+# Public Exports
+
+The package exposes public imports, declarations, or exported integration helpers.
+## What This Is
+Public export documentation explains which imports are intended for developers, what each exported helper or type represents, and how those exports connect to the runtime behavior documented elsewhere.
+## Why It Matters
+Public Exports matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses code-level details as supporting context.
+## Core Concepts
+- package exports
+- public imports
+- types
+- integration helpers
+- developer API
+## Typical Workflow
+1. Identify package exports and source declarations that form the public surface.
+2. Group exports by the workflow or runtime behavior they support.
+3. Document import paths, responsibilities, and related configuration before listing raw symbols.
+## Public Import Paths
+- `better-auth-studio` - Main package entrypoint.
+- `better-auth-studio/astro` - Astro integration entrypoint.
+- `better-auth-studio/config` - Configuration contract or helper export.
+- `better-auth-studio/elysia` - Elysia integration entrypoint.
+- `better-auth-studio/express` - Express integration entrypoint.
+- `better-auth-studio/hono` - Hono integration entrypoint.
+- `better-auth-studio/nextjs` - Next.js integration entrypoint.
+- `better-auth-studio/nuxt` - Nuxt integration entrypoint.
+## Source Surface
+- `src/config.ts` exposes `AuthConfig`, `AuthDatabase`, `AuthProvider`, `findAuthConfig`, `getConfig`, `getPathAliases`, `possiblePaths`.
+- `src/index.ts` exposes `AuthEvent`, `AuthEventType`, `checkEventIngestionHealth`, `createClickHouseProvider`, `createHttpProvider`, `createNodeSqliteProvider`, `createPostgresProvider`, `createSqliteProvider`, `createStorageProvider`, `defineStudioConfig`.
+- `src/adapters/astro.ts` exposes `betterAuthStudio`.
+- `src/adapters/elysia.ts` exposes `betterAuthStudio`.
+- `src/adapters/express.ts` exposes `betterAuthStudio`.
+- `src/adapters/hono.ts` exposes `betterAuthStudio`.
+- `src/adapters/nextjs.ts` exposes `betterAuthStudio`.
+- `src/adapters/nuxt.ts` exposes `betterAuthStudio`.
+- `src/adapters/remix.ts` exposes `betterAuthStudio`.
+- `src/adapters/solid-start.ts` exposes `betterAuthStudio`.
+- `src/adapters/svelte-kit.ts` exposes `betterAuthStudio`.
+- `src/adapters/tanstack-start.ts` exposes `betterAuthStudio`.
+## How To Read This Page
+Use this page as the import map. It should explain stable developer entrypoints, while feature, setup, and configuration pages explain the workflows those entrypoints support.
+## Source Reference
+Use these links when you need to verify behavior, update examples, or trace a public name back to the code that owns it.
+
+### Key Files
+- `src/adapters/astro.ts` - Framework adapter that connects host requests to the product runtime.
+- `src/adapters/elysia.ts` - Framework adapter that connects host requests to the product runtime.
+- `src/adapters/express.ts` - Framework adapter that connects host requests to the product runtime.
+- `src/adapters/hono.ts` - Framework adapter that connects host requests to the product runtime.
+- `src/adapters/nextjs.ts` - Framework adapter that connects host requests to the product runtime.
+- `src/adapters/nuxt.ts` - Framework adapter that connects host requests to the product runtime.
+- `src/adapters/remix.ts` - Framework adapter that connects host requests to the product runtime.
+- `src/adapters/solid-start.ts` - Framework adapter that connects host requests to the product runtime.
+- `src/adapters/svelte-kit.ts` - Framework adapter that connects host requests to the product runtime.
+- `src/adapters/tanstack-start.ts` - Framework adapter that connects host requests to the product runtime.
+
+### Public Names and Routes
+- `src/adapters/astro.ts`: language TypeScript; exports `betterAuthStudio`
+- `src/adapters/elysia.ts`: language TypeScript; exports `betterAuthStudio`
+- `src/adapters/express.ts`: language TypeScript; exports `betterAuthStudio`
+- `src/adapters/hono.ts`: language TypeScript; exports `betterAuthStudio`
+- `src/adapters/nextjs.ts`: language TypeScript; exports `betterAuthStudio`
+- `src/adapters/nuxt.ts`: language TypeScript; exports `betterAuthStudio`
+- `src/adapters/remix.ts`: language TypeScript; exports `betterAuthStudio`
+- `src/adapters/solid-start.ts`: language TypeScript; exports `betterAuthStudio`

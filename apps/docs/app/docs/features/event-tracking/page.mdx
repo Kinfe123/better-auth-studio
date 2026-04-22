@@ -1,0 +1,95 @@
+---
+title: "Event Tracking"
+description: "The project includes event ingestion, audit, analytics, activity, or last-seen tracking."
+order: 60
+---
+
+# Event Tracking
+
+The project includes event ingestion, audit, analytics, activity, or last-seen tracking.
+## What This Is
+This capability turns runtime activity into a timeline that administrators can inspect. It is especially useful for auth products because sign-ins, session creation, account updates, and organization events often need auditability and context.
+## Why It Matters
+Event Tracking matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses code-level details as supporting context.
+## Core Concepts
+- events
+- audit trail
+- activity feed
+- last seen
+- event providers
+## Typical Workflow
+1. Capture events from the host application or configured provider.
+2. Normalize events into a consistent shape for display and filtering.
+3. Use the event timeline to explain user, session, organization, or system activity.
+## What The Repository Shows
+This page starts with the behavior a reader can use, then keeps code-level details as supporting context.
+
+- Reader-facing surfaces: `Events`, `EventsWidget`, `ExportAnalyticsModal`, `LiveEventMarquee`.
+- Related public names: `createClickHouseProvider`, `createHttpProvider`, `createNodeSqliteProvider`, `createPostgresProvider`, `createSqliteProvider`, `Events`, `EventsWidget`, `ExportAnalyticsModal`, `ExportMode`, `LiveEventMarquee`.
+- Related README sections: `configuration-options`, `user-management`.
+## Detailed Behavior
+Event Tracking works as a product workflow with three layers. The first layer is the user-facing experience: what an operator sees, what they can search or inspect, and what actions they can take. The second layer is the domain model: which records, relationships, or configuration values the workflow depends on. The third layer is the safety model: which permissions, access rules, or validation steps prevent accidental or unauthorized changes.
+
+For Better Auth Studio, this feature is easiest to understand from the operator's point of view. A reader can understand what problem this page solves, what state it reads or changes, and what a successful outcome looks like before they need to think about source files.
+
+## Common Scenarios
+- A new operator wants to understand what event tracking is for before using it in production.
+- A developer is wiring the feature into a host application and needs to know which data, config, or permissions are involved.
+- A contributor changed the feature and needs to update docs without forcing readers to understand the source tree first.
+
+## Reader Outcomes
+- Readers can explain what event tracking does in plain language.
+- Readers know the main objects or settings involved before they see any file paths.
+- Readers know which actions are safe, which actions are destructive, and which actions depend on access control.
+## How It Fits in the Product
+Event Tracking is a product capability, not just a list of source files. The important story is the user-facing outcome, the data or configuration it depends on, and the guardrails that make the workflow safe to operate.
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Configuration Options
+| Option                    | Required | Description                                                                                                                                   |
+| ------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`                    | Yes      | Your Better Auth instance                                                                                                                     |
+| `basePath`                | Yes      | URL path where studio is mounted                                                                                                              |
+| `access.allowEmails`      | No       | Array of admin email addresses                                                                                                                |
+| `access.roles`            | No       | Array of allowed user roles                                                                                                                   |
+| `access.allowIpAddresses` | No       | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: `192.168.*`)                                             |
+| `access.blockIpAddresses` | No       | IP blocklist for Studio requests. Supports exact IPs and wildcard patterns                                                                    |
+| `ipAddress`               | No       | IP geolocation for Events/Sessions: `provider` ("ipinfo" \| "ipapi"), `apiToken`, `baseUrl`, optional `endpoint` (ipinfo: "lite" \| "lookup") |
+| `lastSeenAt`              | No       | Enable last-seen tracking: `{ enabled: true, columnName?: string }`                                                                           |
+| `metadata`                | No       | Custom branding (title, theme)                                                                                                                |
+
+### 👥 User Management
+- **View all users** - Paginated list with search and filtering
+- **Create users** - Add new users with email/password
+- **Edit users** - Update user information, email verification status
+- **Delete users** - Remove users from the system
+- **Bulk operations** - Seed multiple test users
+- **User details** - View user profiles, and accounts
+- **Last seen** - When events are enabled, the studio injects an optional `lastSeenAt` field on the user model and updates it on each sign-in or session creation. Run your database migration (e.g. `prisma migrate dev` or Drizzle push) to add the `lastSeenAt` column to the user table.
+## Usage Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect source files.
+- Examples should match the commands, config names, import paths, or behavior present in the repository.
+- Code-level context stays at the bottom so the main page remains useful to product readers.
+- User-facing state, available actions, empty/error states, and permission boundaries are part of the product behavior.
+- The page explains what data the feature reads or changes before referencing source files.
+## Source Reference
+Use these links when you need to verify behavior, update examples, or trace a public name back to the code that owns it.
+
+### Key Files
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx` - EventsWidget reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/ExportAnalyticsModal.tsx` - ExportAnalyticsModal reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/LiveEventMarquee.tsx` - LiveEventMarquee reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/pages/Events.tsx` - Events page-level UI. This is where users usually encounter the capability in the product.
+- `src/providers/events/helpers.ts` - Repository file related to this page.
+- `src/types/events.ts` - Events type surface. It documents data shapes, provider contracts, or configuration objects.
+- `src/utils/event-ingestion.ts` - Event Ingestion utility. It supports the feature behind the scenes and is often where shared rules live.
+
+### Public Names and Routes
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx`: language TypeScript; exports `EventsWidget`
+- `frontend/src/components/ExportAnalyticsModal.tsx`: language TypeScript; exports `ExportAnalyticsModal`, `ExportMode`
+- `frontend/src/components/LiveEventMarquee.tsx`: language TypeScript; exports `LiveEventMarquee`
+- `frontend/src/pages/Events.tsx`: language TypeScript; exports `Events`
+- `src/providers/events/helpers.ts`: language TypeScript; exports `createClickHouseProvider`, `createHttpProvider`, `createNodeSqliteProvider`, `createPostgresProvider`, `createSqliteProvider`, `createStorageProvider`
+- `src/types/events.ts`: language TypeScript; exports `AuthEvent`, `AuthEventType`, `EVENT_TEMPLATES`, `EventIngestionProvider`, `EventQueryOptions`, `EventQueryResult`
+- `src/utils/event-ingestion.ts`: language TypeScript; exports `checkEventIngestionHealth`, `emitEvent`, `getEventIngestionProvider`, `getEventQueueSize`, `initializeEventIngestion`, `isEventIngestionInitialized`

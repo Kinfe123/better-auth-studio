@@ -1,0 +1,84 @@
+---
+title: "Developer Tools"
+description: "The project includes developer-facing tools, generators, inspectors, or visual editors."
+order: 50
+---
+
+# Developer Tools
+
+The project includes developer-facing tools, generators, inspectors, or visual editors.
+## What This Is
+This section explains the utilities that help developers inspect, configure, or generate parts of the product. These tools are not just UI screens; they are shortcuts for common setup, debugging, schema, email, or integration work.
+## Why It Matters
+Developer Tools matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses code-level details as supporting context.
+## Core Concepts
+- developer tools
+- generators
+- inspectors
+- visual editors
+- debug workflows
+## Typical Workflow
+1. Choose the tool that matches the setup or debugging task.
+2. Review generated code or detected state before applying it to the host project.
+3. Use tool output as a starting point, then validate it against the application's real configuration.
+## What The Repository Shows
+This page starts with the behavior a reader can use, then keeps code-level details as supporting context.
+
+- Reader-facing surfaces: `CodeEditor`, `CommandPalette`, `DatabaseVisualizer`, `EmailEditor`, `Tools`.
+- Related public names: `ALL_STUDIO_TOOL_IDS`, `CodeEditor`, `CommandPalette`, `DatabaseVisualizer`, `EmailEditor`, `getExcludedToolIds`, `getVisibleToolsCount`, `initCommand`, `StudioToolsConfig`, `Tools`.
+- Related README sections: `docker-standalone-self-host`, `installation-for-self-hosting`, `next-js-app-router`.
+## Detailed Behavior
+Developer Tools works as a product workflow with three layers. The first layer is the user-facing experience: what an operator sees, what they can search or inspect, and what actions they can take. The second layer is the domain model: which records, relationships, or configuration values the workflow depends on. The third layer is the safety model: which permissions, access rules, or validation steps prevent accidental or unauthorized changes.
+
+For Better Auth Studio, this feature is easiest to understand from the operator's point of view. A reader can understand what problem this page solves, what state it reads or changes, and what a successful outcome looks like before they need to think about source files.
+
+## Common Scenarios
+- A new operator wants to understand what developer tools is for before using it in production.
+- A developer is wiring the feature into a host application and needs to know which data, config, or permissions are involved.
+- A contributor changed the feature and needs to update docs without forcing readers to understand the source tree first.
+
+## Reader Outcomes
+- Readers can explain what developer tools does in plain language.
+- Readers know the main objects or settings involved before they see any file paths.
+- Readers know which actions are safe, which actions are destructive, and which actions depend on access control.
+## How It Fits in the Product
+Developer Tools is a product capability, not just a list of source files. The important story is the user-facing outcome, the data or configuration it depends on, and the guardrails that make the workflow safe to operate.
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Other Commands
+```bash
+# Check version
+pnpx better-auth-studio --version
+
+# Show help
+pnpx better-auth-studio --help
+```
+## Usage Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect source files.
+- Examples should match the commands, config names, import paths, or behavior present in the repository.
+- Code-level context stays at the bottom so the main page remains useful to product readers.
+- User-facing state, available actions, empty/error states, and permission boundaries are part of the product behavior.
+- The page explains what data the feature reads or changes before referencing source files.
+## Source Reference
+Use these links when you need to verify behavior, update examples, or trace a public name back to the code that owns it.
+
+### Key Files
+- `frontend/src/components/CodeEditor.tsx` - CodeEditor reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/components/CommandPalette.tsx` - CommandPalette reusable UI component. It likely renders part of the workflow or a focused interaction.
+- `frontend/src/lib/studio-tools.ts` - Repository file related to this page.
+- `frontend/src/pages/DatabaseVisualizer.tsx` - DatabaseVisualizer page-level UI. This is where users usually encounter the capability in the product.
+- `frontend/src/pages/EmailEditor.tsx` - EmailEditor page-level UI. This is where users usually encounter the capability in the product.
+- `frontend/src/pages/Tools.tsx` - Tools page-level UI. This is where users usually encounter the capability in the product.
+- `src/cli.ts` - CLI entrypoint or command implementation that defines developer-facing commands and flags.
+- `src/cli/commands/init.ts` - CLI entrypoint or command implementation that defines developer-facing commands and flags.
+
+### Public Names and Routes
+- `frontend/src/components/CodeEditor.tsx`: language TypeScript; exports `CodeEditor`
+- `frontend/src/components/CommandPalette.tsx`: language TypeScript; exports `CommandPalette`
+- `frontend/src/lib/studio-tools.ts`: language TypeScript; exports `ALL_STUDIO_TOOL_IDS`, `getExcludedToolIds`, `getVisibleToolsCount`, `StudioToolsConfig`
+- `frontend/src/pages/DatabaseVisualizer.tsx`: language TypeScript; exports `DatabaseVisualizer`
+- `frontend/src/pages/EmailEditor.tsx`: language TypeScript; exports `EmailEditor`
+- `frontend/src/pages/Tools.tsx`: language TypeScript; exports `Tools`
+- `src/cli.ts`: language TypeScript; flags `--api-dir`, `--config`, `--geo-db`, `--host`, `--no-open`, `--port`
+- `src/cli/commands/init.ts`: language TypeScript; exports `initCommand`

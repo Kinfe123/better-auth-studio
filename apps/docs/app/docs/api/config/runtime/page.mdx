@@ -1,0 +1,62 @@
+---
+title: "Runtime Config"
+description: "The package exposes a public configuration surface."
+order: 470
+---
+
+# Runtime Config
+
+The package exposes a public configuration surface.
+## What This Is
+This API reference page explains the configuration shape developers pass into the package, which options are part of the public contract, and which feature pages depend on those settings.
+## Why It Matters
+Runtime Config matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses code-level details as supporting context.
+## Core Concepts
+- configuration type
+- runtime options
+- validation
+- public contract
+## Typical Workflow
+1. Locate the configuration object in the host application.
+2. Set only the options needed for the selected runtime and feature set.
+3. Use related feature docs to understand behavior controlled by each option.
+## Configuration Entry Points
+- `better-auth-studio/config` - Configuration contract or helper export.
+## Configuration Types And Helpers
+- `src/config.ts` exposes `AuthConfig`, `AuthDatabase`, `AuthProvider`, `findAuthConfig`, `getConfig`, `getPathAliases`, `possiblePaths`.
+- `src/types/handler.ts` exposes `defineStudioConfig`, `EventColors`, `LiveMarqueeConfig`, `STUDIO_TOOL_IDS`, `StudioAccessConfig`, `StudioConfig`, `StudioIpAddressConfig`, `StudioLastSeenAtConfig`, `StudioMetadata`, `StudioToolId`.
+## How To Use This Contract
+- Start with the exported configuration helper or type rather than copying internal schema files.
+- Keep runtime options tied to the feature, adapter, or deployment behavior they control.
+- Treat example configs as usage examples; the primary source export is the contract.
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### ⚙️ Settings & Configuration
+- **Plugin status** - Check which Better Auth plugins are enabled
+- **Database configuration** - View current database adapter and settings
+- **Social providers** - Configure OAuth providers (GitHub, Google, etc.)
+- **Email settings** - Configure email verification and password reset
+
+### Configuration Options
+| Option                    | Required | Description                                                                                                                                   |
+| ------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`                    | Yes      | Your Better Auth instance                                                                                                                     |
+| `basePath`                | Yes      | URL path where studio is mounted                                                                                                              |
+| `access.allowEmails`      | No       | Array of admin email addresses                                                                                                                |
+| `access.roles`            | No       | Array of allowed user roles                                                                                                                   |
+| `access.allowIpAddresses` | No       | IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: `192.168.*`)                                             |
+| `access.blockIpAddresses` | No       | IP blocklist for Studio requests. Supports exact IPs and wildcard patterns                                                                    |
+| `ipAddress`               | No       | IP geolocation for Events/Sessions: `provider` ("ipinfo" \| "ipapi"), `apiToken`, `baseUrl`, optional `endpoint` (ipinfo: "lite" \| "lookup") |
+| `lastSeenAt`              | No       | Enable last-seen tracking: `{ enabled: true, columnName?: string }`                                                                           |
+| `metadata`                | No       | Custom branding (title, theme)                                                                                                                |
+## Source Reference
+Use these links when you need to verify behavior, update examples, or trace a public name back to the code that owns it.
+
+### Key Files
+- `src/config.ts` - Repository file related to this page.
+- `src/types/handler.ts` - Handler type surface. It documents data shapes, provider contracts, or configuration objects.
+
+### Public Names and Routes
+- `src/config.ts`: language TypeScript; exports `AuthConfig`, `AuthDatabase`, `AuthProvider`, `findAuthConfig`, `getConfig`, `getPathAliases`
+- `src/types/handler.ts`: language TypeScript; exports `defineStudioConfig`, `EventColors`, `LiveMarqueeConfig`, `STUDIO_TOOL_IDS`, `StudioAccessConfig`, `StudioConfig`

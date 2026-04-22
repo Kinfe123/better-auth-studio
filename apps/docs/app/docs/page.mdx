@@ -1,0 +1,250 @@
+---
+title: "Better Auth Studio"
+description: "Overview for Better Auth Studio."
+order: 0
+---
+
+# Better Auth Studio
+
+Studio for Better Auth
+## Product Story
+Better Auth Studio is documented as a product with capabilities, workflows, configuration decisions, and integration surfaces. These pages are organized so a reader can understand the purpose of the project before they need to inspect source files.
+## Reader Paths
+- Start with the overview, quickstart, and installation pages to understand the repository before drilling into implementation details.
+- Use feature pages to understand product capabilities surfaced by the README, routes, UI, or domain files.
+- Use self-hosting pages when deciding how this project fits into a framework, server, or deployment environment.
+- Use configuration pages for runtime settings, environment files, deployment files, database files, or product config.
+- Use guides for task-oriented workflows such as CLI usage, local development, troubleshooting, or repository-specific operations.
+- Use API reference pages after the mental model is clear and you need routes, commands, adapters, exports, or type contracts.
+## Documentation Model
+Each page answers four questions: what the concept is, why it matters, how a developer or operator uses it, and where the related source files live. File paths and exports are supporting context, not the main explanation.
+## Documentation Map
+- Get Started: [Better Auth Studio](/docs) - Overview for Better Auth Studio.
+- Get Started: [Quickstart](/docs/quickstart) - Run Better Auth Studio for the first time.
+- Get Started: [Installation](/docs/installation) - Install and configure Better Auth Studio.
+- Core Features: [Features](/docs/features) - Product capabilities and workflows readers can use or operate.
+- Core Features: [Dashboard Overview](/docs/features/dashboard-overview) - The project exposes dashboard or overview UI for operational visibility.
+- Core Features: [Developer Tools](/docs/features/developer-tools) - The project includes developer-facing tools, generators, inspectors, or visual editors.
+- Core Features: [Event Tracking](/docs/features/event-tracking) - The project includes event ingestion, audit, analytics, activity, or last-seen tracking.
+- Core Features: [Organization Management](/docs/features/organization-management) - The project includes organizations, teams, members, or invitation workflows.
+- Core Features: [Session Management](/docs/features/session-management) - The project includes session, sign-in, authentication, or token workflows.
+- Core Features: [User Management](/docs/features/user-management) - The project includes user listing, profile, creation, update, or deletion workflows.
+- Self-Hosting: [Self-Hosting](/docs/self-hosting) - Runtime and deployment setup for running the project in your own environment.
+- Self-Hosting: [Astro Setup](/docs/self-hosting/astro) - The repository includes a Astro adapter or example for self-hosted usage.
+- Self-Hosting: [Elysia Setup](/docs/self-hosting/elysia) - The repository includes a Elysia adapter or example for self-hosted usage.
+- Self-Hosting: [Express Setup](/docs/self-hosting/express) - The repository includes a Express adapter or example for self-hosted usage.
+- Self-Hosting: [Hono Setup](/docs/self-hosting/hono) - The repository includes a Hono adapter or example for self-hosted usage.
+- Self-Hosting: [Next.js Setup](/docs/self-hosting/nextjs) - The repository includes a Next.js adapter or example for self-hosted usage.
+- Self-Hosting: [Nuxt Setup](/docs/self-hosting/nuxt) - The repository includes a Nuxt adapter or example for self-hosted usage.
+- Self-Hosting: [Self-Hosting Overview](/docs/self-hosting/overview) - The repository includes guidance or runtime files for deploying the product yourself.
+- Self-Hosting: [Remix Setup](/docs/self-hosting/remix) - The repository includes a Remix adapter or example for self-hosted usage.
+- Self-Hosting: [SolidStart Setup](/docs/self-hosting/solid-start) - The repository includes a SolidStart adapter or example for self-hosted usage.
+- Self-Hosting: [SvelteKit Setup](/docs/self-hosting/svelte-kit) - The repository includes a SvelteKit adapter or example for self-hosted usage.
+- Self-Hosting: [TanStack Start Setup](/docs/self-hosting/tanstack-start) - The repository includes a TanStack Start adapter or example for self-hosted usage.
+- Configuration: [Configuration](/docs/configuration) - Runtime values, environment variables, deployment settings, and framework configuration.
+- Configuration: [Database Adapters](/docs/configuration/database-adapters) - The project detects or configures database adapters.
+- Configuration: [Database](/docs/configuration/database) - The repository includes database schema, migration, or adapter configuration evidence.
+- Configuration: [Deployment](/docs/configuration/deployment) - The repository includes deployment, container, or platform configuration files.
+- Configuration: [Environment Variables](/docs/configuration/environment) - The repository reads environment variables or provides environment example files.
+- Guides: [Guides](/docs/guides) - Task-oriented workflows that move readers from setup to a useful outcome.
+- Guides: [CLI Usage](/docs/guides/cli-usage) - The project has a command line interface and documented runtime flags.
+- Guides: [Watch Mode](/docs/guides/watch-mode) - The CLI or runtime can watch files and reload during development.
+- Examples: [Examples](/docs/examples) - Example implementations that show the project in realistic host applications.
+- Examples: [Astro](/docs/examples/astro) - Astro groups the behavior, entrypoints, and responsibilities around `examples/astro`.
+- Examples: [Elysia](/docs/examples/elysia) - Elysia groups the behavior, entrypoints, and responsibilities around `examples/elysia`.
+- Examples: [Express](/docs/examples/express) - Express groups the behavior, entrypoints, and responsibilities around `examples/express`.
+- Examples: [Hono](/docs/examples/hono) - Hono groups the behavior, entrypoints, and responsibilities around `examples/hono`.
+- Examples: [Nextjs](/docs/examples/nextjs) - Nextjs groups the behavior, entrypoints, and responsibilities around `examples/nextjs`.
+- Examples: [Nuxt](/docs/examples/nuxt) - Nuxt groups the behavior, entrypoints, and responsibilities around `examples/nuxt`.
+- Examples: [Remix](/docs/examples/remix) - Remix groups the behavior, entrypoints, and responsibilities around `examples/remix`.
+- Examples: [Solid Start](/docs/examples/solid-start) - Solid Start groups the behavior, entrypoints, and responsibilities around `examples/solid-start`.
+- Examples: [Svelte Kit](/docs/examples/svelte-kit) - Svelte Kit groups the behavior, entrypoints, and responsibilities around `examples/svelte-kit`.
+- Examples: [Tanstack Start](/docs/examples/tanstack-start) - Tanstack Start groups the behavior, entrypoints, and responsibilities around `examples/tanstack-start`.
+- API Reference: [API Reference](/docs/api) - Concrete developer-facing surfaces: commands, exports, adapters, routes, and type contracts.
+- API Reference: [CLI](/docs/api/cli) - Commands and flags for running repository workflows from the terminal.
+- API Reference: [Configuration API](/docs/api/config) - Configuration types, helpers, and contracts used by application developers.
+- API Reference: [Public Exports](/docs/api/exports) - The package exposes public imports, declarations, or exported integration helpers.
+- API Reference: [Init Command](/docs/api/cli/init) - The CLI exposes an init command for creating product configuration.
+- API Reference: [Start Command](/docs/api/cli/start) - The CLI exposes a start workflow and runtime flags.
+- API Reference: [Runtime Config](/docs/api/config/runtime) - The package exposes a public configuration surface.
+## Project Snapshot
+- Project type: `cli`
+- Package name: `better-auth-studio`
+- Runtime and adapter coverage: Astro, Elysia, Express, Hono, Next.js, Nuxt, Remix, SolidStart, SvelteKit, TanStack Start
+- Source entrypoints: `dist/index.js`, `./dist/cli.js`, `src/index.ts`, `src/cli.ts`
+## Core Capabilities
+- Developer Tools: This section explains the utilities that help developers inspect, configure, or generate parts of the product. These tools are not just UI screens; they are shortcuts for common setup, debugging, schema, email, or integration work. Key concepts: developer tools, generators, inspectors, visual editors.
+- Session Management: This area explains how the product observes active authentication state. It connects user identity, session creation, sign-in activity, cookies or tokens, and any security-sensitive controls exposed to administrators. Key concepts: sessions, sign in, tokens, cookies.
+- Event Tracking: This capability turns runtime activity into a timeline that administrators can inspect. It is especially useful for auth products because sign-ins, session creation, account updates, and organization events often need auditability and context. Key concepts: events, audit trail, activity feed, last seen.
+- Organization Management: This capability documents the multi-tenant administrative model. It explains how organizations group users, how teams subdivide access, and how membership or invitation actions change what a person can do inside the product. Key concepts: organizations, teams, members, invitations.
+- User Management: This capability is the administrative surface for user records. It helps an operator inspect accounts, find a user by identity, update profile or verification state, and remove records when needed. In an auth-oriented product, this page is usually one of the highest-value docs pages because it explains the exact model an admin interacts with. Key concepts: users, accounts, profiles, email verification.
+- Dashboard Overview: This area gives operators a high-level view of the system before they drill into individual records. It usually brings together counts, recent activity, database state, and health signals so an admin can understand whether the product is working as expected. Key concepts: workspace status, operational metrics, recent activity, dashboard widgets.
+## Runtime and Adapter Coverage
+- Astro
+- Elysia
+- Express
+- Hono
+- Next.js
+- Nuxt
+- Remix
+- SolidStart
+- SvelteKit
+- TanStack Start
+## Language Coverage
+- TypeScript: 227 analyzed source files
+- SQL: 6 analyzed source files
+- JavaScript: 3 analyzed source files
+## Config Files
+- `docker/compose.yml` (deployment) - Container or Docker Compose setup.
+- `docker/docker-compose.self-host.yml` (deployment) - Container or Docker Compose setup.
+- `Dockerfile` (deployment) - Container or Docker Compose setup.
+- `docs/.vercelignore` (deployment) - Deployment platform configuration.
+- `docs/next.config.ts` (framework) - Next.js application configuration.
+- `docs/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `docs/postcss.config.mjs` (styling) - Styling and CSS pipeline configuration.
+- `docs/tailwind.config.js` (styling) - Styling and CSS pipeline configuration.
+- `docs/vercel.json` (deployment) - Deployment platform configuration.
+- `examples/astro/astro.config.mjs` (framework) - Astro application configuration.
+- `examples/astro/prisma/astro.config.mjs` (framework) - Astro application configuration.
+- `examples/astro/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `examples/astro/prisma/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/astro/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `examples/elysia/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/express/drizzle/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `examples/express/drizzle/server/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/mongodb/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `examples/express/mongodb/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `examples/express/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+- `examples/hono/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/studio.config.pg.example.ts` (product) - Product runtime configuration.
+## Available Commands
+- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public`
+- `geo:update`: `node scripts/download-geolite2.js`
+- `copy:public`: `rm -rf dist/public && cp -r public dist/`
+- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)`
+- `postinstall`: `node scripts/postinstall.js`
+- `dev`: `tsx src/cli.ts`
+- `start`: `node dist/cli.js`
+- `studio`: `tsx src/cli.ts`
+- `clean`: `rm -rf dist`
+- `frontend:dev`: `cd frontend && pnpm run dev`
+- `frontend:build`: `cd frontend && pnpm run build`
+- `frontend:preview`: `cd frontend && pnpm run preview`
+- `lint`: `oxlint . && oxfmt --check .`
+- `format`: `oxlint --fix . && oxfmt .`
+- `lint:fix`: `oxlint --fix . && oxfmt .`
+- `type-check`: `tsc --noEmit`
+- `test`: `vitest`
+- `test:watch`: `vitest --watch`
+- `test:coverage`: `vitest --coverage`
+- `test:ci`: `pnpm test --run`
+- `release`: `pnpm build && bumpp && pnpm publish --access public --no-git-checks`
+- `release:beta`: `pnpm build && bumpp --preid beta && pnpm publish --access public --tag beta --no-git-checks`
+- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next`
+- `release:canary`: `pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks`
+- `bump`: `bumpp`
+## Configuration Surface
+- `AUTH_SECRET`
+- `AUTH_URL`
+- `BASE_URL`
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `CLERK_SECRET_KEY`
+- `CLICKHOUSE_HOST`
+- `CLICKHOUSE_PASSWORD`
+- `CLICKHOUSE_USERNAME`
+- `DATABASE_URL`
+- `DB_HOST`
+- `DB_NAME`
+- `DB_PASSWORD`
+- `DB_PORT`
+- `DB_USER`
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `IPINFO_TOKEN`
+- `MONGO_URI`
+- `MONGODB_DB_NAME`
+- `MONGODB_URI`
+- `MYSQL_URL`
+- `NEXT_PUBLIC_BETTER_AUTH_URL`
+- `NODE_ENV`
+- `NODE_PATH`
+- `PORT`
+- `POSTGRES_URL`
+- `RESEND_API_KEY`
+- `VERCEL`
+- `VERCEL_URL`
+## Dependencies
+- `@babel/preset-react` (dependency): `^7.27.1`
+- `@babel/preset-typescript` (dependency): `^7.27.1`
+- `@better-auth/utils` (dependency): `^0.3.0`
+- `@noble/hashes` (dependency): `^2.0.1`
+- `@number-flow/react` (dependency): `^0.5.10`
+- `@types/chokidar` (dependency): `^2.1.7`
+- `@types/cors` (devDependency): `^2.8.17`
+- `@types/express` (devDependency): `^4.17.21`
+- `@types/node` (devDependency): `^20.10.0`
+- `@types/supertest` (devDependency): `^6.0.2`
+- `@types/ws` (devDependency): `^8.5.10`
+- `better-auth` (dependency): `1.4.5`
+- `bumpp` (dependency): `^10.2.3`
+- `c12` (dependency): `^3.3.2`
+- `chalk` (dependency): `^5.3.0`
+- `chokidar` (dependency): `^4.0.3`
+- `commander` (dependency): `^11.1.0`
+- `cors` (dependency): `^2.8.5`
+- `dotenv` (dependency): `^16.3.1`
+- `elysia` (dependency): `^1.4.19`
+- `express` (dependency): `^4.18.2`
+- `hono` (dependency): `^4.11.4`
+- `jiti` (dependency): `^2.5.1`
+- `maxmind` (dependency): `^5.0.0`
+## README Sections
+- ## ✨ Try Better Auth Studio Demo
+- ### Hosted Version
+- ### Installation
+- ### Basic Usage
+- ## 📋 Prerequisites
+- ### Supported Database Adapters
+- #### Prisma Setup
+- #### Drizzle Setup
+- #### SQLite Setup
+- ### 📊 Dashboard
+- ### 👥 User Management
+- ### 🏢 Organization Management
+- ### ⚙️ Settings & Configuration
+- ### Start Studio
+## Named Exports
+- `About`
+- `AccessDeniedPage`
+- `AccessEvaluationInput`
+- `AccessEvaluationResult`
+- `account`
+- `accountRelations`
+- `accounts`
+- `action`
+- `addSvelteKitEnvModules`
+- `AlertInfo`
+- `AlertTriangle`
+- `ALL`
+## CLI Options
+- `--api-dir <path>`: Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
+- `--config <path>`: Path to the auth configuration file
+- `--geo-db <path>`: Path to MaxMind GeoLite2 database file (.mmdb
+- `--host <host>`: Host to run the studio on
+- `--no-open`: Do not open browser automatically
+- `--port <port>`: Port to run the studio on
+- `--watch`: Watch for changes in auth config file and reload server

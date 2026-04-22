@@ -1,0 +1,179 @@
+---
+title: "Init Command"
+description: "The CLI exposes an init command for creating product configuration."
+order: 450
+---
+
+# Init Command
+
+The CLI exposes an init command for creating product configuration.
+## Command Purpose
+The init command creates or updates the configuration files needed to embed the product. This page explains what files are written, how existing files are handled, and what a developer verifies before committing the result.
+## How to Run It
+Run `pnpm start` from the repository root after dependencies and required environment values are ready.
+Install dependencies first with `pnpm install`.
+## What the Command Depends On
+The command reads environment-backed configuration. Set these values before using large runs or automation.
+- `AUTH_SECRET`
+- `AUTH_URL`
+- `BASE_URL`
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `CLERK_SECRET_KEY`
+- `CLICKHOUSE_HOST`
+- `CLICKHOUSE_PASSWORD`
+- `CLICKHOUSE_USERNAME`
+- `DATABASE_URL`
+- `DB_HOST`
+- `DB_NAME`
+- `DB_PASSWORD`
+- `DB_PORT`
+- `DB_USER`
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `IPINFO_TOKEN`
+- `MONGO_URI`
+- `MONGODB_DB_NAME`
+- `MONGODB_URI`
+- `MYSQL_URL`
+- `NEXT_PUBLIC_BETTER_AUTH_URL`
+- `NODE_ENV`
+- `NODE_PATH`
+- `PORT`
+- `POSTGRES_URL`
+- `RESEND_API_KEY`
+- `VERCEL`
+- `VERCEL_URL`
+## Flags and Options
+Use flags to override defaults for a specific run. Prefer the default script first, then add flags when you need a different scale, concurrency level, target, or debug mode.
+- `--api-dir <path>`: Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
+- `--config <path>`: Path to the auth configuration file
+- `--geo-db <path>`: Path to MaxMind GeoLite2 database file (.mmdb
+- `--host <host>`: Host to run the studio on
+- `--no-open`: Do not open browser automatically
+- `--port <port>`: Port to run the studio on
+- `--watch`: Watch for changes in auth config file and reload server
+## Script Inventory
+- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public`
+- `geo:update`: `node scripts/download-geolite2.js`
+- `copy:public`: `rm -rf dist/public && cp -r public dist/`
+- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)`
+- `postinstall`: `node scripts/postinstall.js`
+- `dev`: `tsx src/cli.ts`
+- `start`: `node dist/cli.js`
+- `studio`: `tsx src/cli.ts`
+- `clean`: `rm -rf dist`
+- `frontend:dev`: `cd frontend && pnpm run dev`
+- `frontend:build`: `cd frontend && pnpm run build`
+- `frontend:preview`: `cd frontend && pnpm run preview`
+- `lint`: `oxlint . && oxfmt --check .`
+- `format`: `oxlint --fix . && oxfmt .`
+- `lint:fix`: `oxlint --fix . && oxfmt .`
+- `type-check`: `tsc --noEmit`
+- `test`: `vitest`
+- `test:watch`: `vitest --watch`
+- `test:coverage`: `vitest --coverage`
+- `test:ci`: `pnpm test --run`
+- `release`: `pnpm build && bumpp && pnpm publish --access public --no-git-checks`
+- `release:beta`: `pnpm build && bumpp --preid beta && pnpm publish --access public --tag beta --no-git-checks`
+- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next`
+- `release:canary`: `pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks`
+- `bump`: `bumpp`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### Installation for Self Hosting
+**Important:** For self-hosting, install `better-auth-studio` as a **regular dependency** (not devDependency) since it's required at runtime in production:
+
+```bash
+pnpm add better-auth-studio
+```
+
+> **Note:** The CLI usage (standalone studio) can be installed as a dev dependency, but self-hosting requires it in `dependencies` for production deployments.
+
+### Docker (Standalone Self Host)
+If you want to run Better Auth Studio in its own container, this repository includes a Docker setup for the standalone CLI server.
+
+This mode is useful when:
+
+- you want a separate admin container
+- your Better Auth app already lives in its own repository
+- you want Docker-managed `node_modules` and package-manager cache volumes
+
+> **Important:** The standalone container still needs your Better Auth project mounted into it, because Studio loads your real `auth.ts` and `studio.config.*` files at runtime.
+
+Build the image from this repository:
+
+```bash
+docker build -t better-auth-studio:self-host .
+```
+
+Run it with Docker Compose:
+
+```bash
+HOST_PROJECT_PATH=/absolute/path/to/your-better-auth-project \
+CONFIG_PATH=./auth.ts \
+docker compose -f docker/compose.yml up --build
+```
+
+If your auth config is not at the project root, pass it explicitly:
+
+```bash
+HOST_PROJECT_PATH=/absolute/path/to/your-better-auth-project \
+CONFIG_PATH=./src/lib/auth.ts \
+docker compose -f docker/compose.yml up --build
+```
+
+If you already used the older filename, `docker/docker-compose.self-host.yml` still works too.
+
+What the container does:
+
+- mounts your Better Auth project into `/workspace`
+- installs project dependencies into Docker volumes on first boot
+- starts `better-auth-studio start --host 0.0.0.0 --port 3002 --no-open`
+
+Useful environment variables:
+
+- `HOST_PROJECT_PATH` - absolute path to your Better Auth project on the host machine
+- `CONFIG_PATH` - optional auth config path inside the mounted project, for example `./src/lib/auth.ts`
+- `PORT` - studio port, defaults to `3002`
+- `WATCH` - set to `true` to enable watch mode
+- `AUTO_INSTALL` - set to `false` if your container/project already has dependencies installed
+- `PROJECT_INSTALL_CMD` - optional custom install command for non-standard setups
+- `GEO_DB_PATH` - optional GeoLite database path inside the mounted project
+
+If you change the Studio port, make sure your Better Auth config also trusts that origin when needed. The examples usually include both `http://localhost:3000` and `http://localhost:3002` for that reason.
+
+If you already embed Studio in your server with the framework adapters below, that remains the recommended production setup. The Docker flow is mainly for running the standalone Studio server in a containerized environment.
+
+### Next.js (App Router)
+The init command automatically creates `app/api/studio/[[...path]]/route.ts`:
+
+```typescript
+import { betterAuthStudio } from "better-auth-studio/nextjs";
+import studioConfig from "@/studio.config";
+
+const handler = betterAuthStudio(studioConfig);
+
+export { handler as GET, handler as POST, handler as PUT, handler as DELETE, handler as PATCH };
+```
+
+Access at `http://localhost:3000/api/studio`
+## Verification Checklist
+- Confirm required environment values are present before running the command.
+- Start with the smallest safe command or script before increasing scale.
+- Use `--help` when available to confirm the flags supported by the current version.
+- Check the command output or downstream service to confirm the expected side effect happened.
+## Source Reference
+Use these links when you need to verify behavior, update examples, or trace a public name back to the code that owns it.
+
+### Key Files
+- `src/cli/commands/init.ts` - CLI entrypoint or command implementation that defines developer-facing commands and flags.
+
+### Public Names and Routes
+- `src/cli/commands/init.ts`: language TypeScript; exports `initCommand`

@@ -1,0 +1,141 @@
+---
+title: "Environment Variables"
+description: "The repository reads environment variables or provides environment example files."
+order: 260
+---
+
+# Environment Variables
+
+The repository reads environment variables or provides environment example files.
+## What This Is
+Environment variable documentation explains which runtime values the project expects, where those values are read, what each variable controls, and what developers should verify before running previews, workers, or production deployments.
+## Why It Matters
+Environment Variables matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses code-level details as supporting context.
+## Core Concepts
+- environment variables
+- runtime secrets
+- configuration files
+- deployment values
+## Typical Workflow
+1. Start from example environment files when they exist.
+2. Cross-check each variable against the source file that reads it.
+3. Separate required runtime values from optional provider, preview, or deployment values.
+## Detailed Configuration Model
+Environment Variables controls behavior rather than UI copy. The important questions are what decision this configuration helps a developer make, what happens when it is absent, and what runtime behavior changes when it is enabled. This page keeps the mental model ahead of the raw files that mention the setting.
+
+For Better Auth Studio, configuration usually answers practical questions: which services the command or runtime connects to, which secrets or URLs must be present, which defaults are safe for local use, and which values change scale, safety, or output. Each setting is documented in relation to one of those questions.
+
+## Decision Points
+- Is the setting required for every installation, or only for a specific framework, adapter, or deployment mode?
+- Does the setting affect credentials, persistence, batching, integrations, output, or developer convenience?
+- What does a developer verify after changing it?
+
+## Reader Outcomes
+- Readers know when to configure this area and when they can ignore it.
+- Readers understand the consequence of a wrong value.
+- Readers can connect the setting to a visible command result, runtime behavior, or integration.
+## Configuration Surface
+Configuration is easiest to understand when each setting is tied to the behavior it controls. The tables below collect the relevant files and environment variables after the mental model, so readers can connect the concept to the concrete setup surface.
+### Files
+- `examples/astro/prisma/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/astro/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/server/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/mongodb/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/studio.config.pg.example.ts` (product) - Product runtime configuration.
+- `examples/hono/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/nextjs/drizzle/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/nextjs/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/nextjs/mongodb/lib/auth.ts` (product) - Product runtime configuration.
+### Environment Variables
+- `AUTH_SECRET`
+- `AUTH_URL`
+- `BASE_URL`
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `CLERK_SECRET_KEY`
+- `CLICKHOUSE_HOST`
+- `CLICKHOUSE_PASSWORD`
+- `CLICKHOUSE_USERNAME`
+- `DATABASE_URL`
+- `DB_HOST`
+- `DB_NAME`
+- `DB_PASSWORD`
+- `DB_PORT`
+- `DB_USER`
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `IPINFO_TOKEN`
+- `MONGO_URI`
+- `MONGODB_DB_NAME`
+- `MONGODB_URI`
+- `MYSQL_URL`
+- `NEXT_PUBLIC_BETTER_AUTH_URL`
+- `NODE_ENV`
+- `NODE_PATH`
+- `PORT`
+- `POSTGRES_URL`
+- `RESEND_API_KEY`
+- `VERCEL`
+- `VERCEL_URL`
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### ✨ Try Better Auth Studio Demo
+You can try a live, demo version of Better Auth Studio here:
+
+👉 **[https://bt-nextjs.vercel.app/admin](https://bt-nextjs.vercel.app/admin)**
+
+- **Login email:** `admin@user.com`
+- **Password:** `admin@user.com`
+
+This online demo lets you explore the admin studio UI. Please note this is a test environment.
+## How to Reason About This Config
+- Identify whether the option affects security, runtime mounting, data access, or presentation.
+- Prefer examples that use the same names and defaults found in the repository.
+- Call out adapter-specific behavior instead of implying every setting applies to every framework.
+## Validation Checklist
+- Keep config examples aligned with source defaults and runtime validation.
+- Mention whether a setting is required, optional, or only needed for a specific adapter.
+- Update this page when config object names, env vars, or supported providers change.
+## Usage Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect source files.
+- Examples should match the commands, config names, import paths, or behavior present in the repository.
+- Code-level context stays at the bottom so the main page remains useful to product readers.
+- Required settings, optional settings, defaults, and adapter-specific behavior are separated clearly.
+- Credentials, destructive scale controls, and validation expectations are called out before examples.
+## Source Reference
+Use these links when you need to verify behavior, update examples, or trace a public name back to the code that owns it.
+
+### Key Files
+- `examples/astro/prisma/src/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/astro/prisma/src/lib/db.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/elysia/prisma/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/elysia/prisma/src/index.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/elysia/prisma/src/prisma.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/express/drizzle/drizzle.config.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/express/drizzle/lib/db.js` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/express/drizzle/lib/db.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/express/drizzle/server/src/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/express/drizzle/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+
+### Public Names and Routes
+- `examples/astro/prisma/src/lib/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BASE_URL`, `BETTER_AUTH_URL`
+- `examples/astro/prisma/src/lib/db.ts`: language TypeScript; exports `prisma`; env `NODE_ENV`
+- `examples/elysia/prisma/src/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- `examples/elysia/prisma/src/index.ts`: language TypeScript; env `PORT`
+- `examples/elysia/prisma/src/prisma.ts`: language TypeScript; exports `prisma`; env `NODE_ENV`
+- `examples/express/drizzle/drizzle.config.ts`: language TypeScript; env `DATABASE_URL`
+- `examples/express/drizzle/lib/db.js`: language JavaScript; exports `db`; env `DATABASE_URL`
+- `examples/express/drizzle/lib/db.ts`: language TypeScript; exports `db`, `Session`, `User`, `UserInsert`; env `DATABASE_URL`

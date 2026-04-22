@@ -12,41 +12,6 @@ export default defineDocs({
       "slug": "installation"
     },
     {
-      "slug": "adapters",
-      "children": [
-        {
-          "slug": "astro"
-        },
-        {
-          "slug": "elysia"
-        },
-        {
-          "slug": "express"
-        },
-        {
-          "slug": "hono"
-        },
-        {
-          "slug": "nextjs"
-        },
-        {
-          "slug": "nuxt"
-        },
-        {
-          "slug": "remix"
-        },
-        {
-          "slug": "solid-start"
-        },
-        {
-          "slug": "svelte-kit"
-        },
-        {
-          "slug": "tanstack-start"
-        }
-      ]
-    },
-    {
       "slug": "features",
       "children": [
         {
@@ -111,9 +76,6 @@ export default defineDocs({
       "slug": "configuration",
       "children": [
         {
-          "slug": "access-control"
-        },
-        {
           "slug": "database-adapters"
         },
         {
@@ -124,15 +86,6 @@ export default defineDocs({
         },
         {
           "slug": "environment"
-        },
-        {
-          "slug": "event-ingestion"
-        },
-        {
-          "slug": "ip-geolocation"
-        },
-        {
-          "slug": "metadata"
         }
       ]
     },
@@ -140,16 +93,7 @@ export default defineDocs({
       "slug": "guides",
       "children": [
         {
-          "slug": "bulk-operations"
-        },
-        {
           "slug": "cli-usage"
-        },
-        {
-          "slug": "custom-branding"
-        },
-        {
-          "slug": "troubleshooting"
         },
         {
           "slug": "watch-mode"
@@ -195,41 +139,6 @@ export default defineDocs({
       "slug": "api",
       "children": [
         {
-          "slug": "adapters",
-          "children": [
-            {
-              "slug": "astro"
-            },
-            {
-              "slug": "elysia"
-            },
-            {
-              "slug": "express"
-            },
-            {
-              "slug": "hono"
-            },
-            {
-              "slug": "nextjs"
-            },
-            {
-              "slug": "nuxt"
-            },
-            {
-              "slug": "remix"
-            },
-            {
-              "slug": "solid-start"
-            },
-            {
-              "slug": "svelte-kit"
-            },
-            {
-              "slug": "tanstack-start"
-            }
-          ]
-        },
-        {
           "slug": "cli",
           "children": [
             {
@@ -244,133 +153,14 @@ export default defineDocs({
           "slug": "config",
           "children": [
             {
-              "slug": "access-config"
-            },
-            {
-              "slug": "events-config"
-            },
-            {
-              "slug": "metadata-config"
-            },
-            {
-              "slug": "studio-config"
-            }
-          ]
-        },
-        {
-          "slug": "events",
-          "children": [
-            {
-              "slug": "providers"
+              "slug": "runtime"
             }
           ]
         },
         {
           "slug": "exports"
-        },
-        {
-          "slug": "utilities",
-          "children": [
-            {
-              "slug": "access-rules"
-            },
-            {
-              "slug": "database-detection"
-            },
-            {
-              "slug": "event-ingestion"
-            },
-            {
-              "slug": "hook-injector"
-            }
-          ]
         }
       ]
-    },
-    {
-      "slug": "access-rules"
-    },
-    {
-      "slug": "auth-adapter"
-    },
-    {
-      "slug": "cli",
-      "children": [
-        {
-          "slug": "commands"
-        }
-      ]
-    },
-    {
-      "slug": "config"
-    },
-    {
-      "slug": "core",
-      "children": [
-        {
-          "slug": "handlers"
-        }
-      ]
-    },
-    {
-      "slug": "data"
-    },
-    {
-      "slug": "database-detection"
-    },
-    {
-      "slug": "dist"
-    },
-    {
-      "slug": "event-ingestion"
-    },
-    {
-      "slug": "events"
-    },
-    {
-      "slug": "frontend",
-      "children": [
-        {
-          "slug": "src"
-        }
-      ]
-    },
-    {
-      "slug": "geo-service"
-    },
-    {
-      "slug": "get-tsconfig-info"
-    },
-    {
-      "slug": "handlers"
-    },
-    {
-      "slug": "hook-injector"
-    },
-    {
-      "slug": "html-injector"
-    },
-    {
-      "slug": "org-hooks-injector"
-    },
-    {
-      "slug": "providers",
-      "children": [
-        {
-          "slug": "events"
-        }
-      ]
-    },
-    {
-      "slug": "routes",
-      "children": [
-        {
-          "slug": "api-router"
-        }
-      ]
-    },
-    {
-      "slug": "session"
     }
   ],
   metadata: {

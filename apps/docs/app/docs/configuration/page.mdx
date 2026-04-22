@@ -1,0 +1,23 @@
+---
+title: "Configuration"
+description: "Runtime values, environment variables, deployment settings, and framework configuration."
+order: 220
+---
+
+# Configuration
+
+Use this section to find the configuration pages for Better Auth Studio.
+
+## When to Use This Section
+Use this section before running Better Auth Studio in a new environment. It explains which values need to exist, what behavior they control, and how to reason about credentials, defaults, deployment settings, and scale controls.
+
+## Available Pages
+- [Database Adapters](/docs/configuration/database-adapters) - The project detects or configures database adapters.
+- [Database](/docs/configuration/database) - The repository includes database schema, migration, or adapter configuration evidence.
+- [Deployment](/docs/configuration/deployment) - The repository includes deployment, container, or platform configuration files.
+- [Environment Variables](/docs/configuration/environment) - The repository reads environment variables or provides environment example files.
+
+## Reading Order
+- Identify which values are required for every run and which are optional overrides.
+- Treat credentials and destructive scale controls as production-sensitive settings.
+- After changing configuration, rerun the smallest workflow that proves the new value is being used.

@@ -1,0 +1,160 @@
+---
+title: "Elysia Setup"
+description: "The repository includes a Elysia adapter or example for self-hosted usage."
+order: 120
+---
+
+# Elysia Setup
+
+The repository includes a Elysia adapter or example for self-hosted usage.
+## What This Is
+This setup page explains how to run the product inside a Elysia application. It covers the runtime dependency, the framework route or server hook, and the configuration the host app must provide.
+
+Repository context: ⚠️ Beta Feature : Self hosting is currently in beta.  Please report any issues on GitHub.
+## Why It Matters
+Elysia Setup matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses code-level details as supporting context.
+## Core Concepts
+- Elysia
+- self-hosting
+- runtime dependency
+- route mount
+- host app config
+## Typical Workflow
+1. Install the package where the production server can import it.
+2. Create the Elysia route, handler, or server integration.
+3. Verify the product can read the same runtime, database, and access configuration as the host app.
+## Detailed Architecture
+Elysia Setup is about the boundary between the user's application and Better Auth Studio. The host application owns the production environment, routing, runtime configuration, database access, secrets, and deployment platform. Better Auth Studio supplies the package entrypoint, adapter, handler, or standalone runtime that plugs into that host.
+
+The practical goal is to make that boundary obvious. Developers need to know what they install, where they mount it, what configuration they pass in, and what infrastructure must already exist. They also need to understand the difference between local CLI usage and production self-hosted usage when the package is required at runtime.
+
+## Operational Considerations
+- Runtime dependencies must be installed in the environment that serves the admin surface.
+- Auth, database, and access-control configuration come from the same source of truth as the host app.
+- Preview, staging, and production each verify trusted origins, secrets, route paths, and database migrations.
+
+## Reader Outcomes
+- A reader knows what belongs to the host app and what belongs to the package.
+- A reader can identify the route or server integration point before editing files.
+- A reader knows which configuration must be production-ready before exposing the admin surface.
+## Runtime Shape
+This page focuses on the Elysia runtime path provided by adapters, examples, or package exports.
+Use `better-auth-studio/elysia` when wiring this runtime from the package export.
+## Integration Story
+For Elysia, the important idea is that the host application owns runtime state, database access, routing, and deployment. Better Auth Studio provides the handler or adapter that plugs into that host application. This page makes that boundary clear so developers know what the package supplies and what their app must still configure.
+## Setup Checklist
+1. Install dependencies with `pnpm install`.
+2. Configure required environment variables before starting the runtime.
+3. Run `pnpm start` or the framework-specific command from the host app.
+4. Verify the mounted route, API handler, or container can reach the same runtime and database configuration as the host app.
+## Repository Notes
+These notes come from the repository README so the page stays grounded in existing project language.
+
+### 🏠 Self Hosting (Beta)
+> ⚠️ **Beta Feature**: Self-hosting is currently in beta. Please report any issues on GitHub.
+
+Deploy Better Auth Studio alongside your application for production use.
+
+### Installation for Self Hosting
+**Important:** For self-hosting, install `better-auth-studio` as a **regular dependency** (not devDependency) since it's required at runtime in production:
+
+```bash
+pnpm add better-auth-studio
+```
+
+> **Note:** The CLI usage (standalone studio) can be installed as a dev dependency, but self-hosting requires it in `dependencies` for production deployments.
+
+### Setup
+**Step 1: Initialize configuration**
+
+```bash
+pnpx better-auth-studio init
+```
+
+This creates a `studio.config.ts` file:
+
+```typescript
+import type { StudioConfig } from "better-auth-studio";
+import { auth } from "./lib/auth";
+
+const config: StudioConfig = {
+  auth,
+  basePath: "/api/studio",
+  metadata: {
+    title: "Admin Dashboard",
+    theme: "dark",
+  },
+  access: {
+    roles: ["admin"],
+    allowEmails: ["admin@example.com"],
+    allowIpAddresses: ["127.0.0.1", "::1", "192.168.*"],
+    blockIpAddresses: ["203.0.113.45"],
+  },
+};
+
+export default config;
+```
+## Configuration Files
+- `examples/elysia/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/nextjs/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/elysia/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+## Environment Variables
+- `AUTH_SECRET`
+- `AUTH_URL`
+- `BASE_URL`
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `CLERK_SECRET_KEY`
+- `CLICKHOUSE_HOST`
+- `CLICKHOUSE_PASSWORD`
+- `CLICKHOUSE_USERNAME`
+- `DATABASE_URL`
+- `DB_HOST`
+- `DB_NAME`
+- `DB_PASSWORD`
+- `DB_PORT`
+- `DB_USER`
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `IPINFO_TOKEN`
+- `MONGO_URI`
+- `MONGODB_DB_NAME`
+- `MONGODB_URI`
+- `MYSQL_URL`
+- `NEXT_PUBLIC_BETTER_AUTH_URL`
+- `NODE_ENV`
+- `NODE_PATH`
+- `PORT`
+- `POSTGRES_URL`
+- `RESEND_API_KEY`
+- `VERCEL`
+- `VERCEL_URL`
+## Usage Notes
+- The concept comes before the file paths, so readers understand the workflow before they inspect source files.
+- Examples should match the commands, config names, import paths, or behavior present in the repository.
+- Code-level context stays at the bottom so the main page remains useful to product readers.
+- Local development, standalone runtime, and production embedded usage are treated as separate operating modes.
+- Host-app responsibilities include runtime config, database access, secrets, trusted origins, and route mounting.
+## Source Reference
+Use these links when you need to verify behavior, update examples, or trace a public name back to the code that owns it.
+
+### Key Files
+- `examples/elysia/prisma/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/elysia/prisma/src/index.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/elysia/prisma/src/prisma.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/elysia/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `src/adapters/elysia.ts` - Framework adapter that connects host requests to the product runtime.
+
+### Public Names and Routes
+- `examples/elysia/prisma/src/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BETTER_AUTH_URL`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- `examples/elysia/prisma/src/index.ts`: language TypeScript; env `PORT`
+- `examples/elysia/prisma/src/prisma.ts`: language TypeScript; exports `prisma`; env `NODE_ENV`
+- `examples/elysia/prisma/studio.config.ts`: language TypeScript; exports `config`
+- `src/adapters/elysia.ts`: language TypeScript; exports `betterAuthStudio`
