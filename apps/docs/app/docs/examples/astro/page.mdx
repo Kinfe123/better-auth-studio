@@ -1,104 +1,28 @@
 ---
-title: "Astro"
-description: "Astro groups the behavior, entrypoints, and responsibilities around `examples/astro`."
+title: "Astro Example"
+description: "Astro Example shows the shape of a working Astro integration."
 order: 310
 ---
 
-# Astro
+# Astro Example
 
-Astro groups the behavior, entrypoints, and responsibilities around `examples/astro`.
-## What This Area Covers
-Astro explains what this area is responsible for, which developer-facing names or routes belong to it, and how it fits with the rest of the project.
-This area maps to `examples/astro` and connects related source files, declarations, routes, or package exports into one reader-facing topic.
-## Module Responsibilities
-- ALL
-- Astro
-- auth
-- config
-- Examples
-- prisma
-## How To Read This Area
-Astro represents a focused responsibility area in Better Auth Studio. It is useful when you need to understand the behavior around this package export, route family, or source boundary before changing or integrating with it.
+Astro Example shows the shape of a working Astro integration.
+## What This Example Shows
+Astro Example demonstrates how a Astro host app mounts Better Auth Studio, where configuration lives, and which route or server entrypoint connects the app to the Studio runtime.
+## Setup Flow
+1. Open the Astro example app and install its dependencies.
+2. Review the auth, Studio, and framework route files before copying the setup.
+3. Run the example locally and verify the Studio route loads against the configured Better Auth instance.
+## What To Look For
+- The framework route or handler that mounts the Studio runtime.
+- The auth or Studio config file that supplies runtime options.
+- The package scripts or framework command used to run the example locally.
+## Related Files
+Open these files when you need to verify examples or update the behavior behind this page.
 
-For Better Auth Studio, these pages should help readers learn one capability, adapter, plugin, or subsystem at a time. The goal is orientation: what this area owns, what names it exposes, and where to go next for setup or runtime details.
-
-## What to Look For
-- The responsibility owned by this area.
-- The public exports, route handlers, declarations, or configuration values attached to the module.
-- The neighboring docs pages that explain related user-facing workflows or integration details.
-
-## Reader Outcomes
-- Readers understand why this source area exists before reading file paths.
-- Readers can connect public names or routes to a concrete workflow.
-- Readers know when to continue to setup, configuration, or reference pages.
-## Public or Observable Surface
-Use these names as orientation for what this area exposes or handles. Not every name is necessarily a stable public API.
-- `ALL`
-- `auth`
-- `config`
-- `prisma`
-## Repository Notes
-These notes come from the repository README so the page stays grounded in existing project language.
-
-### Start Studio
-```bash
-pnpx better-auth-studio start [options]
-```
-
-**Options:**
-
-- `--port <number>` - Specify port (default: 3002)
-- `--host <string>` - Specify host (default: localhost)
-- `--no-open` - Don't automatically open browser
-- `--config <path>` - Path to auth config file (default: auto-detect)
-- `--watch` - Watch for changes in auth config file and reload server automatically
-
-`3002` is just the standalone Studio default so it does not clash with apps that already use `3000`. You can run Studio on `3000`, `4000`, or any other free port.
-
-**Examples:**
-
-```bash
-# Start on custom port (if installed as dev dependency)
-pnpm better-auth-studio start --port 3001
-
-# Or with pnpx
-pnpx better-auth-studio start --port 3001
-
-# Start without opening browser
-pnpm better-auth-studio start --no-open
-
-# Use custom config file
-pnpm better-auth-studio start --config ./custom-auth.ts
-
-# Enable watch mode for auto-reload on config changes
-pnpm better-auth-studio start --watch
-
-# Combine multiple options
-pnpx better-auth-studio start --port 3001 --watch --config ./src/auth.ts
-```
-## Usage Notes
-- The concept comes before the file paths, so readers understand the workflow before they inspect source files.
-- Examples should match the commands, config names, import paths, or behavior present in the repository.
-- Code-level context stays at the bottom so the main page remains useful to product readers.
-- Area pages should explain responsibility and neighboring workflows before listing source paths.
-- If the area is internal, keep the page focused on responsibilities rather than promising public APIs.
-## Source Reference
-Use these links when you need to verify behavior, update examples, or trace a public name back to the code that owns it.
-
-### Key Files
 - `examples/astro/astro.config.mjs` - Example project file that shows how the capability is wired in a real framework setup.
 - `examples/astro/prisma/astro.config.mjs` - Example project file that shows how the capability is wired in a real framework setup.
 - `examples/astro/prisma/src/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
 - `examples/astro/prisma/src/lib/db.ts` - Example project file that shows how the capability is wired in a real framework setup.
 - `examples/astro/prisma/src/pages/api/auth/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
 - `examples/astro/prisma/src/pages/api/studio/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
-- `examples/astro/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
-- `examples/astro/src/pages/api/studio/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
-
-### Public Names and Routes
-- `examples/astro/prisma/src/lib/auth.ts`: language TypeScript; exports `auth`; env `AUTH_SECRET`, `BASE_URL`, `BETTER_AUTH_URL`
-- `examples/astro/prisma/src/lib/db.ts`: language TypeScript; exports `prisma`; env `NODE_ENV`
-- `examples/astro/prisma/src/pages/api/auth/[...all].ts`: language TypeScript; exports `ALL`
-- `examples/astro/prisma/src/pages/api/studio/[...all].ts`: language TypeScript; exports `ALL`
-- `examples/astro/prisma/studio.config.ts`: language TypeScript; exports `config`
-- `examples/astro/src/pages/api/studio/[...all].ts`: language TypeScript; exports `ALL`

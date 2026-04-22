@@ -9,8 +9,10 @@ order: 90
 The project includes user listing, profile, creation, update, or deletion workflows.
 ## What This Is
 This capability is the administrative surface for user records. It helps an operator inspect accounts, find a user by identity, update profile or verification state, and remove records when needed. In an auth-oriented product, this page is usually one of the highest-value docs pages because it explains the exact model an admin interacts with.
-## Why It Matters
-User Management matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses code-level details as supporting context.
+## When To Use This
+- Use this when you want to understand what user management lets a user or operator accomplish.
+- Use it before changing UI, routes, permissions, or data flows tied to the capability.
+- Pair it with setup and configuration pages when the feature depends on runtime values.
 ## Core Concepts
 - users
 - accounts
@@ -21,56 +23,33 @@ User Management matters because it is part of how Better Auth Studio turns repos
 1. Find a user through the list, search, or filter UI.
 2. Open the user detail view to inspect profile, account, and session-related data.
 3. Apply mutations such as create, edit, delete, or bulk seed only when the configured access policy allows it.
-## What The Repository Shows
-This page starts with the behavior a reader can use, then keeps code-level details as supporting context.
+## Where You See It
+Use these hints to connect the concept to the parts of the product or package a reader is most likely to touch.
 
-- Reader-facing surfaces: `RecentUsersWidget`, `UserDetails`, `Users`.
-- Related public names: `RecentUsersWidget`, `UserDetails`, `Users`.
-- Related README sections: `configuration-options`, `dashboard`, `try-better-auth-studio-demo`, `user-management`.
-## Detailed Behavior
-User Management works as a product workflow with three layers. The first layer is the user-facing experience: what an operator sees, what they can search or inspect, and what actions they can take. The second layer is the domain model: which records, relationships, or configuration values the workflow depends on. The third layer is the safety model: which permissions, access rules, or validation steps prevent accidental or unauthorized changes.
-
-For Better Auth Studio, this feature is easiest to understand from the operator's point of view. A reader can understand what problem this page solves, what state it reads or changes, and what a successful outcome looks like before they need to think about source files.
-
-## Common Scenarios
-- A new operator wants to understand what user management is for before using it in production.
-- A developer is wiring the feature into a host application and needs to know which data, config, or permissions are involved.
-- A contributor changed the feature and needs to update docs without forcing readers to understand the source tree first.
-
-## Reader Outcomes
-- Readers can explain what user management does in plain language.
-- Readers know the main objects or settings involved before they see any file paths.
-- Readers know which actions are safe, which actions are destructive, and which actions depend on access control.
-## How It Fits in the Product
-User Management is a product capability, not just a list of source files. The important story is the user-facing outcome, the data or configuration it depends on, and the guardrails that make the workflow safe to operate.
-## Repository Notes
-These notes come from the repository README so the page stays grounded in existing project language.
+- You will usually see this around `RecentUsersWidget`, `UserDetails`, `Users`.
+- The README talks about this near `configuration-options`, `dashboard`, `try-better-auth-studio-demo`, `user-management`.
+## User Path
+1. Find a user through the list, search, or filter UI.
+2. Open the user detail view to inspect profile, account, and session-related data.
+3. Apply mutations such as create, edit, delete, or bulk seed only when the configured access policy allows it.
+## Expected Outcome
+- You understand the feature's main outcome before changing configuration or code.
+- You know which permissions, data, or runtime settings can affect the workflow.
+- You know where to continue when you need exact commands, imports, or deployment details.
+## From The README
+The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
 
 ### 👥 User Management
-- **View all users** - Paginated list with search and filtering
-- **Create users** - Add new users with email/password
-- **Edit users** - Update user information, email verification status
-- **Delete users** - Remove users from the system
-- **Bulk operations** - Seed multiple test users
-- **User details** - View user profiles, and accounts
-- **Last seen** - When events are enabled, the studio injects an optional `lastSeenAt` field on the user model and updates it on each sign-in or session creation. Run your database migration (e.g. `prisma migrate dev` or Drizzle push) to add the `lastSeenAt` column to the user table.
-## Usage Notes
-- The concept comes before the file paths, so readers understand the workflow before they inspect source files.
-- Examples should match the commands, config names, import paths, or behavior present in the repository.
-- Code-level context stays at the bottom so the main page remains useful to product readers.
-- User-facing state, available actions, empty/error states, and permission boundaries are part of the product behavior.
-- The page explains what data the feature reads or changes before referencing source files.
-## Source Reference
-Use these links when you need to verify behavior, update examples, or trace a public name back to the code that owns it.
+- View all users - Paginated list with search and filtering
+- Create users - Add new users with email/password
+- Edit users - Update user information, email verification status
+- Delete users - Remove users from the system
+- Bulk operations - Seed multiple test users
+- User details - View user profiles, and accounts
+## Related Files
+Open these files when you need to verify examples or update the behavior behind this page.
 
-### Key Files
-- `examples/tanstack-start/drizzle/src/routes/account/$path.tsx` - Route or API layer that receives requests and coordinates runtime behavior.
 - `frontend/src/components/dashboard-widgets/RecentUsersWidget.tsx` - RecentUsersWidget reusable UI component. It likely renders part of the workflow or a focused interaction.
-- `frontend/src/pages/UserDetails.tsx` - UserDetails page-level UI. This is where users usually encounter the capability in the product.
 - `frontend/src/pages/Users.tsx` - Users page-level UI. This is where users usually encounter the capability in the product.
-
-### Public Names and Routes
-- `examples/tanstack-start/drizzle/src/routes/account/$path.tsx`: language TypeScript; exports `Route`
-- `frontend/src/components/dashboard-widgets/RecentUsersWidget.tsx`: language TypeScript; exports `RecentUsersWidget`
-- `frontend/src/pages/UserDetails.tsx`: language TypeScript; exports `UserDetails`
-- `frontend/src/pages/Users.tsx`: language TypeScript; exports `Users`
+- `frontend/src/pages/UserDetails.tsx` - UserDetails page-level UI. This is where users usually encounter the capability in the product.
+- `examples/tanstack-start/drizzle/src/routes/account/$path.tsx` - Route or API layer that receives requests and coordinates runtime behavior.

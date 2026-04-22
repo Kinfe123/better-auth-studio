@@ -9,10 +9,10 @@ order: 290
 The CLI or runtime can watch files and reload during development.
 ## What This Is
 Watch mode is the development feedback loop. It keeps the product aligned with local configuration changes by monitoring files, restarting or refreshing the runtime, and reducing manual browser refreshes.
-
-Repository context: Automatically reload the server when your auth. ts file changes.  Perfect for development when iterating on your auth configuration.
-## Why It Matters
-Watch Mode matters because it is part of how Better Auth Studio turns repository behavior into a usable developer or operator workflow. This page gives readers the mental model first, then uses code-level details as supporting context.
+## When To Use This
+- Use this when you want to complete the watch mode workflow from start to finish.
+- Use it as a task path first, then open reference pages only when you need exact flags or imports.
+- Follow the verification step before increasing scale or automating the workflow.
 ## Core Concepts
 - file watcher
 - reload
@@ -23,99 +23,35 @@ Watch Mode matters because it is part of how Better Auth Studio turns repository
 1. Start the runtime with watch mode enabled.
 2. Edit the auth or studio configuration file.
 3. Confirm the server reloads and the browser reflects the updated configuration.
-## Detailed Guide Goal
-Watch Mode takes a reader from a known starting point to a useful end state. The guide is more than a command list: it explains when to use the workflow, what state the project needs before starting, what each step changes, and how to verify that the workflow succeeded.
-
-The guide is written for someone who wants to accomplish a task, not someone browsing the source code. Commands and flags appear as tools inside the workflow while the reader stays oriented around the goal.
-
-## When to Use This
-- Use this guide when a developer needs to perform the watch mode workflow from the project root or host application.
-- Use it when a contributor needs to understand the intended operator or developer path before changing behavior.
-- Link to API or configuration pages only after the reader understands the task.
-
-## Reader Outcomes
-- The reader knows the prerequisite state.
-- The reader knows what command, action, or setting moves them forward.
-- The reader knows the expected result and how to verify it.
 ## Before You Start
 - Install dependencies with `pnpm install`.
 - Confirm the main workflow with `pnpm start`.
-- Review related source files before adding new examples.
-## Command Mental Model
-- `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
-- `geo:update` runs `node scripts/download-geolite2.js` and supports the project workflow.
-- `copy:public` runs `rm -rf dist/public && cp -r public dist/` and supports the project workflow.
-- `verify:public` runs `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)` and supports the project workflow.
-- `postinstall` runs `node scripts/postinstall.js` and supports the project workflow.
+- Review required configuration before running commands that create or mutate data.
+## Run The Workflow
+1. Start the runtime with watch mode enabled.
+2. Edit the auth or studio configuration file.
+3. Confirm the server reloads and the browser reflects the updated configuration.
+## Useful Commands
 - `dev` runs `tsx src/cli.ts` and starts the local development workflow.
 - `start` runs `node dist/cli.js` and starts the runtime entrypoint after dependencies or build output are ready.
 - `studio` runs `tsx src/cli.ts` and starts the runtime entrypoint after dependencies or build output are ready.
-- `clean` runs `rm -rf dist` and removes generated artifacts so the next build starts from a clean state.
 - `frontend:dev` runs `cd frontend && pnpm run dev` and starts the local development workflow.
-- `frontend:build` runs `cd frontend && pnpm run build` and creates the production build or compiled package artifacts.
 - `frontend:preview` runs `cd frontend && pnpm run preview` and supports the project workflow.
-- `lint` runs `oxlint . && oxfmt --check .` and checks or fixes code style before changes are shipped.
-- `format` runs `oxlint --fix . && oxfmt .` and checks or fixes code style before changes are shipped.
-- `lint:fix` runs `oxlint --fix . && oxfmt .` and checks or fixes code style before changes are shipped.
-- `type-check` runs `tsc --noEmit` and supports the project workflow.
-## Raw Commands and Flags
-- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public`
-- `geo:update`: `node scripts/download-geolite2.js`
-- `copy:public`: `rm -rf dist/public && cp -r public dist/`
-- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)`
-- `postinstall`: `node scripts/postinstall.js`
-- `dev`: `tsx src/cli.ts`
-- `start`: `node dist/cli.js`
-- `studio`: `tsx src/cli.ts`
-- `clean`: `rm -rf dist`
-- `frontend:dev`: `cd frontend && pnpm run dev`
-- `frontend:build`: `cd frontend && pnpm run build`
-- `frontend:preview`: `cd frontend && pnpm run preview`
-- `lint`: `oxlint . && oxfmt --check .`
-- `format`: `oxlint --fix . && oxfmt .`
-- `lint:fix`: `oxlint --fix . && oxfmt .`
-- `type-check`: `tsc --noEmit`
-- `test`: `vitest`
-- `test:watch`: `vitest --watch`
-- `test:coverage`: `vitest --coverage`
-- `test:ci`: `pnpm test --run`
-- `release`: `pnpm build && bumpp && pnpm publish --access public --no-git-checks`
-- `release:beta`: `pnpm build && bumpp --preid beta && pnpm publish --access public --tag beta --no-git-checks`
-- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next`
-- `release:canary`: `pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks`
-- `bump`: `bumpp`
+- `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
+## Useful Options
+- `--watch`: Watch for changes in auth config file and reload server
 - `--api-dir <path>`: Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
 - `--config <path>`: Path to the auth configuration file
-- `--geo-db <path>`: Path to MaxMind GeoLite2 database file (.mmdb
 - `--host <host>`: Host to run the studio on
 - `--no-open`: Do not open browser automatically
 - `--port <port>`: Port to run the studio on
-- `--watch`: Watch for changes in auth config file and reload server
-## Repository Notes
-These notes come from the repository README so the page stays grounded in existing project language.
+- `--geo-db <path>`: Path to MaxMind GeoLite2 database file (.mmdb
+## From The README
+The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
 
 ### Using watch Option
-Automatically reload the server when your `auth.ts` file changes. Perfect for development when iterating on your auth configuration.
+Automatically reload the server when your auth. ts file changes.
+## Related Files
+Open these files when you need to verify examples or update the behavior behind this page.
 
-**Example:**
-
-```bash
-# Start with watch mode enabled
-pnpx better-auth-studio start --watch
-```
-
-**How it works:** Monitors your auth config file for changes, automatically restarts the server, and updates the browser UI via WebSocket - no manual refresh needed.
-## Usage Notes
-- The concept comes before the file paths, so readers understand the workflow before they inspect source files.
-- Examples should match the commands, config names, import paths, or behavior present in the repository.
-- Code-level context stays at the bottom so the main page remains useful to product readers.
-- The guide stays task-oriented: prerequisite, action, expected result, verification.
-- Each command or option is connected to its reason before the raw command inventory appears.
-## Source Reference
-Use these links when you need to verify behavior, update examples, or trace a public name back to the code that owns it.
-
-### Key Files
 - `src/cli.ts` - CLI entrypoint or command implementation that defines developer-facing commands and flags.
-
-### Public Names and Routes
-- `src/cli.ts`: language TypeScript; flags `--api-dir`, `--config`, `--geo-db`, `--host`, `--no-open`, `--port`

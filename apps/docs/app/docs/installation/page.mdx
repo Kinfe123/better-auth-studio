@@ -33,29 +33,7 @@ Copy `env.example` into `.env` and fill in the required values before running th
 - `CLICKHOUSE_USERNAME`
 - `DATABASE_URL`
 - `DB_HOST`
-- `DB_NAME`
-- `DB_PASSWORD`
-- `DB_PORT`
-- `DB_USER`
-- `DISCORD_CLIENT_ID`
-- `DISCORD_CLIENT_SECRET`
-- `GITHUB_CLIENT_ID`
-- `GITHUB_CLIENT_SECRET`
-- `GOOGLE_CLIENT_ID`
-- `GOOGLE_CLIENT_SECRET`
-- `IPINFO_TOKEN`
-- `MONGO_URI`
-- `MONGODB_DB_NAME`
-- `MONGODB_URI`
-- `MYSQL_URL`
-- `NEXT_PUBLIC_BETTER_AUTH_URL`
-- `NODE_ENV`
-- `NODE_PATH`
-- `PORT`
-- `POSTGRES_URL`
-- `RESEND_API_KEY`
-- `VERCEL`
-- `VERCEL_URL`
+- 23 more environment variables appear elsewhere in the project; document them on the page for the workflow that uses them.
 ## Verify the Build or Runtime Command
 The most relevant command detected right now is `pnpm start`.
 ## Framework and Adapter Coverage
@@ -70,59 +48,28 @@ The most relevant command detected right now is `pnpm start`.
 - SvelteKit
 - TanStack Start
 ## Configuration Files
-- `docker/compose.yml` (deployment) - Container or Docker Compose setup.
-- `docker/docker-compose.self-host.yml` (deployment) - Container or Docker Compose setup.
-- `Dockerfile` (deployment) - Container or Docker Compose setup.
-- `docs/.vercelignore` (deployment) - Deployment platform configuration.
-- `docs/next.config.ts` (framework) - Next.js application configuration.
-- `docs/package.json` (package) - Package metadata, scripts, dependencies, and exports.
-- `docs/postcss.config.mjs` (styling) - Styling and CSS pipeline configuration.
-- `docs/tailwind.config.js` (styling) - Styling and CSS pipeline configuration.
-- `docs/vercel.json` (deployment) - Deployment platform configuration.
-- `examples/astro/astro.config.mjs` (framework) - Astro application configuration.
-- `examples/astro/prisma/astro.config.mjs` (framework) - Astro application configuration.
-- `examples/astro/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 - `examples/astro/prisma/src/lib/auth.ts` (product) - Product runtime configuration.
 - `examples/astro/prisma/studio.config.ts` (product) - Product runtime configuration.
-- `examples/elysia/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 - `examples/elysia/prisma/src/auth.ts` (product) - Product runtime configuration.
 - `examples/elysia/prisma/studio.config.ts` (product) - Product runtime configuration.
-- `examples/express/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
-- `examples/express/drizzle/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 - `examples/express/drizzle/server/src/lib/auth.ts` (product) - Product runtime configuration.
 - `examples/express/drizzle/src/auth.ts` (product) - Product runtime configuration.
 - `examples/express/drizzle/studio.config.ts` (product) - Product runtime configuration.
-- `examples/express/mongodb/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 - `examples/express/mongodb/src/auth.ts` (product) - Product runtime configuration.
-- `examples/express/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 - `examples/express/prisma/src/auth.ts` (product) - Product runtime configuration.
 - `examples/express/prisma/studio.config.ts` (product) - Product runtime configuration.
-- `examples/hono/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 - `examples/hono/prisma/src/auth.ts` (product) - Product runtime configuration.
 - `examples/hono/prisma/studio.config.pg.example.ts` (product) - Product runtime configuration.
-## Current Script Inventory
-- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public`
-- `geo:update`: `node scripts/download-geolite2.js`
-- `copy:public`: `rm -rf dist/public && cp -r public dist/`
-- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)`
-- `postinstall`: `node scripts/postinstall.js`
-- `dev`: `tsx src/cli.ts`
-- `start`: `node dist/cli.js`
-- `studio`: `tsx src/cli.ts`
-- `clean`: `rm -rf dist`
-- `frontend:dev`: `cd frontend && pnpm run dev`
-- `frontend:build`: `cd frontend && pnpm run build`
-- `frontend:preview`: `cd frontend && pnpm run preview`
-- `lint`: `oxlint . && oxfmt --check .`
-- `format`: `oxlint --fix . && oxfmt .`
-- `lint:fix`: `oxlint --fix . && oxfmt .`
-- `type-check`: `tsc --noEmit`
-- `test`: `vitest`
-- `test:watch`: `vitest --watch`
-- `test:coverage`: `vitest --coverage`
-- `test:ci`: `pnpm test --run`
-- `release`: `pnpm build && bumpp && pnpm publish --access public --no-git-checks`
-- `release:beta`: `pnpm build && bumpp --preid beta && pnpm publish --access public --tag beta --no-git-checks`
-- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next`
-- `release:canary`: `pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks`
-- `bump`: `bumpp`
+- `examples/hono/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/nextjs/drizzle/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/nextjs/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/nextjs/mongodb/lib/auth.ts` (product) - Product runtime configuration.
+## Useful Commands
+- `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
+- `dev` runs `tsx src/cli.ts` and starts the local development workflow.
+- `start` runs `node dist/cli.js` and starts the runtime entrypoint after dependencies or build output are ready.
+- `test` runs `vitest` and runs verification for expected behavior.
+- `geo:update` runs `node scripts/download-geolite2.js` and supports the project workflow.
+- `copy:public` runs `rm -rf dist/public && cp -r public dist/` and supports the project workflow.
+- `verify:public` runs `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)` and supports the project workflow.
+- `postinstall` runs `node scripts/postinstall.js` and supports the project workflow.

@@ -1,104 +1,28 @@
 ---
-title: "Express"
-description: "Express groups the behavior, entrypoints, and responsibilities around `examples/express`."
+title: "Express Example"
+description: "Express Example shows the shape of a working Express integration."
 order: 330
 ---
 
-# Express
+# Express Example
 
-Express groups the behavior, entrypoints, and responsibilities around `examples/express`.
-## What This Area Covers
-Express explains what this area is responsible for, which developer-facing names or routes belong to it, and how it fits with the rest of the project.
-This area maps to `examples/express` and connects related source files, declarations, routes, or package exports into one reader-facing topic.
-## Module Responsibilities
-- account
-- Examples
-- Express
-- invitation
-- member
-- organization
-- session
-- team
-- teamMember
-- user
-## How To Read This Area
-Express represents a focused responsibility area in Better Auth Studio. It is useful when you need to understand the behavior around this package export, route family, or source boundary before changing or integrating with it.
+Express Example shows the shape of a working Express integration.
+## What This Example Shows
+Express Example demonstrates how a Express host app mounts Better Auth Studio, where configuration lives, and which route or server entrypoint connects the app to the Studio runtime.
+## Setup Flow
+1. Open the Express example app and install its dependencies.
+2. Review the auth, Studio, and framework route files before copying the setup.
+3. Run the example locally and verify the Studio route loads against the configured Better Auth instance.
+## What To Look For
+- The framework route or handler that mounts the Studio runtime.
+- The auth or Studio config file that supplies runtime options.
+- The package scripts or framework command used to run the example locally.
+## Related Files
+Open these files when you need to verify examples or update the behavior behind this page.
 
-For Better Auth Studio, these pages should help readers learn one capability, adapter, plugin, or subsystem at a time. The goal is orientation: what this area owns, what names it exposes, and where to go next for setup or runtime details.
-
-## What to Look For
-- The responsibility owned by this area.
-- The public exports, route handlers, declarations, or configuration values attached to the module.
-- The neighboring docs pages that explain related user-facing workflows or integration details.
-
-## Reader Outcomes
-- Readers understand why this source area exists before reading file paths.
-- Readers can connect public names or routes to a concrete workflow.
-- Readers know when to continue to setup, configuration, or reference pages.
-## Public or Observable Surface
-Use these names as orientation for what this area exposes or handles. Not every name is necessarily a stable public API.
-- `account`
-- `accountRelations`
-- `apikey`
-- `db`
-- `invitation`
-- `invitationRelations`
-- `member`
-- `memberRelations`
-- `organization`
-- `organizationRelations`
-- `session`
-- `Session`
-## Repository Notes
-These notes come from the repository README so the page stays grounded in existing project language.
-
-### Express
-Add the studio handler to your server:
-
-```typescript
-import express from "express";
-import { toNodeHandler } from "better-auth/node";
-import { betterAuthStudio } from "better-auth-studio/express";
-import { auth } from "./auth";
-import studioConfig from "./studio.config";
-
-const app = express();
-
-app.use(express.json());
-app.use("/api/studio", betterAuthStudio(studioConfig));
-app.all("/api/auth/*", toNodeHandler(auth));
-
-app.listen(3000);
-```
-
-Access at `http://localhost:3000/api/studio`
-## Usage Notes
-- The concept comes before the file paths, so readers understand the workflow before they inspect source files.
-- Examples should match the commands, config names, import paths, or behavior present in the repository.
-- Code-level context stays at the bottom so the main page remains useful to product readers.
-- Area pages should explain responsibility and neighboring workflows before listing source paths.
-- If the area is internal, keep the page focused on responsibilities rather than promising public APIs.
-## Source Reference
-Use these links when you need to verify behavior, update examples, or trace a public name back to the code that owns it.
-
-### Key Files
 - `examples/express/drizzle/auth-schema.ts` - Example project file that shows how the capability is wired in a real framework setup.
 - `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql` - Example project file that shows how the capability is wired in a real framework setup.
 - `examples/express/drizzle/better-auth_migrations/2025-09-04T02-33-19.422Z.sql` - Example project file that shows how the capability is wired in a real framework setup.
 - `examples/express/drizzle/drizzle.config.ts` - Example project file that shows how the capability is wired in a real framework setup.
 - `examples/express/drizzle/drizzle/0000_medical_white_queen.sql` - Example project file that shows how the capability is wired in a real framework setup.
 - `examples/express/drizzle/drizzle/0001_stale_nightmare.sql` - Example project file that shows how the capability is wired in a real framework setup.
-- `examples/express/drizzle/drizzle/relations.ts` - Example project file that shows how the capability is wired in a real framework setup.
-- `examples/express/drizzle/drizzle/schema.ts` - Example project file that shows how the capability is wired in a real framework setup.
-- `examples/express/drizzle/lib/db.js` - Example project file that shows how the capability is wired in a real framework setup.
-- `examples/express/drizzle/lib/db.ts` - Example project file that shows how the capability is wired in a real framework setup.
-
-### Public Names and Routes
-- `examples/express/drizzle/auth-schema.ts`: language TypeScript; exports `account`, `invitation`, `member`, `organization`, `session`, `team`
-- `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql`: language SQL; declares `account`, `session`, `user`, `verification`
-- `examples/express/drizzle/better-auth_migrations/2025-09-04T02-33-19.422Z.sql`: language SQL; declares `invitation`, `member`, `organization`
-- `examples/express/drizzle/drizzle.config.ts`: language TypeScript; env `DATABASE_URL`
-- `examples/express/drizzle/drizzle/0000_medical_white_queen.sql`: language SQL; declares `account`, `invitation`, `member`, `organization`, `session`, `team`
-- `examples/express/drizzle/drizzle/0001_stale_nightmare.sql`: language SQL; declares `apikey`, `two_factor`
-- `examples/express/drizzle/drizzle/relations.ts`: language TypeScript; exports `accountRelations`, `invitationRelations`, `memberRelations`, `organizationRelations`, `sessionRelations`, `teamMemberRelations`
-- `examples/express/drizzle/drizzle/schema.ts`: language TypeScript; exports `account`, `invitation`, `member`, `organization`, `session`, `team`

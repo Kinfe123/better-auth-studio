@@ -17,7 +17,7 @@ Better Auth Studio is documented as a product with capabilities, workflows, conf
 - Use guides for task-oriented workflows such as CLI usage, local development, troubleshooting, or repository-specific operations.
 - Use API reference pages after the mental model is clear and you need routes, commands, adapters, exports, or type contracts.
 ## Documentation Model
-Each page answers four questions: what the concept is, why it matters, how a developer or operator uses it, and where the related source files live. File paths and exports are supporting context, not the main explanation.
+Each page answers four questions: what the concept is, when to use it, how a developer or operator completes the workflow, and what to verify next. File paths and exports are supporting context, not the main explanation.
 ## Documentation Map
 - Get Started: [Better Auth Studio](/docs) - Overview for Better Auth Studio.
 - Get Started: [Quickstart](/docs/quickstart) - Run Better Auth Studio for the first time.
@@ -50,16 +50,16 @@ Each page answers four questions: what the concept is, why it matters, how a dev
 - Guides: [CLI Usage](/docs/guides/cli-usage) - The project has a command line interface and documented runtime flags.
 - Guides: [Watch Mode](/docs/guides/watch-mode) - The CLI or runtime can watch files and reload during development.
 - Examples: [Examples](/docs/examples) - Example implementations that show the project in realistic host applications.
-- Examples: [Astro](/docs/examples/astro) - Astro groups the behavior, entrypoints, and responsibilities around `examples/astro`.
-- Examples: [Elysia](/docs/examples/elysia) - Elysia groups the behavior, entrypoints, and responsibilities around `examples/elysia`.
-- Examples: [Express](/docs/examples/express) - Express groups the behavior, entrypoints, and responsibilities around `examples/express`.
-- Examples: [Hono](/docs/examples/hono) - Hono groups the behavior, entrypoints, and responsibilities around `examples/hono`.
-- Examples: [Nextjs](/docs/examples/nextjs) - Nextjs groups the behavior, entrypoints, and responsibilities around `examples/nextjs`.
-- Examples: [Nuxt](/docs/examples/nuxt) - Nuxt groups the behavior, entrypoints, and responsibilities around `examples/nuxt`.
-- Examples: [Remix](/docs/examples/remix) - Remix groups the behavior, entrypoints, and responsibilities around `examples/remix`.
-- Examples: [Solid Start](/docs/examples/solid-start) - Solid Start groups the behavior, entrypoints, and responsibilities around `examples/solid-start`.
-- Examples: [Svelte Kit](/docs/examples/svelte-kit) - Svelte Kit groups the behavior, entrypoints, and responsibilities around `examples/svelte-kit`.
-- Examples: [Tanstack Start](/docs/examples/tanstack-start) - Tanstack Start groups the behavior, entrypoints, and responsibilities around `examples/tanstack-start`.
+- Examples: [Astro Example](/docs/examples/astro) - Astro Example shows the shape of a working Astro integration.
+- Examples: [Elysia Example](/docs/examples/elysia) - Elysia Example shows the shape of a working Elysia integration.
+- Examples: [Express Example](/docs/examples/express) - Express Example shows the shape of a working Express integration.
+- Examples: [Hono Example](/docs/examples/hono) - Hono Example shows the shape of a working Hono integration.
+- Examples: [Next.js Example](/docs/examples/nextjs) - Next.js Example shows the shape of a working Next.js integration.
+- Examples: [Nuxt Example](/docs/examples/nuxt) - Nuxt Example shows the shape of a working Nuxt integration.
+- Examples: [Remix Example](/docs/examples/remix) - Remix Example shows the shape of a working Remix integration.
+- Examples: [SolidStart Example](/docs/examples/solid-start) - SolidStart Example shows the shape of a working SolidStart integration.
+- Examples: [SvelteKit Example](/docs/examples/svelte-kit) - SvelteKit Example shows the shape of a working SvelteKit integration.
+- Examples: [TanStack Start Example](/docs/examples/tanstack-start) - TanStack Start Example shows the shape of a working TanStack Start integration.
 - API Reference: [API Reference](/docs/api) - Concrete developer-facing surfaces: commands, exports, adapters, routes, and type contracts.
 - API Reference: [CLI](/docs/api/cli) - Commands and flags for running repository workflows from the terminal.
 - API Reference: [Configuration API](/docs/api/config) - Configuration types, helpers, and contracts used by application developers.
@@ -67,11 +67,10 @@ Each page answers four questions: what the concept is, why it matters, how a dev
 - API Reference: [Init Command](/docs/api/cli/init) - The CLI exposes an init command for creating product configuration.
 - API Reference: [Start Command](/docs/api/cli/start) - The CLI exposes a start workflow and runtime flags.
 - API Reference: [Runtime Config](/docs/api/config/runtime) - The package exposes a public configuration surface.
-## Project Snapshot
+## Project At A Glance
 - Project type: `cli`
 - Package name: `better-auth-studio`
 - Runtime and adapter coverage: Astro, Elysia, Express, Hono, Next.js, Nuxt, Remix, SolidStart, SvelteKit, TanStack Start
-- Source entrypoints: `dist/index.js`, `./dist/cli.js`, `src/index.ts`, `src/cli.ts`
 ## Core Capabilities
 - Developer Tools: This section explains the utilities that help developers inspect, configure, or generate parts of the product. These tools are not just UI screens; they are shortcuts for common setup, debugging, schema, email, or integration work. Key concepts: developer tools, generators, inspectors, visual editors.
 - Session Management: This area explains how the product observes active authentication state. It connects user identity, session creation, sign-in activity, cookies or tokens, and any security-sensitive controls exposed to administrators. Key concepts: sessions, sign in, tokens, cookies.
@@ -90,68 +89,33 @@ Each page answers four questions: what the concept is, why it matters, how a dev
 - SolidStart
 - SvelteKit
 - TanStack Start
-## Language Coverage
-- TypeScript: 227 analyzed source files
-- SQL: 6 analyzed source files
-- JavaScript: 3 analyzed source files
-## Config Files
-- `docker/compose.yml` (deployment) - Container or Docker Compose setup.
-- `docker/docker-compose.self-host.yml` (deployment) - Container or Docker Compose setup.
-- `Dockerfile` (deployment) - Container or Docker Compose setup.
-- `docs/.vercelignore` (deployment) - Deployment platform configuration.
-- `docs/next.config.ts` (framework) - Next.js application configuration.
-- `docs/package.json` (package) - Package metadata, scripts, dependencies, and exports.
-- `docs/postcss.config.mjs` (styling) - Styling and CSS pipeline configuration.
-- `docs/tailwind.config.js` (styling) - Styling and CSS pipeline configuration.
-- `docs/vercel.json` (deployment) - Deployment platform configuration.
-- `examples/astro/astro.config.mjs` (framework) - Astro application configuration.
-- `examples/astro/prisma/astro.config.mjs` (framework) - Astro application configuration.
-- `examples/astro/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+## Setup Surfaces
 - `examples/astro/prisma/src/lib/auth.ts` (product) - Product runtime configuration.
 - `examples/astro/prisma/studio.config.ts` (product) - Product runtime configuration.
-- `examples/elysia/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 - `examples/elysia/prisma/src/auth.ts` (product) - Product runtime configuration.
 - `examples/elysia/prisma/studio.config.ts` (product) - Product runtime configuration.
-- `examples/express/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
-- `examples/express/drizzle/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 - `examples/express/drizzle/server/src/lib/auth.ts` (product) - Product runtime configuration.
 - `examples/express/drizzle/src/auth.ts` (product) - Product runtime configuration.
 - `examples/express/drizzle/studio.config.ts` (product) - Product runtime configuration.
-- `examples/express/mongodb/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 - `examples/express/mongodb/src/auth.ts` (product) - Product runtime configuration.
-- `examples/express/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 - `examples/express/prisma/src/auth.ts` (product) - Product runtime configuration.
 - `examples/express/prisma/studio.config.ts` (product) - Product runtime configuration.
-- `examples/hono/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
 - `examples/hono/prisma/src/auth.ts` (product) - Product runtime configuration.
 - `examples/hono/prisma/studio.config.pg.example.ts` (product) - Product runtime configuration.
-## Available Commands
-- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public`
-- `geo:update`: `node scripts/download-geolite2.js`
-- `copy:public`: `rm -rf dist/public && cp -r public dist/`
-- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)`
-- `postinstall`: `node scripts/postinstall.js`
-- `dev`: `tsx src/cli.ts`
-- `start`: `node dist/cli.js`
-- `studio`: `tsx src/cli.ts`
-- `clean`: `rm -rf dist`
-- `frontend:dev`: `cd frontend && pnpm run dev`
-- `frontend:build`: `cd frontend && pnpm run build`
-- `frontend:preview`: `cd frontend && pnpm run preview`
-- `lint`: `oxlint . && oxfmt --check .`
-- `format`: `oxlint --fix . && oxfmt .`
-- `lint:fix`: `oxlint --fix . && oxfmt .`
-- `type-check`: `tsc --noEmit`
-- `test`: `vitest`
-- `test:watch`: `vitest --watch`
-- `test:coverage`: `vitest --coverage`
-- `test:ci`: `pnpm test --run`
-- `release`: `pnpm build && bumpp && pnpm publish --access public --no-git-checks`
-- `release:beta`: `pnpm build && bumpp --preid beta && pnpm publish --access public --tag beta --no-git-checks`
-- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next`
-- `release:canary`: `pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks`
-- `bump`: `bumpp`
-## Configuration Surface
+- `examples/hono/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/nextjs/drizzle/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/nextjs/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/nextjs/mongodb/lib/auth.ts` (product) - Product runtime configuration.
+## Common Commands
+- `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
+- `dev` runs `tsx src/cli.ts` and starts the local development workflow.
+- `start` runs `node dist/cli.js` and starts the runtime entrypoint after dependencies or build output are ready.
+- `test` runs `vitest` and runs verification for expected behavior.
+- `geo:update` runs `node scripts/download-geolite2.js` and supports the project workflow.
+- `copy:public` runs `rm -rf dist/public && cp -r public dist/` and supports the project workflow.
+- `verify:public` runs `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)` and supports the project workflow.
+- `postinstall` runs `node scripts/postinstall.js` and supports the project workflow.
+## Configuration You May Need
 - `AUTH_SECRET`
 - `AUTH_URL`
 - `BASE_URL`
@@ -164,87 +128,4 @@ Each page answers four questions: what the concept is, why it matters, how a dev
 - `CLICKHOUSE_USERNAME`
 - `DATABASE_URL`
 - `DB_HOST`
-- `DB_NAME`
-- `DB_PASSWORD`
-- `DB_PORT`
-- `DB_USER`
-- `DISCORD_CLIENT_ID`
-- `DISCORD_CLIENT_SECRET`
-- `GITHUB_CLIENT_ID`
-- `GITHUB_CLIENT_SECRET`
-- `GOOGLE_CLIENT_ID`
-- `GOOGLE_CLIENT_SECRET`
-- `IPINFO_TOKEN`
-- `MONGO_URI`
-- `MONGODB_DB_NAME`
-- `MONGODB_URI`
-- `MYSQL_URL`
-- `NEXT_PUBLIC_BETTER_AUTH_URL`
-- `NODE_ENV`
-- `NODE_PATH`
-- `PORT`
-- `POSTGRES_URL`
-- `RESEND_API_KEY`
-- `VERCEL`
-- `VERCEL_URL`
-## Dependencies
-- `@babel/preset-react` (dependency): `^7.27.1`
-- `@babel/preset-typescript` (dependency): `^7.27.1`
-- `@better-auth/utils` (dependency): `^0.3.0`
-- `@noble/hashes` (dependency): `^2.0.1`
-- `@number-flow/react` (dependency): `^0.5.10`
-- `@types/chokidar` (dependency): `^2.1.7`
-- `@types/cors` (devDependency): `^2.8.17`
-- `@types/express` (devDependency): `^4.17.21`
-- `@types/node` (devDependency): `^20.10.0`
-- `@types/supertest` (devDependency): `^6.0.2`
-- `@types/ws` (devDependency): `^8.5.10`
-- `better-auth` (dependency): `1.4.5`
-- `bumpp` (dependency): `^10.2.3`
-- `c12` (dependency): `^3.3.2`
-- `chalk` (dependency): `^5.3.0`
-- `chokidar` (dependency): `^4.0.3`
-- `commander` (dependency): `^11.1.0`
-- `cors` (dependency): `^2.8.5`
-- `dotenv` (dependency): `^16.3.1`
-- `elysia` (dependency): `^1.4.19`
-- `express` (dependency): `^4.18.2`
-- `hono` (dependency): `^4.11.4`
-- `jiti` (dependency): `^2.5.1`
-- `maxmind` (dependency): `^5.0.0`
-## README Sections
-- ## ✨ Try Better Auth Studio Demo
-- ### Hosted Version
-- ### Installation
-- ### Basic Usage
-- ## 📋 Prerequisites
-- ### Supported Database Adapters
-- #### Prisma Setup
-- #### Drizzle Setup
-- #### SQLite Setup
-- ### 📊 Dashboard
-- ### 👥 User Management
-- ### 🏢 Organization Management
-- ### ⚙️ Settings & Configuration
-- ### Start Studio
-## Named Exports
-- `About`
-- `AccessDeniedPage`
-- `AccessEvaluationInput`
-- `AccessEvaluationResult`
-- `account`
-- `accountRelations`
-- `accounts`
-- `action`
-- `addSvelteKitEnvModules`
-- `AlertInfo`
-- `AlertTriangle`
-- `ALL`
-## CLI Options
-- `--api-dir <path>`: Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
-- `--config <path>`: Path to the auth configuration file
-- `--geo-db <path>`: Path to MaxMind GeoLite2 database file (.mmdb
-- `--host <host>`: Host to run the studio on
-- `--no-open`: Do not open browser automatically
-- `--port <port>`: Port to run the studio on
-- `--watch`: Watch for changes in auth config file and reload server
+- 23 more environment variables appear elsewhere in the project; document them on the page for the workflow that uses them.

@@ -20,31 +20,14 @@ Environment-backed behavior is present, so configuration is part of the first-ru
 3. Run `pnpm start` to exercise the main workflow.
 ## Useful Commands
 These commands are useful after the first run because they describe the repeatable workflows exposed by the repository.
-- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public`
-- `geo:update`: `node scripts/download-geolite2.js`
-- `copy:public`: `rm -rf dist/public && cp -r public dist/`
-- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)`
-- `postinstall`: `node scripts/postinstall.js`
-- `dev`: `tsx src/cli.ts`
-- `start`: `node dist/cli.js`
-- `studio`: `tsx src/cli.ts`
-- `clean`: `rm -rf dist`
-- `frontend:dev`: `cd frontend && pnpm run dev`
-- `frontend:build`: `cd frontend && pnpm run build`
-- `frontend:preview`: `cd frontend && pnpm run preview`
-- `lint`: `oxlint . && oxfmt --check .`
-- `format`: `oxlint --fix . && oxfmt .`
-- `lint:fix`: `oxlint --fix . && oxfmt .`
-- `type-check`: `tsc --noEmit`
-- `test`: `vitest`
-- `test:watch`: `vitest --watch`
-- `test:coverage`: `vitest --coverage`
-- `test:ci`: `pnpm test --run`
-- `release`: `pnpm build && bumpp && pnpm publish --access public --no-git-checks`
-- `release:beta`: `pnpm build && bumpp --preid beta && pnpm publish --access public --tag beta --no-git-checks`
-- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next`
-- `release:canary`: `pnpm build && bumpp --preid canary --no-commit --no-tag --no-push && pnpm publish --access public --tag canary --no-git-checks`
-- `bump`: `bumpp`
+- `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
+- `dev` runs `tsx src/cli.ts` and starts the local development workflow.
+- `start` runs `node dist/cli.js` and starts the runtime entrypoint after dependencies or build output are ready.
+- `test` runs `vitest` and runs verification for expected behavior.
+- `geo:update` runs `node scripts/download-geolite2.js` and supports the project workflow.
+- `copy:public` runs `rm -rf dist/public && cp -r public dist/` and supports the project workflow.
+- `verify:public` runs `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)` and supports the project workflow.
+- `postinstall` runs `node scripts/postinstall.js` and supports the project workflow.
 ## Useful CLI Options
 - `--api-dir <path>`: Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
 - `--config <path>`: Path to the auth configuration file
