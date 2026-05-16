@@ -489,16 +489,17 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 update: preloadedAdapter.update?.bind(preloadedAdapter),
                 delete: preloadedAdapter.delete?.bind(preloadedAdapter),
                 createUser: async (data) => {
+                    const { password, ...userData } = data;
                     return await preloadedAdapter.create({
                         model: "user",
                         data: {
                             createdAt: new Date(),
                             updatedAt: new Date(),
                             emailVerified: false,
-                            name: data.name,
+                            role: null,
+                            image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
+                            ...userData,
                             email: data.email?.toLowerCase(),
-                            role: data.role || null,
-                            image: data.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
                         },
                     });
                 },
@@ -3392,10 +3393,13 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             }
             const plugins = betterAuthConfig.plugins || [];
             const adminPlugin = plugins.find((plugin) => plugin.id === "admin");
+            const customRolesObj = adminPlugin?.options?.roles || adminPlugin?.options?.defaultRoles || adminPlugin?.roles || adminPlugin?.config?.roles;
+            const roles = customRolesObj ? Object.keys(customRolesObj) : ["admin", "user"];
             res.json({
                 enabled: !!adminPlugin,
                 configPath: configPath || null,
                 adminPlugin: adminPlugin || null,
+                roles,
             });
         }
         catch (error) {
@@ -4420,7 +4424,9 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             const createdInvitation = await adapter.create({
                 model: "invitation",
                 data: {
+                    ...req.body,
                     ...invitationData,
+                    email: email.toLowerCase(),
                 },
             });
             if (!createdInvitation) {
@@ -4434,6 +4440,38 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             res.status(500).json({
                 error: "Failed to create invitation",
                 details: isSelfHosted ? errorMessage : undefined,
+            });
+        }
+    });
+    router.post("/api/organizations/:orgId/members", async (req, res) => {
+        try {
+            const { orgId } = req.params;
+            const { userId, role = "member" } = req.body;
+            if (!userId) {
+                return res.status(400).json({ error: "User ID is required" });
+            }
+            const adapter = await getAuthAdapterWithConfig();
+            if (!adapter) {
+                return res.status(500).json({ error: "Auth adapter not available" });
+            }
+            const now = new Date();
+            const member = await adapter.create({
+                model: "member",
+                data: {
+                    ...req.body,
+                    organizationId: orgId,
+                    userId,
+                    role,
+                    createdAt: now,
+                    updatedAt: now,
+                },
+            });
+            res.json({ success: true, member });
+        }
+        catch (error) {
+            res.status(500).json({
+                error: "Failed to add member",
+                message: error?.message || "Unknown error",
             });
         }
     });
@@ -4551,10 +4589,10 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             const teamResult = await adapter.create({
                 model: "team",
                 data: {
-                    name: teamData.name,
-                    organizationId: teamData.organizationId,
-                    createdAt: teamData.createdAt,
-                    updatedAt: teamData.updatedAt,
+                    ...req.body,
+                    organizationId: orgId,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
                 },
             });
             if (!teamResult) {
@@ -4672,12 +4710,14 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                         continue;
                     }
                     const now = new Date();
+                    const { userIds, ...extraFields } = req.body;
                     await adapter.create({
                         model: "teamMember",
                         data: {
+                            ...extraFields,
                             teamId,
                             userId,
-                            role: "member",
+                            role: extraFields.role || "member",
                             createdAt: now,
                             updatedAt: now,
                         },
@@ -4785,12 +4825,15 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
             }
             const plugins = betterAuthConfig?.plugins || [];
             const hasOrganizationPlugin = plugins.find((plugin) => plugin.id === "organization");
+            const customRolesObj = hasOrganizationPlugin?.options?.roles || hasOrganizationPlugin?.roles || hasOrganizationPlugin?.config?.roles;
+            const roles = customRolesObj ? Object.keys(customRolesObj) : ["owner", "admin", "member"];
             return res.json({
                 enabled: !!hasOrganizationPlugin,
                 configPath: configPath || null,
                 availablePlugins: plugins.filter((p) => !isInternalStudioPlugin(p?.id || "")).map((p) => p.id) ||
                     [],
                 organizationPlugin: hasOrganizationPlugin || null,
+                roles,
             });
         }
         catch (_error) {
