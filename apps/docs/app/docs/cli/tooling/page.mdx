@@ -1,0 +1,25 @@
+---
+title: "CLI and Development Tools"
+description: "The CLI page explains terminal-driven workflows, command targets, development tooling, and the flags developers use while working locally."
+order: 500
+---
+
+# CLI and Development Tools
+
+The CLI page explains terminal-driven workflows, command targets, development tooling, and the flags developers use while working locally.
+## What Lives Here
+- `src/cli.ts` - CLI command implementation that defines developer-facing commands and flags.
+- `src/cli/commands/init.ts` - CLI command implementation that defines developer-facing commands and flags.
+## Useful Options
+- `--watch`: Watch for changes in auth config file and reload server
+- `--api-dir`: Accepted by the CLI parser; run `--help` to confirm how it changes the command before using it in automation.
+- `--geo-db`: Accepted by the CLI parser; run `--help` to confirm how it changes the command before using it in automation.
+- `--no-open`: Do not open browser automatically
+- `--config`: Path to auth config file (default: auto-detect
+- `--host`: Specify host (default: localhost
+- `--port`: Specify port (default: 3002
+## Related Areas
+- [Core Backend Systems](/docs/backend/systems) - The backend page explains request handling, runtime configuration, data-facing services, and the server-side workflow behind the product.
+- [Build System and Package Structure](/docs/build/package-structure) - The build page explains how the repository is packaged, built, exported, and prepared for local development or distribution.
+- [Documentation Site](/docs/docs/site) - The documentation page explains how the repository's docs site or docs application is structured, built, and connected to the product.
+- [Frontend Application](/docs/frontend/application) - The frontend page explains the user-facing application, navigation shell, and interface workflows readers actually interact with.

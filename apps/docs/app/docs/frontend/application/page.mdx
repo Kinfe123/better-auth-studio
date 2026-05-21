@@ -1,0 +1,27 @@
+---
+title: "Frontend Application"
+description: "The frontend page explains the user-facing application, navigation shell, and interface workflows readers actually interact with."
+order: 520
+---
+
+# Frontend Application
+
+The frontend page explains the user-facing application, navigation shell, and interface workflows readers actually interact with.
+## What Lives Here
+- `frontend/src/components/AnimatedNumber.tsx` - AnimatedNumber reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/CodeBlock.tsx` - CodeBlock reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/CodeEditor.tsx` - CodeEditor reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/CommandPalette.tsx` - CommandPalette reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/CopyableId.tsx` - CopyableId reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx` - DashboardCustomizePanel reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardFloatingPanel.tsx` - DashboardFloatingPanel reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardWidgetGrid.tsx` - DashboardWidgetGrid reusable UI component. It renders a visible part of the workflow or a focused interaction.
+## How It Connects
+- The frontend translates user actions into API requests, mutations, or route transitions.
+- Shared layout, navigation, and state live here so workflow pages can explain the visible product before they describe internals.
+- Reader-facing docs should start from the screen or task, then link to backend or configuration pages only when the UI depends on them.
+## Related Areas
+- [Core Backend Systems](/docs/backend/systems) - The backend page explains request handling, runtime configuration, data-facing services, and the server-side workflow behind the product.
+- [Build System and Package Structure](/docs/build/package-structure) - The build page explains how the repository is packaged, built, exported, and prepared for local development or distribution.
+- [CLI and Development Tools](/docs/cli/tooling) - The CLI page explains terminal-driven workflows, command targets, development tooling, and the flags developers use while working locally.
+- [Documentation Site](/docs/docs/site) - The documentation page explains how the repository's docs site or docs application is structured, built, and connected to the product.

@@ -1,0 +1,26 @@
+---
+title: "Database Adapters"
+description: "Database adapters connect the product to the persistence layer used by the host application."
+order: 40
+---
+
+# Database Adapters
+
+Database adapter docs explain how the product connects to the persistence layer used by the host application. They identify supported adapters, the expected provider names, and what needs to be migrated before the runtime can read or write records safely.
+
+## Runtime contract
+Treat each setting as part of the runtime contract: credentials unlock external services, provider settings control generated answers, and project config files decide how the app starts.
+
+## Required environment variables
+- `MYSQL_URL` - URL used by the runtime to reach an external service, app, or callback endpoint.
+- `DATABASE_URL` - Database connection string used by the runtime or migration layer.
+- `POSTGRES_URL` - URL used by the runtime to reach an external service, app, or callback endpoint.
+
+## Project config files
+- `examples/express/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/nextjs/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+
+## Verify changes
+- Run `pnpm dev` after setting the variables.
+- Send a small docs question through Discord and confirm the bot replies in the same conversation.
+- If the model answer fails, check the provider key first, then verify the Discord bot token and client ID.

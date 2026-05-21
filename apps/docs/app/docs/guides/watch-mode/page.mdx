@@ -1,0 +1,20 @@
+---
+title: "Watch Mode"
+description: "The CLI or runtime can watch files and reload during development."
+order: 80
+---
+
+# Watch Mode
+
+The CLI or runtime can watch files and reload during development.
+## Goal
+Watch mode is the development feedback loop. It keeps the product aligned with local configuration changes by monitoring files, restarting or refreshing the runtime, and reducing manual browser refreshes.
+## Run The Workflow
+1. Start the runtime with watch mode enabled.
+2. Edit the auth or studio configuration file.
+3. Confirm the server reloads and the browser reflects the updated configuration.
+## Useful Options
+- `--watch`: Watch for changes in auth config file and reload server
+- `--no-open`: Do not open browser automatically
+- `--api-dir`: Accepted by the CLI parser; run `--help` to confirm how it changes the command before using it in automation.
+- `--geo-db`: Accepted by the CLI parser; run `--help` to confirm how it changes the command before using it in automation.

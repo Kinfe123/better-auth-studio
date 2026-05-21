@@ -1,0 +1,46 @@
+---
+title: "Installation"
+description: "Install and configure Better Auth Studio."
+order: 20
+---
+
+# Installation
+
+Install the project dependencies first, then run the command or package script that proves Better Auth Studio is usable in this repository.
+
+## Install, configure, verify
+Installation has two jobs: install the package dependencies and verify the command or package script that exercises the main workflow.
+
+## Runtime inputs
+- Dependencies provide the framework, CLI, adapters, and runtime libraries used by the project.
+- Scripts provide repeatable workflows for local development, production builds, tests, and release tasks.
+
+## Prepare the bot application
+- Create the bot or application in the messaging platform before starting the local process.
+- Enable the message access or intent settings required by that platform so the bot can see user questions.
+- Invite the bot into the server, workspace, channel, or chat where you want to test it.
+
+## Verify setup
+- Dependencies install with the package manager already used by the project.
+- The bot logs in, receives a test message, and replies in the same conversation without undocumented manual steps.
+
+## Install Dependencies
+Run `pnpm install` from the project root.
+
+## Review Runtime Configuration
+Review the project files and scripts before running the project.
+
+No reader-facing environment contract was found in README or example environment files.
+
+## Run the project
+Use `pnpm dev` as the first local command for this repository.
+After the process is running, send a small test question through the messaging platform and verify the bot replies. Confirm it responds with useful context instead of only logging the message.
+
+## Runtime coverage
+- Next.js
+
+## Repository scripts
+- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` creates the production build or compiled package artifacts.
+- `dev`: `tsx src/cli.ts` starts the local development workflow.
+- `start`: `node dist/cli.js` starts the runtime process after dependencies or build output are ready.
+- `test`: `vitest` runs verification for expected behavior.

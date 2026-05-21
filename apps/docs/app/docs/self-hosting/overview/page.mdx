@@ -1,0 +1,35 @@
+---
+title: "Self-Hosting Overview"
+description: "Self-hosting explains how to run the product inside infrastructure you control."
+order: 270
+---
+
+# Self-Hosting Overview
+
+Self-hosting explains how to run the product inside infrastructure you control.
+## What You Are Wiring
+Self-hosting explains how the package runs inside or next to a user's own application. It clarifies which pieces are required at runtime, how the host app mounts the product, and what infrastructure must be available in production.
+## Runtime Shape
+This page covers the self-hosted runtime path described by deployment files, README sections, or configuration files.
+## Integration Story
+The important idea is that Better Auth Studio can run in a production environment controlled by the user. This page makes clear which files belong to the package and which runtime settings belong to the host application.
+## Setup Checklist
+1. Install dependencies with `pnpm install`.
+2. Configure required environment variables before starting the runtime.
+3. Run `pnpm dev` or the framework-specific command from the host app.
+4. Verify the mounted route, API handler, or container can reach the same runtime and database configuration as the host app.
+## Configuration Files
+- `docker/compose.yml` (deployment) - Container or Docker Compose setup.
+- `docker/docker-compose.self-host.yml` (deployment) - Container or Docker Compose setup.
+- `Dockerfile` (deployment) - Container or Docker Compose setup.
+## Environment Variables
+- `ADMIN_EMAIL_1`
+- `ADMIN_EMAIL_2`
+- `ADMIN_EMAIL_3`
+- `IPINFO_TOKEN` - Token used to authenticate a runtime, bot, webhook, or provider integration.
+- `PORT`
+- `STUDIO_BASE_PATH`
+- `CLICKHOUSE_HOST`
+- `CLICKHOUSE_USERNAME`
+- `NEXT_PUBLIC_BETTER_AUTH_URL` - URL used by the runtime to reach an external service, app, or callback endpoint.
+- `BETTER_AUTH_SECRET`

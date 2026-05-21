@@ -1,0 +1,23 @@
+---
+title: "CLI Usage"
+description: "CLI usage explains the commands and flags developers use to initialize, run, and debug the product."
+order: 70
+---
+
+# CLI Usage
+
+CLI usage explains the commands and flags developers use to initialize, run, and debug the product.
+## Goal
+CLI usage explains the command-line mental model: which commands exist, when to use each command, which flags affect runtime behavior, and how the CLI discovers project configuration.
+## Run The Workflow
+1. Install or run the CLI from the host project root.
+2. Choose the command that matches the task, such as starting the studio or initializing config.
+3. Pass flags for port, host, config path, watch mode, or other runtime behavior when defaults do not match the app.
+## Useful Options
+- `--watch`: Watch for changes in auth config file and reload server
+- `--api-dir`: Accepted by the CLI parser; run `--help` to confirm how it changes the command before using it in automation.
+- `--config`: Path to auth config file (default: auto-detect
+- `--geo-db`: Accepted by the CLI parser; run `--help` to confirm how it changes the command before using it in automation.
+- `--host`: Specify host (default: localhost
+- `--no-open`: Do not open browser automatically
+- `--port`: Specify port (default: 3002

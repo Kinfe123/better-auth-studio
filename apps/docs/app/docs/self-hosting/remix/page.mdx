@@ -1,0 +1,34 @@
+---
+title: "Remix Setup"
+description: "Remix setup shows how to mount the product inside a Remix host application."
+order: 340
+---
+
+# Remix Setup
+
+Remix setup shows how to mount the product inside a Remix host application.
+## What You Are Wiring
+This setup page explains how to run the product inside a Remix application. It covers the runtime dependency, the framework route or server hook, and the configuration the host app must provide.
+## Runtime Shape
+This page focuses on the Remix runtime path provided by adapters, examples, or package exports.
+Use `better-auth-studio/remix` when wiring this runtime from the package export.
+## Integration Story
+For Remix, the important idea is that the host application owns runtime state, database access, routing, and deployment. Better Auth Studio provides the handler or adapter that plugs into that host application. This page makes that boundary clear so developers know what the package supplies and what their app must still configure.
+## Setup Checklist
+1. Install dependencies with `pnpm install`.
+2. Configure required environment variables before starting the runtime.
+3. Run `pnpm dev` or the framework-specific command from the host app.
+4. Verify the mounted route, API handler, or container can reach the same runtime and database configuration as the host app.
+## Configuration Files
+- `examples/remix/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/remix/prisma/vite.config.ts` (framework) - Vite application configuration.
+- `examples/remix/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+## Environment Variables
+- `ADMIN_EMAIL_1`
+- `ADMIN_EMAIL_2`
+- `ADMIN_EMAIL_3`
+- `CLICKHOUSE_HOST`
+- `IPINFO_TOKEN` - Token used to authenticate a runtime, bot, webhook, or provider integration.
+- `PORT`
+- `STUDIO_BASE_PATH`
+- `BETTER_AUTH_SECRET`

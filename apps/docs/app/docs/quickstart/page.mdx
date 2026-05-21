@@ -1,0 +1,45 @@
+---
+title: "Quickstart"
+description: "Run Better Auth Studio with the current scripts and configuration."
+order: 10
+---
+
+# Quickstart
+
+Use this quickstart to move from a fresh checkout to the first workflow that proves Better Auth Studio is installed and usable.
+
+## Prerequisites
+This project uses `pnpm` as its package manager.
+The repository does not publish a first-run environment checklist, so begin with the package scripts and add provider keys only when a workflow asks for them.
+
+## Run locally
+1. Install dependencies with `pnpm install`.
+2. Run `pnpm dev` to exercise the main workflow.
+3. Send a small test question through the messaging platform and verify the bot replies.
+
+## Verify the reply
+The bot should acknowledge the question and return a useful answer in the same channel. If it stays silent, check the bot token, platform permissions or intents, and any AI/provider keys listed on the environment page.
+
+## Repository scripts
+These commands are useful after the first run because they are the repeatable workflows available in the project.
+
+- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` creates the production build or compiled package artifacts.
+- `dev`: `tsx src/cli.ts` starts the local development workflow.
+- `start`: `node dist/cli.js` starts the runtime process after dependencies or build output are ready.
+- `test`: `vitest` runs verification for expected behavior.
+
+## CLI options
+- `--config`: Path to auth config file (default: auto-detect
+- `--host`: Specify host (default: localhost
+- `--no-open`: Do not open browser automatically
+- `--port`: Specify port (default: 3002
+- `--watch`: Watch for changes in auth config file and reload server
+- `--api-dir`: Accepted by the CLI parser; run `--help` to confirm how it changes the command before using it in automation.
+- `--geo-db`: Accepted by the CLI parser; run `--help` to confirm how it changes the command before using it in automation.
+
+## Next steps
+- [Configuration](/docs/configuration) - Runtime values, environment variables, deployment settings, and framework configuration.
+- [Database Adapters](/docs/configuration/database-adapters) - Database adapters connect the product to the persistence layer used by the host application.
+- [Deployment](/docs/configuration/deployment) - Deployment documentation explains how the product runs in previews, staging, and production.
+- [Guides](/docs/guides) - Task-oriented workflows that move readers from setup to a useful outcome.
+- [CLI Usage](/docs/guides/cli-usage) - CLI usage explains the commands and flags developers use to initialize, run, and debug the product.

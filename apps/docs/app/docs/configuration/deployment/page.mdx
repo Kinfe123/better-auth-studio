@@ -1,0 +1,26 @@
+---
+title: "Deployment"
+description: "Deployment documentation explains how the product runs in previews, staging, and production."
+order: 50
+---
+
+# Deployment
+
+Deployment documentation explains how the project is expected to run outside local development, which platform files are authoritative, and what needs to be verified for preview, staging, and production environments.
+
+## Runtime contract
+Treat each setting as part of the runtime contract: credentials unlock external services, provider settings control generated answers, and project config files decide how the app starts.
+
+## Required environment variables
+- `BETTER_AUTH_SECRET`
+
+## Project config files
+- `docker/compose.yml` (deployment) - Container or Docker Compose setup.
+- `docker/docker-compose.self-host.yml` (deployment) - Container or Docker Compose setup.
+- `Dockerfile` (deployment) - Container or Docker Compose setup.
+- `vercel.json` (deployment) - Deployment platform configuration.
+
+## Verify changes
+- Run `pnpm dev` after setting the variables.
+- Send a small docs question through Discord and confirm the bot replies in the same conversation.
+- If the model answer fails, check the provider key first, then verify the Discord bot token and client ID.

@@ -1,0 +1,29 @@
+---
+title: "Build System and Package Structure"
+description: "The build page explains how the repository is packaged, built, exported, and prepared for local development or distribution."
+order: 490
+---
+
+# Build System and Package Structure
+
+The build page explains how the repository is packaged, built, exported, and prepared for local development or distribution.
+## What Lives Here
+- `docker/compose.yml` - Deployment configuration that explains how the product runs outside local development.
+- `docker/docker-compose.self-host.yml` - Deployment configuration that explains how the product runs outside local development.
+- `Dockerfile` - Deployment configuration that explains how the product runs outside local development.
+- `package.json` - Package manifest that defines scripts, exports, and dependency boundaries.
+- `vercel.json` - Deployment configuration that explains how the product runs outside local development.
+## Build Inputs
+- `build`: `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` creates the production build or compiled package artifacts.
+- `start`: `node dist/cli.js` starts the runtime process after dependencies or build output are ready.
+- `dev`: `tsx src/cli.ts` starts the local development workflow.
+- `test`: `vitest` runs verification for expected behavior.
+- `release:no-build`: `bumpp && pnpm publish --access public --no-git-checks --tag next` creates the production build or compiled package artifacts.
+- `geo:update`: `node scripts/download-geolite2.js` runs a repository-defined maintenance command.
+- `copy:public`: `rm -rf dist/public && cp -r public dist/` runs a repository-defined maintenance command.
+- `verify:public`: `test -f dist/public/index.html && echo '✓ Public directory copied successfully' || (echo '✗ ERROR: Public directory not copied!' && exit 1)` runs a repository-defined maintenance command.
+## Related Areas
+- [Core Backend Systems](/docs/backend/systems) - The backend page explains request handling, runtime configuration, data-facing services, and the server-side workflow behind the product.
+- [CLI and Development Tools](/docs/cli/tooling) - The CLI page explains terminal-driven workflows, command targets, development tooling, and the flags developers use while working locally.
+- [Documentation Site](/docs/docs/site) - The documentation page explains how the repository's docs site or docs application is structured, built, and connected to the product.
+- [Frontend Application](/docs/frontend/application) - The frontend page explains the user-facing application, navigation shell, and interface workflows readers actually interact with.

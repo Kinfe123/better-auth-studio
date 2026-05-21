@@ -1,0 +1,42 @@
+---
+title: "Next.js Setup"
+description: "Next.js setup shows how to mount the product inside a Next.js host application."
+order: 320
+---
+
+# Next.js Setup
+
+Next.js setup shows how to mount the product inside a Next.js host application.
+## What You Are Wiring
+This setup page explains how to run the product inside a Next.js application. It covers the runtime dependency, the framework route or server hook, and the configuration the host app must provide.
+## Runtime Shape
+This page focuses on the Next.js runtime path provided by adapters, examples, or package exports.
+Use `better-auth-studio/nextjs` when wiring this runtime from the package export.
+## Integration Story
+For Next.js, the important idea is that the host application owns runtime state, database access, routing, and deployment. Better Auth Studio provides the handler or adapter that plugs into that host application. This page makes that boundary clear so developers know what the package supplies and what their app must still configure.
+## Setup Checklist
+1. Install dependencies with `pnpm install`.
+2. Configure required environment variables before starting the runtime.
+3. Run `pnpm dev` or the framework-specific command from the host app.
+4. Verify the mounted route, API handler, or container can reach the same runtime and database configuration as the host app.
+## Configuration Files
+- `examples/nextjs/drizzle/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/nextjs/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/nextjs/mongodb/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/nextjs/prisma/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/nextjs/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/nextjs/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/nextjs/drizzle/next.config.js` (framework) - Next.js application configuration.
+- `examples/nextjs/mongodb/next.config.js` (framework) - Next.js application configuration.
+- `examples/nextjs/prisma/next.config.js` (framework) - Next.js application configuration.
+- `examples/nextjs/drizzle/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+## Environment Variables
+- `ADMIN_EMAIL_1`
+- `ADMIN_EMAIL_2`
+- `ADMIN_EMAIL_3`
+- `CLICKHOUSE_HOST`
+- `IPINFO_TOKEN` - Token used to authenticate a runtime, bot, webhook, or provider integration.
+- `NEXT_PUBLIC_BETTER_AUTH_URL` - URL used by the runtime to reach an external service, app, or callback endpoint.
+- `PORT`
+- `STUDIO_BASE_PATH`
+- `BETTER_AUTH_SECRET`
