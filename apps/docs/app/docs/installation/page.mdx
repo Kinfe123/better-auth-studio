@@ -1,0 +1,63 @@
+---
+title: "Installation"
+description: "Install and configure Better Auth Studio."
+order: 10
+---
+
+# Installation
+
+Better Auth Studio is a CLI tool you install alongside your Better Auth project. It reads your existing `auth.ts` file and connects to your database through the adapter you've already configured — no extra schema or migration needed for basic use.
+
+## Prerequisites
+
+Before installing, make sure you have:
+
+- **Node.js v18 or higher**
+- **A Better Auth project** with a valid `auth.ts` configuration file
+- **A configured database adapter** — Prisma, Drizzle, or `better-sqlite3`
+
+## Install as a dev dependency
+
+The recommended approach is to install Better Auth Studio as a dev dependency so each project pins its own version:
+
+```bash
+pnpm add -D better-auth-studio
+```
+
+You can then run it from your project:
+
+```bash
+pnpm better-auth-studio start
+```
+
+## Install globally
+
+If you prefer a single global installation shared across projects:
+
+```bash
+pnpm add -g better-auth-studio
+```
+
+Then run it from any Better Auth project directory:
+
+```bash
+better-auth-studio start
+```
+
+## Run without installing
+
+Use `pnpx` to run the latest version without a permanent install:
+
+```bash
+pnpx better-auth-studio start
+```
+
+## Verify the installation
+
+After installing, confirm the CLI is available:
+
+```bash
+pnpm better-auth-studio --version
+```
+
+If you see a version number, you're ready to go. Next, follow the [Quickstart](/docs/quickstart) to launch the studio against your project for the first time.

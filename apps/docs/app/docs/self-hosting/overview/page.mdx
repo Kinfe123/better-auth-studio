@@ -1,0 +1,57 @@
+---
+title: "Self-Hosting Overview"
+description: "Framework-by-framework instructions for embedding Better Auth Studio in your application."
+order: 1
+---
+
+# Self-Hosting Overview
+
+Better Auth Studio can be embedded as a mounted route in any of the frameworks it supports. The pattern is the same across all of them: create a `studio.config.ts`, import the framework adapter, and register a catch-all route at your chosen base path.
+
+> **Note:** The `init` command handles scaffolding for Next.js and SvelteKit automatically. For other frameworks, run `better-auth-studio init` and follow the printed manual instructions.
+
+## Next.js (App Router)
+
+Create `app/api/studio/[[...path]]/route.ts`:
+
+```ts
+import { betterAuthStudio } from 'better-auth-studio/nextjs';
+import studioConfig from '@/studio.config';
+
+const handler = betterAuthStudio(studioConfig);
+
+export { handler as GET, handler as POST, handler as PUT, handler as DELETE, handler as PATCH };
+```
+
+## SvelteKit
+
+Create `src/routes/api/studio/[...path]/+server.ts`:
+
+```ts
+import { betterAuthStudio } from 'better-auth-studio/svelte-kit';
+import studioConfig from '../../../../../studio.config.js';
+
+const handler = betterAuthStudio(studioConfig);
+
+export async function GET(event) { return handler(event); }
+export async function POST(event) { return handler(event); }
+export async function PUT(event) { return handler(event); }
+export async function DELETE(event) { return handler(event); }
+export async function PATCH(event) { return handler(event); }
+```
+
+## Astro
+
+Create `src/pages/api/studio/[...all].ts` and use the Astro adapter from `better-auth-studio/astro`. Your `studio.config.ts` should export a config with `basePath: '/api/studio'`.
+
+## Nuxt
+
+Create `server/api/studio/[...all].ts` and use the Nuxt adapter. The Nuxt example in the repository (`examples/nuxt/prisma`) shows the complete setup including an index handler and the wildcard route.
+
+## Remix
+
+Create `app/routes/api.studio.$.ts` and use the Remix adapter from `better-auth-studio/remix`.
+
+## Elysia, Hono, Express
+
+For server frameworks, mount the studio handler at your chosen prefix. Each framework has a corresponding adapter export (`better-auth-studio/elysia`, `better-auth-studio/hono`, `better-auth-studio/express`). The `basePath` in `studio.config.ts` must match the prefix you register.

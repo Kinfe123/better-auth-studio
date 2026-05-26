@@ -1,0 +1,43 @@
+---
+title: "Organization Management"
+description: "Manage multi-tenant organizations, teams, members, and invitations from the Better Auth Studio UI."
+order: 1
+---
+
+# Organization Management
+
+The organizations panel in Better Auth Studio gives administrators full control over the multi-tenant hierarchy in a Better Auth project. You can manage every layer — from top-level organizations down to individual team members and pending invitations — without writing custom admin code.
+
+## Organizations
+
+The organizations list shows all organizations in your database with pagination. From the list you can:
+
+- **Create** a new organization with a name and custom slug.
+- **Edit** the organization's name or metadata.
+- **Delete** the organization and all associated data.
+- **Bulk-seed** test organizations for local development.
+
+## Teams
+
+Each organization can contain one or more teams. From the organization detail view you can create and name teams, rename or delete existing teams, and see all members assigned to each team.
+
+## Members and invitations
+
+Membership management lets you add users to a team by email, remove members, and change their roles. The invitations view shows pending invites so you can cancel or resend them without touching the database directly.
+
+## Prerequisites
+
+Organization management features require the Better Auth `organization` plugin to be enabled in your `auth.ts`. If the plugin is not active, the organizations section will indicate that the feature is unavailable.
+
+```ts
+// auth.ts
+import { betterAuth } from 'better-auth';
+import { organization } from 'better-auth/plugins';
+
+export const auth = betterAuth({
+  plugins: [organization()],
+  // ...
+});
+```
+
+The settings panel inside the studio shows which plugins are active, so you can verify the organization plugin is loaded before using this section.

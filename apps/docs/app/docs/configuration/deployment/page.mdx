@@ -1,0 +1,60 @@
+---
+title: "Deployment"
+description: "Run Better Auth Studio in production using Docker or the provided Compose files."
+order: 2
+---
+
+# Deployment
+
+Better Auth Studio ships a `Dockerfile` and Docker Compose files so you can run the standalone studio in any container environment. This is the recommended approach for production self-hosting when you want the studio running as a separate service rather than embedded in your application.
+
+## Docker Compose (recommended)
+
+The provided `docker/compose.yml` mounts your Better Auth project directory into the container so the studio can read your `auth.ts` and connect to your database:
+
+```yaml
+# docker/compose.yml (excerpt)
+services:
+  studio:
+    image: better-auth-studio:self-host
+    environment:
+      PORT: ${PORT:-3002}
+      CONFIG_PATH: ${CONFIG_PATH:-./auth.ts}
+      AUTO_INSTALL: ${AUTO_INSTALL:-true}
+      WATCH: ${WATCH:-false}
+    ports:
+      - "${PORT:-3002}:${PORT:-3002}"
+    volumes:
+      - ${HOST_PROJECT_PATH}:/workspace
+```
+
+Set `HOST_PROJECT_PATH` to your Better Auth project directory before starting:
+
+```bash
+export HOST_PROJECT_PATH=/path/to/your/project
+docker compose -f docker/compose.yml up
+```
+
+## Environment variables
+
+The Docker runtime reads the following variables:
+
+| Variable | Default | Description |
+|---|---|---|
+| `PORT` | `3002` | Port the studio listens on |
+| `CONFIG_PATH` | `./auth.ts` | Path to auth config inside `/workspace` |
+| `AUTO_INSTALL` | `true` | Install project dependencies on start |
+| `WATCH` | `false` | Reload on auth config changes |
+| `HOST_PROJECT_PATH` | — | **Required.** Host path mounted as `/workspace` |
+
+> **Note:** `HOST_PROJECT_PATH` is required. The Compose file will refuse to start without it.
+
+## Building the image yourself
+
+The `Dockerfile` produces a `node:20-bookworm-slim` runtime image with the studio installed globally:
+
+```bash
+docker build -t better-auth-studio:self-host .
+```
+
+The build runs `pnpm install`, `pnpm build`, and `npm pack`, then installs the packed tarball globally in the runtime stage. The image exposes port `3002`.

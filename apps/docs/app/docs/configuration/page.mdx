@@ -1,0 +1,36 @@
+---
+title: "Configuration"
+description: "Environment variables, database adapters, and framework settings required to run Better Auth Studio."
+order: 0
+---
+
+# Configuration
+
+Better Auth Studio draws its configuration from two places: a `studio.config.ts` file in your project root (used when embedding the studio into your application), and CLI flags or environment variables (used when running the standalone CLI). This section covers both.
+
+For embedded deployments, you define a `studio.config.ts` file that exports a `StudioConfig` object. The two required fields are `auth` (your Better Auth instance) and `basePath` (the URL path where the studio is mounted). A minimal config looks like this:
+
+```ts
+// studio.config.ts
+import { defineStudioConfig } from 'better-auth-studio';
+import { auth } from './src/lib/auth';
+
+export default defineStudioConfig({
+  auth,
+  basePath: '/api/studio',
+});
+```
+
+You can restrict access to specific admin email addresses using the optional `access.allowEmails` field:
+
+```ts
+export default defineStudioConfig({
+  auth,
+  basePath: '/api/studio',
+  access: {
+    allowEmails: ['admin@yourapp.com'],
+  },
+});
+```
+
+For database adapter configuration, see [Database Adapters](/docs/configuration/database-adapters). For production deployment, including Docker and environment variable setup, see [Deployment](/docs/configuration/deployment).

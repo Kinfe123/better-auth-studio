@@ -1,0 +1,14 @@
+node_modules
+.env*
+!.env.example
+.next
+.nuxt
+.output
+.svelte-kit
+.astro
+dist
+build
+.vercel
+app/api/docs
+app/docs/layout.tsx
+mdx-components.tsx

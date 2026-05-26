@@ -1,0 +1,17 @@
+---
+title: "Features"
+description: "The main user-facing capabilities of Better Auth Studio."
+order: 0
+---
+
+# Features
+
+Better Auth Studio gives operators full visibility and control over a Better Auth deployment. The UI is organized around three main areas: the dashboard, user management, and organization management.
+
+**Dashboard** — The landing page of the studio shows aggregate counts for users, teams, and organizations, along with database configuration status and the list of active Better Auth plugins. It gives you a quick health-check before drilling into individual records.
+
+**User Management** — The users panel lets you view a paginated, searchable list of all accounts, create new users with email and password, edit profile fields and email verification status, ban or delete accounts, and bulk-seed test users for development. When event ingestion is enabled, each user detail view also shows a `lastSeenAt` timestamp. See [User Management](/docs/features/organization-management) for the organization equivalent.
+
+**Organization Management** — The organizations panel handles the full multi-tenant hierarchy. You can create and edit organizations, manage teams within them, add or remove members, handle invitations, and bulk-seed test organizations. Full details are on the [Organization Management](/docs/features/organization-management) page.
+
+**Settings** — The settings panel surfaces your current database adapter, configured OAuth providers, email settings, and the status of each Better Auth plugin. Nothing is editable here — it's a read-only view of what your `auth.ts` has configured.

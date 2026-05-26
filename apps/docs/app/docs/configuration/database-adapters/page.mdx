@@ -1,0 +1,73 @@
+---
+title: "Database Adapters"
+description: "How Better Auth Studio connects to your database through Prisma, Drizzle, or SQLite."
+order: 1
+---
+
+# Database Adapters
+
+Better Auth Studio reads your database through the same adapter you've already wired into Better Auth. It auto-detects the adapter from your `auth.ts` file — you don't configure the adapter separately for the studio. The studio supports Prisma, Drizzle, and SQLite out of the box, with PostgreSQL and MySQL supported via Prisma or Drizzle.
+
+## Prisma
+
+If your `auth.ts` uses `prismaAdapter`, the studio picks it up automatically:
+
+```ts
+// auth.ts
+import { betterAuth } from 'better-auth';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, {
+    provider: 'postgresql', // or 'mysql', 'sqlite'
+  }),
+});
+```
+
+## Drizzle
+
+If your project uses `drizzleAdapter`, the studio detects it the same way:
+
+```ts
+// auth.ts
+import { betterAuth } from 'better-auth';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { db } from './database';
+
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: 'pg', // or 'mysql', 'sqlite'
+  }),
+});
+```
+
+## SQLite
+
+For SQLite with `better-sqlite3`, pass the `Database` instance directly:
+
+```ts
+// auth.ts
+import { betterAuth } from 'better-auth';
+import Database from 'better-sqlite3';
+
+export const auth = betterAuth({
+  database: new Database('./better-auth.db'),
+});
+```
+
+## Last-seen tracking
+
+When event ingestion is enabled, the studio can track a `lastSeenAt` timestamp on user records. This field is injected via `injectLastSeenAtHooks` and updated on each sign-in or session creation. After enabling the feature, run your database migration to add the column:
+
+```bash
+# Prisma
+npx prisma migrate dev
+
+# Drizzle
+npx drizzle-kit push
+```
+
+> **Note:** The `lastSeenAt` column is optional. The studio works without it — it only appears in user detail views when the column exists.

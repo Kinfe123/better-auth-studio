@@ -1,0 +1,52 @@
+---
+title: "Guides"
+description: "Practical runbooks for common Better Auth Studio workflows."
+order: 0
+---
+
+# Guides
+
+The guides in this section walk you through specific workflows you'll use while developing or operating Better Auth Studio. They assume you've already completed the [Installation](/docs/installation) and can run the studio against your project.
+
+**[Watch Mode](/docs/guides/watch-mode)** — Keep the studio server in sync with your `auth.ts` as you iterate. The `--watch` flag monitors your config file and reloads the server automatically, pushing updates to the browser over WebSocket without a manual refresh.
+
+More guides will be added as the studio matures. If there's a workflow you'd like documented, open an issue on GitHub.
+
+## Examples
+
+Use these examples as concrete starting points for this workflow:
+
+### Basic Usage
+```bash
+pnpm better-auth-studio start
+```
+
+### Start Studio
+```bash
+# Start on custom port (if installed as dev dependency)
+pnpm better-auth-studio start --port 3001
+
+# Or with pnpx
+pnpx better-auth-studio start --port 3001
+
+# Start without opening browser
+pnpm better-auth-studio start --no-open
+
+# Use custom config file
+pnpm better-auth-studio start --config ./custom-auth.ts
+
+# Enable watch mode for auto-reload on config changes
+pnpm better-auth-studio start --watch
+
+# Combine multiple options
+pnpx better-auth-studio start --port 3001 --watch --config ./src/auth.ts
+```
+
+### Using Config Option
+```bash
+# With relative path
+pnpm better-auth-studio start --config ./src/lib/auth.ts
+
+# With absolute path
+pnpm better-auth-studio start --config /path/to/project/auth.ts
+```

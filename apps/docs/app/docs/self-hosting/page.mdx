@@ -1,0 +1,27 @@
+---
+title: "Self-Hosting"
+description: "Embed Better Auth Studio inside your own application or run it as a standalone Docker container."
+order: 0
+---
+
+# Self-Hosting
+
+Better Auth Studio supports two self-hosted deployment modes: running as a standalone server (via the CLI or Docker), and embedding as a mounted route inside your existing application. Both approaches give you full control over who can access the studio and where it runs.
+
+## Standalone mode
+
+The CLI and Docker paths are the simplest option. You run `better-auth-studio start` (or the Docker container) from your project directory, and the studio connects to your database using the adapter in `auth.ts`. No changes to your application code are required.
+
+See [Deployment](/docs/configuration/deployment) for the Docker Compose setup and environment variable reference.
+
+## Embedded mode
+
+Embedded mode mounts the studio as a route inside your existing application. This is useful when you want the studio served on the same domain and port as your app, behind your app's existing authentication.
+
+The general pattern is:
+
+1. Run `better-auth-studio init` to generate `studio.config.ts` and the framework route file.
+2. Edit `studio.config.ts` to point `auth` at your Better Auth instance.
+3. Verify the route is mounted at the `basePath` specified in your config.
+
+For detailed framework-specific instructions, see [Self-Hosting Overview](/docs/self-hosting/overview).
