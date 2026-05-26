@@ -1,0 +1,17 @@
+---
+title: "Self-Hosting"
+description: "Run Better Auth Studio inside your own application or infrastructure."
+order: 0
+---
+
+# Self-Hosting
+
+Better Auth Studio can run in two ways: as a standalone CLI server (covered in [Quickstart](/docs/quickstart)), or embedded directly inside your application as a route handler. Embedding it gives you a studio that lives at a path like `/api/studio` in your existing app, protected by your own auth and accessible to your team.
+
+The [Self-Hosting Overview](/docs/self-hosting/overview) page explains the full setup — including the `studio.config.ts` file, the `handleStudioRequest` export, Docker deployment, and the environment variables you need to set in production.
+
+## Supported frameworks
+
+Better Auth Studio ships adapter packages for every major Node.js framework. The `init` command can scaffold route files automatically for Next.js and SvelteKit. For all other frameworks the setup follows the same pattern: import the framework-specific handler, pass your `studio.config.ts`, and mount it on a catch-all route.
+
+Frameworks with example integrations in the repository: Astro, Elysia, Express, Hono, Next.js, Nuxt, Remix, SolidStart, SvelteKit, and TanStack Start.

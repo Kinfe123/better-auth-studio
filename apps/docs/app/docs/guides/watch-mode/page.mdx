@@ -1,0 +1,43 @@
+---
+title: "Watch Mode"
+description: "Automatically reload Better Auth Studio when your auth config changes during development."
+order: 1
+---
+
+# Watch Mode
+
+Watch mode monitors your `auth.ts` file for changes and automatically restarts the studio server and refreshes the browser UI via WebSocket. This means you can iterate on your auth configuration — adding plugins, changing adapters, updating social providers — and see the studio reflect your changes without a manual restart.
+
+## Enabling watch mode
+
+Pass the `--watch` flag when starting the studio:
+
+```bash
+pnpm better-auth-studio start --watch
+```
+
+Or with `pnpx`:
+
+```bash
+pnpx better-auth-studio start --watch
+```
+
+## Combining with other flags
+
+Watch mode works alongside all other `start` flags. For example, to start on a custom port, point to a non-standard config file, and enable watching:
+
+```bash
+pnpx better-auth-studio start --port 3001 --config ./src/auth.ts --watch
+```
+
+## In Docker
+
+To enable watch mode inside the Docker container, set the `WATCH` environment variable to `true` in your compose file or shell:
+
+```bash
+WATCH=true HOST_PROJECT_PATH=/path/to/project docker compose -f docker/compose.yml up
+```
+
+> **Note:** Watch mode is designed for development. In production, run the studio without `--watch` to avoid unintended restarts caused by routine file system activity.
+
+Once you're done iterating, head to [Self-Hosting](/docs/self-hosting) to learn how to embed the studio in your deployed application.

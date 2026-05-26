@@ -1,0 +1,17 @@
+---
+title: "Introduction"
+description: "The admin dashboard for your Better Auth project. Manage users, organizations, and auth settings from a powerful visual interface."
+order: 0
+---
+
+# Introduction
+
+Better Auth Studio is an admin dashboard that connects directly to your existing Better Auth project and gives you a visual interface for managing users, organizations, teams, database settings, and auth configuration — without writing any additional backend code.
+
+> **Note:** Better Auth Studio is currently in beta and under active development. You may encounter bugs or incomplete features. Please report any issues on the GitHub repository.
+
+You can run it as a standalone CLI tool that reads your existing `auth.ts` config, or you can embed it inside your application as a mounted route handler. Both modes work with the same underlying configuration. The studio supports Prisma, Drizzle, and SQLite databases and works across every major Node.js framework including Next.js, Nuxt, Remix, SvelteKit, Astro, SolidStart, Hono, Express, Elysia, and TanStack Start.
+
+Want to see it before you set it up? Try the live demo at [https://bt-nextjs.vercel.app/admin](https://bt-nextjs.vercel.app/admin) with email `admin@user.com` and password `admin@user.com`. For the hosted version, visit [better-auth.build](https://better-auth.build).
+
+Head to [Installation](/docs/installation) to add the package to your project, or jump straight to [Quickstart](/docs/quickstart) to have the studio running in under two minutes. When you're ready to embed it inside your app, the [Configuration](/docs/configuration) section covers database adapters, environment variables, and deployment options. The [Self-Hosting](/docs/self-hosting) section explains how to run it in Docker against any project directory.

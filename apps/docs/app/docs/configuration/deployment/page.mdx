@@ -1,0 +1,48 @@
+---
+title: "Deployment"
+description: "Run Better Auth Studio in Docker for previews, staging, and production environments."
+order: 2
+---
+
+# Deployment
+
+Better Auth Studio ships with a `Dockerfile` and Docker Compose files so you can run the studio as a container pointed at any Better Auth project on the host machine. The container installs the studio globally, mounts your project directory as a workspace volume, and starts the CLI server automatically.
+
+## Docker Compose quickstart
+
+The repository includes `docker/compose.yml` for local and self-hosted use. Set two environment variables and start the container:
+
+```bash
+export HOST_PROJECT_PATH=/absolute/path/to/your/better-auth-project
+docker compose -f docker/compose.yml up
+```
+
+The studio will be available at `http://localhost:3002` by default.
+
+## Container environment variables
+
+The Docker Compose file reads the following variables at startup. Set them in your shell or in a `.env` file alongside the compose file:
+
+- `HOST_PROJECT_PATH` — **Required.** Absolute path to your Better Auth project on the host machine. The container mounts this as `/workspace`.
+- `PORT` — Port to expose (default: `3002`).
+- `CONFIG_PATH` — Path to your auth config file relative to the project root (default: `./auth.ts`).
+- `WATCH` — Set to `true` to enable watch mode inside the container (default: `false`).
+- `AUTO_INSTALL` — Set to `true` to automatically install project dependencies on startup (default: `true`).
+- `PROJECT_INSTALL_CMD` — Override the install command (for example, `npm install`).
+- `GEO_DB_PATH` — Optional path to a GeoLite2 database file for IP geolocation.
+
+## Custom port
+
+To run the studio on port `4000` instead of the default:
+
+```bash
+PORT=4000 HOST_PROJECT_PATH=/path/to/project docker compose -f docker/compose.yml up
+```
+
+The compose file maps `${PORT}:${PORT}` so the same value is used inside and outside the container.
+
+## Production considerations
+
+The container is configured with `restart: unless-stopped`, which means it recovers automatically after a crash or reboot. Node modules and the pnpm store are persisted in named Docker volumes (`studio_node_modules` and `studio_pnpm_store`) so reinstalls are fast on subsequent starts.
+
+For production deployments, make sure `BETTER_AUTH_SECRET` and your database connection variables (`DATABASE_URL`, `POSTGRES_URL`, or `MYSQL_URL`) are available in the container environment. The studio passes these through to your project's auth config at runtime.

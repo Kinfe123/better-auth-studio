@@ -1,0 +1,25 @@
+---
+title: "Features"
+description: "What you can do inside Better Auth Studio: users, organizations, dashboard, and settings."
+order: 0
+---
+
+# Features
+
+Better Auth Studio gives you a full administrative interface over your Better Auth data. This section describes what the studio can do once it's running against your project.
+
+## Dashboard
+
+The dashboard gives you an at-a-glance count of users, teams, and organizations in your database. When event tracking is enabled, the dashboard also surfaces recent activity and last-seen context for each user.
+
+## User management
+
+The Users view shows a paginated, searchable list of all accounts in your database. From here you can create new users with an email and password, edit profile information and email verification status, delete individual accounts, or bulk-seed test users. When events are enabled, the studio injects a `lastSeenAt` field onto the user model and updates it on each sign-in or session creation — run your migration (`prisma migrate dev` or Drizzle push) after enabling this feature.
+
+## Organizations
+
+The [Organization Management](/docs/features/organization-management) page covers the full multi-tenant admin surface: creating and editing organizations, managing teams within an organization, adding and removing members, and bulk-seeding test data.
+
+## Settings
+
+The Settings view shows which Better Auth plugins are active in your configuration, your current database adapter and connection details, configured OAuth social providers (GitHub, Google, and others), and email settings for verification and password reset.

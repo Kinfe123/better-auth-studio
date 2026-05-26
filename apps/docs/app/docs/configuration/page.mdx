@@ -1,0 +1,57 @@
+---
+title: "Configuration"
+description: "Environment, database, deployment, and framework settings required to run Better Auth Studio."
+order: 0
+---
+
+# Configuration
+
+Better Auth Studio is configured in two places: the `studio.config.ts` file in your project root (used when the studio is embedded inside your application), and the CLI flags or environment variables passed when running the standalone server.
+
+The [Database Adapters](/docs/configuration/database-adapters) page explains how to wire up Prisma, Drizzle, and SQLite so the studio can read and write your auth data. The [Deployment](/docs/configuration/deployment) page covers Docker and container options for running the studio in production or in a shared environment.
+
+## studio.config.ts
+
+When you run `pnpx better-auth-studio init`, the CLI creates a `studio.config.ts` file in your project root. You can also create it manually. The two required fields are `auth` (your Better Auth instance) and `basePath` (the URL path where the studio is mounted in your application).
+
+```ts
+// studio.config.ts
+import { defineStudioConfig } from 'better-auth-studio';
+import { auth } from './src/lib/auth';
+
+export default defineStudioConfig({
+  auth,
+  basePath: '/api/studio',
+});
+```
+
+`defineStudioConfig` is exported from the `better-auth-studio` package root and provides TypeScript types for all options.
+
+## Access control
+
+By default, any authenticated user can reach the studio. You should restrict access to admin emails in production:
+
+```ts
+export default defineStudioConfig({
+  auth,
+  basePath: '/api/studio',
+  access: {
+    allowEmails: ['admin@yourcompany.com'],
+  },
+});
+```
+
+## Environment variables
+
+The standalone CLI server and the Docker container both read environment variables at runtime. The key variables are:
+
+- `BETTER_AUTH_SECRET` — Required. The secret used by your Better Auth instance.
+- `BETTER_AUTH_URL` — Required. The base URL of your Better Auth server.
+- `DATABASE_URL` / `POSTGRES_URL` / `MYSQL_URL` — Required by your database adapter.
+- `PORT` — Port the standalone server listens on (default: `3002`).
+- `STUDIO_SECRET` — Optional secret used to protect the studio route when embedded.
+- `STUDIO_BASE_PATH` — Base path override for the embedded studio route.
+- `IPINFO_TOKEN` / `IPAPI_TOKEN` — Optional tokens for IP geolocation features.
+- `ADMIN_EMAIL_1`, `ADMIN_EMAIL_2`, `ADMIN_EMAIL_3` — Admin email addresses allowed to access the studio.
+
+See [Database Adapters](/docs/configuration/database-adapters) for adapter-specific connection variables, and [Deployment](/docs/configuration/deployment) for container-level env var usage.

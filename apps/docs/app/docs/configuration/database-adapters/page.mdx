@@ -1,0 +1,77 @@
+---
+title: "Database Adapters"
+description: "Connect Better Auth Studio to the Prisma, Drizzle, or SQLite database your project already uses."
+order: 1
+---
+
+# Database Adapters
+
+Better Auth Studio does not manage its own database — it reads and writes through the adapter you already configured in your `auth.ts` file. The studio auto-detects which adapter you're using by inspecting that file, so in most cases no extra setup is required beyond a working `auth.ts`.
+
+> **Note:** Some studio features add columns to your existing tables (for example, `lastSeenAt` on the user model). After enabling those features you must run your normal migration command — `prisma migrate dev` or `drizzle-kit push` — before starting the studio.
+
+## Prisma
+
+Pass a `PrismaClient` instance to `prismaAdapter` and set the `provider` to match your database:
+
+```ts
+// auth.ts
+import { betterAuth } from 'better-auth';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, {
+    provider: 'postgresql', // or 'mysql' or 'sqlite'
+  }),
+});
+```
+
+Set `DATABASE_URL` (PostgreSQL / MySQL) or the path to your SQLite file in your `.env` before starting the studio.
+
+## Drizzle
+
+Pass your Drizzle `db` instance to `drizzleAdapter` with the matching provider:
+
+```ts
+// auth.ts
+import { betterAuth } from 'better-auth';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { db } from './database';
+
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: 'pg', // or 'mysql' or 'sqlite'
+  }),
+});
+```
+
+Make sure the `DATABASE_URL` (or `POSTGRES_URL` / `MYSQL_URL`) environment variable is set before starting the studio.
+
+## SQLite
+
+Pass a `better-sqlite3` `Database` instance directly:
+
+```ts
+// auth.ts
+import { betterAuth } from 'better-auth';
+import Database from 'better-sqlite3';
+
+export const auth = betterAuth({
+  database: new Database('./better-auth.db'),
+});
+```
+
+No additional environment variables are needed for SQLite — the file path is embedded in the constructor call.
+
+## Supported databases
+
+Better Auth Studio works with any database that your adapter supports:
+
+- **PostgreSQL** via Prisma (`provider: 'postgresql'`) or Drizzle (`provider: 'pg'`)
+- **MySQL** via Prisma (`provider: 'mysql'`) or Drizzle (`provider: 'mysql'`)
+- **SQLite** via Prisma (`provider: 'sqlite'`), Drizzle (`provider: 'sqlite'`), or `better-sqlite3` directly
+
+After confirming your `auth.ts` uses one of these adapters, run `pnpm better-auth-studio start` — the studio will load your config and connect automatically.

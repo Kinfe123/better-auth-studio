@@ -1,0 +1,92 @@
+---
+title: "Self-Hosting Overview"
+description: "Embed Better Auth Studio in your application with a studio.config.ts and a catch-all route handler."
+order: 1
+---
+
+# Self-Hosting Overview
+
+Embedding Better Auth Studio in your application means the dashboard lives at a path you control (for example `/api/studio`), runs inside your existing server, and is protected by your auth configuration. This is the right choice when you want the studio accessible to your team in a shared environment without running a separate process.
+
+## 1. Create studio.config.ts
+
+Run the init command to scaffold the config file and route automatically:
+
+```bash
+pnpm better-auth-studio init
+```
+
+For Next.js and SvelteKit, `init` also generates the catch-all route file. For all other frameworks, it prints the code you need to add manually.
+
+If you prefer to create the config by hand:
+
+```ts
+// studio.config.ts
+import { defineStudioConfig } from 'better-auth-studio';
+import { auth } from './src/lib/auth';
+
+export default defineStudioConfig({
+  auth,
+  basePath: '/api/studio',
+  access: {
+    allowEmails: ['admin@yourcompany.com'],
+  },
+});
+```
+
+## 2. Mount the route handler
+
+The exact import path depends on your framework. For Next.js (App Router):
+
+```ts
+// app/api/studio/[[...path]]/route.ts
+import { betterAuthStudio } from 'better-auth-studio/nextjs';
+import studioConfig from '@/studio.config';
+
+const handler = betterAuthStudio(studioConfig);
+
+export { handler as GET, handler as POST, handler as PUT, handler as DELETE, handler as PATCH };
+```
+
+For SvelteKit:
+
+```ts
+// src/routes/api/studio/[...path]/+server.ts
+import { betterAuthStudio } from 'better-auth-studio/svelte-kit';
+import studioConfig from '../../../../../studio.config.js';
+
+const handler = betterAuthStudio(studioConfig);
+
+export const GET = (event) => handler(event);
+export const POST = (event) => handler(event);
+export const PUT = (event) => handler(event);
+export const DELETE = (event) => handler(event);
+export const PATCH = (event) => handler(event);
+```
+
+For frameworks like Express, Hono, Elysia, Nuxt, Remix, Astro, SolidStart, and TanStack Start, the pattern is the same — import from the matching sub-path (for example `better-auth-studio/hono`) and mount it on a wildcard route.
+
+## 3. Set environment variables
+
+At minimum you need:
+
+```env
+BETTER_AUTH_SECRET=your-secret
+BETTER_AUTH_URL=https://yourapp.com
+DATABASE_URL=your-database-connection-string
+```
+
+To restrict studio access to specific admins, set `ADMIN_EMAIL_1`, `ADMIN_EMAIL_2`, and `ADMIN_EMAIL_3`, or configure `access.allowEmails` in `studio.config.ts`.
+
+Optionally, set `STUDIO_SECRET` to require a shared secret for requests to the studio route, and `STUDIO_BASE_PATH` to override the mounted path at runtime.
+
+## Running with Docker
+
+The repository includes a production-ready `Dockerfile` and `docker/compose.yml`. Mount your project directory and set `HOST_PROJECT_PATH`:
+
+```bash
+export HOST_PROJECT_PATH=/path/to/your/project
+docker compose -f docker/compose.yml up
+```
+
+See [Deployment](/docs/configuration/deployment) for a full breakdown of the Docker Compose environment variables.
