@@ -1,0 +1,13 @@
+---
+title: "Configuration"
+description: "Environment, database, and framework settings required to run Better Auth Studio."
+order: 0
+---
+
+# Configuration
+
+Better Auth Studio picks up its configuration from two sources: the CLI flags you pass to `better-auth-studio start`, and the `studio.config.ts` file you create in your project root when embedding the studio inside a framework app.
+
+For standalone use (running the CLI against your project), no config file is required — the CLI reads your existing `auth.ts` directly. For embedded use, you create a `studio.config.ts` that exports a `defineStudioConfig` call so your framework route handler knows how to wire everything together.
+
+The sub-pages in this section cover the two areas most likely to need explicit configuration: [Database Adapters](/docs/configuration/database-adapters) describes how the studio detects and connects to your persistence layer, and [Deployment](/docs/configuration/deployment) covers running the studio in Docker or on a cloud platform.

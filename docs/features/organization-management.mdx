@@ -1,0 +1,37 @@
+---
+title: "Organization Management"
+description: "Create and manage organizations, teams, and memberships in Better Auth Studio."
+order: 1
+---
+
+# Organization Management
+
+Organization management is the multi-tenant administrative surface inside Better Auth Studio. It lets you inspect and modify the organizations, teams, and memberships that structure access inside your application — without writing SQL or building a custom admin UI.
+
+## Organizations
+
+From the Organizations screen you can:
+
+- Browse all organizations in a paginated list
+- Create new organizations with a name and a custom slug
+- Edit organization details after creation
+- Delete organizations when they're no longer needed
+- Bulk-seed test organizations for development and staging environments
+
+## Teams
+
+Each organization can contain one or more teams. The studio lets you create and manage teams within an organization, rename them, and remove them when the structure changes.
+
+## Members
+
+You can add users to a team or remove them from one directly in the studio. Membership changes take effect immediately against your database — there's no separate sync step.
+
+## Invitations
+
+The studio surfaces pending invitations so you can review who has been invited to an organization and cancel invitations that are no longer valid.
+
+## Bulk seeding
+
+The bulk seed feature generates multiple test organizations and teams in a single action. This is useful for populating a development or staging database before testing multi-tenant workflows in your application.
+
+> **Note:** Organization management features require the Better Auth organizations plugin to be enabled in your `auth.ts`. The Settings screen inside the studio shows which plugins are currently active.

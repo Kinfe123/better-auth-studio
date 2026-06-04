@@ -1,0 +1,30 @@
+{
+  "name": "docs-cloud-managed-runtime",
+  "private": true,
+  "packageManager": "pnpm@10.9.0",
+  "scripts": {
+    "sync:content": "node ./scripts/sync-managed-content.mjs",
+    "dev": "node ./scripts/sync-managed-content.mjs && next dev --turbopack",
+    "build": "node ./scripts/sync-managed-content.mjs && next build --turbopack",
+    "start": "node ./scripts/sync-managed-content.mjs && next start"
+  },
+  "dependencies": {
+    "@farming-labs/docs": "latest",
+    "@farming-labs/next": "latest",
+    "@farming-labs/theme": "latest",
+    "next": "16.2.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/mdx": "^2.0.13",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3"
+  }
+}

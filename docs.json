@@ -1,0 +1,26 @@
+{
+  "$schema": "https://docs.farming-labs.dev/schema/docs.json",
+  "version": 1,
+  "docs": {
+    "mode": "frameworkless",
+    "runtime": "nextjs",
+    "root": ".docs/site"
+  },
+  "content": {
+    "docsRoot": "docs",
+    "apiReferenceRoot": "api-reference",
+    "openapi": []
+  },
+  "cloud": {
+    "apiKey": {
+      "env": "DOCS_CLOUD_API_KEY"
+    },
+    "preview": {
+      "enabled": true
+    },
+    "publish": {
+      "mode": "draft-pr",
+      "baseBranch": "master"
+    }
+  }
+}

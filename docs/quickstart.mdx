@@ -1,0 +1,49 @@
+---
+title: "Quickstart"
+description: "Run Better Auth Studio for the first time."
+order: 20
+---
+
+# Quickstart
+
+This guide takes you from a fresh install to a running studio dashboard. You need an existing Better Auth project with a configured `auth.ts` and a working database connection.
+
+## 1. Navigate to your project
+
+```bash
+cd your-better-auth-project
+```
+
+## 2. Install Better Auth Studio
+
+```bash
+pnpm add -D better-auth-studio
+```
+
+## 3. Start the studio
+
+```bash
+pnpm better-auth-studio start
+```
+
+The CLI auto-detects your `auth.ts` file and starts the studio server on port `3002` by default. Your browser opens automatically at `http://localhost:3002`.
+
+> **Note:** Port `3002` is chosen to avoid colliding with apps already running on `3000`. You can override it with `--port`.
+
+## Custom port or config path
+
+```bash
+pnpm better-auth-studio start --port 4000 --config ./src/lib/auth.ts
+```
+
+## 4. Explore the dashboard
+
+Once the browser opens you'll see the dashboard with an overview of your users, sessions, organizations, and plugin status. From here you can create or edit users, manage organizations and teams, and inspect your database adapter settings.
+
+## Using pnpx (no install)
+
+If you prefer not to add the package to your project, run it directly:
+
+```bash
+pnpx better-auth-studio start
+```

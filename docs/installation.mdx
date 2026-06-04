@@ -1,0 +1,49 @@
+---
+title: "Installation"
+description: "Install and configure Better Auth Studio."
+order: 10
+---
+
+# Installation
+
+Better Auth Studio runs against your existing Better Auth project. Before you install it, make sure you have:
+
+- **Node.js v18 or higher**
+- **A Better Auth project** with a valid `auth.ts` configuration file
+- **A supported database adapter** — Prisma, Drizzle, or `better-sqlite3`
+
+## Install the package
+
+The recommended approach is installing as a dev dependency so each project pins its own version:
+
+```bash
+pnpm add -D better-auth-studio
+```
+
+You can also install it globally if you want one shared installation across projects:
+
+```bash
+pnpm add -g better-auth-studio
+```
+
+Or run it on demand without installing at all:
+
+```bash
+pnpx better-auth-studio start
+```
+
+## Verify the installation
+
+Run the following from your project root to confirm the binary is available:
+
+```bash
+pnpm better-auth-studio --help
+```
+
+You should see the available commands and flags printed to the terminal. If the command is not found after a local install, make sure your shell resolves `node_modules/.bin` (pnpm does this automatically when you prefix commands with `pnpm`).
+
+## Auto-detection
+
+## Next steps
+
+Once the package is installed, follow the [Quickstart](/docs/quickstart) to launch the studio for the first time. To embed the studio inside your framework app instead of running it standalone, start with [Self-Hosting](/docs/self-hosting).

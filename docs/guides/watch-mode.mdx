@@ -1,0 +1,39 @@
+---
+title: "Watch Mode"
+description: "Automatically reload the studio when your auth config changes during development."
+order: 1
+---
+
+# Watch Mode
+
+Watch mode keeps the studio server in sync with your `auth.ts` while you're actively developing. Instead of stopping and restarting the CLI every time you change your auth configuration, the server detects the file change, restarts automatically, and pushes an update to the browser over WebSocket — no manual refresh needed.
+
+## Enabling watch mode
+
+Pass `--watch` to the `start` command:
+
+```bash
+pnpm better-auth-studio start --watch
+```
+
+Or combine it with other flags:
+
+```bash
+pnpm better-auth-studio start --watch --port 4000 --config ./src/lib/auth.ts
+```
+
+With `pnpx`:
+
+```bash
+pnpx better-auth-studio start --watch
+```
+
+## What gets watched
+
+The CLI monitors the auth config file resolved at startup — either the auto-detected path or the path you passed via `--config`. Changes to that file trigger a server restart. Other files in your project are not watched.
+
+## When to use it
+
+Watch mode is designed for local development. It's especially useful when you're iterating on plugin configuration, adding social providers, or changing database adapter settings and you want to see the studio reflect those changes immediately.
+
+> **Note:** Avoid enabling watch mode in production or inside a Docker container where the config file is unlikely to change. Use it as a development-time convenience only.

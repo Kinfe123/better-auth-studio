@@ -1,0 +1,17 @@
+---
+title: "Introduction"
+description: "An admin studio for Better Auth — inspect users, manage organizations, and monitor your auth system from a polished UI."
+order: 0
+---
+
+# Introduction
+
+Better Auth Studio is an admin interface for [Better Auth](https://better-auth.com) projects. It gives you a real-time view into your authentication database — users, sessions, organizations, teams, and settings — without writing a single query. You run it from the CLI, point it at your existing `auth.ts` config, and open the dashboard in your browser.
+
+> **Note:** Better Auth Studio is currently in beta. You may encounter bugs or incomplete features. Report issues on the GitHub repository — your feedback shapes the roadmap.
+
+The studio ships in two modes. In **standalone mode**, you run it as a CLI tool (`better-auth-studio start`) alongside your application — zero framework coupling required. In **embedded mode**, you mount it directly inside your Next.js, SvelteKit, Astro, Nuxt, Remix, SolidStart, Elysia, Express, Hono, or TanStack Start app using the framework-specific handler.
+
+A [live demo](https://bt-nextjs.vercel.app/admin) is available if you want to explore the UI before installing. Login with `admin@user.com` / `admin@user.com`.
+
+Head to [Installation](/docs/installation) to add the package to your project, or jump straight to [Quickstart](/docs/quickstart) to run it in under two minutes. If you want to embed the studio inside your framework app rather than run it standalone, see [Self-Hosting](/docs/self-hosting).

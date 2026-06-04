@@ -1,0 +1,80 @@
+---
+title: "Database Adapters"
+description: "How Better Auth Studio connects to Prisma, Drizzle, and SQLite databases."
+order: 1
+---
+
+# Database Adapters
+
+Better Auth Studio reads and writes your auth database through the same adapter you already configured in `auth.ts`. It auto-detects which adapter is in use when the CLI starts, so in most cases you don't need to do anything extra.
+
+## Supported adapters
+
+The studio works with:
+
+- **Prisma** (`prismaAdapter`) — PostgreSQL, MySQL, and SQLite providers
+- **Drizzle** (`drizzleAdapter`) — `pg`, `mysql`, and `sqlite` providers
+- **better-sqlite3** (`new Database(...)`) — direct SQLite without an ORM
+
+## Prisma
+
+If your project already uses Prisma, your `auth.ts` likely looks like this:
+
+```typescript
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, {
+    provider: "postgresql", // or "mysql" or "sqlite"
+  }),
+});
+```
+
+The studio picks this up automatically. No additional configuration is needed.
+
+## Drizzle
+
+For Drizzle, the setup looks like:
+
+```typescript
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { db } from "./database";
+
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: "pg", // or "mysql" or "sqlite"
+  }),
+});
+```
+
+## SQLite
+
+For projects using `better-sqlite3` directly:
+
+```typescript
+import { betterAuth } from "better-auth";
+import Database from "better-sqlite3";
+
+export const auth = betterAuth({
+  database: new Database("./better-auth.db"),
+});
+```
+
+## Migrations and schema
+
+Some studio features — such as `lastSeenAt` tracking on user records — add columns to your database schema. After enabling those features, run your migrations before restarting the studio:
+
+```bash
+# Prisma
+npx prisma migrate dev
+
+# Drizzle
+npx drizzle-kit push
+```
+
+The studio will warn you in the UI if a required column is missing.
