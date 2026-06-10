@@ -1,0 +1,159 @@
+---
+title: Better Auth Studio
+description: Studio for Better Auth - a comprehensive admin dashboard for managing users, organizations, and authentication workflows
+---
+
+# Better Auth Studio
+
+Better Auth Studio provides a web-based admin interface for managing your Better Auth applications. Monitor user activity, manage organizations and teams, and configure authentication settings through an intuitive dashboard.
+
+> **Beta Notice**: Better Auth Studio is currently in beta. You may encounter bugs or incomplete features. Please report any issues on our [GitHub repository](https://github.com/Kinfe123/better-auth-studio).
+
+## What you can do
+
+After installing Better Auth Studio, you can:
+
+- **Monitor authentication metrics** - Track user signups, logins, and session activity in real-time
+- **Manage users and organizations** - Create, edit, and delete users, teams, and organizational structures  
+- **Configure database adapters** - Connect with Prisma, Drizzle, SQLite, PostgreSQL, or MySQL
+- **Deploy to any framework** - Integrate with Next.js, Nuxt, Remix, SvelteKit, Astro, and more
+- **Control access** - Configure admin roles and IP-based access rules
+
+## Quick demo
+
+Try the live demo at [bt-nextjs.vercel.app/admin](https://bt-nextjs.vercel.app/admin)
+
+- **Email**: `admin@user.com`
+- **Password**: `admin@user.com`
+
+## Get started
+
+Install Better Auth Studio as a development dependency:
+
+```bash
+pnpm add -D better-auth-studio
+```
+
+Navigate to your Better Auth project and start the studio:
+
+```bash
+pnpm better-auth-studio start
+```
+
+The studio will automatically open at [http://localhost:3002](http://localhost:3002) and detect your auth configuration.
+
+## Core features
+
+### Dashboard overview
+
+The dashboard provides real-time insights into your authentication system:
+
+- User and organization statistics
+- Activity graphs for signups, logins, and sessions
+- Security patch notifications
+- Quick access to management tools
+
+### User management
+
+Manage your user base with comprehensive tools:
+
+- View all users with search and filtering
+- Create new users with email/password
+- Update email verification status
+- Track last seen timestamps (when events are enabled)
+- Bulk operations for testing and seeding
+
+### Organization management
+
+Handle multi-tenant scenarios with full organizational control:
+
+- Create and manage organizations with custom slugs
+- Configure teams within organizations
+- Add and remove team members
+- Send and manage invitations
+- Bulk seed test data
+
+## Database adapters
+
+Better Auth Studio automatically detects and works with your existing database adapter:
+
+```typescript
+// Using Prisma
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
+});
+```
+
+```typescript
+// Using Drizzle
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { db } from "./database";
+
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: "pg",
+  }),
+});
+```
+
+Supported adapters include Prisma, Drizzle, SQLite, PostgreSQL, MySQL, and MongoDB.
+
+## Framework integration
+
+Better Auth Studio includes adapters for all major frameworks. Mount the studio in your application:
+
+<CodeGroup title="Framework Setup">
+
+```typescript title="Next.js"
+import { studioHandler } from "better-auth-studio/nextjs";
+import { auth } from "@/lib/auth";
+
+export const { GET, POST, PUT, DELETE, PATCH } = studioHandler(auth);
+```
+
+```typescript title="Express"
+import { studioRouter } from "better-auth-studio/express";
+import { auth } from "./auth";
+
+app.use("/api/studio", studioRouter(auth));
+```
+
+```typescript title="Hono"
+import { studioApp } from "better-auth-studio/hono";
+import { auth } from "./auth";
+
+app.route("/api/studio", studioApp(auth));
+```
+
+</CodeGroup>
+
+## Configuration options
+
+Customize the studio behavior with configuration options:
+
+```bash
+# Custom port
+pnpm better-auth-studio start --port 3001
+
+# Watch mode for development
+pnpm better-auth-studio start --watch
+
+# Specify auth config path
+pnpm better-auth-studio start --config ./src/lib/auth.ts
+```
+
+## Next steps
+
+- [Install and configure](/docs/installation) Better Auth Studio in your project
+- [Set up database adapters](/docs/configuration/database-adapters) for your persistence layer
+- [Deploy the studio](/docs/self-hosting) alongside your application
+- [Explore examples](/docs/examples) for your framework
