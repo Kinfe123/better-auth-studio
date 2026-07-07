@@ -423,6 +423,43 @@ app.listen(3000);
 
 Access at `http://localhost:3000/api/studio`
 
+### Cloudflare Workers
+
+Use the Worker adapter when the Studio shell needs to run in a non-Node runtime. The adapter avoids Node-only imports, serves UI assets from Workers Assets or an asset map, and delegates Studio API routes to an edge-compatible handler.
+
+```typescript
+import { betterAuthStudio } from "better-auth-studio/cloudflare-workers";
+import { auth } from "./auth";
+
+type Env = {
+  ASSETS: { fetch(request: Request): Promise<Response> | Response };
+};
+
+const studio = betterAuthStudio<Env>({
+  auth,
+  basePath: "/studio",
+  // Optional when your Worker has the default ASSETS binding.
+  assets: (env) => env.ASSETS,
+  apiHandler: async (request) => {
+    // Handle /api/* Studio routes with edge-compatible code here.
+    return new Response(JSON.stringify({ error: "Not implemented" }), {
+      status: 501,
+      headers: { "Content-Type": "application/json" },
+    });
+  },
+});
+
+export default {
+  fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    return studio(request, env, ctx);
+  },
+};
+```
+
+Access at `https://your-worker.example.com/studio`
+
+The built-in Studio API router still depends on Node-only modules, so Workers deployments should provide `apiHandler` for `/api/*` routes. Better Auth auth routes under `/auth/*` are delegated to `auth.handler` when available.
+
 ### Configuration Options
 
 | Option                    | Required | Description                                                                                                                                   |

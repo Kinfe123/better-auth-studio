@@ -28,6 +28,7 @@
     "./express": "./dist/adapters/express.js",
     "./nextjs": "./dist/adapters/nextjs.js",
     "./hono": "./dist/adapters/hono.js",
+    "./cloudflare-workers": "./dist/adapters/cloudflare-workers.js",
     "./elysia": "./dist/adapters/elysia.js",
     "./svelte-kit": "./dist/adapters/svelte-kit.js",
     "./solid-start": "./dist/adapters/solid-start.js",

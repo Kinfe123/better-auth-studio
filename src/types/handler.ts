@@ -10,7 +10,7 @@ export type UniversalResponse = {
   status: number;
   headers: Record<string, string>;
   setCookies?: string[];
-  body: string | Buffer;
+  body: string | Uint8Array | ArrayBuffer;
 };
 export type TimeWindowPreset =
   | "15m"
