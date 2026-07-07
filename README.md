@@ -81,7 +81,7 @@ Before using Better Auth Studio, ensure you have:
 
 - **Node.js** (v18 or higher)
 - **A Better Auth project** with a valid `auth.ts` configuration file
-- **Database setup** (Prisma, Drizzle, or SQLite)
+- **Database setup** (Prisma, Drizzle, Kysely, or SQLite)
 
 ## 🔧 Configuration
 
@@ -91,9 +91,10 @@ Better Auth Studio automatically detects and works with:
 
 - **Prisma** (`prismaAdapter`)
 - **Drizzle** (`drizzleAdapter`)
+- **Kysely** (`database: { db, type }`)
 - **SQLite** (`new Database()` from better-sqlite3)
-- **PostgreSQL** (via Prisma or Drizzle)
-- **MySQL** (via Prisma or Drizzle)
+- **PostgreSQL** (via Prisma, Drizzle, or Kysely)
+- **MySQL** (via Prisma, Drizzle, or Kysely)
 
 ### Example Configuration Files
 
@@ -131,6 +132,31 @@ export const auth = betterAuth({
 });
 ```
 
+#### Kysely Setup
+
+```typescript
+// auth.ts
+import { betterAuth } from "better-auth";
+import { Kysely, PostgresDialect } from "kysely";
+import { Pool } from "pg";
+
+const db = new Kysely<any>({
+  dialect: new PostgresDialect({
+    pool: new Pool({
+      connectionString: process.env.DATABASE_URL,
+    }),
+  }),
+});
+
+export const auth = betterAuth({
+  database: {
+    db,
+    type: "postgres", // or "mysql", "sqlite", "mssql"
+  },
+  // ... other config
+});
+```
+
 #### SQLite Setup
 
 ```typescript
@@ -158,7 +184,7 @@ export const auth = betterAuth({
 - **Delete users** - Remove users from the system
 - **Bulk operations** - Seed multiple test users
 - **User details** - View user profiles, and accounts
-- **Last seen** - When events are enabled, the studio injects an optional `lastSeenAt` field on the user model and updates it on each sign-in or session creation. Run your database migration (e.g. `prisma migrate dev` or Drizzle push) to add the `lastSeenAt` column to the user table.
+- **Last seen** - When events are enabled, the studio injects an optional `lastSeenAt` field on the user model and updates it on each sign-in or session creation. Run your database migration (e.g. `prisma migrate dev`, Drizzle push, or a Kysely migration) to add the `lastSeenAt` column to the user table.
 
 ### 🏢 Organization Management
 

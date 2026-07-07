@@ -6,11 +6,58 @@ import type {
   EventQueryResult,
 } from "../../types/events.js";
 
+type PostgresProviderClientType = "postgres" | "prisma" | "drizzle" | "kysely";
+
+type KyselyCompiledQuery = {
+  sql: string;
+  parameters: ReadonlyArray<unknown>;
+  queryId: { queryId: string };
+};
+
+function isKyselyClient(client: any, clientType?: PostgresProviderClientType): boolean {
+  const hasExecuteQuery = typeof client?.executeQuery === "function";
+  if (clientType === "kysely") {
+    return hasExecuteQuery;
+  }
+
+  return hasExecuteQuery && typeof client?.selectFrom === "function";
+}
+
+function createKyselyCompiledQuery(sql: string, parameters: unknown[] = []): KyselyCompiledQuery {
+  return {
+    sql,
+    parameters,
+    queryId: { queryId: `bas_${Date.now()}_${Math.random().toString(36).slice(2)}` },
+  };
+}
+
+async function executeKyselyQuery(client: any, query: string, params: unknown[] = []) {
+  return await client.executeQuery(createKyselyCompiledQuery(query, params));
+}
+
+function getEventInsertParams(event: AuthEvent): unknown[] {
+  return [
+    event.id,
+    event.type,
+    event.timestamp,
+    event.status || "success",
+    event.userId || null,
+    event.sessionId || null,
+    event.organizationId || null,
+    JSON.stringify(event.metadata || {}),
+    event.ipAddress || null,
+    event.userAgent || null,
+    event.source,
+    event.display?.message || null,
+    event.display?.severity || null,
+  ];
+}
+
 export function createPostgresProvider(options: {
   client: any;
   tableName?: string;
   schema?: string;
-  clientType?: "postgres" | "prisma" | "drizzle";
+  clientType?: PostgresProviderClientType;
 }): EventIngestionProvider {
   const { client, tableName = "auth_events", schema = "public", clientType } = options;
 
@@ -35,14 +82,17 @@ export function createPostgresProvider(options: {
   const hasExecuteRaw = client?.$executeRaw;
   const hasExecute = client?.execute;
   const hasUnsafe = actualClient?.unsafe || client?.$client?.unsafe || client?.unsafe;
+  const hasKysely = isKyselyClient(client, clientType);
 
-  if (!hasQuery && !hasExecuteRaw && !hasExecute && !hasUnsafe) {
+  if (!hasQuery && !hasExecuteRaw && !hasExecute && !hasUnsafe && !hasKysely) {
     const errorMessage =
       clientType === "prisma"
         ? "Invalid Prisma client. Client must have a `$executeRaw` method."
         : clientType === "drizzle"
           ? "Invalid Drizzle client. Drizzle instance must wrap a postgres-js (with `unsafe` method) or pg (with `query` method) client."
-          : "Invalid Postgres client. Client must have either a `query` method (pg Pool/Client) or `$executeRaw` method (Prisma client).";
+          : clientType === "kysely"
+            ? "Invalid Kysely client. Client must have an `executeQuery` method."
+            : "Invalid Postgres client. Client must have either a `query` method (pg Pool/Client), `$executeRaw` method (Prisma client), or `executeQuery` method (Kysely client).";
     throw new Error(errorMessage);
   }
 
@@ -58,6 +108,10 @@ export function createPostgresProvider(options: {
         // Prisma client
         executeQuery = async (query: string) => {
           return await client.$executeRawUnsafe(query);
+        };
+      } else if (hasKysely) {
+        executeQuery = async (query: string) => {
+          return await executeKyselyQuery(client, query);
         };
       } else if (clientType === "drizzle") {
         // Drizzle client - use $client which exposes the underlying client
@@ -87,7 +141,7 @@ export function createPostgresProvider(options: {
         };
       } else {
         throw new Error(
-          `Postgres client doesn't support $executeRaw or query method. Available properties: ${Object.keys(client).join(", ")}`,
+          `Postgres client doesn't support $executeRaw, executeQuery, or query method. Available properties: ${Object.keys(client).join(", ")}`,
         );
       }
 
@@ -168,7 +222,40 @@ export function createPostgresProvider(options: {
     async ingest(event: AuthEvent) {
       await ensureTableSync();
 
-      if (clientType === "prisma" || client.$executeRaw) {
+      if (hasKysely) {
+        try {
+          await executeKyselyQuery(
+            client,
+            `INSERT INTO ${schema}.${tableName}
+             (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+            getEventInsertParams(event),
+          );
+        } catch (error: any) {
+          console.error(
+            `Failed to insert event (${event.type}) into ${schema}.${tableName}:`,
+            error,
+          );
+          if (error.code === "42P01") {
+            tableEnsured = false;
+            await ensureTableSync();
+            try {
+              await executeKyselyQuery(
+                client,
+                `INSERT INTO ${schema}.${tableName}
+                 (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+                getEventInsertParams(event),
+              );
+              return;
+            } catch (retryError: any) {
+              console.error(`Retry after table creation also failed:`, retryError);
+              throw retryError;
+            }
+          }
+          throw error;
+        }
+      } else if (clientType === "prisma" || client.$executeRaw) {
         const query = `
           INSERT INTO ${schema}.${tableName} 
           (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
@@ -206,7 +293,7 @@ export function createPostgresProvider(options: {
         if (useUnsafe) {
           // postgres-js client - use unsafe() for raw SQL
           const query = `
-            INSERT INTO ${schema}.${tableName} 
+            INSERT INTO ${schema}.${tableName}
             (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
             VALUES ('${event.id}'::uuid, '${event.type}', '${event.timestamp.toISOString()}', '${event.status || "success"}', ${event.userId ? `'${event.userId.replace(/'/g, "''")}'` : "NULL"}, ${event.sessionId ? `'${event.sessionId.replace(/'/g, "''")}'` : "NULL"}, ${event.organizationId ? `'${event.organizationId.replace(/'/g, "''")}'` : "NULL"}, '${JSON.stringify(event.metadata || {}).replace(/'/g, "''")}'::jsonb, ${event.ipAddress ? `'${event.ipAddress.replace(/'/g, "''")}'` : "NULL"}, ${event.userAgent ? `'${event.userAgent.replace(/'/g, "''")}'` : "NULL"}, '${event.source}', ${event.display?.message ? `'${event.display.message.replace(/'/g, "''")}'` : "NULL"}, ${event.display?.severity ? `'${event.display.severity}'` : "NULL"})
           `;
@@ -237,21 +324,7 @@ export function createPostgresProvider(options: {
               `INSERT INTO ${schema}.${tableName} 
                (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
-              [
-                event.id,
-                event.type,
-                event.timestamp,
-                event.status || "success",
-                event.userId || null,
-                event.sessionId || null,
-                event.organizationId || null,
-                JSON.stringify(event.metadata || {}),
-                event.ipAddress || null,
-                event.userAgent || null,
-                event.source,
-                event.display?.message || null,
-                event.display?.severity || null,
-              ],
+              [...getEventInsertParams(event)],
             );
           } catch (error: any) {
             console.error(
@@ -266,21 +339,7 @@ export function createPostgresProvider(options: {
                   `INSERT INTO ${schema}.${tableName} 
                    (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
-                  [
-                    event.id,
-                    event.type,
-                    event.timestamp,
-                    event.status || "success",
-                    event.userId || null,
-                    event.sessionId || null,
-                    event.organizationId || null,
-                    JSON.stringify(event.metadata || {}),
-                    event.ipAddress || null,
-                    event.userAgent || null,
-                    event.source,
-                    event.display?.message || null,
-                    event.display?.severity || null,
-                  ],
+                  [...getEventInsertParams(event)],
                 );
                 return;
               } catch (retryError: any) {
@@ -315,7 +374,40 @@ export function createPostgresProvider(options: {
       await ensureTableSync();
 
       // Support Prisma client ($executeRaw), Drizzle instance, or standard pg client (query)
-      if (clientType === "prisma" || client.$executeRaw) {
+      if (hasKysely) {
+        const PARAMS_PER_EVENT = 13;
+        const MAX_PARAMS = 65535;
+        const CHUNK_SIZE = Math.floor(MAX_PARAMS / PARAMS_PER_EVENT) - 1;
+
+        for (let chunkStart = 0; chunkStart < events.length; chunkStart += CHUNK_SIZE) {
+          const chunk = events.slice(chunkStart, chunkStart + CHUNK_SIZE);
+
+          const values = chunk
+            .map((_, i) => {
+              const base = i * PARAMS_PER_EVENT;
+              return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 4}, $${base + 5}, $${base + 6}, $${base + 7}, $${base + 8}, $${base + 9}, $${base + 10}, $${base + 11}, $${base + 12}, $${base + 13})`;
+            })
+            .join(", ");
+
+          const query = `
+            INSERT INTO ${schema}.${tableName}
+            (id, type, timestamp, status, user_id, session_id, organization_id, metadata, ip_address, user_agent, source, display_message, display_severity)
+            VALUES ${values}
+          `;
+
+          const params = chunk.flatMap((event) => getEventInsertParams(event));
+
+          try {
+            await executeKyselyQuery(client, query, params);
+          } catch (error: any) {
+            console.error(
+              `Failed to insert batch chunk (${chunk.length} events) into ${schema}.${tableName}:`,
+              error,
+            );
+            throw error;
+          }
+        }
+      } else if (clientType === "prisma" || client.$executeRaw) {
         // Prisma client - use $executeRawUnsafe for batch inserts
         const CHUNK_SIZE = 500; // Reasonable chunk size for string-based queries
         for (let i = 0; i < events.length; i += CHUNK_SIZE) {
@@ -396,21 +488,7 @@ export function createPostgresProvider(options: {
               VALUES ${values}
             `;
 
-            const params = chunk.flatMap((event) => [
-              event.id,
-              event.type,
-              event.timestamp,
-              event.status || "success",
-              event.userId || null,
-              event.sessionId || null,
-              event.organizationId || null,
-              JSON.stringify(event.metadata || {}),
-              event.ipAddress || null,
-              event.userAgent || null,
-              event.source,
-              event.display?.message || null,
-              event.display?.severity || null,
-            ]);
+            const params = chunk.flatMap((event) => getEventInsertParams(event));
 
             try {
               await batchQueryClient.query(query, params);
@@ -471,6 +549,10 @@ export function createPostgresProvider(options: {
             return await client.$queryRawUnsafe(query);
           }
         };
+      } else if (hasKysely) {
+        queryFn = async (query: string, params?: any[]) => {
+          return await executeKyselyQuery(client, query, params || []);
+        };
       } else if (client.query) {
         // Standard pg client (Pool or Client)
         queryFn = async (query: string, params?: any[]) => {
@@ -496,6 +578,8 @@ export function createPostgresProvider(options: {
             .replace("$1", `'${schema}'`)
             .replace("$2", `'${tableName}'`);
           checkResult = await client.$queryRawUnsafe(prismaQuery);
+        } else if (hasKysely) {
+          checkResult = await queryFn(checkTableQuery, [schema, tableName]);
         } else {
           // Standard pg client
           checkResult = await queryFn(checkTableQuery, [schema, tableName]);

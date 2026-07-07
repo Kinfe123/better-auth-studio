@@ -5,3 +5,4 @@
  * @returns The version string if found, undefined otherwise
  */
 export declare function getPackageVersion(packageName: string, cwd?: string): Promise<string | undefined>;
+export declare function getDirectPackageVersion(packageName: string, cwd?: string): string | undefined;

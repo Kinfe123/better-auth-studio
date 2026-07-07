@@ -357,6 +357,13 @@ program
             databaseInfo = "Drizzle";
           } else if (content.includes("prismaAdapter")) {
             databaseInfo = "Prisma";
+          } else if (
+            content.includes("kyselyAdapter") ||
+            content.includes("Kysely") ||
+            content.includes('from "kysely"') ||
+            content.includes("from 'kysely'")
+          ) {
+            databaseInfo = "Kysely";
           } else if (authConfig.database.adapter && authConfig.database.provider) {
             const adapter = authConfig.database.adapter;
             const adapterName = adapter.charAt(0).toUpperCase() + adapter.slice(1);

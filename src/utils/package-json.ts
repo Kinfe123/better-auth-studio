@@ -70,3 +70,31 @@ export async function getPackageVersion(
     return undefined;
   }
 }
+
+export function getDirectPackageVersion(packageName: string, cwd?: string): string | undefined {
+  const searchDir = cwd || process.cwd();
+  const projectRoot = findProjectRoot(searchDir);
+  const packageJsonPaths = Array.from(
+    new Set([join(searchDir, "package.json"), join(projectRoot, "package.json")]),
+  );
+
+  for (const packageJsonPath of packageJsonPaths) {
+    if (!existsSync(packageJsonPath)) {
+      continue;
+    }
+
+    try {
+      const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
+      const version =
+        packageJson.dependencies?.[packageName] ||
+        packageJson.devDependencies?.[packageName] ||
+        packageJson.peerDependencies?.[packageName];
+
+      if (version) {
+        return version.replace(/[\^~]/, "");
+      }
+    } catch {}
+  }
+
+  return undefined;
+}

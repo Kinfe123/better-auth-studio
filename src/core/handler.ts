@@ -51,6 +51,7 @@ export async function initializeEventIngestionAndHooks(config: StudioConfig): Pr
         case "postgres":
         case "prisma":
         case "drizzle":
+        case "kysely":
           try {
             provider = createPostgresProvider({
               client: config.events.client,

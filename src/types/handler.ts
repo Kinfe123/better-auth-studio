@@ -169,6 +169,7 @@ export type StudioConfig = {
       | "postgres"
       | "prisma"
       | "drizzle"
+      | "kysely"
       | "clickhouse"
       | "https"
       | "custom"

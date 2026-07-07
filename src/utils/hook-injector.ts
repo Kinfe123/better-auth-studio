@@ -1194,6 +1194,7 @@ function createEventIngestionPlugin(eventsConfig: StudioConfig["events"]): any {
               case "postgres":
               case "prisma":
               case "drizzle":
+              case "kysely":
                 provider = createPostgresProvider({
                   client: capturedConfig.client,
                   tableName: capturedConfig.tableName,

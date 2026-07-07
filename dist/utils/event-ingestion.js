@@ -25,6 +25,7 @@ export function initializeEventIngestion(eventsConfig) {
             case "postgres":
             case "prisma":
             case "drizzle":
+            case "kysely":
                 try {
                     provider = createPostgresProvider({
                         client: eventsConfig.client,

@@ -390,7 +390,7 @@ export default function Installation() {
               </li>
               <li className="flex items-start">
                 <span className="text-white/50 mr-3">•</span>
-                <strong>Database setup</strong> (Prisma, Drizzle, or SQLite)
+                <strong>Database setup</strong> (Prisma, Drizzle, Kysely, or SQLite)
               </li>
             </ul>
           </PixelCard>
@@ -429,17 +429,23 @@ export default function Installation() {
                 </div>
                 <div className="flex items-center text-sm font-light tracking-tight text-white/70">
                   <span className="text-white/50 mr-3">→</span>
+                  <strong>Kysely</strong> (
+                  <code className="bg-white/10 px-1 text-white/90">database: {"{ db, type }"}</code>
+                  )
+                </div>
+                <div className="flex items-center text-sm font-light tracking-tight text-white/70">
+                  <span className="text-white/50 mr-3">→</span>
                   <strong>SQLite</strong> (
                   <code className="bg-white/10 px-1 text-white/90">new Database()</code> from
                   better-sqlite3)
                 </div>
                 <div className="flex items-center text-sm font-light tracking-tight text-white/70">
                   <span className="text-white/50 mr-3">→</span>
-                  <strong>PostgreSQL</strong> (via Prisma or Drizzle)
+                  <strong>PostgreSQL</strong> (via Prisma, Drizzle, or Kysely)
                 </div>
                 <div className="flex items-center text-sm font-light tracking-tight text-white/70">
                   <span className="text-white/50 mr-3">→</span>
-                  <strong>MySQL</strong> (via Prisma or Drizzle)
+                  <strong>MySQL</strong> (via Prisma, Drizzle, or Kysely)
                 </div>
               </div>
             </PixelCard>
@@ -495,6 +501,35 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg", // or "mysql", "sqlite"
   }),
+  // ... other config
+});`}
+                    language="typescript"
+                  />
+                </PixelCard>
+              </div>
+
+              <div className="mb-6">
+                <h4 className="font-light tracking-tight mb-3 text-white">Kysely Setup</h4>
+                <PixelCard variant="code">
+                  <CodeHighlighter
+                    code={`// auth.ts
+import { betterAuth } from "better-auth";
+import { Kysely, PostgresDialect } from "kysely";
+import { Pool } from "pg";
+
+const db = new Kysely<any>({
+  dialect: new PostgresDialect({
+    pool: new Pool({
+      connectionString: process.env.DATABASE_URL,
+    }),
+  }),
+});
+
+export const auth = betterAuth({
+  database: {
+    db,
+    type: "postgres", // or "mysql", "sqlite", "mssql"
+  },
   // ... other config
 });`}
                     language="typescript"

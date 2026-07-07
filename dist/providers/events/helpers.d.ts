@@ -1,9 +1,10 @@
 import type { AuthEvent, EventIngestionProvider } from "../../types/events.js";
+type PostgresProviderClientType = "postgres" | "prisma" | "drizzle" | "kysely";
 export declare function createPostgresProvider(options: {
     client: any;
     tableName?: string;
     schema?: string;
-    clientType?: "postgres" | "prisma" | "drizzle";
+    clientType?: PostgresProviderClientType;
 }): EventIngestionProvider;
 export declare function createSqliteProvider(options: {
     client: any;
@@ -33,3 +34,4 @@ export declare function createStorageProvider(options: {
     adapter: any;
     tableName?: string;
 }): EventIngestionProvider;
+export {};

@@ -1,7 +1,8 @@
-import { getPackageVersion } from "./package-json.js";
+import { getDirectPackageVersion, getPackageVersion } from "./package-json.js";
 const DATABASES = {
     "drizzle-orm": "drizzle",
     "@prisma/client": "prisma",
+    kysely: "kysely",
     mongoose: "mongodb",
     mongodb: "mongodb",
     pg: "postgresql",
@@ -16,6 +17,7 @@ const _DATABASE_DIALECTS = {
     mariadb: ["mariadb"],
     sqlite: ["sqlite3", "better-sqlite3"],
     prisma: ["@prisma/client"],
+    kysely: ["kysely"],
     mongodb: ["mongoose", "mongodb"],
     drizzle: ["drizzle-orm"],
 };
@@ -26,7 +28,7 @@ const _DATABASE_DIALECTS = {
  */
 export async function detectDatabase(cwd) {
     for (const [pkg, name] of Object.entries(DATABASES)) {
-        const version = await getPackageVersion(pkg, cwd);
+        const version = pkg === "kysely" ? getDirectPackageVersion(pkg, cwd) : await getPackageVersion(pkg, cwd);
         if (version)
             return { name, version };
     }
@@ -79,6 +81,14 @@ export async function detectDatabaseWithDialect(cwd) {
             adapter = "drizzle";
             break;
         }
+        case "kysely": {
+            const kyselyDialect = await detectKyselyDialect(cwd);
+            if (kyselyDialect) {
+                dialect = kyselyDialect;
+            }
+            adapter = "kysely";
+            break;
+        }
     }
     return {
         name: detection.name,
@@ -118,6 +128,26 @@ async function detectDrizzleDialect(cwd) {
             if (version)
                 return dialect;
         }
+        catch { }
+    }
+    return undefined;
+}
+async function detectKyselyDialect(cwd) {
+    const kyselyDrivers = [
+        { pkg: "pg", dialect: "postgresql" },
+        { pkg: "postgres", dialect: "postgresql" },
+        { pkg: "mysql2", dialect: "mysql" },
+        { pkg: "better-sqlite3", dialect: "sqlite" },
+        { pkg: "sqlite3", dialect: "sqlite" },
+        { pkg: "tedious", dialect: "mssql" },
+        { pkg: "mssql", dialect: "mssql" },
+    ];
+    for (const { pkg, dialect } of kyselyDrivers) {
+        try {
+            const version = await getPackageVersion(pkg, cwd);
+            if (version)
+                return dialect;
+        }
         catch (_error) { }
     }
     return undefined;
@@ -130,7 +160,7 @@ async function detectDrizzleDialect(cwd) {
 export async function detectAllDatabases(cwd) {
     const results = [];
     for (const [pkg, name] of Object.entries(DATABASES)) {
-        const version = await getPackageVersion(pkg, cwd);
+        const version = pkg === "kysely" ? getDirectPackageVersion(pkg, cwd) : await getPackageVersion(pkg, cwd);
         if (version) {
             const detection = await detectDatabaseWithDialect(cwd);
             if (detection && detection.name === name) {
