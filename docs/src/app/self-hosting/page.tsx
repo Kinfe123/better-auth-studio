@@ -28,6 +28,7 @@ type Framework =
   | "nextjs"
   | "express"
   | "hono"
+  | "cloudflare"
   | "elysia"
   | "sveltekit"
   | "solidstart"
@@ -44,6 +45,7 @@ const frameworks: Array<{
   { id: "nextjs", name: "Next.js", icon: NextJsIcon },
   { id: "express", name: "Express", icon: ExpressIcon },
   { id: "hono", name: "Hono", icon: HonoIcon },
+  { id: "cloudflare", name: "Cloudflare Workers", icon: ServerIcon },
   { id: "elysia", name: "Elysia", icon: ElysiaIcon },
   { id: "sveltekit", name: "Svelte Kit", icon: SvelteKitIcon },
   { id: "solidstart", name: "Solid Start", icon: SolidStartIcon },
@@ -648,6 +650,65 @@ serve({
                         Access the studio at{" "}
                         <code className="text-white/90 bg-white/10 px-1 py-0.5">/api/studio</code>
                       </p>
+                    </div>
+                  </PixelCard>
+                )}
+
+                {activeFramework === "cloudflare" && (
+                  <PixelCard variant="highlight" className="relative">
+                    <div className="pt-4 space-y-4 relative">
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        For Cloudflare Workers, use the Worker-safe adapter. It serves the Studio
+                        shell and assets from Workers Assets or a custom asset map, then delegates
+                        Studio API routes to your edge-compatible handler:
+                      </p>
+                      <CodeHighlighter
+                        code={`import { betterAuthStudio } from "better-auth-studio/cloudflare-workers";
+import { auth } from "./auth";
+
+type Env = {
+  ASSETS: { fetch(request: Request): Promise<Response> | Response };
+};
+
+const studio = betterAuthStudio<Env>({
+  auth,
+  basePath: "/studio",
+  assets: (env) => env.ASSETS,
+  apiHandler: async (request) => {
+    return new Response(JSON.stringify({ error: "Not implemented" }), {
+      status: 501,
+      headers: { "Content-Type": "application/json" },
+    });
+  },
+});
+
+export default {
+  fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    return studio(request, env, ctx);
+  },
+};`}
+                        language="typescript"
+                      />
+                      <p className="text-sm font-light tracking-tight text-white/70">
+                        Access the studio at{" "}
+                        <code className="text-white/90 bg-white/10 px-1 py-0.5">/studio</code>
+                      </p>
+                      <div className="mt-4 p-3 bg-white/5 border border-white/10 rounded-none">
+                        <p className="text-xs font-light tracking-tight text-white/60">
+                          <strong className="font-bold text-white/80">Note:</strong> The Cloudflare
+                          Workers adapter avoids Node-only imports. The full built-in Studio API
+                          router still uses Node modules, so Workers deployments should provide{" "}
+                          <code className="text-white/70 bg-white/10 px-1 py-0.5">apiHandler</code>{" "}
+                          for <code className="text-white/70 bg-white/10 px-1 py-0.5">/api/*</code>{" "}
+                          routes. Better Auth auth routes under{" "}
+                          <code className="text-white/70 bg-white/10 px-1 py-0.5">/auth/*</code> are
+                          delegated to{" "}
+                          <code className="text-white/70 bg-white/10 px-1 py-0.5">
+                            auth.handler
+                          </code>{" "}
+                          when available.
+                        </p>
+                      </div>
                     </div>
                   </PixelCard>
                 )}

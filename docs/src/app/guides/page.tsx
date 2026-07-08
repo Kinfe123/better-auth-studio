@@ -30,7 +30,7 @@ const GUIDES = [
   {
     id: "other-frameworks",
     title: "Other frameworks",
-    description: "Hono, Express, Elysia, SvelteKit, and more",
+    description: "Hono, Express, Cloudflare Workers, and more",
   },
   {
     id: "customize-studio",
@@ -705,6 +705,7 @@ export { handler as GET, handler as POST, handler as PUT, handler as DELETE, han
                 <li>
                   Import the adapter (e.g.{" "}
                   <code className="bg-white/10 px-1">better-auth-studio/hono</code>,{" "}
+                  <code className="bg-white/10 px-1">better-auth-studio/cloudflare-workers</code>,{" "}
                   <code className="bg-white/10 px-1">better-auth-studio/express</code>) and mount
                   the handler on <code className="bg-white/10 px-1">basePath</code>.
                 </li>
@@ -730,6 +731,10 @@ export { handler as GET, handler as POST, handler as PUT, handler as DELETE, han
                 <li>
                   <strong>Hono</strong> –{" "}
                   <code className="bg-white/10 px-1">better-auth-studio/hono</code>
+                </li>
+                <li>
+                  <strong>Cloudflare Workers</strong> –{" "}
+                  <code className="bg-white/10 px-1">better-auth-studio/cloudflare-workers</code>
                 </li>
                 <li>
                   <strong>Express</strong> –{" "}
