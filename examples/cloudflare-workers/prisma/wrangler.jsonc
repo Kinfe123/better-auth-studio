@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "better-auth-studio-cloudflare-workers-prisma",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-08",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "node_modules/better-auth-studio/dist/public",
+    "binding": "ASSETS",
+  },
+  "vars": {
+    "BETTER_AUTH_URL": "http://localhost:8787",
+    "ADMIN_EMAILS": "admin@example.com",
+  },
+}

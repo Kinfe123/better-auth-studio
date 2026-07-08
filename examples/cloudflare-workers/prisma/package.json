@@ -1,0 +1,35 @@
+{
+  "name": "better-auth-studio-cloudflare-workers-prisma-example",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Better Auth Studio example with Cloudflare Workers and Prisma",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "build": "pnpm prisma:generate && wrangler deploy --dry-run",
+    "type-check": "pnpm prisma:generate && tsc --noEmit",
+    "types": "wrangler types --no-strict-vars",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "better-auth": "1.4.5",
+    "better-auth-studio": "file:../../..",
+    "pg": "^8.17.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260708.1",
+    "@types/pg": "^8.16.0",
+    "dotenv": "^17.2.3",
+    "prisma": "^7.8.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.108.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
