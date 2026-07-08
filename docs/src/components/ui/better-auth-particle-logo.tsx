@@ -29,8 +29,8 @@ const BETTER_AUTH_SVG_URL = `data:image/svg+xml;charset=utf-8,${encodeURICompone
   BETTER_AUTH_SVG,
 )}`;
 const PARTICLE_COLOR = "rgb(232,232,232)";
-const INTRO_DURATION = 5200;
-const SPAWN_DELAY_RANGE = 1700;
+const INTRO_DURATION = 3800;
+const SPAWN_DELAY_RANGE = 1250;
 const SPAWN_EDGE_PADDING_RATIO = 0.18;
 
 function containRect(imageWidth: number, imageHeight: number, width: number, height: number) {
@@ -143,7 +143,7 @@ async function buildParticles(width: number, height: number, logoBounds: Bounds)
     const dx = point.x - spawn.x;
     const dy = point.y - spawn.y;
     const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-    const launchSpeed = 0.14 + Math.random() * 0.28;
+    const launchSpeed = 0.2 + Math.random() * 0.35;
 
     return {
       delay: Math.random() * SPAWN_DELAY_RANGE,
@@ -241,8 +241,10 @@ export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLog
 
         const introProgress = Math.min(1, introAge / INTRO_DURATION);
         const easedIntro = introProgress * introProgress;
-        const visibility = Math.min(1, introAge / 1200);
-        const homePull = 0.0008 + easedIntro * 0.0075;
+        const finishProgress = Math.max(0, (introProgress - 0.72) / 0.28);
+        const finishEase = finishProgress * finishProgress;
+        const visibility = Math.min(1, introAge / 1000);
+        const homePull = 0.0012 + easedIntro * 0.01 + finishEase * 0.012;
         particle.vx += (particle.homeX - particle.x) * homePull;
         particle.vy += (particle.homeY - particle.y) * homePull;
 
@@ -259,7 +261,7 @@ export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLog
           }
         }
 
-        const damping = 0.94 - easedIntro * 0.08;
+        const damping = 0.93 - easedIntro * 0.065 - finishEase * 0.035;
         particle.vx *= damping;
         particle.vy *= damping;
         particle.x += particle.vx;
