@@ -145,13 +145,13 @@ export default function VercelPage() {
       />
       <div className="absolute left-1/2 top-[55%] h-px w-[min(72rem,86vw)] -translate-x-1/2 bg-gradient-to-r from-transparent via-white/18 to-transparent" />
 
-      <section className="relative z-10 flex h-full items-center justify-center px-5 pt-28 text-center md:pt-0">
+      <section className="relative z-10 flex h-full items-center justify-center px-4 pb-5 pt-36 text-center sm:px-5 sm:pt-28 md:pt-0">
         <div className="mx-auto flex w-full max-w-5xl flex-col items-center">
-          <div className="mb-7 h-32 w-48 drop-shadow-[0_0_34px_rgba(255,255,255,0.24)] sm:h-40 sm:w-60 md:h-48 md:w-72 lg:h-[14.5rem] lg:w-96">
+          <div className="mb-5 h-28 w-44 drop-shadow-[0_0_34px_rgba(255,255,255,0.24)] min-[390px]:h-32 min-[390px]:w-48 sm:mb-7 sm:h-40 sm:w-60 md:h-48 md:w-72 lg:h-[14.5rem] lg:w-96">
             <BetterAuthParticleLogo />
           </div>
           <div className="group/announcement">
-            <h1 className="mx-auto mt-0 max-w-5xl text-3xl font-light uppercase leading-[1.04] text-white sm:text-3xl md:text-[2.9rem]">
+            <h1 className="mx-auto mt-0 max-w-[21rem] text-[1.7rem] font-light uppercase leading-[1.08] text-white min-[390px]:text-3xl sm:max-w-5xl sm:text-3xl md:text-[2.9rem] md:leading-[1.04]">
               <span className="inline-flex items-center gap-[0.24em] bg-white px-[0.18em] py-[0.06em] text-black">
                 <BetterAuthIcon />
                 <span>Better-Auth</span>
@@ -162,11 +162,11 @@ export default function VercelPage() {
                 <span>Vercel</span>
               </span>
             </h1>
-            <div className="mx-auto mt-7 flex max-w-4xl flex-col items-center justify-center gap-y-2 text-sm font-light text-white/55 sm:hidden">
+            <div className="mx-auto mt-5 flex max-w-4xl flex-col items-center justify-center gap-y-1 text-[0.72rem] font-light leading-none text-white/55 min-[390px]:text-xs sm:hidden">
               {stats.map((stat, index) => (
                 <div className="contents" key={stat.label}>
                   {index > 0 ? (
-                    <span className="h-7 w-px bg-white/25" aria-hidden="true" />
+                    <span className="h-4 w-px bg-white/25" aria-hidden="true" />
                   ) : null}
                   <p className="inline-flex items-center gap-x-2 whitespace-nowrap">
                     <span className="font-medium text-white/90">{stat.value}</span>{" "}
@@ -195,7 +195,7 @@ export default function VercelPage() {
               ))}
             </div>
             <a
-              className="mx-auto mt-4 inline-flex translate-y-1 items-center gap-x-2 text-xs font-light text-white/0 opacity-0 transition-all duration-300 group-hover/announcement:translate-y-0 group-hover/announcement:text-white/65 group-hover/announcement:opacity-100 hover:text-white focus:translate-y-0 focus:text-white focus:opacity-100"
+              className="mx-auto mt-3 inline-flex translate-y-0 items-center gap-x-2 text-xs font-light text-white/70 opacity-100 transition-all duration-300 hover:text-white focus:translate-y-0 focus:text-white focus:opacity-100 md:mt-4 md:translate-y-1 md:text-white/0 md:opacity-0 md:group-hover/announcement:translate-y-0 md:group-hover/announcement:text-white/65 md:group-hover/announcement:opacity-100"
               href="https://vercel.com/blog/vercel-acquires-better-auth"
               rel="noopener noreferrer"
               target="_blank"
