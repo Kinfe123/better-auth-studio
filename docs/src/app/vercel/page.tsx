@@ -143,16 +143,16 @@ export default function VercelPage() {
             "radial-gradient(ellipse at 50% 36%, rgba(255,255,255,0.16) 0%, rgba(185,185,185,0.07) 30%, transparent 66%)",
         }}
       />
-      <div className="absolute left-1/2 top-[55%] h-px w-[min(72rem,86vw)] -translate-x-1/2 bg-gradient-to-r from-transparent via-white/18 to-transparent" />
+      <div className="hidden md:absolute left-1/2 top-[55%] h-px w-[min(72rem,86vw)] -translate-x-1/2 bg-gradient-to-r from-transparent via-white/18 to-transparent" />
 
       <section className="relative z-10 flex h-full items-center justify-center px-4 pb-5 pt-36 text-center sm:px-5 sm:pt-28 md:pt-0">
         <div className="mx-auto flex w-full max-w-5xl flex-col items-center">
-          <div className="mb-5 h-28 w-44 drop-shadow-[0_0_34px_rgba(255,255,255,0.24)] min-[390px]:h-32 min-[390px]:w-48 sm:mb-7 sm:h-40 sm:w-60 md:h-48 md:w-72 lg:h-[14.5rem] lg:w-96">
+          <div className="mb-5 h-28 w-44 drop-shadow-[0_0_34px_rgba(255,255,255,0.24)] min-[390px]:h-32 min-[390px]:w-48 sm:mb-7 sm:h-40 sm:w-60 md:h-48 md:w-72 lg:h-[14.55rem] lg:w-96">
             <BetterAuthParticleLogo />
           </div>
           <div className="group/announcement">
-            <h1 className="mx-auto mt-0 max-w-[21rem] text-[1.7rem] font-light uppercase leading-[1.08] text-white min-[390px]:text-3xl sm:max-w-5xl sm:text-3xl md:text-[2.9rem] md:leading-[1.04]">
-              <span className="inline-flex items-center gap-[0.24em] bg-white px-[0.18em] py-[0.06em] text-black">
+            <h1 className="mx-auto mt-0 max-w-[21rem] text-[1.7rem] font-light uppercase leading-[1.08] text-white min-[390px]:text-xl sm:max-w-5xl sm:text-3xl md:text-[2.8rem] md:leading-[1.04]">
+              <span className="inline-flex items-center gap-[0.24em]">
                 <BetterAuthIcon />
                 <span>Better-Auth</span>
               </span>{" "}
@@ -200,7 +200,7 @@ export default function VercelPage() {
               rel="noopener noreferrer"
               target="_blank"
             >
-              <span>Read more on the Vercel blog</span>
+              <span>Read more</span>
               <ArrowUpRightIcon />
             </a>
           </div>
