@@ -29,8 +29,9 @@ const BETTER_AUTH_SVG_URL = `data:image/svg+xml;charset=utf-8,${encodeURICompone
   BETTER_AUTH_SVG,
 )}`;
 const PARTICLE_COLOR = "rgb(232,232,232)";
-const INTRO_DURATION = 1800;
-const SPAWN_EDGE_INSET_RATIO = 0.025;
+const INTRO_DURATION = 5200;
+const SPAWN_DELAY_RANGE = 1700;
+const SPAWN_EDGE_PADDING_RATIO = 0.18;
 
 function containRect(imageWidth: number, imageHeight: number, width: number, height: number) {
   const imageRatio = imageWidth / imageHeight;
@@ -71,21 +72,22 @@ function loadLogoImage() {
 
 function getScreenEdgeSpawn(index: number, width: number, height: number) {
   const edge = index % 4;
-  const inset = Math.random() * Math.max(8, Math.min(width, height) * SPAWN_EDGE_INSET_RATIO);
+  const padding = Math.max(56, Math.min(width, height) * SPAWN_EDGE_PADDING_RATIO);
+  const drift = Math.random() * padding;
 
   if (edge === 0) {
-    return { x: inset, y: Math.random() * height };
+    return { x: -padding - drift, y: Math.random() * height };
   }
 
   if (edge === 1) {
-    return { x: width - inset, y: Math.random() * height };
+    return { x: width + padding + drift, y: Math.random() * height };
   }
 
   if (edge === 2) {
-    return { x: Math.random() * width, y: inset };
+    return { x: Math.random() * width, y: -padding - drift };
   }
 
-  return { x: Math.random() * width, y: height - inset };
+  return { x: Math.random() * width, y: height + padding + drift };
 }
 
 async function buildParticles(width: number, height: number, logoBounds: Bounds): Promise<Particle[]> {
@@ -141,10 +143,10 @@ async function buildParticles(width: number, height: number, logoBounds: Bounds)
     const dx = point.x - spawn.x;
     const dy = point.y - spawn.y;
     const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-    const launchSpeed = 0.35 + Math.random() * 0.55;
+    const launchSpeed = 0.14 + Math.random() * 0.28;
 
     return {
-      delay: Math.random() * 260,
+      delay: Math.random() * SPAWN_DELAY_RANGE,
       homeX: point.x,
       homeY: point.y,
       size: particleSize,
@@ -231,10 +233,16 @@ export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLog
       context.globalCompositeOperation = "source-over";
 
       for (const particle of particles) {
-        const introAge = Math.max(0, now - introStartedAt - particle.delay);
+        const introAge = now - introStartedAt - particle.delay;
+
+        if (introAge <= 0) {
+          continue;
+        }
+
         const introProgress = Math.min(1, introAge / INTRO_DURATION);
         const easedIntro = introProgress * introProgress;
-        const homePull = 0.003 + easedIntro * 0.014;
+        const visibility = Math.min(1, introAge / 1200);
+        const homePull = 0.0008 + easedIntro * 0.0075;
         particle.vx += (particle.homeX - particle.x) * homePull;
         particle.vy += (particle.homeY - particle.y) * homePull;
 
@@ -251,12 +259,13 @@ export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLog
           }
         }
 
-        const damping = 0.9 - easedIntro * 0.04;
+        const damping = 0.94 - easedIntro * 0.08;
         particle.vx *= damping;
         particle.vy *= damping;
         particle.x += particle.vx;
         particle.y += particle.vy;
 
+        context.globalAlpha = visibility;
         context.fillStyle = PARTICLE_COLOR;
         context.beginPath();
         context.moveTo(particle.x, particle.y - particle.size / 2);
@@ -265,6 +274,8 @@ export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLog
         context.closePath();
         context.fill();
       }
+
+      context.globalAlpha = 1;
 
       animationFrame = requestAnimationFrame(draw);
     };
