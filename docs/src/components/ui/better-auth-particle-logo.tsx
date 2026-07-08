@@ -2,7 +2,15 @@
 
 import { useEffect, useRef } from "react";
 
+type Bounds = {
+  height: number;
+  width: number;
+  x: number;
+  y: number;
+};
+
 type Particle = {
+  delay: number;
   homeX: number;
   homeY: number;
   size: number;
@@ -21,6 +29,8 @@ const BETTER_AUTH_SVG_URL = `data:image/svg+xml;charset=utf-8,${encodeURICompone
   BETTER_AUTH_SVG,
 )}`;
 const PARTICLE_COLOR = "rgb(232,232,232)";
+const INTRO_DURATION = 1800;
+const SPAWN_EDGE_INSET_RATIO = 0.025;
 
 function containRect(imageWidth: number, imageHeight: number, width: number, height: number) {
   const imageRatio = imageWidth / imageHeight;
@@ -59,7 +69,26 @@ function loadLogoImage() {
   });
 }
 
-async function buildParticles(width: number, height: number): Promise<Particle[]> {
+function getScreenEdgeSpawn(index: number, width: number, height: number) {
+  const edge = index % 4;
+  const inset = Math.random() * Math.max(8, Math.min(width, height) * SPAWN_EDGE_INSET_RATIO);
+
+  if (edge === 0) {
+    return { x: inset, y: Math.random() * height };
+  }
+
+  if (edge === 1) {
+    return { x: width - inset, y: Math.random() * height };
+  }
+
+  if (edge === 2) {
+    return { x: Math.random() * width, y: inset };
+  }
+
+  return { x: Math.random() * width, y: height - inset };
+}
+
+async function buildParticles(width: number, height: number, logoBounds: Bounds): Promise<Particle[]> {
   const image = await loadLogoImage();
   const offscreen = document.createElement("canvas");
   const context = offscreen.getContext("2d", { willReadFrequently: true });
@@ -72,22 +101,31 @@ async function buildParticles(width: number, height: number): Promise<Particle[]
   offscreen.height = height;
   context.clearRect(0, 0, width, height);
 
-  const fit = containRect(image.naturalWidth || 400, image.naturalHeight || 300, width, height);
+  const fit = containRect(
+    image.naturalWidth || 400,
+    image.naturalHeight || 300,
+    logoBounds.width,
+    logoBounds.height,
+  );
   const scale = 0.8;
   const drawWidth = fit.width * scale;
   const drawHeight = fit.height * scale;
-  const drawX = fit.x + (fit.width - drawWidth) / 2;
-  const drawY = fit.y + (fit.height - drawHeight) / 2;
+  const drawX = logoBounds.x + fit.x + (fit.width - drawWidth) / 2;
+  const drawY = logoBounds.y + fit.y + (fit.height - drawHeight) / 2;
 
   context.drawImage(image, drawX, drawY, drawWidth, drawHeight);
 
   const pixels = context.getImageData(0, 0, width, height).data;
-  const sampleGap = Math.max(4, Math.round(Math.min(width, height) / 38));
+  const sampleGap = Math.max(4, Math.round(Math.min(logoBounds.width, logoBounds.height) / 38));
   const particleSize = Math.max(2.6, Math.min(6.4, sampleGap * 0.86));
   const points: Array<{ x: number; y: number }> = [];
+  const sampleStartX = Math.max(0, Math.floor(logoBounds.x));
+  const sampleStartY = Math.max(0, Math.floor(logoBounds.y));
+  const sampleEndX = Math.min(width, Math.ceil(logoBounds.x + logoBounds.width));
+  const sampleEndY = Math.min(height, Math.ceil(logoBounds.y + logoBounds.height));
 
-  for (let y = 0; y < height; y += sampleGap) {
-    for (let x = 0; x < width; x += sampleGap) {
+  for (let y = sampleStartY; y < sampleEndY; y += sampleGap) {
+    for (let x = sampleStartX; x < sampleEndX; x += sampleGap) {
       const alpha = pixels[(y * width + x) * 4 + 3];
 
       if (alpha > 28) {
@@ -98,24 +136,35 @@ async function buildParticles(width: number, height: number): Promise<Particle[]
 
   shuffle(points);
 
-  return points.slice(0, 980).map((point) => ({
-    homeX: point.x,
-    homeY: point.y,
-    size: particleSize,
-    vx: (Math.random() - 0.5) * 2,
-    vy: (Math.random() - 0.5) * 2,
-    x: width * (0.08 + Math.random() * 0.84),
-    y: height * (0.12 + Math.random() * 0.76),
-  }));
+  return points.slice(0, 980).map((point, index) => {
+    const spawn = getScreenEdgeSpawn(index, width, height);
+    const dx = point.x - spawn.x;
+    const dy = point.y - spawn.y;
+    const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+    const launchSpeed = 0.35 + Math.random() * 0.55;
+
+    return {
+      delay: Math.random() * 260,
+      homeX: point.x,
+      homeY: point.y,
+      size: particleSize,
+      vx: (dx / distance) * launchSpeed,
+      vy: (dy / distance) * launchSpeed,
+      x: spawn.x,
+      y: spawn.y,
+    };
+  });
 }
 
 export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLogoProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    const container = containerRef.current;
 
-    if (!canvas) {
+    if (!canvas || !container) {
       return;
     }
 
@@ -128,7 +177,9 @@ export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLog
     let animationFrame = 0;
     let cancelled = false;
     let devicePixelRatio = 1;
+    let introStartedAt = 0;
     let particles: Particle[] = [];
+    let pointerRadius = 0;
     let version = 0;
     let viewHeight = 0;
     let viewWidth = 0;
@@ -140,33 +191,50 @@ export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLog
     };
 
     const resize = async () => {
-      const rect = canvas.getBoundingClientRect();
-      const nextWidth = Math.max(1, Math.round(rect.width));
-      const nextHeight = Math.max(1, Math.round(rect.height));
+      const rect = container.getBoundingClientRect();
+      const nextWidth = Math.max(1, Math.round(window.innerWidth));
+      const nextHeight = Math.max(1, Math.round(window.innerHeight));
+      const logoBounds = {
+        height: Math.max(1, Math.round(rect.height)),
+        width: Math.max(1, Math.round(rect.width)),
+        x: Math.round(rect.left),
+        y: Math.round(rect.top),
+      };
 
       viewWidth = nextWidth;
       viewHeight = nextHeight;
+      pointerRadius = Math.min(logoBounds.width, logoBounds.height) * 0.32;
       devicePixelRatio = window.devicePixelRatio || 1;
       canvas.width = Math.round(nextWidth * devicePixelRatio);
       canvas.height = Math.round(nextHeight * devicePixelRatio);
+      canvas.style.height = `${nextHeight}px`;
+      canvas.style.left = `${Math.round(-rect.left)}px`;
+      canvas.style.top = `${Math.round(-rect.top)}px`;
+      canvas.style.width = `${nextWidth}px`;
       context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
 
       const currentVersion = version + 1;
       version = currentVersion;
-      const nextParticles = await buildParticles(nextWidth, nextHeight);
+      const nextParticles = await buildParticles(nextWidth, nextHeight, logoBounds);
 
       if (!cancelled && currentVersion === version) {
+        introStartedAt = performance.now();
         particles = nextParticles;
       }
     };
 
     const draw = () => {
+      const now = performance.now();
+
       context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
       context.clearRect(0, 0, viewWidth, viewHeight);
       context.globalCompositeOperation = "source-over";
 
       for (const particle of particles) {
-        const homePull = 0.014;
+        const introAge = Math.max(0, now - introStartedAt - particle.delay);
+        const introProgress = Math.min(1, introAge / INTRO_DURATION);
+        const easedIntro = introProgress * introProgress;
+        const homePull = 0.003 + easedIntro * 0.014;
         particle.vx += (particle.homeX - particle.x) * homePull;
         particle.vy += (particle.homeY - particle.y) * homePull;
 
@@ -174,7 +242,7 @@ export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLog
           const dx = particle.x - pointer.x;
           const dy = particle.y - pointer.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
-          const radius = Math.min(viewWidth, viewHeight) * 0.32;
+          const radius = pointerRadius;
 
           if (distance > 0 && distance < radius) {
             const force = (1 - distance / radius) * 1.9;
@@ -183,8 +251,9 @@ export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLog
           }
         }
 
-        particle.vx *= 0.86;
-        particle.vy *= 0.86;
+        const damping = 0.9 - easedIntro * 0.04;
+        particle.vx *= damping;
+        particle.vy *= damping;
         particle.x += particle.vx;
         particle.y += particle.vy;
 
@@ -201,10 +270,9 @@ export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLog
     };
 
     const onPointerMove = (event: PointerEvent) => {
-      const rect = canvas.getBoundingClientRect();
       pointer.active = true;
-      pointer.x = event.clientX - rect.left;
-      pointer.y = event.clientY - rect.top;
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
     };
 
     const onPointerLeave = () => {
@@ -217,9 +285,10 @@ export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLog
       void resize();
     });
 
-    resizeObserver.observe(canvas);
-    canvas.addEventListener("pointermove", onPointerMove);
-    canvas.addEventListener("pointerleave", onPointerLeave);
+    resizeObserver.observe(container);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerleave", onPointerLeave);
+    window.addEventListener("resize", resize);
     void resize();
     animationFrame = requestAnimationFrame(draw);
 
@@ -227,17 +296,20 @@ export function BetterAuthParticleLogo({ className = "" }: BetterAuthParticleLog
       cancelled = true;
       cancelAnimationFrame(animationFrame);
       resizeObserver.disconnect();
-      canvas.removeEventListener("pointermove", onPointerMove);
-      canvas.removeEventListener("pointerleave", onPointerLeave);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerleave", onPointerLeave);
+      window.removeEventListener("resize", resize);
     };
   }, []);
 
   return (
-    <canvas
-      aria-label="Better Auth particle logo"
-      className={`block h-full w-full ${className}`}
-      ref={canvasRef}
-      role="img"
-    />
+    <div className={`relative h-full w-full ${className}`} ref={containerRef}>
+      <canvas
+        aria-label="Better Auth particle logo"
+        className="pointer-events-none absolute block max-w-none"
+        ref={canvasRef}
+        role="img"
+      />
+    </div>
   );
 }
