@@ -2,9 +2,9 @@ import Navigation from "@/components/Navigation";
 import { BetterAuthParticleLogo } from "@/components/ui/better-auth-particle-logo";
 
 const stats = [
-  { value: "29k", label: "GitHub stars", icon: "github" },
-  { value: "4.5m", label: "downloads / week", icon: "npm" },
-  { value: "12k+", label: "community", icon: "community" },
+  { value: "29k", label: "GitHub stars", mobileLabel: "stars", icon: "github" },
+  { value: "4.5m", label: "downloads / week", mobileLabel: "npm", icon: "npm" },
+  { value: "12k+", label: "community", mobileLabel: "community", icon: "community" },
 ] as const;
 
 function GitHubIcon() {
@@ -162,18 +162,18 @@ export default function VercelPage() {
                 <span>Vercel</span>
               </span>
             </h1>
-            <div className="mx-auto mt-5 flex max-w-4xl flex-col items-center justify-center gap-y-1 text-[0.72rem] font-light leading-none text-white/55 min-[390px]:text-xs sm:hidden">
+            <div className="mx-auto mt-5 flex max-w-[21rem] items-center justify-center gap-x-2 text-[0.62rem] font-light leading-none text-white/55 min-[390px]:gap-x-2.5 min-[390px]:text-[0.68rem] sm:hidden">
               {stats.map((stat, index) => (
-                <div className="contents" key={stat.label}>
+                <div className="flex items-center gap-x-2" key={stat.label}>
                   {index > 0 ? (
-                    <span className="h-4 w-px bg-white/25" aria-hidden="true" />
+                    <span className="h-5 w-px bg-white/25" aria-hidden="true" />
                   ) : null}
-                  <p className="inline-flex items-center gap-x-2 whitespace-nowrap">
+                  <p className="inline-flex items-center gap-x-1.5 whitespace-nowrap">
                     <span className="font-medium text-white/90">{stat.value}</span>{" "}
                     <span className="text-white/62">
                       <StatIcon icon={stat.icon} />
                     </span>
-                    <span>{stat.label}</span>
+                    <span>{stat.mobileLabel}</span>
                   </p>
                 </div>
               ))}
