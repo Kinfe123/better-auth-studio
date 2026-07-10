@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { createPageMetadata } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,29 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Better Auth Studio",
-  description:
-    "An admin dashboard for Better Auth. Manage users, sessions, organizations, and more with an intuitive interface.",
+  ...createPageMetadata(),
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
     shortcut: "/favicon.svg",
-  },
-  openGraph: {
-    title: "Better Auth Studio",
-    description:
-      "An admin dashboard for Better Auth. Manage users, sessions, organizations, and more with an intuitive interface.",
-    images: [
-      {
-        url: "/og.png",
-        width: 1200,
-        height: 630,
-        alt: "Better Auth Studio",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    images: ["/og.png"],
   },
 };
 
