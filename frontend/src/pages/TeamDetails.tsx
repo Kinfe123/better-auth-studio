@@ -18,6 +18,8 @@ import {
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import { useSchemaFields } from "../hooks/useSchemaFields";
+import { DynamicFields } from "../components/DynamicFields";
 
 interface Team {
   id: string;
@@ -78,6 +80,9 @@ export default function TeamDetails() {
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [teamFormData, setTeamFormData] = useState({ name: "" });
+  const [extraFieldsData, setExtraFieldsData] = useState<Record<string, any>>({});
+  const { fields: teamMemberSchemaFields } = useSchemaFields("teamMember");
+  const { fields: teamSchemaFields } = useSchemaFields("team");
   const [removingMembers, setRemovingMembers] = useState<Record<string, boolean>>({});
 
   const fetchTeam = useCallback(async () => {
@@ -148,7 +153,7 @@ export default function TeamDetails() {
       const response = await fetch(`/api/teams/${teamId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: teamFormData.name }),
+        body: JSON.stringify({ name: teamFormData.name, ...extraFieldsData }),
       });
 
       const result = await response.json();
@@ -177,17 +182,18 @@ export default function TeamDetails() {
       const response = await fetch(`/api/teams/${teamId}/members`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userIds: selectedUsers }),
+        body: JSON.stringify({ userIds: selectedUsers, ...extraFieldsData }),
       });
 
       const result = await response.json();
 
       if (result.success) {
-        await fetchTeamMembers();
+        toast.success(result.message || "Members added successfully!", { id: toastId });
         setShowAddMemberModal(false);
         setSelectedUsers([]);
-        setSearchTerm("");
-        toast.success(`Successfully added ${selectedUsers.length} members!`, { id: toastId });
+        setExtraFieldsData({});
+        fetchTeamMembers();
+        fetchTeam();
       } else {
         toast.error(`Error adding members: ${result.error || "Unknown error"}`, { id: toastId });
       }
@@ -223,6 +229,24 @@ export default function TeamDetails() {
         const { [memberId]: _, ...rest } = prev;
         return rest;
       });
+    }
+  };
+
+  const openEditTeamModal = () => {
+    if (team) {
+      setTeamFormData({ name: team.name });
+
+      // Populate extra fields
+      const extra: Record<string, any> = {};
+      const standardKeys = ["id", "name", "organizationId", "createdAt", "updatedAt", "metadata"];
+      Object.entries(team).forEach(([key, value]) => {
+        if (!standardKeys.includes(key)) {
+          extra[key] = value;
+        }
+      });
+      setExtraFieldsData(extra);
+
+      setShowEditTeamModal(true);
     }
   };
 
@@ -334,7 +358,7 @@ export default function TeamDetails() {
             <span className="sm:hidden">Add</span>
           </Button>
           <Button
-            onClick={() => setShowEditTeamModal(true)}
+            onClick={openEditTeamModal}
             className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none text-xs md:text-sm px-2 md:px-4 h-8 md:h-10"
           >
             <Edit className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
@@ -695,6 +719,14 @@ export default function TeamDetails() {
                   </div>
                 )}
               </div>
+              <div className="mt-6 border-t border-dashed border-white/10 pt-6">
+                <h4 className="text-xs text-white/80 font-mono uppercase mb-4">Common Member Fields</h4>
+                <DynamicFields
+                  fields={teamMemberSchemaFields}
+                  values={extraFieldsData}
+                  onChange={(name, val) => setExtraFieldsData((prev) => ({ ...prev, [name]: val }))}
+                />
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
@@ -769,11 +801,19 @@ export default function TeamDetails() {
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
+              <DynamicFields
+                fields={teamSchemaFields}
+                values={extraFieldsData}
+                onChange={(name, val) => setExtraFieldsData((prev) => ({ ...prev, [name]: val }))}
+              />
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
                 variant="outline"
-                onClick={() => setShowEditTeamModal(false)}
+                onClick={() => {
+                  setShowEditTeamModal(false);
+                  setExtraFieldsData({});
+                }}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase font-medium text-xs tracking-tight"
               >
                 Cancel

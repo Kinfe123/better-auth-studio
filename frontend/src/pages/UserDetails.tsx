@@ -260,6 +260,7 @@ export default function UserDetails() {
   const [banExpiresIn, setBanExpiresIn] = useState<number | undefined>();
   const [adminPluginEnabled, setAdminPluginEnabled] = useState(false);
   const [editRole, setEditRole] = useState<string>("");
+  const [availableRoles, setAvailableRoles] = useState<string[]>(["admin", "user"]);
   const [seedingLogs, setSeedingLogs] = useState<
     Array<{
       id: string;
@@ -292,6 +293,9 @@ export default function UserDetails() {
       const response = await fetch("/api/admin/status");
       const data = await response.json();
       setAdminPluginEnabled(data.enabled);
+      if (data.roles && Array.isArray(data.roles)) {
+        setAvailableRoles(data.roles);
+      }
     } catch (_error) {
       setAdminPluginEnabled(false);
     }
@@ -2668,8 +2672,11 @@ export default function UserDetails() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">None</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
+                    {availableRoles.map((r) => (
+                      <SelectItem key={r} value={r}>
+                        {r.charAt(0).toUpperCase() + r.slice(1).replace(/_/g, " ")}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

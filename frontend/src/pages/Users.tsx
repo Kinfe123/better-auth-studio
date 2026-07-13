@@ -48,6 +48,8 @@ import {
 } from "../components/ui/select";
 import { useCounts } from "../contexts/CountsContext";
 import { getImageSrc } from "../lib/utils";
+import { useSchemaFields } from "../hooks/useSchemaFields";
+import { DynamicFields } from "../components/DynamicFields";
 import { fetchStudioAuthJson } from "../utils/studio-auth";
 
 interface User {
@@ -96,6 +98,8 @@ export default function Users() {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(20);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [extraFieldsData, setExtraFieldsData] = useState<Record<string, any>>({});
+  const { fields: userSchemaFields } = useSchemaFields("user");
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -117,6 +121,7 @@ export default function Users() {
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [seedRole, setSeedRole] = useState<string>("");
   const [createRole, setCreateRole] = useState<string>("");
+  const [availableRoles, setAvailableRoles] = useState<string[]>(["admin", "user"]);
   const lastSeenAtEnabled = !!(window as any).__STUDIO_CONFIG__?.lastSeenAt?.enabled;
   const lastSeenAtColumnName =
     (window as any).__STUDIO_CONFIG__?.lastSeenAt?.columnName || "lastSeenAt";
@@ -160,6 +165,9 @@ export default function Users() {
       const response = await fetch("/api/admin/status");
       const data = await response.json();
       setAdminPluginEnabled(data.enabled);
+      if (data.roles && Array.isArray(data.roles)) {
+        setAvailableRoles(data.roles);
+      }
     } catch (_error) {
       setAdminPluginEnabled(false);
     }
@@ -321,7 +329,7 @@ export default function Users() {
       const response = await fetch("/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, role: createRole || null }),
+        body: JSON.stringify({ name, email, password, role: createRole || null, ...extraFieldsData }),
       });
 
       const result = await response.json();
@@ -330,6 +338,7 @@ export default function Users() {
         await fetchUsers();
         setShowCreateModal(false);
         setCreateRole("");
+        setExtraFieldsData({});
         (document.getElementById("create-name") as HTMLInputElement).value = "";
         (document.getElementById("create-email") as HTMLInputElement).value = "";
         (document.getElementById("create-password") as HTMLInputElement).value = "";
@@ -1403,8 +1412,11 @@ export default function Users() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="">None</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="user">User</SelectItem>
+                        {availableRoles.map((r) => (
+                          <SelectItem key={r} value={r}>
+                            {r.charAt(0).toUpperCase() + r.slice(1).replace(/_/g, " ")}
+                          </SelectItem>
+                        ))}
                         <SelectItem value="mix">Mix (Random)</SelectItem>
                       </SelectContent>
                     </Select>
@@ -1534,11 +1546,19 @@ export default function Users() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">None</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
+                    {availableRoles.map((r) => (
+                      <SelectItem key={r} value={r}>
+                        {r.charAt(0).toUpperCase() + r.slice(1).replace(/_/g, " ")}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
+              <DynamicFields
+                fields={userSchemaFields}
+                values={extraFieldsData}
+                onChange={(name, val) => setExtraFieldsData((prev) => ({ ...prev, [name]: val }))}
+              />
             </div>
             <div className="flex flex-wrap justify-end gap-2 md:space-x-3 mt-6">
               <Button
@@ -1682,8 +1702,11 @@ export default function Users() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">None</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
+                    {availableRoles.map((r) => (
+                      <SelectItem key={r} value={r}>
+                        {r.charAt(0).toUpperCase() + r.slice(1).replace(/_/g, " ")}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

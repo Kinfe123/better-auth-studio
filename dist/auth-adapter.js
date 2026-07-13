@@ -90,16 +90,17 @@ export async function getAuthAdapter(configPath) {
         }
         authAdapter = {
             createUser: async (data) => {
+                const { password, ...userData } = data;
                 const user = await adapter.create({
                     model: "user",
                     data: {
                         createdAt: new Date(),
                         updatedAt: new Date(),
                         emailVerified: false,
-                        name: data.name,
+                        role: null,
+                        image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
+                        ...userData,
                         email: data.email?.toLowerCase(),
-                        role: data.role || null,
-                        image: data.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.email}`,
                     },
                 });
                 if (data.password) {

@@ -36,6 +36,8 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { useCounts } from "../contexts/CountsContext";
+import { useSchemaFields } from "../hooks/useSchemaFields";
+import { DynamicFields } from "../components/DynamicFields";
 
 interface Organization {
   id: string;
@@ -113,6 +115,8 @@ export default function Organizations() {
   const [isSeeding, setIsSeeding] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [createFormData, setCreateFormData] = useState({ name: "", slug: "" });
+  const [extraFieldsData, setExtraFieldsData] = useState<Record<string, any>>({});
+  const { fields: orgSchemaFields } = useSchemaFields("organization");
   const [editFormData, setEditFormData] = useState({ name: "", slug: "" });
   const [orgSortOrder, setOrgSortOrder] = useState<"newest" | "oldest">("newest");
 
@@ -329,6 +333,17 @@ export default function Organizations() {
   const openEditModal = (organization: Organization) => {
     setSelectedOrganization(organization);
     setEditFormData({ name: organization.name, slug: organization.slug });
+
+    // Populate extra fields
+    const extra: Record<string, any> = {};
+    const standardKeys = ["id", "name", "slug", "logo", "createdAt", "updatedAt", "metadata"];
+    Object.entries(organization).forEach(([key, value]) => {
+      if (!standardKeys.includes(key)) {
+        extra[key] = value;
+      }
+    });
+    setExtraFieldsData(extra);
+
     setShowEditModal(true);
   };
 
@@ -352,6 +367,7 @@ export default function Organizations() {
         body: JSON.stringify({
           name: createFormData.name,
           slug: createFormData.slug,
+          ...extraFieldsData,
         }),
       });
 
@@ -361,6 +377,7 @@ export default function Organizations() {
         await fetchOrganizations();
         setShowCreateModal(false);
         setCreateFormData({ name: "", slug: "" });
+        setExtraFieldsData({});
         toast.success("Organization created successfully!", { id: toastId });
       } else {
         toast.error(`Error creating organization: ${result.error || "Unknown error"}`, {
@@ -395,6 +412,7 @@ export default function Organizations() {
         body: JSON.stringify({
           name: editFormData.name,
           slug: editFormData.slug,
+          ...extraFieldsData,
         }),
       });
 
@@ -1068,6 +1086,11 @@ export default function Organizations() {
                   </Button>
                 </div>
               </div>
+              <DynamicFields
+                fields={orgSchemaFields}
+                values={extraFieldsData}
+                onChange={(name, val) => setExtraFieldsData((prev) => ({ ...prev, [name]: val }))}
+              />
               {/* Seeding Logs */}
               {seedingLogs.length > 0 && (
                 <div className="mt-6">
@@ -1147,6 +1170,11 @@ export default function Organizations() {
                   Auto-generated from name. You can edit it manually.
                 </p>
               </div>
+              <DynamicFields
+                fields={orgSchemaFields}
+                values={extraFieldsData}
+                onChange={(name, val) => setExtraFieldsData((prev) => ({ ...prev, [name]: val }))}
+              />
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button

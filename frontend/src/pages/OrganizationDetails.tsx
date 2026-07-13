@@ -20,6 +20,8 @@ import {
 } from "../components/PixelIcons";
 import { Terminal } from "../components/Terminal";
 import { Button } from "../components/ui/button";
+import { useSchemaFields } from "../hooks/useSchemaFields";
+import { DynamicFields } from "../components/DynamicFields";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import {
@@ -100,7 +102,24 @@ export default function OrganizationDetails() {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [editFormData, setEditFormData] = useState({ name: "", slug: "" });
 
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+  const [selectedAddMemberUserId, setSelectedAddMemberUserId] = useState("");
+  const [addMemberRole, setAddMemberRole] = useState("member");
+  const [availableRoles, setAvailableRoles] = useState<string[]>(["owner", "admin", "member"]);
+  const [addMemberExtraFields, setAddMemberExtraFields] = useState<Record<string, any>>({});
+
+  const [inviteExtraFields, setInviteExtraFields] = useState<Record<string, any>>({});
+  const [teamExtraFields, setTeamExtraFields] = useState<Record<string, any>>({});
+  const [orgExtraFields, setOrgExtraFields] = useState<Record<string, any>>({});
+
+  const { fields: orgSchemaFields } = useSchemaFields("organization");
+
+  const { fields: memberSchemaFields } = useSchemaFields("member");
+  const { fields: invitationSchemaFields } = useSchemaFields("invitation");
+  const { fields: teamSchemaFields } = useSchemaFields("team");
+
   const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("member");
   const [selectedInviterId, setSelectedInviterId] = useState("");
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [teamFormData, setTeamFormData] = useState({ name: "" });
@@ -217,6 +236,9 @@ export default function OrganizationDetails() {
       const response = await fetch("/api/plugins/organization/status");
       const data = await response.json();
       setOrganizationEnabled(data.enabled);
+      if (data.roles && Array.isArray(data.roles)) {
+        setAvailableRoles(data.roles);
+      }
     } catch (error) {
       console.error("Failed to check organization status:", error);
       setOrganizationEnabled(false);
@@ -460,6 +482,17 @@ export default function OrganizationDetails() {
   const openEditModal = () => {
     if (organization) {
       setEditFormData({ name: organization.name, slug: organization.slug });
+
+      // Populate extra fields
+      const extra: Record<string, any> = {};
+      const standardKeys = ["id", "name", "slug", "logo", "createdAt", "updatedAt", "metadata"];
+      Object.entries(organization).forEach(([key, value]) => {
+        if (!standardKeys.includes(key)) {
+          extra[key] = value;
+        }
+      });
+      setOrgExtraFields(extra);
+
       setShowEditModal(true);
     }
   };
@@ -494,6 +527,7 @@ export default function OrganizationDetails() {
         body: JSON.stringify({
           name: editFormData.name,
           slug: editFormData.slug,
+          ...orgExtraFields,
         }),
       });
 
@@ -542,8 +576,9 @@ export default function OrganizationDetails() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: inviteEmail,
-          role: "member",
+          role: inviteRole,
           inviterId: selectedInviterId,
+          ...inviteExtraFields,
         }),
       });
 
@@ -554,6 +589,7 @@ export default function OrganizationDetails() {
         setShowInviteModal(false);
         setInviteEmail("");
         setSelectedInviterId("");
+        setInviteExtraFields({});
         toast.success("Invitation sent successfully!", { id: toastId });
       } else {
         toast.error(`Error sending invitation: ${result.error || "Unknown error"}`, {
@@ -659,6 +695,40 @@ export default function OrganizationDetails() {
     }
   };
 
+
+  const handleAddMember = async () => {
+    if (!selectedAddMemberUserId) {
+      toast.error("Please select a user");
+      return;
+    }
+
+    const toastId = toast.loading("Adding member...");
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/members`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: selectedAddMemberUserId,
+          role: addMemberRole,
+          ...addMemberExtraFields,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        toast.success("Member added successfully", { id: toastId });
+        setShowAddMemberModal(false);
+        setAddMemberExtraFields({});
+        setSelectedAddMemberUserId("");
+        fetchMembers();
+      } else {
+        toast.error(result.error || "Failed to add member", { id: toastId });
+      }
+    } catch (error) {
+      toast.error("Failed to add member", { id: toastId });
+    }
+  };
+
   const handleCreateTeam = async () => {
     if (!teamFormData.name) {
       toast.error("Please enter a team name");
@@ -675,6 +745,7 @@ export default function OrganizationDetails() {
         body: JSON.stringify({
           name: teamFormData.name,
           organizationId: orgId,
+          ...teamExtraFields,
         }),
       });
 
@@ -684,6 +755,7 @@ export default function OrganizationDetails() {
         await fetchTeams();
         setShowCreateTeamModal(false);
         setTeamFormData({ name: "" });
+        setTeamExtraFields({});
         toast.success("Team created successfully!", { id: toastId });
       } else {
         toast.error(`Error creating team: ${result.error || "Unknown error"}`, { id: toastId });
@@ -711,6 +783,7 @@ export default function OrganizationDetails() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: teamFormData.name,
+          ...teamExtraFields,
         }),
       });
 
@@ -769,6 +842,17 @@ export default function OrganizationDetails() {
   const openEditTeamModal = (team: Team) => {
     setSelectedTeam(team);
     setTeamFormData({ name: team.name });
+
+    // Populate extra fields
+    const extra: Record<string, any> = {};
+    const standardKeys = ["id", "name", "organizationId", "createdAt", "updatedAt", "metadata"];
+    Object.entries(team).forEach(([key, value]) => {
+      if (!standardKeys.includes(key)) {
+        extra[key] = value;
+      }
+    });
+    setTeamExtraFields(extra);
+
     setShowEditTeamModal(true);
   };
 
@@ -870,11 +954,10 @@ export default function OrganizationDetails() {
           <nav className="flex overflow-x-auto space-x-4 px-3 md:space-x-8 md:px-6">
             <button
               onClick={() => setActiveTab("details")}
-              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
-                activeTab === "details"
+              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${activeTab === "details"
                   ? "border-white text-white"
                   : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
-              }`}
+                }`}
             >
               <Building2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90 flex-shrink-0" />
               <span className="inline-flex items-start font-mono uppercase text-[10px] md:text-xs font-normal">
@@ -883,11 +966,10 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab("members")}
-              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
-                activeTab === "members"
+              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${activeTab === "members"
                   ? "border-white text-white"
                   : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
-              }`}
+                }`}
             >
               <Users className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90 flex-shrink-0" />
               <span className="inline-flex items-start font-mono uppercase text-[10px] md:text-xs font-normal">
@@ -905,11 +987,10 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab("invitations")}
-              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
-                activeTab === "invitations"
+              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${activeTab === "invitations"
                   ? "border-white text-white"
                   : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
-              }`}
+                }`}
             >
               <Mail className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90 flex-shrink-0" />
               <span className="inline-flex items-start font-mono uppercase text-[10px] md:text-xs font-normal">
@@ -927,11 +1008,10 @@ export default function OrganizationDetails() {
             </button>
             <button
               onClick={() => setActiveTab("teams")}
-              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
-                activeTab === "teams"
+              className={`flex items-center space-x-1.5 md:space-x-2 py-3 md:py-4 px-1 md:px-2 border-b-2 font-medium text-sm whitespace-nowrap ${activeTab === "teams"
                   ? "border-white text-white"
                   : "border-transparent text-gray-400 hover:text-white hover:border-white/50"
-              }`}
+                }`}
             >
               <Users className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/90 flex-shrink-0" />
               <span className="inline-flex items-start font-mono uppercase text-[10px] md:text-xs font-normal">
@@ -1028,7 +1108,7 @@ export default function OrganizationDetails() {
                         <AnimatedNumber
                           value={Math.ceil(
                             (new Date().getTime() - new Date(organization.createdAt).getTime()) /
-                              (1000 * 60 * 60 * 24),
+                            (1000 * 60 * 60 * 24),
                           )}
                           format={{ notation: "standard", maximumFractionDigits: 0 }}
                         />
@@ -1338,6 +1418,18 @@ export default function OrganizationDetails() {
                     Manage organization members and their roles
                   </p>
                 </div>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => {
+                      fetchAvailableUsers();
+                      setShowAddMemberModal(true);
+                    }}
+                    className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none font-mono uppercase font-medium text-xs tracking-tight h-8"
+                  >
+                    <UserPlus className="w-3.5 h-3.5 mr-1.5" />
+                    Add Member
+                  </Button>
+                </div>
               </div>
 
               {/* Members List */}
@@ -1551,16 +1643,15 @@ export default function OrganizationDetails() {
                               </div>
                               <div className="flex items-center gap-1.5 mt-0.5">
                                 <span
-                                  className={`text-[9px] font-mono uppercase px-1 py-0.5 rounded-none ${
-                                    invitation.status === "accepted"
+                                  className={`text-[9px] font-mono uppercase px-1 py-0.5 rounded-none ${invitation.status === "accepted"
                                       ? "bg-green-900/50 text-green-400 border border-green-500/30"
                                       : invitation.status === "rejected" ||
-                                          invitation.status === "cancelled"
+                                        invitation.status === "cancelled"
                                         ? "bg-red-900/50 text-red-400 border border-red-500/30"
                                         : invitation.status === "expired"
                                           ? "bg-yellow-900/50 text-yellow-400 border border-yellow-500/30"
                                           : "bg-blue-900/50 text-blue-400 border border-blue-500/30"
-                                  }`}
+                                    }`}
                                 >
                                   {invitation.status}
                                 </span>
@@ -1686,16 +1777,15 @@ export default function OrganizationDetails() {
                               </td>
                               <td className="py-4 px-4">
                                 <span
-                                  className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${
-                                    invitation.status === "accepted"
+                                  className={`text-xs font-mono uppercase px-2 border-dashed py-1 rounded-none ${invitation.status === "accepted"
                                       ? "bg-green-900/50 text-green-400 border border-green-500/30"
                                       : invitation.status === "rejected" ||
-                                          invitation.status === "cancelled"
+                                        invitation.status === "cancelled"
                                         ? "bg-red-900/50 text-red-400 border border-red-500/30"
                                         : invitation.status === "expired"
                                           ? "bg-yellow-900/50 text-yellow-400 border border-yellow-500/30"
                                           : "bg-blue-900/50 text-blue-400 border border-blue-500/30"
-                                  }`}
+                                    }`}
                                 >
                                   {invitation.status}
                                 </span>
@@ -1857,6 +1947,32 @@ export default function OrganizationDetails() {
                   </SelectContent>
                 </Select>
               </div>
+              <div>
+                <Label htmlFor="invite-role" className="text-xs text-white/80 font-mono uppercase">
+                  Role
+                </Label>
+                <Select value={inviteRole} onValueChange={setInviteRole}>
+                  <SelectTrigger
+                    id="invite-role"
+                    className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                    disabled={inviting}
+                  >
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableRoles.map((r) => (
+                      <SelectItem key={r} value={r}>
+                        {r.charAt(0).toUpperCase() + r.slice(1).replace(/_/g, " ")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <DynamicFields
+                fields={invitationSchemaFields}
+                values={inviteExtraFields}
+                onChange={(name, val) => setInviteExtraFields((prev) => ({ ...prev, [name]: val }))}
+              />
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
@@ -1923,6 +2039,11 @@ export default function OrganizationDetails() {
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
+              <DynamicFields
+                fields={teamSchemaFields}
+                values={teamExtraFields}
+                onChange={(name, val) => setTeamExtraFields((prev) => ({ ...prev, [name]: val }))}
+              />
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
@@ -2004,6 +2125,11 @@ export default function OrganizationDetails() {
                   className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
                 />
               </div>
+              <DynamicFields
+                fields={teamSchemaFields}
+                values={teamExtraFields}
+                onChange={(name, val) => setTeamExtraFields((prev) => ({ ...prev, [name]: val }))}
+              />
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
@@ -2011,6 +2137,7 @@ export default function OrganizationDetails() {
                 onClick={() => {
                   setShowEditTeamModal(false);
                   setTeamFormData({ name: "" });
+                  setTeamExtraFields({});
                 }}
                 disabled={isUpdatingTeam}
                 className="border border-dashed border-white/20 text-white hover:bg-white/10 rounded-none font-mono uppercase font-medium text-xs tracking-tight"
@@ -2398,6 +2525,11 @@ export default function OrganizationDetails() {
                   Auto-generated from name. You can edit it manually.
                 </p>
               </div>
+              <DynamicFields
+                fields={orgSchemaFields}
+                values={orgExtraFields}
+                onChange={(name, val) => setOrgExtraFields((prev) => ({ ...prev, [name]: val }))}
+              />
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 sm:space-x-0 mt-6">
               <Button
@@ -2405,6 +2537,7 @@ export default function OrganizationDetails() {
                 onClick={() => {
                   setShowEditModal(false);
                   setEditFormData({ name: "", slug: "" });
+                  setOrgExtraFields({});
                 }}
                 disabled={isUpdating}
                 className="border font-mono uppercase text-xs tracking-tight border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
@@ -2417,6 +2550,115 @@ export default function OrganizationDetails() {
                 className="bg-white hover:bg-white/90 font-mono uppercase text-xs tracking-tight text-black border border-white/20 rounded-none disabled:opacity-50"
               >
                 {isUpdating ? "Updating..." : "Update"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Add Member Modal */}
+      {showAddMemberModal && (
+        <div
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 md:p-6"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowAddMemberModal(false);
+              setAddMemberExtraFields({});
+            }
+          }}
+        >
+          <div
+            className="bg-black border border-white/15 p-3 md:p-6 w-full max-w-xl rounded-none shadow-2xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base md:text-lg text-white font-light uppercase font-mono">
+                Add Member
+              </h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowAddMemberModal(false);
+                  setAddMemberExtraFields({});
+                }}
+                className="text-gray-400 -mt-2 hover:text-white rounded-none"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="flex flex-col items-center justify-center mt-2">
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+              <div className="relative z-20 h-4 w-[calc(100%+3rem)] mx-auto -translate-x-1/2 left-1/2 bg-[repeating-linear-gradient(-45deg,#ffffff,#ffffff_1px,transparent_1px,transparent_6px)] opacity-[7%]" />
+              <hr className="w-[calc(100%+3rem)] border-white/10 h-px" />
+            </div>
+
+            <div className="space-y-4 mt-4">
+              <div>
+                <Label htmlFor="add-member-user" className="text-xs text-white/80 font-mono uppercase">
+                  User
+                </Label>
+                <Select value={selectedAddMemberUserId} onValueChange={setSelectedAddMemberUserId}>
+                  <SelectTrigger
+                    id="add-member-user"
+                    className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                  >
+                    <SelectValue placeholder="Select user" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableUsers.map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.name} ({user.email})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="add-member-role" className="text-xs text-white/80 font-mono uppercase">
+                  Role
+                </Label>
+                <Select value={addMemberRole} onValueChange={setAddMemberRole}>
+                  <SelectTrigger
+                    id="add-member-role"
+                    className="mt-1 border border-dashed border-white/20 bg-black/30 text-white rounded-none"
+                  >
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableRoles.map((r) => (
+                      <SelectItem key={r} value={r}>
+                        {r.charAt(0).toUpperCase() + r.slice(1).replace(/_/g, " ")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <DynamicFields
+                fields={memberSchemaFields}
+                values={addMemberExtraFields}
+                onChange={(name, val) => setAddMemberExtraFields((prev) => ({ ...prev, [name]: val }))}
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowAddMemberModal(false);
+                  setAddMemberExtraFields({});
+                }}
+                className="border font-mono uppercase text-xs tracking-tight border-dashed border-white/20 text-white hover:bg-white/10 rounded-none"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAddMember}
+                className="bg-white hover:bg-white/90 font-mono uppercase text-xs tracking-tight text-black border border-white/20 rounded-none disabled:opacity-50"
+              >
+                Add Member
               </Button>
             </div>
           </div>
