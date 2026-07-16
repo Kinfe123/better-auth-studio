@@ -28,13 +28,14 @@ import { useWebSocket } from "../hooks/useWebSocket";
 import { buildApiUrl } from "../utils/api";
 import { fetchStudioAuthJson } from "../utils/studio-auth";
 import CommandPalette from "./CommandPalette";
+import { EntityAvatar } from "./EntityAvatar";
 import { LiveEventMarquee } from "./LiveEventMarquee";
 
 interface UserProfile {
   id: string;
   email: string;
   name?: string;
-  image?: string;
+  image?: string | null;
   role?: string;
 }
 
@@ -188,19 +189,37 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     if (!isSelfHosted) return;
+    const controller = new AbortController();
 
     const fetchUserProfile = async () => {
       try {
-        const { data } = await fetchStudioAuthJson("/session");
+        const { data } = await fetchStudioAuthJson("/session", { signal: controller.signal });
         if (data.authenticated && data.user) {
-          setUserProfile(data.user);
+          const sessionUser = data.user as UserProfile;
+          let profile = sessionUser;
+
+          try {
+            const response = await fetch(buildApiUrl(`/api/users/${sessionUser.id}`), {
+              credentials: "include",
+              signal: controller.signal,
+            });
+            if (response.ok) {
+              const userData = await response.json();
+              profile = { ...sessionUser, image: userData.user?.image ?? null };
+            }
+          } catch {
+            // The session profile remains usable when the optional image lookup fails.
+          }
+
+          if (!controller.signal.aborted) setUserProfile(profile);
         }
       } catch {
-        setUserProfile(null);
+        if (!controller.signal.aborted) setUserProfile(null);
       }
     };
 
     fetchUserProfile();
+    return () => controller.abort();
   }, [isSelfHosted]);
 
   useEffect(() => {
@@ -655,35 +674,35 @@ export default function Layout({ children }: LayoutProps) {
                   type="button"
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
                   className="w-9 h-9 md:w-10 md:h-10 border border-dashed border-white/30 bg-black flex items-center justify-center hover:border-white/50 transition-colors overflow-hidden"
+                  aria-label={isProfileOpen ? "Close profile menu" : "Open profile menu"}
+                  aria-expanded={isProfileOpen}
+                  aria-controls="studio-profile-panel"
                 >
-                  {userProfile.image ? (
-                    <img
-                      src={userProfile.image}
-                      alt={userProfile.name || userProfile.email}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-white text-xs font-mono uppercase">
-                      {getInitials(userProfile.name, userProfile.email)}
-                    </span>
-                  )}
+                  <EntityAvatar
+                    src={userProfile.image}
+                    alt=""
+                    className="w-full h-full"
+                    fallback={
+                      <span className="text-white text-xs font-mono uppercase">
+                        {getInitials(userProfile.name, userProfile.email)}
+                      </span>
+                    }
+                  />
                 </button>
 
                 {isProfileOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-64 border border-dashed border-white/20 bg-black z-50">
+                  <div
+                    id="studio-profile-panel"
+                    className="absolute right-0 top-full mt-2 w-64 border border-dashed border-white/20 bg-black z-50"
+                  >
                     <div className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 border border-dashed border-white/30 bg-black flex items-center justify-center flex-shrink-0 overflow-hidden">
-                          {userProfile.image ? (
-                            <img
-                              src={userProfile.image}
-                              alt={userProfile.name || userProfile.email}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <User className="w-5 h-5 text-white/50" />
-                          )}
-                        </div>
+                        <EntityAvatar
+                          src={userProfile.image}
+                          alt=""
+                          className="w-10 h-10 border border-dashed border-white/30 bg-black"
+                          fallback={<User className="w-5 h-5 text-white/50" />}
+                        />
                         <div className="min-w-0 flex-1">
                           <p className="text-white text-[11px] font-mono uppercase truncate">
                             {userProfile.name || "User"}

@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
+import { EntityAvatar } from "../EntityAvatar";
 import { Building2 } from "../PixelIcons";
 
 interface Org {
   id: string;
   name?: string;
   slug?: string;
+  logo?: string | null;
   createdAt?: string;
   memberCount?: number;
 }
@@ -78,10 +80,19 @@ export function RecentOrganizationsWidget() {
                   className="border-b border-white/5 hover:bg-white/[3%] cursor-pointer transition-colors group"
                 >
                   <td
-                    className="py-1.5 px-1.5 text-gray-300 group-hover:text-white truncate max-w-[140px] transition-colors"
+                    className="py-1.5 px-1.5 text-gray-300 group-hover:text-white max-w-[140px] transition-colors"
                     title={o.name || ""}
                   >
-                    {o.name || o.slug || "—"}
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <EntityAvatar
+                        src={o.logo}
+                        alt=""
+                        className="w-5 h-5 border border-dashed border-white/15 bg-white/5"
+                        imageClassName="object-contain"
+                        fallback={<Building2 className="w-3 h-3 text-white/50" />}
+                      />
+                      <span className="truncate">{o.name || o.slug || "—"}</span>
+                    </div>
                   </td>
                   <td className="py-1.5 px-1.5 text-gray-600 font-mono">{o.memberCount ?? "—"}</td>
                   <td className="py-1.5 px-1.5 text-gray-600 whitespace-nowrap text-right font-mono">

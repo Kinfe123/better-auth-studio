@@ -18,6 +18,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { AnimatedNumber } from "../components/AnimatedNumber";
 import { CopyableId } from "../components/CopyableId";
+import { EntityAvatar } from "../components/EntityAvatar";
 import {
   AlertInfo,
   AlertTriangle,
@@ -78,7 +79,7 @@ interface Organization {
   id: string;
   name: string;
   slug: string;
-  image?: string;
+  logo?: string | null;
   createdAt: string;
   role: string;
 }
@@ -143,6 +144,7 @@ interface Invitation {
   status: "pending" | "accepted" | "rejected" | "cancelled" | "expired";
   organizationId: string;
   organizationName: string;
+  organizationLogo?: string | null;
   teamId?: string;
   teamName?: string;
   inviterId: string;
@@ -1273,20 +1275,12 @@ export default function UserDetails() {
         <div className="mb-4 md:mb-8 mt-2 md:mt-4">
           <div className="flex items-start justify-between gap-2 md:gap-4 md:items-center">
             <div className="flex items-center space-x-3 md:space-x-4 min-w-0 flex-1">
-              <div className="w-10 h-10 md:w-16 md:h-16 bg-gray-800 border border-dashed border-white/20 flex items-center justify-center overflow-hidden flex-shrink-0">
-                {getImageSrc(user?.image) ? (
-                  <img
-                    src={getImageSrc(user?.image)}
-                    alt={user?.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none";
-                    }}
-                  />
-                ) : (
-                  <User className="w-5 h-5 md:w-8 md:h-8 text-white" />
-                )}
-              </div>
+              <EntityAvatar
+                src={user?.image}
+                alt=""
+                className="w-10 h-10 md:w-16 md:h-16 bg-gray-800 border border-dashed border-white/20"
+                fallback={<User className="w-5 h-5 md:w-8 md:h-8 text-white" />}
+              />
               <div className="min-w-0">
                 <h1 className="text-lg md:text-3xl font-light text-white flex items-center flex-wrap gap-1">
                   <span className="truncate max-w-[150px] md:max-w-none">{user.name}</span>
@@ -1627,17 +1621,13 @@ export default function UserDetails() {
                       >
                         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-3">
                           <div className="flex items-center space-x-3 md:space-x-4 flex-1 min-w-0">
-                            <div className="w-10 h-10 md:w-12 md:h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none flex-shrink-0">
-                              {membership.organization.image ? (
-                                <img
-                                  src={membership.organization.image}
-                                  alt={membership.organization.name}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <Building2 className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                              )}
-                            </div>
+                            <EntityAvatar
+                              src={membership.organization.logo}
+                              alt=""
+                              className="w-10 h-10 md:w-12 md:h-12 bg-black/80 border border-dashed border-white/20 rounded-none"
+                              imageClassName="object-contain"
+                              fallback={<Building2 className="w-5 h-5 md:w-6 md:h-6 text-white" />}
+                            />
                             <div className="flex-1 min-w-0">
                               <h3 className="text-white text-sm md:text-base font-light inline-flex items-start">
                                 <span className="truncate">{membership.organization.name}</span>
@@ -2074,7 +2064,13 @@ export default function UserDetails() {
                             >
                               <td className="py-3 px-2 md:py-4 md:px-4">
                                 <div className="flex items-center space-x-2 group">
-                                  <Building2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400 flex-shrink-0" />
+                                  <EntityAvatar
+                                    src={invitation.organizationLogo}
+                                    alt=""
+                                    className="w-5 h-5 border border-dashed border-white/15 bg-white/5"
+                                    imageClassName="object-contain"
+                                    fallback={<Building2 className="w-3.5 h-3.5 text-gray-400" />}
+                                  />
                                   <span className="text-white text-xs md:text-sm truncate max-w-[100px] md:max-w-none">
                                     {invitation.organizationName}
                                   </span>

@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { AnimatedNumber } from "../components/AnimatedNumber";
 import { CopyableId } from "../components/CopyableId";
+import { EntityAvatar } from "../components/EntityAvatar";
 import {
   Building2,
   Calendar,
@@ -30,6 +31,7 @@ interface Team {
   organization?: {
     id: string;
     name: string;
+    logo?: string | null;
   };
 }
 
@@ -313,9 +315,15 @@ export default function TeamDetails() {
                 {team.organization && (
                   <Link
                     to={`/organizations/${team.organizationId}`}
-                    className="text-gray-400 hover:text-white text-xs md:text-sm font-sans"
+                    className="inline-flex items-center text-gray-400 hover:text-white text-xs md:text-sm font-sans"
                   >
-                    <Building2 className="w-3.5 h-3.5 md:w-4 md:h-4 inline mr-1" />
+                    <EntityAvatar
+                      src={team.organization.logo}
+                      alt=""
+                      className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1"
+                      imageClassName="object-contain"
+                      fallback={<Building2 className="w-full h-full" />}
+                    />
                     {team.organization.name}
                   </Link>
                 )}

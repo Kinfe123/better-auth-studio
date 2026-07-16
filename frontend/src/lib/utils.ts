@@ -16,16 +16,23 @@ export function assetPath(path: string): string {
 }
 
 export function getImageSrc(image: string | null | undefined, fallback?: string): string {
-  if (!image) {
+  const normalizedImage = image?.trim();
+
+  if (!normalizedImage) {
     return fallback || "";
   }
 
-  if (image.startsWith("data:image/")) {
-    return image;
+  if (normalizedImage.startsWith("data:image/") || normalizedImage.startsWith("blob:")) {
+    return normalizedImage;
   }
 
-  if (image.startsWith("http://") || image.startsWith("https://")) {
-    return image;
+  try {
+    const imageUrl = new URL(normalizedImage, window.location.origin);
+    if (imageUrl.protocol === "http:" || imageUrl.protocol === "https:") {
+      return imageUrl.toString();
+    }
+  } catch {
+    // Fall through to the provided fallback for malformed or unsupported URLs.
   }
 
   return fallback || "";

@@ -2095,7 +2095,7 @@ export function createRoutes(
                 id: organization.id,
                 name: organization.name || "Unknown Organization",
                 slug: organization.slug || "unknown",
-                image: organization.image,
+                logo: organization.logo,
                 createdAt: organization.createdAt,
               }
             : {
@@ -2385,6 +2385,7 @@ export function createRoutes(
           ? {
               id: organization.id,
               name: organization.name,
+              logo: organization.logo,
             }
           : null,
       };
@@ -2419,6 +2420,7 @@ export function createRoutes(
         id: organization.id,
         name: organization.name,
         slug: organization.slug,
+        logo: organization.logo,
         metadata: organization.metadata,
         createdAt: organization.createdAt,
         updatedAt: organization.updatedAt,
@@ -4802,6 +4804,7 @@ export function createRoutes(
       const transformedInvitations = await Promise.all(
         invitations.map(async (invitation: any) => {
           let organizationName = "Unknown";
+          let organizationLogo: string | null | undefined;
           let teamName: string | undefined;
 
           try {
@@ -4816,6 +4819,7 @@ export function createRoutes(
                   where: [{ field: "id", value: invitation.organizationId }],
                 });
                 organizationName = org?.name || "Unknown";
+                organizationLogo = org?.logo;
               } catch (_orgError) {
                 // Ignore org fetch errors
               }
@@ -4843,6 +4847,7 @@ export function createRoutes(
             status: invitation.status || "pending",
             organizationId: invitation.organizationId,
             organizationName,
+            organizationLogo,
             teamId: invitation.teamId,
             teamName,
             inviterId: invitation.inviterId,
@@ -6014,7 +6019,7 @@ export function createRoutes(
           const organizationData = {
             name: organizationName,
             slug: generateSlug(organizationName),
-            image: `https://api.dicebear.com/7.x/identicon/svg?seed=${randomSuffix}`,
+            logo: `https://api.dicebear.com/7.x/identicon/svg?seed=${randomSuffix}`,
             createdAt: new Date(),
             updatedAt: new Date(),
           };
@@ -6026,7 +6031,7 @@ export function createRoutes(
               id: organization.id,
               name: organization.name,
               slug: organization.slug,
-              image: organization.image,
+              logo: organization.logo,
               createdAt: organization.createdAt,
             },
           });

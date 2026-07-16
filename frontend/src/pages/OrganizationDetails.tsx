@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { AnimatedNumber } from "../components/AnimatedNumber";
 import { CopyableId } from "../components/CopyableId";
+import { EntityAvatar } from "../components/EntityAvatar";
 import {
   ArrowLeft,
   Building2,
@@ -34,6 +35,7 @@ interface Organization {
   id: string;
   name: string;
   slug: string;
+  logo?: string | null;
   metadata?: any;
   createdAt: string;
   updatedAt: string;
@@ -851,9 +853,13 @@ export default function OrganizationDetails() {
         </div>
       </div>
       <div className="flex items-center space-x-3">
-        <div className="w-12 h-12 bg-white/10 border border-dashed border-white/20 rounded-none flex items-center justify-center">
-          <Building2 className="w-6 h-6 text-white" />
-        </div>
+        <EntityAvatar
+          src={organization.logo}
+          alt=""
+          className="w-12 h-12 bg-white/10 border border-dashed border-white/20 rounded-none"
+          imageClassName="object-contain"
+          fallback={<Building2 className="w-6 h-6 text-white" />}
+        />
         <div>
           <h1 className="text-xl md:text-2xl text-white font-light inline-flex items-center">
             <span className="truncate">{organization.name}</span>
@@ -1797,9 +1803,13 @@ export default function OrganizationDetails() {
 
             <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
-                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
-                  <Building2 className="w-7 h-7 text-white" />
-                </div>
+                <EntityAvatar
+                  src={organization.logo}
+                  alt=""
+                  className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10"
+                  imageClassName="object-contain"
+                  fallback={<Building2 className="w-7 h-7 text-white" />}
+                />
                 <div className="space-y-1">
                   <div className="text-white font-medium leading-tight flex items-center gap-2">
                     <span>{organization.name}</span>
@@ -2118,9 +2128,13 @@ export default function OrganizationDetails() {
 
             <div className="space-y-6 mt-4">
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-3">
-                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
-                  <Building2 className="w-7 h-7 text-white" />
-                </div>
+                <EntityAvatar
+                  src={organization.logo}
+                  alt=""
+                  className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10"
+                  imageClassName="object-contain"
+                  fallback={<Building2 className="w-7 h-7 text-white" />}
+                />
                 <div className="space-y-1">
                   <div className="text-white font-medium leading-tight flex items-center gap-2">
                     <span>{organization.name}</span>
@@ -2233,9 +2247,13 @@ export default function OrganizationDetails() {
 
             <div className="space-y-6 mt-4">
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:space-x-3">
-                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
-                  <Building2 className="w-7 h-7 text-white" />
-                </div>
+                <EntityAvatar
+                  src={organization.logo}
+                  alt=""
+                  className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10"
+                  imageClassName="object-contain"
+                  fallback={<Building2 className="w-7 h-7 text-white" />}
+                />
                 <div className="space-y-1">
                   <div className="text-white font-medium leading-tight flex items-center gap-2">
                     <span>{organization.name}</span>
@@ -2360,9 +2378,13 @@ export default function OrganizationDetails() {
 
             <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
-                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
-                  <Building2 className="w-7 h-7 text-white" />
-                </div>
+                <EntityAvatar
+                  src={organization.logo}
+                  alt=""
+                  className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10"
+                  imageClassName="object-contain"
+                  fallback={<Building2 className="w-7 h-7 text-white" />}
+                />
                 <div className="space-y-1">
                   <div className="text-white font-medium leading-tight flex items-center gap-2">
                     <span>{organization.name}</span>

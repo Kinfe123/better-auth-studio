@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import WorldMap from "react-svg-worldmap";
-import { X } from "../PixelIcons";
+import { EntityAvatar } from "../EntityAvatar";
+import { User, X } from "../PixelIcons";
 
 interface CountryCount {
   countryCode: string;
@@ -11,7 +12,13 @@ interface CountryCount {
 }
 
 interface CountryDetail {
-  users: Array<{ id: string; name: string | null; email: string | null; createdAt: string | null }>;
+  users: Array<{
+    id: string;
+    name: string | null;
+    email: string | null;
+    image: string | null;
+    createdAt: string | null;
+  }>;
   sessions: Array<{
     id: string;
     userId: string;
@@ -246,7 +253,15 @@ export function WorldMapWidget() {
                               }}
                             >
                               <td className="py-1.5 px-1 text-gray-300 group-hover:text-white transition-colors">
-                                {u.name || "—"}
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <EntityAvatar
+                                    src={u.image}
+                                    alt=""
+                                    className="w-5 h-5 border border-dashed border-white/15 bg-white/5"
+                                    fallback={<User className="w-3 h-3 text-white/50" />}
+                                  />
+                                  <span className="truncate">{u.name || "—"}</span>
+                                </div>
                               </td>
                               <td className="py-1.5 px-1 text-gray-500 font-mono truncate max-w-[180px]">
                                 {u.email || "—"}

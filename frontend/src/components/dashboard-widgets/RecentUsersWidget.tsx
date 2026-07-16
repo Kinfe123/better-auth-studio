@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import { ChevronDown, Users } from "../PixelIcons";
+import { EntityAvatar } from "../EntityAvatar";
+import { ChevronDown, User, Users } from "../PixelIcons";
 
 interface RecentUser {
   id: string;
   name?: string | null;
   email?: string | null;
+  image?: string | null;
   createdAt?: string;
   country?: string;
   countryCode?: string;
@@ -264,10 +266,18 @@ export function RecentUsersWidget({
                   className="border-b border-white/5 hover:bg-white/[3%] cursor-pointer transition-colors group"
                 >
                   <td
-                    className="py-1.5 px-1.5 text-gray-300 group-hover:text-white truncate max-w-[90px] transition-colors"
+                    className="py-1.5 px-1.5 text-gray-300 group-hover:text-white max-w-[90px] transition-colors"
                     title={u.name || ""}
                   >
-                    {u.name || "—"}
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <EntityAvatar
+                        src={u.image}
+                        alt=""
+                        className="w-5 h-5 border border-dashed border-white/15 bg-white/5"
+                        fallback={<User className="w-3 h-3 text-white/50" />}
+                      />
+                      <span className="truncate">{u.name || "—"}</span>
+                    </div>
                   </td>
                   <td
                     className="py-1.5 px-1.5 text-gray-500 truncate max-w-[110px] font-mono"
