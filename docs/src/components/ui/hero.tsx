@@ -11,6 +11,7 @@ import { Mesh } from "three";
 import { KernelSize } from "postprocessing";
 import { LineShadowText } from "../LineShadow";
 import Link from "next/link";
+import { InstallCommand } from "./install-command";
 function Shape() {
   const meshRef = useRef<Mesh>(null);
   const innerSphereRef = useRef<Mesh>(null);
@@ -260,7 +261,6 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ title, description, links, version }) => {
-  const [copied, setCopied] = useState(false);
   const [typedTerminalCommand, setTypedTerminalCommand] = useState("");
   const [terminalLogs, setTerminalLogs] = useState<TerminalLine[]>([]);
   const [terminalHeight, setTerminalHeight] = useState<number>(110);
@@ -404,65 +404,7 @@ export const Hero: React.FC<HeroProps> = ({ title, description, links, version }
           </h1>
 
           <p className="font-mono uppercase text-[12.5px] text-white/50 mb-6">{description}</p>
-          <div className="bg-black/20 backdrop-blur-sm border border-white/15 hover:border-white/20 transition-all duration-300 border-dashed rounded-none p-4 font-mono text-xs overflow-hidden">
-            <div className="text-white/70 flex items-center text-[10px] uppercase font-mono mb-2">
-              <svg
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                className="w-3 rotate-180 h-3 inline-flex mr-1 text-white/50 hover:text-white transition-colors"
-              >
-                <path
-                  d="M16 5v2h-2V5h2zm-4 4V7h2v2h-2zm-2 2V9h2v2h-2zm0 2H8v-2h2v2zm2 2v-2h-2v2h2zm0 0h2v2h-2v-2zm4 4v-2h-2v2h2z"
-                  fill="currentColor"
-                />
-              </svg>
-              Install Better Auth Studio
-            </div>
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-              <span className="text-white/80">$</span>
-              <code className="text-white text-xs whitespace-nowrap">
-                pnpx better-auth-studio@latest start
-              </code>
-              <button
-                onClick={() => {
-                  setCopied(true);
-                  navigator.clipboard.writeText("pnpx better-auth-studio@latest start");
-                  setTimeout(() => {
-                    setCopied(false);
-                  }, 3000);
-                }}
-                className="ml-2 text-white/50 hover:text-white transition-colors"
-                title="Copy to clipboard"
-              >
-                {copied ? (
-                  <svg
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    className="w-4 h-4 text-white/50 hover:text-white transition-colors"
-                  >
-                    <path
-                      d="M18 6h2v2h-2V6zm-2 4V8h2v2h-2zm-2 2V9h2v2h-2zm-2 2h2v-2h-2v2zm-2 2h2v-2h-2v2zm-2 0v2h2v-2H8zm-2-2h2v2H6v-2zm0 0H4v-2h2v2z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    className="w-4 h-4 text-white/50 hover:text-white transition-colors"
-                  >
-                    <path
-                      d="M4 2h12v2H4v12H2V2h2zm4 4h12v16H8V6zm2 2v12h8V8h-8z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                )}
-              </button>
-            </div>
-          </div>
+          <InstallCommand />
         </div>
 
         <div className="hidden lg:block absolute bottom-6 right-6 lg:right-10 w-[420px] lg:w-[520px]">
