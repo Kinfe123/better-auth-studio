@@ -19,8 +19,6 @@ import { toast } from "sonner";
 import { AnimatedNumber } from "../components/AnimatedNumber";
 import { CopyableId } from "../components/CopyableId";
 import { EntityAvatar } from "../components/EntityAvatar";
-import { SessionDeviceBadge } from "../components/SessionDeviceBadge";
-import { SessionDeviceIcon } from "../components/SessionDeviceIcon";
 import {
   AlertInfo,
   AlertTriangle,
@@ -35,6 +33,7 @@ import {
   HashIcon,
   Loader,
   Mail,
+  Monitor,
   Phone,
   PhoneNumber,
   User,
@@ -1933,11 +1932,7 @@ export default function UserDetails() {
                         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-3">
                           <div className="flex items-center space-x-3 md:space-x-4 flex-1 min-w-0">
                             <div className="w-10 h-10 md:w-12 md:h-12 bg-black/80 border border-dashed border-white/20 flex items-center justify-center rounded-none flex-shrink-0">
-                              <SessionDeviceIcon
-                                userAgent={session.userAgent}
-                                className="h-auto w-auto border-0 bg-transparent"
-                                iconClassName="w-5 h-5 md:w-6 md:h-6 text-white"
-                              />
+                              <Monitor className="w-5 h-5 md:w-6 md:h-6 text-white" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="text-white text-sm md:text-base font-light inline-flex items-start">
@@ -1950,11 +1945,6 @@ export default function UserDetails() {
                                   <span className="ml-1">]</span>
                                 </sup>
                               </h3>
-                              <SessionDeviceBadge
-                                userAgent={session.userAgent}
-                                showMeta
-                                className="mt-2 max-w-full"
-                              />
                               <div className="flex items-center space-x-2 mt-1 md:mt-2">
                                 <Globe className="w-3 h-3 md:w-3.5 md:h-3.5 text-gray-400 flex-shrink-0" />
                                 <span className="text-gray-400 uppercase font-mono text-[10px] md:text-xs truncate">

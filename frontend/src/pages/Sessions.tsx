@@ -18,7 +18,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { CopyableId } from "../components/CopyableId";
-import { SessionDeviceBadge } from "../components/SessionDeviceBadge";
 import { SessionDeviceIcon } from "../components/SessionDeviceIcon";
 import { Terminal } from "../components/Terminal";
 import { Button } from "../components/ui/button";
@@ -553,11 +552,6 @@ export default function Sessions() {
                         <span className="hidden sm:block">
                           <CopyableId id={session.id} />
                         </span>
-                        <SessionDeviceBadge
-                          userAgent={session.userAgent}
-                          showMeta
-                          className="mt-2 max-w-[190px]"
-                        />
                       </div>
                     </div>
                   </td>
@@ -872,11 +866,6 @@ export default function Sessions() {
                     Session {selectedSession.id.slice(0, 8)}...
                   </div>
                   <div className="text-sm text-gray-400">{selectedSession.userId}</div>
-                  <SessionDeviceBadge
-                    userAgent={selectedSession.userAgent}
-                    showMeta
-                    className="mt-2 max-w-[260px]"
-                  />
                 </div>
               </div>
               <div>

@@ -16,7 +16,6 @@ interface SessionDeviceIconProps {
   userAgent?: string | null;
   className?: string;
   iconClassName?: string;
-  decorative?: boolean;
 }
 
 const categoryIcons: Record<SessionDeviceCategory, LucideIcon> = {
@@ -28,12 +27,7 @@ const categoryIcons: Record<SessionDeviceCategory, LucideIcon> = {
   unknown: HelpCircle,
 };
 
-export function SessionDeviceIcon({
-  userAgent,
-  className,
-  iconClassName,
-  decorative = false,
-}: SessionDeviceIconProps) {
+export function SessionDeviceIcon({ userAgent, className, iconClassName }: SessionDeviceIconProps) {
   const deviceInfo = parseSessionDevice(userAgent);
   const DeviceIcon =
     deviceInfo.device.label === "Bot"
@@ -48,10 +42,9 @@ export function SessionDeviceIcon({
         "flex h-7 w-7 shrink-0 items-center justify-center border border-dashed border-white/15 bg-white/5 text-white/80",
         className,
       )}
-      role={decorative ? undefined : "img"}
-      aria-hidden={decorative || undefined}
-      aria-label={decorative ? undefined : deviceInfo.device.label}
-      title={decorative ? undefined : deviceInfo.device.label}
+      role="img"
+      aria-label={deviceInfo.device.label}
+      title={deviceInfo.device.label}
     >
       <DeviceIcon className={cn("h-3.5 w-3.5", iconClassName)} aria-hidden="true" />
     </span>
