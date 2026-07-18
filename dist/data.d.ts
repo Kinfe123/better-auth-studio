@@ -13,10 +13,17 @@ export interface User {
 export interface Session {
     id: string;
     userId: string;
-    expires: Date;
-    createdAt: Date;
-    userAgent?: string;
+    token?: string;
+    expiresAt?: Date | string;
+    expires?: Date | string;
+    createdAt: Date | string;
+    updatedAt?: Date | string;
+    userAgent?: string | null;
+    ipAddress?: string | null;
     ip?: string;
+    activeOrganizationId?: string;
+    activeTeamId?: string;
+    [key: string]: unknown;
 }
 export interface AuthStats {
     totalUsers: number;

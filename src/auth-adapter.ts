@@ -489,16 +489,26 @@ function generateRandomIP(): string {
   return `${range.min.split(".")[0]}.${secondOctet}.${thirdOctet}.${fourthOctet}`;
 }
 
+const SESSION_SEED_USER_AGENTS = [
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 18_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Mobile/15E148 Safari/604.1",
+  "Mozilla/5.0 (Linux; Android 15; Pixel 9 Pro Build/AP3A.241205.015) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Mobile Safari/537.36",
+  "Mozilla/5.0 (iPad; CPU OS 18_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Mobile/15E148 Safari/604.1",
+  "Mozilla/5.0 (Linux; Android 14; SM-X910 Build/UP1A.231005.007) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+] as const;
+
 export async function createMockSession(adapter: AuthAdapter, userId: string, index: number) {
   // Generate a random IP address
   const ipAddress = generateRandomIP();
+  const userAgent = SESSION_SEED_USER_AGENTS[(index - 1) % SESSION_SEED_USER_AGENTS.length];
 
   const sessionData = {
     userId: userId,
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
     token: `session_token_${index}_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`,
     ipAddress: ipAddress,
-    userAgent: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36`,
+    userAgent,
     createdAt: new Date(),
     updatedAt: new Date(),
   };

@@ -18,6 +18,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { CopyableId } from "../components/CopyableId";
+import { SessionDeviceBadge } from "../components/SessionDeviceBadge";
+import { SessionDeviceIcon } from "../components/SessionDeviceIcon";
 import { Terminal } from "../components/Terminal";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -29,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import { parseSessionDevice } from "../lib/session-device";
 import { buildApiUrl } from "../utils/api";
 
 interface LocationData {
@@ -45,6 +48,7 @@ interface Session {
   createdAt: string;
   updatedAt: string;
   ipAddress?: string;
+  userAgent?: string | null;
 }
 
 export default function Sessions() {
@@ -137,7 +141,7 @@ export default function Sessions() {
     try {
       const response = await fetch(buildApiUrl("/api/sessions"));
       const data = await response.json();
-      const list = data.sessions || [];
+      const list = data.sessions || data.data || [];
       setSessions(list);
       resolveSessionLocations(list);
     } catch (_error) {
@@ -387,9 +391,17 @@ export default function Sessions() {
   };
 
   const filteredSessions = sessions.filter((session) => {
+    const normalizedSearch = searchTerm.toLowerCase();
+    const deviceInfo = parseSessionDevice(session.userAgent);
     const matchesSearch =
-      session.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      session.userId.toLowerCase().includes(searchTerm.toLowerCase());
+      session.id.toLowerCase().includes(normalizedSearch) ||
+      session.userId.toLowerCase().includes(normalizedSearch) ||
+      session.userAgent?.toLowerCase().includes(normalizedSearch) ||
+      deviceInfo.device.label.toLowerCase().includes(normalizedSearch) ||
+      deviceInfo.os.label.toLowerCase().includes(normalizedSearch) ||
+      deviceInfo.browser.label.toLowerCase().includes(normalizedSearch) ||
+      deviceInfo.vendor?.toLowerCase().includes(normalizedSearch) ||
+      deviceInfo.model?.toLowerCase().includes(normalizedSearch);
     const matchesFilter =
       filter === "all" ||
       (filter === "active" && new Date(session.expiresAt) > new Date()) ||
@@ -406,6 +418,8 @@ export default function Sessions() {
     });
     return list;
   }, [filteredSessions, sessionSortOrder]);
+
+  const selectedDeviceInfo = selectedSession ? parseSessionDevice(selectedSession.userAgent) : null;
 
   if (loading) {
     return (
@@ -539,6 +553,11 @@ export default function Sessions() {
                         <span className="hidden sm:block">
                           <CopyableId id={session.id} />
                         </span>
+                        <SessionDeviceBadge
+                          userAgent={session.userAgent}
+                          showMeta
+                          className="mt-2 max-w-[190px]"
+                        />
                       </div>
                     </div>
                   </td>
@@ -592,6 +611,7 @@ export default function Sessions() {
                         size="sm"
                         className="text-gray-400 hover:text-white rounded-none h-7 w-7 md:h-9 md:w-9 p-0"
                         onClick={() => openViewModal(session)}
+                        aria-label={`View session ${session.id}`}
                       >
                         <Eye className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </Button>
@@ -600,6 +620,7 @@ export default function Sessions() {
                         size="sm"
                         className="text-gray-400 hover:text-white rounded-none h-7 w-7 md:h-9 md:w-9 p-0"
                         onClick={() => openEditModal(session)}
+                        aria-label={`Edit session ${session.id}`}
                       >
                         <Edit className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </Button>
@@ -608,6 +629,7 @@ export default function Sessions() {
                         size="sm"
                         className="text-red-400 hover:text-red-300 rounded-none h-7 w-7 md:h-9 md:w-9 p-0"
                         onClick={() => openDeleteModal(session)}
+                        aria-label={`Delete session ${session.id}`}
                       >
                         <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </Button>
@@ -850,6 +872,11 @@ export default function Sessions() {
                     Session {selectedSession.id.slice(0, 8)}...
                   </div>
                   <div className="text-sm text-gray-400">{selectedSession.userId}</div>
+                  <SessionDeviceBadge
+                    userAgent={selectedSession.userAgent}
+                    showMeta
+                    className="mt-2 max-w-[260px]"
+                  />
                 </div>
               </div>
               <div>
@@ -975,9 +1002,11 @@ export default function Sessions() {
 
             <div className="space-y-6 mt-4">
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-none border border-dashed border-white/15 bg-white/10 flex items-center justify-center">
-                  <Database className="w-7 h-7 text-white" />
-                </div>
+                <SessionDeviceIcon
+                  userAgent={selectedSession.userAgent}
+                  className="h-14 w-14 bg-white/10"
+                  iconClassName="h-7 w-7 text-white"
+                />
                 <div className="space-y-1">
                   <div className="text-white font-medium leading-tight flex items-center gap-2">
                     <span>Session {selectedSession.id.slice(0, 8)}...</span>
@@ -993,6 +1022,35 @@ export default function Sessions() {
                     label: "Status",
                     value: new Date(selectedSession.expiresAt) > new Date() ? "Active" : "Expired",
                   },
+                  ...(selectedDeviceInfo
+                    ? [
+                        {
+                          label: "Device",
+                          value: selectedDeviceInfo.device.label,
+                        },
+                        {
+                          label: "Operating system",
+                          value: [selectedDeviceInfo.os.label, selectedDeviceInfo.os.version]
+                            .filter(Boolean)
+                            .join(" "),
+                        },
+                        {
+                          label: "Browser",
+                          value: [
+                            selectedDeviceInfo.browser.label,
+                            selectedDeviceInfo.browser.version,
+                          ]
+                            .filter(Boolean)
+                            .join(" "),
+                        },
+                        ...(selectedDeviceInfo.vendor
+                          ? [{ label: "Manufacturer", value: selectedDeviceInfo.vendor }]
+                          : []),
+                        ...(selectedDeviceInfo.model
+                          ? [{ label: "Model", value: selectedDeviceInfo.model }]
+                          : []),
+                      ]
+                    : []),
                   ...(selectedSession.ipAddress
                     ? [
                         {
@@ -1032,6 +1090,14 @@ export default function Sessions() {
                     </div>
                   </div>
                 ))}
+                <div className="border border-dashed border-white/15 bg-black/90 px-3 py-2 rounded-none">
+                  <div className="text-[11px] font-mono font-light uppercase tracking-wide text-gray-400">
+                    User agent
+                  </div>
+                  <div className="mt-2 break-all font-mono text-[10px] leading-relaxed text-white/80">
+                    {selectedSession.userAgent || "Not recorded"}
+                  </div>
+                </div>
                 <div className="mt-2">
                   <CopyableId id={selectedSession.id} variant="detail" />
                 </div>

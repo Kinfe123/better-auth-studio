@@ -2028,17 +2028,19 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
                 model: "session",
                 limit: 10000,
             });
-            const userSessions = sessions.filter((session) => session.userId === userId);
+            const userSessions = sessions.filter((session) => (session.userId ?? session.user_id) === userId);
             const formattedSessions = userSessions.map((session) => ({
-                id: session.id,
-                token: session.token,
-                expiresAt: session.expiresAt,
-                ipAddress: session.ipAddress || "Unknown",
-                userAgent: session.userAgent || "Unknown",
-                activeOrganizationId: session.activeOrganizationId,
-                activeTeamId: session.activeTeamId,
-                createdAt: session.createdAt,
-                updatedAt: session.updatedAt,
+                id: session.id ?? session.session_id,
+                token: session.token ?? session.session_token,
+                expiresAt: session.expiresAt ?? session.expires_at ?? session.expires,
+                ipAddress: session.ipAddress ?? session.ip_address ?? session.ip ?? "Unknown",
+                userAgent: session.userAgent ?? session.user_agent ?? null,
+                activeOrganizationId: session.activeOrganizationId ??
+                    session.active_organization_id ??
+                    session.active_organization,
+                activeTeamId: session.activeTeamId ?? session.active_team_id ?? session.active_team,
+                createdAt: session.createdAt ?? session.created_at,
+                updatedAt: session.updatedAt ?? session.updated_at,
             }));
             res.json({ sessions: formattedSessions });
         }
@@ -2713,8 +2715,14 @@ export function createRoutes(authConfig, configPath, geoDbPath, preloadedAdapter
         try {
             const page = parseInt(req.query.page, 10) || 1;
             const limit = parseInt(req.query.limit, 10) || 20;
-            const sessions = await getAuthData(authConfig, "sessions", { page, limit }, configPath, preloadedAdapter);
-            res.json(sessions);
+            const result = await getAuthData(authConfig, "sessions", { page, limit }, configPath, preloadedAdapter);
+            res.json({
+                sessions: result.data || [],
+                total: result.total || 0,
+                page: result.page || page,
+                limit: result.limit || limit,
+                totalPages: result.totalPages || 0,
+            });
         }
         catch (_error) {
             res.status(500).json({ error: "Failed to fetch sessions" });

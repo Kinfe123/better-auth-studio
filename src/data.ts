@@ -16,10 +16,17 @@ export interface User {
 export interface Session {
   id: string;
   userId: string;
-  expires: Date;
-  createdAt: Date;
-  userAgent?: string;
+  token?: string;
+  expiresAt?: Date | string;
+  expires?: Date | string;
+  createdAt: Date | string;
+  updatedAt?: Date | string;
+  userAgent?: string | null;
+  ipAddress?: string | null;
   ip?: string;
+  activeOrganizationId?: string;
+  activeTeamId?: string;
+  [key: string]: unknown;
 }
 
 export interface AuthStats {
@@ -200,19 +207,41 @@ async function getRealSessions(
   const { page, limit } = options;
 
   try {
-    if (adapter.getSessions) {
-      const allSessions = await adapter.getSessions();
+    let allSessions: any[] | null = null;
+    let getSessionsError: unknown;
+
+    if (typeof adapter?.getSessions === "function") {
+      try {
+        const result = await adapter.getSessions();
+        if (Array.isArray(result)) {
+          allSessions = result;
+        }
+      } catch (error) {
+        getSessionsError = error;
+      }
+    }
+
+    if (allSessions === null && typeof adapter?.findMany === "function") {
+      allSessions = await adapter.findMany({ model: "session", limit: 100000 });
+    }
+
+    if (allSessions === null && getSessionsError) {
+      throw getSessionsError;
+    }
+
+    if (Array.isArray(allSessions)) {
+      const normalizedSessions = allSessions.map(normalizeSession);
 
       const startIndex = (page - 1) * limit;
       const endIndex = startIndex + limit;
-      const paginatedSessions = allSessions.slice(startIndex, endIndex);
+      const paginatedSessions = normalizedSessions.slice(startIndex, endIndex);
 
       return {
         data: paginatedSessions,
-        total: allSessions.length,
+        total: normalizedSessions.length,
         page,
         limit,
-        totalPages: Math.ceil(allSessions.length / limit),
+        totalPages: Math.ceil(normalizedSessions.length / limit),
       };
     }
 
@@ -226,6 +255,25 @@ async function getRealSessions(
   } catch (_error) {
     throw new Error(`Failed to get auth data: ${_error}`);
   }
+}
+
+function normalizeSession(rawSession: any): Session {
+  const session = rawSession && typeof rawSession === "object" ? rawSession : {};
+
+  return {
+    ...session,
+    id: session.id ?? session.session_id,
+    userId: session.userId ?? session.user_id,
+    token: session.token ?? session.session_token,
+    expiresAt: session.expiresAt ?? session.expires_at ?? session.expires,
+    createdAt: session.createdAt ?? session.created_at,
+    updatedAt: session.updatedAt ?? session.updated_at,
+    userAgent: session.userAgent ?? session.user_agent,
+    ipAddress: session.ipAddress ?? session.ip_address ?? session.ip,
+    activeOrganizationId:
+      session.activeOrganizationId ?? session.active_organization_id ?? session.active_organization,
+    activeTeamId: session.activeTeamId ?? session.active_team_id ?? session.active_team,
+  };
 }
 
 async function getRealProviderStats(_adapter: any) {
