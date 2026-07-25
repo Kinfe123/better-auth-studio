@@ -1,5 +1,7 @@
 import { handleStudioRequest } from "../core/handler.js";
 import { injectEventHooks, injectLastSeenAtHooks } from "../utils/hook-injector.js";
+const STATIC_ASSET_QUERY_PARAM = "__better_auth_studio_asset";
+const STATIC_ASSET_PATH_PATTERN = /^\/(?:assets\/[^/?#]+|vite\.svg|favicon\.svg|logo\.png)$/;
 /**
  * TanStack Start adapter for Better Auth Studio
  *
@@ -35,7 +37,7 @@ export function betterAuthStudio(config) {
         try {
             const universalReq = await convertTanStackStartToUniversal(request, config);
             const universalRes = await handleStudioRequest(universalReq, config);
-            return universalToResponse(universalRes);
+            return universalToResponse(universalRes, config);
         }
         catch (error) {
             console.error("Studio handler error:", error);
@@ -87,11 +89,15 @@ async function convertTanStackStartToUniversal(request, config) {
     const basePath = config.basePath || "/api/studio";
     const normalizedBasePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
     const url = new URL(request.url);
-    let path = url.pathname;
-    if (path.startsWith(normalizedBasePath)) {
+    const queryAssetPath = url.searchParams.get(STATIC_ASSET_QUERY_PARAM);
+    const acceptedQueryAssetPath = queryAssetPath && STATIC_ASSET_PATH_PATTERN.test(queryAssetPath) ? queryAssetPath : null;
+    let path = acceptedQueryAssetPath || url.pathname;
+    if (!acceptedQueryAssetPath && path.startsWith(normalizedBasePath)) {
         path = path.slice(normalizedBasePath.length) || "/";
     }
-    const pathWithQuery = path + url.search;
+    url.searchParams.delete(STATIC_ASSET_QUERY_PARAM);
+    const query = url.searchParams.toString();
+    const pathWithQuery = path + (query ? `?${query}` : "");
     return {
         url: pathWithQuery,
         method: method,
@@ -99,13 +105,32 @@ async function convertTanStackStartToUniversal(request, config) {
         body,
     };
 }
-function universalToResponse(res) {
+function universalToResponse(res, config) {
     const headers = new Headers(res.headers);
     res.setCookies?.forEach((cookie) => {
         headers.append("Set-Cookie", cookie);
     });
-    return new Response(res.body, {
+    let body = res.body;
+    if (typeof body === "string" &&
+        headers.get("Content-Type")?.toLowerCase().includes("text/html")) {
+        body = rewriteStaticAssetUrls(body, config.basePath || "/api/studio");
+    }
+    return new Response(body, {
         status: res.status,
         headers,
+    });
+}
+/**
+ * Nitro can treat nested URLs ending in .js/.css as public files before a
+ * TanStack Start splat route gets a chance to handle them. Keep Studio assets
+ * on the exact server-route URL and carry the requested file in the query.
+ */
+function rewriteStaticAssetUrls(html, basePath) {
+    const normalizedBasePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+    const escapedBasePath = normalizedBasePath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const assetUrlPattern = new RegExp(`((?:href|src)=["'])${escapedBasePath}(/(?:assets/[^"'?#]+|vite\\.svg|favicon\\.svg|logo\\.png))(["'])`, "g");
+    return html.replace(assetUrlPattern, (_match, prefix, assetPath, suffix) => {
+        const query = new URLSearchParams({ [STATIC_ASSET_QUERY_PARAM]: assetPath });
+        return `${prefix}${normalizedBasePath}?${query.toString()}${suffix}`;
     });
 }
