@@ -43,6 +43,7 @@ import type { AuthEvent, AuthEventType } from "./types/events.js";
 import type { StudioAccessConfig, StudioConfig } from "./types/handler.js";
 import { evaluateRequestAccess, extractClientIp } from "./utils/access-rules.js";
 import { detectDatabaseWithDialect } from "./utils/database-detection.js";
+import { isAllowedStudioRole, normalizeStudioRoles } from "./utils/roles.js";
 import {
   createStudioSession,
   decryptSession,
@@ -355,6 +356,29 @@ export function createRoutes(
   studioConfig?: StudioConfig,
 ): Router {
   const isSelfHosted = !!preloadedAdapter;
+
+  // Roles the Studio may write. Defaults to Better Auth's built-in admin/user, so
+  // deployments that never configure `roles` behave exactly as before.
+  const allowedRoles = normalizeStudioRoles(studioConfig?.userRoles);
+
+  /**
+   * Rejects a role the configured vocabulary does not contain.
+   *
+   * Returns true when a response has already been sent, so callers can `return`
+   * immediately. Without this the Studio happily writes any string to the role
+   * column, including values the host application cannot interpret.
+   */
+  const rejectInvalidRole = (res: Response, role: unknown): boolean => {
+    if (isAllowedStudioRole(role, allowedRoles)) {
+      return false;
+    }
+    res.status(400).json({
+      error: `Invalid role ${JSON.stringify(role)}. Allowed roles: ${allowedRoles
+        .map((option) => option.value)
+        .join(", ")}.`,
+    });
+    return true;
+  };
 
   const getAuthConfigSafe = async (): Promise<any | null> => {
     if (isSelfHosted) {
@@ -1948,6 +1972,9 @@ export function createRoutes(
       const { userId } = req.params;
       const body = req.body || {};
       const { name, email, role, image } = body;
+      if (rejectInvalidRole(res, role)) {
+        return;
+      }
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter || !adapter.update) {
         return res.status(500).json({ error: "Auth adapter not available" });
@@ -5657,6 +5684,9 @@ export function createRoutes(
       }
 
       const userData = req.body;
+      if (rejectInvalidRole(res, userData?.role)) {
+        return;
+      }
       if (!adapter.createUser) {
         return res.status(500).json({ error: "createUser method not available on adapter" });
       }
@@ -5671,6 +5701,9 @@ export function createRoutes(
     try {
       const { id } = req.params;
       const userData = req.body;
+      if (rejectInvalidRole(res, userData?.role)) {
+        return;
+      }
 
       const updatedUser = await getAuthData(
         authConfig,
@@ -5688,6 +5721,11 @@ export function createRoutes(
   router.post("/api/seed/users", async (req: Request, res: Response) => {
     try {
       const { count = 1, role } = req.body;
+      // "mix" is the seeder's own sentinel for "pick one at random", so it is
+      // validated against the configured roles rather than passed through.
+      if (role !== "mix" && rejectInvalidRole(res, role)) {
+        return;
+      }
       const adapter = await getAuthAdapterWithConfig();
       if (!adapter) {
         return res.status(500).json({ error: "Auth adapter not available" });
@@ -5701,7 +5739,7 @@ export function createRoutes(
           }
           let userRole = role;
           if (role === "mix") {
-            userRole = Math.random() < 0.5 ? "admin" : "user";
+            userRole = allowedRoles[Math.floor(Math.random() * allowedRoles.length)].value;
           }
           const user = await createMockUser(adapter, i + 1, userRole);
           if (!user) {

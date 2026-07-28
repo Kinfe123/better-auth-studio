@@ -386,6 +386,33 @@ const config: StudioConfig = {
 export default config;
 ```
 
+#### Custom user roles
+
+By default the Create/Edit User dialogs offer Better Auth's built-in `admin` and `user`
+roles, and the user-write routes accept any value. If your app defines its own roles,
+set `userRoles` so Studio offers exactly those — and refuses to store anything else:
+
+```typescript
+const config: StudioConfig = {
+  auth,
+  // Strings are shorthand when the stored value is also the label you want shown.
+  userRoles: ["ADMIN", "EDITOR", "VIEWER"],
+};
+```
+
+Use the object form when the display text should differ from the stored value:
+
+```typescript
+userRoles: [{ value: "SYSTEM_ADMIN", label: "System Admin" }, "SUPPORT"],
+```
+
+`userRoles` is enforced on the server as well as in the UI, so
+`POST /api/users`, `PUT /api/users/:id` and the user seeder all reject a role outside
+the list with a `400`. Leaving it unset preserves the previous behavior exactly.
+
+> Not to be confused with `access.roles`, which controls **who may open Studio**.
+> `userRoles` controls **which roles Studio can assign**.
+
 ### Next.js (App Router)
 
 The init command automatically creates `app/api/studio/[[...path]]/route.ts`:

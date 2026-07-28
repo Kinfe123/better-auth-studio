@@ -47,6 +47,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { useCounts } from "../contexts/CountsContext";
+import { getStudioRoles } from "../lib/studio-roles";
 import { getImageSrc } from "../lib/utils";
 import { fetchStudioAuthJson } from "../utils/studio-auth";
 
@@ -80,6 +81,8 @@ const formatTimeAgo = (value?: string | null): string => {
 };
 
 export default function Users() {
+  // Role options come from the host app's config, not a hardcoded list.
+  const studioRoles = getStudioRoles();
   const navigate = useNavigate();
   const location = useLocation();
   const { counts, refetchCounts } = useCounts();
@@ -1403,8 +1406,11 @@ export default function Users() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="">None</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="user">User</SelectItem>
+                        {studioRoles.map((role) => (
+                          <SelectItem key={role.value} value={role.value}>
+                            {role.label ?? role.value}
+                          </SelectItem>
+                        ))}
                         <SelectItem value="mix">Mix (Random)</SelectItem>
                       </SelectContent>
                     </Select>
@@ -1534,8 +1540,11 @@ export default function Users() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">None</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
+                    {studioRoles.map((role) => (
+                      <SelectItem key={role.value} value={role.value}>
+                        {role.label ?? role.value}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -1682,8 +1691,11 @@ export default function Users() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">None</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
+                    {studioRoles.map((role) => (
+                      <SelectItem key={role.value} value={role.value}>
+                        {role.label ?? role.value}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
