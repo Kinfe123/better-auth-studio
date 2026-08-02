@@ -90,7 +90,11 @@ function getScreenEdgeSpawn(index: number, width: number, height: number) {
   return { x: Math.random() * width, y: height + padding + drift };
 }
 
-async function buildParticles(width: number, height: number, logoBounds: Bounds): Promise<Particle[]> {
+async function buildParticles(
+  width: number,
+  height: number,
+  logoBounds: Bounds,
+): Promise<Particle[]> {
   const image = await loadLogoImage();
   const offscreen = document.createElement("canvas");
   const context = offscreen.getContext("2d", { willReadFrequently: true });

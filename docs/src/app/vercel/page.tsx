@@ -104,12 +104,7 @@ function ArrowUpRightIcon() {
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path
-        d="M7 17 17 7M9 7h8v8"
-        stroke="currentColor"
-        strokeLinecap="square"
-        strokeWidth="1.8"
-      />
+      <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" strokeLinecap="square" strokeWidth="1.8" />
     </svg>
   );
 }
@@ -165,9 +160,7 @@ export default function VercelPage() {
             <div className="mx-auto mt-5 flex max-w-[21rem] items-center justify-center gap-x-2 text-[0.62rem] font-light leading-none text-white/55 min-[390px]:gap-x-2.5 min-[390px]:text-[0.68rem] sm:hidden">
               {stats.map((stat, index) => (
                 <div className="flex items-center gap-x-2" key={stat.label}>
-                  {index > 0 ? (
-                    <span className="h-5 w-px bg-white/25" aria-hidden="true" />
-                  ) : null}
+                  {index > 0 ? <span className="h-5 w-px bg-white/25" aria-hidden="true" /> : null}
                   <p className="inline-flex items-center gap-x-1.5 whitespace-nowrap">
                     <span className="font-medium text-white/90">{stat.value}</span>{" "}
                     <span className="text-white/62">
@@ -181,9 +174,7 @@ export default function VercelPage() {
             <div className="mx-auto mt-7 hidden max-w-4xl flex-wrap items-center justify-center gap-x-4 gap-y-3 text-sm font-light text-white/55 sm:flex md:text-base">
               {stats.map((stat, index) => (
                 <div className="flex items-center gap-x-4" key={stat.label}>
-                  {index > 0 ? (
-                    <span className="h-6 w-px bg-white/25" aria-hidden="true" />
-                  ) : null}
+                  {index > 0 ? <span className="h-6 w-px bg-white/25" aria-hidden="true" /> : null}
                   <p className="inline-flex items-center gap-x-2 whitespace-nowrap">
                     <span className="font-medium text-white/90">{stat.value}</span>{" "}
                     <span className="text-white/62">
