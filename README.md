@@ -25,7 +25,7 @@ This online demo lets you explore the admin studio UI. Please note this is a tes
 
 ### Hosted Version
 
-For the hosted version: **[better-auth.build](https://better-auth.build)**
+For the hosted version: **[better-auth.com](https://better-auth.com)**
 
 ### Installation
 
