@@ -1,0 +1,40 @@
+---
+title: "Deployment"
+description: "Run Better Auth Studio in Docker or on a cloud platform."
+order: 2
+---
+
+# Deployment
+
+Better Auth Studio ships with a Dockerfile and Docker Compose configuration you can use to run the standalone studio in any containerized environment. This is the recommended approach when you want a persistent admin UI that's not tied to a single developer's machine.
+
+## Docker Compose (recommended)
+
+The repository includes `docker/compose.yml`. The minimum required environment variable is `HOST_PROJECT_PATH` — the path on your host machine to your Better Auth project directory:
+
+```bash
+HOST_PROJECT_PATH=/path/to/your/project docker compose -f docker/compose.yml up
+```
+
+The container mounts your project directory at `/workspace`, installs dependencies automatically, and starts the studio on port `3002`.
+
+## Environment variables
+
+The Docker setup reads the following variables:
+
+| Variable | Default | Description |
+|---|---|---|
+| `HOST_PROJECT_PATH` | *(required)* | Absolute path to your Better Auth project on the host |
+| `PORT` | `3002` | Port the studio listens on |
+| `CONFIG_PATH` | `./auth.ts` | Relative path to your auth config inside the workspace |
+| `WATCH` | `false` | Set to `true` to enable watch mode |
+| `AUTO_INSTALL` | `true` | Automatically run `pnpm install` on startup |
+| `GEO_DB_PATH` | *(empty)* | Optional path to a GeoLite2 database file |
+
+## Container image
+
+The multi-stage Dockerfile builds from `node:20-bookworm-slim`. The builder stage compiles TypeScript and the frontend, packs the result into a tarball, and the runtime stage installs it globally so `better-auth-studio` is available on `PATH`. The container exposes port `3002`.
+
+## Vercel
+
+The docs site deploys to Vercel via `vercel.json` at the repository root. If you're deploying your own Next.js or other framework app that embeds the studio, standard platform deployment applies — set the required environment variables (`BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and your database URL) in your platform dashboard.

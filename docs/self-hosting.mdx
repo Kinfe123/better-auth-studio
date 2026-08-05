@@ -1,0 +1,29 @@
+---
+title: "Self-Hosting"
+description: "Embed Better Auth Studio inside your own framework application."
+order: 0
+---
+
+# Self-Hosting
+
+Better Auth Studio supports two deployment models. The **standalone CLI** runs as a separate process alongside your app — useful during development and for teams who want an isolated admin tool. The **embedded** model mounts the studio directly inside your application as a set of API routes, so the studio lives at a path like `/api/studio` in your own domain.
+
+This section covers the embedded model. If you just want to run the CLI, the [Quickstart](/docs/quickstart) is all you need.
+
+## Supported frameworks
+
+The studio ships framework-specific handlers for:
+
+- Next.js
+
+## General setup
+
+Regardless of framework, the steps are the same:
+
+1. Install `better-auth-studio` as a dependency (not just dev dependency, since it runs at request time).
+2. Run `better-auth-studio init` to scaffold `studio.config.ts` and the route file.
+3. Fill in the `auth` and `basePath` options in `studio.config.ts`.
+4. Set the required environment variables: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and `STUDIO_SECRET`.
+5. Start your application and navigate to the `basePath` you configured.
+
+See [Self-Hosting Overview](/docs/self-hosting/overview) for a detailed walkthrough including Docker-based deployment.

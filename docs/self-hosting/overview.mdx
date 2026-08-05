@@ -1,0 +1,63 @@
+---
+title: "Self-Hosting Overview"
+description: "Run Better Auth Studio in infrastructure you control — embedded or Docker-based."
+order: 1
+---
+
+# Self-Hosting Overview
+
+This page walks through both self-hosting approaches: embedding the studio in a framework app, and running it as a standalone Docker container.
+
+## Embedded in a framework app
+
+The quickest way to embed the studio is with the `init` command:
+
+```bash
+pnpm better-auth-studio init
+```
+
+This creates `studio.config.ts` in your project root and the appropriate route file for your framework. For Next.js, that file lands at `app/api/studio/[[...path]]/route.ts`.
+
+Open `studio.config.ts` and configure it:
+
+```typescript
+import { defineStudioConfig } from 'better-auth-studio';
+import { auth } from './src/lib/auth';
+
+export default defineStudioConfig({
+  auth,
+  basePath: '/api/studio',
+  access: {
+    allowEmails: ['admin@yourcompany.com'],
+  },
+});
+```
+
+Then set the required environment variables:
+
+```bash
+BETTER_AUTH_SECRET=your-secret
+BETTER_AUTH_URL=https://yourapp.com
+STUDIO_SECRET=a-separate-studio-secret
+```
+
+Start your app and open `https://yourapp.com/api/studio` in the browser.
+
+## Docker standalone
+
+The repository includes a `Dockerfile` and `docker/compose.yml` for running the studio as a standalone container pointed at any Better Auth project on your host.
+
+```bash
+HOST_PROJECT_PATH=/path/to/your/project \
+  docker compose -f docker/compose.yml up
+```
+
+The container exposes port `3002` by default. Set `PORT` in your environment to change it.
+
+See [Deployment](/docs/configuration/deployment) for the full list of Docker environment variables and configuration options.
+
+## Access control
+
+When the studio is embedded at a public URL, use `access.allowEmails` in `studio.config.ts` to restrict access to a specific list of email addresses. Without this, any authenticated user in your Better Auth system can reach the admin UI.
+
+> **Note:** Self-hosting is in beta. The access control model may evolve in future releases.

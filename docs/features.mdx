@@ -1,0 +1,70 @@
+---
+title: "Features"
+description: "The main admin workflows available inside Better Auth Studio."
+order: 0
+---
+
+# Features
+
+Better Auth Studio gives you a full admin UI on top of your Better Auth database. This section documents the major workflows available inside the studio.
+
+**Dashboard** — The landing screen shows aggregate counts for users, teams, and organizations, so you can understand the state of your system at a glance.
+
+**User Management** — Create, edit, delete, and search users. You can update email verification status, view linked accounts, and bulk-seed test users for development. When event tracking is enabled, the studio also surfaces a `lastSeenAt` timestamp for each user.
+
+**[Organization Management](/docs/features/organization-management)** — Manage the multi-tenant layer of your auth system. Create organizations with custom slugs, manage teams inside those organizations, control membership, handle invitations, and bulk-seed test data.
+
+**Settings** — Inspect which Better Auth plugins are active, review your database adapter configuration, and check the status of OAuth social providers and email settings.
+
+## Examples
+
+Use these examples as concrete starting points for this workflow:
+
+### Setup
+```typescript
+import type { StudioConfig } from "better-auth-studio";
+import { auth } from "./lib/auth";
+
+const config: StudioConfig = {
+  auth,
+  basePath: "/api/studio",
+  metadata: {
+    title: "Admin Dashboard",
+    theme: "dark",
+  },
+  access: {
+    roles: ["admin"],
+    allowEmails: ["admin@example.com"],
+    allowIpAddresses: ["127.0.0.1", "::1", "192.168.*"],
+    blockIpAddresses: ["203.0.113.45"],
+  },
+};
+
+export default config;
+```
+
+### Basic Usage
+```bash
+pnpm better-auth-studio start
+```
+
+### Start Studio
+```bash
+# Start on custom port (if installed as dev dependency)
+pnpm better-auth-studio start --port 3001
+
+# Or with pnpx
+pnpx better-auth-studio start --port 3001
+
+# Start without opening browser
+pnpm better-auth-studio start --no-open
+
+# Use custom config file
+pnpm better-auth-studio start --config ./custom-auth.ts
+
+# Enable watch mode for auto-reload on config changes
+pnpm better-auth-studio start --watch
+
+# Combine multiple options
+pnpx better-auth-studio start --port 3001 --watch --config ./src/auth.ts
+```
