@@ -1,0 +1,28 @@
+---
+title: "SvelteKit Example"
+description: "SvelteKit Example shows the shape of a working SvelteKit integration."
+order: 390
+---
+
+# SvelteKit Example
+
+SvelteKit Example shows the shape of a working SvelteKit integration.
+## What This Example Shows
+SvelteKit Example demonstrates how a SvelteKit host app mounts Better Auth Studio, where configuration lives, and which route or server entrypoint connects the app to the Studio runtime.
+## Setup Flow
+1. Open the SvelteKit example app and install its dependencies.
+2. Review the auth, Studio, and framework route files before copying the setup.
+3. Run the example locally and verify the Studio route loads against the configured Better Auth instance.
+## What To Look For
+- The framework route or handler that mounts the Studio runtime.
+- The auth or Studio config file that supplies runtime options.
+- The package scripts or framework command used to run the example locally.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `examples/svelte-kit/.eslintrc.cjs` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/svelte-kit/mongodb/postcss.config.js` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/svelte-kit/mongodb/src/hooks.server.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/svelte-kit/mongodb/src/lib/auth-client.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/svelte-kit/mongodb/src/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/svelte-kit/mongodb/src/lib/db/index.ts` - Example project file that shows how the capability is wired in a real framework setup.

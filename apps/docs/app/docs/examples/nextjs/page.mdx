@@ -1,0 +1,28 @@
+---
+title: "Next.js Example"
+description: "Next.js Example shows the shape of a working Next.js integration."
+order: 350
+---
+
+# Next.js Example
+
+Next.js Example shows the shape of a working Next.js integration.
+## What This Example Shows
+Next.js Example demonstrates how a Next.js host app mounts Better Auth Studio, where configuration lives, and which route or server entrypoint connects the app to the Studio runtime.
+## Setup Flow
+1. Open the Next.js example app and install its dependencies.
+2. Review the auth, Studio, and framework route files before copying the setup.
+3. Run the example locally and verify the Studio route loads against the configured Better Auth instance.
+## What To Look For
+- The framework route or handler that mounts the Studio runtime.
+- The auth or Studio config file that supplies runtime options.
+- The package scripts or framework command used to run the example locally.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `examples/nextjs/drizzle/app/api/auth/[...all]/route.ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/nextjs/drizzle/app/api/studio/[[...path]]/route.ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/nextjs/drizzle/app/layout.tsx` - Layout page-level UI. This is where users usually encounter the capability in the product.
+- `examples/nextjs/drizzle/app/page.tsx` - Page page-level UI. This is where users usually encounter the capability in the product.
+- `examples/nextjs/drizzle/auth-schema.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/nextjs/drizzle/drizzle.config.ts` - Example project file that shows how the capability is wired in a real framework setup.

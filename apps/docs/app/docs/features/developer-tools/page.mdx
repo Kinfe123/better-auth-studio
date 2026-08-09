@@ -1,0 +1,47 @@
+---
+title: "Developer Tools"
+description: "Developer tools help configure, inspect, and generate the pieces needed to run the product."
+order: 50
+---
+
+# Developer Tools
+
+Developer tools help configure, inspect, and generate the pieces needed to run the product.
+## What This Is
+This section explains the utilities that help developers inspect, configure, or generate parts of the product. These tools are not just UI screens; they are shortcuts for common setup, debugging, schema, email, or integration work.
+## When To Use This
+- Use this page when you are operating, integrating, or changing developer tools.
+- Read it before changing UI, routes, permissions, or data flows tied to this workflow.
+- Pair it with setup and configuration pages when runtime values affect what the user sees.
+## Core Concepts
+- developer tools
+- generators
+- inspectors
+- visual editors
+- debug workflows
+## Typical Workflow
+1. Choose the tool that matches the setup or debugging task.
+2. Review generated code or detected state before applying it to the host project.
+3. Use tool output as a starting point, then validate it against the application's real configuration.
+## In The Product
+These are the product surfaces or existing docs sections readers are most likely to touch while using this workflow.
+
+- Primary product surfaces: `CodeEditor`, `CommandPalette`, `DatabaseVisualizer`, `EmailEditor`, `Tools`.
+- README context: `docker-standalone-self-host`, `installation-for-self-hosting`, `next-js-app-router`.
+## User Path
+1. Choose the tool that matches the setup or debugging task.
+2. Review generated code or detected state before applying it to the host project.
+3. Use tool output as a starting point, then validate it against the application's real configuration.
+## Expected Outcome
+- You can describe the workflow in product terms before changing configuration or code.
+- You know which permissions, data, or runtime settings can change the user's experience.
+- You know where to continue when you need exact commands, imports, or deployment details.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `frontend/src/pages/DatabaseVisualizer.tsx` - DatabaseVisualizer page-level UI. This is where users usually encounter the capability in the product.
+- `frontend/src/components/CommandPalette.tsx` - CommandPalette reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/lib/studio-tools.ts` - Repository file related to this page.
+- `frontend/src/pages/EmailEditor.tsx` - EmailEditor page-level UI. This is where users usually encounter the capability in the product.
+- `frontend/src/pages/Tools.tsx` - Tools page-level UI. This is where users usually encounter the capability in the product.
+- `frontend/src/components/CodeEditor.tsx` - CodeEditor reusable UI component. It renders a visible part of the workflow or a focused interaction.

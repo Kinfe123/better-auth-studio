@@ -1,0 +1,28 @@
+---
+title: "Nuxt Example"
+description: "Nuxt Example shows the shape of a working Nuxt integration."
+order: 360
+---
+
+# Nuxt Example
+
+Nuxt Example shows the shape of a working Nuxt integration.
+## What This Example Shows
+Nuxt Example demonstrates how a Nuxt host app mounts Better Auth Studio, where configuration lives, and which route or server entrypoint connects the app to the Studio runtime.
+## Setup Flow
+1. Open the Nuxt example app and install its dependencies.
+2. Review the auth, Studio, and framework route files before copying the setup.
+3. Run the example locally and verify the Studio route loads against the configured Better Auth instance.
+## What To Look For
+- The framework route or handler that mounts the Studio runtime.
+- The auth or Studio config file that supplies runtime options.
+- The package scripts or framework command used to run the example locally.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `examples/nuxt/prisma/nuxt.config.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/nuxt/prisma/server/api/auth/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/nuxt/prisma/server/api/studio/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/nuxt/prisma/server/api/studio/index.ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/nuxt/prisma/server/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/nuxt/prisma/server/lib/db.ts` - Example project file that shows how the capability is wired in a real framework setup.

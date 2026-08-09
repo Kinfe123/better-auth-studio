@@ -1,0 +1,27 @@
+---
+title: "Hono Example"
+description: "Hono Example shows the shape of a working Hono integration."
+order: 340
+---
+
+# Hono Example
+
+Hono Example shows the shape of a working Hono integration.
+## What This Example Shows
+Hono Example demonstrates how a Hono host app mounts Better Auth Studio, where configuration lives, and which route or server entrypoint connects the app to the Studio runtime.
+## Setup Flow
+1. Open the Hono example app and install its dependencies.
+2. Review the auth, Studio, and framework route files before copying the setup.
+3. Run the example locally and verify the Studio route loads against the configured Better Auth instance.
+## What To Look For
+- The framework route or handler that mounts the Studio runtime.
+- The auth or Studio config file that supplies runtime options.
+- The package scripts or framework command used to run the example locally.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `examples/hono/prisma/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/hono/prisma/src/index.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/hono/prisma/src/prisma.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/hono/prisma/studio.config.pg.example.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/hono/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.

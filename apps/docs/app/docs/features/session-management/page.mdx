@@ -1,0 +1,52 @@
+---
+title: "Session Management"
+description: "Session management explains active authentication state, sign-in activity, and session controls."
+order: 80
+---
+
+# Session Management
+
+Session management explains active authentication state, sign-in activity, and session controls.
+## What This Is
+This area explains how the product observes active authentication state. It connects user identity, session creation, sign-in activity, cookies or tokens, and any security-sensitive controls exposed to administrators.
+## When To Use This
+- Use this page when you are operating, integrating, or changing session management.
+- Read it before changing UI, routes, permissions, or data flows tied to this workflow.
+- Pair it with setup and configuration pages when runtime values affect what the user sees.
+## Core Concepts
+- sessions
+- sign in
+- tokens
+- cookies
+- auth state
+## Typical Workflow
+1. Review session records for a user or the whole workspace.
+2. Use session metadata to understand device, location, or activity context when available.
+3. Document any destructive session action with its security impact before exposing it to operators.
+## In The Product
+These are the product surfaces or existing docs sections readers are most likely to touch while using this workflow.
+
+- README context: `basic-usage`, `configuration-options`, `docker-standalone-self-host`, `hosted-version`.
+## User Path
+1. Review session records for a user or the whole workspace.
+2. Use session metadata to understand device, location, or activity context when available.
+3. Document any destructive session action with its security impact before exposing it to operators.
+## Expected Outcome
+- You can describe the workflow in product terms before changing configuration or code.
+- You know which permissions, data, or runtime settings can change the user's experience.
+- You know where to continue when you need exact commands, imports, or deployment details.
+## From The README
+The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
+
+### ✨ Try Better Auth Studio Demo
+- Login email: admin@user.com
+- Password: admin@user.com
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `src/auth-adapter.ts` - Repository file related to this page.
+- `src/utils/auth-callbacks-injector.ts` - Auth Callbacks Injector utility. It supports the feature behind the scenes and is often where shared rules live.
+- `src/utils/session.ts` - Session utility. It supports the feature behind the scenes and is often where shared rules live.
+- `src/cli.ts` - CLI entrypoint or command implementation that defines developer-facing commands and flags.
+- `examples/astro/prisma/src/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/elysia/prisma/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.

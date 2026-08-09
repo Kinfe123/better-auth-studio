@@ -1,0 +1,119 @@
+---
+title: "Better Auth Studio"
+description: "Overview for Better Auth Studio."
+order: 0
+---
+
+# Better Auth Studio
+
+Studio for Better Auth
+## Product Story
+Better Auth Studio is documented as a product with capabilities, workflows, configuration decisions, and integration surfaces. These pages are organized so a reader can understand the purpose of the project before they need to inspect source files.
+## Reader Paths
+- Start with the overview, quickstart, and installation pages to understand the product before moving into deeper setup details.
+- Use feature pages to understand product capabilities surfaced by the README, routes, UI, or domain files.
+- Use self-hosting pages when deciding how this project fits into a framework, server, or deployment environment.
+- Use configuration pages for runtime settings, environment files, deployment files, database files, or product config.
+- Use guides for task-oriented workflows such as CLI usage, local development, troubleshooting, or product-specific operations.
+- Use API reference pages after the mental model is clear and you need routes, commands, adapters, exports, or type contracts.
+## Documentation Model
+Each page answers four questions: what the concept is, when to use it, how a developer or operator completes the workflow, and what to verify next. File paths and exports are supporting context, not the main explanation.
+## Documentation Map
+- Get Started: [Better Auth Studio](/docs) - Overview for Better Auth Studio.
+- Get Started: [Quickstart](/docs/quickstart) - Run Better Auth Studio for the first time.
+- Get Started: [Installation](/docs/installation) - Install and configure Better Auth Studio.
+- Core Features: [Features](/docs/features) - Product capabilities and workflows readers can use or operate.
+- Core Features: [Dashboard Overview](/docs/features/dashboard-overview) - Dashboard pages give operators a clear view of users, activity, and system health.
+- Core Features: [Developer Tools](/docs/features/developer-tools) - Developer tools help configure, inspect, and generate the pieces needed to run the product.
+- Core Features: [Event Tracking](/docs/features/event-tracking) - Event tracking turns runtime activity into timelines, audit trails, and last-seen context.
+- Core Features: [Organization Management](/docs/features/organization-management) - Organization management explains teams, members, invitations, and multi-tenant administration.
+- Core Features: [Session Management](/docs/features/session-management) - Session management explains active authentication state, sign-in activity, and session controls.
+- Core Features: [User Management](/docs/features/user-management) - User management helps operators inspect accounts, profiles, and account-level actions.
+- Self-Hosting: [Self-Hosting](/docs/self-hosting) - Runtime and deployment setup for running the project in your own environment.
+- Self-Hosting: [Self-Hosting Overview](/docs/self-hosting/overview) - Self-hosting explains how to run the product inside infrastructure you control.
+- Self-Hosting: [Astro Setup](/docs/self-hosting/astro) - Astro setup shows how to mount the product inside a Astro host application.
+- Self-Hosting: [Elysia Setup](/docs/self-hosting/elysia) - Elysia setup shows how to mount the product inside a Elysia host application.
+- Self-Hosting: [Express Setup](/docs/self-hosting/express) - Express setup shows how to mount the product inside a Express host application.
+- Self-Hosting: [Hono Setup](/docs/self-hosting/hono) - Hono setup shows how to mount the product inside a Hono host application.
+- Self-Hosting: [Next.js Setup](/docs/self-hosting/nextjs) - Next.js setup shows how to mount the product inside a Next.js host application.
+- Self-Hosting: [Nuxt Setup](/docs/self-hosting/nuxt) - Nuxt setup shows how to mount the product inside a Nuxt host application.
+- Self-Hosting: [Remix Setup](/docs/self-hosting/remix) - Remix setup shows how to mount the product inside a Remix host application.
+- Self-Hosting: [SolidStart Setup](/docs/self-hosting/solid-start) - SolidStart setup shows how to mount the product inside a SolidStart host application.
+- Self-Hosting: [SvelteKit Setup](/docs/self-hosting/svelte-kit) - SvelteKit setup shows how to mount the product inside a SvelteKit host application.
+- Self-Hosting: [TanStack Start Setup](/docs/self-hosting/tanstack-start) - TanStack Start setup shows how to mount the product inside a TanStack Start host application.
+- Configuration: [Configuration](/docs/configuration) - Runtime values, environment variables, deployment settings, and framework configuration.
+- Configuration: [Database Adapters](/docs/configuration/database-adapters) - Database adapters connect the product to the persistence layer used by the host application.
+- Configuration: [Database](/docs/configuration/database) - Database configuration explains persistence, schema, migrations, and runtime readiness.
+- Configuration: [Deployment](/docs/configuration/deployment) - Deployment documentation explains how the product runs in previews, staging, and production.
+- Configuration: [Environment Variables](/docs/configuration/environment) - Environment variables provide runtime secrets, URLs, provider settings, and deployment values.
+- Guides: [Guides](/docs/guides) - Task-oriented workflows that move readers from setup to a useful outcome.
+- Guides: [CLI Usage](/docs/guides/cli-usage) - CLI usage explains the commands and flags developers use to initialize, run, and debug the product.
+- Guides: [Watch Mode](/docs/guides/watch-mode) - The CLI or runtime can watch files and reload during development.
+- Examples: [Examples](/docs/examples) - Example implementations that show the project in realistic host applications.
+- Examples: [Astro Example](/docs/examples/astro) - Astro Example shows the shape of a working Astro integration.
+- Examples: [Elysia Example](/docs/examples/elysia) - Elysia Example shows the shape of a working Elysia integration.
+- Examples: [Express Example](/docs/examples/express) - Express Example shows the shape of a working Express integration.
+- Examples: [Hono Example](/docs/examples/hono) - Hono Example shows the shape of a working Hono integration.
+- Examples: [Next.js Example](/docs/examples/nextjs) - Next.js Example shows the shape of a working Next.js integration.
+- Examples: [Nuxt Example](/docs/examples/nuxt) - Nuxt Example shows the shape of a working Nuxt integration.
+- Examples: [Remix Example](/docs/examples/remix) - Remix Example shows the shape of a working Remix integration.
+- Examples: [SolidStart Example](/docs/examples/solid-start) - SolidStart Example shows the shape of a working SolidStart integration.
+- Examples: [SvelteKit Example](/docs/examples/svelte-kit) - SvelteKit Example shows the shape of a working SvelteKit integration.
+- Examples: [TanStack Start Example](/docs/examples/tanstack-start) - TanStack Start Example shows the shape of a working TanStack Start integration.
+- API Reference: [API Reference](/docs/api) - Concrete developer-facing surfaces: commands, exports, adapters, routes, and type contracts.
+- API Reference: [CLI](/docs/api/cli) - Commands and flags for running repository workflows from the terminal.
+- API Reference: [Configuration API](/docs/api/config) - Configuration types, helpers, and contracts used by application developers.
+- API Reference: [Public Exports](/docs/api/exports) - Use this reference to choose the correct public import path for the workflow you are building.
+- API Reference: [Init Command](/docs/api/cli/init) - The CLI exposes an init command for creating product configuration.
+- API Reference: [Start Command](/docs/api/cli/start) - The CLI exposes a start workflow and runtime flags.
+- API Reference: [Runtime Config](/docs/api/config/runtime) - Runtime config defines the options developers pass when wiring the package into an application.
+## Project At A Glance
+- Project type: `cli`
+- Package name: `better-auth-studio`
+- Runtime and adapter coverage: Astro, Elysia, Express, Hono, Next.js, Nuxt, Remix, SolidStart, SvelteKit, TanStack Start
+## Core Capabilities
+- Developer Tools: This section explains the utilities that help developers inspect, configure, or generate parts of the product. These tools are not just UI screens; they are shortcuts for common setup, debugging, schema, email, or integration work. Key concepts: developer tools, generators, inspectors, visual editors.
+- Session Management: This area explains how the product observes active authentication state. It connects user identity, session creation, sign-in activity, cookies or tokens, and any security-sensitive controls exposed to administrators. Key concepts: sessions, sign in, tokens, cookies.
+- Event Tracking: This capability turns runtime activity into a timeline that administrators can inspect. It is especially useful for auth products because sign-ins, session creation, account updates, and organization events often need auditability and context. Key concepts: events, audit trail, activity feed, last seen.
+- Organization Management: This capability documents the multi-tenant administrative model. It explains how organizations group users, how teams subdivide access, and how membership or invitation actions change what a person can do inside the product. Key concepts: organizations, teams, members, invitations.
+- User Management: This capability is the administrative surface for user records. It helps an operator inspect accounts, find a user by identity, update profile or verification state, and remove records when needed. In an auth-oriented product, this page is usually one of the highest-value docs pages because it explains the exact model an admin interacts with. Key concepts: users, accounts, profiles, email verification.
+- Dashboard Overview: This area gives operators a high-level view of the system before they drill into individual records. It usually brings together counts, recent activity, database state, and health signals so an admin can understand whether the product is working as expected. Key concepts: workspace status, operational metrics, recent activity, dashboard widgets.
+## Runtime and Adapter Coverage
+- Astro
+- Elysia
+- Express
+- Hono
+- Next.js
+- Nuxt
+- Remix
+- SolidStart
+- SvelteKit
+- TanStack Start
+## Setup Surfaces
+- `examples/astro/prisma/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/astro/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/server/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/mongodb/src/auth.ts` (product) - Product runtime configuration.
+## Common Commands
+- `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
+- `dev` runs `tsx src/cli.ts` and starts the local development workflow.
+- `start` runs `node dist/cli.js` and starts the runtime entrypoint after dependencies or build output are ready.
+- `test` runs `vitest` and runs verification for expected behavior.
+## Configuration You May Need
+- `AUTH_SECRET`
+- `AUTH_URL`
+- `BASE_URL`
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `CLERK_SECRET_KEY`
+- `CLICKHOUSE_HOST`
+- `CLICKHOUSE_PASSWORD`
+- `CLICKHOUSE_USERNAME`
+- `DATABASE_URL`
+- `DB_HOST`
+- 23 more environment variables appear elsewhere in the project; document them on the page for the workflow that uses them.

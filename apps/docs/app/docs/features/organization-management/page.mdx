@@ -1,0 +1,57 @@
+---
+title: "Organization Management"
+description: "Organization management explains teams, members, invitations, and multi-tenant administration."
+order: 70
+---
+
+# Organization Management
+
+Organization management explains teams, members, invitations, and multi-tenant administration.
+## What This Is
+This capability documents the multi-tenant administrative model. It explains how organizations group users, how teams subdivide access, and how membership or invitation actions change what a person can do inside the product.
+## When To Use This
+- Use this page when you are operating, integrating, or changing organization management.
+- Read it before changing UI, routes, permissions, or data flows tied to this workflow.
+- Pair it with setup and configuration pages when runtime values affect what the user sees.
+## Core Concepts
+- organizations
+- teams
+- members
+- invitations
+- slugs
+## Typical Workflow
+1. Inspect organizations from the organization list.
+2. Open an organization to manage teams, members, and pending invitations.
+3. Use create, edit, delete, and bulk seed flows to keep test or production organizations aligned with the auth model.
+## In The Product
+These are the product surfaces or existing docs sections readers are most likely to touch while using this workflow.
+
+- Primary product surfaces: `OrganizationDetails`, `Organizations`, `RecentOrganizationsWidget`, `RecentTeamsWidget`, `TeamDetails`, `Teams`.
+- README context: `dashboard`, `organization-management`.
+## User Path
+1. Inspect organizations from the organization list.
+2. Open an organization to manage teams, members, and pending invitations.
+3. Use create, edit, delete, and bulk seed flows to keep test or production organizations aligned with the auth model.
+## Expected Outcome
+- You can describe the workflow in product terms before changing configuration or code.
+- You know which permissions, data, or runtime settings can change the user's experience.
+- You know where to continue when you need exact commands, imports, or deployment details.
+## From The README
+The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
+
+### 🏢 Organization Management
+- View organizations - List all organizations with pagination
+- Create organizations - Add new organizations with custom slugs
+- Edit organizations - Update organization details
+- Delete organizations - Remove organizations
+- Team management - Create and manage teams within organizations
+- Member management - Add/remove members from teams
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `frontend/src/components/dashboard-widgets/RecentOrganizationsWidget.tsx` - RecentOrganizationsWidget reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/RecentTeamsWidget.tsx` - RecentTeamsWidget reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/pages/Organizations.tsx` - Organizations page-level UI. This is where users usually encounter the capability in the product.
+- `frontend/src/pages/Teams.tsx` - Teams page-level UI. This is where users usually encounter the capability in the product.
+- `frontend/src/pages/OrganizationDetails.tsx` - OrganizationDetails page-level UI. This is where users usually encounter the capability in the product.
+- `frontend/src/pages/TeamDetails.tsx` - TeamDetails page-level UI. This is where users usually encounter the capability in the product.

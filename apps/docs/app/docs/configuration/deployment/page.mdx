@@ -1,0 +1,60 @@
+---
+title: "Deployment"
+description: "Deployment documentation explains how the product runs in previews, staging, and production."
+order: 250
+---
+
+# Deployment
+
+Deployment documentation explains how the product runs in previews, staging, and production.
+## What This Is
+Deployment documentation explains how the project is expected to run outside local development, which platform files are authoritative, and what needs to be verified for preview, staging, and production environments.
+
+If you want to run Better Auth Studio in its own container, this repository includes a Docker setup for the standalone CLI server.
+## When To Use This
+- Use this when deployment changes how Better Auth Studio runs, connects, or behaves.
+- Use it to decide which values are required, optional, or only needed for a specific workflow.
+- Verify configuration changes with the smallest command or integration path that exercises them.
+## Core Concepts
+- deployment
+- containers
+- platform config
+- preview environment
+- production
+## Typical Workflow
+1. Locate Docker, Railway, Vercel, Wrangler, or platform-specific configuration.
+2. Connect deployment files to required environment variables and runtime commands.
+3. Document verification steps for preview and production environments.
+## What This Controls
+Configuration is useful only when readers can connect each value to behavior. Start by deciding whether the value affects credentials, persistence, routing, framework integration, output, or developer convenience.
+## Environment Variables
+- `BETTER_AUTH_SECRET`
+- 34 more environment variables appear elsewhere in the project; document them on the page for the workflow that uses them.
+## Configuration Files
+- `docker/compose.yml` (deployment) - Container or Docker Compose setup.
+- `docker/docker-compose.self-host.yml` (deployment) - Container or Docker Compose setup.
+- `Dockerfile` (deployment) - Container or Docker Compose setup.
+- `vercel.json` (deployment) - Deployment platform configuration.
+## From The README
+The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
+
+### Docker (Standalone Self Host)
+- you want a separate admin container
+- your Better Auth app already lives in its own repository
+- you want Docker managed node modules and package manager cache volumes
+- mounts your Better Auth project into /workspace
+- installs project dependencies into Docker volumes on first boot
+- starts better auth studio start host 0.0.0.0 port 3002 no open
+## How To Verify Changes
+- Identify whether the option affects security, runtime mounting, data access, or presentation.
+- Prefer examples that use the same names and defaults found in the project.
+- Call out adapter-specific behavior instead of implying every setting applies to every framework.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `docker/compose.yml` - Deployment configuration that explains how the product runs outside local development.
+- `docker/docker-compose.self-host.yml` - Deployment configuration that explains how the product runs outside local development.
+- `Dockerfile` - Deployment configuration that explains how the product runs outside local development.
+- `docs/.vercelignore` - Deployment configuration that explains how the product runs outside local development.
+- `docs/vercel.json` - Deployment configuration that explains how the product runs outside local development.
+- `vercel.json` - Deployment configuration that explains how the product runs outside local development.

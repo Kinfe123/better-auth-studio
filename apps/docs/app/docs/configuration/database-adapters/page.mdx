@@ -1,0 +1,73 @@
+---
+title: "Database Adapters"
+description: "Database adapters connect the product to the persistence layer used by the host application."
+order: 230
+---
+
+# Database Adapters
+
+Database adapters connect the product to the persistence layer used by the host application.
+## What This Is
+Database adapter docs explain how the product connects to the persistence layer used by the host application. They identify supported adapters, the expected provider names, and what needs to be migrated before the runtime can read or write records safely.
+## When To Use This
+- Use this when database adapters changes how Better Auth Studio runs, connects, or behaves.
+- Use it to decide which values are required, optional, or only needed for a specific workflow.
+- Verify configuration changes with the smallest command or integration path that exercises them.
+## Core Concepts
+- Prisma
+- Drizzle
+- SQLite
+- Postgres
+- MySQL
+- schema detection
+## Typical Workflow
+1. Identify which adapter the host application already uses.
+2. Confirm that the product can load the adapter and database connection from the host configuration.
+3. Run migrations or schema pushes before using features that require additional columns.
+## What This Controls
+Configuration is useful only when readers can connect each value to behavior. Start by deciding whether the value affects credentials, persistence, routing, framework integration, output, or developer convenience.
+## Environment Variables
+- `DATABASE_URL`
+- `AUTH_SECRET`
+- `BASE_URL`
+- `BETTER_AUTH_URL`
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- 25 more environment variables appear elsewhere in the project; document them on the page for the workflow that uses them.
+## Configuration Files
+- `examples/astro/prisma/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/astro/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/server/src/lib/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/mongodb/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/express/prisma/studio.config.ts` (product) - Product runtime configuration.
+## From The README
+The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
+
+### Supported Database Adapters
+- Prisma (prismaAdapter)
+- Drizzle (drizzleAdapter)
+- SQLite (new Database() from better sqlite3)
+- PostgreSQL (via Prisma or Drizzle)
+- MySQL (via Prisma or Drizzle)
+## How To Verify Changes
+- Identify whether the option affects security, runtime mounting, data access, or presentation.
+- Prefer examples that use the same names and defaults found in the project.
+- Call out adapter-specific behavior instead of implying every setting applies to every framework.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `examples/express/drizzle/better-auth_migrations/2025-08-27T15-55-04.099Z.sql` - Example project file that shows how the capability is wired in a real framework setup.
+- `src/utils/database-detection.ts` - Database Detection utility. It supports the feature behind the scenes and is often where shared rules live.
+- `examples/astro/prisma/astro.config.mjs` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/astro/prisma/src/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/astro/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/elysia/prisma/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.

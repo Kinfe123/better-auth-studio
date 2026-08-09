@@ -1,0 +1,63 @@
+---
+title: "Self-Hosting Overview"
+description: "Self-hosting explains how to run the product inside infrastructure you control."
+order: 110
+---
+
+# Self-Hosting Overview
+
+Self-hosting explains how to run the product inside infrastructure you control.
+## What This Is
+Self-hosting explains how the package runs inside or next to a user's own application. It clarifies which pieces are required at runtime, how the host app mounts the product, and what infrastructure must be available in production.
+
+⚠️ Beta Feature : Self hosting is currently in beta.  Please report any issues on GitHub.
+## When To Use This
+- Use this when you want to run Better Auth Studio inside your own application or infrastructure.
+- Use it to separate what the host app owns from what the package provides.
+- Review environment and deployment settings before exposing the runtime in production.
+## Core Concepts
+- runtime dependency
+- host application
+- deployment
+- container
+- production route
+## Typical Workflow
+1. Install the package as a runtime dependency when the host app serves it in production.
+2. Mount the framework adapter or standalone server at the configured base path.
+3. Verify that environment variables, database access, auth config, and allowed origins match production.
+## Runtime Shape
+This page covers the self-hosted runtime path described by deployment files, README sections, or configuration files.
+## Integration Story
+The important idea is that Better Auth Studio can run in a production environment controlled by the user. This page makes clear which files belong to the package and which runtime settings belong to the host application.
+## Setup Checklist
+1. Install dependencies with `pnpm install`.
+2. Configure required environment variables before starting the runtime.
+3. Run `pnpm start` or the framework-specific command from the host app.
+4. Verify the mounted route, API handler, or container can reach the same runtime and database configuration as the host app.
+## From The README
+The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
+
+### 🏠 Self Hosting (Beta)
+⚠️ Beta Feature : Self hosting is currently in beta.  Please report any issues on GitHub.
+
+### Installation for Self Hosting
+Important: For self hosting, install better auth studio as a regular dependency (not devDependency) since it's required at runtime in production:
+## Configuration Files
+- `docker/compose.yml` (deployment) - Container or Docker Compose setup.
+- `docker/docker-compose.self-host.yml` (deployment) - Container or Docker Compose setup.
+- `Dockerfile` (deployment) - Container or Docker Compose setup.
+## Environment Variables
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `CLICKHOUSE_HOST`
+- `CLICKHOUSE_USERNAME`
+- `DB_HOST`
+- `DB_USER`
+- `NEXT_PUBLIC_BETTER_AUTH_URL`
+- `BETTER_AUTH_SECRET`
+- 28 more environment variables appear elsewhere in the project; document them on the page for the workflow that uses them.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `docker/docker-compose.self-host.yml` - Deployment configuration that explains how the product runs outside local development.
+- `docker/compose.yml` - Deployment configuration that explains how the product runs outside local development.
+- `Dockerfile` - Deployment configuration that explains how the product runs outside local development.

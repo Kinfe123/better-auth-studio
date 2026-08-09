@@ -1,0 +1,69 @@
+---
+title: "Runtime Config"
+description: "Runtime config defines the options developers pass when wiring the package into an application."
+order: 470
+---
+
+# Runtime Config
+
+Runtime config defines the options developers pass when wiring the package into an application.
+## What This Is
+This API reference page explains the configuration shape developers pass into the package, which options are part of the public contract, and which feature pages depend on those settings.
+## When To Use This
+- Use this when you need the developer-facing contract behind runtime config.
+- Start with the purpose and example shape before copying exported names.
+- Follow related feature or configuration pages when the API depends on runtime behavior.
+## Core Concepts
+- configuration type
+- runtime options
+- validation
+- public contract
+## Typical Workflow
+1. Locate the configuration object in the host application.
+2. Set only the options needed for the selected runtime and feature set.
+3. Use related feature docs to understand behavior controlled by each option.
+## Configuration Entry Points
+- `better-auth-studio/config` - Configuration contract or helper export.
+## Configuration Contract
+| Contract | Use it for |
+| --- | --- |
+| `AuthConfig` | Configuration contract used when mounting or customizing Better Auth Studio. |
+| `AuthDatabase` | Database-related configuration for how the runtime stores or reads product data. |
+| `AuthProvider` | Provider configuration for integrations or backing services. |
+| `defineStudioConfig` | Helper for declaring Better Auth Studio configuration with a stable shape. |
+| `EventColors` | Feature-specific configuration that controls optional Studio behavior. |
+| `findAuthConfig` | Helper for locating or loading configuration at runtime. |
+| `getConfig` | Helper for locating or loading configuration at runtime. |
+| `getPathAliases` | Helper for locating or loading configuration at runtime. |
+| `LiveMarqueeConfig` | Feature-specific configuration that controls optional Studio behavior. |
+| `possiblePaths` | Public contract name used by the package configuration surface. |
+| `STUDIO_TOOL_IDS` | Feature-specific configuration that controls optional Studio behavior. |
+| `StudioAccessConfig` | Access-control configuration that decides who can use the runtime surface. |
+| `StudioConfig` | Configuration contract used when mounting or customizing Better Auth Studio. |
+| `StudioIpAddressConfig` | Network or IP-related configuration used by session, event, or access-control behavior. |
+## How To Use This Contract
+- Start with the exported configuration helper or type rather than copying internal schema files.
+- Keep runtime options tied to the feature, adapter, or deployment behavior they control.
+- Treat example configs as usage examples; the primary source export is the contract.
+## From The README
+The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
+
+### ⚙️ Settings & Configuration
+- Plugin status - Check which Better Auth plugins are enabled
+- Database configuration - View current database adapter and settings
+- Social providers - Configure OAuth providers (GitHub, Google, etc.)
+- Email settings - Configure email verification and password reset
+
+### Configuration Options
+- `auth` (required) - Your Better Auth instance
+- `basePath` (required) - URL path where studio is mounted
+- `access.allowEmails` (optional) - Array of admin email addresses
+- `access.roles` (optional) - Array of allowed user roles
+- `access.allowIpAddresses` (optional) - IP allowlist for Studio requests. Supports exact IPs and wildcard patterns (example: 192.168. )
+- `access.blockIpAddresses` (optional) - IP blocklist for Studio requests. Supports exact IPs and wildcard patterns
+- 3 more settings are described in the README.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `src/types/handler.ts` - Handler type surface. It documents data shapes, provider contracts, or configuration objects.
+- `src/config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.

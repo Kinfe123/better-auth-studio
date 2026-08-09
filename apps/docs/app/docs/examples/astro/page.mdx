@@ -1,0 +1,28 @@
+---
+title: "Astro Example"
+description: "Astro Example shows the shape of a working Astro integration."
+order: 310
+---
+
+# Astro Example
+
+Astro Example shows the shape of a working Astro integration.
+## What This Example Shows
+Astro Example demonstrates how a Astro host app mounts Better Auth Studio, where configuration lives, and which route or server entrypoint connects the app to the Studio runtime.
+## Setup Flow
+1. Open the Astro example app and install its dependencies.
+2. Review the auth, Studio, and framework route files before copying the setup.
+3. Run the example locally and verify the Studio route loads against the configured Better Auth instance.
+## What To Look For
+- The framework route or handler that mounts the Studio runtime.
+- The auth or Studio config file that supplies runtime options.
+- The package scripts or framework command used to run the example locally.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `examples/astro/astro.config.mjs` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/astro/prisma/astro.config.mjs` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/astro/prisma/src/lib/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/astro/prisma/src/lib/db.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/astro/prisma/src/pages/api/auth/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.
+- `examples/astro/prisma/src/pages/api/studio/[...all].ts` - Route or API layer that receives requests and coordinates runtime behavior.

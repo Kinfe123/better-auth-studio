@@ -1,0 +1,51 @@
+---
+title: "Dashboard Overview"
+description: "Dashboard pages give operators a clear view of users, activity, and system health."
+order: 40
+---
+
+# Dashboard Overview
+
+Dashboard pages give operators a clear view of users, activity, and system health.
+## What This Is
+This area gives operators a high-level view of the system before they drill into individual records. It usually brings together counts, recent activity, database state, and health signals so an admin can understand whether the product is working as expected.
+## When To Use This
+- Use this page when you are operating, integrating, or changing dashboard overview.
+- Read it before changing UI, routes, permissions, or data flows tied to this workflow.
+- Pair it with setup and configuration pages when runtime values affect what the user sees.
+## Core Concepts
+- workspace status
+- operational metrics
+- recent activity
+- dashboard widgets
+## Typical Workflow
+1. Open the dashboard to see the current state of the product.
+2. Use summary widgets to identify the area that needs attention.
+3. Navigate from a widget into the detailed feature page or record list.
+## In The Product
+These are the product surfaces or existing docs sections readers are most likely to touch while using this workflow.
+
+- Primary product surfaces: `Dashboard`, `DashboardCustomizePanel`, `DashboardFloatingPanel`, `DashboardWidgetGrid`, `DatabaseWidget`, `DropTargetSlot`, `EventsWidget`.
+- README context: `dashboard`.
+## User Path
+1. Open the dashboard to see the current state of the product.
+2. Use summary widgets to identify the area that needs attention.
+3. Navigate from a widget into the detailed feature page or record list.
+## Expected Outcome
+- You can describe the workflow in product terms before changing configuration or code.
+- You know which permissions, data, or runtime settings can change the user's experience.
+- You know where to continue when you need exact commands, imports, or deployment details.
+## From The README
+The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
+
+### 📊 Dashboard
+- Overview statistics - User, teams and organization counts data
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `frontend/src/components/dashboard-widgets/DatabaseWidget.tsx` - DatabaseWidget reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardCustomizePanel.tsx` - DashboardCustomizePanel reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardFloatingPanel.tsx` - DashboardFloatingPanel reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DashboardWidgetGrid.tsx` - DashboardWidgetGrid reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/DropTargetSlot.tsx` - DropTargetSlot reusable UI component. It renders a visible part of the workflow or a focused interaction.
+- `frontend/src/components/dashboard-widgets/EventsWidget.tsx` - EventsWidget reusable UI component. It renders a visible part of the workflow or a focused interaction.

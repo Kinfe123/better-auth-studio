@@ -1,0 +1,52 @@
+---
+title: "Database"
+description: "Database configuration explains persistence, schema, migrations, and runtime readiness."
+order: 240
+---
+
+# Database
+
+Database configuration explains persistence, schema, migrations, and runtime readiness.
+## What This Is
+Database documentation explains how the project connects to persistence, which schema or migration files matter, and what has to be ready before runtime features read or write state.
+## When To Use This
+- Use this when database changes how Better Auth Studio runs, connects, or behaves.
+- Use it to decide which values are required, optional, or only needed for a specific workflow.
+- Verify configuration changes with the smallest command or integration path that exercises them.
+## Core Concepts
+- database
+- schema
+- migrations
+- adapter
+- persistence
+## Typical Workflow
+1. Identify the database library, schema files, and migration files used by the project.
+2. Document required connection variables and migration steps.
+3. Explain which runtime features depend on the database being available.
+## What This Controls
+Configuration is useful only when readers can connect each value to behavior. Start by deciding whether the value affects credentials, persistence, routing, framework integration, output, or developer convenience.
+## Environment Variables
+- `DATABASE_URL`
+- `BETTER_AUTH_SECRET`
+- 33 more environment variables appear elsewhere in the project; document them on the page for the workflow that uses them.
+## Configuration Files
+- `examples/express/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/nextjs/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+## From The README
+The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
+
+### Supported Database Adapters
+- Prisma (prismaAdapter)
+- Drizzle (drizzleAdapter)
+- SQLite (new Database() from better sqlite3)
+- PostgreSQL (via Prisma or Drizzle)
+- MySQL (via Prisma or Drizzle)
+## How To Verify Changes
+- Identify whether the option affects security, runtime mounting, data access, or presentation.
+- Prefer examples that use the same names and defaults found in the project.
+- Call out adapter-specific behavior instead of implying every setting applies to every framework.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `examples/express/drizzle/drizzle.config.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/nextjs/drizzle/drizzle.config.ts` - Example project file that shows how the capability is wired in a real framework setup.

@@ -1,0 +1,33 @@
+---
+title: "Public Exports"
+description: "Use this reference to choose the correct public import path for the workflow you are building."
+order: 440
+---
+
+# Public Exports
+
+Use this reference to choose the correct public import path for the workflow you are building.
+## What To Import
+Use this page when you already know you need to integrate Better Auth Studio from `better-auth-studio`, but you need to choose the right entrypoint. Start with the main package for shared helpers, use framework subpaths when mounting the product in an app, and use config subpaths when you are typing or loading runtime configuration.
+## Common Imports
+```ts
+import { AuthConfig, AuthProvider } from "better-auth-studio";
+import { AuthConfig, findAuthConfig } from "better-auth-studio/config";
+import { betterAuthStudio } from "better-auth-studio/nextjs";
+```
+## Choose an Import Path
+| Import path | When to use it | Common imports |
+| --- | --- | --- |
+| `better-auth-studio` | Use this for top-level helpers, shared types, and runtime utilities from Better Auth Studio. | `AuthConfig`, `AuthDatabase`, `AuthEvent`, `AuthEventType`, `AuthProvider` |
+| `better-auth-studio/astro` | Use this in an Astro host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
+| `better-auth-studio/config` | Use this when loading, validating, or typing the product configuration. | `AuthConfig`, `AuthDatabase`, `AuthProvider`, `findAuthConfig`, `getConfig` |
+| `better-auth-studio/elysia` | Use this in an Elysia host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
+| `better-auth-studio/express` | Use this in an Express host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
+| `better-auth-studio/hono` | Use this in a Hono host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
+| `better-auth-studio/nextjs` | Use this in a Next.js host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
+| `better-auth-studio/nuxt` | Use this in a Nuxt host app when mounting Better Auth Studio into that framework. | `betterAuthStudio` |
+## How To Decide
+- Choose the main package entrypoint for shared helpers, product-level types, and top-level setup utilities.
+- Choose a framework entrypoint when the import is used inside that framework's route, handler, plugin, or server integration.
+- Choose a configuration entrypoint when the code is reading, validating, or typing the product configuration.
+- If two paths look similar, prefer the narrowest path that matches the file you are editing.

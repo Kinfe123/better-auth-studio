@@ -1,0 +1,71 @@
+---
+title: "Elysia Setup"
+description: "Elysia setup shows how to mount the product inside a Elysia host application."
+order: 130
+---
+
+# Elysia Setup
+
+Elysia setup shows how to mount the product inside a Elysia host application.
+## What This Is
+This setup page explains how to run the product inside a Elysia application. It covers the runtime dependency, the framework route or server hook, and the configuration the host app must provide.
+
+⚠️ Beta Feature : Self hosting is currently in beta.  Please report any issues on GitHub.
+## When To Use This
+- Use this when you want to run Better Auth Studio inside your own application or infrastructure.
+- Use it to separate what the host app owns from what the package provides.
+- Review environment and deployment settings before exposing the runtime in production.
+## Core Concepts
+- Elysia
+- self-hosting
+- runtime dependency
+- route mount
+- host app config
+## Typical Workflow
+1. Install the package where the production server can import it.
+2. Create the Elysia route, handler, or server integration.
+3. Verify the product can read the same runtime, database, and access configuration as the host app.
+## Runtime Shape
+This page focuses on the Elysia runtime path provided by adapters, examples, or package exports.
+Use `better-auth-studio/elysia` when wiring this runtime from the package export.
+## Integration Story
+For Elysia, the important idea is that the host application owns runtime state, database access, routing, and deployment. Better Auth Studio provides the handler or adapter that plugs into that host application. This page makes that boundary clear so developers know what the package supplies and what their app must still configure.
+## Setup Checklist
+1. Install dependencies with `pnpm install`.
+2. Configure required environment variables before starting the runtime.
+3. Run `pnpm start` or the framework-specific command from the host app.
+4. Verify the mounted route, API handler, or container can reach the same runtime and database configuration as the host app.
+## From The README
+The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
+
+### 🏠 Self Hosting (Beta)
+⚠️ Beta Feature : Self hosting is currently in beta.  Please report any issues on GitHub.
+
+### Installation for Self Hosting
+Important: For self hosting, install better auth studio as a regular dependency (not devDependency) since it's required at runtime in production:
+## Configuration Files
+- `examples/elysia/prisma/src/auth.ts` (product) - Product runtime configuration.
+- `examples/elysia/prisma/studio.config.ts` (product) - Product runtime configuration.
+- `examples/express/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/nextjs/drizzle/drizzle.config.ts` (database) - Database schema or adapter configuration.
+- `examples/elysia/prisma/package.json` (package) - Package metadata, scripts, dependencies, and exports.
+## Environment Variables
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `PORT`
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `CLICKHOUSE_HOST`
+- `DB_HOST`
+- 25 more environment variables appear elsewhere in the project; document them on the page for the workflow that uses them.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `examples/elysia/prisma/src/auth.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `examples/elysia/prisma/src/index.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/elysia/prisma/src/prisma.ts` - Example project file that shows how the capability is wired in a real framework setup.
+- `examples/elysia/prisma/studio.config.ts` - Runtime configuration file that controls how the product is mounted, secured, or connected to auth.
+- `src/adapters/elysia.ts` - Framework adapter that connects host requests to the product runtime.

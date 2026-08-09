@@ -1,0 +1,57 @@
+---
+title: "Watch Mode"
+description: "The CLI or runtime can watch files and reload during development."
+order: 290
+---
+
+# Watch Mode
+
+The CLI or runtime can watch files and reload during development.
+## What This Is
+Watch mode is the development feedback loop. It keeps the product aligned with local configuration changes by monitoring files, restarting or refreshing the runtime, and reducing manual browser refreshes.
+## When To Use This
+- Use this when you want to complete the watch mode workflow from start to finish.
+- Use it as a task path first, then open reference pages only when you need exact flags or imports.
+- Follow the verification step before increasing scale or automating the workflow.
+## Core Concepts
+- file watcher
+- reload
+- config changes
+- development loop
+- WebSocket updates
+## Typical Workflow
+1. Start the runtime with watch mode enabled.
+2. Edit the auth or studio configuration file.
+3. Confirm the server reloads and the browser reflects the updated configuration.
+## Before You Start
+- Install dependencies with `pnpm install`.
+- Confirm the main workflow with `pnpm start`.
+- Review required configuration before running commands that create or mutate data.
+## Run The Workflow
+1. Start the runtime with watch mode enabled.
+2. Edit the auth or studio configuration file.
+3. Confirm the server reloads and the browser reflects the updated configuration.
+## Useful Commands
+- `dev` runs `tsx src/cli.ts` and starts the local development workflow.
+- `start` runs `node dist/cli.js` and starts the runtime entrypoint after dependencies or build output are ready.
+- `studio` runs `tsx src/cli.ts` and starts the runtime entrypoint after dependencies or build output are ready.
+- `frontend:dev` runs `cd frontend && pnpm run dev` and starts the local development workflow.
+- `frontend:preview` runs `cd frontend && pnpm run preview` and supports the project workflow.
+- `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
+## Useful Options
+- `--watch`: Watch for changes in auth config file and reload server
+- `--api-dir <path>`: Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
+- `--config <path>`: Path to the auth configuration file
+- `--host <host>`: Host to run the studio on
+- `--no-open`: Do not open browser automatically
+- `--port <port>`: Port to run the studio on
+- `--geo-db <path>`: Path to MaxMind GeoLite2 database file (.mmdb
+## From The README
+The README already describes this area in project language. Use these excerpts as the reader-facing baseline before adding more examples.
+
+### Using watch Option
+Automatically reload the server when your auth. ts file changes.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `src/cli.ts` - CLI entrypoint or command implementation that defines developer-facing commands and flags.

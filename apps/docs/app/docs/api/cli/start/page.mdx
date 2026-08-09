@@ -1,0 +1,52 @@
+---
+title: "Start Command"
+description: "The CLI exposes a start workflow and runtime flags."
+order: 460
+---
+
+# Start Command
+
+The CLI exposes a start workflow and runtime flags.
+## Command Purpose
+The start command launches the repository's main runtime entrypoint. This page explains the package script, required configuration, and flags that change how the command runs.
+## How to Run It
+Run `pnpm start` from the project root after dependencies and required environment values are ready.
+Install dependencies first with `pnpm install`.
+## What the Command Depends On
+The command reads environment-backed configuration. Set these values before using large runs or automation.
+- `CLICKHOUSE_HOST`
+- `BETTER_AUTH_ALLOWED_HOSTS`
+- `CLICKHOUSE_PASSWORD`
+- `CLICKHOUSE_USERNAME`
+- `DB_HOST`
+- `DB_PORT`
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- 25 more environment variables appear elsewhere in the project; document them on the page for the workflow that uses them.
+## Flags and Options
+Use flags to override defaults for a specific run. Prefer the default script first, then add flags when you need a different scale, concurrency level, target, or debug mode.
+- `--api-dir <path>`: Custom app directory path for Next.js (e.g., "app" or "src/app"). The command will auto-detect "app" or "src/app" if not provided.
+- `--watch`: Watch for changes in auth config file and reload server
+- `--host <host>`: Host to run the studio on
+- `--port <port>`: Port to run the studio on
+- `--config <path>`: Path to the auth configuration file
+- `--geo-db <path>`: Path to MaxMind GeoLite2 database file (.mmdb
+- `--no-open`: Do not open browser automatically
+## Useful Commands
+- `start` runs `node dist/cli.js` and starts the runtime entrypoint after dependencies or build output are ready.
+- `dev` runs `tsx src/cli.ts` and starts the local development workflow.
+- `studio` runs `tsx src/cli.ts` and starts the runtime entrypoint after dependencies or build output are ready.
+- `frontend:dev` runs `cd frontend && pnpm run dev` and starts the local development workflow.
+- `frontend:preview` runs `cd frontend && pnpm run preview` and supports the project workflow.
+- `build` runs `pnpm run clean && tsc && pnpm run frontend:build && pnpm run copy:public && pnpm run verify:public` and creates the production build or compiled package artifacts.
+## Verification Checklist
+- Confirm required environment values are present before running the command.
+- Start with the smallest safe command or script before increasing scale.
+- Use `--help` when available to confirm the flags supported by the current version.
+- Check the command output or downstream service to confirm the expected side effect happened.
+## Supporting Files
+Use these files when you need to verify examples or update the behavior behind this page.
+
+- `src/cli.ts` - CLI entrypoint or command implementation that defines developer-facing commands and flags.
