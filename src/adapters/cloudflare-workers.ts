@@ -1,3 +1,6 @@
+import type { StudioRolesConfig } from "../types/handler.js";
+import { normalizeStudioRoles } from "../utils/roles.js";
+
 type MaybePromise<T> = T | Promise<T>;
 
 export type CloudflareStudioAsset = string | Uint8Array | ArrayBuffer | Response;
@@ -79,6 +82,7 @@ export type CloudflareStudioConfig<Env = unknown, Ctx = unknown> = {
   basePath?: string;
   access?: CloudflareStudioAccessConfig;
   metadata?: CloudflareStudioMetadata;
+  userRoles?: StudioRolesConfig;
   lastSeenAt?: {
     enabled?: boolean;
     columnName?: string;
@@ -481,6 +485,7 @@ function prepareFrontendConfig<Env, Ctx>(config: CloudflareStudioConfig<Env, Ctx
       config.tools && Array.isArray(config.tools.exclude) && config.tools.exclude.length > 0
         ? { exclude: config.tools.exclude }
         : undefined,
+    userRoles: normalizeStudioRoles(config.userRoles),
   };
 }
 

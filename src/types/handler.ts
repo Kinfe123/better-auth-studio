@@ -151,8 +151,8 @@ export type StudioRoleOption = {
 };
 
 /**
- * Roles offered in the user Create/Edit dialogs and accepted by the user-write
- * routes. Plain strings are shorthand for `{ value }`.
+ * Roles offered in the user Create/Edit dialogs. When configured, user-write
+ * routes accept only these values. Plain strings are shorthand for `{ value }`.
  */
 export type StudioRolesConfig = ReadonlyArray<string | StudioRoleOption>;
 
@@ -162,12 +162,13 @@ export type StudioConfig = {
   access?: StudioAccessConfig;
   metadata?: StudioMetadata;
   /**
-   * Roles the Studio offers when creating or editing a user, and the only values
-   * its user-write routes will accept.
+   * Roles the Studio offers when creating or editing a user. When configured,
+   * these are also the only values its user-write routes will accept.
    *
-   * Defaults to Better Auth's built-in `admin` / `user` when unset. Set this when
-   * your app uses its own role vocabulary, so the Studio cannot write a role your
-   * application does not recognize.
+   * The UI defaults to Better Auth's built-in `admin` / `user` when unset, while
+   * the API retains its previous unrestricted behavior for backward compatibility.
+   * Set this when your app uses its own role vocabulary so the Studio cannot write
+   * a role your application does not recognize.
    *
    * Distinct from `access.roles`, which controls who may open the Studio at all.
    *

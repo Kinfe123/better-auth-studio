@@ -99,8 +99,6 @@ export async function startStudio(options: StudioOptions) {
     });
   }
 
-  app.use(createRoutes(authConfig, configPath, geoDbPath));
-
   const publicDirCandidates = [
     join(__dirname, "public"),
     join(__dirname, "../public"),
@@ -125,6 +123,7 @@ export async function startStudio(options: StudioOptions) {
     }
   }
 
+  let studioConfig: StudioConfig | undefined;
   let eventsStatus: { enabled: boolean; configured: boolean; clientType?: string } | null = null;
   if (studioConfigPath) {
     try {
@@ -156,7 +155,7 @@ export async function startStudio(options: StudioOptions) {
         dotenv: true,
         jitiOptions,
       });
-      const studioConfig = config?.default || config?.config || (config as any);
+      studioConfig = config?.default || config?.config || (config as any);
       if (studioConfig?.events) {
         const eventsConfig = studioConfig.events;
         const enabled = eventsConfig.enabled === true;
@@ -177,6 +176,20 @@ export async function startStudio(options: StudioOptions) {
       }
     } catch (_error) {}
   }
+
+  app.use(
+    createRoutes(
+      authConfig,
+      configPath,
+      geoDbPath,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      studioConfig,
+    ),
+  );
+
   app.use(
     "/assets",
     express.static(join(publicDir, "assets"), {
@@ -200,10 +213,12 @@ export async function startStudio(options: StudioOptions) {
 
   app.get("*", (_req, res) => {
     const html = serveIndexHtml(publicDir, {
+      ...studioConfig,
       basePath: "", // CLI studio uses root path
       metadata: {
         title: "Better Auth Studio",
-        theme: "dark",
+        ...studioConfig?.metadata,
+        theme: studioConfig?.metadata?.theme === "light" ? "light" : "dark",
       },
     });
 

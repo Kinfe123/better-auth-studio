@@ -357,9 +357,10 @@ export function createRoutes(
 ): Router {
   const isSelfHosted = !!preloadedAdapter;
 
-  // Roles the Studio may write. Defaults to Better Auth's built-in admin/user, so
-  // deployments that never configure `roles` behave exactly as before.
+  // Keep the UI defaults available for seeding, but preserve the historical API
+  // behavior unless the host explicitly opts into a restricted role vocabulary.
   const allowedRoles = normalizeStudioRoles(studioConfig?.userRoles);
+  const enforceAllowedRoles = studioConfig?.userRoles !== undefined;
 
   /**
    * Rejects a role the configured vocabulary does not contain.
@@ -369,6 +370,9 @@ export function createRoutes(
    * column, including values the host application cannot interpret.
    */
   const rejectInvalidRole = (res: Response, role: unknown): boolean => {
+    if (!enforceAllowedRoles) {
+      return false;
+    }
     if (isAllowedStudioRole(role, allowedRoles)) {
       return false;
     }
@@ -5720,10 +5724,12 @@ export function createRoutes(
 
   router.post("/api/seed/users", async (req: Request, res: Response) => {
     try {
-      const { count = 1, role } = req.body;
-      // "mix" is the seeder's own sentinel for "pick one at random", so it is
-      // validated against the configured roles rather than passed through.
-      if (role !== "mix" && rejectInvalidRole(res, role)) {
+      const { count = 1, role, roleMode } = req.body;
+      const hasConfiguredMixRole = allowedRoles.some((option) => option.value === "mix");
+      // `roleMode` avoids colliding with a real role named "mix". Keep accepting
+      // the legacy role sentinel when "mix" is not itself a configured role.
+      const shouldMixRoles = roleMode === "mix" || (role === "mix" && !hasConfiguredMixRole);
+      if (!shouldMixRoles && rejectInvalidRole(res, role)) {
         return;
       }
       const adapter = await getAuthAdapterWithConfig();
@@ -5737,10 +5743,9 @@ export function createRoutes(
           if (typeof adapter.createUser !== "function") {
             throw new Error("createUser method not available on adapter");
           }
-          let userRole = role;
-          if (role === "mix") {
-            userRole = allowedRoles[Math.floor(Math.random() * allowedRoles.length)].value;
-          }
+          const userRole = shouldMixRoles
+            ? allowedRoles[Math.floor(Math.random() * allowedRoles.length)].value
+            : role;
           const user = await createMockUser(adapter, i + 1, userRole);
           if (!user) {
             throw new Error("Failed to create user");

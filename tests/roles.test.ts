@@ -4,6 +4,7 @@ import {
   isAllowedStudioRole,
   normalizeStudioRoles,
 } from "../src/utils/roles";
+import { getRandomRoleSelectValue } from "../frontend/src/lib/studio-roles";
 
 describe("normalizeStudioRoles", () => {
   it("falls back to admin/user when roles are not configured", () => {
@@ -99,5 +100,16 @@ describe("isAllowedStudioRole", () => {
     expect(isAllowedStudioRole("admin", defaults)).toBe(true);
     expect(isAllowedStudioRole("user", defaults)).toBe(true);
     expect(isAllowedStudioRole("SYSTEM_ADMIN", defaults)).toBe(false);
+  });
+});
+
+describe("getRandomRoleSelectValue", () => {
+  it("returns a value that cannot collide with a configured role", () => {
+    const roles = normalizeStudioRoles([
+      "__better_auth_studio_random_role__",
+      "__better_auth_studio_random_role___",
+    ]);
+
+    expect(getRandomRoleSelectValue(roles)).toBe("__better_auth_studio_random_role____");
   });
 });

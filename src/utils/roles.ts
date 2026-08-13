@@ -1,10 +1,10 @@
 import type { StudioRoleOption, StudioRolesConfig } from "../types/handler.js";
 
 /**
- * Roles offered when `roles` is not configured.
+ * Roles offered when `userRoles` is not configured.
  *
  * These match Better Auth's built-in admin plugin vocabulary, so existing
- * deployments that never set `roles` keep exactly the behavior they had.
+ * deployments that never set `userRoles` keep the same UI options.
  */
 export const DEFAULT_STUDIO_ROLES: StudioRoleOption[] = [
   { value: "admin", label: "Admin" },
@@ -12,11 +12,11 @@ export const DEFAULT_STUDIO_ROLES: StudioRoleOption[] = [
 ];
 
 /**
- * Normalizes the `roles` config into `{ value, label }` pairs.
+ * Normalizes the `userRoles` config into `{ value, label }` pairs.
  *
- * Accepts plain strings for the common case (`roles: ["ADMIN", "EDITOR"]`) and
+ * Accepts plain strings for the common case (`userRoles: ["ADMIN", "EDITOR"]`) and
  * `{ value, label }` objects when the display text should differ from the stored
- * value (`roles: [{ value: "SYSTEM_ADMIN", label: "System Admin" }]`).
+ * value (`userRoles: [{ value: "SYSTEM_ADMIN", label: "System Admin" }]`).
  *
  * Entries without a usable `value` are dropped rather than throwing, so a typo in
  * config cannot take the whole Studio down. If nothing usable remains, the

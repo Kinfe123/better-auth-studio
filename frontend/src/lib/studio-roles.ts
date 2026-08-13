@@ -44,3 +44,12 @@ export function getStudioRoles(): StudioRoleOption[] {
 
   return roles.length > 0 ? roles : DEFAULT_ROLES;
 }
+
+/** A Select value guaranteed not to collide with any configured role. */
+export function getRandomRoleSelectValue(roles: StudioRoleOption[]): string {
+  let value = "__better_auth_studio_random_role__";
+  while (roles.some((role) => role.value === value)) {
+    value += "_";
+  }
+  return value;
+}
