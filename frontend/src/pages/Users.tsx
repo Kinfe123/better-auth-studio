@@ -47,6 +47,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { useCounts } from "../contexts/CountsContext";
+import { getRandomRoleSelectValue, getStudioRoles } from "../lib/studio-roles";
 import { getImageSrc } from "../lib/utils";
 import { fetchStudioAuthJson } from "../utils/studio-auth";
 
@@ -80,6 +81,9 @@ const formatTimeAgo = (value?: string | null): string => {
 };
 
 export default function Users() {
+  // Role options come from the host app's config, not a hardcoded list.
+  const studioRoles = getStudioRoles();
+  const randomRoleSelectValue = getRandomRoleSelectValue(studioRoles);
   const navigate = useNavigate();
   const location = useLocation();
   const { counts, refetchCounts } = useCounts();
@@ -204,7 +208,7 @@ export default function Users() {
 
     fetchCurrentUser();
   }, []);
-  const handleSeedUsers = async (count: number, role?: string) => {
+  const handleSeedUsers = async (count: number, role?: string, mixRoles = false) => {
     setSeedingLogs([]);
     setIsSeeding(true);
 
@@ -221,7 +225,11 @@ export default function Users() {
       const response = await fetch("/api/seed/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ count, role: role || undefined }),
+        body: JSON.stringify({
+          count,
+          role: role || undefined,
+          roleMode: mixRoles ? "mix" : undefined,
+        }),
       });
 
       const result = await response.json();
@@ -1403,9 +1411,12 @@ export default function Users() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="">None</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="user">User</SelectItem>
-                        <SelectItem value="mix">Mix (Random)</SelectItem>
+                        {studioRoles.map((role) => (
+                          <SelectItem key={role.value} value={role.value}>
+                            {role.label ?? role.value}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value={randomRoleSelectValue}>Mix (Random)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1415,7 +1426,11 @@ export default function Users() {
                         (document.getElementById("user-count") as HTMLInputElement)?.value || "5",
                         10,
                       );
-                      handleSeedUsers(count, seedRole || undefined);
+                      handleSeedUsers(
+                        count,
+                        seedRole === randomRoleSelectValue ? undefined : seedRole || undefined,
+                        seedRole === randomRoleSelectValue,
+                      );
                     }}
                     disabled={isSeeding}
                     className="bg-white hover:bg-white/90 text-black border border-white/20 rounded-none mt-6 disabled:opacity-50 font-mono uppercase font-medium text-xs tracking-tight"
@@ -1534,8 +1549,11 @@ export default function Users() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">None</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
+                    {studioRoles.map((role) => (
+                      <SelectItem key={role.value} value={role.value}>
+                        {role.label ?? role.value}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -1682,8 +1700,11 @@ export default function Users() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">None</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
+                    {studioRoles.map((role) => (
+                      <SelectItem key={role.value} value={role.value}>
+                        {role.label ?? role.value}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

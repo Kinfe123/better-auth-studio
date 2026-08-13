@@ -144,11 +144,38 @@ export const STUDIO_TOOL_IDS = [
 
 export type StudioToolId = (typeof STUDIO_TOOL_IDS)[number];
 
+/** A single selectable role. `label` defaults to `value` when omitted. */
+export type StudioRoleOption = {
+  value: string;
+  label?: string;
+};
+
+/**
+ * Roles offered in the user Create/Edit dialogs. When configured, user-write
+ * routes accept only these values. Plain strings are shorthand for `{ value }`.
+ */
+export type StudioRolesConfig = ReadonlyArray<string | StudioRoleOption>;
+
 export type StudioConfig = {
   auth: any;
   basePath?: string;
   access?: StudioAccessConfig;
   metadata?: StudioMetadata;
+  /**
+   * Roles the Studio offers when creating or editing a user. When configured,
+   * these are also the only values its user-write routes will accept.
+   *
+   * The UI defaults to Better Auth's built-in `admin` / `user` when unset, while
+   * the API retains its previous unrestricted behavior for backward compatibility.
+   * Set this when your app uses its own role vocabulary so the Studio cannot write
+   * a role your application does not recognize.
+   *
+   * Distinct from `access.roles`, which controls who may open the Studio at all.
+   *
+   * @example userRoles: ['ADMIN', 'EDITOR', 'VIEWER']
+   * @example userRoles: [{ value: 'SYSTEM_ADMIN', label: 'System Admin' }, 'SUPPORT']
+   */
+  userRoles?: StudioRolesConfig;
   lastSeenAt?: StudioLastSeenAtConfig;
   /** Optional IP geolocation config (ipinfo.io or ipapi.co). When set, used for Events/Sessions location. */
   ipAddress?: StudioIpAddressConfig;
@@ -199,6 +226,8 @@ export type WindowStudioConfig = {
   liveMarquee?: LiveMarqueeConfig;
   /** Tool ids to exclude from the Tools page (from self-host config). */
   tools?: { exclude?: StudioToolId[] };
+  /** Normalized role options for the user Create/Edit dialogs. */
+  userRoles?: StudioRoleOption[];
 };
 
 export function defineStudioConfig(config: StudioConfig): StudioConfig {

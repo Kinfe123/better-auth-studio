@@ -1,15 +1,26 @@
-import { describe, it, expect, afterEach } from "vitest";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import type { AddressInfo } from "node:net";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { startStudio } from "../src/studio";
 import type { AuthConfig } from "../src/config";
 
 describe("Studio", () => {
   let testServer: any = null;
+  let testDirectory: string | null = null;
 
   afterEach(async () => {
     if (testServer && typeof testServer.close === "function") {
       await new Promise<void>((resolve) => {
         testServer.close(() => resolve());
       });
+    }
+    testServer = null;
+    vi.restoreAllMocks();
+    if (testDirectory) {
+      rmSync(testDirectory, { recursive: true, force: true });
+      testDirectory = null;
     }
   });
 
@@ -108,5 +119,33 @@ describe("Studio", () => {
     expect(result.wss).toBeDefined();
 
     testServer = result.server;
+  });
+
+  it("loads userRoles into the standalone CLI frontend", async () => {
+    testDirectory = mkdtempSync(join(tmpdir(), "better-auth-studio-roles-"));
+    writeFileSync(
+      join(testDirectory, "studio.config.mjs"),
+      `export default { userRoles: [{ value: "EDITOR", label: "Editor" }] };`,
+    );
+    vi.spyOn(process, "cwd").mockReturnValue(testDirectory);
+
+    const result = await startStudio({
+      port: 0,
+      host: "127.0.0.1",
+      openBrowser: false,
+      authConfig: { database: { adapter: "memory", provider: "memory" } },
+      logStartup: false,
+    });
+    testServer = result.server;
+    if (!testServer.listening) {
+      await new Promise<void>((resolve) => testServer.once("listening", resolve));
+    }
+
+    const address = testServer.address() as AddressInfo;
+    const response = await fetch(`http://127.0.0.1:${address.port}/`);
+    const html = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(html).toContain('"userRoles":[{"value":"EDITOR","label":"Editor"}]');
   });
 });

@@ -54,6 +54,7 @@ import {
 } from "../components/ui/select";
 import { format, formatDistanceToNow } from "date-fns";
 import { getProviderIcon } from "../lib/icons";
+import { getStudioRoles } from "../lib/studio-roles";
 import { getImageSrc } from "../lib/utils";
 import { buildApiUrl } from "../utils/api";
 
@@ -225,6 +226,8 @@ function formatEventDateTime(value?: string | Date) {
 }
 
 export default function UserDetails() {
+  // Role options come from the host app's config, not a hardcoded list.
+  const studioRoles = getStudioRoles();
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const lastSeenAtEnabled = !!(window as any).__STUDIO_CONFIG__?.lastSeenAt?.enabled;
@@ -2664,8 +2667,11 @@ export default function UserDetails() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">None</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
+                    {studioRoles.map((role) => (
+                      <SelectItem key={role.value} value={role.value}>
+                        {role.label ?? role.value}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

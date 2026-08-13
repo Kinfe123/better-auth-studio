@@ -14,6 +14,8 @@ export type {
   StudioConfig,
   StudioLastSeenAtConfig,
   StudioMetadata,
+  StudioRoleOption,
+  StudioRolesConfig,
   StudioToolId,
   WindowStudioConfig,
 } from "./types/handler.js";

@@ -23,6 +23,7 @@ describe("Cloudflare Workers adapter", () => {
       tools: {
         exclude: ["run-migration"],
       },
+      userRoles: [{ value: "SYSTEM_ADMIN", label: "System Admin" }, "SUPPORT"],
     });
 
     const response = await handler(
@@ -36,6 +37,9 @@ describe("Cloudflare Workers adapter", () => {
     expect(html).toContain("<title>Worker Studio</title>");
     expect(html).toContain('"basePath":"/studio"');
     expect(html).toContain('"exclude":["run-migration"]');
+    expect(html).toContain(
+      '"userRoles":[{"value":"SYSTEM_ADMIN","label":"System Admin"},{"value":"SUPPORT","label":"SUPPORT"}]',
+    );
     expect(html).toContain('src="/studio/assets/app.js"');
   });
 

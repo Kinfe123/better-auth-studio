@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { StudioAccessConfig } from "../types/handler.js";
+import type { StudioAccessConfig, StudioRoleOption } from "../types/handler.js";
+import { normalizeStudioRoles } from "./roles.js";
 
 export interface StudioMetadata {
   title?: string;
@@ -79,6 +80,8 @@ export interface WindowStudioConfig {
   lastSeenAt?: LastSeenAtConfig;
   /** Tool ids to exclude from the Tools page (from self-host config). */
   tools?: { exclude?: string[] };
+  /** Normalized role options for the user Create/Edit dialogs. */
+  userRoles: StudioRoleOption[];
 }
 
 export function serveIndexHtml(publicDir: string, config: Partial<StudioConfig> = {}): string {
@@ -147,6 +150,9 @@ function prepareFrontendConfig(config: Partial<StudioConfig>): WindowStudioConfi
       toolsConfig && Array.isArray(toolsConfig.exclude) && toolsConfig.exclude.length > 0
         ? { exclude: toolsConfig.exclude }
         : undefined,
+    // Always emitted (never undefined) so the frontend can render the selects without
+    // carrying its own copy of the defaults.
+    userRoles: normalizeStudioRoles((config as any).userRoles),
   };
 }
 
